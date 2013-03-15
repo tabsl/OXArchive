@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_extend.php 18910 2009-05-08 14:24:06Z vilma $
+ * $Id: article_extend.php 22481 2009-09-22 06:50:34Z arvydas $
  */
 
 /**
@@ -80,7 +80,7 @@ class Article_Extend extends oxAdminDetails
         }
 
 
-            $oDB = oxDb::GetDB();
+            $oDB = oxDb::getDB();
             $myConfig = $this->getConfig();
             $suffix = ($this->_iEditLang)?"_$this->_iEditLang":"";
 
@@ -88,7 +88,7 @@ class Article_Extend extends oxAdminDetails
             $sSelect  = "select $sArticleTable.oxtitle$suffix, $sArticleTable.oxartnum, $sArticleTable.oxvarselect$suffix from $sArticleTable where 1 ";
             // #546
             $sSelect .= $myConfig->getConfigParam( 'blVariantsSelection' )?'':" and $sArticleTable.oxparentid = '' ";
-            $sSelect .= " and $sArticleTable.oxid = '".$oArticle->oxarticles__oxbundleid->value."'";
+            $sSelect .= " and $sArticleTable.oxid = ".$oDB->quote( $oArticle->oxarticles__oxbundleid->value );
 
             $rs = $oDB->Execute( $sSelect);
             if ($rs != false && $rs->RecordCount() > 0) {

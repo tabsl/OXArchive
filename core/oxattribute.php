@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxattribute.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxattribute.php 22524 2009-09-22 11:47:27Z sarunas $
  */
 
 /**
@@ -69,11 +69,12 @@ class oxAttribute extends oxI18n
 
         // remove attributes from articles also
         $oDB = oxDb::getDb();
-        $sDelete = "delete from oxobject2attribute where oxattrid = '$sOXID' ";
+        $sOxidQuoted = $oDB->quote($sOXID);
+        $sDelete = "delete from oxobject2attribute where oxattrid = ".$sOxidQuoted;
         $rs = $oDB->execute( $sDelete);
 
         // #657 ADDITIONAL removes attribute connection to category
-        $sDelete = "delete from oxcategory2attribute where oxattrid = '$sOXID' ";
+        $sDelete = "delete from oxcategory2attribute where oxattrid = ".$sOxidQuoted;
         $rs = $oDB->execute( $sDelete);
 
         return parent::delete( $sOXID);

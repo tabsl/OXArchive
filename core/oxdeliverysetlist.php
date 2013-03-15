@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdeliverysetlist.php 21594 2009-08-14 12:04:44Z rimvydas.paskevicius $
+ * $Id: oxdeliverysetlist.php 22657 2009-09-25 15:39:22Z arvydas $
  */
 
 /**
@@ -192,30 +192,36 @@ class oxDeliverySetList extends oxList
             $aGroupIds = $oUser->getUserGroups();
         }
 
-        $sIds = '';
+        $aIds = array();
         if ( count( $aGroupIds ) ) {
             foreach ( $aGroupIds as $oGroup ) {
-                $aIds[] = "'".$oGroup->getId()."'";
+                $aIds[] = $oGroup->getId();
             }
-            $sIds = implode(', ', $aIds);
         }
 
-        $sCountrySql = $sCountryId?"EXISTS(select oxobject2delivery.oxid from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxdelset' and oxobject2delivery.OXOBJECTID='$sCountryId')":'0';
-        $sUserSql    = $sUserId   ?"EXISTS(select oxobject2delivery.oxid from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxdelsetu' and oxobject2delivery.OXOBJECTID='$sUserId')":'0';
-        $sGroupSql   = $sIds      ?"EXISTS(select oxobject2delivery.oxid from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxdelsetg' and oxobject2delivery.OXOBJECTID in ($sIds) )":'0';
+        $sUserTable    = getViewName( 'oxuser' );
+        $sGroupTable   = getViewName( 'oxgroups' );
+        $sCountryTable = getViewName( 'oxcountry' );
+
+        $oDb = oxDb::getDb();
+
+        $sCountrySql = $sCountryId?"EXISTS(select oxobject2delivery.oxid from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxdelset' and oxobject2delivery.OXOBJECTID=".$oDb->quote($sCountryId).")":'0';
+        $sUserSql    = $sUserId   ?"EXISTS(select oxobject2delivery.oxid from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxdelsetu' and oxobject2delivery.OXOBJECTID=".$oDb->quote($sUserId).")":'0';
+        $sGroupSql   = count( $aIds ) ?"EXISTS(select oxobject2delivery.oxid from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxdelsetg' and oxobject2delivery.OXOBJECTID in (".implode(', ', oxDb::getInstance()->quoteArray($aIds) ).") )":'0';
 
         $sQ .= "and (
             select
-                if(EXISTS(select 1 from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxdelset' LIMIT 1),
+                if(EXISTS(select 1 from oxobject2delivery, $sCountryTable where $sCountryTable.oxid=oxobject2delivery.oxobjectid and oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxdelset' LIMIT 1),
                     $sCountrySql,
                     1) &&
-                if(EXISTS(select 1 from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxdelsetu' LIMIT 1),
+                if(EXISTS(select 1 from oxobject2delivery, $sUserTable where $sUserTable.oxid=oxobject2delivery.oxobjectid and oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxdelsetu' LIMIT 1),
                     $sUserSql,
                     1) &&
-                if(EXISTS(select 1 from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxdelsetg' LIMIT 1),
+                if(EXISTS(select 1 from oxobject2delivery, $sGroupTable where $sGroupTable.oxid=oxobject2delivery.oxobjectid and oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxdelsetg' LIMIT 1),
                     $sGroupSql,
                     1)
             )";
+
         //order by
         $sQ .= " order by $sTable.oxpos";
 
@@ -287,7 +293,7 @@ class oxDeliverySetList extends oxList
 
            $dBasketPrice = $oBasket->getPriceForPayment();
 
-            // checking if these ship sets available (number if possible payment methods > 0)
+            // checking if these ship sets available (number of possible payment methods > 0)
             foreach ( $this as $sShipSetId => $oShipSet ) {
 
                 $aPaymentList = $oPayList->getPaymentList( $sShipSetId, $dBasketPrice, $oUser );

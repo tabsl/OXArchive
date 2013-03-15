@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_extend.inc.php 18928 2009-05-11 12:22:51Z vilma $
+ * $Id: article_extend.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -49,6 +49,7 @@ class ajaxComponent extends ajaxListComponent
     {
         $sCategoriesTable = getViewName( 'oxcategories' );
         $sO2CView = getViewName( 'oxobject2category' );
+        $oDb = oxDb::getDb();
 
         $sOxid      = oxConfig::getParameter( 'oxid' );
         $sSynchOxid = oxConfig::getParameter( 'synchoxid' );
@@ -56,11 +57,11 @@ class ajaxComponent extends ajaxListComponent
         if ( $sOxid ) {
             // all categories article is in
             $sQAdd  = " from $sO2CView left join $sCategoriesTable on $sCategoriesTable.oxid=$sO2CView.oxcatnid ";
-            $sQAdd .= " where $sO2CView.oxobjectid = '$sOxid' and $sCategoriesTable.oxid is not null ";
+            $sQAdd .= " where $sO2CView.oxobjectid = " . $oDb->quote( $sOxid ) . " and $sCategoriesTable.oxid is not null ";
         } else {
             $sQAdd  = " from $sCategoriesTable where $sCategoriesTable.oxid not in ( ";
             $sQAdd .= " select $sCategoriesTable.oxid from $sO2CView left join $sCategoriesTable on $sCategoriesTable.oxid=$sO2CView.oxcatnid ";
-            $sQAdd .= " where $sO2CView.oxobjectid = '$sSynchOxid' and $sCategoriesTable.oxid is not null ) and $sCategoriesTable.oxpriceto = '0'";
+            $sQAdd .= " where $sO2CView.oxobjectid = " . $oDb->quote( $sSynchOxid ) . " and $sCategoriesTable.oxid is not null ) and $sCategoriesTable.oxpriceto = '0'";
         }
 
         return $sQAdd;
@@ -129,7 +130,7 @@ class ajaxComponent extends ajaxListComponent
 
         } elseif ( is_array( $aRemoveCat ) && count( $aRemoveCat ) ) {
 
-            $sQ = 'delete from oxobject2category where oxid in ("' . implode( '", "', $aRemoveCat ) . '")';
+            $sQ = 'delete from oxobject2category where oxid in (' . implode( ', ', oxDb::getInstance()->quoteArray( $aRemoveCat ) ) . ')';
             $oDb->Execute( $sQ );
 
         }
@@ -145,9 +146,10 @@ class ajaxComponent extends ajaxListComponent
     public function addcat()
     {
         $myConfig = $this->getConfig();
-        $aAddCat = $this->_getActionIds( 'oxcategories.oxid' );
-        $soxId   = oxConfig::getParameter( 'synchoxid' );
-        $sShopID = $myConfig->getShopId();
+        $oDb      = oxDb::getDb();
+        $aAddCat  = $this->_getActionIds( 'oxcategories.oxid' );
+        $soxId    = oxConfig::getParameter( 'synchoxid' );
+        $sShopID  = $myConfig->getShopId();
         $sO2CView = getViewName('oxobject2category');
 
         // adding
@@ -167,7 +169,7 @@ class ajaxComponent extends ajaxListComponent
             foreach ( $aAddCat as $sAdd ) {
 
                 // check, if it's already in, then don't add it again
-                $sSelect = 'select 1 from ' . $sO2CView . ' as oxobject2category where oxobject2category.oxcatnid="' . $sAdd . '" and oxobject2category.oxobjectid ="' . $soxId . '"';
+                $sSelect = "select 1 from " . $sO2CView . " as oxobject2category where oxobject2category.oxcatnid= " . $oDb->quote( $sAdd ) . " and oxobject2category.oxobjectid = " . $oDb->quote( $soxId ) . " ";
                 if ( $oDb->getOne( $sSelect ) )
                     continue;
 
@@ -192,15 +194,16 @@ class ajaxComponent extends ajaxListComponent
     public function setAsDefault()
     {
         $myConfig = $this->getConfig();
-        $sDefCat = oxConfig::getParameter( "defcat" );
-        $soxId   = oxConfig::getParameter( "oxid" );
-        $sShopId = $myConfig->getShopId();
+        $sDefCat  = oxConfig::getParameter( "defcat" );
+        $soxId    = oxConfig::getParameter( "oxid" );
+        $sShopId  = $myConfig->getShopId();
+        $oDb      = oxDb::getDb();
 
         $sShopCheck = "";
 
-        $sQ = "update oxobject2category set oxtime = oxtime + 10 where oxobjectid = '$soxId' $sShopCheck ";
+        $sQ = "update oxobject2category set oxtime = oxtime + 10 where oxobjectid = " . $oDb->quote( $soxId ) . " $sShopCheck ";
         oxDb::getInstance()->getDb()->Execute($sQ);
-        $sQ = "update oxobject2category set oxtime = 0 where oxobjectid = '$soxId' and oxcatnid = '".$sDefCat."' $sShopCheck ";
+        $sQ = "update oxobject2category set oxtime = 0 where oxobjectid = " . $oDb->quote( $soxId ) . " and oxcatnid = " . $oDb->quote( $sDefCat ) . " $sShopCheck ";
         oxDb::getInstance()->getDb()->Execute($sQ);
     }
 }

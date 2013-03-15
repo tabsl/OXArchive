@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: order_list.php 18765 2009-05-04 13:11:33Z vilma $
+ * $Id: order_list.php 22543 2009-09-22 13:45:36Z arvydas $
  */
 
 /**
@@ -92,20 +92,21 @@ class Order_List extends oxAdminList
      */
     protected function _prepareWhereQuery( $aWhere, $sqlFull )
     {
+        $oDb = oxDb::getDb();
         $sQ = parent::_prepareWhereQuery( $aWhere, $sqlFull );
         $myConfig = $this->getConfig();
         $aFolders = $myConfig->getConfigParam( 'aOrderfolder' );
         $sFolder = oxConfig::getParameter( 'folder' );
         //searchong for empty oxfolder fields
         if ( $sFolder && $sFolder != '-1' ) {
-            $sQ .= " and ( oxorder.oxfolder = '".$sFolder."' ";
+            $sQ .= " and ( oxorder.oxfolder = ".$oDb->quote( $sFolder )." ";
             //deprecated check for old orders
-            $sQ .= "or oxorder.oxfolder = '".oxLang::getInstance()->translateString($sFolder)."')";
+            $sQ .= "or oxorder.oxfolder = ".$oDb->quote( oxLang::getInstance()->translateString( $sFolder ) )." )";
         } elseif ( !$sFolder && is_array( $aFolders ) ) {
             $aFolderNames = array_keys( $aFolders );
-            $sQ .= " and ( oxorder.oxfolder = '".$aFolderNames[0]."' ";
+            $sQ .= " and ( oxorder.oxfolder = ".$oDb->quote( $aFolderNames[0] )." ";
             //deprecated check for old orders
-            $sQ .= "or oxorder.oxfolder = '".oxLang::getInstance()->translateString($aFolderNames[0])."')";
+            $sQ .= "or oxorder.oxfolder = ".$oDb->quote( oxLang::getInstance()->translateString($aFolderNames[0] ) )." )";
         }
 
         return $sQ;
@@ -129,13 +130,13 @@ class Order_List extends oxAdminList
         if ( $sSearch ) {
             switch ($sSearchField) {
             case 'oxorderarticles':
-                $sQ = "oxorder left join oxorderarticles on oxorderarticles.oxorderid=oxorder.oxid where ( oxorderarticles.oxartnum like '%{$sSearch}%' or oxorderarticles.oxtitle like '%{$sSearch}%' ) and ";
+                $sQ = "oxorder left join oxorderarticles on oxorderarticles.oxorderid=oxorder.oxid where ( oxorderarticles.oxartnum like ".$oDb->quote( "%{$sSearch}%" ) ." or oxorderarticles.oxtitle like ".$oDb->quote( "%{$sSearch}%" )." ) and ";
                 break;
             case 'oxpayments':
-                $sQ = "oxorder left join oxpayments on oxpayments.oxid=oxorder.oxpaymenttype where oxpayments.oxdesc like '%{$sSearch}%' and ";
+                $sQ = "oxorder left join oxpayments on oxpayments.oxid=oxorder.oxpaymenttype where oxpayments.oxdesc like ".$oDb->quote( "%{$sSearch}%" ) ." and ";
                 break;
             default:
-                $sQ = "oxorder where oxorder.oxpaid like '%{$sSearch}%' and ";
+                $sQ = "oxorder where oxorder.oxpaid like ".$oDb->quote( "%{$sSearch}%" )." and ";
                 break;
             }
             $sSql = str_replace( 'oxorder where', $sQ, $sSql);
@@ -145,6 +146,7 @@ class Order_List extends oxAdminList
     }
 
     /**
+     * Cancels order and its order articles
      *
      * @return null
      */
@@ -154,24 +156,12 @@ class Order_List extends oxAdminList
         $soxId    = oxConfig::getParameter( "oxid");
 
         $oOrder = oxNew( "oxorder" );
-        $oOrder->load( $soxId);
-        $oOrder->oxorder__oxstorno->setValue(1);
-        $oOrder->save();
-
-        // stock information
-        $blUseStock = $myConfig->getConfigParam( 'blUseStock' );
-        $blAllowNegativeStock = $myConfig->getConfigParam('blAllowNegativeStock');
-        $oDB = oxDb::getDb();
-        foreach ( $oOrder->getOrderArticles() as $oArticle) {
-            if ( $oArticle->oxorderarticles__oxstorno->value == 0) {
-                if ( $blUseStock )
-                    $oArticle->updateArticleStock($oArticle->oxorderarticles__oxamount->value, $blAllowNegativeStock );
-                $oDB->execute( "update oxorderarticles set oxorderarticles.oxstorno = '1' where oxorderarticles.oxid = '".$oArticle->oxorderarticles__oxid->value."' ");
-            }
+        if ( $oOrder->load( $soxId ) ) {
+            $oOrder->cancelOrder();
         }
 
 
-        //we call init() here to loads list items after sorno()
+        //we call init() here to load list items after sorno()
         $this->init();
     }
 

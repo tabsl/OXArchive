@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: order_overview.php 20582 2009-07-01 12:33:12Z arvydas $
+ * $Id: order_overview.php 22375 2009-09-17 11:50:04Z rimvydas.paskevicius $
  */
 
     // DTAUS
@@ -115,12 +115,13 @@ class Order_Overview extends oxAdminDetails
 
         $oImex = oxNew( "oximex" );
         $sLexware = $oImex->exportLexwareOrders( $sOrderNr, $sToOrderNr);
+
         if ( isset( $sLexware) && $sLexware) {
             header("Pragma: public");
             header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
             header("Expires: 0");
             header("Content-type: application/x-download");
-            header('Content-Length: '.getStr()->strlen($sLexware));
+            header('Content-Length: '.strlen($sLexware));
             header("Content-Disposition: attachment; filename=intern.xml");
             echo( $sLexware);
             exit();

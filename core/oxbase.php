@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxbase.php 20797 2009-07-12 15:33:49Z tomas $
+ * $Id: oxbase.php 22131 2009-09-04 06:57:59Z arvydas $
  */
 
 /**
@@ -162,6 +162,13 @@ class oxBase extends oxSuperCfg
      * @var bool
      */
     protected $_blIsInList = false;
+
+    /**
+     * Marks if object was loaded from db or not yet.
+     *
+     * @var bool
+     */
+    protected $_isLoaded = false;
 
     /**
      * Class constructor, sets active shop.
@@ -571,7 +578,17 @@ class oxBase extends oxSuperCfg
 
         $sSelect = $this->buildSelectString( array( $this->getViewName().".oxid" => $sOXID));
 
-        return $this->assignRecord( $sSelect);
+        return $this->_isLoaded = $this->assignRecord( $sSelect );
+    }
+
+    /**
+     * Returns object "loaded" state
+     *
+     * @return bool
+     */
+    public function isLoaded()
+    {
+        return $this->_isLoaded;
     }
 
     /**

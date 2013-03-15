@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: report_base.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: report_base.php 22452 2009-09-21 08:28:12Z arvydas $
  */
 
 /**
@@ -55,6 +55,12 @@ if ( !class_exists( 'report_base' ) ) {
     class Report_base extends oxAdminView
     {
         /**
+         * Smarty object
+         * @return
+         */
+        protected $_oSmarty = null;
+
+        /**
          * Returns name of template to render
          *
          * @return string
@@ -62,6 +68,28 @@ if ( !class_exists( 'report_base' ) ) {
         public function render()
         {
             return $this->_sThisTemplate;
+        }
+
+        /**
+         * Smarty object setter
+         *
+         * @param smarty $oSmarty smarty object
+         *
+         * @return null
+         */
+        public function setSmarty( $oSmarty )
+        {
+            $this->_oSmarty = $oSmarty;
+        }
+
+        /**
+         * Returns Smarty object
+         *
+         * @return smarty
+         */
+        public function getSmarty()
+        {
+            return $this->_oSmarty;
         }
     }
 }

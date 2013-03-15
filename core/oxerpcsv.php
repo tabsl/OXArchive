@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerpcsv.php 18054 2009-04-09 16:47:26Z arvydas $
+ * $Id: oxerpcsv.php 22559 2009-09-22 14:56:08Z arvydas $
  */
 
 /**
@@ -438,8 +438,8 @@ class oxErpCsv extends oxERPBase
         // deleting old relations before import in V0.1
         if ( $this->_sCurrVersion == "0.1" && !isset($this->_aImportedAccessoire2Article[$aRow['OXARTICLENID']] ) ) {
             $myConfig = oxConfig::getInstance();
-            $sDeleteSQL = "delete from oxaccessoire2article where oxarticlenid = '{$aRow['OXARTICLENID']}'";
-            oxDb::getDb()->Execute( $sDeleteSQL );
+            $oDb = oxDb::getDb();
+            $oDb->execute( "delete from oxaccessoire2article where oxarticlenid = ".$oDb->quote( $aRow['OXARTICLENID'] ) );
             $this->_aImportedAccessoire2Article[$aRow['OXARTICLENID']] = 1;
         }
 
@@ -460,8 +460,8 @@ class oxErpCsv extends oxERPBase
 
         if ( $this->_sCurrVersion == "0.1" && !isset( $this->_aImportedActions2Article[$aRow['OXARTID']] ) ) { //only in V0.1 and only once per import/article
             $myConfig = oxConfig::getInstance();
-            $sDeleteSQL = "delete from oxactions2article where oxartid = '{$aRow['OXARTID']}'";
-            oxDb::getDb()->Execute( $sDeleteSQL );
+            $oDb = oxDb::getDb();
+            $oDb->execute( "delete from oxactions2article where oxartid = ".$oDb->quote( $aRow['OXARTID'] ) );
             $this->_aImportedActions2Article[$aRow['OXARTID']] = 1;
         }
 
@@ -482,8 +482,8 @@ class oxErpCsv extends oxERPBase
         // deleting old relations before import in V0.1
         if ( $this->_sCurrVersion == "0.1" && !isset( $this->_aImportedObject2Category[$aRow['OXOBJECTID']] ) ) {
             $myConfig = oxConfig::getInstance();
-            $sDeleteSQL = "delete from oxobject2category where oxobjectid = '{$aRow['OXOBJECTID']}'";
-            oxDb::getDb()->Execute( $sDeleteSQL );
+            $oDb = oxDb::getDb();
+            $oDb->execute( "delete from oxobject2category where oxobjectid = ".$oDb->quote( $aRow['OXOBJECTID'] ) );
             $this->_aImportedObject2Category[$aRow['OXOBJECTID']] = 1;
         }
 
@@ -504,16 +504,15 @@ class oxErpCsv extends oxERPBase
         $aRow['OXTIME'] = 0;
 
         $myConfig = oxConfig::getInstance();
-        $sSql = "select OXID from oxobject2category where oxobjectid = '".$aRow['OXOBJECTID']."' and OXCATNID = '".$aRow['OXCATNID']."'";
-        $aRow['OXID'] = oxDb::getDb()->GetOne($sSql);
+        $oDb = oxDb::getDb();
+
+        $sSql = "select OXID from oxobject2category where oxobjectid = ".$oDb->quote( $aRow['OXOBJECTID'] )." and OXCATNID = ".$oDb->quote( $aRow['OXCATNID'] );
+        $aRow['OXID'] = $oDb->GetOne($sSql);
 
         $sResult = $this->_save( $oType, $aRow);
-
         if ((boolean) $sResult) {
-
-            $sSql = "Update oxobject2category set oxtime = oxtime+10 where oxobjectid = '" . $aRow['OXOBJECTID'] ."' and oxcatnid != '". $aRow['OXCATNID'] ."' and oxshopid = '".$myConfig->getShopId()."'";
-            oxDb::getDb()->Execute($sSql);
-
+            $sSql = "Update oxobject2category set oxtime = oxtime+10 where oxobjectid = ".$oDb->quote( $aRow['OXOBJECTID'] ) ." and oxcatnid != ".$oDb->quote( $aRow['OXCATNID'] ) ." and oxshopid = '".$myConfig->getShopId()."'";
+            $oDb->Execute($sSql);
         }
 
         return (boolean) $sResult;
@@ -546,8 +545,8 @@ class oxErpCsv extends oxERPBase
         // deleting old relations before import in V0.1
         if ( $this->_sCurrVersion == "0.1" && !isset($this->_aImportedObject2Article[$aRow['OXARTICLENID']] ) ) {
             $myConfig = oxConfig::getInstance();
-            $sDeleteSQL = "delete from oxobject2article where oxarticlenid = '{$aRow['OXARTICLENID']}'";
-            oxDb::getDb()->Execute( $sDeleteSQL );
+            $oDb = oxDb::getDb();
+            $oDb->Execute( "delete from oxobject2article where oxarticlenid = ".$oDb->quote( $aRow['OXARTICLENID'] ) );
             $this->aImportedObject2Article[$aRow['OXARTICLENID']] = 1;
         }
 

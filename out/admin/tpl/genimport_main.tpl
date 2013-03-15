@@ -1,5 +1,15 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE_1"|oxmultilangassign skip_onload="true"}]
 
+<script type="text/javascript">
+    if (top)
+    {   top.sShopTitle   = "[{$actshopobj->oxshops__oxname->getRawValue()|oxaddslashes}]";
+        top.sMenuItem    = "[{ oxmultilang ident="GENIMPORT_MENUITEM" }]";
+        top.sMenuSubItem = "[{ oxmultilang ident="GENIMPORT_MENUSUBITEM" }]";
+        top.sWorkArea    = "[{$_act}]";
+        top.setTitle();
+    }
+</script>
+
 [{ if $readonly }]
     [{assign var="readonly" value="readonly disabled"}]
 [{else}]
@@ -62,7 +72,19 @@
         <tr>
             <td class="edittext" height="40">[{ oxmultilang ident="GENIMPORT_CSVFILE" }]:</td>
             <td class="edittext">
-			<input type="file" class="edittext" style="width: 210px;" name="csvfile" [{ $readonly }]>
+            <input type="file" class="edittext" style="width: 210px;" name="csvfile" [{ $readonly }]>
+            </td>
+        </tr>
+        <tr>
+            <td class="edittext" height="40" nowrap>[{ oxmultilang ident="GENIMPORT_FIELDSTERMINATEDBY" }]:</td>
+            <td class="edittext">
+            <input type="input" class="edittext" style="width: 20px;" maxlength="1" name="sGiCsvFieldTerminator" value="[{$sGiCsvFieldTerminator}]" [{ $readonly }]>
+            </td>
+        </tr>
+        <tr>
+            <td class="edittext" height="40">[{ oxmultilang ident="GENIMPORT_FIELDSENCLOSEDBY" }]:</td>
+            <td class="edittext">
+            <input type="input" class="edittext" style="width: 20px;" maxlength="1" name="sGiCsvFieldEncloser" value="[{$sGiCsvFieldEncloser}]" [{ $readonly }]>
             </td>
         </tr>
         <tr>

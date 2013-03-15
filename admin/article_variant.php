@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_variant.php 18601 2009-04-28 11:24:29Z tomas $
+ * $Id: article_variant.php 22482 2009-09-22 06:53:41Z arvydas $
  */
 
 /**
@@ -279,7 +279,7 @@ class Article_Variant extends oxAdminDetails
                 $this->sLanguage = $myLang->getBaseLanguage();
 
                 $sField = "oxvaldesc".$myLang->getLanguageTag();
-                $sQ = "select $sField from $sSLViewName where oxid  = '$sSelID' ";
+                $sQ = "select $sField from $sSLViewName where oxid  = ". $oDb->quote( $sSelID );
                 $sValues = $oDb->GetOne($sQ);
 
                 $aValues = $myUtils->assignValuesFromText($sValues );

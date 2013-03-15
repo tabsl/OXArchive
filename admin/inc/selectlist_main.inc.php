@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: selectlist_main.inc.php 17244 2009-03-16 15:17:48Z arvydas $
+ * $Id: selectlist_main.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -97,6 +97,23 @@ class ajaxComponent extends ajaxListComponent
     }
 
     /**
+     * Return fully formatted query for data loading
+     *
+     * @param string $sQ part of initial query
+     *
+     * @return string
+     */
+    protected function _getDataQuery( $sQ )
+    {
+        $sArtTable = getViewName('oxarticles');
+        $sQ = parent::_getDataQuery( $sQ );
+
+        // display variants or not ?
+        $sQ .= $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ? ' group by '.$sArtTable.'.oxid ' : '';
+        return $sQ;
+    }
+
+    /**
      * Removes article from Selection list
      *
      * @return null
@@ -110,7 +127,7 @@ class ajaxComponent extends ajaxListComponent
             oxDb::getDb()->Execute( $sQ );
 
         } elseif ( is_array( $aChosenArt ) ) {
-            $sQ = "delete from oxobject2selectlist where oxobject2selectlist.oxid in ('" . implode( "', '", $aChosenArt ) . "') ";
+            $sQ = "delete from oxobject2selectlist where oxobject2selectlist.oxid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aChosenArt ) ) . ") ";
             oxDb::getDb()->Execute( $sQ );
         }
     }
@@ -137,7 +154,7 @@ class ajaxComponent extends ajaxListComponent
                 $oNewGroup->init( "oxobject2selectlist" );
                 $oNewGroup->oxobject2selectlist__oxobjectid = new oxField( $sAdd );
                 $oNewGroup->oxobject2selectlist__oxselnid = new oxField( $soxId );
-                $oNewGroup->oxobject2selectlist__oxsort   = new oxField( ( int ) $oDb->getOne( "select max(oxsort) + 1 from oxobject2selectlist where oxobjectid = '$sAdd' " ) );
+                $oNewGroup->oxobject2selectlist__oxsort   = new oxField( ( int ) $oDb->getOne( "select max(oxsort) + 1 from oxobject2selectlist where oxobjectid =  " . $oDb->quote( $sAdd ) . " " ) );
                 $oNewGroup->save();
             }
         }

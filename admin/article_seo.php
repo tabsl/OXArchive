@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_seo.php 21225 2009-07-31 14:07:41Z arvydas $
+ * $Id: article_seo.php 22624 2009-09-24 14:45:24Z rimvydas.paskevicius $
  */
 
 /**
@@ -106,13 +106,14 @@ class Article_Seo extends Object_Seo
      */
     protected function _getSeoDataSql( $oObject, $iShopId, $iLang )
     {
+        $oDb = oxDb::getDb();
         if ( $this->_sActCatType == 'oxtag' ) {
             $sObjectId = oxSeoEncoderArticle::getInstance()->getDynamicObjectId( $iShopId, $oObject->getStdTagLink( $this->getTag() ) );
-            $sQ = "select * from oxseo where oxobjectid = '".$sObjectId."' and
+            $sQ = "select * from oxseo where oxobjectid = ".$oDb->quote( $sObjectId ) . " and
                    oxshopid = '{$iShopId}' and oxlang = {$this->_iActCatLang} ";
         } else {
             $sParam = ( $sCat = $this->getSelectedCategoryId() ) ? " and oxparams = '$sCat' " : '';
-            $sQ = "select * from oxseo where oxobjectid = '".$oObject->getId()."' and
+            $sQ = "select * from oxseo where oxobjectid = ".$oDb->quote( $oObject->getId() ) . " and
                    oxshopid = '{$iShopId}' and oxlang = {$iLang} {$sParam} ";
         }
         return $sQ;
@@ -130,8 +131,9 @@ class Article_Seo extends Object_Seo
 
             // adding price categories
             $sCatTable = "oxcategories";
-            $sQ = "select oxid from $sCatTable where ( oxpricefrom != 0 || oxpriceto != 0 ) and ( oxpricefrom <= '{$oArticle->oxarticles__oxprice->value}' || oxpriceto >= '{$oArticle->oxarticles__oxprice->value}' ) ";
-            $rs = oxDb::getDb( true )->execute( $sQ );
+            $oDb = oxDb::getDb( true );
+            $sQ = "select oxid from $sCatTable where ( oxpricefrom != 0 || oxpriceto != 0 ) and ( oxpricefrom <= ".$oDb->quote( $oArticle->oxarticles__oxprice->value ) ." || oxpriceto >= ".$oDb->quote( $oArticle->oxarticles__oxprice->value ) ." ) ";
+            $rs = $oDb->execute( $sQ );
             if ( $rs != false && $rs->recordCount() > 0 ) {
                 while ( !$rs->EOF ) {
                     $oCat = oxNew('oxcategory');
@@ -321,15 +323,17 @@ class Article_Seo extends Object_Seo
      */
      protected function _getSeoUrlQuery( $oObject, $iShopId )
      {
-        // tag type urls are loaded differently from others..
+        $oDb = oxDb::getDb();
+
+         // tag type urls are loaded differently from others..
         if ( $sTag = $this->getTag() ) {
 
             $sStdUrl = "index.php?cl=details&amp;anid=".$oObject->getId()."&amp;listtype=tag&amp;searchtag=".rawurlencode( $sTag );
             $sObjectId = md5( strtolower( $oObject->getShopId() . $sStdUrl ) );
-            $sQ = "select oxseourl from oxseo where oxobjectid = '".$sObjectId."'
+            $sQ = "select oxseourl from oxseo where oxobjectid = ".$oDb->quote( $sObjectId )."
                    and oxshopid = '{$iShopId}' and oxlang = {$this->_iActCatLang}";
         } else {
-            $sQ = "select oxseourl from oxseo where oxobjectid = '".$oObject->getId()."'
+            $sQ = "select oxseourl from oxseo where oxobjectid = ".$oDb->quote( $oObject->getId() )."
                    and oxshopid = '{$iShopId}' and oxlang = {$this->_iEditLang}
                    and oxparams = '{$this->_sActCatId}' ";
         }

@@ -19,7 +19,7 @@
  * @package setup
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: index.php 21558 2009-08-12 13:44:42Z tomas $
+ * $Id: index.php 22591 2009-09-24 07:09:30Z vilma $
  */
 
 
@@ -80,6 +80,12 @@ if ( isset( $_POST['use_dynamic_pages'] ) ) {
     $aPersistentData['use_dynamic_pages'] = $_POST['use_dynamic_pages'];
 }
 
+//storring dyn pages settings to session
+if ( isset( $_POST['check_for_updates'] ) ) {
+    // store to session
+    $aPersistentData['check_for_updates'] = $_POST['check_for_updates'];
+}
+
 // startup
 if ( isset( $_GET['istep'] ) && $_GET['istep'] ) {
     $istep = $_GET['istep'];
@@ -101,7 +107,19 @@ if ( isset( $_POST['iEula'] ) ) {
 
 // routing table
 if ( !$iEula && $istep > $aSetupSteps['STEP_LICENSE'] ) {
-    $istep = $aSetupSteps['STEP_WELCOME'];
+    $istep = $aSetupSteps['STEP_FINISH'];
+    $sMessage = $aLang['ERROR_SETUP_CANCELLED'];
+    include "headitem.php";
+    ?>
+    </br></br>
+    <form action="index.php" method="post">
+    <input type="hidden" name="sid" value="<?php echo( getSID()); ?>">
+    <input type="hidden" name="istep" value="<?php echo $aSetupSteps['STEP_WELCOME']; ?>">
+    <input type="submit" id="step0Submit" class="edittext" value="<?php echo( $aLang['BUTTON_START_INSTALL'] ) ?>">
+    </form>
+    <?php
+    include "bottomitem.php";
+    exit();
 }
 
 
@@ -353,10 +371,18 @@ function saveDynPagesSettings()
     $sQConfInsert2 = "insert into oxconfig (oxid, oxshopid, oxvarname, oxvartype, oxvarvalue)
                              values('$sID2', '$sBaseOut', 'sShopCountry', 'str', ENCODE( '".$aPersistentData['country_lang']."', '".$oConfk->sConfigKey."'))";
 
+    $sID3 = generateUID();
+
+    $sQConfDelete3 = "delete from oxconfig where oxvarname = 'blCheckForUpdates'";
+    $sQConfInsert3 = "insert into oxconfig (oxid, oxshopid, oxvarname, oxvartype, oxvarvalue)
+                             values('$sID3', '$sBaseOut', 'blCheckForUpdates', 'bool', ENCODE( '".$aPersistentData['check_for_updates']."', '".$oConfk->sConfigKey."'))";
+
     mysql_query($sQConfDelete1);
     mysql_query($sQConfInsert1);
     mysql_query($sQConfDelete2);
     mysql_query($sQConfInsert2);
+    mysql_query($sQConfDelete3);
+    mysql_query($sQConfInsert3);
 }
 
 function setMySqlCollation( $iUtfMode )
@@ -649,12 +675,16 @@ if ( $istep == $aSetupSteps['STEP_WELCOME'] ) {
               </td>
             </tr>
           </table>
-
+          
         </td>
     </tr>
     <input type="hidden" name="sid" value="<?php echo( getSID()); ?>">
    </table>
-
+    <br>
+    <input type="hidden" value="false" name="check_for_updates">
+    <input type="checkbox" id="check_for_updates_ckbox" value="true" name="check_for_updates" valign="" style="vertical-align:middle; width:20px; height:22px;" >
+    <?php echo($aLang['STEP_1_CHECK_UPDATES']) ?>
+    <br>
     <br>
     <?php echo( $aLang['STEP_1_TEXT'] ) ?>
     <br><br>

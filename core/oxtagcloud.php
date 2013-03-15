@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxtagcloud.php 21223 2009-07-31 13:02:17Z arvydas $
+ * $Id: oxtagcloud.php 22590 2009-09-24 06:24:00Z alfonsas $
  */
 
 if (!defined('OXTAGCLOUD_MINFONT')) {
@@ -65,8 +65,7 @@ class oxTagCloud extends oxSuperCfg
 
         $sArticleSelect = " 1 ";
         if ( $sArtId ) {
-            $sArtId = $oDb->quote( $sArtId );
-            $sArticleSelect = " oxarticles.oxid = $sArtId ";
+            $sArticleSelect = " oxarticles.oxid = ".$oDb->quote( $sArtId )." ";
             $iAmount = 0;
         }
 
@@ -102,7 +101,7 @@ class oxTagCloud extends oxSuperCfg
      * Sorts passed tag array. Using MySQL for sorting (to keep user defined ordering way).
      *
      * @param array $aTags tags to sort
-     * @param int   $iLang      preferred language [optional]
+     * @param int   $iLang preferred language [optional]
      *
      * @return array
      */
@@ -184,6 +183,7 @@ class oxTagCloud extends oxSuperCfg
             } else {
                 $sLink = $sUrl . $oSeoEncoderTag->getStdTagUri( $sTag ) . "&amp;lang=" . $iLang;
             }
+            $iFontSize = $this->_getFontSize( $sRelevance, $iMaxHit );
             $sTagCloud .= "<a style='font-size:". $iFontSize ."%;' class='tagitem_". $iFontSize . "' href='$sLink'>".$oStr->htmlentities($sTag)."</a> ";
         }
 

@@ -81,4 +81,26 @@ class oxOutOfStockException extends oxArticleException
         $aRes['remainingAmount'] = $this->getRemainingAmount();
         return $aRes;
     }
+
+    /**
+     * Defines a name of the view variable containing the messages.
+     * Currently it checks if destination value is set, and if
+     * not - overrides default error message with:
+     *
+     *    $this->getMessage(). $this->getRemainingAmount()
+     *
+     * It is necessary to display correct stock error message on
+     * any view (except basket).
+     *
+     * @param string $sDestination name of the view variable
+     *
+     * @return null
+     */
+    public function setDestination( $sDestination )
+    {
+        // in case destination not set, overriding default error message
+        if ( !$sDestination ) {
+            $this->message = oxLang::getInstance()->translateString( $this->getMessage() ) . " " . $this->getRemainingAmount();
+        }
+    }
 }

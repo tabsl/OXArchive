@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutilscount.php 18569 2009-04-27 11:01:52Z arvydas $
+ * $Id: oxutilscount.php 22628 2009-09-25 06:47:51Z vilma $
  */
 
 /**
@@ -149,7 +149,6 @@ class oxUtilsCount extends oxSuperCfg
 
         // loading from cache
         $aManufacturerData = $this->_getManufacturerCache();
-
         if ( !$aManufacturerData || !isset( $aManufacturerData[$sManufacturerId][$sActIdent] ) ) {
             $iCnt = $this->setManufacturerArticleCount( $aManufacturerData, $sManufacturerId, $sActIdent );
         } else {
@@ -199,14 +198,13 @@ class oxUtilsCount extends oxSuperCfg
         $oArticle = oxNew( 'oxarticle' );
         $sTable   = $oArticle->getViewName();
 
-        $sSubSelect  = "select if(oxparentid='',oxid,oxparentid) as id from oxarticles where oxprice >0 ";
-        $sSubSelect .= $dPriceTo?"and oxprice <= $dPriceTo ":" ";
-        $sSubSelect .= "group by id having ";
-        $sSubSelect .= $dPriceFrom?"min(oxprice) >= $dPriceFrom ":" ";
+        $sSubSelect  = "select if( oxparentid='', oxid, oxparentid ) as id from {$sTable} where oxprice >= 0 ";
+        $sSubSelect .= $dPriceTo ? "and oxprice <= " . (double)$dPriceTo . " " : " ";
+        $sSubSelect .= $dPriceFrom ? "group by id having min( oxprice ) >= " . (double)$dPriceFrom . " " : " ";
 
-        $sSelect  = "select count($sTable.oxid) from $sTable where ";
-        $sSelect .= "$sTable.oxid in ($sSubSelect) ";
-        $sSelect .= "and $sTable.oxissearch = 1 and ".$oArticle->getSqlActiveSnippet();
+        $sSelect  = "select count({$sTable}.oxid) from {$sTable} where ";
+        $sSelect .= "{$sTable}.oxid in ($sSubSelect) ";
+        $sSelect .= "and {$sTable}.oxissearch = 1 and ".$oArticle->getSqlActiveSnippet();
 
         $aCache[$sCatId][$sActIdent] = oxDb::getDb()->getOne( $sSelect );
 
@@ -235,7 +233,7 @@ class oxUtilsCount extends oxSuperCfg
 
         // select each vendor articles count
         $sQ  = "select $sTable.oxvendorid AS vendorId, count(*) from $sTable where ";
-        $sQ .= "$sTable.oxvendorid <> '' and ".$oArticle->getSqlActiveSnippet()." group by $sTable.oxvendorid ";
+        $sQ .= "$sTable.oxvendorid <> '' and $sTable.oxparentid = '' and ".$oArticle->getSqlActiveSnippet()." group by $sTable.oxvendorid ";
         $aDbResult = oxDb::getDb()->getAssoc( $sQ );
 
         foreach ( $aDbResult as $sKey => $sValue ) {
@@ -267,7 +265,7 @@ class oxUtilsCount extends oxSuperCfg
 
         // select each Manufacturer articles count
         $sQ  = "select $sTable.oxmanufacturerid AS manufacturerId, count(*) from $sTable where ";
-        $sQ .= "$sTable.oxmanufacturerid <> '' and ".$oArticle->getSqlActiveSnippet()." group by $sTable.oxmanufacturerid ";
+        $sQ .= "$sTable.oxmanufacturerid <> '' and $sTable.oxparentid = '' and ".$oArticle->getSqlActiveSnippet()." group by $sTable.oxmanufacturerid ";
         $aDbResult = oxDb::getDb()->getAssoc( $sQ );
 
         foreach ( $aDbResult as $sKey => $sValue ) {
@@ -312,7 +310,7 @@ class oxUtilsCount extends oxSuperCfg
         if ( $aCatData = $this->_getCatCache() ) {
 
             $sTable  = getViewName( 'oxcategories' );
-            $sSelect = "select $sTable.oxid from $sTable where '$iPrice' >= $sTable.oxpricefrom and '$iPrice' <= $sTable.oxpriceto ";
+            $sSelect = "select $sTable.oxid from $sTable where " . (double)$iPrice . " >= $sTable.oxpricefrom and " . (double)$iPrice . " <= $sTable.oxpriceto ";
 
             $rs = oxDb::getDb()->execute( $sSelect );
             if ( $rs != false && $rs->recordCount() > 0 ) {
@@ -416,7 +414,7 @@ class oxUtilsCount extends oxSuperCfg
         if ( !$aLocalCatCache ) {
             $sLocalCatCache = oxUtils::getInstance()->fromFileCache( 'aLocalCatCache');
             if ( $sLocalCatCache ) {
-                $aLocalCatCache = unserialize( $sLocalCatCache );
+                $aLocalCatCache = $sLocalCatCache;
             } else {
                 $aLocalCatCache = null;
             }
@@ -435,7 +433,7 @@ class oxUtilsCount extends oxSuperCfg
     protected function _setCatCache( $aCache )
     {
         $this->getConfig()->setGlobalParameter( 'aLocalCatCache', $aCache );
-        oxUtils::getInstance()->toFileCache( 'aLocalCatCache', serialize( $aCache ) );
+        oxUtils::getInstance()->toFileCache( 'aLocalCatCache', $aCache );
     }
 
     /**
@@ -448,7 +446,7 @@ class oxUtilsCount extends oxSuperCfg
     protected function _setVendorCache( $aCache )
     {
         $this->getConfig()->setGlobalParameter( 'aLocalVendorCache', $aCache );
-        oxUtils::getInstance()->toFileCache( 'aLocalVendorCache', serialize( $aCache ) );
+        oxUtils::getInstance()->toFileCache( 'aLocalVendorCache', $aCache );
     }
 
     /**
@@ -460,8 +458,8 @@ class oxUtilsCount extends oxSuperCfg
      */
     protected function _setManufacturerCache( $aCache )
     {
-        $this->getConfig()->setGlobalParameter( 'aLocalManufacturerCache', $aCache );
-        oxUtils::getInstance()->toFileCache( 'aLocalManufacturerCache', serialize( $aCache ) );
+    	$this->getConfig()->setGlobalParameter( 'aLocalManufacturerCache', $aCache );
+        oxUtils::getInstance()->toFileCache( 'aLocalManufacturerCache', $aCache );
     }
 
     /**
@@ -479,7 +477,7 @@ class oxUtilsCount extends oxSuperCfg
         if ( !$aLocalVendorCache ) {
             $sLocalVendorCache = oxUtils::getInstance()->fromFileCache( 'aLocalVendorCache' );
             if ( $sLocalVendorCache ) {
-                $aLocalVendorCache = unserialize( $sLocalVendorCache );
+                $aLocalVendorCache = $sLocalVendorCache;
             } else {
                 $aLocalVendorCache = null;
             }
@@ -503,7 +501,7 @@ class oxUtilsCount extends oxSuperCfg
         if ( !$aLocalManufacturerCache ) {
             $sLocalManufacturerCache = oxUtils::getInstance()->fromFileCache( 'aLocalManufacturerCache' );
             if ( $sLocalManufacturerCache ) {
-                $aLocalManufacturerCache = unserialize( $sLocalManufacturerCache );
+                $aLocalManufacturerCache = $sLocalManufacturerCache;
             } else {
                 $aLocalManufacturerCache = null;
             }

@@ -15,8 +15,11 @@ function ThisDate( sID)
     [{assign var="readonly" value=""}]
 [{/if}]
 
+[{assign var="oCurr" value=$edit->getOrderCurrency() }]
+
 <form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
     [{ $shop->hiddensid }]
+    <input type="hidden" name="cur" value="[{ $oCurr->id }]">
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="order_main">
 </form>
@@ -24,6 +27,7 @@ function ThisDate( sID)
 
 <form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
 [{ $shop->hiddensid }]
+<input type="hidden" name="cur" value="[{ $oCurr->id }]">
 <input type="hidden" name="cl" value="order_main">
 <input type="hidden" name="fnc" value="save">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -131,6 +135,7 @@ function ThisDate( sID)
 
         <form name="myedit2" id="myedit2" action="[{ $shop->selflink }]" method="post">
         [{ $shop->hiddensid }]
+        <input type="hidden" name="cur" value="[{ $oCurr->id }]">
         <input type="hidden" name="cl" value="order_main">
         <input type="hidden" name="fnc" value="changeDelSet">
         <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -155,6 +160,7 @@ function ThisDate( sID)
         </form>
         <form name="myedit3" id="myedit3" action="[{ $shop->selflink }]" method="post">
         [{ $shop->hiddensid }]
+        <input type="hidden" name="cur" value="[{ $oCurr->id }]">
         <input type="hidden" name="cl" value="order_main">
         <input type="hidden" name="fnc" value="changePayment">
         <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -208,6 +214,7 @@ function ThisDate( sID)
 
         <form name="sendorder" id="sendorder" action="[{ $shop->selflink }]" method="post">
         [{ $shop->hiddensid }]
+        <input type="hidden" name="cur" value="[{ $oCurr->id }]">
         <input type="hidden" name="cl" value="order_main">
         <input type="hidden" name="fnc" value="sendorder">
         <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -224,6 +231,7 @@ function ThisDate( sID)
 
         <form name="resetorder" id="resetorder" action="[{ $shop->selflink }]" method="post">
         [{ $shop->hiddensid }]
+        <input type="hidden" name="cur" value="[{ $oCurr->id }]">
         <input type="hidden" name="cl" value="order_main">
         <input type="hidden" name="fnc" value="resetorder">
         <input type="hidden" name="oxid" value="[{ $oxid }]">

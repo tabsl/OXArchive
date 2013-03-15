@@ -47,7 +47,7 @@ class oxStrMb
      */
     protected $_aUmlEntities = array('&auml;', '&ouml;', '&uuml;', '&Auml;', '&Ouml;', '&Uuml;', '&szlig;' );
 
-   /**
+    /**
      * Class constructor. The constructor is defined in order to be possible to call parent::__construct() in modules.
      *
      * @return null;

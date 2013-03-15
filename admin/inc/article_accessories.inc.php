@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_accessories.inc.php 17244 2009-03-16 15:17:48Z arvydas $
+ * $Id: article_accessories.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -55,6 +55,7 @@ class ajaxComponent extends ajaxListComponent
         $myConfig    = $this->getConfig();
         $sSelId      = oxConfig::getParameter( 'oxid' );
         $sSynchSelId = oxConfig::getParameter( 'synchoxid' );
+        $oDb         = oxDb::getDb();
 
         $sArticleTable = getViewName('oxarticles');
         $sO2CView      = getViewName('oxobject2category');
@@ -68,22 +69,39 @@ class ajaxComponent extends ajaxListComponent
             if ( $sSynchSelId && $sSelId != $sSynchSelId ) {
                 $sQAdd  = " from $sO2CView left join $sArticleTable on ";
                 $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?" ( $sArticleTable.oxid=$sO2CView.oxobjectid or $sArticleTable.oxparentid=$sO2CView.oxobjectid )":" $sArticleTable.oxid=$sO2CView.oxobjectid ";
-                $sQAdd .= " where $sO2CView.oxcatnid = '$sSelId' ";
+                $sQAdd .= " where $sO2CView.oxcatnid = " . $oDb->quote( $sSelId ) . " ";
             } else {
                 $sQAdd  = " from oxaccessoire2article left join $sArticleTable on oxaccessoire2article.oxobjectid=$sArticleTable.oxid ";
-                $sQAdd .= " where oxaccessoire2article.oxarticlenid = '$sSelId' ";
+                $sQAdd .= " where oxaccessoire2article.oxarticlenid = " . $oDb->quote( $sSelId ) . " ";
             }
         }
 
         if ( $sSynchSelId && $sSynchSelId != $sSelId ) {
             // dodger performance
             $sSubSelect .= " select oxaccessoire2article.oxobjectid from oxaccessoire2article ";
-            $sSubSelect .= " where oxaccessoire2article.oxarticlenid = '$sSynchSelId' ";
+            $sSubSelect .= " where oxaccessoire2article.oxarticlenid = " . $oDb->quote( $sSynchSelId ) . " ";
             $sQAdd .= " and $sArticleTable.oxid not in ( $sSubSelect ) ";
         }
 
         // creating AJAX component
         return $sQAdd;
+    }
+
+    /**
+     * Return fully formatted query for data loading
+     *
+     * @param string $sQ part of initial query
+     *
+     * @return string
+     */
+    protected function _getDataQuery( $sQ )
+    {
+        $sArtTable = getViewName('oxarticles');
+        $sQ = parent::_getDataQuery( $sQ );
+
+        // display variants or not ?
+        $sQ .= $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ? ' group by '.$sArtTable.'.oxid ' : '';
+        return $sQ;
     }
 
     /**
@@ -101,7 +119,7 @@ class ajaxComponent extends ajaxListComponent
             oxDb::getDb()->Execute( $sQ );
 
         } elseif ( is_array( $aChosenArt ) ) {
-            $sQ = "delete from oxaccessoire2article where oxaccessoire2article.oxid in ('" . implode( "', '", $aChosenArt ) . "') ";
+            $sQ = "delete from oxaccessoire2article where oxaccessoire2article.oxid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aChosenArt ) ) . ") ";
             oxDb::getDb()->Execute( $sQ );
         }
 

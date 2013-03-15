@@ -3,6 +3,7 @@
 <head>
   <title>[{ $title }]</title>
   <meta http-equiv="Content-Type" content="text/html; charset=[{$charset}]">
+  <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
   <link rel="stylesheet" href="[{$shop->basetpldir}]style.css">
 
 

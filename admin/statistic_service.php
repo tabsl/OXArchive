@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: statistic_service.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: statistic_service.php 22488 2009-09-22 07:04:25Z arvydas $
  */
 
 /**
@@ -39,7 +39,7 @@ class Statistic_Service extends oxAdminDetails
     public function render()
     {
         parent::render();
-        $this->_aViewData['iLogCount'] = oxDb::getDb()->getOne( "select count(*) from oxlogs where oxshopid = '".$this->getConfig()->GetShopId()."'");
+        $this->_aViewData['iLogCount'] = oxDb::getDb()->getOne( "select count(*) from oxlogs where oxshopid = '".$this->getConfig()->getShopId()."'");
 
         return "statistic_service.tpl";
     }
@@ -55,6 +55,7 @@ class Statistic_Service extends oxAdminDetails
         $dNow = time();
         $sDeleteFrom = date( "Y-m-d H:i:s", mktime( date( "H", $dNow), date( "i", $dNow), date( "s", $dNow), date( "m", $dNow), date( "d", $dNow) - $iTimeFrame, date( "Y", $dNow)));
 
-        oxDb::getDb()->Execute( "delete from oxlogs where oxtime < '$sDeleteFrom'");
+        $oDb = oxDb::getDb();
+        $oDb->Execute( "delete from oxlogs where oxtime < ".$oDb->quote( $sDeleteFrom ) );
     }
 }

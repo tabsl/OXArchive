@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxpayment.php 21594 2009-08-14 12:04:44Z rimvydas.paskevicius $
+ * $Id: oxpayment.php 22525 2009-09-22 11:51:55Z arvydas $
  */
 
 /**
@@ -74,7 +74,7 @@ class oxPayment extends oxI18n
      */
     public function getGroups()
     {
-        if ( $this->_oGroups == null && $sOxid = $this->getId() ) {
+        if ( $this->_oGroups == null && ( $sOxid = $this->getId() ) ) {
 
             // usergroups
             $this->_oGroups = oxNew( 'oxlist', 'oxgroups' );
@@ -216,9 +216,10 @@ class oxPayment extends oxI18n
         if ( parent::delete( $sOXID ) ) {
 
             $sOXID = $sOXID?$sOXID:$this->getId();
+            $oDb = oxDb::getDb();
 
             // deleting payment related data
-            $rs = oxDb::getDb()->execute( "delete from oxobject2payment where oxpaymentid = '$sOXID' " );
+            $rs = $oDb->execute( "delete from oxobject2payment where oxpaymentid = ".$oDb->quote( $sOXID ) );
             return $rs->EOF;
         }
 

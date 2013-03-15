@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: newsletter_selection.inc.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: newsletter_selection.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,  visible, multilanguage, ident
@@ -84,7 +84,7 @@ class ajaxComponent extends ajaxListComponent
             oxDb::getDb()->Execute( $sQ );
 
         } elseif ( $aRemoveGroups && is_array( $aRemoveGroups ) ) {
-            $sQ = "delete from oxobject2group where oxobject2group.oxid in ('" . implode( "', '", $aRemoveGroups ) . "') ";
+            $sQ = "delete from oxobject2group where oxobject2group.oxid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aRemoveGroups ) ) . ") ";
             oxDb::getDb()->Execute( $sQ );
         }
     }

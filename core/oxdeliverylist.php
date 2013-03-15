@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdeliverylist.php 21592 2009-08-14 10:22:24Z vilma $
+ * $Id: oxdeliverylist.php 22657 2009-09-25 15:39:22Z arvydas $
  */
 
 /**
@@ -185,9 +185,11 @@ class oxDeliveryList extends oxList
      */
     protected function _getFilterSelect( $oUser, $sCountryId, $sDelSet )
     {
+        $oDb = oxDb::getDb();
+
         $sTable = getViewName( 'oxdelivery' );
         $sQ  = "select $sTable.* from ( select $sTable.* from $sTable left join oxdel2delset on oxdel2delset.oxdelid=$sTable.oxid ";
-        $sQ .= "where ".$this->getBaseObject()->getSqlActiveSnippet()." and oxdel2delset.oxdelsetid = '$sDelSet' ";
+        $sQ .= "where ".$this->getBaseObject()->getSqlActiveSnippet()." and oxdel2delset.oxdelsetid = ".$oDb->quote($sDelSet)." ";
 
         // do we need to check in filter starting param ?
         //$sQ .= "and ( $sTable.oxparam != 0 and $sTable.oxparamend != 0 ";
@@ -208,27 +210,30 @@ class oxDeliveryList extends oxList
             $aGroupIds = $oUser->getUserGroups();
         }
 
-        $sIds = '';
+        $aIds = array();
         if ( count( $aGroupIds ) ) {
             foreach ( $aGroupIds as $oGroup ) {
-                $aIds[] = "'".$oGroup->getId()."'";
+                $aIds[] = $oGroup->getId();
             }
-            $sIds = implode(', ', $aIds);
         }
 
-        $sCountrySql = $sCountryId ? "EXISTS(select oxobject2delivery.oxid from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxcountry' and oxobject2delivery.OXOBJECTID='$sCountryId')" : '0';
-        $sUserSql    = $sUserId    ? "EXISTS(select oxobject2delivery.oxid from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxuser' and oxobject2delivery.OXOBJECTID='$sUserId')"   : '0';
-        $sGroupSql   = $sIds       ? "EXISTS(select oxobject2delivery.oxid from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxgroups' and oxobject2delivery.OXOBJECTID in ($sIds) )"  : '0';
+        $sUserTable    = getViewName( 'oxuser' );
+        $sGroupTable   = getViewName( 'oxgroups' );
+        $sCountryTable = getViewName( 'oxcountry' );
+
+        $sCountrySql = $sCountryId ? "EXISTS(select oxobject2delivery.oxid from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxcountry' and oxobject2delivery.OXOBJECTID=".$oDb->quote($sCountryId).")" : '0';
+        $sUserSql    = $sUserId    ? "EXISTS(select oxobject2delivery.oxid from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxuser' and oxobject2delivery.OXOBJECTID=".$oDb->quote($sUserId).")"   : '0';
+        $sGroupSql   = count( $aIds ) ? "EXISTS(select oxobject2delivery.oxid from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxgroups' and oxobject2delivery.OXOBJECTID in (".implode(', ', oxDb::getInstance()->quoteArray($aIds) ).") )"  : '0';
 
         $sQ .= ") as $sTable where (
             select
-                if(EXISTS(select 1 from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxcountry' LIMIT 1),
+                if(EXISTS(select 1 from oxobject2delivery, $sCountryTable where $sCountryTable.oxid=oxobject2delivery.oxobjectid and oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxcountry' LIMIT 1),
                     $sCountrySql,
                     1) &&
-                if(EXISTS(select 1 from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxuser' LIMIT 1),
+                if(EXISTS(select 1 from oxobject2delivery, $sUserTable where $sUserTable.oxid=oxobject2delivery.oxobjectid and oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxuser' LIMIT 1),
                     $sUserSql,
                     1) &&
-                if(EXISTS(select 1 from oxobject2delivery where oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxgroups' LIMIT 1),
+                if(EXISTS(select 1 from oxobject2delivery, $sGroupTable where $sGroupTable.oxid=oxobject2delivery.oxobjectid and oxobject2delivery.oxdeliveryid=$sTable.OXID and oxobject2delivery.oxtype='oxgroups' LIMIT 1),
                     $sGroupSql,
                     1)
             )";

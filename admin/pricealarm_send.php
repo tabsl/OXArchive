@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: pricealarm_send.php 21005 2009-07-20 05:16:20Z alfonsas $
+ * $Id: pricealarm_send.php 22485 2009-09-22 06:59:12Z arvydas $
  */
 
 /**

@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: payment.php 21594 2009-08-14 12:04:44Z rimvydas.paskevicius $
+ * $Id: payment.php 22336 2009-09-15 15:44:43Z vilma $
  */
 
 /**
@@ -523,7 +523,7 @@ class Payment extends oxUBase
 
             // #646
             $oPaymentList = $this->getPaymentList();
-            if ( isset( $oPaymentList ) && !isset( $oPaymentList[$sCheckedId] ) ) {
+            if ( isset( $oPaymentList ) && $oPaymentList && !isset( $oPaymentList[$sCheckedId] ) ) {
                 end($oPaymentList);
                 $sCheckedId = key( $oPaymentList );
             }

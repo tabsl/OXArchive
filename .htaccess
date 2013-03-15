@@ -18,4 +18,10 @@ RewriteRule (\.html|\/)$ oxseo.php
 
 </IfModule>
 
+# disabling log file access from outside
+<FilesMatch "(EXCEPTION_LOG\.txt|\.log$|\.tpl$)">
+order allow,deny
+deny from all
+</FilesMatch>
+
 Options -Indexes

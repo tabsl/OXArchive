@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxwrapping.php 20535 2009-06-30 00:58:33Z alfonsas $
+ * $Id: oxwrapping.php 22548 2009-09-22 13:50:42Z rimvydas.paskevicius $
  */
 
 /**
@@ -155,7 +155,7 @@ class oxWrapping extends oxI18n
         $oEntries = oxNew( 'oxlist' );
         $oEntries->init( 'oxwrapping' );
         $sWrappingViewName = getViewName( 'oxwrapping' );
-        $sSelect =  "select * from $sWrappingViewName where $sWrappingViewName.".$this->getSqlFieldName( 'oxactive' )." = '1' and $sWrappingViewName.oxtype = '$sWrapType' ";
+        $sSelect =  "select * from $sWrappingViewName where $sWrappingViewName.".$this->getSqlFieldName( 'oxactive' )." = '1' and $sWrappingViewName.oxtype = " . oxDb::getDb()->quote( $sWrapType );
         $oEntries->selectString( $sSelect );
 
         return $oEntries;
@@ -171,7 +171,7 @@ class oxWrapping extends oxI18n
     public function getWrappingCount( $sWrapType )
     {
         $sWrappingViewName = getViewName( 'oxwrapping' );
-        $sQ = "select count(*) from $sWrappingViewName where $sWrappingViewName.".$this->getSqlFieldName( 'oxactive' )." = '1' and $sWrappingViewName.oxtype = '$sWrapType' ";
+        $sQ = "select count(*) from $sWrappingViewName where $sWrappingViewName.".$this->getSqlFieldName( 'oxactive' )." = '1' and $sWrappingViewName.oxtype = " . oxDb::getDb()->quote( $sWrapType );
         return (int) oxDb::getDb()->getOne( $sQ );
     }
 

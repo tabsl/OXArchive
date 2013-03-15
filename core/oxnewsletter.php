@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxnewsletter.php 17636 2009-03-27 09:15:44Z arvydas $
+ * $Id: oxnewsletter.php 22525 2009-09-22 11:51:55Z arvydas $
  */
 
 /**
@@ -94,8 +94,9 @@ class oxNewsletter extends oxBase
         $blDeleted = parent::delete( $sOxId );
 
         if ( $blDeleted ) {
-            $sDelete = "delete from oxobject2group where oxobject2group.oxshopid = '".$this->getShopId()."' and oxobject2group.oxobjectid = '$sOxId' ";
-            oxDb::getDb()->execute( $sDelete );
+            $oDb = oxDb::getDb();
+            $sDelete = "delete from oxobject2group where oxobject2group.oxshopid = '".$this->getShopId()."' and oxobject2group.oxobjectid = ".$oDb->quote( $sOxId );
+            $oDb->execute( $sDelete );
         }
 
         return $blDeleted;
@@ -182,7 +183,8 @@ class oxNewsletter extends oxBase
         //print_r($oxEMail);
         // store failed info
         if ( !$blSend ) {
-            oxDb::getDb()->Execute( "update oxnewssubscribed set oxemailfailed = '1' where oxemail = '".$this->_oUser->oxuser__oxusername->value."'");
+            $oDb = oxDb::getDb();
+            $oDb->execute( "update oxnewssubscribed set oxemailfailed = '1' where oxemail = ".$oDb->quote( $this->_oUser->oxuser__oxusername->value ) );
         }
 
         return $blSend;
@@ -268,7 +270,7 @@ class oxNewsletter extends oxBase
             $sSelect  = "select $sArticleTable.* from oxorder left join oxorderarticles on oxorderarticles.oxorderid = oxorder.oxid";
             $sSelect .= " left join $sArticleTable on oxorderarticles.oxartid = $sArticleTable.oxid";
             $sSelect .= " where ".$oArticle->getSqlActiveSnippet();
-            $sSelect .= " and oxorder.oxuserid = '".$this->_oUser->oxuser__oxid->value."' order by oxorder.oxorderdate desc";
+            $sSelect .= " and oxorder.oxuserid = '".$this->_oUser->getId()."' order by oxorder.oxorderdate desc";
 
             if ( $oArticle->assignRecord( $sSelect ) ) {
                 $oSimList = $oArticle->getSimilarProducts();

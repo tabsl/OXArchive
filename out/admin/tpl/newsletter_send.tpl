@@ -30,6 +30,9 @@ window.onload = function ()
 </form>
 
 <div class="liste">
+[{foreach from=$oView->getMailErrors() item=sError}]
+  [{ $sError }]
+[{/foreach}]
 <center>
 <h1>[{ oxmultilang ident="NEWSLETTER_SEND_SEND1" }] : [{ $iStart}] [{ oxmultilang ident="NEWSLETTER_SEND_SEND2" }] [{$user}].<h1>
 </center

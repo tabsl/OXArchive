@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: object_seo.php 21225 2009-07-31 14:07:41Z arvydas $
+ * $Id: object_seo.php 22495 2009-09-22 07:42:43Z arvydas $
  */
 
 /**
@@ -85,7 +85,7 @@ class Object_Seo extends oxAdminDetails
      */
     protected function _getSeoDataSql( $oObject, $iShopId, $iLang )
     {
-        return "select * from oxseo where oxobjectid = '".$oObject->getId()."' and
+        return "select * from oxseo where oxobjectid = ".oxDb::getDb()->quote( $oObject->getId() )." and
                 oxshopid = '{$iShopId}' and oxlang = {$iLang} ";
     }
 

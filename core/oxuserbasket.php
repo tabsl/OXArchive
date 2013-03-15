@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxuserbasket.php 21478 2009-08-06 15:41:06Z tomas $
+ * $Id: oxuserbasket.php 22548 2009-09-22 13:50:42Z rimvydas.paskevicius $
  */
 
 /**
@@ -298,7 +298,7 @@ class oxUserBasket extends oxBase
         $blDelete = false;
         if ( $sOXID && ( $blDelete = parent::delete( $sOXID ) ) ) {
             // cleaning up related data
-            $sQ = "delete from oxuserbasketitems where oxbasketid = '$sOXID' ";
+            $sQ = "delete from oxuserbasketitems where oxbasketid = " . oxDb::getDb()->quote( $sOXID );
             oxDb::getDb()->execute( $sQ );
         }
         return $blDelete;

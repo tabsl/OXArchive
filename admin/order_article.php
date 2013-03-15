@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: order_article.php 20543 2009-06-30 06:24:21Z arvydas $
+ * $Id: order_article.php 22607 2009-09-24 12:04:48Z arvydas $
  */
 
 /**
@@ -31,6 +31,36 @@
 class Order_Article extends oxAdminDetails
 {
     /**
+     * Product which was currently found by search
+     *
+     * @var oxarticle
+     */
+    protected $_oSearchProduct = null;
+
+    /**
+     * Product list:
+     *  - if product is not variant - list contains only product which was found by search;
+     *  - if product is variant - list consist with variant paret and its variants
+     *
+     * @var oxlist
+     */
+    protected $_oSearchProductList = null;
+
+    /**
+     * Product found by search. If product is variant - it keeps parent object
+     *
+     * @var oxarticle
+     */
+    protected $_oMainSearchProduct = null;
+
+    /**
+     * Active order object
+     *
+     * @var oxorder
+     */
+    protected $_oEditObject = null;
+
+    /**
      * Executes parent method parent::render(), creates oxorder and oxvoucherlist
      * objects, appends voucherlist information to order object and passes data
      * to Smarty engine, returns name of template file "order_article.tpl".
@@ -41,16 +71,110 @@ class Order_Article extends oxAdminDetails
     {
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid" );
-        if ( $soxId != "-1" && isset( $soxId ) ) {
-            // load object
-            $oOrder = oxNew( "oxorder" );
-            $oOrder->load( $soxId );
-
-            $this->_aViewData["edit"] =  $oOrder;
+        if ( $oOrder = $this->getEditObject() ) {
+            $this->_aViewData["edit"] = $oOrder;
         }
 
         return "order_article.tpl";
+    }
+
+    /**
+     * Returns editable order object
+     *
+     * @return oxorder
+     */
+    public function getEditObject()
+    {
+        $soxId = oxConfig::getParameter( "oxid" );
+        if ( $this->_oEditObject === null && isset( $soxId ) && $soxId != "-1" ) {
+            $this->_oEditObject = oxNew( "oxorder" );
+            $this->_oEditObject->load( $soxId );
+        }
+        return $this->_oEditObject;
+    }
+
+    /**
+     * Returns user written product number
+     *
+     * @return string
+     */
+    public function getSearchProductArtNr()
+    {
+        return oxConfig::getParameter( 'sSearchArtNum' );
+    }
+
+    /**
+     * If possible returns searched/found oxarticle object
+     *
+     * @return oxarticle | false
+     */
+    public function getSearchProduct()
+    {
+        if ( $this->_oSearchProduct === null ) {
+            $this->_oSearchProduct = false;
+            $sSearchArtNum = $this->getSearchProductArtNr();
+
+            foreach ( $this->getProductList() as $oProduct ) {
+                if ( $oProduct->oxarticles__oxartnum->value == $sSearchArtNum ) {
+                    $this->_oSearchProduct = $oProduct;
+                    break;
+                }
+            }
+        }
+
+        return $this->_oSearchProduct;
+    }
+
+    /**
+     * Returns product found by search. If product is variant - returns parent object
+     *
+     * @return
+     */
+    public function getMainProduct()
+    {
+        if ( $this->_oMainSearchProduct === null && ( $sArtNum = $this->getSearchProductArtNr() ) ) {
+            $this->_oMainSearchProduct = false;
+            $sArtId = null;
+
+            //get article id
+            $oDb = oxDb::getDb(true);
+            $sQ  = "select oxid, oxparentid from oxarticles where oxarticles.oxartnum = ".$oDb->quote( $sArtNum )." limit 1";
+            $rs  = $oDb->execute( $sQ );
+            if ($rs != false && $rs->recordCount() > 0) {
+                $sArtId = $rs->fields['oxparentid'] ? $rs->fields['oxparentid'] : $rs->fields['oxid'];
+                $oProduct = oxNew( "oxarticle" );
+                if ( $oProduct->load( $sArtId ) ) {
+                    $this->_oMainSearchProduct = $oProduct;
+                }
+            }
+        }
+
+        return $this->_oMainSearchProduct;
+    }
+
+    /**
+     * Returns product list containing searchable product or its parent and its variants
+     *
+     * @return oxlist
+     */
+    public function getProductList()
+    {
+        if ( $this->_oSearchProductList === null ) {
+            $this->_oSearchProductList = oxNew( "oxlist" );
+
+            // main search product is found?
+            if ( $oMainSearchProduct = $this->getMainProduct() ) {
+                // storing self to first list position
+                $this->_oSearchProductList->offsetSet( $oMainSearchProduct->getId(), $oMainSearchProduct );
+
+                // adding variants..
+                foreach ( $oMainSearchProduct->getVariants() as $oVariant ) {
+                    $this->_oSearchProductList->offsetSet( $oVariant->getId(), $oVariant );
+                }
+            }
+        }
+
+        return $this->_oSearchProductList;
     }
 
     /**
@@ -60,23 +184,23 @@ class Order_Article extends oxAdminDetails
      */
     public function addThisArticle()
     {
-        if ( ( $sArtNum = oxConfig::getParameter( 'sArtNum' ) ) ) {
-            $dAmount  = oxConfig::getParameter( 'am' );
+        $sOxid    = oxConfig::getParameter( 'aid' );
+        $dAmount  = oxConfig::getParameter( 'am' );
+        $oProduct = oxNew( "oxarticle" );
+
+        if ( $sOxid && $dAmount && $oProduct->load( $sOxid ) ) {
+
             $sOrderId = oxConfig::getParameter( 'oxid' );
+            $oOrder   = oxNew( 'oxorder' );
+            if ( $sOrderId && $oOrder->load( $sOrderId ) ) {
 
-            //get article id
-            $sQ = "select oxid from oxarticles where oxarticles.oxartnum = '{$sArtNum}'";
-            if ( ( $sArtId = oxDb::getDb()->getOne( $sQ ) ) && $dAmount > 0 ) {
                 $oOrderArticle = oxNew( 'oxorderArticle' );
-                $oOrderArticle->oxorderarticles__oxartid  = new oxField( $sArtId );
-                $oOrderArticle->oxorderarticles__oxartnum = new oxField( $sArtNum );
+                $oOrderArticle->oxorderarticles__oxartid  = new oxField( $oProduct->getId() );
+                $oOrderArticle->oxorderarticles__oxartnum = new oxField( $oProduct->oxarticles__oxartnum->value );
                 $oOrderArticle->oxorderarticles__oxamount = new oxField( $dAmount );
-                $aOrderArticles[] = $oOrderArticle;
+                $oOrderArticle->oxorderarticles__oxselvariant = new oxField( oxConfig::getParameter( 'sel' ) );
 
-                $oOrder = oxNew( 'oxorder' );
-                if ( $oOrder->load( $sOrderId ) ) {
-                    $oOrder->recalculateOrder( $aOrderArticles );
-                }
+                $oOrder->recalculateOrder( array( $oOrderArticle ) );
             }
         }
     }
@@ -138,11 +262,12 @@ class Order_Article extends oxAdminDetails
             $oArticle->updateArticleStock( $oArticle->oxorderarticles__oxamount->value * $sStockSign, $myConfig->getConfigParam('blAllowNegativeStock') );
         }
 
-        $sQ = "update oxorderarticles set oxstorno = '{$oArticle->oxorderarticles__oxstorno->value}' where oxid = '{$sOrderArtId}'";
-        oxDb::getDb()->execute( $sQ );
+        $oDb = oxDb::getDb();
+        $sQ = "update oxorderarticles set oxstorno = ".$oDb->quote( $oArticle->oxorderarticles__oxstorno->value )." where oxid = ".$oDb->quote( $sOrderArtId );
+        $oDb->execute( $sQ );
 
         //get article id
-        $sQ = "select oxartid from oxorderarticles where oxid = '{$sOrderArtId}'";
+        $sQ = "select oxartid from oxorderarticles where oxid = ".$oDb->quote( $sOrderArtId );
         if ( ( $sArtId = oxDb::getDb()->getOne( $sQ ) ) ) {
             $oOrder = oxNew( 'oxorder' );
             if ( $oOrder->load( oxConfig::getParameter( 'oxid' ) ) ) {

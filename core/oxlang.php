@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxlang.php 20457 2009-06-25 13:21:33Z vilma $
+ * $Id: oxlang.php 22390 2009-09-17 14:40:09Z arvydas $
  */
 
 /**
@@ -280,7 +280,7 @@ class oxLang extends oxSuperCfg
                         $oLang->sort   = $aLangParams[$key]['sort'];
                     }
 
-                    if ( isset( $iLanguage ) && $i == $iLanguage ) {
+                    if ( isset( $iLanguage ) && $oLang->id == $iLanguage ) {
                         $oLang->selected = 1;
                     } else {
                         $oLang->selected = 0;
@@ -331,7 +331,14 @@ class oxLang extends oxSuperCfg
      */
     public function getLanguageNames()
     {
-        return array_values( $this->getConfig()->getConfigParam( 'aLanguages' ));
+
+        $aConfLanguages = $this->getConfig()->getConfigParam( 'aLanguages' );
+        $aLangIds = $this->getLanguageIds();
+        $aLanguages = array();
+        foreach ( $aLangIds as $iId => $sValue ) {
+            $aLanguages[$iId] = $aConfLanguages[$sValue];
+        }
+        return $aLanguages;
     }
 
     /**
@@ -523,6 +530,41 @@ class oxLang extends oxSuperCfg
     }
 
     /**
+     * Returns array with pathes where language files are stored
+     *
+     * @param bool $blAdmin admin mode
+     * @param int  $iLang   active language
+     *
+     * @return array
+     */
+    protected function _getLangFilesPathArray( $blAdmin, $iLang )
+    {
+        $aLangFiles = false;
+        if ( ( $sDir = dirname( $this->getConfig()->getLanguagePath( 'lang.php', $blAdmin, $iLang ) ) ) ) {
+            //get all lang files
+            //#M681: content of cust_lang.php should be prefered to lang.php
+            $aLangFiles = glob( $sDir."/*_lang.php" );
+            array_unshift( $aLangFiles, $sDir."/lang.php");
+        }
+
+        return $aLangFiles;
+    }
+
+    /**
+     * Returns language cache file name
+     *
+     * @param bool $blAdmin admin or not
+     * @param int  $iLang   current language id
+     *
+     * @return string
+     */
+    protected function _getLangFileCacheName( $blAdmin, $iLang )
+    {
+        $myConfig = $this->getConfig();
+        return "langcache_" . ( (int) $blAdmin ) . "_{$iLang}_" . $myConfig->getShopId() . "_" . $myConfig->getConfigParam( 'sTheme' );
+    }
+
+    /**
      * Returns language cache array
      *
      * @param bool $blAdmin admin or not [optional]
@@ -535,24 +577,15 @@ class oxLang extends oxSuperCfg
         $myConfig = $this->getConfig();
         $myUtils  = oxUtils::getInstance();
 
-        $sCacheName = "langcache_".( (int) $blAdmin )."_{$iLang}_".$myConfig->getShopId();
+        $sCacheName = $this->_getLangFileCacheName( $blAdmin, $iLang );
         $aLangCache = $myUtils->getLangCache( $sCacheName );
-        if ( !$aLangCache ) {
-            $sDir = dirname( $myConfig->getLanguagePath( 'lang.php', $blAdmin, $iLang ) );
-
-            //get all lang files
-            //#M681: content of cust_lang.php should be prefered to lang.php
-            $aLangFiles = glob( $sDir."/*_lang.php" );
-            array_unshift($aLangFiles, $sDir."/lang.php");
-
+        if ( !$aLangCache && ( $aLangFiles = $this->_getLangFilesPathArray( $blAdmin, $iLang ) ) ) {
             $aLangCache[$iLang] = array();
-            if (!$sDir) {
-                return array();
-            }
+            $sBaseCharset = false;
             foreach ( $aLangFiles as $sLangFile ) {
                 require $sLangFile;
 
-                // inclyding only (!) thoose, which has charset defined
+                // including only (!) thoose, which has charset defined
                 if ( isset( $aLang['charset'] ) ) {
 
                     // recoding only in utf
@@ -563,8 +596,17 @@ class oxLang extends oxSuperCfg
                         $aLang['charset'] = 'UTF-8';
                     }
 
+                    if ( !$sBaseCharset ) {
+                        $sBaseCharset = $aLang['charset'];
+                    }
+
                     $aLangCache[$iLang] = array_merge( $aLangCache[$iLang], $aLang );
                 }
+            }
+
+            // setting base charset
+            if ( $sBaseCharset ) {
+                $aLangCache[$iLang]['charset'] = $sBaseCharset;
             }
 
             //save to cache

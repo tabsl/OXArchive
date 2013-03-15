@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oximex.php 21012 2009-07-20 11:04:39Z arvydas $
+ * $Id: oximex.php 22592 2009-09-24 07:21:04Z alfonsas $
  */
 
 /**
@@ -125,19 +125,11 @@ class oxImex extends oxBase
         $oDB = oxDb::getDb();
 
         $sWhere = "";
-        $sInGroup = "";
-        $blSep = false;
-        foreach ($aGroups as $sGroupId => $iAct) {
-            if ($blSep) {
-                $sInGroup .= ", ";
-            }
-            $sInGroup .= "'".$sGroupId."'";
-            $blSep = true;
-        }
+        $sInGroup = implode(',',oxDb::getInstance()->quoteArray(array_keys($aGroups)));
 
         $sSelect  = "select count(".$this->getViewName().".oxid) from ".$this->getViewName()." ";
         $sSelect .= "left join oxobject2group on ".$this->getViewName().".oxid=oxobject2group.oxobjectid ";
-        $sSelect .= "where oxobject2group.oxgroupsid in ($sInGroup) ";
+        $sSelect .= "where oxobject2group.oxgroupsid in (".$sInGroup.") ";
         $sSearch = $this->getViewName() . "__oxshopid";
         if ( isset( $this->$sSearch)) {
             $sSelect .= $sWhere = "and ".$this->getViewName().".oxshopid = '".$myConfig->getShopId()."' ";
@@ -237,7 +229,7 @@ class oxImex extends oxBase
                 $oArticle->load( $rs->fields['OXID']);
                 $this->setAdminMode( $blAdmin );
 
-                $sSelect = "select oxtitle from oxarticles where oxid = '".$oArticle->oxarticles__oxparentid->value."'";
+                $sSelect = "select oxtitle from oxarticles where oxid = " . $oDB->quote( $oArticle->oxarticles__oxparentid->value );
                 $oTitle = $oDB->getOne( $sSelect);
                 if ($oTitle != false && strlen ($oTitle)) {
                     $nTitle = $this->interForm($oTitle);
@@ -488,7 +480,7 @@ class oxImex extends oxBase
      *
      * @return string
      */
-    function exportLexwareOrders( $iFromOrderNr = null, $iToOrderNr = null)
+    function exportLexwareOrders( $iFromOrderNr = "", $iToOrderNr = "")
     {
         // thnx to Volker Dörk for this function and his help here
         $myConfig = $this->getConfig();
@@ -497,11 +489,13 @@ class oxImex extends oxBase
 
         $sSelect = "select * from oxorder where 1 ";
 
-        if ( $iFromOrderNr !== null ) {
+        if ( $iFromOrderNr !== "" ) {
+            $iFromOrderNr = (int)$iFromOrderNr;
             $sSelect .= "and oxordernr >= $iFromOrderNr ";
         }
 
-        if ( $iToOrderNr !== null ) {
+        if ( $iToOrderNr !== "" ) {
+            $iToOrderNr = (int)$iToOrderNr;
             $sSelect .= "and oxordernr <= $iToOrderNr ";
         }
 
@@ -513,7 +507,9 @@ class oxImex extends oxBase
             return null;
         }
 
-        $sExport  = "<?xml version=\"1.0\" encoding=\"ISO-8859-15\"?>$sNewLine";
+        $sCharset = $this->_getCharset();
+
+        $sExport  = "<?xml version=\"1.0\" encoding=\"{$sCharset}\"?>$sNewLine";
         $sExport .= "<Bestellliste>$sNewLine";
         $sRet     = $sExport;
 
@@ -523,7 +519,7 @@ class oxImex extends oxBase
             $oUser = oxNew( "oxuser" );
             $oUser->load( $oOrder->oxorder__oxuserid->value );
 
-            $sExport  = "<Bestellung zurückgestellt=\"Nein\" bearbeitet=\"Nein\" übertragen=\"Nein\">$sNewLine";
+            $sExport  = "<Bestellung " . $this->_convertStr( "zurückgestellt" ) . "=\"Nein\" bearbeitet=\"Nein\" " . $this->_convertStr( "übertragen" ) . "=\"Nein\">$sNewLine";
             $sExport .= "<Bestellnummer>".$oOrder->oxorder__oxordernr->value."</Bestellnummer>$sNewLine";
             $sExport .= "<Standardwaehrung>978</Standardwaehrung>$sNewLine";
             $sExport .= "<Bestelldatum>$sNewLine";
@@ -722,5 +718,33 @@ class oxImex extends oxBase
         } else {
             return null;
         }
+    }
+
+    /**
+     * Get current charset
+     *
+     * @return string
+     */
+    protected function _getCharset()
+    {
+        return oxLang::getInstance()->translateString( 'charset' );
+    }
+
+    /**
+     * Converts string from 'ISO-8859-15' to defined charset
+     *
+     * @param string $sStr string to convert
+     *
+     * @return string
+     */
+    protected function _convertStr( $sStr )
+    {
+        $sCharset = $this->_getCharset();
+
+        if ( $sCharset == 'ISO-8859-15' ) {
+            return $sStr;
+        }
+
+        return $sStr = iconv( 'ISO-8859-15', $sCharset, $sStr );
     }
 }

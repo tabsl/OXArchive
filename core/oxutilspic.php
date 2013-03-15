@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutilspic.php 21092 2009-07-22 14:42:13Z vilma $
+ * $Id: oxutilspic.php 22111 2009-09-03 11:00:40Z rimvydas.paskevicius $
  */
 
 /**
@@ -149,6 +149,7 @@ class oxUtilsPic extends oxSuperCfg
                 || strpos( $sPicName, 'nopic_ico.jpg' ) === false ) ) {
 
             $sFile = "$sAbsDynImageDir/$sPicName";
+
             if ( file_exists( $sFile ) ) {
                 $blDeleted = unlink( $sFile );
             }
@@ -206,7 +207,9 @@ class oxUtilsPic extends oxSuperCfg
         $sPic = $sPicTable.'__'.$sPicField;
         if ( isset( $oObject->{$sPic} ) &&
              ( $_FILES['myfile']['size'][$sPicType.'@'.$sPic] > 0 || $aParams[$sPic] != $oObject->{$sPic}->value ) ) {
-            $blDelete = $this->safePictureDelete($oObject->{$sPic}->value, $sAbsDynImageDir, $sPicTable, $sPicField );
+
+            $sImgDir = $sAbsDynImageDir . $sPicDir;
+            $blDelete = $this->safePictureDelete($oObject->{$sPic}->value, $sImgDir, $sPicTable, $sPicField );
         }
 
         return $blDelete;

@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxubase.php 21135 2009-07-27 10:56:53Z rimvydas.paskevicius $
+ * $Id: oxubase.php 22650 2009-09-25 14:32:34Z tomas $
  */
 
 /**
@@ -73,19 +73,6 @@ class oxUBase extends oxView
      * @var oxcategory
      */
     protected $_oActCategory = null;
-
-    /**
-     * Active category object.
-     * @var object
-     */
-    protected $_oClickCat = null;
-
-    /**
-     * Category ID
-     *
-     * @var string
-     */
-    protected $_sCategoryId = null;
 
     /**
      * Active Manufacturer object.
@@ -373,6 +360,15 @@ class oxUBase extends oxView
 
     /**
      * If order price to low
+     * @var integer
+     */
+    protected $_blLowOrderPrice = null;
+
+    /**
+     * If order price to low
+     *
+     * @deprecated
+     *
      * @var integer
      */
     protected $_iLowOrderPrice  = null;
@@ -729,33 +725,6 @@ class oxUBase extends oxView
     }
 
     /**
-     * Get category ID
-     *
-     * @return string
-     */
-    public function getCategoryId()
-    {
-        if ( $this->_sCategoryId == null && ( $sCatId = oxConfig::getParameter( 'cnid' ) ) ) {
-            $this->_sCategoryId = $sCatId;
-        }
-
-        return $this->_sCategoryId;
-    }
-
-    /**
-     * Category ID setter
-     *
-     * @param string $sCategoryId Id of category to cache
-     *
-     * @return null
-     */
-    public function setCategoryId( $sCategoryId )
-    {
-        $this->_sCategoryId = $sCategoryId;
-    }
-
-
-    /**
      * Returns show right basket
      *
      * @return bool
@@ -1074,14 +1043,14 @@ class oxUBase extends oxView
             } elseif ( $this->_sMetaKeywordsIdent ) {
                 $oContent = oxNew( 'oxcontent' );
                 if ( $oContent->loadByIdent( $this->_sMetaKeywordsIdent ) && $oContent->oxcontents__oxactive->value ) {
-                	$this->_sMetaKeywords = strip_tags( $oContent->oxcontents__oxcontent->value );
+                    $this->_sMetaKeywords = strip_tags( $oContent->oxcontents__oxcontent->value );
                     $blRemoveDuplicatedWords = false;
                 }
             }
 
             $this->_sMetaKeywords = $this->_prepareMetaKeyword( $this->_sMetaKeywords, $blRemoveDuplicatedWords );
         }
-        
+
         return $this->_sMetaKeywords;
     }
 
@@ -1643,8 +1612,10 @@ class oxUBase extends oxView
                 $sForceLangChange = "&amp;lang={$iLang}";
             }
 
+            $sUrl = $this->getSession()->processUrl( $myConfig->getShopCurrentURL( $iLang ) . $this->_getRequestParams() . $sForceLangChange );
+
             // fallback to old non seo url
-            return $this->_addPageNrParam( $myConfig->getShopCurrentURL( $iLang ) . $this->_getRequestParams() . $sForceLangChange, $iActPageNr, $iLang );
+            return $this->_addPageNrParam( $sUrl, $iActPageNr, $iLang );
         }
     }
 
@@ -1884,9 +1855,20 @@ class oxUBase extends oxView
     /**
      * Template variable getter. Returns list of customer also bought thies products
      *
+     * @deprecated use thankyou::getAlsoBoughtTheseProducts()
+     *
      * @return object
      */
     public function getAlsoBoughtThiesProducts()
+    {
+    }
+
+    /**
+     * Template variable getter. Returns list of customer also bought thies products
+     *
+     * @return object
+     */
+    public function getAlsoBoughtTheseProducts()
     {
     }
 
@@ -2132,6 +2114,8 @@ class oxUBase extends oxView
     /**
      * performs setup of aViewData according to iMinOrderPrice admin setting
      *
+     * @deprecated
+     *
      * @return null
      */
     public function prepareMinimumOrderPrice4View()
@@ -2168,9 +2152,6 @@ class oxUBase extends oxView
         parent::render();
 
         if ( $this->getIsOrderStep() ) {
-
-            // min. order price check
-            $this->prepareMinimumOrderPrice4View();
 
             // disabling navigation during order ...
             if ( $this->getConfig()->getConfigParam( 'blDisableNavBars' ) ) {
@@ -2246,42 +2227,6 @@ class oxUBase extends oxView
             $this->_iActPage = ( $this->_iActPage < 0 ) ? 0 : $this->_iActPage;
         }
         return $this->_iActPage;
-    }
-
-    /**
-     * Returns active category set by categories component; if category is
-     * not set by component - will create category object and will try to
-     * load by id passed by request
-     *
-     * @return oxcategory
-     */
-    public function getActCategory()
-    {
-        // if active category is not set yet - trying to load it from request params
-        // this may be usefull when category component was unable to load active category
-        // and we still need some object to mount navigation info
-        if ( $this->_oClickCat === null ) {
-
-            $this->_oClickCat = false;
-            $oCategory = oxNew( 'oxcategory' );
-            if ( $oCategory->load( $this->getCategoryId() ) ) {
-                $this->_oClickCat = $oCategory;
-            }
-        }
-
-        return $this->_oClickCat;
-    }
-
-    /**
-     * Active category setter
-     *
-     * @param oxcategory $oCategory active category
-     *
-     * @return null
-     */
-    public function setActCategory( $oCategory )
-    {
-        $this->_oClickCat = $oCategory;
     }
 
     /**
@@ -2593,22 +2538,31 @@ class oxUBase extends oxView
     }
 
     /**
-     * Template variable getter. Returns if order price is to low
+     * Template variable getter. Returns if order price is lower than
+     * minimum order price setup (config param "iMinOrderPrice")
      *
-     * @return integer
+     * @return bool
      */
     public function isLowOrderPrice()
     {
-        return $this->_iLowOrderPrice;
+        if ( $this->_blLowOrderPrice === null && ( $oBasket = $this->getSession()->getBasket() ) ) {
+            $this->_blLowOrderPrice = $oBasket->isBelowMinOrderPrice();
+        }
+
+        return $this->_blLowOrderPrice;
     }
 
     /**
-     * Template variable getter. Returns min order price
+     * Template variable getter. Returns formatted min order price value
      *
      * @return string
      */
     public function getMinOrderPrice()
     {
+        if ( $this->_sMinOrderPrice === null && $this->isLowOrderPrice() ) {
+            $dMinOrderPrice = oxPrice::getPriceInActCurrency( $this->getConfig()->getConfigParam( 'iMinOrderPrice' ) );
+            $this->_sMinOrderPrice = oxLang::getInstance()->formatCurrency( $dMinOrderPrice );
+        }
         return $this->_sMinOrderPrice;
     }
 
@@ -2809,72 +2763,6 @@ class oxUBase extends oxView
     public function setCatMore( $oCat )
     {
         $this->_oCatMore = $oCat;
-    }
-
-    /**
-     * Template variable getter. Returns if user subscribed for newsletter
-     *
-     * @return bool
-     */
-    public function isNewsSubscribed()
-    {
-        return $this->_blNewsSubscribed;
-    }
-
-    /**
-     * Sets if user subscribed for newsletter
-     *
-     * @param bool $blNewsSubscribed TRUE - news are subscribed
-     *
-     * @return null
-     */
-    public function setNewsSubscribed( $blNewsSubscribed )
-    {
-        $this->_blNewsSubscribed = $blNewsSubscribed;
-    }
-
-    /**
-     * Template variable getter. Returns if show user shipping address
-     *
-     * @return bool
-     */
-    public function showShipAddress()
-    {
-        return $this->_blShowShipAddress;
-    }
-
-    /**
-     * Sets if show user shipping address
-     *
-     * @param bool $blShowShipAddress TRUE - show shipping address
-     *
-     * @return null
-     */
-    public function setShowShipAddress( $blShowShipAddress )
-    {
-        $this->_blShowShipAddress = $blShowShipAddress;
-    }
-
-    /**
-     * Template variable getter. Returns shipping address
-     *
-     * @return bool
-     */
-    public function getDelAddress()
-    {
-        return $this->_oDelAddress;
-    }
-
-    /**
-     * Sets shipping address
-     *
-     * @param bool $oDelAddress delivery address
-     *
-     * @return null
-     */
-    public function setDelAddress( $oDelAddress )
-    {
-        $this->_oDelAddress = $oDelAddress;
     }
 
     /**

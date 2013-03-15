@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdeliveryset.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxdeliveryset.php 22555 2009-09-22 14:48:27Z sarunas $
  */
 
 /**
@@ -71,9 +71,10 @@ class oxDeliverySet extends oxI18n
 
         $oDb = oxDb::getDb();
 
-        $oDb->execute( 'delete from oxobject2payment where oxobjectid = "'.$sOxId.'" ' );
-        $oDb->execute( 'delete from oxobject2delivery where oxdeliveryid = "'.$sOxId.'" ');
-        $oDb->execute( 'delete from oxdel2delset where oxdelsetid = "'.$sOxId.'" ');
+        $sOxidQuoted = $oDb->quote($sOxId);
+        $oDb->execute( 'delete from oxobject2payment where oxobjectid = '.$sOxidQuoted );
+        $oDb->execute( 'delete from oxobject2delivery where oxdeliveryid = '.$sOxidQuoted);
+        $oDb->execute( 'delete from oxdel2delset where oxdelsetid = '.$sOxidQuoted);
 
         return parent::delete( $sOxId );
     }

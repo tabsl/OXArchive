@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: deliveryset_payment.inc.php 17244 2009-03-16 15:17:48Z arvydas $
+ * $Id: deliveryset_payment.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -82,7 +82,7 @@ class ajaxComponent extends ajaxListComponent
             oxDb::getDb()->Execute( $sQ );
 
         } elseif ( is_array( $aChosenCntr ) ) {
-            $sQ = "delete from oxobject2payment where oxobject2payment.oxid in ('" . implode( "', '", $aChosenCntr ) . "') ";
+            $sQ = "delete from oxobject2payment where oxobject2payment.oxid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aChosenCntr ) ) . ") ";
             oxDb::getDb()->Execute( $sQ );
         }
     }
@@ -106,7 +106,7 @@ class ajaxComponent extends ajaxListComponent
             $oDb = oxDb::getDb();
             foreach ( $aChosenSets as $sChosenSet) {
                 // check if we have this entry already in
-                $sID = $oDb->GetOne("select oxid from oxobject2payment where oxpaymentid = '$sChosenSet' and oxobjectid = '$soxId' and oxtype = 'oxdelset'");
+                $sID = $oDb->GetOne("select oxid from oxobject2payment where oxpaymentid = " . oxDb::getDb()->quote( $sChosenSet ) . "  and oxobjectid = '$soxId' and oxtype = 'oxdelset'");
                 if ( !isset( $sID) || !$sID) {
                     $oObject = oxNew( 'oxbase' );
                     $oObject->init( 'oxobject2payment' );

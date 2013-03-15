@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdebugdb.php 21461 2009-08-05 16:42:31Z tomas $
+ * $Id: oxdebugdb.php 22588 2009-09-23 16:22:22Z alfonsas $
  */
 
 /**
@@ -39,9 +39,9 @@ class oxDebugDb
      *
      * @return null;
      */
-	public function __construct()
-	{
-	}
+    public function __construct()
+    {
+    }
 
     /**
      * Removes special chars (' ', "\t", "\r", "\n") from passed string
@@ -144,8 +144,8 @@ class oxDebugDb
         $aOutput = array();
         $oDb = oxDb::getDb();
         foreach ($aInput as $fnc => $aWarnings) {
-            $ids = implode("','", array_keys($aWarnings));
-            $rs = $oDb->execute("select sql1, timer, tracer from adodb_logsql where sql0 in ('$ids')");
+            $ids = implode(",", oxDb::getInstance()->quoteArray(array_keys($aWarnings)));
+            $rs = $oDb->execute("select sql1, timer, tracer from adodb_logsql where sql0 in ($ids)");
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     $aOutputEntry = array();

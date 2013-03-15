@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: list_order.php 18898 2009-05-08 12:13:29Z arvydas $
+ * $Id: list_order.php 22642 2009-09-25 12:13:51Z rimvydas.paskevicius $
  */
 
 /**
@@ -114,7 +114,7 @@ class List_Order extends Order_List
         $sSql = " $sSql group by oxorderarticles.oxartnum";
         if ( $sSort = oxConfig::getParameter( "sort" ) ) {
             $sSortDesc = ($sSort == 'oxorder.oxorderdate') ? 'DESC' : '';
-            $sSql .= " order by $sSort " . $sSortDesc;
+            $sSql .= " order by " . oxDb::getInstance()->escapeString( $sSort ) . " " . $sSortDesc;
         }
 
         return $sSql;

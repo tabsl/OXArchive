@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxvoucher.php 21499 2009-08-07 13:49:56Z vilma $
+ * $Id: oxvoucher.php 22548 2009-09-22 13:50:42Z rimvydas.paskevicius $
  */
 
 /**
@@ -75,11 +75,11 @@ class oxVoucher extends oxBase
 
             $sQ  = "select {$sViewName}.* from {$sViewName}, {$sSeriesViewName} where
                         {$sSeriesViewName}.oxid = {$sViewName}.oxvoucherserieid and
-                        {$sViewName}.oxvouchernr = '{$sVoucherNr}' and ";
+                        {$sViewName}.oxvouchernr = " . oxDb::getDb()->quote( $sVoucherNr ) . " and ";
 
             if ( is_array( $aVouchers ) ) {
                 foreach ( $aVouchers as $sVoucherId => $sSkipVoucherNr ) {
-                    $sQ .= "{$sViewName}.oxid != '$sVoucherId' and ";
+                    $sQ .= "{$sViewName}.oxid != " . oxDb::getDb()->quote( $sVoucherId ) . " and ";
                 }
             }
             $sQ .= "( {$sViewName}.oxorderid is NULL || {$sViewName}.oxorderid = '' ) ";
@@ -134,7 +134,7 @@ class oxVoucher extends oxBase
         $sVoucherID = $this->oxvouchers__oxid->value;
 
         if ( $sVoucherID ) {
-            $sQ = 'update oxvouchers set oxreserved = '.time().' where oxid = "'.$sVoucherID.'"';
+            $sQ = "update oxvouchers set oxreserved = " . time() . " where oxid = " . oxDb::getDb()->quote( $sVoucherID );
             oxDb::getDb()->Execute( $sQ );
         }
     }
@@ -150,7 +150,7 @@ class oxVoucher extends oxBase
         $sVoucherID = $this->oxvouchers__oxid->value;
 
         if ( $sVoucherID ) {
-            $sQ = 'update oxvouchers set oxreserved = 0 where oxid = "'.$sVoucherID.'"';
+            $sQ = "update oxvouchers set oxreserved = 0 where oxid = " . oxDb::getDb()->quote( $sVoucherID );
             oxDb::getDb()->Execute($sQ);
         }
     }
@@ -247,7 +247,8 @@ class oxVoucher extends oxBase
             throw $oEx;
         }
         $oSerie = $this->getSerie();
-        if ( $oSerie->oxvoucherseries__oxminimumvalue->value && $dPrice < $oSerie->oxvoucherseries__oxminimumvalue->value ) {
+        $oCur = $this->getConfig()->getActShopCurrencyObject();
+        if ( $oSerie->oxvoucherseries__oxminimumvalue->value && $dPrice < ($oSerie->oxvoucherseries__oxminimumvalue->value*$oCur->rate) ) {
             $oEx = oxNew( 'oxVoucherException' );
             $oEx->setMessage('EXCEPTION_VOUCHER_INCORRECTPRICE');
             $oEx->setVoucherNr($this->oxVouchers__voucherNr->value);
@@ -311,12 +312,12 @@ class oxVoucher extends oxBase
             if (!$oSerie->oxvoucherseries__oxallowotherseries->value) {
                 // just search for vouchers with different series
                 $sSql  = "select 1 from oxvouchers where oxvouchers.oxid in ($sIds) and ";
-                $sSql .= "oxvouchers.oxvoucherserieid != '{$this->oxvouchers__oxvoucherserieid->value}'";
+                $sSql .= "oxvouchers.oxvoucherserieid != " . oxDb::getDb()->quote( $this->oxvouchers__oxvoucherserieid->value ) ;
                 $blAvailable &= !oxDb::getDb()->getOne($sSql);
             } else {
                 // search for vouchers with different series and those vouchers do not allow other series
                 $sSql  = "select 1 from oxvouchers left join oxvoucherseries on oxvouchers.oxvoucherserieid=oxvoucherseries.oxid ";
-                $sSql .= "where oxvouchers.oxid in ($sIds) and oxvouchers.oxvoucherserieid != '{$this->oxvouchers__oxvoucherserieid->value}' ";
+                $sSql .= "where oxvouchers.oxid in ($sIds) and oxvouchers.oxvoucherserieid != " . oxDb::getDb()->quote( $this->oxvouchers__oxvoucherserieid->value );
                 $sSql .= "and not oxvoucherseries.oxallowotherseries";
                 $blAvailable &= !oxDb::getDb()->getOne($sSql);
             }
@@ -413,8 +414,8 @@ class oxVoucher extends oxBase
         $oSerie = $this->getSerie();
         if ( !$oSerie->oxvoucherseries__oxallowuseanother->value ) {
 
-            $sSelect  = 'select count(*) from '.$this->getViewName().' where oxuserid = "'.$oUser->oxuser__oxid->value.'" and ';
-            $sSelect .= 'oxvoucherserieid = "'.$this->oxvouchers__oxvoucherserieid->value.'" and ';
+            $sSelect  = 'select count(*) from '.$this->getViewName().' where oxuserid = '. oxDb::getDb()->quote( $oUser->oxuser__oxid->value ) . ' and ';
+            $sSelect .= 'oxvoucherserieid = ' . oxDb::getDb()->quote( $this->oxvouchers__oxvoucherserieid->value ) . ' and ';
             $sSelect .= 'oxorderid is not NULL and oxorderid != "" ';
 
             if ( oxDb::getDb()->getOne( $sSelect )) {

@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: dynexportbase.php 21075 2009-07-21 11:59:29Z arvydas $
+ * $Id: dynexportbase.php 22500 2009-09-22 07:48:17Z arvydas $
  */
 
 /**
@@ -299,7 +299,7 @@ class DynExportBase extends oxAdminDetails
 
         //selecting category
         $sQ =  "select oxobject2category.oxcatnid, $sCatView.oxleft, $sCatView.oxright, $sCatView.oxrootid from $sO2CView as oxobject2category left join $sCatView on $sCatView.oxid = oxobject2category.oxcatnid ";
-        $sQ .= "where oxobject2category.oxobjectid='".$oArticle->getId()."' and $sCatView.oxactive".(($sLang)?"_$sLang":"")." = 1 order by oxobject2category.oxtime ";
+        $sQ .= "where oxobject2category.oxobjectid=".$oDB->quote( $oArticle->getId() )." and $sCatView.oxactive".(($sLang)?"_$sLang":"")." = 1 order by oxobject2category.oxtime ";
 
         $aRet = array();
         $rs = $oDB->execute( $sQ);
@@ -342,7 +342,7 @@ class DynExportBase extends oxAdminDetails
 
         //selecting category
         $sQ =  "select $sCatView.oxtitle".(($sLang)?"_$sLang":"")." from $sO2CView as oxobject2category left join $sCatView on $sCatView.oxid = oxobject2category.oxcatnid ";
-        $sQ .= "where oxobject2category.oxobjectid='".$oArticle->getId()."' and $sCatView.oxactive".(($sLang)?"_$sLang":"")." = 1 order by oxobject2category.oxtime ";
+        $sQ .= "where oxobject2category.oxobjectid=".$oDB->quote( $oArticle->getId() )." and $sCatView.oxactive".(($sLang)?"_$sLang":"")." = 1 order by oxobject2category.oxtime ";
 
         $rs = $oDB->getOne( $sQ);
 
@@ -599,7 +599,7 @@ class DynExportBase extends oxAdminDetails
      */
     private function _getCatAdd($aChosenCat)
     {
-
+        $oDB = oxDb::getDb();
         $sCatAdd        = null;
         if ( isset( $aChosenCat)) {
             $sCatAdd = " and ( ";
@@ -608,7 +608,7 @@ class DynExportBase extends oxAdminDetails
                 if ( $blSep) {
                     $sCatAdd .= " or ";
                 }
-                $sCatAdd .= "oxobject2category.oxcatnid = '$sCat'";
+                $sCatAdd .= "oxobject2category.oxcatnid = ".$oDB->quote( $sCat );
                 $blSep = true;
             }
             $sCatAdd .= ")";
@@ -651,9 +651,9 @@ class DynExportBase extends oxAdminDetails
         //  $sSelect = str_replace( "or oxarticles.oxstockflag = 3", "", $sSelect);
 
         if ( isset( $sSearchString) && strlen( $sSearchString)) {
-            $sSelect .= "and ( $sArticleTable.OXTITLE".$language." like '%$sSearchString%' ";
-            $sSelect .= "or $sArticleTable.OXSHORTDESC".$language."  like '%$sSearchString%' ";
-            $sSelect .= "or $sArticleTable.oxsearchkeys  like '%$sSearchString%') ";
+            $sSelect .= "and ( $sArticleTable.OXTITLE".$language." like ".$oDB->quote( "%{$sSearchString}%" );
+            $sSelect .= " or $sArticleTable.OXSHORTDESC".$language."  like ".$oDB->quote( "%$sSearchString%" );
+            $sSelect .= " or $sArticleTable.oxsearchkeys  like ".$oDB->quote( "%$sSearchString%" ) ." ) ";
         }
         if ( $sCatAdd) {
             $sSelect .= $sCatAdd;
@@ -665,7 +665,7 @@ class DynExportBase extends oxAdminDetails
         $dMinStock = oxConfig::getParameter( "sExportMinStock");
         if ( isset( $dMinStock) && $dMinStock && $this->getConfig()->getConfigParam( 'blUseStock' ) ) {
             $dMinStock = str_replace( array( ";", " ", "/", "'"), "", $dMinStock);
-            $sSelect .= " and $sArticleTable.oxstock >= $dMinStock";
+            $sSelect .= " and $sArticleTable.oxstock >= ".$oDB->quote( $dMinStock );
         }
         $sSelect .= " group by $sArticleTable.oxid";
 
@@ -699,7 +699,7 @@ class DynExportBase extends oxAdminDetails
                     if ( $blSep) {
                         $sDel .= ",";
                     }
-                    $sDel .= "'".$rs->fields[0]."'";
+                    $sDel .= $oDB->quote( $rs->fields[0] );
                     $blSep = true;
                     $rs->moveNext();
                 }

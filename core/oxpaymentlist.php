@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxpaymentlist.php 18756 2009-05-04 08:47:01Z arvydas $
+ * $Id: oxpaymentlist.php 22657 2009-09-25 15:39:22Z arvydas $
  */
 
 /**
@@ -103,13 +103,14 @@ class oxPaymentList extends oxList
      */
     protected function _getFilterSelect( $sShipSetId, $dPrice, $oUser )
     {
+        $oDb = oxDb::getDb();
         $sBoni = ($oUser && $oUser->oxuser__oxboni->value )?$oUser->oxuser__oxboni->value:0;
 
         $sTable = getViewName( 'oxpayments' );
         $sQ  = "select {$sTable}.* from ( select distinct {$sTable}.* from {$sTable}, oxobject2group, oxobject2payment ";
         $sQ .= "where {$sTable}.oxactive='1' and oxobject2group.oxobjectid = {$sTable}.oxid ";
-        $sQ .= "and oxobject2payment.oxpaymentid = {$sTable}.oxid and oxobject2payment.oxobjectid = '{$sShipSetId}' ";
-        $sQ .= "and oxpayments.oxfromboni <= {$sBoni} and oxpayments.oxfromamount <= {$dPrice} and oxpayments.oxtoamount >= {$dPrice} ";
+        $sQ .= "and oxobject2payment.oxpaymentid = {$sTable}.oxid and oxobject2payment.oxobjectid = ".$oDb->quote( $sShipSetId );
+        $sQ .= " and oxpayments.oxfromboni <= ".$oDb->quote( $sBoni ) ." and oxpayments.oxfromamount <= ".$oDb->quote( $dPrice ) ." and oxpayments.oxtoamount >= ".$oDb->quote( $dPrice );
 
         // defining initial filter parameters
         $sGroupIds  = '';
@@ -126,15 +127,18 @@ class oxPaymentList extends oxList
             }
         }
 
-        $sCountrySql = $sCountryId ? "exists( select 1 from oxobject2payment as s1 where s1.oxpaymentid={$sTable}.OXID and s1.oxtype='oxcountry' and s1.OXOBJECTID='{$sCountryId}' limit 1 )":'0';
+        $sGroupTable   = getViewName( 'oxgroups' );
+        $sCountryTable = getViewName( 'oxcountry' );
+
+        $sCountrySql = $sCountryId ? "exists( select 1 from oxobject2payment as s1 where s1.oxpaymentid={$sTable}.OXID and s1.oxtype='oxcountry' and s1.OXOBJECTID=".$oDb->quote( $sCountryId )." limit 1 )":'0';
         $sGroupSql   = $sGroupIds ? "exists( select 1 from oxobject2group as s3 where s3.OXOBJECTID={$sTable}.OXID and s3.OXGROUPSID in ( {$sGroupIds} ) limit 1 )":'0';
 
         $sQ .= " ) as $sTable where (
             select
-                if( exists( select 1 from oxobject2payment as ss1 where ss1.oxpaymentid={$sTable}.OXID and ss1.oxtype='oxcountry' limit 1 ),
+                if( exists( select 1 from oxobject2payment as ss1, $sCountryTable where $sCountryTable.oxid=ss1.oxobjectid and ss1.oxpaymentid={$sTable}.OXID and ss1.oxtype='oxcountry' limit 1 ),
                     {$sCountrySql},
                     1) &&
-                if( exists( select 1 from oxobject2group as ss3 where ss3.OXOBJECTID={$sTable}.OXID limit 1 ),
+                if( exists( select 1 from oxobject2group as ss3, $sGroupTable where $sGroupTable.oxid=ss3.oxgroupsid and ss3.OXOBJECTID={$sTable}.OXID limit 1 ),
                     {$sGroupSql},
                     1)
                 )  order by {$sTable}.oxsort asc ";

@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_attribute.inc.php 18560 2009-04-27 08:02:48Z arvydas $
+ * $Id: article_attribute.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -45,6 +45,7 @@ class ajaxComponent extends ajaxListComponent
      */
     protected function _getQuery()
     {
+        $oDb         = oxDb::getDb();
         $sArtId      = oxConfig::getParameter( 'oxid' );
         $sSynchArtId = oxConfig::getParameter( 'synchoxid' );
 
@@ -52,10 +53,10 @@ class ajaxComponent extends ajaxListComponent
         if ( $sArtId ) {
             // all categories article is in
             $sQAdd  = " from oxobject2attribute left join $sAttrViewName on $sAttrViewName.oxid=oxobject2attribute.oxattrid ";
-            $sQAdd .= " where oxobject2attribute.oxobjectid = '$sArtId' ";
+            $sQAdd .= " where oxobject2attribute.oxobjectid = " . $oDb->quote( $sArtId ) . " ";
         } else {
             $sQAdd  = " from $sAttrViewName  where $sAttrViewName.oxid not in ( select oxobject2attribute.oxattrid from oxobject2attribute left join $sAttrViewName on $sAttrViewName.oxid=oxobject2attribute.oxattrid ";
-            $sQAdd .= " where oxobject2attribute.oxobjectid = '$sSynchArtId' ) ";
+            $sQAdd .= " where oxobject2attribute.oxobjectid = " . $oDb->quote( $sSynchArtId ) . " ) ";
         }
 
         return $sQAdd;
@@ -75,7 +76,7 @@ class ajaxComponent extends ajaxListComponent
             oxDb::getDb()->Execute( $sQ );
 
         } elseif ( is_array( $aChosenArt ) ) {
-            $sQ = "delete from oxobject2attribute where oxobject2attribute.oxid in ('" . implode( "', '", $aChosenArt ) . "') ";
+            $sQ = "delete from oxobject2attribute where oxobject2attribute.oxid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aChosenArt ) ) . ") ";
             oxDb::getDb()->Execute( $sQ );
         }
     }
@@ -113,6 +114,7 @@ class ajaxComponent extends ajaxListComponent
      */
     public function saveAttributeValue ()
     {
+        $oDb = oxDb::getDb();
 
         $soxId = oxConfig::getParameter( "oxid");
         $this->sAttributeOXID = oxConfig::getParameter( "attr_oxid");
@@ -129,8 +131,8 @@ class ajaxComponent extends ajaxListComponent
             if ( isset( $this->sAttributeOXID) && ("" != $this->sAttributeOXID)) {
                 $oGroups = oxNew( "oxlist" );
                 $oGroups->init( "oxbase", "oxobject2attribute" );
-                $sSelect =  "select * from oxobject2attribute where oxobject2attribute.oxobjectid='".$oArticle->oxarticles__oxid->value."' and ";
-                $sSelect .= " oxobject2attribute.oxattrid='".$this->sAttributeOXID."' ";
+                $sSelect =  "select * from oxobject2attribute where oxobject2attribute.oxobjectid= " . $oDb->quote( $oArticle->oxarticles__oxid->value ) . " and ";
+                $sSelect .= " oxobject2attribute.oxattrid= " . $oDb->quote( $this->sAttributeOXID ) . " ";
                 $oGroups->selectString( $sSelect );
                 foreach ($oGroups as $oGroup) {
                     // sets new value

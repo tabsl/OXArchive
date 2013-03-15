@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: report_user_per_group.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: report_user_per_group.php 22478 2009-09-21 14:51:46Z arvydas $
  */
 
 if ( !class_exists( "report_user_per_group")) {
@@ -37,6 +37,19 @@ if ( !class_exists( "report_user_per_group")) {
         protected $_sThisTemplate = "report_user_per_group.tpl";
 
         /**
+         * Checks if db contains data for report generation
+         *
+         * @return bool
+         */
+        public function drawReport()
+        {
+            $sQ = "SELECT 1 FROM oxobject2group, oxuser, oxgroups
+                   WHERE oxobject2group.oxobjectid = oxuser.oxid AND
+                   oxobject2group.oxgroupsid = oxgroups.oxid";
+            return oxDb::getDb()->getOne( $sQ );
+        }
+
+        /**
          * Collects and renders user per group report data
          *
          * @return null
@@ -44,13 +57,12 @@ if ( !class_exists( "report_user_per_group")) {
         public function user_per_group()
         {
             $myConfig = $this->getConfig();
+            $oDb = oxDb::getDb();
+
             global $aTitles;
 
             $aDataX = array();
             $aDataY = array();
-
-            $sTime_from = date( "Y-m-d H:i:s", strtotime( oxConfig::getParameter( "time_from")));
-            $sTime_to   = date( "Y-m-d H:i:s", strtotime( oxConfig::getParameter( "time_to")));
 
             $sSQL = "SELECT oxgroups.oxtitle,
                             count(oxuser.oxid)
@@ -62,7 +74,7 @@ if ( !class_exists( "report_user_per_group")) {
                      GROUP BY oxobject2group.oxgroupsid
                      ORDER BY oxobject2group.oxgroupsid";
 
-            $rs = oxDb::getDb()->execute( $sSQL);
+            $rs = $oDb->execute( $sSQL);
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     if ( $rs->fields[1]) {

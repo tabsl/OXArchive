@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: attribute_category.php 17243 2009-03-16 15:16:57Z arvydas $
+ * $Id: attribute_category.php 22482 2009-09-22 06:53:41Z arvydas $
  */
 
 /**
@@ -71,11 +71,13 @@ class Attribute_Category extends oxAdminDetails
     {
         $sChosenCatId = oxConfig::getParameter("chosenCatId");
         if ( isset($sChosenCatId) && $sChosenCatId) {
-            $suffix = oxLang::getInstance()->getLanguageTag( $this->_iEditLang);
-            $sSelect  = "select oxcategory2attribute.oxid, oxattribute.oxtitle$suffix from oxcategory2attribute, oxattribute ";
-            $sSelect .= "where oxcategory2attribute.oxobjectid='$sChosenCatId' and oxattribute.oxid=oxcategory2attribute.oxattrid ";
-            $sSelect .= "order by oxcategory2attribute.oxsort, oxattribute.oxpos, oxattribute.oxtitle$suffix ";
             $oDB = oxDb::getDb();
+            $suffix = oxLang::getInstance()->getLanguageTag( $this->_iEditLang);
+
+            $sSelect  = "select oxcategory2attribute.oxid, oxattribute.oxtitle$suffix from oxcategory2attribute, oxattribute ";
+            $sSelect .= "where oxcategory2attribute.oxobjectid=".$oDB->quote( $sChosenCatId )." and oxattribute.oxid=oxcategory2attribute.oxattrid ";
+            $sSelect .= "order by oxcategory2attribute.oxsort, oxattribute.oxpos, oxattribute.oxtitle$suffix ";
+
             $aList = array();
             $rs = $oDB->selectLimit( $sSelect, 1000, 0);
             if ($rs != false && $rs->recordCount() > 0) {
@@ -124,10 +126,10 @@ class Attribute_Category extends oxAdminDetails
                 foreach ( $aList as $iNum => $aItem) {
                     if ( $aItem[0] == $sFItmId && $iNum > 0) {
                         //echo "$iNum + ".sizeof($aObjectId)." - 1";
-                        $sSelect = "update $sTable set $sTable.oxsort=".( $iNum + count($aObjectId) - 1 )." where $sTable.oxid='".$aList[$iNum-1][0]."'";
+                        $sSelect = "update $sTable set $sTable.oxsort=".( $iNum + count($aObjectId) - 1 )." where $sTable.oxid=".$oDB->quote( $aList[$iNum-1][0] );
                         $oDB->execute( $sSelect);
                         foreach ( $aObjectId as $iSNum => $sItem) {
-                            $sSelect = "update $sTable set $sTable.oxsort=".( $iNum + $iSNum - 1)." where $sTable.oxid='".$sItem."'";
+                            $sSelect = "update $sTable set $sTable.oxsort=".( $iNum + $iSNum - 1)." where $sTable.oxid=".$oDB->quote( $sItem );
                             $oDB->execute( $sSelect);
                         }
                         break;
@@ -138,10 +140,10 @@ class Attribute_Category extends oxAdminDetails
                 $sFItmId = $aObjectId[count($aObjectId)-1];
                 foreach ( $aList as $iNum => $aItem) {
                     if ( $aItem[0] == $sFItmId && $iNum < (count($aList)-1)) {
-                        $sSelect = "update $sTable set $sTable.oxsort=".( $iNum - count($aObjectId) + 1 )." where $sTable.oxid='".$aList[$iNum+1][0]."'";
+                        $sSelect = "update $sTable set $sTable.oxsort=".( $iNum - count($aObjectId) + 1 )." where $sTable.oxid=".$oDB->quote( $aList[$iNum+1][0] );
                         $oDB->execute( $sSelect);
                         foreach ( $aObjectId as $iSNum => $sItem) {
-                            $sSelect = "update $sTable set $sTable.oxsort=".( $iNum - (count($aObjectId)-$iSNum) + 2 )." where $sTable.oxid='".$sItem."'";
+                            $sSelect = "update $sTable set $sTable.oxsort=".( $iNum - (count($aObjectId)-$iSNum) + 2 )." where $sTable.oxid=".$oDB->quote( $sItem );
                             $oDB->execute( $sSelect);
                         }
                         break;
@@ -200,7 +202,7 @@ class Attribute_Category extends oxAdminDetails
             // updates sorting
             foreach ( $aList as $iNum => $aItem) {
                 if ( $aItem[1] != $iNum) {
-                    $sSelect = "update $sTable set $sTable.oxsort=$iNum where $sTable.oxid='".$aItem[0]."'";
+                    $sSelect = "update $sTable set $sTable.oxsort=$iNum where $sTable.oxid=".$oDB->quote( $aItem[0] );
                     $oDB->execute( $sSelect);
                 }
             }

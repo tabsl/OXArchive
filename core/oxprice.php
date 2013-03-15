@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxprice.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxprice.php 22268 2009-09-10 14:36:51Z arvydas $
  */
 
 /**
@@ -419,5 +419,18 @@ class oxPrice extends oxSuperCfg
 
         // rounding brutto price value after each operation
         $this->_dBrutto = oxUtils::getInstance()->fRound( $this->_dBrutto );
+    }
+
+    /**
+     * Returns price multiplied by current currency
+     *
+     * @param string $dPrice price value
+     *
+     * @return double
+     */
+    public static function getPriceInActCurrency( $dPrice )
+    {
+        $oCur = oxConfig::getInstance()->getActShopCurrencyObject();
+        return ( ( double ) $dPrice ) * $oCur->rate;
     }
 }

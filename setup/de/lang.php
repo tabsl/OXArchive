@@ -19,7 +19,7 @@
  * @package setup
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 20809 2009-07-13 10:00:20Z arvydas $
+ * $Id: lang.php 22591 2009-09-24 07:09:30Z vilma $
  */
 
 $aLang = array(
@@ -103,6 +103,7 @@ $aLang = array(
                                                       Bertoldstr. 48<br>
                                                       79098 Freiburg<br>
                                                       Deutschland<br>",
+'STEP_1_CHECK_UPDATES'                            => 'Regelmaßig überprüfen, ob Updates vorhanden sind',
 'BUTTON_BEGIN_INSTALL'                            => "Shopinstallation beginnen",
 'BUTTON_PROCEED_INSTALL'                          => "Setup beginnen",
 
@@ -177,6 +178,8 @@ $aLang = array(
 'PRIVACY_POLICY'                                  => "Datenschutzerl&auml;uterungen",
 
 'LOAD_DYN_CONTENT_NOTICE'                         => "<p>Falls die Option &quot;Weitere Informationen&quot; nachladen eingeschaltet ist, sehen Sie ein zus&auml;tzliches Men&uuml; im Admin Bereich Ihres OXID eShops.</p><p>Mittels dieses Men&uuml;s erhalten Sie weitere Informationen &uuml;ber E-Commerce Services wie z.B. Google Produktsuche oder econda.</p> <p>Sie k&ouml;nnen diese Einstellung im Admin Bereich jederzeit wieder &auml;ndern.</p>",
+'ERROR_SETUP_CANCELLED'                           => "Das Setup wurde abgebrochen, weil Sie die Lizenzvereinbarungen nicht akzeptiert haben.",
+'BUTTON_START_INSTALL'                            => "Setup erneut starten",
 
 );
 

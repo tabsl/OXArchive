@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: statistic_main.php 17243 2009-03-16 15:16:57Z arvydas $
+ * $Id: statistic_main.php 22452 2009-09-21 08:28:12Z arvydas $
  */
 
 /**
@@ -69,37 +69,32 @@ class Statistic_Main extends oxAdminDetails
         }
 
         // setting all reports data: check for reports and load them
-        $sPath     = getShopBasePath().$myConfig->getConfigParam( 'sAdminDir' )."/reports";
-        $iLanguage = oxConfig::getParameter("editlanguage");
-        if ( !isset( $iLanguage))
-            $iLanguage = 0;
+        $sPath     = getShopBasePath().$myConfig->getConfigParam( 'sAdminDir' ) . "/reports";
+        $iLanguage = (int) oxConfig::getParameter("editlanguage");
         $aAllreports = array();
 
-        $handle = opendir( $sPath);
-        while ( false !== ( $file = readdir( $handle ) ) ) {
-            if ( $file != '.' && $file != '..' && !is_dir( $sPath."/".$file)) {
-                include $sPath."/".$file;
+        $aReportFiles = glob( $sPath."/*.php" );
+        foreach ( $aReportFiles as $sFile ) {
+            if ( is_file( $sFile ) && !is_dir( $sFile ) ) {
 
-                $sConst = strtoupper( str_replace( '.php', '', $file ) );
+                $sConst = strtoupper( str_replace( '.php', '', basename( $sFile ) ) );
 
                 // skipping base report class
                 if ( $sConst == 'REPORT_BASE') {
                     continue;
                 }
 
-                $sName = $oLang->translateString( $sConst, $iLanguage );
+                include $sFile;
 
-                $oItem = new stdClass();
-                $oItem->filename = $file.$i;
-                $oItem->name     = $sName.$i;
+                $oItem = new oxStdClass();
+                $oItem->filename = basename( $sFile );
+                $oItem->name     = $oLang->translateString( $sConst, $iLanguage );
                 $aAllreports[]   = $oItem;
             }
         }
-        closedir($handle);
 
         // setting reports data
         oxSession::setVar( "allstat_reports", $aAllreports);
-
         oxSession::setVar( "stat_reports_$soxId", $aReports);
 
         // passing assigned reports count
@@ -137,6 +132,7 @@ class Statistic_Main extends oxAdminDetails
             $aParams['oxstatistics__oxid'] = null;
 
         $aAllreports = oxSession::getVar( "stat_reports_$soxId");
+
         $aParams['oxstatistics__oxshopid'] = $sShopID;
         $oStat->setReports($aAllreports);
         $oStat->assign($aParams);
@@ -157,49 +153,50 @@ class Statistic_Main extends oxAdminDetails
     {
         $myConfig  = $this->getConfig();
 
-        $soxId       = oxConfig::getParameter( "oxid");
-        $aAllreports = oxSession::getVar( "stat_reports_$soxId");
+        $soxId = oxConfig::getParameter( "oxid" );
 
-        $sPath          = getShopBasePath().$myConfig->getConfigParam( 'sAdminDir' )."/reports";
+        // load object
+        $oStat = oxNew( "oxstatistic" );
+        $oStat->load( $soxId );
+
+        $aAllreports = $oStat->getReports();
 
         $oShop = oxNew( "oxshop" );
         $oShop->load( $myConfig->getShopId());
-        $oShop = $this->addGlobalParams( $oShop);
+        $oShop = $this->addGlobalParams( $oShop );
 
-        $myUtilsView = oxUtilsView::getInstance();
-        $myUtilsView->getSmarty()->assign( "shop", $oShop );
-
-        $sTime_from = oxConfig::getParameter( "time_from");
-        $sTime_to   = oxConfig::getParameter( "time_to");
-        if ( isset( $sTime_from) && $sTime_from && isset( $sTime_to) && $sTime_to) {
-              $sTime_from = oxUtilsDate::getInstance()->formatDBDate( $sTime_from, true);
-            $sTime_from = date( "Y-m-d", strtotime( $sTime_from));
-            $sTime_to = oxUtilsDate::getInstance()->formatDBDate( $sTime_to, true);
-            $sTime_to = date( "Y-m-d", strtotime( $sTime_to));
+        $sTime_from = oxConfig::getParameter( "time_from" );
+        $sTime_to   = oxConfig::getParameter( "time_to" );
+        if ( $sTime_from && $sTime_to ) {
+            $sTime_from = oxUtilsDate::getInstance()->formatDBDate( $sTime_from, true );
+            $sTime_from = date( "Y-m-d", strtotime( $sTime_from ) );
+            $sTime_to = oxUtilsDate::getInstance()->formatDBDate( $sTime_to, true );
+            $sTime_to = date( "Y-m-d", strtotime( $sTime_to ) );
         } else {
-             $dDays         = oxConfig::getParameter( "timeframe");
-            $dNow          = time();
-            $sTime_from  = date( "Y-m-d", mktime( 0, 0, 0, date( "m", $dNow), date( "d", $dNow) - $dDays, date( "Y", $dNow)));
-            $sTime_to       = date( "Y-m-d", time());
+            $dDays = oxConfig::getParameter( "timeframe" );
+            $dNow  = time();
+            $sTime_from = date( "Y-m-d", mktime( 0, 0, 0, date( "m", $dNow ), date( "d", $dNow ) - $dDays, date( "Y", $dNow ) ) );
+            $sTime_to   = date( "Y-m-d", time() );
         }
 
-        $oSmarty = $myUtilsView->getSmarty();
+        $oSmarty = oxUtilsView::getInstance()->getSmarty();
         $oSmarty->assign( "time_from", $sTime_from." 23:59:59" );
         $oSmarty->assign( "time_to", $sTime_to." 23:59:59" );
+        $oSmarty->assign( "shop", $oShop );
 
         echo( $oSmarty->fetch( "report_pagehead.tpl" ) );
-
         foreach ( $aAllreports as $file ) {
-            if ( !trim( $file ) ) {
-                continue;
+            if ( ( $file = trim( $file ) ) ) {
+                $sClassName = str_replace( ".php", "", strtolower( $file ) );
+
+                $oReport = oxNew( $sClassName );
+                $oReport->setSmarty( $oSmarty );
+
+                $oSmarty->assign( "oView", $oReport );
+                echo( $oSmarty->fetch( $oReport->render() ) );
             }
-
-            $sClassName = str_replace( ".php", "", strtolower($file));
-
-            $oReport = oxNew( $sClassName );
-
-            echo( $oSmarty->fetch( $oReport->render() ) );
         }
+
         echo( $oSmarty->fetch( "report_bottomitem.tpl" ) );
         exit();
     }

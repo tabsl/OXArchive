@@ -7,33 +7,34 @@
 [{/if}]
 
 <ul class="req">
-    [{ oxmultilang ident="SYSREQ_DESCRIPTION_REQ" }]:
+    <h3>[{ oxmultilang ident="SYSREQ_DESCRIPTION_REQ" }]:</h3>
     [{foreach from=$aInfo item=aModules key=sGroupName}]
     <li class='group'>[{ oxmultilang ident="SYSREQ_"|cat:$sGroupName|oxupper }]
         [{foreach from=$aModules item=iModuleState key=sModule}]
-	        <ul>
-	            [{assign var="class" value=$oView->getModuleClass($iModuleState)}]
-	            <li id="[{$sModule}]" class="[{ $class }]">[{ oxmultilang ident="SYSREQ_"|cat:$sModule|oxupper }]</li>
-	        </ul>
+            <ul>
+                [{assign var="class" value=$oView->getModuleClass($iModuleState)}]
+                <li id="[{$sModule}]" class="[{ $class }]">[{ oxmultilang ident="SYSREQ_"|cat:$sModule|oxupper }]</li>
+            </ul>
         [{/foreach}]
     </li>
     [{/foreach}]
     <li class="clear"></li>
 </ul>
 
-[{if $aCollations}]
-	<ul class="req">[{ oxmultilang ident="SYSREQ_DESCRIPTION_COLL" }]:
-	    [{foreach from=$aCollations item=aColumns key=sTable}]
-	    <li class="coll">[{ $sTable }]
-	        [{foreach from=$aColumns item=sCollation key=sColumn}]
-	            <ul>
-	                <li id="[{$sColumn}]" class="fail">[{ $sColumn }] - [{ $sCollation }]</li>
-	            </ul>
-	        [{/foreach}]
-	    </li>
-	    [{/foreach}]
-	    <li class="clear"></li>
-	</ul>
+[{if !$aCollations}]
+    <ul class="req">
+        <h3>[{ oxmultilang ident="SYSREQ_DESCRIPTION_COLL" }]:</h3>
+        [{foreach from=$aCollations item=aColumns key=sTable}]
+        <li class="coll">[{ $sTable }]
+            [{foreach from=$aColumns item=sCollation key=sColumn}]
+                <ul>
+                    <li id="[{$sColumn}]" class="fail">[{ $sColumn }] - [{ $sCollation }]</li>
+                </ul>
+            [{/foreach}]
+        </li>
+        [{/foreach}]
+        <li class="clear"></li>
+    </ul>
 [{/if}]
 
 <ul class="req">

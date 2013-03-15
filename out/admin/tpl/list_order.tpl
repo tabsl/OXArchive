@@ -139,7 +139,7 @@ function editThis( sID )
 <script type="text/javascript">
 if (parent.parent)
 {   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->getRawValue()|oxaddslashes}]";
-    parent.parent.sMenuItem    = "";
+    parent.parent.sMenuItem    = "[{ oxmultilang ident="ORDER_LIST_MENUITEM" }]";
     parent.parent.sMenuSubItem = "[{ oxmultilang ident="snporderlistheader" }]";
     parent.parent.sWorkArea    = "[{$_act}]";
     parent.parent.setTitle();

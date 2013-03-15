@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: category_order.inc.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: category_order.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -61,13 +61,13 @@ class ajaxComponent extends ajaxListComponent
         if ( $sSynchOxid  = oxConfig::getParameter( 'synchoxid' ) ) {
             $sQAdd  = " from $sArtTable left join $sO2CView on $sArtTable.oxid=$sO2CView.oxobjectid where $sO2CView.oxcatnid = '$sSynchOxid' ";
             if ( $aSkipArt = oxSession::getVar( 'neworder_sess' ) ) {
-                $sQAdd .= " and $sArtTable.oxid not in ( '".implode( "', '", $aSkipArt )."' ) ";
+                $sQAdd .= " and $sArtTable.oxid not in ( ".implode( ", ", oxDb::getInstance()->quoteArray( $aSkipArt ) )." ) ";
             }
         } else {
             // which fields to load ?
             $sQAdd  = " from $sArtTable where ";
             if ( $aSkipArt = oxSession::getVar( 'neworder_sess') ) {
-                $sQAdd .= " $sArtTable.oxid in ( '".implode( "', '", $aSkipArt )."' ) ";
+                $sQAdd .= " $sArtTable.oxid in ( ".implode( ", ", oxDb::getInstance()->quoteArray( $aSkipArt ) )." ) ";
             } else {
                 $sQAdd .= " 1 = 0 ";
             }
@@ -91,7 +91,7 @@ class ajaxComponent extends ajaxListComponent
             $sArtTable = getViewName( 'oxarticles' );
             $sSep = '';
             foreach ( $aSkipArt as $sId ) {
-                $sOrderBy = " $sArtTable.oxid='$sId' ".$sSep.$sOrderBy;
+                $sOrderBy = " $sArtTable.oxid=" . oxDb::getDb()->quote( $sId ) . " ".$sSep.$sOrderBy;
                 $sSep = ", ";
             }
             $sOrder = "order by ".$sOrderBy;
@@ -125,7 +125,7 @@ class ajaxComponent extends ajaxListComponent
             // checking if all articles were moved from one
             $sSelect  = "select 1 from $sArticleTable left join $sO2CView on $sArticleTable.oxid=$sO2CView.oxobjectid ";
             $sSelect .= "where $sO2CView.oxcatnid = '$soxId' and $sArticleTable.oxparentid = '' and $sArticleTable.oxid ";
-            $sSelect .= "not in ( '".implode( "', '", $aSkipArt )."' ) ";
+            $sSelect .= "not in ( ".implode( ", ", oxDb::getInstance()->quoteArray( $aSkipArt ) )." ) ";
 
             // simply echoing "1" if some items found, and 0 if nothing was found
             echo (int) oxDb::getDb()->getOne( $sSelect );
@@ -162,7 +162,7 @@ class ajaxComponent extends ajaxListComponent
             // checking if all articles were moved from one
             $sSelect  = "select 1 from $sArticleTable left join $sO2CView on $sArticleTable.oxid=$sO2CView.oxobjectid ";
             $sSelect .= "where $sO2CView.oxcatnid = '$soxId' and $sArticleTable.oxparentid = '' and $sArticleTable.oxid ";
-            $sSelect .= "not in ( '".implode( "', '", $aOrdArt )."' ) ";
+            $sSelect .= "not in ( ".implode( ", ", oxDb::getInstance()->quoteArray( $aOrdArt ) )." ) ";
 
             // simply echoing "1" if some items found, and 0 if nothing was found
             echo (int) oxDb::getDb()->getOne( $sSelect );
@@ -183,7 +183,7 @@ class ajaxComponent extends ajaxListComponent
             $aNewOrder = oxSession::getVar( "neworder_sess" );
             if ( is_array( $aNewOrder ) && count( $aNewOrder ) ) {
                 $sO2CView = getViewName('oxobject2category');
-                $sSelect =  "select * from $sO2CView where $sO2CView.oxcatnid='".$oCategory->getId()."' and $sO2CView.oxobjectid in ('".implode( "', '", $aNewOrder )."' )";
+                $sSelect =  "select * from $sO2CView where $sO2CView.oxcatnid='".$oCategory->getId()."' and $sO2CView.oxobjectid in (".implode( ", ", oxDb::getInstance()->quoteArray( $aNewOrder ) )." )";
                 $oList = oxNew( "oxlist" );
                 $oList->init( "oxbase", "oxobject2category" );
                 $oList->selectString( $sSelect );

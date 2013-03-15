@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcontentlist.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxcontentlist.php 22541 2009-09-22 13:05:49Z sarunas $
  */
 
 /**
@@ -86,6 +86,7 @@ class oxContentList extends oxList
     protected function _loadMenue( $iType, $sSQLAdd = null )
     {
         // load them
+        $iType = (int)$iType;
         $this->selectString( "select * from oxcontents where ".oxDb::getInstance()->getMultiLangFieldName( 'oxactive').
         " = '1' and oxtype = '$iType' and oxsnippet = '0' and oxshopid = '$this->_sShopID' $sSQLAdd order by oxloadid" );
     }

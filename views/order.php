@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: order.php 21594 2009-08-14 12:04:44Z rimvydas.paskevicius $
+ * $Id: order.php 22381 2009-09-17 13:11:50Z vilma $
  */
 
 /**
@@ -263,6 +263,10 @@ class Order extends oxUBase
                 return $this->_getNextStep( $iSuccess );
             } catch ( oxOutOfStockException $oEx ) {
                 oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true, 'basket' );
+            } catch ( oxNoArticleException $oEx ) {
+                oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
+            } catch ( oxArticleInputException $oEx ) {
+                oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
             }
         }
     }

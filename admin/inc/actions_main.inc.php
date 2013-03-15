@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: actions_main.inc.php 17479 2009-03-20 12:32:53Z arvydas $
+ * $Id: actions_main.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -91,6 +91,23 @@ class ajaxComponent extends ajaxListComponent
     }
 
     /**
+     * Return fully formatted query for data loading
+     *
+     * @param string $sQ part of initial query
+     *
+     * @return string
+     */
+    protected function _getDataQuery( $sQ )
+    {
+        $sArtTable = getViewName('oxarticles');
+        $sQ = parent::_getDataQuery( $sQ );
+
+        // display variants or not ?
+        $sQ .= $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ? ' group by '.$sArtTable.'.oxid ' : '';
+        return $sQ;
+    }
+
+    /**
      * Returns SQL query addon for sorting
      *
      * @return string
@@ -115,7 +132,7 @@ class ajaxComponent extends ajaxListComponent
             $sQ = $this->_addFilter( "delete oxactions2article.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
         } elseif ( is_array( $aChosenArt ) ) {
-            $sQ = "delete from oxactions2article where oxactions2article.oxid in ('" . implode( "', '", $aChosenArt ) . "') ";
+            $sQ = "delete from oxactions2article where oxactions2article.oxid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aChosenArt ) ) . ") ";
             oxDb::getDb()->Execute( $sQ );
         }
     }
@@ -167,7 +184,7 @@ class ajaxComponent extends ajaxListComponent
         $sArtTable = getViewName('oxarticles');
         $sSelId  = oxConfig::getParameter( 'oxid' );
         $sSelect  = "select * from $sArtTable left join oxactions2article on $sArtTable.oxid=oxactions2article.oxartid ";
-        $sSelect .= "where oxactions2article.oxactionid = '$sSelId' and oxactions2article.oxshopid = '".$myConfig->getShopID()."' ".$this->_getSorting();
+        $sSelect .= "where oxactions2article.oxactionid = " . oxDb::getDb()->quote( $sSelId ) . " and oxactions2article.oxshopid = '".$myConfig->getShopID()."' ".$this->_getSorting();
 
         $oList = oxNew( "oxlist" );
         $oList->init( "oxbase", "oxactions2article" );

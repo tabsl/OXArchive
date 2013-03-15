@@ -84,3 +84,4 @@ Disallow: /*?listtype=vendor
 Disallow: /*&listtype=vendor
 Disallow: /*?cur=
 Disallow: /*&cur
+Disallow: /EXCEPTION_LOG.txt

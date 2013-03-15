@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxstart.php 20794 2009-07-12 14:57:32Z tomas $
+ * $Id: oxstart.php 22096 2009-09-02 14:12:06Z sarunas $
  */
 
 /**

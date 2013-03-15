@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: register.php 19252 2009-05-21 07:52:04Z arvydas $
+ * $Id: register.php 21711 2009-08-19 15:03:40Z tomas $
  */
 
 /**
@@ -140,8 +140,7 @@ class Register extends User
             if ( $oUser = $this->getUser() ) {
                 $sAddressId = $oUser->getSelectedAddress();
                 if ( $sAddressId && $sAddressId != '-1' ) {
-                    $this->_oDelAddress = oxNew( 'oxbase' );
-                    $this->_oDelAddress->init( 'oxaddress' );
+                    $this->_oDelAddress = oxNew( 'oxaddress' );
                     $this->_oDelAddress->load( $sAddressId );
                 }
             }

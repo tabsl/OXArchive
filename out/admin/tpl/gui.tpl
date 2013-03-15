@@ -173,6 +173,16 @@
         });
     </script>
 
+    <script type="text/javascript">
+    if (parent.parent)
+    {   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->getRawValue()|oxaddslashes}]";
+        parent.parent.sMenuItem    = "[{ oxmultilang ident="GUI_LIST_MENUITEM" }]";
+        parent.parent.sMenuSubItem = "[{ oxmultilang ident="GUI_LIST_MENUSUBITEM" }]";
+        parent.parent.sWorkArea    = "[{$_act}]";
+        parent.parent.setTitle();
+    }
+    </script>
+
     <iframe id="gui-preview" name="preview" src="[{$shop->currenthomedir}]" width="100%" height="99%" frameborder="no">
 
 </body>

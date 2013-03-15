@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: dyn_ipayment.php 17479 2009-03-20 12:32:53Z arvydas $
+ * $Id: dyn_ipayment.php 22483 2009-09-22 06:55:52Z arvydas $
  */
 /**
  * Includes configuration class.
@@ -84,15 +84,16 @@ class dyn_ipayment extends Shop_Config
         $aRemovePayment = oxConfig::getParameter( "addpayments");
 
         if ( isset( $aRemovePayment) && is_array($aRemovePayment) && count($aRemovePayment)) {
+            $oDb = oxDb::getDb();
             $sQ  = "delete from oxobject2ipayment where oxobject2ipayment.oxshopid='".$myConfig->getShopId()."' ";
             $sQ .= "and oxobject2ipayment.oxid in (";
             $blSep = false;
             foreach ($aRemovePayment as $sRem) {
-                $sQ .= ( ( $blSep ) ? ", ":"" ) . " '$sRem'";
+                $sQ .= ( ( $blSep ) ? ", ":"" ) . " ".$oDb->quote( $sRem );
                 $blSep = true;
             }
             $sQ .= ")";
-            oxDb::getDb()->Execute( $sQ);
+            $oDb->execute( $sQ);
         }
     }
 
@@ -111,7 +112,7 @@ class dyn_ipayment extends Shop_Config
         $oActPayment->init( "oxobject2ipayment" );
 
         $sQ  = "select * from oxobject2ipayment where oxobject2ipayment.oxshopid='".$myConfig->getShopId()."'
-                and oxobject2ipayment.oxid = '$sActPayment' ";
+                and oxobject2ipayment.oxid = ".oxDb::getDb()->quote( $sActPayment );
 
         if ( $oActPayment->assignRecord( $sQ ) && is_array( $aParams ) ) {
             foreach ( $aParams as $sField => $sValue ) {

@@ -60,7 +60,7 @@ class oxOpenIdDb extends Auth_OpenID_OpenIDStore
 
     /**
      * Class constructor
-     * 
+     *
      * @return null
      */
     public function __construct()
@@ -77,15 +77,15 @@ class oxOpenIdDb extends Auth_OpenID_OpenIDStore
      *
      * @param string $sServerUrl   the URL of the identity server
      * @param object $oAssociation the Association to store
-     * 
+     *
      * @return null
      */
     public function storeAssociation($sServerUrl, $oAssociation)
     {
         $sSql  = "REPLACE INTO " . $this->_sAssociationsTable . " (server_url,handle,secret,issued,lifetime,assoc_type)";
-        $sSql .= " VALUES ('$sServerUrl','".$oAssociation->handle."','";
-        $sSql .= $this->blobEncode($oAssociation->secret)."','".$oAssociation->issued."','";
-        $sSql .= $oAssociation->lifetime."','".$oAssociation->assoc_type."')";
+        $sSql .= " VALUES (".$this->_oDB->quote( $sServerUrl ).",".$this->_oDB->quote( $oAssociation->handle ).",'";
+        $sSql .= $this->blobEncode($oAssociation->secret)."', ".$this->_oDB->quote( $oAssociation->issued ).", ";
+        $sSql .= $this->_oDB->quote( $oAssociation->lifetime ).", ".$this->_oDB->quote( $oAssociation->assoc_type ).")";
 
         $this->_oDB->execute($sSql);
     }
@@ -107,7 +107,7 @@ class oxOpenIdDb extends Auth_OpenID_OpenIDStore
         }
 
         $sSql  = "DELETE FROM ".$this->_sAssociationsTable;
-        $sSql .= " WHERE server_url = '".$sServerUrl."' AND handle = '".$sHandle."'";
+        $sSql .= " WHERE server_url = ".$this->_oDB->quote( $sServerUrl )." AND handle = ".$this->_oDB->quote( $sHandle );
         $this->_oDB->execute($sSql);
 
         return true;
@@ -138,7 +138,7 @@ class oxOpenIdDb extends Auth_OpenID_OpenIDStore
             $aAssocs = array();
             if ( $aRes->recordCount() > 0 ) {
                 $aAssocRow = $aRes->fields;
-                $oAssoc = new Auth_OpenID_Association($aAssocRow['0'], 
+                $oAssoc = new Auth_OpenID_Association($aAssocRow['0'],
                                                  $aAssocRow['1'],
                                                  $aAssocRow['2'],
                                                  $aAssocRow['3'],
@@ -159,7 +159,7 @@ class oxOpenIdDb extends Auth_OpenID_OpenIDStore
                 return null;
             }
             $aAssocRow = $aAssocs->fields;
-            $oAssoc = new Auth_OpenID_Association($aAssocRow['0'], 
+            $oAssoc = new Auth_OpenID_Association($aAssocRow['0'],
                                              $aAssocRow['1'],
                                              $aAssocRow['2'],
                                              $aAssocRow['3'],
@@ -211,7 +211,7 @@ class oxOpenIdDb extends Auth_OpenID_OpenIDStore
             return false;
         }
         $sSql = "INSERT INTO " . $this->_sNoncesTable . " (server_url, timestamp, salt) ";
-        $sSql.= "VALUES ('$sServerUrl', '$sTimestamp', '$sSalt')";
+        $sSql.= "VALUES (".$this->_oDB->quote( $sServerUrl ).", ".$this->_oDB->quote( $sTimestamp ).", ".$this->_oDB->quote( $sSalt ).")";
         $this->_oDB->execute($sSql);
         return true;
     }
@@ -243,7 +243,7 @@ class oxOpenIdDb extends Auth_OpenID_OpenIDStore
     /**
      * Resets the store by removing all records from the store's
      * tables.
-     * 
+     *
      * @return null
      */
     public function reset()
@@ -285,7 +285,7 @@ class oxOpenIdDb extends Auth_OpenID_OpenIDStore
     }
 
     /**
-     * This method selects an association that matches the server URL and, 
+     * This method selects an association that matches the server URL and,
      * if specified, handle.
      *
      * @param string $sServerUrl the URL of the identity server
@@ -296,7 +296,7 @@ class oxOpenIdDb extends Auth_OpenID_OpenIDStore
     protected function _getAssoc($sServerUrl, $sHandle)
     {
         $sSql  = "SELECT handle, secret, issued, lifetime, assoc_type FROM ".$this->_sAssociationsTable;
-        $sSql .= " WHERE server_url = '".$sServerUrl."' AND handle = '".$sHandle."'";
+        $sSql .= " WHERE server_url = ".$this->_oDB->quote( $sServerUrl )." AND handle = ".$this->_oDB->quote( $sHandle );
         $aRes = $this->_oDB->execute($sSql);
         if ($aRes) {
             return $aRes;
@@ -315,7 +315,7 @@ class oxOpenIdDb extends Auth_OpenID_OpenIDStore
     protected function _getAssocs($sServerUrl)
     {
         $sSql  = "SELECT handle, secret, issued, lifetime, assoc_type FROM ".$this->_sAssociationsTable;
-        $sSql .= " WHERE server_url = '".$sServerUrl."'";
+        $sSql .= " WHERE server_url = ".$this->_oDB->quote( $sServerUrl );
         $aRes = $this->_oDB->execute($sSql);
         if ($aRes) {
             return $aRes;
@@ -347,5 +347,5 @@ class oxOpenIdDb extends Auth_OpenID_OpenIDStore
     {
         return base64_decode($sSecret);
     }
-    
+
 }

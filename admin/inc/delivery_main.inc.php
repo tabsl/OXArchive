@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: delivery_main.inc.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: delivery_main.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -84,7 +84,7 @@ class ajaxComponent extends ajaxListComponent
             oxDb::getDb()->Execute( $sQ );
 
         } elseif ( is_array( $aChosenCntr ) ) {
-            $sQ = "delete from oxobject2delivery where oxobject2delivery.oxid in ('" . implode( "', '", $aChosenCntr ) . "') ";
+            $sQ = "delete from oxobject2delivery where oxobject2delivery.oxid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aChosenCntr ) ) . ") ";
             oxDb::getDb()->Execute( $sQ );
         }
     }

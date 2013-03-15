@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: shop_main.php 20866 2009-07-14 14:53:35Z arvydas $
+ * $Id: shop_main.php 22589 2009-09-24 04:48:28Z alfonsas $
  */
 
 
@@ -102,8 +102,16 @@ class Shop_Main extends oxAdminDetails
 
         $oShop = oxNew( "oxshop" );
 
+
+        $isubjlang = oxConfig::getParameter("subjlang");
+        if ( $isubjlang && $isubjlang > 0 ) {
+            $iLang = $isubjlang;
+        } else {
+            $iLang = 0;
+        }
+
         if ( $soxId != "-1") {
-            $oShop->loadInLang( 0, $soxId );
+            $oShop->loadInLang( $iLang, $soxId );
         } else {
                 $aParams['oxshops__oxid'] = null;
         }
@@ -112,20 +120,19 @@ class Shop_Main extends oxAdminDetails
             $aParams['oxshops__oxsmtp'] = trim($aParams['oxshops__oxsmtp']);
         }
 
+        $oShop->setLanguage(0);
         //$aParams = $oShop->ConvertNameArray2Idx( $aParams);
         $oShop->assign( $aParams);
+        $oShop->setLanguage($iLang);
 
         $sNewSMPTPass = oxConfig::getParameter( "oxsmtppwd");
 
-        if ($sNewSMPTPass)
+        if ($sNewSMPTPass) {
             $oShop->oxshops__oxsmtppwd->setValue($sNewSMPTPass);
+        }
         //unsetting password
-        if ($sNewSMPTPass == '-')
+        if ($sNewSMPTPass == '-') {
             $oShop->oxshops__oxsmtppwd->setValue("");
-
-        $isubjlang = oxConfig::getParameter("subjlang");
-        if ($isubjlang && $isubjlang > 0) {
-            $oShop->setLanguage($isubjlang);
         }
 
 

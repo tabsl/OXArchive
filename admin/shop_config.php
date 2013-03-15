@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: shop_config.php 21092 2009-07-22 14:42:13Z vilma $
+ * $Id: shop_config.php 22487 2009-09-22 07:03:10Z arvydas $
  */
 
 /**
@@ -65,23 +65,28 @@ class Shop_Config extends oxAdminDetails
             $this->_aViewData["edit"] = $oShop = $this->_getEditShop( $soxId );
 
             try {
-                // category choose list
-                $oCatTree = oxNew( "oxCategoryList" );
-                $oCatTree->buildList($myConfig->getConfigParam( 'bl_perfLoadCatTree' ));
-
-                foreach($oCatTree as $key => $val) {
-                    if ( $val->oxcategories__oxid->value == $oShop->oxshops__oxdefcat->value) {
-                        $val->selected = 1;
-                        $oCatTree[$key] = $val;
-                        break;
+                // category choosen as default
+                $this->_aViewData["defcat"] = null;
+                if ($oShop->oxshops__oxdefcat->value) {
+                    $oCat = oxNew( "oxCategory" );
+                    if ($oCat->load($oShop->oxshops__oxdefcat->value)) {
+                        $this->_aViewData["defcat"] = $oCat;
                     }
                 }
-                $this->_aViewData["cattree"]     =  $oCatTree;
             } catch ( Exception $oExcp ) {
                 // on most cases this means that views are broken, so just
                 // outputting notice and keeping functionality flow ..
                 $this->_aViewData["updateViews"] = 1;
             }
+
+            $iAoc = oxConfig::getParameter("aoc");
+            if ( $iAoc == 1 ) {
+                include_once 'inc/shop_default_category.inc.php';
+                $this->_aViewData['oxajax'] = $aColumns;
+
+                return "popups/shop_default_category.tpl";
+            }
+
         }
 
         // check if we right now saved a new entry
@@ -92,8 +97,8 @@ class Shop_Config extends oxAdminDetails
         $aConfArrs = array();
         $aConfAarrs = array();
 
-
-        $rs = oxDb::getDb()->Execute("select oxvarname, oxvartype, DECODE( oxvarvalue, '".$myConfig->getConfigParam( 'sConfigKey' )."') as oxvarvalue from oxconfig where oxshopid = '$soxId'");
+        $oDb = oxDb::getDb();
+        $rs = $oDb->Execute("select oxvarname, oxvartype, DECODE( oxvarvalue, ".$oDb->quote( $myConfig->getConfigParam( 'sConfigKey' ) ).") as oxvarvalue from oxconfig where oxshopid = '$soxId'");
         if ($rs != false && $rs->recordCount() > 0) {
             $oStr = getStr();
             while (!$rs->EOF) {

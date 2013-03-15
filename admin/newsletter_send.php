@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: newsletter_send.php 17627 2009-03-26 15:08:34Z arvydas $
+ * $Id: newsletter_send.php 22484 2009-09-22 06:57:02Z arvydas $
  */
 
 /**
@@ -29,6 +29,13 @@
  */
 class Newsletter_Send extends oxAdminList
 {
+    /**
+     * Mail sending errors array
+     *
+     * @var array
+     */
+    protected $_aMailErrors = array();
+
     /**
      * Executes parent method parent::render(), creates oxnewsletter object,
      * sends newsletter to users of chosen groups and returns name of template
@@ -77,7 +84,7 @@ class Newsletter_Send extends oxAdminList
             $sSearchKey = $sInGroup->oxgroups__oxid->value;
             if ( $blSep)
                 $sSelectGroups .= ",";
-            $sSelectGroups .= "'$sSearchKey'";
+            $sSelectGroups .= $oDB->quote( $sSearchKey );
             $blSep = true;
         }
         $sSelectGroups .= ") )";
@@ -121,8 +128,9 @@ class Newsletter_Send extends oxAdminList
                     $sShopID = oxSession::setVar( "keepalive", "yes");
                     $oRemark->oxremark__oxshopid   = new oxField($sShopID);
                     $oRemark->save();
-                } else
-                    echo( "problem sending to : ".$rs->fields[1]."<br>");
+                } else {
+                    $this->_aMailErrors[] = "problem sending to : ".$rs->fields[1]."<br>";
+                }
 
 
                    $rs->moveNext();
@@ -148,12 +156,22 @@ class Newsletter_Send extends oxAdminList
             // #493A - saving changes
             oxSession::setVar("_oNewsletter", $oCachedNewsletter);
         } else {
-               $sPage = "newsletter_done.tpl";
+           $sPage = "newsletter_done.tpl";
             // #493A - deleting cache variable
             oxSession::deleteVar("_oNewsletter");
         }
 
         return $sPage;
+    }
+
+    /**
+     * Returns newsletter mailing errors
+     *
+     * @return array
+     */
+    public function getMailErrors()
+    {
+        return $this->_aMailErrors;
     }
 
     /*

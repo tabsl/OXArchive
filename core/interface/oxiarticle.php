@@ -68,11 +68,12 @@ interface oxIArticle
     /**
      * Returns ID's of categories. where this article is assigned
      *
+     * @param bool $blActCats   select categories if all parents are active
      * @param bool $blSkipCache Whether to skip cache
      *
      * @return array
      */
-    public function getCategoryIds( $blSkipCache = false );
+    public function getCategoryIds( $blActCats = false, $blSkipCache = false );
 
     /**
      * Calculates and returns price of article (adds taxes and discounts).

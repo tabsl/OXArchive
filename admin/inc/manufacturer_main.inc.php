@@ -83,6 +83,23 @@ class ajaxComponent extends ajaxListComponent
     }
 
     /**
+     * Return fully formatted query for data loading
+     *
+     * @param string $sQ part of initial query
+     *
+     * @return string
+     */
+    protected function _getDataQuery( $sQ )
+    {
+        $sArtTable = getViewName('oxarticles');
+        $sQ = parent::_getDataQuery( $sQ );
+
+        // display variants or not ?
+        $sQ .= $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ? ' group by '.$sArtTable.'.oxid ' : '';
+        return $sQ;
+    }
+
+    /**
      * Removes article from Manufacturer config
      *
      * @return null
@@ -98,7 +115,7 @@ class ajaxComponent extends ajaxListComponent
         }
 
         if ( is_array(  $aRemoveArt ) ) {
-            $sSelect = "update oxarticles set oxmanufacturerid = null where oxid in ( '".implode("', '", $aRemoveArt )."') ";
+            $sSelect = "update oxarticles set oxmanufacturerid = null where oxid in ( ".implode(", ", oxDb::getInstance()->quoteArray( $aRemoveArt ) ).") ";
             oxDb::getDb()->Execute( $sSelect);
 
             $this->resetCounter( "manufacturerArticle", oxConfig::getParameter( 'oxid' ) );
@@ -123,7 +140,7 @@ class ajaxComponent extends ajaxListComponent
         }
 
         if ( $soxId && $soxId != "-1" && is_array( $aAddArticle ) ) {
-            $sSelect = "update oxarticles set oxmanufacturerid = '$soxId' where oxid in ( '".implode("', '", $aAddArticle )."' )";
+            $sSelect = "update oxarticles set oxmanufacturerid = '$soxId' where oxid in ( ".implode(", ", oxDb::getInstance()->quoteArray( $aAddArticle ) )." )";
 
             oxDb::getDb()->Execute( $sSelect);
             $this->resetCounter( "manufacturerArticle", $soxId );

@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: attribute_order.inc.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: attribute_order.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(
@@ -43,7 +43,7 @@ class ajaxComponent extends ajaxListComponent
         $sSelTable = getViewName('oxattribute');
         $sArtId    = oxConfig::getParameter( 'oxid' );
 
-        $sQAdd = " from $sSelTable left join oxcategory2attribute on oxcategory2attribute.oxattrid = $sSelTable.oxid where oxobjectid = '$sArtId' ";
+        $sQAdd = " from $sSelTable left join oxcategory2attribute on oxcategory2attribute.oxattrid = $sSelTable.oxid where oxobjectid = " . oxDb::getDb()->quote( $sArtId ) . " ";
 
         return $sQAdd;
     }
@@ -66,7 +66,7 @@ class ajaxComponent extends ajaxListComponent
     public function setSorting()
     {
         $sSelId  = oxConfig::getParameter( 'oxid' );
-        $sSelect = "select * from oxcategory2attribute where oxobjectid='$sSelId' order by oxsort";
+        $sSelect = "select * from oxcategory2attribute where oxobjectid= " . oxDb::getDb()->quote( $sSelId ) . " order by oxsort";
 
         $oList = oxNew( "oxlist" );
         $oList->init( "oxbase", "oxcategory2attribute" );

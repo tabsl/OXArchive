@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxadminview.php 21146 2009-07-28 11:13:14Z arvydas $
+ * $Id: oxadminview.php 22480 2009-09-21 15:19:33Z rimvydas.paskevicius $
  */
 
 /**
@@ -213,34 +213,41 @@ class oxAdminView extends oxView
     }
 
     /**
-     * Returns service URL
+     * Returns service url protocol: "https" is admin works in ssl mode, "http" if no ssl
      *
      * @return string
      */
-    public function getServiceUrl( $sLangAbbr=null )
+    protected function _getServiceProtocol()
     {
-        if ( !empty($this->_sServiceUrl) )
-            return $this->_sServiceUrl;
+        return $this->getConfig()->isSsl() ? 'https' : 'http';
+    }
 
-        $myConfig = $this->getConfig();
+    /**
+     * Returns service URL
+     *
+     * @param string $sLangAbbr language abbr.
+     *
+     * @return string
+     */
+    public function getServiceUrl( $sLangAbbr = null )
+    {
+        if ( $this->_sServiceUrl === null ) {
+
+            $sProtocol = $this->_getServiceProtocol();
 
 
 
-            $sUrl = 'http://admin.oxid-esales.com/CE/';
+                $sUrl = $sProtocol . '://admin.oxid-esales.com/CE/';
 
-        $sShopVersionNr = $this->_getShopVersionNr();
-        $sCountry = $this->_getCountryByCode( $myConfig->getConfigParam( 'sShopCountry' ) );
+            $sCountry = $this->_getCountryByCode( $this->getConfig()->getConfigParam( 'sShopCountry' ) );
 
-        if (!$iLang) {
-            $oLang = oxLang::getInstance();
-            $iLang = $oLang->getTplLanguage();
-            $aLanguages = $oLang->getLanguageArray();
-            $sLangAbbr = $aLanguages[$iLang]->abbr;
+            if ( !$sLangAbbr ) {
+                $oLang = oxLang::getInstance();
+                $sLangAbbr = $oLang->getLanguageAbbr( $oLang->getTplLanguage() );
+            }
+
+            $this->_sServiceUrl = $sUrl . $this->_getShopVersionNr()."/{$sCountry}/{$sLangAbbr}/";
         }
-
-        $sUrl .= "{$sShopVersionNr}/{$sCountry}/{$sLangAbbr}/";
-
-        $this->_sServiceUrl = $sUrl;
 
         return $this->_sServiceUrl;
     }
@@ -490,7 +497,7 @@ class oxAdminView extends oxView
         $sCountry = 'international';
 
         if ( !empty($sCountryCode) ) {
-            $sQ = "select oxtitle_1 from oxcountry where oxisoalpha2 = '$sCountryCode' ";
+            $sQ = "select oxtitle_1 from oxcountry where oxisoalpha2 = " . oxDb::getDb()->quote( $sCountryCode );
             $sCountry = oxDb::getDb()->getOne( $sQ );
         }
 

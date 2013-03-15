@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxselectlist.php 18115 2009-04-14 08:32:39Z sarunas $
+ * $Id: oxselectlist.php 22531 2009-09-22 12:30:48Z vilma $
  */
 
 /**
@@ -89,7 +89,8 @@ class oxSelectlist extends oxI18n
 
         // remove selectlists from articles also
         if ( $blRemove = parent::delete( $sOXID ) ) {
-            oxDb::getDb()->execute( "delete from oxobject2selectlist where oxselnid = '$sOXID' " );
+            $oDb = oxDb::getDb();
+            $oDb->execute( "delete from oxobject2selectlist where oxselnid = " . $oDb->quote( $sOXID ) . " " );
         }
 
         return $blRemove;

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxseoencoderarticle.php 21221 2009-07-31 12:41:23Z arvydas $
+ * $Id: oxseoencoderarticle.php 22590 2009-09-24 06:24:00Z alfonsas $
  */
 
 /**
@@ -256,8 +256,9 @@ class oxSeoEncoderArticle extends oxSeoEncoder
 
                 // looking in cache ..
                 if ( !isset( self::$_aTitleCache[$sParentId] ) ) {
-                    $sQ = "select oxtitle from oxarticles where oxid = '{$sParentId}'";
-                    self::$_aTitleCache[$sParentId] = oxDb::getDb()->getOne( $sQ );
+                    $oDb = oxDb::getDb();
+                    $sQ = "select oxtitle from oxarticles where oxid = ".$oDb->quote( $sParentId );
+                    self::$_aTitleCache[$sParentId] = $oDb->getOne( $sQ );
                 }
                 $sTitle = self::$_aTitleCache[$sParentId];
             }
@@ -423,15 +424,17 @@ class oxSeoEncoderArticle extends oxSeoEncoder
             $sArtId = $oArticle->oxarticles__oxparentid->value;
         }
 
-        // checking cache
         $oDb = oxDb::getDb( false );
+        $sArtIdQuoted = $oDb->quote( $sArtId );
+
+        // checking cache
         $sCatTable = getViewName('oxcategories');
 
         $sQ = "select distinct catroots.oxrootid
                 from oxobject2category as o2c
                 left join {$sCatTable} as catroots
                     on o2c.oxcatnid=catroots.oxid
-                where o2c.oxobjectid = '$sArtId'
+                where o2c.oxobjectid = $sArtIdQuoted
                 order by o2c.oxtime";
 
         $aRoots = $oDb->getAll($sQ);
@@ -440,13 +443,13 @@ class oxSeoEncoderArticle extends oxSeoEncoder
         foreach ($aRoots as $aRootId) {
             $sQ = "select node.* _depth from
                     ( select oxcatnid from oxobject2category
-                            where oxobjectid = '$sArtId' order by oxtime
+                            where oxobjectid = $sArtIdQuoted order by oxtime
                         ) as sub
                         left join {$sCatTable} as node
                             on sub.oxcatnid=node.oxid
                         join {$sCatTable} as parent
                             on node.oxrootid = parent.oxrootid
-                    where node.oxrootid = '{$aRootId[0]}'
+                    where node.oxrootid = ".$oDb->quote( $aRootId[0] )."
                         and node.oxleft between parent.oxleft and parent.oxright
                 group by node.oxid order by (count( parent.oxid ) ) desc limit 1";
 
@@ -468,7 +471,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
      */
     public function onDeleteArticle($oArticle)
     {
-        $sId = oxDb::getDb()->quote($oArticle->getId());
-        oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sId and oxtype = 'oxarticle'");
+        $sIdQuoted = oxDb::getDb()->quote($oArticle->getId());
+        oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxarticle'");
     }
 }

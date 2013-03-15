@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_crossselling.inc.php 18972 2009-05-12 13:14:18Z rimvydas.paskevicius $
+ * $Id: article_crossselling.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -58,6 +58,7 @@ class ajaxComponent extends ajaxListComponent
 
         $sSelId      = oxConfig::getParameter( 'oxid' );
         $sSynchSelId = oxConfig::getParameter( 'synchoxid' );
+        $oDb         = oxDb::getDb();
 
         // category selected or not ?
         if ( !$sSelId ) {
@@ -68,28 +69,28 @@ class ajaxComponent extends ajaxListComponent
             if ( $sSynchSelId && $sSelId != $sSynchSelId ) {
                 $sQAdd  = " from $sO2CView as oxobject2category left join $sArticleTable on ";
                 $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?" ($sArticleTable.oxid=oxobject2category.oxobjectid or $sArticleTable.oxparentid=oxobject2category.oxobjectid)":" $sArticleTable.oxid=oxobject2category.oxobjectid ";
-                $sQAdd .= " where oxobject2category.oxcatnid = '$sSelId' ";
+                $sQAdd .= " where oxobject2category.oxcatnid = " . $oDb->quote( $sSelId ) . " ";
             } else {
 
                 if ( $myConfig->getConfigParam( 'blBidirectCross' ) ) {
                     $sQAdd  = " from oxobject2article ";
                     $sQAdd .= " inner join $sArticleTable on ( oxobject2article.oxobjectid = $sArticleTable.oxid ";
                     $sQAdd .= " or oxobject2article.oxarticlenid = $sArticleTable.oxid ) ";
-                    $sQAdd .= " where ( oxobject2article.oxarticlenid = '$sSelId' or oxobject2article.oxobjectid = '$sSelId' ) ";
-                    $sQAdd .= " and $sArticleTable.oxid != '$sSelId' ";
+                    $sQAdd .= " where ( oxobject2article.oxarticlenid = " . $oDb->quote( $sSelId ) . " or oxobject2article.oxobjectid = " . $oDb->quote( $sSelId ) . " ) ";
+                    $sQAdd .= " and $sArticleTable.oxid != " . $oDb->quote( $sSelId ) . " ";
                 } else {
                     $sQAdd  = " from oxobject2article left join $sArticleTable on oxobject2article.oxobjectid=$sArticleTable.oxid ";
-                    $sQAdd .= " where oxobject2article.oxarticlenid = '$sSelId' ";
+                    $sQAdd .= " where oxobject2article.oxarticlenid = " . $oDb->quote( $sSelId ) . " ";
                 }
             }
         }
         if ( $sSynchSelId && $sSynchSelId != $sSelId) {
             if ( $myConfig->getConfigParam( 'blBidirectCross' ) ) {
                 $sSubSelect  = "select $sArticleTable.oxid from oxobject2article left join $sArticleTable on (oxobject2article.oxobjectid=$sArticleTable.oxid or oxobject2article.oxarticlenid=$sArticleTable.oxid) ";
-                $sSubSelect .= "where (oxobject2article.oxarticlenid = '$sSynchSelId' or oxobject2article.oxobjectid = '$sSynchSelId' )";
+                $sSubSelect .= "where (oxobject2article.oxarticlenid = " . $oDb->quote( $sSynchSelId ) . " or oxobject2article.oxobjectid = " . $oDb->quote( $sSynchSelId ) . " )";
             } else {
                 $sSubSelect  = "select $sArticleTable.oxid from oxobject2article left join $sArticleTable on oxobject2article.oxobjectid=$sArticleTable.oxid ";
-                $sSubSelect .= "where oxobject2article.oxarticlenid = '$sSynchSelId' ";
+                $sSubSelect .= "where oxobject2article.oxarticlenid = " . $oDb->quote( $sSynchSelId ) . " ";
             }
 
             $sSubSelect .= " and $sArticleTable.oxid IS NOT NULL ";
@@ -100,9 +101,27 @@ class ajaxComponent extends ajaxListComponent
         $sQAdd .= " and $sArticleTable.oxid IS NOT NULL ";
 
         // skipping self from list
-        $sQAdd .= " and $sArticleTable.oxid != '".( $sSelId ? $sSelId: $sSynchSelId )."' ";
+        $sId = ( $sSelId ) ? $sSelId : $sSynchSelId ;
+        $sQAdd .= " and $sArticleTable.oxid != " . $oDb->quote( $sId ) . " ";
 
         return $sQAdd;
+    }
+
+    /**
+     * Return fully formatted query for data loading
+     *
+     * @param string $sQ part of initial query
+     *
+     * @return string
+     */
+    protected function _getDataQuery( $sQ )
+    {
+        $sArtTable = getViewName('oxarticles');
+        $sQ = parent::_getDataQuery( $sQ );
+
+        // display variants or not ?
+        $sQ .= $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ? ' group by '.$sArtTable.'.oxid ' : '';
+        return $sQ;
     }
 
     /**
@@ -120,7 +139,7 @@ class ajaxComponent extends ajaxListComponent
             oxDb::getDb()->Execute( $sQ );
 
         } elseif ( is_array( $aChosenArt ) ) {
-            $sQ = "delete from oxobject2article where oxobject2article.oxid in ('" . implode( "', '", $aChosenArt ) . "') ";
+            $sQ = "delete from oxobject2article where oxobject2article.oxid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aChosenArt ) ) . ") ";
             oxDb::getDb()->Execute( $sQ );
         }
     }

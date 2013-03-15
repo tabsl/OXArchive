@@ -55,7 +55,7 @@ window.onload = function ()
         <select name="art_category" class="editinput" onChange="Javascript:document.search.lstrt.value=0;document.search.submit();">
         <option value="">[{ oxmultilang ident="ARTICLE_LIST_ALLPRODUCTS" }]</option>
         [{foreach from=$cattree->aList item=pcat}]
-        <option value="[{ $pcat->oxcategories__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value|oxtruncate:20:"..":true }]</option>
+        <option value="[{ $pcat->oxcategories__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value }]</option>
         [{/foreach}]
         </select>
         <select name="pwrsearchfld" class="editinput" onChange="Javascript:document.search.lstrt.value=0;document.search.sort.value=this.value;document.forms.search.submit();">

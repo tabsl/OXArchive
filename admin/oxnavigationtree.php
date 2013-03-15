@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxnavigationtree.php 20610 2009-07-02 12:25:48Z sarunas $
+ * $Id: oxnavigationtree.php 22383 2009-09-17 14:13:19Z arvydas $
  */
 
 /**
@@ -32,7 +32,7 @@ class OxNavigationTree extends oxSuperCfg
      * stores DOM object for all navigation tree
      */
     protected $_oDom = null;
-    
+
     /**
      * keeps unmodified dom
      */
@@ -491,10 +491,16 @@ class OxNavigationTree extends oxSuperCfg
             if ( $sShopCountry ) {
                 $sRemoteDynUrl = $this->_getDynMenuUrl( $sDynLang, $blLoadDynContents );
 
+                // loading remote file from server only once
+                $blLoadRemote = oxSession::getVar( "loadedremotexml" );
+
                 // very basic check if its valid xml file
-                if ( ( $sDynPath = $myOxUtlis->getRemoteCachePath( $sRemoteDynUrl, $sLocalDynPath ) ) ) {
+                if ( ( !isset( $blLoadRemote ) || $blLoadRemote ) && ( $sDynPath = $myOxUtlis->getRemoteCachePath( $sRemoteDynUrl, $sLocalDynPath ) ) ) {
                     $sDynPath = $this->_checkDynFile( $sDynPath );
                 }
+
+                // caching last load state
+                oxSession::setVar( "loadedremotexml", $sDynPath ? true : false );
             }
         } else {
             if ( $sShopCountry ) {
@@ -577,7 +583,7 @@ class OxNavigationTree extends oxSuperCfg
                 }
 
                 $this->_oInitialDom = new DOMDocument();
-                if ( true || $blReload ) {
+                if ( $blReload ) {
                     // fully reloading and building pathes
                     $this->_oInitialDom->appendChild( new DOMElement( 'OX' ) );
 

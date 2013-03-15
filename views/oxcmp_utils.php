@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcmp_utils.php 18919 2009-05-11 07:59:10Z arvydas $
+ * $Id: oxcmp_utils.php 22590 2009-09-24 06:24:00Z alfonsas $
  */
 
 /**
@@ -267,12 +267,15 @@ class oxcmp_utils extends oxView
         if ( is_array( $aItems ) && count( $aItems ) ) {
 
             $oArticle = oxNew( 'oxarticle' );
+
+            $oDb = oxDb::getDb();
+
             // counts how many pages
-            $sAddSql  = implode( "','", array_keys( $aItems ) );
-            $sSelect  = "select count(oxid) from oxarticles where oxarticles.oxid in ( '".$sAddSql."' ) ";
+            $sInSql   = implode( ",", oxDb::getInstance()->quoteArray( array_keys( $aItems ) ) );
+            $sSelect  = "select count(oxid) from oxarticles where oxarticles.oxid in (".$sInSql.") ";
             $sSelect .= 'and '.$oArticle->getSqlActiveSnippet();
 
-            $iCnt = (int) oxDb::getDb()->getOne( $sSelect );
+            $iCnt = (int) $oDb->getOne( $sSelect );
 
             //add amount of compared items to view data
             $this->_oParent->setCompareItemsCnt( $iCnt );

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutils.php 21099 2009-07-23 07:43:26Z vilma $
+ * $Id: oxutils.php 22590 2009-09-24 06:24:00Z alfonsas $
  */
 
 /**
@@ -525,8 +525,8 @@ class oxUtils extends oxSuperCfg
         $sRes = null;
         // read the file
         $sFilePath = $this->_getCacheFilePath( $sKey );
-		if (!file_exists( $sFilePath))
-			return null;
+        if (!file_exists( $sFilePath))
+            return null;
         if ( file_exists( $sFilePath) && is_readable($sFilePath)) {
             // read it
             $sRes = file_get_contents( $sFilePath);
@@ -617,11 +617,15 @@ class oxUtils extends oxSuperCfg
                 if ( $hSocket) {
                     fputs( $hSocket, "GET ".$sPath." HTTP/1.0\r\nHost: $sHost\r\n\r\n");
                     $headers = stream_get_line($hSocket, 4096, "\r\n\r\n");
-                    $hLocal = @fopen( $sLocal, "wb");
-                    stream_copy_to_stream($hSocket, $hLocal);
-                    fclose( $hSocket);
-                    fclose($hLocal);
-                    $blSuccess = true;
+                    if ( ( $hLocal = @fopen( $sLocal, "wb") ) !== false ) {
+                        rewind($hLocal);
+                        // does not copy all the data
+                        // stream_copy_to_stream($hSocket, $hLocal);
+                        fwrite ( $hLocal, stream_get_contents( $hSocket ) );
+                        fclose( $hLocal );
+                        fclose( $hSocket );
+                        $blSuccess = true;
+                    }
                 }
             }
         }
@@ -656,8 +660,7 @@ class oxUtils extends oxSuperCfg
         if ( $sUserID) {
             // escaping
             $oDb = oxDb::getDb();
-            $sUserID = $oDb->quote($sUserID);
-            $sRights = $oDb->getOne("select oxrights from oxuser where oxid = $sUserID");
+            $sRights = $oDb->getOne("select oxrights from oxuser where oxid = ".$oDb->quote($sUserID));
 
             if ( $sRights != "user") {
                 // malladmin ?
@@ -675,7 +678,7 @@ class oxUtils extends oxSuperCfg
                     }
                     $blIsAuth = true;
                 } else {   // Shopadmin... check if this shop is valid and exists
-                    $sShopID = $oDb->getOne("select oxid from oxshops where oxid = '{$sRights}'");
+                    $sShopID = $oDb->getOne("select oxid from oxshops where oxid = " . $oDb->quote( $sRights ) );
                     if ( isset( $sShopID) && $sShopID) {   // success, this shop exists
 
                         oxSession::setVar( "actshop", $sRights);
@@ -835,7 +838,7 @@ class oxUtils extends oxSuperCfg
      *
      * @return null or exit
      */
-    public function redirect( $sUrl, $blAddRedirectParam = true )
+    public function redirect( $sUrl, $blAddRedirectParam = true, $iHeaderCode = 301 )
     {
         //preventing possible cyclic redirection
         //#M341 and check only if redirect paramater must be added
@@ -848,7 +851,18 @@ class oxUtils extends oxSuperCfg
         }
 
         $sUrl = str_ireplace( "&amp;", "&", $sUrl );
-        $this->_simpleRedirect( $sUrl, "HTTP/1.1 301 Moved Permanently" );
+
+        $sHeaderCode = '';
+        switch ($iHeaderCode) {
+            case 301:
+                $sHeaderCode = "HTTP/1.1 301 Moved Permanently";
+                break;
+            case 302:
+            default:
+                $sHeaderCode = "HTTP/1.1 302 Found";
+        }
+
+        $this->_simpleRedirect( $sUrl, $sHeaderCode );
 
         try {//may occur in case db is lost
             $this->getSession()->freeze();

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutilsfile.php 21470 2009-08-06 13:01:57Z rimvydas.paskevicius $
+ * $Id: oxutilsfile.php 22113 2009-09-03 11:44:26Z arvydas $
  */
 
 /**
@@ -30,9 +30,23 @@ class oxUtilsFile extends oxSuperCfg
     /**
      * oxUtils class instance.
      *
-     * @var oxutils* instance
+     * @var oxutils
      */
     private static $_instance = null;
+
+    /**
+     * Max pictures count
+     *
+     * @var int
+     */
+    protected $_iMaxPicImgCount  = 12;
+
+    /**
+     * Max zoom pictures count
+     *
+     * @var int
+     */
+    protected $_iMaxZoomImgCount = 12;
 
     /**
      * Image type and its folder information array
@@ -104,6 +118,24 @@ class oxUtilsFile extends oxSuperCfg
             }
         }
         return self::$_instance;
+    }
+
+    /**
+     * Class constructor, initailizes pictures count info (_iMaxPicImgCount/_iMaxZoomImgCount)
+     *
+     * @return null
+     */
+    public function __construct()
+    {
+        $myConfig = $this->getConfig();
+
+        if ( $iPicCount = $myConfig->getConfigParam( 'iPicCount' ) ) {
+            $this->_iMaxPicImgCount = $iPicCount;
+        }
+
+        if ( $iZoomPicCount = $myConfig->getConfigParam( 'iZoomPicCount' ) ) {
+            $this->_iMaxZoomImgCount = $iZoomPicCount;
+        }
     }
 
     /**
@@ -216,38 +248,40 @@ class oxUtilsFile extends oxSuperCfg
     /**
      * Prepares image file name
      *
-     * @param object $sValue uploadable file name
-     * @param string $sType  image type
-     * @param object $blDemo if true = whecks if file type is defined in oxutilsfile::_aAllowedFiles
+     * @param object $sValue     uploadable file name
+     * @param string $sType      image type
+     * @param object $blDemo     if true = whecks if file type is defined in oxutilsfile::_aAllowedFiles
+     * @patam string $sImagePath final image file location
      *
      * @return string
      */
-    protected function _prepareImageName( $sValue, $sType, $blDemo = false )
+    protected function _prepareImageName( $sValue, $sType, $blDemo = false, $sImagePath )
     {
-        // add type to name
-        $aFilename = explode( ".", $sValue );
-        $sFileType = trim( $aFilename[count( $aFilename )-1] );
+        if ( $sValue ) {
+            // add type to name
+            $aFilename = explode( ".", $sValue );
+            $sFileType = trim( $aFilename[count( $aFilename )-1] );
 
-        if ( isset( $sFileType ) ) {
+            if ( isset( $sFileType ) ) {
 
-            // unallowed files ?
-            if ( in_array( $sFileType, $this->_aBadFiles ) || ( $blDemo && !in_array( $sFileType, $this->_aAllowedFiles ) ) ) {
-                oxUtils::getInstance()->showMessageAndExit( "We don't play this game, go away" );
+                // unallowed files ?
+                if ( in_array( $sFileType, $this->_aBadFiles ) || ( $blDemo && !in_array( $sFileType, $this->_aAllowedFiles ) ) ) {
+                    oxUtils::getInstance()->showMessageAndExit( "We don't play this game, go away" );
+                }
+
+                // removing file type
+                if ( count( $aFilename ) > 0 ) {
+                    unset( $aFilename[count( $aFilename )-1] );
+                }
+
+                $sFName = '';
+                if ( isset( $aFilename[0] ) ) {
+                    $sFName = preg_replace( '/[^a-zA-Z0-9_\.-]/', '', implode( '.', $aFilename ) );
+                }
+
+                $sValue = $this->_getUniqueFileName( $sImagePath, "{$sFName}_" . strtolower( $sType ), $sFileType );
             }
-
-            // removing file type
-            if ( count( $aFilename ) > 0 ) {
-                unset( $aFilename[count( $aFilename )-1] );
-            }
-
-            $sFName = '';
-            if ( isset( $aFilename[0] ) ) {
-                $sFName = preg_replace( '/[^a-zA-Z0-9_\.-]/', '', implode( '.', $aFilename ) );
-            }
-
-            $sValue = "{$sFName}_" . strtolower( $sType ) . ".{$sFileType}";
         }
-
         return $sValue;
     }
 
@@ -265,6 +299,44 @@ class oxUtilsFile extends oxSuperCfg
     }
 
     /**
+     * Returns array of sizes which are used to resize images. If size is not
+     * defined - NULL will be returned
+     *
+     * @param string $sImgType image type (TH, TC, ICO etc), can be useful for modules
+     * @param int    $iImgNum  number of image (e.g. numper of ZOOM1 is 1)
+     * @param string $sImgConf config parameter name, which keeps size info
+     *
+     * @return array | null
+     */
+    protected function _getImageSize( $sImgType, $iImgNum, $sImgConf )
+    {
+        $myConfig = $this->getConfig();
+        $sSize = false;
+
+        switch ( $sImgConf ) {
+            case 'aDetailImageSizes':
+                $aDetailImageSizes = $myConfig->getConfigParam( $sImgConf );
+                $sSize = $myConfig->getConfigParam( 'sDetailImageSize' );
+                if ( isset( $aDetailImageSizes['oxpic'.$iImgNum] ) ) {
+                    $sSize = $aDetailImageSizes['oxpic'.$iImgNum];
+                }
+                break;
+            case 'aZoomImageSizes':
+                $aZoomImageSizes = $myConfig->getConfigParam( $sImgConf );
+                $sSize = $myConfig->getConfigParam( 'sZoomImageSize' );
+                if ( isset( $aZoomImageSizes['oxzoom'.intval( $iImgNum )] ) ) {
+                    $sSize = $aZoomImageSizes['oxzoom'.$iImgNum];
+                }
+                break;
+            default:
+                $sSize = $myConfig->getConfigParam( $sImgConf );
+        }
+        if ( $sSize ) {
+            return explode( '*', $sSize );
+        }
+    }
+
+    /**
      * Prepares (resizes anc copies) images according to its type.
      * Returns preparation status
      *
@@ -276,101 +348,53 @@ class oxUtilsFile extends oxSuperCfg
      */
     protected function _prepareImage( $sType, $sSource, $sTarget )
     {
-        $myConfig  = $this->getConfig();
         $oUtilsPic = oxUtilspic::getInstance();
 
+        // picture type
+        $sPicType = preg_replace( "/\d*$/", "", $sType );
+
+        // numper of processable picture
+        $iPicNum  = (int) preg_replace( "/^\D*/", "", $sType );
+        $iPicNum = $iPicNum ? abs( $iPicNum ) : 1;
+
+        $aSize = false;
+        $blResize = false;
+
         // add file process here
-        $blCopy = false;
-        switch ( $sType ) {
+        switch ( $sPicType ) {
             case 'TH':
-                if ( ( $sSize = $myConfig->getConfigParam( 'sThumbnailsize' ) ) ) {
-                    // convert this file
-                    $aSize = explode( '*', $sSize );
-                    $blCopy = $oUtilsPic->resizeImage( $sSource, $sTarget, $aSize[0], $aSize[1] );
-                }
+                $aSize = $this->_getImageSize( $sType, $iPicNum, 'sThumbnailsize' );
                 break;
             case 'TC':
-                if ( ( $sSize = $myConfig->getConfigParam( 'sCatThumbnailsize' ) ) ) {
-                    // convert this file
-                    $aSize = explode( '*', $sSize );
-                    $blCopy = $oUtilsPic->resizeImage( $sSource, $sTarget, $aSize[0], $aSize[1] );
-                }
+                $aSize = $this->_getImageSize( $sType, $iPicNum, 'sCatThumbnailsize' );
                 break;
             case 'CICO':
             case 'ICO':
-                if ( ( $sSize = $myConfig->getConfigParam( 'sIconsize' ) ) ) {
-                    // convert this file
-                    $aSize = explode( '*', $sSize );
-                    $blCopy = $oUtilsPic->resizeImage( $sSource, $sTarget, $aSize[0], $aSize[1] );
-                }
+                $aSize = $this->_getImageSize( $sType, $iPicNum, 'sIconsize' );
                 break;
-            case 'P1':
-            case 'P2':
-            case 'P3':
-            case 'P4':
-            case 'P5':
-            case 'P6':
-            case 'P7':
-            case 'P8':
-            case 'P9':
-            case 'P10':
-            case 'P11':
-            case 'P12':
-                //
-                $aPType = explode( 'P', $sType );
-                $iPic = intval( $aPType[1] ) - 1;
+            case 'P':
+                // pictures count is limited to 12
+                $iPicNum = ( $iPicNum > $this->_iMaxPicImgCount ) ? $this->_iMaxPicImgCount : $iPicNum;
 
-                // #840A + compatibility with prev. versions
-                $aDetailImageSizes = $myConfig->getConfigParam( 'aDetailImageSizes' );
-                $sDetailImageSize  = $myConfig->getConfigParam( 'sDetailImageSize' );
-                if ( isset( $aDetailImageSizes['oxpic'.intval( $aPType[1] )] ) ) {
-                    $sDetailImageSize = $aDetailImageSizes['oxpic'.intval( $aPType[1] )];
+                //make an icon
+                if ( ( $aSize = $this->_getImageSize( $sType, $iPicNum, 'sIconsize' ) ) ) {
+                    $oUtilsPic->resizeImage( $sSource, $oUtilsPic->iconName( $sTarget ), $aSize[0], $aSize[1] );
                 }
 
-                if ( $sDetailImageSize ) {
-                    // convert this file
-                    $aSize = explode( '*', $sDetailImageSize );
-                    $blCopy = $oUtilsPic->resizeImage( $sSource, $sTarget, $aSize[0], $aSize[1] );
-
-                    //make an icon
-                    $sIconName = $oUtilsPic->iconName( $sTarget );
-                    $aSize = explode( '*', $myConfig->getConfigParam( 'sIconsize' ) );
-                    $blCopy = $oUtilsPic->resizeImage( $sSource, $sIconName, $aSize[0], $aSize[1] );
-                }
+                $aSize = $this->_getImageSize( $sType, $iPicNum, 'aDetailImageSizes' );
                 break;
-            case 'Z1':
-            case 'Z2':
-            case 'Z3':
-            case 'Z4':
-            case 'Z5':
-            case 'Z6':
-            case 'Z7':
-            case 'Z8':
-            case 'Z9':
-            case 'Z10':
-            case 'Z11':
-            case 'Z12':
-                //
-                $aPType = explode( 'Z', $sType );
-                $iPic = intval( $aPType[1] ) - 1;
+            case 'Z':
+                // zoom pictures count is limited to 12
+                $iPicNum = ( $iPicNum > $this->_iMaxZoomImgCount ) ? $this->_iMaxZoomImgCount : $iPicNum;
 
-                // #840A + compatibility with prev. versions
-                $aZoomImageSizes = $myConfig->getConfigParam( 'aZoomImageSizes' );
-                $sZoomImageSize  = $myConfig->getConfigParam( 'sZoomImageSize' );
-                if ( isset( $aZoomImageSizes['oxzoom'.intval( $aPType[1] )] ) ) {
-                    $sZoomImageSize = $aZoomImageSizes['oxzoom'.intval( $aPType[1] )];
-                }
-
-                //
-                if ( $sZoomImageSize ) {
-                    // convert this file
-                    $aSize = explode( '*', $sZoomImageSize );
-                    $blCopy = $oUtilsPic->resizeImage( $sSource, $sTarget, $aSize[0], $aSize[1] );
-                }
+                $aSize = $this->_getImageSize( $sType, $iPicNum, 'aZoomImageSizes' );
                 break;
         }
 
-        return $blCopy;
+        if ( $aSize ) {
+            $blResize = $oUtilsPic->resizeImage( $sSource, $sTarget, $aSize[0], $aSize[1] );
+        }
+        return $blResize;
     }
 
     /**
@@ -392,6 +416,18 @@ class oxUtilsFile extends oxSuperCfg
     }
 
     /**
+     * Removes temporary created image
+     *
+     * @param string $sImagePath temporary image path
+     *
+     * @return
+     */
+    protected function _removeTempImage( $sImagePath )
+    {
+        return unlink( $sImagePath );
+    }
+
+    /**
      * Uploaded file processor (filters, etc), sets configuration parameters to
      * passed object and returns it.
      *
@@ -405,8 +441,13 @@ class oxUtilsFile extends oxSuperCfg
         $aFiles = $aFiles ? $aFiles : $_FILES;
         if ( isset( $aFiles['myfile']['name'] ) ) {
 
+            $oConfig = $this->getConfig();
+
             // A. protection for demoshops - strictly defining allowed file extensions
-            $blDemo = (bool) $this->getConfig()->isDemoShop();
+            $blDemo = (bool) $oConfig->isDemoShop();
+
+            // folder where images will be processed
+            $sTmpFolder = $oConfig->getConfigParam( "sCompileDir" );
 
             // process all files
             while ( list( $sKey, $sValue ) = each( $aFiles['myfile']['name'] ) ) {
@@ -417,27 +458,30 @@ class oxUtilsFile extends oxSuperCfg
                 $sKey    = $aFiletype[1];
                 $sType   = $aFiletype[0];
                 $sValue  = strtolower( $sValue );
+                $sImagePath = $this->_getImagePath( $sType );
 
-                // no file ? - skip
-                if ( $sValue ) {
+                // checking file type and building final file name
+                if ( $sSource && ( $sValue = $this->_prepareImageName( $sValue, $sType, $blDemo, $sImagePath ) ) ) {
 
-                    // building file name
-                    $sValue = $this->_prepareImageName( $sValue, $sType, $blDemo );
+                    // moving to tmp folder for processing as safe mode or spec. open_basedir setup
+                    // usually does not allow file modification in php's temp folder
+                    $sProcessPath = $sTmpFolder . basename( $sSource );
+                    if ( $sProcessPath && $this->_moveImage( $sSource, $sProcessPath ) ) {
 
-                    // finding directory
-                    $sTarget = $this->_getImagePath( $sType ) . $sValue;
+                        // finding final image path
+                        if ( ( $sTarget = $sImagePath . $sValue ) ) {
 
-                    // processing images
-                    $blCopy = $this->_prepareImage( $sType, $sSource, $sTarget );
+                            // processing image and moving to final location
+                            $this->_prepareImage( $sType, $sProcessPath, $sTarget );
 
-                    // moving ..
-                    if ( !$blCopy && $sSource ) {
-                        $this->_moveImage( $sSource, $sTarget );
-                    }
+                            // assign the name
+                            if ( $oObject ) {
+                                $oObject->{$sKey}->setValue( $sValue );
+                            }
+                        }
 
-                    // assign the name
-                    if ( $oObject && isset( $sValue ) && $sValue ) {
-                        $oObject->{$sKey}->setValue( $sValue );
+                        // removing temporary file
+                        $this->_removeTempImage( $sProcessPath );
                     }
                 }
             }
@@ -531,7 +575,7 @@ class oxUtilsFile extends oxSuperCfg
         }
 
         //wrong chars in file name?
-        if ( !preg_match('/^[_a-z0-3\.]+$/i', $aFileInfo['name'] ) ) {
+        if ( !preg_match('/^[\-_a-z0-9\.]+$/i', $aFileInfo['name'] ) ) {
             throw new oxException( 'EXCEPTION_FILENAMEINVALIDCHARS' );
         }
 
@@ -545,19 +589,14 @@ class oxUtilsFile extends oxSuperCfg
         $sExt = $aPathInfo['extension'];
         $sFileName = $aPathInfo['filename'];
 
-        if ( !in_array( $sExt, $this->getConfig()->getConfigParam( 'aAllowedUploadTypes' ) ) ) {
+        $aAllowedUploadTypes = (array) $this->getConfig()->getConfigParam( 'aAllowedUploadTypes' );
+        $aAllowedUploadTypes = array_map( "strtolower", $aAllowedUploadTypes );
+        if ( !in_array( strtolower( $sExt ), $aAllowedUploadTypes ) ) {
             throw new oxException( 'EXCEPTION_NOTALLOWEDTYPE' );
         }
 
-        //file exists ?
-        $iFileCounter = 0;
-        $sTempFileName = $sFileName;
-        while (file_exists($sBasePath . "/" .$sUploadPath . "/" . $sFileName . "." . $sExt)) {
-            $iFileCounter++;
-            $sFileName = $sTempFileName . "($iFileCounter)";
-        }
-
-        move_uploaded_file($aFileInfo['tmp_name'], $sBasePath . "/" .$sUploadPath . "/" . $sFileName . "." . $sExt);
+        $sFileName = $this->_getUniqueFileName( $sBasePath . "/" .$sUploadPath, $sFileName, $sExt );
+        $this->_moveImage( $aFileInfo['tmp_name'], $sBasePath . "/" .$sUploadPath . "/" . $sFileName . "." . $sExt );
 
         $sUrl = $this->getConfig()->getShopUrl() . "/" . $sUploadPath . "/" . $sFileName . "." . $sExt;
 
@@ -566,5 +605,29 @@ class oxUtilsFile extends oxSuperCfg
         $sUrl = str_replace('http:/', 'http://', $sUrl);
 
         return $sUrl;
+    }
+
+    /**
+     * Checks if file with same name does not exist, if exists - addes number prefix
+     * to file name Returns unique file name.
+     *
+     * @param string $sFilePath file storage path/folder (e.g. /htdocs/out/img/)
+     * @param string $sFileName name of file (e.g. picture1)
+     * @param string $sFileExt  file extension (e.g. gif)
+     *
+     * @return string
+     */
+    protected function _getUniqueFileName( $sFilePath, $sFileName, $sFileExt )
+    {
+        $sFilePath     = $this->normalizeDir( $sFilePath );
+        $iFileCounter  = 0;
+        $sTempFileName = $sFileName;
+
+        //file exists ?
+        while ( file_exists( $sFilePath . "/" . $sFileName . "." . $sFileExt ) ) {
+            $iFileCounter++;
+            $sFileName = $sTempFileName . "($iFileCounter)";
+        }
+        return $sFileName . "." . $sFileExt;
     }
 }

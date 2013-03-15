@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: report_visitor_absolute.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: report_visitor_absolute.php 22478 2009-09-21 14:51:46Z arvydas $
  */
 
 if ( !class_exists( "report_visitor_absolute") ) {
@@ -37,6 +37,34 @@ if ( !class_exists( "report_visitor_absolute") ) {
         protected $_sThisTemplate = "report_visitor_absolute.tpl";
 
         /**
+         * Checks if db contains data for report generation
+         *
+         * @return bool
+         */
+        public function drawReport()
+        {
+            $oDb = oxDb::getDb();
+
+            $oSmarty    = $this->getSmarty();
+            $sTime_from = $oDb->quote( date( "Y-m-d H:i:s", strtotime( $oSmarty->_tpl_vars['time_from'] ) ) );
+            $sTime_to   = $oDb->quote( date( "Y-m-d H:i:s", strtotime( $oSmarty->_tpl_vars['time_to'] ) ) );
+
+            if ( $oDb->getOne( "select 1 from oxlogs where oxtime >= $sTime_from and oxtime <= $sTime_to" ) ) {
+                return true;
+            }
+
+            // buyer
+            if ( $oDb->getOne( "select 1 from oxorder where oxorderdate >= $sTime_from and oxorderdate <= $sTime_to" ) ) {
+                return true;
+            }
+
+            // newcustomer
+            if ( $oDb->getOne( "select 1 from oxuser where oxcreate >= $sTime_from and oxcreate <= $sTime_to" ) ) {
+                return true;
+            }
+        }
+
+        /**
          * Collects and renders visitor/month report data
          *
          * @return null
@@ -44,21 +72,22 @@ if ( !class_exists( "report_visitor_absolute") ) {
         public function visitor_month()
         {
             $myConfig = $this->getConfig();
+            $oDb = oxDb::getDb();
 
             $aDataX = array();
             $aDataY = array();
 
             $dTimeTo    = strtotime( oxConfig::getParameter( "time_to"));
-            $sTime_to   = date( "Y-m-d H:i:s", $dTimeTo);
+            $sTime_to   = $oDb->quote( date( "Y-m-d H:i:s", $dTimeTo ) );
             $dTimeFrom  = mktime( 23, 59, 59, date( "m", $dTimeTo)-12, date( "d", $dTimeTo), date( "Y", $dTimeTo));
-            $sTime_from = date( "Y-m-d H:i:s", $dTimeFrom);
+            $sTime_from = $oDb->quote( date( "Y-m-d H:i:s", $dTimeFrom ) );
 
-            $sSQL = "select oxtime, count(*) as nrof from oxlogs where oxtime >= '$sTime_from' and oxtime <= '$sTime_to' group by oxsessid";
+            $sSQL = "select oxtime, count(*) as nrof from oxlogs where oxtime >= $sTime_from and oxtime <= $sTime_to group by oxsessid";
             $aTemp = array();
             for ( $i = 1; $i <= 12; $i++)
                 $aTemp[date( "m/Y", mktime( 23, 59, 59, date( "m", $dTimeFrom)+$i, date( "d", $dTimeFrom), date( "Y", $dTimeFrom)) )] = 0;
 
-            $rs = oxDb::getDb()->execute( $sSQL);
+            $rs = $oDb->execute( $sSQL);
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     $aTemp[date( "m/Y", strtotime( $rs->fields[0]))]++;
@@ -74,9 +103,9 @@ if ( !class_exists( "report_visitor_absolute") ) {
             }
 
             // buyer
-            $sSQL = "select oxorderdate from oxorder where oxorderdate >= '$sTime_from' and oxorderdate <= '$sTime_to' order by oxorderdate";
+            $sSQL = "select oxorderdate from oxorder where oxorderdate >= $sTime_from and oxorderdate <= $sTime_to order by oxorderdate";
             $aTemp = array();
-            $rs = oxDb::getDb()->execute( $sSQL);
+            $rs = $oDb->execute( $sSQL);
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     $aTemp[date( "m/Y", strtotime( $rs->fields[0]))]++;
@@ -89,9 +118,9 @@ if ( !class_exists( "report_visitor_absolute") ) {
             }
 
             // newcustomer
-            $sSQL = "select oxcreate from oxuser where oxcreate >= '$sTime_from' and oxcreate <= '$sTime_to' order by oxcreate";
+            $sSQL = "select oxcreate from oxuser where oxcreate >= $sTime_from and oxcreate <= $sTime_to order by oxcreate";
             $aTemp = array();
-            $rs = oxDb::getDb()->execute( $sSQL);
+            $rs = $oDb->execute( $sSQL);
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     $aTemp[date( "m/Y", strtotime( $rs->fields[0]))]++;
@@ -172,18 +201,19 @@ if ( !class_exists( "report_visitor_absolute") ) {
         public function visitor_week()
         {
             $myConfig = $this->getConfig();
+            $oDb = oxDb::getDb();
 
             $aDataX = array();
             $aDataY = array();
 
-            $dTimeTo     = strtotime( oxConfig::getParameter( "time_to"));
-            $sTime_to     = date( "Y-m-d H:i:s", $dTimeTo);
-            $dTimeFrom     = strtotime( oxConfig::getParameter( "time_from"));
-            $sTime_from = date( "Y-m-d H:i:s", $dTimeFrom);
+            $dTimeTo    = strtotime( oxConfig::getParameter( "time_to"));
+            $sTime_to   = $oDb->quote( date( "Y-m-d H:i:s", $dTimeTo ) );
+            $dTimeFrom  = strtotime( oxConfig::getParameter( "time_from"));
+            $sTime_from = $oDb->quote( date( "Y-m-d H:i:s", $dTimeFrom ) );
 
-            $sSQL = "select oxtime, count(*) as nrof from oxlogs where oxtime >= '$sTime_from' and oxtime <= '$sTime_to' group by oxsessid order by oxtime";
+            $sSQL = "select oxtime, count(*) as nrof from oxlogs where oxtime >= $sTime_from and oxtime <= $sTime_to group by oxsessid order by oxtime";
             $aTemp = array();
-            $rs = oxDb::getDb()->execute( $sSQL);
+            $rs = $oDb->execute( $sSQL);
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     //$aTemp[date( "W", strtotime( $rs->fields[0]))]++;
@@ -200,9 +230,9 @@ if ( !class_exists( "report_visitor_absolute") ) {
             }
 
             // buyer
-            $sSQL = "select oxorderdate from oxorder where oxorderdate >= '$sTime_from' and oxorderdate <= '$sTime_to' order by oxorderdate";
+            $sSQL = "select oxorderdate from oxorder where oxorderdate >= $sTime_from and oxorderdate <= $sTime_to order by oxorderdate";
             $aTemp = array();
-            $rs = oxDb::getDb()->execute( $sSQL);
+            $rs = $oDb->execute( $sSQL);
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     //$aTemp[date( "W", strtotime( $rs->fields[0]))]++;
@@ -216,9 +246,9 @@ if ( !class_exists( "report_visitor_absolute") ) {
             }
 
             // newcustomer
-            $sSQL = "select oxcreate from oxuser where oxcreate >= '$sTime_from' and oxcreate <= '$sTime_to' order by oxcreate";
+            $sSQL = "select oxcreate from oxuser where oxcreate >= $sTime_from and oxcreate <= $sTime_to order by oxcreate";
             $aTemp = array();
-            $rs = oxDb::getDb()->execute( $sSQL);
+            $rs = $oDb->execute( $sSQL);
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     //$aTemp[date( "W", strtotime( $rs->fields[0]))]++;

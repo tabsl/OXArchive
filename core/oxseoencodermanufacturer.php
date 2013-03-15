@@ -162,7 +162,7 @@ class oxSeoEncoderManufacturer extends oxSeoEncoder
      */
     public function onDeleteManufacturer($oManufacturer)
     {
-        $sId = oxDb::getDb()->quote($oManufacturer->getId());
-        oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sId and oxtype = 'oxmanufacturers'");
+        $sIdQuoted = oxDb::getDb()->quote($oManufacturer->getId());
+        oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxmanufacturers'");
     }
 }

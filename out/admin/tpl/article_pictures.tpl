@@ -52,7 +52,7 @@ function editThis( sID )
 
 
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
-<colgroup><col width="40%" span="1"><col width="20%"></colgroup>
+<colgroup><col width="40%" span="2"><col width="20%"></colgroup>
 <tr>
     <td valign="top" class="edittext">
         <table cellspacing="0" cellpadding="0" border="0">

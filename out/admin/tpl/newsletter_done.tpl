@@ -25,6 +25,9 @@ window.onload = function ()
 </form>
 
 <div id="liste">
+[{foreach from=$oView->getMailErrors() item=sError}]
+  [{ $sError }]
+[{/foreach}]
 <center>
 <h1>[{ oxmultilang ident="NEWSLETTER_DONE_NEWSSEND" }]</h1>
 <a href="JavaScript:var oSearch = document.getElementById('search');oSearch.submit();"><b>[{ oxmultilang ident="NEWSLETTER_DONE_GOTONEWSLETTER" }]</b></a>

@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_pictures.php 17243 2009-03-16 15:16:57Z arvydas $
+ * $Id: article_pictures.php 22110 2009-09-03 10:59:05Z rimvydas.paskevicius $
  */
 
 /**
@@ -77,19 +77,22 @@ class Article_Pictures extends oxAdminDetails
         $oArticle = oxNew( "oxarticle");
         $oArticle->load( $soxId);
 
-            // shopid
-            $sShopID = oxSession::getVar( "actshop");
-            $aParams['oxarticles__oxshopid'] = $sShopID;
-            $myUtilsPic = oxUtilsPic::getInstance();
+        // shopid
+        $sShopID = oxSession::getVar( "actshop");
+        $aParams['oxarticles__oxshopid'] = $sShopID;
+        $myUtilsPic = oxUtilsPic::getInstance();
 
-            // #1173M - not all pic are deleted
-            if ( $myUtilsPic->overwritePic( $oArticle, 'oxarticles', 'oxthumb', 'TH', '0', $aParams, $myConfig->getAbsDynImageDir() ))
-                $myUtilsPic->overwritePic( $oArticle, 'oxarticles', 'oxicon', 'ICO', 'icon', $aParams, $myConfig->getAbsDynImageDir() );
+        // #1268P - deleting images
+        $myUtilsPic->overwritePic( $oArticle, 'oxarticles', 'oxthumb', 'TH', '0', $aParams, $myConfig->getAbsDynImageDir() );
+        $myUtilsPic->overwritePic( $oArticle, 'oxarticles', 'oxicon', 'ICO', 'icon', $aParams, $myConfig->getAbsDynImageDir() );
 
-            for ($i=1; $i<=$myConfig->getConfigParam( 'iPicCount' ); $i++)
-                $myUtilsPic->overwritePic( $oArticle, 'oxarticles', 'oxpic'.$i, 'P'.$i, $i, $aParams, $myConfig->getAbsDynImageDir());
-            for ($i=1; $i<=$myConfig->getConfigParam( 'iZoomPicCount' ); $i++)
-                $myUtilsPic->overwritePic( $oArticle, 'oxarticles', 'oxzoom'.$i, 'Z'.$i, 'z'.$i, $aParams, $myConfig->getAbsDynImageDir());
+        for ($i=1; $i<=$myConfig->getConfigParam( 'iPicCount' ); $i++) {
+            $myUtilsPic->overwritePic( $oArticle, 'oxarticles', 'oxpic'.$i, 'P'.$i, $i, $aParams, $myConfig->getAbsDynImageDir());
+        }
+
+        for ($i=1; $i<=$myConfig->getConfigParam( 'iZoomPicCount' ); $i++) {
+            $myUtilsPic->overwritePic( $oArticle, 'oxarticles', 'oxzoom'.$i, 'Z'.$i, 'z'.$i, $aParams, $myConfig->getAbsDynImageDir());
+        }
 
         //$aParams = $oArticle->ConvertNameArray2Idx( $aParams);
         $oArticle->assign( $aParams);

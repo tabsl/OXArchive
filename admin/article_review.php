@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_review.php 17479 2009-03-20 12:32:53Z arvydas $
+ * $Id: article_review.php 22482 2009-09-22 06:53:41Z arvydas $
  */
 
 /**
@@ -89,9 +89,10 @@ class Article_Review extends oxAdminDetails
      */
     protected function _getReviewList($oArticle)
     {
+        $oDb = oxDb::getDb();
         $sSelect  = "select oxreviews.* from oxreviews
-                     where oxreviews.OXOBJECTID = '".$oArticle->oxarticles__oxid->value
-                    ."' and oxreviews.oxtype = 'oxarticle'";
+                     where oxreviews.OXOBJECTID = ".$oDb->quote( $oArticle->oxarticles__oxid->value ) ."
+                     and oxreviews.oxtype = 'oxarticle'";
 
         $aVariantList = $oArticle->getVariants();
 
@@ -99,7 +100,7 @@ class Article_Review extends oxAdminDetails
 
             // verifying rights
             foreach ( $aVariantList as $oVariant ) {
-                $sSelect .= "or oxreviews.oxobjectid = '".$oVariant->oxarticles__oxid->value."' ";
+                $sSelect .= "or oxreviews.oxobjectid = ".$oDb->quote( $oVariant->oxarticles__oxid->value )." ";
             }
 
         }

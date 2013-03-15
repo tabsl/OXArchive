@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: discount_main.php 17189 2009-03-13 12:19:59Z arvydas $
+ * $Id: discount_main.php 22483 2009-09-22 06:55:52Z arvydas $
  */
 
 /**
@@ -191,21 +191,22 @@ class Discount_Main extends oxAdminDetails
      */
     protected function _loadArticleList( $sItmartid, $sITMChosenArtCat)
     {
+        $oDB = oxDb::getDb();
+
         $sArticleTable = getViewName("oxarticles");
         $sO2CView = getViewName('oxobject2category');
         $sSuffix = oxLang::getInstance()->getLanguageTag();
         $sSelect = "select $sArticleTable.oxid, $sArticleTable.oxartnum, $sArticleTable.oxtitle$sSuffix from $sArticleTable ";
         if ( !isset( $sITMChosenArtCat) || !$sITMChosenArtCat || $sITMChosenArtCat == "oxrootid") {
-            $sSelect .= "where $sArticleTable.oxid = '".$sItmartid."' ";
+            $sSelect .= "where $sArticleTable.oxid = ".$oDB->quote( $sItmartid ) ." ";
         } elseif ( $sITMChosenArtCat != "-1" && $sITMChosenArtCat != "oxrootid") {
             $oArticle = oxNew( 'oxarticle' );
-            $sSelect .= "left join $sO2CView as oxobject2category on $sArticleTable.oxid=oxobject2category.oxobjectid where oxobject2category.oxcatnid = '$sITMChosenArtCat' and ".$oArticle->getSqlActiveSnippet()." order by oxobject2category.oxpos";
+            $sSelect .= "left join $sO2CView as oxobject2category on $sArticleTable.oxid=oxobject2category.oxobjectid where oxobject2category.oxcatnid = ".$oDB->quote( $sITMChosenArtCat ) ." and ".$oArticle->getSqlActiveSnippet()." order by oxobject2category.oxpos";
         } else {
             $sSelect .= "left join $sO2CView as oxobject2category on $sArticleTable.oxid=oxobject2category.oxobjectid where oxobject2category.oxcatnid is null AND $sArticleTable.oxparentid = '' ";
         }
         // We do NOT use Shop Framework here as we do have to much overhead
         // this list can be up to 1000 entries
-        $oDB = oxDb::getDb();
         $aList = array();
         $oArt = new stdClass();
         $oArt->oxarticles__oxid     = new oxField("");

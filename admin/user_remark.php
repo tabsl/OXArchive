@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: user_remark.php 17191 2009-03-13 12:21:00Z arvydas $
+ * $Id: user_remark.php 22494 2009-09-22 07:41:21Z arvydas $
  */
 
 /**
@@ -51,7 +51,7 @@ class User_Remark extends oxAdminDetails
             // all remark
             $oRems = oxNew( "oxlist" );
             $oRems->init( "oxremark");
-            $sSelect = "select * from oxremark where oxparentid='".$oUser->oxuser__oxid->value."' order by oxcreate desc";
+            $sSelect = "select * from oxremark where oxparentid=".oxDb::getDb()->quote( $oUser->getId() )." order by oxcreate desc";
             $oRems->selectString( $sSelect );
             foreach ($oRems as $key => $val) {
                 if ( $val->oxremark__oxid->value == $sRemoxId) {
@@ -93,6 +93,7 @@ class User_Remark extends oxAdminDetails
         $oRemark->oxremark__oxtext = new oxField($sNewText);
         $oRemark->oxremark__oxheader = new oxField($sNewHeader);
         $oRemark->oxremark__oxparentid = new oxField($soxId);
+        $oRemark->oxremark__oxtype = new oxField("r");
 
         $oRemark->save();
     }

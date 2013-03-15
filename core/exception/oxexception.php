@@ -193,4 +193,15 @@ class oxException extends Exception
     {
         return array();
     }
+
+    /**
+     * Defines a name of the view variable containing the messages
+     *
+     * @param string $sDestination name of the view variable
+     *
+     * @return null
+     */
+    public function setDestination( $sDestination )
+    {
+    }
 }

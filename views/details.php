@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: details.php 21122 2009-07-24 08:19:07Z arvydas $
+ * $Id: details.php 21739 2009-08-20 13:28:17Z arvydas $
  */
 
 /**
@@ -391,7 +391,7 @@ class Details extends oxUBase
 
         $this->_aViewData['ispricealarm'] = $this->isPriceAlarm();
 
-        $this->_aViewData['customerwho']    = $this->getAlsoBoughtThiesProducts();
+        $this->_aViewData['customerwho']    = $this->getAlsoBoughtTheseProducts();
         $this->_aViewData['accessoirelist'] = $this->getAccessoires();
         $this->_aViewData['similarlist']    = $this->getSimilarProducts();
         $this->_aViewData['crossselllist']  = $this->getCrossSelling();
@@ -1146,9 +1146,21 @@ class Details extends oxUBase
     /**
      * Template variable getter. Returns list of customer also bought thies products
      *
+     * @deprecated use thankyou::getAlsoBoughtTheseProducts()
+     *
      * @return object
      */
     public function getAlsoBoughtThiesProducts()
+    {
+        return $this->getAlsoBoughtTheseProducts();
+    }
+
+    /**
+     * Template variable getter. Returns list of customer also bought thies products
+     *
+     * @return object
+     */
+    public function getAlsoBoughtTheseProducts()
     {
         if ( $this->_aAlsoBoughtArts === null ) {
             $this->_aAlsoBoughtArts = false;

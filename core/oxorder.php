@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxorder.php 21499 2009-08-07 13:49:56Z vilma $
+ * $Id: oxorder.php 22620 2009-09-24 13:54:00Z arvydas $
  */
 
 /**
@@ -147,6 +147,13 @@ class oxOrder extends oxBase
      * @var bool
      */
     protected $_blReloadDiscount = true;
+
+    /**
+     * Current order currency object
+     *
+     * @var oxStdClass
+     */
+    protected $_oOrderCurrency = null;
 
     /**
      * Class constructor, initiates parent constructor (parent::oxBase()).
@@ -441,8 +448,12 @@ class oxOrder extends oxBase
      */
     protected function _setOrderStatus( $sStatus )
     {
-        $sQ = 'update oxorder set oxtransstatus="'.$sStatus.'" where oxid="'.$this->getId().'" ';
-        oxDb::getDb()->execute( $sQ );
+        $oDb = oxDb::getDb();
+        $sQ = 'update oxorder set oxtransstatus='.$oDb->quote( $sStatus ).' where oxid="'.$this->getId().'" ';
+        $oDb->execute( $sQ );
+
+        //updating order object
+        $this->oxorder__oxtransstatus = new oxField( $sStatus, oxField::T_RAW );
     }
 
     /**
@@ -499,14 +510,14 @@ class oxOrder extends oxBase
         }
 
         // general discount
-        $dDiscount = 0;
-        $aDiscounts = $oBasket->getDiscounts();
-        if ( count($aDiscounts) > 0 ) {
-            foreach ($aDiscounts as $oDiscount) {
-                $dDiscount += $oDiscount->dDiscount;
+        if ( $this->_blReloadDiscount ) {
+            $dDiscount = 0;
+            $aDiscounts = $oBasket->getDiscounts();
+            if ( count($aDiscounts) > 0 ) {
+                foreach ($aDiscounts as $oDiscount) {
+                    $dDiscount += $oDiscount->dDiscount;
+                }
             }
-        }
-        if ( $dDiscount ) {
             $this->oxorder__oxdiscount = new oxField($dDiscount, oxField::T_RAW);
         }
 
@@ -635,7 +646,8 @@ class oxOrder extends oxBase
         foreach ( $aArticleList as $oContent ) {
 
             //$oContent->oProduct = $oContent->getArticle();
-            $oProduct = $oContent->getArticle();
+            // #M773 Do not use article lazy loading on order save
+            $oProduct = $oContent->getArticle( true, null, true);
 
             // copy only if object is oxarticle type
             if ( $oProduct->isOrderArticle() ) {
@@ -652,7 +664,7 @@ class oxOrder extends oxBase
                 if ( count( $aChosenSelList = $oContent->getChosenSelList() ) ) {
                     foreach ( $aChosenSelList as $oItem ) {
                         if ( $sSelList ) {
-                           $sSelList .= ", ";
+                            $sSelList .= ", ";
                         }
                         $sSelList .= "{$oItem->name} : {$oItem->value}";
                     }
@@ -780,9 +792,10 @@ class oxOrder extends oxBase
 
         // #756M Preserve already stored payment information
         if ( !$aDynvalue && ( $oUserpayment = $this->getPaymentType() ) ) {
-            $aStoredDynvalue = $oUserpayment->getDynValues();
-            foreach ( $aStoredDynvalue as $oVal ) {
-                $aDynvalue[$oVal->name] = $oVal->value;
+            if ( is_array( $aStoredDynvalue = $oUserpayment->getDynValues() ) ) {
+                foreach ( $aStoredDynvalue as $oVal ) {
+                    $aDynvalue[$oVal->name] = $oVal->value;
+                }
             }
         }
 
@@ -791,15 +804,16 @@ class oxOrder extends oxBase
         // collecting dynamic values
         $aDynVal = array();
 
-        $aPaymentDynValues = $oPayment->getDynValues();
-        foreach ( $aPaymentDynValues  as $key => $oVal ) {
-            if ( isset( $aDynvalue[$oVal->name] ) ) {
-                $oVal->value = $aDynvalue[$oVal->name];
-            }
+        if ( is_array( $aPaymentDynValues = $oPayment->getDynValues() ) ) {
+            foreach ( $aPaymentDynValues  as $key => $oVal ) {
+                if ( isset( $aDynvalue[$oVal->name] ) ) {
+                    $oVal->value = $aDynvalue[$oVal->name];
+                }
 
-            //$oPayment->setDynValue($key, $oVal);
-            $aPaymentDynValues[$key] = $oVal;
-            $aDynVal[$oVal->name] = $oVal->value;
+                //$oPayment->setDynValue($key, $oVal);
+                $aPaymentDynValues[$key] = $oVal;
+                $aDynVal[$oVal->name] = $oVal->value;
+            }
         }
 
         // Store this payment information, we might allow users later to
@@ -984,8 +998,7 @@ class oxOrder extends oxBase
     {
         $oDelAdress = null;
         if ( ( $soxAddressId = oxConfig::getParameter( 'deladrid' ) ) ) {
-            $oDelAdress = oxNew( 'oxbase' );
-            $oDelAdress->init( 'oxaddress' );
+            $oDelAdress = oxNew( 'oxaddress' );
             $oDelAdress->load( $soxAddressId );
 
             //get delivery country name from delivery country id
@@ -1010,8 +1023,16 @@ class oxOrder extends oxBase
      */
     public function validateStock( $oBasket )
     {
-        foreach ( $oBasket->getContents() as $oContent ) {
-            $oProd = $oContent->getArticle();
+        foreach ( $oBasket->getContents() as $key => $oContent ) {
+            try {
+                $oProd = $oContent->getArticle();
+            } catch ( oxNoArticleException $oEx ) {
+                $oBasket->removeItem( $key );
+                throw $oEx;
+            } catch ( oxArticleInputException $oEx ) {
+                $oBasket->removeItem( $key );
+                throw $oEx;
+            }
 
             // check if its still available
             $iOnStock = $oProd->checkForStock( $oContent->getAmount() );
@@ -1019,6 +1040,7 @@ class oxOrder extends oxBase
                 $oEx = oxNew( 'oxOutOfStockException' );
                 $oEx->setMessage( 'EXCEPTION_OUTOFSTOCK_OUTOFSTOCK' );
                 $oEx->setArticleNr( $oProd->oxarticles__oxartnum->value );
+                $oEx->setProductId( $oProd->getId() );
                 $oEx->setRemainingAmount( $oProd->oxarticles__oxstock->value );
                 throw $oEx;
             }
@@ -1098,9 +1120,9 @@ class oxOrder extends oxBase
         // update article stock information and delete order articles
         $myConfig = $this->getConfig();
         $blUseStock = $myConfig->getConfigParam( 'blUseStock' );
-        $oOrderArticles = $this->getOrderArticles( $blUseStock );
+        $oOrderArticles = $this->getOrderArticles( false );
         foreach ( $oOrderArticles as $oOrderArticle ) {
-            if ( $blUseStock ) {
+            if ( $blUseStock && $oOrderArticle->oxorderarticles__oxstorno->value != 1 ) {
                 $oOrderArticle->updateArticleStock( $oOrderArticle->oxorderarticles__oxamount->value, $myConfig->getConfigParam('blAllowNegativeStock') );
             }
             $oOrderArticle->delete();
@@ -1119,7 +1141,7 @@ class oxOrder extends oxBase
      * adds current order articles to virtual basket and finaly recalculates order by calling oxorder::finalizeOrder()
      * If no errors, finishing transaction.
      *
-     * @param array $aNewArticles      article list of new order
+     * @param array $aNewArticles article list of new order
      *
      * @return null
      */
@@ -1356,7 +1378,7 @@ class oxOrder extends oxBase
     {
         $oDB = oxDb::getDb( true );
         $aVouchers = array();
-        $sSelect = "select oxvouchernr from oxvouchers where oxorderid = '".$this->oxorder__oxid->value."'";
+        $sSelect = "select oxvouchernr from oxvouchers where oxorderid = ".$oDB->quote( $this->oxorder__oxid->value );
         $rs = $oDB->execute( $sSelect);
         if ($rs != false && $rs->recordCount() > 0) {
             while (!$rs->EOF) {
@@ -1419,7 +1441,8 @@ class oxOrder extends oxBase
             return false;
         }
 
-        if ( oxDb::getDb()->getOne( 'select oxid from oxorder where oxid = "'.$sOxId.'"' ) ) {
+        $oDb = oxDb::getDb();
+        if ( $oDb->getOne( 'select oxid from oxorder where oxid = '.$oDb->quote( $sOxId ) ) ) {
             return true;
         }
 
@@ -1558,8 +1581,9 @@ class oxOrder extends oxBase
      */
     public function getLastUserPaymentType( $sUserId)
     {
-        $sQ = 'select oxorder.oxpaymenttype from oxorder where oxorder.oxshopid="'.$this->getConfig()->getShopId().'" and oxorder.oxuserid="'.$sUserId.'" order by oxorder.oxorderdate desc ';
-        $sLastPaymentId = oxDb::getDb()->getOne( $sQ );
+        $oDb = oxDb::getDb();
+        $sQ = 'select oxorder.oxpaymenttype from oxorder where oxorder.oxshopid="'.$this->getConfig()->getShopId().'" and oxorder.oxuserid='.$oDb->quote( $sUserId ).' order by oxorder.oxorderdate desc ';
+        $sLastPaymentId = $oDb->getOne( $sQ );
         return $sLastPaymentId;
     }
 
@@ -1584,8 +1608,8 @@ class oxOrder extends oxBase
     /**
      * Adds order articles back to virtual basket. Needed for recalculating order.
      *
-     * @param oxUser $oUser            basket user object
-     * @param array  $aOrderArticles   order articles
+     * @param oxUser $oUser          basket user object
+     * @param array  $aOrderArticles order articles
      *
      * @return oxBasket
      */
@@ -1606,6 +1630,8 @@ class oxOrder extends oxBase
      *
      * @param oxbasket $oBasket   basket to add articles
      * @param array    $aArticles article array
+     *
+     * @return null
      */
     protected function _addArticlesToBasket( $oBasket, $aArticles )
     {
@@ -1719,4 +1745,43 @@ class oxOrder extends oxBase
         $this->_blReloadDiscount = $blReload;
     }
 
+    /**
+     * Performs order cancelation process
+     *
+     * @return null
+     */
+    public function cancelOrder()
+    {
+        $this->oxorder__oxstorno = new oxField( 1 );
+        if ( $this->save() ) {
+            // canceling ordered products
+            foreach ( $this->getOrderArticles() as $oOrderArticle ) {
+                $oOrderArticle->cancelOrderArticle();
+            }
+        }
+    }
+
+    /**
+     * Returns actual order currency object. In case currency was not recognized
+     * due to changed name returns first shop currency object
+     *
+     * @return oxStdClass
+     */
+    public function getOrderCurrency()
+    {
+        if ( $this->_oOrderCurrency === null ) {
+
+            // setting default in case unrecognized currency was set during order
+            $aCurrencies = $this->getConfig()->getCurrencyArray();
+            $this->_oOrderCurrency = current( $aCurrencies );
+
+            foreach ( $aCurrencies as $oCurr ) {
+                if( $oCurr->name == $this->oxorder__oxcurrency->value ) {
+                    $this->_oOrderCurrency = $oCurr;
+                    break;
+                }
+            }
+        }
+        return $this->_oOrderCurrency;
+    }
 }

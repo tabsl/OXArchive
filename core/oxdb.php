@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdb.php 21182 2009-07-29 13:30:48Z arvydas $
+ * $Id: oxdb.php 22479 2009-09-21 15:18:40Z rimvydas.paskevicius $
  */
 
 /**
@@ -255,6 +255,21 @@ class oxDb extends oxSuperCfg
     {
         $aTypesWoQuotes = array('int', 'decimal', 'float', 'tinyint', 'smallint', 'mediumint', 'bigint', 'double');
         return !in_array( $sFieldtype, $aTypesWoQuotes);
+    }
+
+    /**
+     * Quotes an array.
+     *
+     * @param array $aStrArray array of strings to quote
+     *
+     * @return array
+     */
+    public function quoteArray( $aStrArray)
+    {
+        foreach ( $aStrArray as $sKey => $sString ) {
+            $aStrArray[$sKey] = self::getDb()->quote($sString);
+        }
+        return $aStrArray;
     }
 
     /**
@@ -797,6 +812,36 @@ class oxDb extends oxSuperCfg
 
         // we should increase (decrease) field lenght
         $oObject->fldmax_length = strlen( $oObject->value );
+    }
+
+    /**
+     * Get connection ID
+     *
+     * @return link identifier
+     */
+    protected function _getConnectionId()
+    {
+        if ( self::$_oDB !== null ) {
+           return self::$_oDB->connectionId;
+        }
+
+        return null;
+    }
+
+    /**
+     * Escape string for using in mysql statements
+     *
+     * @param string $sString string which will be escaped
+     *
+     * @return string
+     */
+    public function escapeString( $sString )
+    {
+        if ( !get_magic_quotes_gpc() ) {
+            $sString = mysql_real_escape_string( $sString, $this->_getConnectionId() );
+        }
+
+        return $sString;
     }
 
 }

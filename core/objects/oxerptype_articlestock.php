@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_articlestock.php 18030 2009-04-09 11:36:21Z arvydas $
+ * $Id: oxerptype_articlestock.php 22510 2009-09-22 10:38:27Z arvydas $
  */
 
 require_once 'oxerptype.php';
@@ -63,7 +63,7 @@ class oxERPType_ArticleStock extends oxERPType
 
         $oDB = oxDb::getDb();
 
-        $sSql = "select oxid from ". $this->getTableName($myConfig->getShopId()) ." where oxid = '". $sOxid ."'";
+        $sSql = "select oxid from ". $this->getTableName($myConfig->getShopId()) ." where oxid = ".$oDB->quote( $sOxid );
         $sRes = $oDB->getOne($sSql);
 
         if ( !$sRes ) {

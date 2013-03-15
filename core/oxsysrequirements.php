@@ -102,14 +102,14 @@ class oxSysRequirements
                                   'OXORDERID',
                                   'OXVOUCHERSERIEID');
 
-   /**
+    /**
      * Class constructor. The constructor is defined in order to be possible to call parent::__construct() in modules.
      *
      * @return null;
      */
-	public function __construct()
-	{
-	}
+    public function __construct()
+    {
+    }
 
     /**
      * Sets system required modules
@@ -409,10 +409,11 @@ class oxSysRequirements
      */
     public function checkZendOptimizer()
     {
-        $iModStat = extension_loaded( 'Zend Optimizer' ) ? 2 : 0;
+        $iMinStat = 0;
+        $iModStat = extension_loaded( 'Zend Optimizer' ) ? 2 : $iMinStat;
         $sHost   = $_SERVER['HTTP_HOST'];
         $sScript = $_SERVER['SCRIPT_NAME'];
-        if ( $iModStat > 0 && $sScript && $rFp = @fsockopen( $sHost, 80, $iErrNo, $sErrStr, 10 ) ) {
+        if ( $iModStat > $iMinStat && $sScript && $rFp = @fsockopen( $sHost, 80, $iErrNo, $sErrStr, 10 ) ) {
             $sScript = str_replace( basename($sScript), '../admin/index.php', $sScript );
 
             $sReq  = "POST $sScript HTTP/1.1\r\n";
@@ -428,10 +429,10 @@ class oxSysRequirements
                 $sOut .= fgets( $rFp, 100 );
             }
 
-            $iModStat = ( strpos( $sOut, 'Zend Optimizer not installed' ) !== false ) ? 0 : 2;
+            $iModStat = ( strpos( $sOut, 'Zend Optimizer not installed' ) !== false ) ? $iMinStat : 2;
             fclose( $rFp );
         }
-        if ( $iModStat > 0 && $sScript && $rFp = @fsockopen( $sHost, 80, $iErrNo, $sErrStr, 10 ) ) {
+        if ( $iModStat > $iMinStat && $sScript && $rFp = @fsockopen( $sHost, 80, $iErrNo, $sErrStr, 10 ) ) {
             $sScript = str_replace( basename($sScript), '../index.php', $sScript );
 
             $sReq  = "POST $sScript HTTP/1.1\r\n";
@@ -446,7 +447,7 @@ class oxSysRequirements
             while ( !feof( $rFp ) ) {
                 $sOut .= fgets( $rFp, 100 );
             }
-            $iModStat = ( strpos( $sOut, 'Zend Optimizer not installed' ) !== false ) ? 0 : 2;
+            $iModStat = ( strpos( $sOut, 'Zend Optimizer not installed' ) !== false ) ? $iMinStat : 2;
             fclose( $rFp );
         }
         return $iModStat;
@@ -590,7 +591,7 @@ class oxSysRequirements
     {
         if ( $sModule ) {
             $iModStat = null;
-            $sCheckFunction = "check".str_replace(" ","",ucwords(str_replace("_"," ",$sModule)));
+            $sCheckFunction = "check".str_replace(" ", "", ucwords(str_replace("_", " ", $sModule)));
             $iModStat = $this->$sCheckFunction();
 
             return $iModStat;

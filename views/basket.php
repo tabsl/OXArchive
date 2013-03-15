@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: basket.php 17315 2009-03-17 16:18:58Z arvydas $
+ * $Id: basket.php 22072 2009-09-02 10:19:07Z arvydas $
  */
 
 /**
@@ -235,5 +235,15 @@ class Basket extends oxUBase
                 return $sBackLink;
             }
         }
+    }
+
+    /**
+     * Returns a name of the view variable containing the error/exception messages
+     *
+     * @return null
+     */
+    public function getErrorDestination()
+    {
+        return 'basket';
     }
 }

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxrecommlist.php 17480 2009-03-20 12:33:16Z arvydas $
+ * $Id: oxrecommlist.php 22590 2009-09-24 06:24:00Z alfonsas $
  */
 
 /**
@@ -148,9 +148,9 @@ class oxRecommList extends oxBase
         }
 
         if ( ( $blDelete = parent::delete( $sOXID ) ) ) {
+            $oDb = oxDb::getDb();
             // cleaning up related data
-            $sQ = "delete from oxobject2list where oxlistid = '$sOXID' ";
-            oxDb::getDb()->execute( $sQ );
+            $oDb->execute( "delete from oxobject2list where oxlistid = ".$oDb->quote( $sOXID ) );
         }
         return $blDelete;
     }
@@ -168,9 +168,9 @@ class oxRecommList extends oxBase
             return false;
         }
 
-        $sSelect = 'select oxdesc from oxobject2list where oxlistid = "'.$this->getId().'" and oxobjectid = "'.$sOXID.'"';
-        $sDesc = oxDb::getDb()->getOne( $sSelect );
-        return $sDesc;
+        $oDb = oxDb::getDb();
+        $sSelect = 'select oxdesc from oxobject2list where oxlistid = "'.$this->getId().'" and oxobjectid = '.$oDb->quote( $sOXID );
+        return $oDb->getOne( $sSelect );
     }
 
     /**
@@ -182,12 +182,11 @@ class oxRecommList extends oxBase
      */
     public function removeArticle( $sOXID )
     {
-        if ( !$sOXID ) {
-            return false;
+        if ( $sOXID ) {
+            $oDb = oxDb::getDb();
+            $sQ = "delete from oxobject2list where oxobjectid = ".$oDb->quote( $sOXID ) ." and oxlistid='".$this->getId()."'";
+            return $oDb->execute( $sQ );
         }
-
-        $sQ = "delete from oxobject2list where oxobjectid = '$sOXID' ";
-        return oxDb::getDb()->execute( $sQ );
     }
 
     /**
@@ -202,12 +201,11 @@ class oxRecommList extends oxBase
     {
         $blAdd = false;
         if ( $sOXID ) {
-            $oDB = oxDb::getDb();
-            if ( !$oDB->getOne( "select oxid from oxobject2list where oxobjectid='$sOXID' and oxlistid='".$this->getId()."'" ) ) {
+            $oDb = oxDb::getDb();
+            if ( !$oDb->getOne( "select oxid from oxobject2list where oxobjectid=".$oDb->quote( $sOXID )." and oxlistid='".$this->getId()."'" ) ) {
                 $sUid  = oxUtilsObject::getInstance()->generateUID();
-                $sDesc = $oDB->quote( $sDesc );
-                $sQ    = "insert into oxobject2list ( oxid, oxobjectid, oxlistid, oxdesc ) values ( '$sUid', '$sOXID', '".$this->getId()."', $sDesc )";
-                $blAdd = $oDB->execute( $sQ );
+                $sQ    = "insert into oxobject2list ( oxid, oxobjectid, oxlistid, oxdesc ) values ( '$sUid', ".$oDb->quote( $sOXID ).", '".$this->getId()."', ".$oDb->quote( $sDesc )." )";
+                $blAdd = $oDb->execute( $sQ );
             }
         }
         return $blAdd;
@@ -228,12 +226,7 @@ class oxRecommList extends oxBase
         if ( count( $aArticleIds ) ) {
             startProfile(__FUNCTION__);
 
-            $aIds = array();
-            foreach ( $aArticleIds as $iKey => $sVal ) {
-                $aIds[$sVal] = mysql_real_escape_string($sVal);
-            }
-
-            $sIds = implode("','", $aIds);
+            $sIds = implode( ",", oxDb::getInstance()->quoteArray( $aArticleIds ) );
 
             $oRecommList = oxNew( 'oxlist' );
             $oRecommList->init( 'oxrecommlist' );
@@ -246,10 +239,10 @@ class oxRecommList extends oxBase
             $sSelect = "SELECT distinct lists.* FROM oxobject2list AS o2l_lists";
             $sSelect.= " LEFT JOIN oxobject2list AS o2l_count ON o2l_lists.oxlistid = o2l_count.oxlistid";
             $sSelect.= " LEFT JOIN oxrecommlists as lists ON o2l_lists.oxlistid = lists.oxid";
-            $sSelect.= " WHERE o2l_lists.oxobjectid IN ('$sIds') and lists.oxshopid ='$iShopId'";
+            $sSelect.= " WHERE o2l_lists.oxobjectid IN ( $sIds ) and lists.oxshopid ='$iShopId'";
             $sSelect.= " GROUP BY lists.oxid order by (";
             $sSelect.= " SELECT count( order1.oxobjectid ) FROM oxobject2list AS order1";
-            $sSelect.= " WHERE order1.oxobjectid IN ('$sIds') AND o2l_lists.oxlistid = order1.oxlistid";
+            $sSelect.= " WHERE order1.oxobjectid IN ( $sIds ) AND o2l_lists.oxlistid = order1.oxlistid";
             $sSelect.= " ) DESC, count( lists.oxid ) DESC";
 
             $oRecommList->selectString( $sSelect );
@@ -259,7 +252,7 @@ class oxRecommList extends oxBase
             if ( $oRecommList->count() ) {
                 startProfile('_loadFirstArticles');
 
-                $this->_loadFirstArticles( $oRecommList, $aIds );
+                $this->_loadFirstArticles( $oRecommList, $aArticleIds );
 
                 stopProfile('_loadFirstArticles');
 
@@ -281,16 +274,19 @@ class oxRecommList extends oxBase
      */
     protected function _loadFirstArticles(oxList $oRecommList, $aIds)
     {
+        $aIds = oxDb::getInstance()->quoteArray( $aIds );
+        $sIds = implode(", ", $aIds);
+
         $aPrevIds = array();
         $sArtView = getViewName( 'oxarticles' );
         foreach ($oRecommList as $key => $oRecomm) {
-            $sIds = implode("','", $aIds);
+
             if (count($aPrevIds)) {
                 $sNegateSql = " AND $sArtView.oxid not in ( '".implode("','", $aPrevIds)."' ) ";
             } else {
                 $sNegateSql = '';
             }
-            $sArticlesFilter = "$sNegateSql ORDER BY $sArtView.oxid in ( '$sIds' ) desc";
+            $sArticlesFilter = "$sNegateSql ORDER BY $sArtView.oxid in ( $sIds ) desc";
             $oRecomm->setArticlesFilter($sArticlesFilter);
             $oArtList = oxNew( 'oxarticlelist' );
             $oArtList->setSqlLimit( 0, 1 );
@@ -302,6 +298,7 @@ class oxRecommList extends oxBase
                 $sId = $oArticle->getId();
                 $aPrevIds[$sId] = $sId;
                 unset($aIds[$sId]);
+                $sIds = implode(", ", $aIds);
             } else {
                 unset($oRecommList[$key]);
             }
@@ -365,13 +362,13 @@ class oxRecommList extends oxBase
      */
     protected function _getSearchSelect( $sSearchStr )
     {
-        $iShopId    = $this->getConfig()->getShopId();
-        $sSearchStr = oxDb::getDb()->quote( "%$sSearchStr%" );
+        $iShopId          = $this->getConfig()->getShopId();
+        $sSearchStrQuoted = oxDb::getDb()->quote( "%$sSearchStr%" );
 
         $sSelect = "select distinct rl.* from oxrecommlists as rl";
         $sSelect.= " inner join oxobject2list as o2l on o2l.oxlistid = rl.oxid";
-        $sSelect.= " where ( rl.oxtitle like $sSearchStr or rl.oxdesc like $sSearchStr";
-        $sSelect.= " or o2l.oxdesc like $sSearchStr ) and rl.oxshopid = '$iShopId'";
+        $sSelect.= " where ( rl.oxtitle like $sSearchStrQuoted or rl.oxdesc like $sSearchStrQuoted";
+        $sSelect.= " or o2l.oxdesc like $sSearchStrQuoted ) and rl.oxshopid = '$iShopId'";
 
         return $sSelect;
     }
@@ -437,5 +434,18 @@ class oxRecommList extends oxBase
     public function setArticlesFilter($sArticlesFilter)
     {
         $this->_sArticlesFilter = $sArticlesFilter;
+    }
+
+    /**
+     * Save this Object to database, insert or update as needed.
+     *
+     * @return mixed
+     */
+    public function save()
+    {
+        if (!$this->oxrecommlists__oxtitle->value) {
+            throw new oxObjectException('EXCEPTION_RECOMMLIST_NOTITLE');
+        }
+        return parent::save();
     }
 }

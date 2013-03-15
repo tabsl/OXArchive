@@ -80,9 +80,13 @@
     // Use browser cookies to store session id (no sid parameter in URL)
     $this->blSessionUseCookies = 1;
 
-    // set this parameter when your shop runs on different subdomains in ssl/non ssl mode
-    // e.g. if you setup "ssl.shop.com"/"www.shop.com" - config value should be ".shop.com"
-    $this->sCookieDomain = null;
+    // The domain that the cookie is available: array( _SHOP_ID_ => _DOMAIN_ );
+    // check setcookie() documentation for more details @php.net
+    $this->aCookieDomains = null;
+
+    // The path on the server in which the cookie will be available on: array( _SHOP_ID_ => _PATH_ );
+    // check setcookie() documentation for more details @php.net
+    $this->aCookiePaths = null;
 
     // uncomment the following line if you want to leave euro sign unchanged in output
     // by default is set to convert euro sign symbol to html entity

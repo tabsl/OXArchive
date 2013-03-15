@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcmp_categories.php 21224 2009-07-31 13:37:17Z vilma $
+ * $Id: oxcmp_categories.php 22598 2009-09-24 08:09:51Z vilma $
  */
 
 /**
@@ -61,7 +61,9 @@ class oxcmp_categories extends oxView
         }
 
         $sActProduct = oxConfig::getParameter( 'anid' );
-        $sActCont = oxConfig::getParameter( 'tpl' );
+        if ( ! ( $sActCont = oxConfig::getParameter( 'oxcid' ) ) ) {
+            $sActCont = oxConfig::getParameter( 'tpl' );
+        }
         $sActManufacturer = oxConfig::getParameter( 'mnid' );
         $sActCat = $sActManufacturer ? null : oxConfig::getParameter( 'cnid' );
         $sActTag = oxConfig::getParameter( 'searchtag' );
@@ -369,7 +371,8 @@ class oxcmp_categories extends oxView
             if ( $sActCat && !$blVendor && !$blManufacturer && !$blTags ) {
                 if ( !$oProduct->isAssignedToCategory( $sActCat ) ) {
                     // article is assigned to any category ?
-                    $aArticleCats = $oProduct->getCategoryIds();
+                    // #1306: selecting active categories will not be checked if parent categories are active 
+                    $aArticleCats = $oProduct->getCategoryIds(true);
                     if ( is_array( $aArticleCats ) && count( $aArticleCats ) ) {
                         $sActCat = reset( $aArticleCats );
                         // setting list type directly
@@ -387,7 +390,7 @@ class oxcmp_categories extends oxView
                     }
                 }
             } elseif ( !$sActCat && !$sActCont && !$sActManufacturer && !$blTags ) {
-                $aArticleCats = $oProduct->getCategoryIds();
+                $aArticleCats = $oProduct->getCategoryIds(true);
                 if ( is_array( $aArticleCats ) && count( $aArticleCats ) ) {
                     $sActCat = reset( $aArticleCats );
                     // setting list type directly

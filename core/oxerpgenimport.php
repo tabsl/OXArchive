@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerpgenimport.php 21601 2009-08-14 13:36:52Z rimvydas.paskevicius $
+ * $Id: oxerpgenimport.php 22356 2009-09-16 13:54:18Z vilma $
  */
 
 /**
@@ -392,12 +392,16 @@ class oxErpGenImport extends oxErpCsv
     protected function _getCsvFieldsTerminator()
     {
         $myConfig = oxConfig::getInstance();
+        // deprecated
+        $sChar = $myConfig->getConfigParam( 'sGiCsvFieldTerminator' );
 
-        if ( $sChar = $myConfig->getConfigParam( 'sGiCsvFieldTerminator' ) ){
-            return $sChar;
-        } else {
-            return $this->_sDefaultStringTerminator;
+        if ( !$sChar ){
+            $sChar = $myConfig->getConfigParam( 'sCSVSign' );
         }
+        if ( !$sChar ){
+            $sChar = $this->_sDefaultStringTerminator;
+        }
+        return $sChar;
     }
 
     /**

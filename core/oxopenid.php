@@ -29,12 +29,15 @@ $sPath = ini_get('include_path');
 $sPath = $sPath . PATH_SEPARATOR . $sPathExtra;
 ini_set('include_path', $sPath);
 
-if ( (PHP_OS == "WINNT") && !defined('Auth_OpenID_RAND_SOURCE') ) {
-    /**
-     * The OpenID suite from JanRain points to a randomness source specific 
-     * to Linux/Unix/Mac "/dev/urandom". Need to set Auth_OpenID_RAND_SOURCE to null.
-     */
-    define('Auth_OpenID_RAND_SOURCE', null);
+if ( !defined('Auth_OpenID_RAND_SOURCE') ) {
+    if ( $sRandSource = oxConfig::getInstance()->getConfigParam( 'sAuthOpenIdRandSource' ) ) {
+        define( 'Auth_OpenID_RAND_SOURCE', $sRandSource );
+    } elseif ( PHP_OS == 'WINNT' || ( @fopen( '/dev/urandom', 'r' ) === false ) ) {
+        /**
+         * in case shop runs on windows or other system, which does not have '/dev/urandom'
+         */
+        define( 'Auth_OpenID_RAND_SOURCE', null );
+    }
 }
 
 require_once "openid/Auth/OpenID/Consumer.php";
@@ -52,10 +55,10 @@ class oxOpenId extends oxBase
 {
     /**
      * OpenID authentication process.
-     * 
+     *
      * @param string $sOpenId    openid url
      * @param string $sReturnUrl url to return
-     * 
+     *
      * @return null
      */
     public function authenticateOid( $sOpenId, $sReturnUrl )
@@ -63,7 +66,7 @@ class oxOpenId extends oxBase
         $myConfig = $this->getConfig();
         // create OpenID consumer
         $oConsumer = $this->_getConsumer();
-    
+
         // begin sign-in process
         // creates an authentication request to the OpenID provider
         $oAuth = $oConsumer->begin($sOpenId);
@@ -80,12 +83,12 @@ class oxOpenId extends oxBase
         // redirect to OpenID provider for authentication
         $sUrl = $oAuth->redirectURL( $myConfig->getShopUrl(), $sReturnUrl);
         oxUtils::getInstance()->redirect( $sUrl, false );
-        
+
     }
 
     /**
      * Complete the authentication using the server's response
-     * 
+     *
      * @param string $sReturnUrl url to return
      *
      * @return array $aData registration data
@@ -128,7 +131,7 @@ class oxOpenId extends oxBase
 
         return $oConsumer;
     }
- 
+
     /**
      * Returns response object.
      *
@@ -139,7 +142,7 @@ class oxOpenId extends oxBase
         $oSRreg = new Auth_OpenID_SRegResponse();
 
         return $oSRreg;
-    }   
+    }
 
     /**
      * Where will store OpenID information.

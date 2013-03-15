@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxreview.php 17248 2009-03-16 15:22:07Z arvydas $
+ * $Id: oxreview.php 22600 2009-09-24 08:24:15Z alfonsas $
  */
 
 /**
@@ -120,13 +120,7 @@ class oxReview extends oxBase
 
         $sObjectIdWhere = '';
         if ( is_array( $aIds ) && count( $aIds ) ) {
-            foreach ( $aIds as $sId ) {
-                if ( $sObjectIdWhere ) {
-                    $sObjectIdWhere .= ', ';
-                }
-                $sObjectIdWhere .= $oDb->quote( $sId );
-            }
-            $sObjectIdWhere = "oxreviews.oxobjectid in ( $sObjectIdWhere )";
+            $sObjectIdWhere = "oxreviews.oxobjectid in ( ".implode(", ",oxDb::getInstance()->quoteArray( $aIds ))." )";
         } elseif ( is_string( $aIds ) && $aIds ) {
             $sObjectIdWhere = "oxreviews.oxobjectid = ".$oDb->quote( $aIds );
         } else {
@@ -135,8 +129,7 @@ class oxReview extends oxBase
 
         $iLoadInLang = is_null( $iLoadInLang ) ? (int) oxLang::getInstance()->getBaseLanguage() : (int) $iLoadInLang;
 
-        $sType = $oDb->quote( $sType );
-        $sSelect = "select oxreviews.* from oxreviews where oxreviews.oxtype = $sType and $sObjectIdWhere and oxreviews.oxlang = '$iLoadInLang'";
+        $sSelect = "select oxreviews.* from oxreviews where oxreviews.oxtype = ".$oDb->quote( $sType )." and $sObjectIdWhere and oxreviews.oxlang = '$iLoadInLang'";
 
         if ( !$blLoadEmpty ) {
             $sSelect .= ' and oxreviews.oxtext != "" ';

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxgbentry.php 17248 2009-03-16 15:22:07Z arvydas $
+ * $Id: oxgbentry.php 22560 2009-09-22 14:58:12Z rimvydas.paskevicius $
  */
 
 /**
@@ -168,7 +168,7 @@ class oxGbEntry extends oxBase
         if ( $sUserId && $sShopid) {
             $sToday = date( 'Y-m-d' );
             $sSelect  = "select count(*) from oxgbentries ";
-            $sSelect .= "where oxgbentries.oxuserid = '$sUserId' and oxgbentries.oxshopid = '$sShopid' ";
+            $sSelect .= "where oxgbentries.oxuserid = " . oxDb::getDb()->quote( $sUserId ) . " and oxgbentries.oxshopid = " . oxDb::getDb()->quote( $sShopid ) . " ";
             $sSelect .= "and oxgbentries.oxcreate >= '$sToday 00:00:00' and oxgbentries.oxcreate <= '$sToday 23:59:59' ";
             $iCnt = oxDb::getDb()->getOne( $sSelect );
 

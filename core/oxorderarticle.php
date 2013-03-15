@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxorderarticle.php 20672 2009-07-08 11:38:22Z arvydas $
+ * $Id: oxorderarticle.php 22526 2009-09-22 12:01:34Z arvydas $
  */
 
 /**
@@ -178,10 +178,11 @@ class oxOrderArticle extends oxBase implements oxIArticle
 
         // get real article stock count
         $iStockCount = $this->_getArtStock( $dAddAmount, $blAllowNegativeStock );
+        $oDb = oxDb::getDb();
 
         // #874A. added oxarticles.oxtimestamp = oxarticles.oxtimestamp to keep old timestamp value
         $oArticle->oxarticles__oxstock = new oxField($iStockCount);
-        oxDb::getDb()->execute( 'update oxarticles set oxarticles.oxstock = '.$iStockCount.', oxarticles.oxtimestamp = oxarticles.oxtimestamp where oxarticles.oxid = "'.$this->oxorderarticles__oxartid->value.'" ' );
+        $oDb->execute( 'update oxarticles set oxarticles.oxstock = '.$oDb->quote( $iStockCount ).', oxarticles.oxtimestamp = oxarticles.oxtimestamp where oxarticles.oxid = '.$oDb->quote( $this->oxorderarticles__oxartid->value ) );
         $oArticle->onChange( ACTION_UPDATE_STOCK );
 
         //update article sold amount
@@ -198,9 +199,11 @@ class oxOrderArticle extends oxBase implements oxIArticle
      */
     protected function _getArtStock( $dAddAmount = null, $blAllowNegativeStock = null )
     {
+        $oDb = oxDb::getDb();
+
         // #1592A. must take real value
-        $sQ = 'select oxstock from oxarticles where oxid = "'.$this->oxorderarticles__oxartid->value.'" ';
-        $iStockCount  = ( float ) oxDb::getDb()->getOne( $sQ );
+        $sQ = 'select oxstock from oxarticles where oxid = '.$oDb->quote( $this->oxorderarticles__oxartid->value );
+        $iStockCount  = ( float ) $oDb->getOne( $sQ );
 
         $iStockCount += $dAddAmount;
 
@@ -294,6 +297,9 @@ class oxOrderArticle extends oxBase implements oxIArticle
     /**
      * Executes oxOrderArticle::load() and returns its result
      *
+     * @param int    $iLanguage language id
+     * @param string $sOxid     order article id
+     *
      * @return bool
      */
     public function loadInLang( $iLanguage, $sOxid )
@@ -323,9 +329,10 @@ class oxOrderArticle extends oxBase implements oxIArticle
             return $this->oxorderarticles__oxartparentid->value;
         }
 
+        $oDb = oxDb::getDb();
         $oArticle = oxNew( "oxarticle" );
-        $sQ = "select oxparentid from " . $oArticle->getViewName() . " where oxid='" . $this->getProductId() . "'";
-        $this->oxarticles__oxparentid = new oxField( oxDb::getDb()->getOne( $sQ ) );
+        $sQ = "select oxparentid from " . $oArticle->getViewName() . " where oxid=" . $oDb->quote( $this->getProductId() );
+        $this->oxarticles__oxparentid = new oxField( $oDb->getOne( $sQ ) );
         return $this->oxarticles__oxparentid->value;
     }
 
@@ -407,6 +414,8 @@ class oxOrderArticle extends oxBase implements oxIArticle
 
     /**
      * Returns article select lists, implements iBaseArticle interface method
+     *
+     * @param string $sKeyPrefix prefix (not used)
      *
      * @return array
      */
@@ -511,15 +520,16 @@ class oxOrderArticle extends oxBase implements oxIArticle
     /**
      * Returns empty array, implements iBaseArticle interface getter method
      *
+     * @param bool $blActCats   select categories if all parents are active
      * @param bool $blSkipCache force reload or not (default false - no reload)
      *
      * @return array
      */
-    public function getCategoryIds( $blSkipCache = false )
+    public function getCategoryIds( $blActCats = false, $blSkipCache = false )
     {
         $aCatIds = array();
         if ( $oOrderArticle = $this->_getOrderArticle() ) {
-            $aCatIds = $oOrderArticle->getCategoryIds( $blSkipCache );
+            $aCatIds = $oOrderArticle->getCategoryIds( $blActCats, $blSkipCache );
         }
         return $aCatIds;
     }
@@ -628,4 +638,21 @@ class oxOrderArticle extends oxBase implements oxIArticle
         return true;
     }
 
+
+   /**
+    * Sets order article storno value to 1 and if stock control is on -
+    * restores previous oxarticle stock state
+    *
+    * @return null
+    */
+   public function cancelOrderArticle()
+   {
+        if ( $this->oxorderarticles__oxstorno->value == 0 ) {
+            $myConfig = $this->getConfig();
+            $this->oxorderarticles__oxstorno->setValue( 1 );
+            if ( $this->save() && $myConfig->getConfigParam( 'blUseStock' ) ) {
+                $this->updateArticleStock( $this->oxorderarticles__oxamount->value, $myConfig->getConfigParam('blAllowNegativeStock') );
+            }
+        }
+   }
 }

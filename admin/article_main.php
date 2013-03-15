@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_main.php 19886 2009-06-16 12:39:06Z alfonsas $
+ * $Id: article_main.php 22481 2009-09-22 06:50:34Z arvydas $
  */
 
 /**
@@ -185,8 +185,9 @@ class Article_Main extends oxAdminDetails
             $aResetIds = array();
             if ( $aParams['oxarticles__oxactive'] != $oArticle->oxarticles__oxactive->value) {
                 //check categories
-                $sQ = "select oxcatnid from oxobject2category where oxobjectid = '".$oArticle->oxarticles__oxid->value."'";
-                $rs = oxDb::getDb()->Execute($sQ);
+                $oDb = oxDb::getDb();
+                $sQ = "select oxcatnid from oxobject2category where oxobjectid = ".$oDb->quote( $oArticle->oxarticles__oxid->value );
+                $rs = $oDb->execute($sQ);
                 if ( $rs !== false && $rs->recordCount() > 0 ) {
                     while (!$rs->EOF) {
                         $this->resetCounter( "catArticle", $rs->fields[0] );
@@ -216,7 +217,10 @@ class Article_Main extends oxAdminDetails
 
         $oArticle->setLanguage(0);
 
-        $oArticle->assign( $aParams);
+        //triming spaces from article title (M:876)
+        $aParams['oxarticles__oxtitle'] = trim( $aParams['oxarticles__oxtitle'] );
+
+        $oArticle->assign( $aParams );
         $oArticle->setLanguage($this->_iEditLang);
 
         $oArticle = oxUtilsFile::getInstance()->processFiles( $oArticle );
@@ -316,10 +320,11 @@ class Article_Main extends oxAdminDetails
 
 
             $myUtilsObject = oxUtilsObject::getInstance();
+            $oDb = oxDb::getDb();
 
             //copy variants
-            $sQ = "select oxid from oxarticles where oxparentid = '{$sOldId}'";
-            $rs = oxDb::getDb()->execute($sQ);
+            $sQ = "select oxid from oxarticles where oxparentid = ".$oDb->quote( $sOldId );
+            $rs = $oDb->execute($sQ);
             if ( $rs !== false && $rs->recordCount() > 0) {
                 while ( !$rs->EOF ) {
                     $this->copyArticle( $rs->fields[0], $myUtilsObject->generateUID(), $sNewId );
@@ -336,7 +341,7 @@ class Article_Main extends oxAdminDetails
                 if ( $myConfig->getConfigParam( 'blWarnOnSameArtNums' ) &&
                      $oArticle->oxarticles__oxartnum->value && oxConfig::getParameter( 'fnc' ) == 'copyArticle' ) {
                     $sSelect = "select oxid from ".$oArticle->getCoreTableName()."
-                                where oxartnum = '{$oArticle->oxarticles__oxartnum->value}'and oxid != '{$sNewId}'";
+                                where oxartnum = ".$oDb->quote( $oArticle->oxarticles__oxartnum->value )." and oxid != ".$oDb->quote( $sNewId );
 
                     if ( $oArticle->assignRecord( $sSelect ) ) {
                         $this->_aViewData["errorsavingatricle"] = 1;
@@ -364,14 +369,15 @@ class Article_Main extends oxAdminDetails
         $oDb = oxDb::getDb();
 
         $sO2CView = getViewName('oxobject2category');
-        $sQ = "select oxcatnid from $sO2CView where oxobjectid = '$sOldID'";
+        $sQ = "select oxcatnid, oxtime from $sO2CView where oxobjectid = ".$oDb->quote( $sOldID );
         $rs = $oDb->execute($sQ);
         if ($rs !== false && $rs->recordCount() > 0) {
             while (!$rs->EOF) {
                 $sUID = $myUtilsObject->generateUID();
                 $sCatID = $rs->fields[0];
+                $sTime =  $rs->fields[1];
 
-                    $oDb->execute("insert into oxobject2category (oxid, oxobjectid, oxcatnid) VALUES ('$sUID', '$sNewID', '$sCatID') ");
+                    $oDb->execute("insert into oxobject2category (oxid, oxobjectid, oxcatnid, oxtime) VALUES (".$oDb->quote( $sUID ).", ".$oDb->quote( $sNewID ).", ".$oDb->quote( $sCatID ).", ".$oDb->quote( $sTime ).") ");
                 $rs->moveNext();
 
                     // resetting article count in category
@@ -391,8 +397,10 @@ class Article_Main extends oxAdminDetails
     protected function _copyAttributes( $sOldID, $sNewID )
     {
         $myUtilsObject = oxUtilsObject::getInstance();
-        $sQ = "select oxid from oxobject2attribute where oxobjectid = '$sOldID'";
-        $rs = oxDb::getDb()->Execute($sQ);
+        $oDb = oxDb::getDb();
+
+        $sQ = "select oxid from oxobject2attribute where oxobjectid = ".$oDb->quote( $sOldID );
+        $rs = $oDb->Execute($sQ);
         if ($rs !== false && $rs->recordCount() > 0) {
             while (!$rs->EOF) {
                 // #1055A
@@ -420,14 +428,14 @@ class Article_Main extends oxAdminDetails
         $myUtilsObject = oxUtilsObject::getInstance();
         $oDb = oxDb::getDb();
 
-        $sQ = "select oxselnid from oxobject2selectlist where oxobjectid = '$sOldID'";
+        $sQ = "select oxselnid from oxobject2selectlist where oxobjectid = ".$oDb->quote( $sOldID );
         $rs = $oDb->Execute($sQ);
 
         if ($rs !== false && $rs->recordCount() > 0) {
             while (!$rs->EOF) {
                 $sUID = $myUtilsObject->generateUID();
                 $sID = $rs->fields[0];
-                $oDb->Execute("insert into oxobject2selectlist (oxid, oxobjectid, oxselnid) VALUES ('$sUID', '$sNewID', '$sID') ");
+                $oDb->Execute("insert into oxobject2selectlist (oxid, oxobjectid, oxselnid) VALUES (".$oDb->quote( $sUID ).", ".$oDb->quote( $sNewID ).", ".$oDb->quote( $sID ).") ");
                 $rs->moveNext();
             }
         }
@@ -446,13 +454,13 @@ class Article_Main extends oxAdminDetails
         $myUtilsObject = oxUtilsObject::getInstance();
         $oDb = oxDb::getDb();
 
-        $sQ = "select oxobjectid from oxobject2article where oxarticlenid = '$sOldID'";
+        $sQ = "select oxobjectid from oxobject2article where oxarticlenid = ".$oDb->quote( $sOldID );
         $rs = $oDb->Execute($sQ);
         if ($rs !== false && $rs->recordCount() > 0) {
             while (!$rs->EOF) {
                 $sUID = $myUtilsObject->generateUID();
                 $sID = $rs->fields[0];
-                $oDb->Execute("insert into oxobject2article (oxid, oxobjectid, oxarticlenid) VALUES ('$sUID', '$sID', '$sNewID') ");
+                $oDb->Execute("insert into oxobject2article (oxid, oxobjectid, oxarticlenid) VALUES (".$oDb->quote( $sUID ).", ".$oDb->quote( $sID ).", ".$oDb->quote( $sNewID )." ) ");
                 $rs->moveNext();
             }
         }
@@ -471,13 +479,13 @@ class Article_Main extends oxAdminDetails
         $myUtilsObject = oxUtilsObject::getInstance();
         $oDb = oxDb::getDb();
 
-        $sQ = "select oxobjectid from oxaccessoire2article where oxarticlenid= '$sOldID'";
+        $sQ = "select oxobjectid from oxaccessoire2article where oxarticlenid= ".$oDb->quote( $sOldID );
         $rs = $oDb->Execute($sQ);
         if ($rs !== false && $rs->recordCount() > 0) {
             while (!$rs->EOF) {
                 $sUID = $myUtilsObject->generateUID();
                 $sID = $rs->fields[0];
-                $oDb->Execute("insert into oxaccessoire2article (oxid, oxobjectid, oxarticlenid) VALUES ('$sUID', '$sID', '$sNewID') ");
+                $oDb->Execute("insert into oxaccessoire2article (oxid, oxobjectid, oxarticlenid) VALUES (".$oDb->quote( $sUID ).", ".$oDb->quote( $sID ).", ".$oDb->quote( $sNewID ).") ");
                 $rs->moveNext();
             }
         }
@@ -576,9 +584,10 @@ class Article_Main extends oxAdminDetails
             $aResetIds = array();
 
             if ( $aParams['oxarticles__oxactive'] != $oArticle->oxarticles__oxactive->value) {
+                $oDb = oxDb::getDb();
                 //check categories
-                $sQ = "select oxcatnid from oxobject2category where oxobjectid = '".$oArticle->oxarticles__oxid->value."'";
-                $rs = oxDb::getDb()->Execute($sQ);
+                $sQ = "select oxcatnid from oxobject2category where oxobjectid = ".$oDb->quote( $oArticle->oxarticles__oxid->value );
+                $rs = $oDb->Execute($sQ);
                 if ($rs !== false && $rs->recordCount() > 0)
                     while (!$rs->EOF) {
                         $this->resetCounter( "catArticle", $rs->fields[0] );

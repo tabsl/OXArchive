@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_crossselling.php 17243 2009-03-16 15:16:57Z arvydas $
+ * $Id: article_crossselling.php 22481 2009-09-22 06:50:34Z arvydas $
  */
 
 /**
@@ -108,10 +108,10 @@ class Article_Crossselling extends oxAdminDetails
                 $sFItmId = $aObjectId[0];
                 foreach ( $aList as $iNum => $aItem) {
                     if ( $aItem[2] == $sFItmId && $iNum > 0) {
-                        $sSelect = "update $sTable set $sTable.oxsort=".( $iNum + count($aObjectId) - 1 )." where $sTable.oxobjectid='".$aList[$iNum-1][2]."'";
+                        $sSelect = "update $sTable set $sTable.oxsort=".( $iNum + count($aObjectId) - 1 )." where $sTable.oxobjectid=".$oDB->quote( $aList[$iNum-1][2] );
                         $oDB->execute( $sSelect);
                         foreach ( $aObjectId as $iSNum => $sItem) {
-                            $sSelect = "update $sTable set $sTable.oxsort=".( $iNum + $iSNum - 1 )." where $sTable.oxobjectid='".$sItem."'";
+                            $sSelect = "update $sTable set $sTable.oxsort=".( $iNum + $iSNum - 1 )." where $sTable.oxobjectid=".$oDB->quote( $sItem );
                             $oDB->execute( $sSelect);
                         }
                         break;
@@ -122,10 +122,10 @@ class Article_Crossselling extends oxAdminDetails
                 $sFItmId = $aObjectId[count($aObjectId)-1];
                 foreach ( $aList as $iNum => $aItem) {
                     if ( $aItem[2] == $sFItmId && $iNum < (count($aList)-1)) {
-                        $sSelect = "update $sTable set $sTable.oxsort=".( $iNum - count($aObjectId) + 1 )." where $sTable.oxobjectid='".$aList[$iNum+1][2]."'";
+                        $sSelect = "update $sTable set $sTable.oxsort=".( $iNum - count($aObjectId) + 1 )." where $sTable.oxobjectid=".$oDB->quote( $aList[$iNum+1][2] );
                         $oDB->execute( $sSelect);
                         foreach ( $aObjectId as $iSNum => $sItem) {
-                            $sSelect = "update $sTable set $sTable.oxsort=".( $iNum - $iSNum + 1 )." where $sTable.oxobjectid='".$sItem."'";
+                            $sSelect = "update $sTable set $sTable.oxsort=".( $iNum - $iSNum + 1 )." where $sTable.oxobjectid=".$oDB->quote( $sItem );
                             $oDB->execute( $sSelect);
                         }
                         break;
@@ -155,7 +155,7 @@ class Article_Crossselling extends oxAdminDetails
         $oDB = oxDb::getDb();
         foreach ( $aList as $iNum => $aItem) {
             if ( $aItem[1] != $iNum) {
-                $sSelect = "update $sTable set $sTable.oxsort=$iNum where $sTable.oxid='".$aItem[0]."'";
+                $sSelect = "update $sTable set $sTable.oxsort=$iNum where $sTable.oxid=".$oDB->quote( $aItem[0] );
                 $oDB->execute( $sSelect);
             }
         }
@@ -176,11 +176,11 @@ class Article_Crossselling extends oxAdminDetails
 
         if ( !isset($soxId) && $soxId == "-1")
             return;
+
         $sSelect  = "select $sTable.oxid, $sTable.oxsort, $sTable.oxobjectid , ";
         $sSelect .= "$sTable.oxarticlenid from $sTable where $sTable.oxarticlenid = '".$soxId."' order by $sTable.oxsort";
-        $oDB = oxDb::getDb();
         $aList = array();
-        $rs = $oDB->selectLimit( $sSelect, 1000, 0);
+        $rs = oxDb::getDb()->selectLimit( $sSelect, 1000, 0);
         //fetches assigned article list
         if ($rs != false && $rs->recordCount() > 0) {
             while (!$rs->EOF) {

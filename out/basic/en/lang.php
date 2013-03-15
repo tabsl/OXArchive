@@ -19,7 +19,7 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 21166 2009-07-28 14:56:10Z arvydas $
+ * $Id: lang.php 22336 2009-09-15 15:44:43Z vilma $
  */
 
 
@@ -1222,14 +1222,15 @@ $aLang = array(
 'EXCEPTION_CONNECTION_IPAYMENTNOSERVICE'          => 'Error during communication with the IPayment server!',
 'EXCEPTION_CONNECTION_IPAYMENTPROXYFAULT'         => 'Error during communication with the IPayment server!',
 'EXCEPTION_CONNECTION_IPAYMENTPROXYERROR'         => 'Error during communication with the IPayment server!',
-'EXCEPTION_ARTICLE_ARTICELDOESNOTEXIST'           => "Article doesn't exist!",
+'EXCEPTION_ARTICLE_ARTICELDOESNOTEXIST'           => 'Unfortunately the product "%s" is no longer available!',
 'EXCEPTION_ARTICLE_ARTICELNOTBUYABLE'             => "Product is not buyable",
-'EXCEPTION_OUTOFSTOCK_OUTOFSTOCK'                 => 'No enought items of this article in stock! Available:',
+'EXCEPTION_OUTOFSTOCK_OUTOFSTOCK'                 => 'Not enough items of this product in stock! Available:',
 'EXCEPTION_ARTICLE_NOPRODUCTID'                   => 'No product id given!',
 'EXCEPTION_INPUT_INVALIDAMOUNT'                   => 'Please enter a valid amount for this product!',
 'EXCEPTION_NOFILE'                                => 'No uploaded file',
 'EXCEPTION_NOTALLOWEDTYPE'                        => 'Not allowed file type (please, edit config.inc.php to allow this type of file)',
-'EXCEPTION_SYSTEMCOMPONENT_TEMPLATENOTFOUND'      => 'Template "%s" not found'
+'EXCEPTION_SYSTEMCOMPONENT_TEMPLATENOTFOUND'      => 'Template "%s" not found',
+'EXCEPTION_RECOMMLIST_NOTITLE'                    => 'Title field is empty',
 );
 
 /*

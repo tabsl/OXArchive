@@ -33,7 +33,14 @@ class oxArticleException extends oxException
      *
      * @var string
      */
-    protected $_sArticleNr;
+    protected $_sArticleNr = null;
+
+    /**
+     * Id of product which caused this exception
+     *
+     * @var string
+     */
+    protected $_sProductId = null;
 
     /**
      * Sets the article number of the article which caused the exception
@@ -58,6 +65,28 @@ class oxArticleException extends oxException
     }
 
     /**
+     * Sets the product id of the article which caused the exception
+     *
+     * @param string $sProductId id of product who causes the exception
+     *
+     * @return null
+     */
+    public function setProductId( $sProductId )
+    {
+        $this->_sProductId = $sProductId;
+    }
+
+    /**
+     * Faulty product id
+     *
+     * @return string
+     */
+    public function getProductId()
+    {
+        return $this->_sProductId;
+    }
+
+    /**
      * Get string dump
      * Overrides oxException::getString()
      *
@@ -78,6 +107,7 @@ class oxArticleException extends oxException
     {
         $aRes = parent::getValues();
         $aRes['articleNr'] = $this->getArticleNr();
+        $aRes['productId'] = $this->getProductId();
         return $aRes;
     }
 }

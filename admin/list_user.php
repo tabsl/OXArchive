@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: list_user.php 18141 2009-04-14 11:39:01Z arvydas $
+ * $Id: list_user.php 22642 2009-09-25 12:13:51Z rimvydas.paskevicius $
  */
 
 /**
@@ -75,7 +75,7 @@ class List_User extends User_List
     protected function _prepareOrderByQuery( $sSql = null )
     {
         if ( $sSort = oxConfig::getParameter( "sort" ) ) {
-            $sSql .= " order by $sSort ";
+            $sSql .= " order by " . oxDb::getInstance()->escapeString( $sSort ) . " ";
         }
 
         return $sSql;

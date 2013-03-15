@@ -520,25 +520,20 @@ function _groupExp(el) {
 
             <dl>
                 <dt>
-                    <input type=text class="txt" style="width:70" name=confstrs[iTopNaviCatCount] value="[{$confstrs.iTopNaviCatCount}]" [{ $readonly}]>
+                    <input type="button" value="[{if isset($defcat) && isset($defcat->oxcategories__oxtitle)}][{$defcat->oxcategories__oxtitle->value}][{else}]---[{/if}]" onclick="JavaScript:showDialog('?cl=shop_config&aoc=1&oxid=[{$oxid|escape:'url'}]');">
                 </dt>
                 <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_TOPNAVICATCOUNT" }]
+                    [{ oxmultilang ident="SHOP_CONFIG_ACTIVECATEGORYBYSTART" }]
                 </dd>
                 <div class="spacer"></div>
             </dl>
 
             <dl>
                 <dt>
-                    <select name="editval[oxshops__oxdefcat]" class="select" [{ $readonly}]>
-                      <option value="">--</option>
-                      [{foreach from=$cattree->aList item=pcat}]
-                      <option value="[{ $pcat->oxcategories__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value }]</option>
-                      [{/foreach}]
-                    </select>
+                    <input type=text class="txt" style="width:70" name=confstrs[iTopNaviCatCount] value="[{$confstrs.iTopNaviCatCount}]" [{ $readonly}]>
                 </dt>
                 <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_ACTIVECATEGORYBYSTART" }]
+                    [{ oxmultilang ident="SHOP_CONFIG_TOPNAVICATCOUNT" }]
                 </dd>
                 <div class="spacer"></div>
             </dl>
@@ -625,6 +620,17 @@ function _groupExp(el) {
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_LOAD_DYNAMIC_PAGES" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+            
+            <dl>
+                <dt>
+                    <input type=hidden name="confbools[blCheckForUpdates]" value="false">
+                    <input type=checkbox name="confbools[blCheckForUpdates]" value="true"  [{if ($confbools.blCheckForUpdates)}]checked[{/if}] [{ $readonly}]>
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_CHECK_UPDATES" }]
                 </dd>
                 <div class="spacer"></div>
             </dl>
@@ -754,6 +760,16 @@ function _groupExp(el) {
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_ENTERNETPRICE" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <input type=text class="txt" name=confstrs[sGiCsvFieldEncloser] value="[{$confstrs.sGiCsvFieldEncloser}]">
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_CSVFIELDENCLOSER" }]
                 </dd>
                 <div class="spacer"></div>
             </dl>

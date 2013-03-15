@@ -63,8 +63,11 @@ function StornoThisArticle( sID)
     [{assign var="readonly" value=""}]
 [{/if}]
 
+[{assign var="oCurr" value=$edit->getOrderCurrency() }]
+
 <form name="DeleteThisArticle" id="DeleteThisArticle" action="[{ $shop->selflink }]" method="post">
     [{ $shop->hiddensid }]
+    <input type="hidden" name="cur" value="[{ $oCurr->id }]">
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="sArtID" value="">
     <input type="hidden" name="cl" value="order_article">
@@ -73,6 +76,7 @@ function StornoThisArticle( sID)
 
 <form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
     [{ $shop->hiddensid }]
+    <input type="hidden" name="cur" value="[{ $oCurr->id }]">
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="order_article">
 </form>
@@ -81,6 +85,7 @@ function StornoThisArticle( sID)
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
 <form name="search" id="search" action="[{ $shop->selflink }]" method="post">
     [{ $shop->hiddensid }]
+    <input type="hidden" name="cur" value="[{ $oCurr->id }]">
     <input type="hidden" name="cl" value="order_article">
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="fnc" value="updateOrder">
@@ -134,21 +139,11 @@ function StornoThisArticle( sID)
 <input type="submit" value="[{ oxmultilang ident="ORDER_ARTICLE_UPDATE_STOCK" }]">
 
 </form>
-<br /><br />
-    <table border="0" cellspacing="0" cellpadding="0">
-    <form method="POST" name="AddThisArticle" id="AddThisArticle" action="[{ $shop->selflink }]">
-    [{ $shop->hiddensid }]
-    <input type="hidden" name="oxid" value="[{ $oxid }]">
-    <input type="hidden" name="cl" value="order_article">
-    <input type="hidden" name="fnc" value="AddThisArticle">
-    <tr>
-    <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_ARTNUM" }]&nbsp;<input class="listedit" type="text" name="sArtNum" value="" size="15" [{ $readonly }]></td>
-    <td class="edittext">&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_SUM" }]&nbsp;<input class="listedit" type="text" name="am" value="1" size="4" [{ $readonly }]></td>
-    <td class="edittext">&nbsp;&nbsp;<input class="listedit" type="submit" value="[{ oxmultilang ident="ORDER_ARTICLE_ADDITEM" }]" name="add" [{ $readonly }]></td>
-    </tr>
-    </form>
-    </table>
-    <br>
+
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td valign="top" style="padding-left:10px;">
+    <br />
     [{if $edit->oxorder__oxstorno->value}]
     <span class="orderstorno">[{ oxmultilang ident="ORDER_ARTICLE_STORNO" }]</span><br><br>
     [{/if}]
@@ -199,7 +194,107 @@ function StornoThisArticle( sID)
     <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
     </tr>
     </table>
+  </td>
+    <td valign="top" align="left" width="60%">
+<br />
 
+
+    <form method="POST" name="searchForProduct" id="searchForProduct" action="[{ $shop->selflink }]">
+      [{ $shop->hiddensid }]
+      <input type="hidden" name="oxid" value="[{ $oxid }]">
+      <input type="hidden" name="cl" value="order_article">
+      <input type="hidden" name="cur" value="[{ $oCurr->id }]">
+      <input type="hidden" name="fnc" value="">
+
+      <table border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td class="edittext" height="15">
+            [{ oxmultilang ident="GENERAL_ARTNUM" }]:
+          </td>
+          <td class="edittext">
+            <input class="listedit" type="text" name="sSearchArtNum" value="[{ $oView->getSearchProductArtNr() }]" size="15" [{ $readonly }]>
+          </td>
+          <td class="edittext">
+            <input class="listedit" type="submit" value="[{ oxmultilang ident="ORDER_ARTICLE_SEARCH" }]" name="search" [{ $readonly }]>
+          </td>
+        </tr>
+      </table>
+    </form>
+
+    [{assign var="oSearchProd" value=$oView->getSearchProduct() }]
+    [{if $oSearchProd }]
+    [{assign var="oMainProd" value=$oView->getMainProduct() }]
+
+    <form method="POST" name="AddThisArticle" id="AddThisArticle" action="[{ $shop->selflink }]">
+    [{ $shop->hiddensid }]
+    <input type="hidden" name="cur" value="[{ $oCurr->id }]">
+    <input type="hidden" name="oxid" value="[{ $oxid }]">
+    <input type="hidden" name="cl" value="order_article">
+    <input type="hidden" name="sSearchArtNum" value="[{ $oView->getSearchProductArtNr() }]">
+    <input type="hidden" name="fnc" value="addThisArticle">
+
+
+      <table border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td>
+            <br />
+            <fieldset>
+              <legend>
+                <select name="aid">
+                  [{foreach key=iSel from=$oView->getProductList() item=oProduct }]
+
+                  [{assign var="_disabled" value="" }]
+                  [{assign var="_selected" value="" }]
+
+                  [{if $oProduct->isNotBuyable() || $oProduct->isParentNotBuyable() }]
+                    [{assign var="_disabled" value="disabled=\"disabled\"" }]
+                  [{elseif $oSearchProd->getId() == $oProduct->getId() }]
+                    [{assign var="_selected" value="selected=\"selected\"" }]
+                  [{/if}]
+
+                  <option value="[{ $oProduct->getId() }]" [{ $_selected }] [{ $_disabled }]>[{$oMainProd->oxarticles__oxtitle->value}] [{ $oProduct->oxarticles__oxvarselect->value }] [{ $oProduct->getFPrice() }] [{ $oCurr->name }]</option>
+                  [{/foreach}]
+                </select>
+              </legend>
+              <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td class="edittext">[{ oxmultilang ident="GENERAL_SUM" }]:</td>
+                  <td class="edittext"><input class="listedit" type="text" name="am" value="1" size="4" [{ $readonly }]></td>
+                <tr>
+
+                [{assign var="oSearchProdSelList" value=$oSearchProd->getSelectLists() }]
+                [{if $oSearchProdSelList }]
+                    [{foreach key=iSel from=$oSearchProdSelList item=oList}]
+                    <tr>
+                      <td class="edittext">[{ $oList.name }]:</td>
+                      <td class="edittext">
+                        <select id="test_select_[{$product->oxarticles__oxid->value}]_[{$iSel}]" name="sel[[{$iSel}]]" class="listedit">
+                        [{foreach key=iSelIdx from=$oList item=oSelItem}]
+                          [{ if $oSelItem->name }]<option value="[{$iSelIdx}]">[{ $oSelItem->name }]</option>[{/if}]
+                        [{/foreach}]
+                        </select>
+                      </td>
+                      </div>
+                    </tr>
+                    [{/foreach}]
+                [{/if}]
+
+                <tr>
+                  <td colspan="2" class="edittext"><input class="listedit" type="submit" value="[{ oxmultilang ident="ORDER_ARTICLE_ADDITEM" }]" name="add" [{ $readonly }]></td>
+                </tr>
+              </table>
+            </fieldset>
+          </td>
+        </tr>
+      </table>
+
+    </form>
+    [{elseif $oView->getSearchProductArtNr() }]
+      <br />[{ oxmultilang ident="ORDER_ARTICLE_SEARCH_NOITEMSFOUND" }]
+    [{/if}]
+</td>
+</tr>
+</table>
 [{include file="bottomnaviitem.tpl"}]
 
 [{include file="bottomitem.tpl"}]

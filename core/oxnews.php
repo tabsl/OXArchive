@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxnews.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxnews.php 22525 2009-09-22 11:51:55Z arvydas $
  */
 
 /**
@@ -134,8 +134,8 @@ class oxNews extends oxI18n
         }
 
         if ( $blDelete = parent::delete( $sOxid ) ) {
-            $sQ = "delete from oxobject2group where oxobject2group.oxobjectid = '$sOxid' ";
-            oxDb::getDb()->execute( $sQ );
+            $oDb = oxDb::getDb();
+            $oDb->execute( "delete from oxobject2group where oxobject2group.oxobjectid = ".$oDb->quote( $sOxid ) );
         }
         return $blDelete;
     }

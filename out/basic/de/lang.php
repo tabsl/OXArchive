@@ -19,7 +19,7 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 21166 2009-07-28 14:56:10Z arvydas $
+ * $Id: lang.php 22733 2009-09-29 08:06:02Z philipp.grashoff $
  */
 
 
@@ -251,7 +251,7 @@ $aLang = array(
 'COMPARE_POPUP_TITLE'                             => "Artikelvergleich",
 'COMPARE_POPUP_ARTICELNO'                         => "Art.Nr.:",
 'COMPARE_POPUP_PRODUCTATTRIBUTES'                 => "Artikelattribute",
-'COMPARE_POPUP_SELECTATLEASTTWOART'               => "Bitte wählen Sie mind. zwei Artikel zum vergleichen",
+'COMPARE_POPUP_SELECTATLEASTTWOART'               => "Bitte wählen Sie mind. zwei Artikel zum Vergleichen",
 'COMPARE_POPUP_PRINT'                             => "Diese Seite drucken",
 'COMPARE_TITLE'                                   => "Artikelvergleich",
 'COMPARE_ARTICLENOMBER'                           => "Art.Nr.:",
@@ -261,7 +261,7 @@ $aLang = array(
 'COMPARE_WISHLIST'                                => "Wunschzettel",
 'COMPARE_PRODUCTATTRIBUTES'                       => "Artikelattribute",
 'COMPARE_REMOVE'                                  => "entfernen",
-'COMPARE_SELECTATLEASTTWOART'                     => "Bitte wählen Sie mind. zwei Artikel zum vergleichen",
+'COMPARE_SELECTATLEASTTWOART'                     => "Bitte wählen Sie mind. zwei Artikel zum Vergleichen",
 'COMPARE_BACKTOSHOP'                              => "Zurück zum Shop",
 'CONTACT_TITLECONTACT'                            => "Kontakt",
 'CONTACT_COMPLETEMARKEDFIELDS'                    => 'Bitte alle Felder mit * ausfüllen !',
@@ -1221,14 +1221,15 @@ $aLang = array(
 'EXCEPTION_CONNECTION_IPAYMENTNOSERVICE'          => 'Fehler bei der Kommunikation mit dem IPaymentserver!',
 'EXCEPTION_CONNECTION_IPAYMENTPROXYFAULT'         => 'Fehler bei der Kommunikation mit dem IPaymentserver!',
 'EXCEPTION_CONNECTION_IPAYMENTPROXYERROR'         => 'Fehler bei der Kommunikation mit dem IPaymentserver!',
-'EXCEPTION_ARTICLE_ARTICELDOESNOTEXIST'           => 'Artikel existiert nicht!',
+'EXCEPTION_ARTICLE_ARTICELDOESNOTEXIST'           => 'Der Artikel "%s" ist leider nicht mehr verfügbar',
 'EXCEPTION_ARTICLE_ARTICELNOTBUYABLE'             => "Artikel ist nicht kaufbar",
 'EXCEPTION_OUTOFSTOCK_OUTOFSTOCK'                 => 'Der Lagerbestand dieses Artikels ist nicht ausreichend! Verfügbar:',
 'EXCEPTION_ARTICLE_NOPRODUCTID'                   => 'Keine Artikel ID angegeben!',
 'EXCEPTION_INPUT_INVALIDAMOUNT'                   => 'Bitte geben Sie eine gültige Menge für das Artikel ein!',
 'EXCEPTION_NOFILE'                                => 'Keine Datei hochgeladen',
 'EXCEPTION_NOTALLOWEDTYPE'                        => 'Verbotener Dateityp. Bitte config.inc.php anpassen, um diesen Dateityp zu erlauben.',
-'EXCEPTION_SYSTEMCOMPONENT_TEMPLATENOTFOUND'      => 'Template "%s" nicht gefunden'
+'EXCEPTION_SYSTEMCOMPONENT_TEMPLATENOTFOUND'      => 'Template "%s" nicht gefunden',
+'EXCEPTION_RECOMMLIST_NOTITLE'                    => 'Kein Titel angegeben',
 );
 
 /*

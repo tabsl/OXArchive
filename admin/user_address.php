@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: user_address.php 20428 2009-06-23 14:46:14Z vilma $
+ * $Id: user_address.php 21704 2009-08-19 14:39:14Z tomas $
  */
 
 /**
@@ -55,8 +55,7 @@ class User_Address extends oxAdminDetails
             // load adress
             $soxAddressId = isset($this->sSavedOxid)?$this->sSavedOxid:oxConfig::getParameter( "oxaddressid");
             if ( $soxAddressId != "-1" && isset( $soxAddressId ) ) {
-                $oAdress = oxNew( "oxbase" );
-                $oAdress->init( "oxaddress" );
+                $oAdress = oxNew( "oxaddress" );
                 $oAdress->load( $soxAddressId );
                 $this->_aViewData["edit"] = $oAdress;
             }
@@ -99,8 +98,7 @@ class User_Address extends oxAdminDetails
 
         $aParams = oxConfig::getParameter( "editval");
 
-        $oAdress = oxNew( "oxbase" );
-        $oAdress->init( "oxaddress" );
+        $oAdress = oxNew( "oxaddress" );
 
         if ( $aParams['oxaddress__oxid'] == "-1")
             $aParams['oxaddress__oxid'] = null;
@@ -123,8 +121,7 @@ class User_Address extends oxAdminDetails
         if ( !$this->_allowAdminEdit( oxConfig::getParameter( "oxid" ) ) )
             return false;
 
-        $oAdress = oxNew( "oxbase" );
-        $oAdress->init( "oxaddress" );
+        $oAdress = oxNew( "oxaddress" );
 
         if ( $aParams['oxaddress__oxid'] != "-1") {
             $oAdress->load( $aParams['oxaddress__oxid']);

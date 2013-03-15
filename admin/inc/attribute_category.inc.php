@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: attribute_category.inc.php 17958 2009-04-07 14:29:36Z rimvydas.paskevicius $
+ * $Id: attribute_category.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -53,6 +53,7 @@ class ajaxComponent extends ajaxListComponent
     {
         $myConfig = $this->getConfig();
         $sLangTag = oxLang::getInstance()->getLanguageTag();
+        $oDb      = oxDb::getDb();
 
         $sCatTable = getViewName('oxcategories');
         $sDiscountId      = oxConfig::getParameter( 'oxid' );
@@ -64,13 +65,13 @@ class ajaxComponent extends ajaxListComponent
             $sQAdd .= " and $sCatTable.oxactive{$sLangTag} = '1' ";
         } else {
             $sQAdd  = " from $sCatTable left join oxcategory2attribute on $sCatTable.oxid=oxcategory2attribute.oxobjectid ";
-            $sQAdd .= " where oxcategory2attribute.oxattrid = '$sDiscountId' and $sCatTable.oxshopid = '".$myConfig->getShopId()."' ";
+            $sQAdd .= " where oxcategory2attribute.oxattrid = " . $oDb->quote( $sDiscountId ) . " and $sCatTable.oxshopid = '".$myConfig->getShopId()."' ";
             $sQAdd .= " and $sCatTable.oxactive{$sLangTag} = '1' ";
         }
 
         if ( $sSynchDiscountId && $sSynchDiscountId != $sDiscountId) {
             $sQAdd .= " and $sCatTable.oxid not in ( select $sCatTable.oxid from $sCatTable left join oxcategory2attribute on $sCatTable.oxid=oxcategory2attribute.oxobjectid ";
-            $sQAdd .= " where oxcategory2attribute.oxattrid = '$sSynchDiscountId' and $sCatTable.oxshopid = '".$myConfig->getShopId()."' ";
+            $sQAdd .= " where oxcategory2attribute.oxattrid = " . $oDb->quote( $sSynchDiscountId ) . " and $sCatTable.oxshopid = '".$myConfig->getShopId()."' ";
             $sQAdd .= " and $sCatTable.oxactive{$sLangTag} = '1' ) ";
         }
 
@@ -91,7 +92,7 @@ class ajaxComponent extends ajaxListComponent
             oxDb::getDb()->Execute( $sQ );
 
         } elseif ( is_array( $aChosenCat ) ) {
-            $sQ = "delete from oxcategory2attribute where oxcategory2attribute.oxid in ('" . implode( "', '", $aChosenCat ) . "') ";
+            $sQ = "delete from oxcategory2attribute where oxcategory2attribute.oxid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aChosenCat ) ) . ") ";
             oxDb::getDb()->Execute( $sQ );
         }
 

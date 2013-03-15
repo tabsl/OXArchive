@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcontent.php 20457 2009-06-25 13:21:33Z vilma $
+ * $Id: oxcontent.php 22539 2009-09-22 13:05:20Z sarunas $
  */
 
 /**
@@ -141,6 +141,8 @@ class oxContent extends oxI18n
 
         parent::assign( $dbRecord );
         $this->oxcontents__oxcontent->setValue(str_replace( '&amp;', '&', $this->oxcontents__oxcontent->value ), oxField::T_RAW);
+        // workaround for firefox showing &lang= as &9001;= entity, mantis#0001272
+        $this->oxcontents__oxcontent->setValue(str_replace( '&lang=', '&amp;lang=', $this->oxcontents__oxcontent->value ), oxField::T_RAW);
         $this->getLink();
     }
 
@@ -195,7 +197,8 @@ class oxContent extends oxI18n
             }
         }
         if ($this->oxcontents__oxcatid->value && $this->oxcontents__oxcatid->value != 'oxrootid') {
-            $sParentId = oxDb::getDb()->getOne("select oxparentid from oxcategories where oxid = '{$this->oxcontents__oxcatid->value}'");
+            $oDb = oxDb::getDb();
+            $sParentId = $oDb->getOne("select oxparentid from oxcategories where oxid = ".$oDb->quote($this->oxcontents__oxcatid->value));
             if ($sParentId && 'oxrootid' != $sParentId) {
                 $sAdd .= "&amp;cnid=$sParentId";
             }
@@ -230,8 +233,11 @@ class oxContent extends oxI18n
      */
     public function delete( $sOXID = null)
     {
+        if ( !$sOXID ) {
+        	$sOXID = $this->getId();
+        }
         if (parent::delete($sOXID)) {
-            oxSeoEncoderContent::getInstance()->onDeleteContent($this);
+            oxSeoEncoderContent::getInstance()->onDeleteContent($sOXID);
             return true;
         }
         return false;

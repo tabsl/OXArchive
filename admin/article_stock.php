@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_stock.php 17188 2009-03-13 12:19:11Z arvydas $
+ * $Id: article_stock.php 22482 2009-09-22 06:53:41Z arvydas $
  */
 
 /**
@@ -252,10 +252,11 @@ class Article_Stock extends oxAdminDetails
     public function deleteprice()
     {
 
+        $oDb = oxDb::getDb();
         $sPriceID = oxConfig::getParameter("priceid");
         $sOXID = oxConfig::getParameter("oxid");
-        $sQ = "delete from oxprice2article where oxid = '$sPriceID' and oxartid = '$sOXID'";
-        oxDb::getDb()->Execute($sQ);
+        $sQ = "delete from oxprice2article where oxid = ".$oDb->quote( $sPriceID )." and oxartid = '$sOXID'";
+        $oDb->Execute($sQ);
     }
 
 }

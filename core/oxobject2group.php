@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxobject2group.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxobject2group.php 22516 2009-09-22 11:17:13Z arvydas $
  */
 
 /**
@@ -66,11 +66,12 @@ class oxObject2Group extends oxBase
      */
     public function save()
     {
-        $sQ  = "select 1 from oxobject2group where oxgroupsid = '{$this->oxobject2group__oxgroupsid->value}' ";
-        $sQ .= "and oxobjectid = '{$this->oxobject2group__oxobjectid->value}' ";
+        $oDb = oxDb::getDb();
+        $sQ  = "select 1 from oxobject2group where oxgroupsid = ".$oDb->quote( $this->oxobject2group__oxgroupsid->value );
+        $sQ .= " and oxobjectid = ". $oDb->quote( $this->oxobject2group__oxobjectid->value );
 
         // does not exist
-        if ( !oxDb::getDb()->getOne( $sQ ) ) {
+        if ( !$oDb->getOne( $sQ ) ) {
             return parent::save();
         }
     }

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxorderarticlelist.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxorderarticlelist.php 22518 2009-09-22 11:20:00Z arvydas $
  */
 
 /**
@@ -53,7 +53,7 @@ class oxOrderArticleList extends oxList
         $sSelect  = "SELECT oxorderarticles.* FROM oxorder ";
         $sSelect .= "left join oxorderarticles on oxorderarticles.oxorderid = oxorder.oxid ";
         $sSelect .= "left join oxarticles on oxorderarticles.oxartid = oxarticles.oxid ";
-        $sSelect .= "WHERE oxorder.oxuserid = '$sOxId'";
+        $sSelect .= "WHERE oxorder.oxuserid = ".oxDb::getDb()->quote( $sOxId );
 
         $this->selectString( $sSelect );
 

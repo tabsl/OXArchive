@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutilsserver.php 18948 2009-05-12 07:36:12Z arvydas $
+ * $Id: oxutilsserver.php 22348 2009-09-16 09:08:30Z sarunas $
  */
 
 /**
@@ -91,7 +91,9 @@ class oxUtilsServer extends oxSuperCfg
 
     /**
      * Returns cookie path. If user did not set path, or set it to null, according to php
-     * documentation empty string will be returned, marking to skip argument
+     * documentation empty string will be returned, marking to skip argument. Additionally
+     * path can be defined in config.inc.php file as "sCookiePath" param. Please check cookie
+     * documentation for more details about current parameter
      *
      * @param string $sPath user defined cookie path
      *
@@ -99,6 +101,16 @@ class oxUtilsServer extends oxSuperCfg
      */
     protected function _getCookiePath( $sPath )
     {
+        // possibility for users to define cookie path
+        // @deprecated use "aCookiePaths" instead
+        if ( $sCookiePath = $this->getConfig()->getConfigParam( 'sCookiePath' ) ) {
+            $sPath = $sCookiePath;
+        } elseif ( $aCookiePaths = $this->getConfig()->getConfigParam( 'aCookiePaths' ) ) {
+            // in case user wants to have shop specific setup
+            $sShopId = $this->getConfig()->getShopId();
+            $sPath = isset( $aCookiePaths[$sShopId] ) ? $aCookiePaths[$sShopId] : $sPath;
+        }
+
         // from php doc: .. You may also replace an argument with an empty string ("") in order to skip that argument..
         return $sPath ? $sPath : "";
     }
@@ -120,9 +132,14 @@ class oxUtilsServer extends oxSuperCfg
         // on special cases, like separate domain for SSL, cookies must be defined on domain specific path
         // please have a look at
         if ( !$sDomain ) {
-            $myConfig = $this->getConfig();
-            $sCookieDomain = $myConfig->getConfigParam( 'sCookieDomain' );
-            $sDomain = $sCookieDomain ? $sCookieDomain : "";
+            // @deprecated use "aCookieDomains" instead
+            if ( $sCookieDomain = $this->getConfig()->getConfigParam( 'sCookieDomain' ) ) {
+                $sDomain = $sCookieDomain;
+            } elseif ( $aCookieDomains = $this->getConfig()->getConfigParam( 'aCookieDomains' ) ) {
+                // in case user wants to have shop specific setup
+                $sShopId = $this->getConfig()->getShopId();
+                $sDomain = isset( $aCookieDomains[$sShopId] ) ? $aCookieDomains[$sShopId] : $sDomain;
+            }
         }
         return $sDomain;
     }
@@ -157,6 +174,7 @@ class oxUtilsServer extends oxSuperCfg
     {
         if ( isset( $_SERVER["HTTP_X_FORWARDED_FOR"] ) ) {
             $sIP = $_SERVER["HTTP_X_FORWARDED_FOR"];
+            $sIP = preg_replace('/,.*$/', '', $sIP);
         } elseif ( isset( $_SERVER["HTTP_CLIENT_IP"] ) ) {
             $sIP = $_SERVER["HTTP_CLIENT_IP"];
         } else {

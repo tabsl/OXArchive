@@ -35,7 +35,7 @@
 [{ oxmultilang ident="EFIRE_SAVECREDENTIALS" }]
 
 <p>
-<input type=Submit>
+<input type=Submit name=etSubmit>
 </form>
 <br />
 [{assign var="blWhite" value=""}]

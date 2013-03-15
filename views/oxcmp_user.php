@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcmp_user.php 21145 2009-07-28 11:10:29Z vilma $
+ * $Id: oxcmp_user.php 22448 2009-09-21 08:09:11Z vilma $
  */
 
 /**
@@ -86,15 +86,17 @@ class oxcmp_user extends oxView
             oxSession::setVar( 'dgr', $sDynGoup );
         }
 
+        /*
         if ( $blNewsReg = oxConfig::getParameter( 'blnewssubscribed' )) {
             $this->_oParent->setNewsSubscribed( $blNewsReg );
             // Passing to view. Left for compatibility reasons for a while. Will be removed in future
             $this->_oParent->addTplParam( 'blnewssubscribed', $this->_oParent->isNewsSubscribed() );
-        }
+        }*/
 
         if ( $aInvAdress = oxConfig::getParameter( 'invadr') ) {
             $this->_oParent->addTplParam( 'invadr', $aInvAdress );
         }
+
 
         if ( $aDelAdress = oxConfig::getParameter( 'deladr') ) {
             $this->_oParent->addTplParam( 'deladr', $aDelAdress );
@@ -104,9 +106,9 @@ class oxcmp_user extends oxView
             $this->_oParent->addTplParam( 'lgn_usr', $sUser );
         }
 
+        /*
         if ( $aDelAdressID = oxConfig::getParameter( 'deladrid' ) ) {
-            $oAddress = oxNew( 'oxbase' );
-            $oAddress->init( 'oxaddress' );
+            $oAddress = oxNew( 'oxaddress' );
             $oAddress->load( $aDelAdressID );
             $this->_oParent->setDelAddress( $oAddress );
             $this->_oParent->addTplParam( 'delivadr', $this->_oParent->getDelAddress() );
@@ -117,7 +119,7 @@ class oxcmp_user extends oxView
             $this->_oParent->setShowShipAddress( 1 );
             // Passing to view. Left for compatibility reasons for a while. Will be removed in future
             $this->_oParent->addTplParam( 'blshowshipaddress', 1 );
-        }
+        }*/
 
         return $this->getUser();
     }
@@ -315,7 +317,7 @@ class oxcmp_user extends oxView
     public function changeUser( )
     {
         // checking if "open address area" button was clicked
-        if ( $blSetup = $this->_setupDelAddress() ) {
+        if ( $this->_setupDelAddress() ) {
             return;
         }
 
@@ -378,7 +380,7 @@ class oxcmp_user extends oxView
         // second pass
         $sPassword2 = oxConfig::getParameter( 'lgn_pwd2' );
 
-        $aRawVal = array('oxuser__oxcompany', 'oxuser__oxaddinfo', 'oxuser__oxfname', 'oxuser__oxlname');
+        $aRawVal = array('oxuser__oxcompany', 'oxuser__oxaddinfo', 'oxuser__oxfname', 'oxuser__oxlname', 'oxuser__oxcity');
         $aInvAdress = oxConfig::getParameter( 'invadr', $aRawVal );
         $aDelAdress = $this->_getDelAddressData();
 
@@ -455,8 +457,8 @@ class oxcmp_user extends oxView
 
         // registered new user ?
         if ( $this->createuser()!= false && $this->_blIsNewUser ) {
-                // #1672 R
-                $this->getUser()->addToGroup( 'oxidnotyetordered' );
+            // #1672 R
+            $this->getUser()->addToGroup( 'oxidnotyetordered' );
 
             if ( $this->_blNewsSubscriptionStatus === null || $this->_blNewsSubscriptionStatus ) {
                 return 'register?success=1';
@@ -546,7 +548,7 @@ class oxcmp_user extends oxView
     protected function _getDelAddressData()
     {
         // if user company name, user name and additional info has special chars
-        $aRawVal = array('oxaddress__oxcompany', 'oxaddress__oxaddinfo', 'oxuser__oxfname', 'oxuser__oxlname');
+        $aRawVal = array('oxaddress__oxcompany', 'oxaddress__oxaddinfo', 'oxaddress__oxfname', 'oxaddress__oxlname', 'oxaddress__oxcity');
         $aDelAdress = $aDeladr = oxConfig::getParameter( 'deladr', $aRawVal );
 
         if ( is_array( $aDeladr ) ) {
@@ -601,13 +603,13 @@ class oxcmp_user extends oxView
      */
     protected function _setupDelAddress()
     {
-        $blSetup = false;
+        $blShowIt = false;
         $blShowShipAddress = $blSessShowAddress = (int) oxSession::getVar( 'blshowshipaddress' );
 
         // user clicked on button to hide
         if ( $blHideAddress = oxConfig::getParameter( 'blhideshipaddress' ) ) {
             $blShowShipAddress = 0;
-            $blSetup = true;
+            $blShowIt = true;
 
             // unsetting delivery address
             oxSession::deleteVar( 'deladdrid' );
@@ -617,14 +619,14 @@ class oxcmp_user extends oxView
             // user clicked on button to show
             if ( $blShowAddress != $blSessShowAddress ) {
                 $blShowShipAddress = 1;
-                $blSetup = true;
+                $blShowIt = true;
             }
         }
 
         oxSession::setVar( 'blshowshipaddress', $blShowShipAddress );
         $this->_oParent->_aViewData['blshowshipaddress'] = $blShowShipAddress;
 
-        return $blSetup;
+        return $blShowIt;
     }
 
     /**
@@ -636,6 +638,7 @@ class oxcmp_user extends oxView
     public function loginOid()
     {
         $iOldErrorReproting = error_reporting();
+        //for 3rd part library disabling our E_STRICT error reporting
         error_reporting($iOldErrorReproting & ~E_STRICT);
         try {
             $oOpenId = oxNew( "oxOpenID" );

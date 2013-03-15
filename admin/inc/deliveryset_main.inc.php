@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: deliveryset_main.inc.php 17244 2009-03-16 15:17:48Z arvydas $
+ * $Id: deliveryset_main.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -82,7 +82,7 @@ class ajaxComponent extends ajaxListComponent
             oxDb::getDb()->Execute( $sQ );
 
         } elseif ( $aRemoveGroups && is_array( $aRemoveGroups ) ) {
-            $sQ = "delete from oxdel2delset where oxdel2delset.oxid in ('" . implode( "', '", $aRemoveGroups ) . "') ";
+            $sQ = "delete from oxdel2delset where oxdel2delset.oxid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aRemoveGroups ) ) . ") ";
             oxDb::getDb()->Execute( $sQ );
         }
     }
@@ -106,7 +106,7 @@ class ajaxComponent extends ajaxListComponent
             $oDb = oxDb::getDb();
             foreach ( $aChosenSets as $sChosenSet) {
                 // check if we have this entry already in
-                $sID = $oDb->GetOne("select oxid from oxdel2delset where oxdelid = '$sChosenSet' and oxdelsetid = '$soxId'");
+                $sID = $oDb->GetOne("select oxid from oxdel2delset where oxdelid =  " . $oDb->quote( $sChosenSet ) . " and oxdelsetid = '$soxId'");
                 if ( !isset( $sID) || !$sID) {
                     $oDel2delset = oxNew( 'oxbase' );
                     $oDel2delset->init( 'oxdel2delset' );

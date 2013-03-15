@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: genexport_do.php 21075 2009-07-21 11:59:29Z arvydas $
+ * $Id: genexport_do.php 22356 2009-09-16 13:54:18Z vilma $
  */
 
 /**
@@ -47,11 +47,14 @@ class GenExport_Do extends DynExportBase
      */
     public function nextTick( $iCnt )
     {
+        $myConfig = oxConfig::getInstance();
         $iExportedItems = $iCnt;
         if ( $oArticle = $this->getOneArticle( $iCnt, $blContinue ) ) {
             $smarty = oxUtilsView::getInstance()->getSmarty();
             $smarty->assign_by_ref( "linenr", $iCnt );
             $smarty->assign_by_ref( "article", $oArticle );
+            $smarty->assign( "spr", $myConfig->getConfigParam( 'sCSVSign' ) );
+            $smarty->assign( "encl", $myConfig->getConfigParam( 'sGiCsvFieldEncloser' ) );
             $this->write( $smarty->fetch( "genexport.tpl", $this->getViewID() ) );
             return ++$iExportedItems;
         }

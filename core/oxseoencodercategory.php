@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxseoencodercategory.php 20953 2009-07-15 13:36:51Z arvydas $
+ * $Id: oxseoencodercategory.php 22590 2009-09-24 06:24:00Z alfonsas $
  */
 
 /**
@@ -234,13 +234,13 @@ class oxSeoEncoderCategory extends oxSeoEncoder
         // this is because this method is usually called inside update,
         // where object may already be carrying changed id
         $aCatInfo = $oDb->getAll("select oxrootid, oxleft, oxright from oxcategories where oxid = '".$oCategory->getId()."' limit 1");
-        $sCatRootId = $aCatInfo[0][0];
+        $sCatRootIdQuoted = $oDb->quote( $aCatInfo[0][0] );
         // update article for root of this cat
-        $sQ = "update oxseo as seo1, (select oxobjectid from oxseo where oxtype = 'oxarticle' and oxparams = '{$sCatRootId}') as seo2 set seo1.oxexpired = '1' where seo1.oxtype = 'oxarticle' and seo1.oxobjectid = seo2.oxobjectid";
+        $sQ = "update oxseo as seo1, (select oxobjectid from oxseo where oxtype = 'oxarticle' and oxparams = {$sCatRootIdQuoted}) as seo2 set seo1.oxexpired = '1' where seo1.oxtype = 'oxarticle' and seo1.oxobjectid = seo2.oxobjectid";
         $oDb->execute( $sQ );
 
         // update sub cats
-        $sQ = "update oxseo as seo1, (select oxid from oxcategories where oxrootid='$sCatRootId' and oxleft > {$aCatInfo[0][1]} and oxright < {$aCatInfo[0][2]}) as seo2 set seo1.oxexpired = '1' where seo1.oxtype = 'oxcategory' and seo1.oxobjectid = seo2.oxid";
+        $sQ = "update oxseo as seo1, (select oxid from oxcategories where oxrootid={$sCatRootIdQuoted} and oxleft > ".$oDb->quote( $aCatInfo[0][1] )." and oxright < ".$oDb->quote( $aCatInfo[0][2] ).") as seo2 set seo1.oxexpired = '1' where seo1.oxtype = 'oxcategory' and seo1.oxobjectid = seo2.oxid";
         $oDb->execute( $sQ );
     }
 
@@ -254,9 +254,9 @@ class oxSeoEncoderCategory extends oxSeoEncoder
      */
     public function onDeleteCategory($oCategory)
     {
-        $sId = oxDb::getDb()->quote($oCategory->getId());
-        oxDb::getDb()->execute("update oxseo, (select oxseourl from oxseo where oxobjectid = $sId and oxtype = 'oxcategory') as test set oxseo.oxexpired=1 where oxseo.oxseourl like concat(test.oxseourl, '%') and (oxtype = 'oxcategory' or oxtype = 'oxarticle')");
-        oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sId and oxtype = 'oxcategory'");
+        $sIdQuoted = oxDb::getDb()->quote($oCategory->getId());
+        oxDb::getDb()->execute("update oxseo, (select oxseourl from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxcategory') as test set oxseo.oxexpired=1 where oxseo.oxseourl like concat(test.oxseourl, '%') and (oxtype = 'oxcategory' or oxtype = 'oxarticle')");
+        oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxcategory'");
     }
 
 }

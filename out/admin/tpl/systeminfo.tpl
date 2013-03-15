@@ -1,5 +1,15 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign box=" "}]
 
+<script type="text/javascript">
+    if(top)
+    {
+        top.sMenuItem    = "[{ oxmultilang ident="SYSTEMINFO_MENUITEM" }]";
+        top.sMenuSubItem = "[{ oxmultilang ident="SYSTEMINFO_MENUSUBITEM" }]";
+        top.sWorkArea    = "[{$_act}]";
+        top.setTitle();
+    }
+</script>
+
 <form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
     [{ $shop->hiddensid }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">

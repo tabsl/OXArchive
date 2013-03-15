@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: vendor_main.inc.php 17958 2009-04-07 14:29:36Z rimvydas.paskevicius $
+ * $Id: vendor_main.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,       visible, multilanguage, ident
@@ -83,6 +83,23 @@ class ajaxComponent extends ajaxListComponent
     }
 
     /**
+     * Return fully formatted query for data loading
+     *
+     * @param string $sQ part of initial query
+     *
+     * @return string
+     */
+    protected function _getDataQuery( $sQ )
+    {
+        $sArtTable = getViewName('oxarticles');
+        $sQ = parent::_getDataQuery( $sQ );
+
+        // display variants or not ?
+        $sQ .= $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ? ' group by '.$sArtTable.'.oxid ' : '';
+        return $sQ;
+    }
+
+    /**
      * Removes article from Vendor config
      *
      * @return null
@@ -98,7 +115,7 @@ class ajaxComponent extends ajaxListComponent
         }
 
         if ( is_array(  $aRemoveArt ) ) {
-            $sSelect = "update oxarticles set oxvendorid = null where oxid in ( '".implode("', '", $aRemoveArt )."') ";
+            $sSelect = "update oxarticles set oxvendorid = null where oxid in ( ".implode(", ", oxDb::getInstance()->quoteArray( $aRemoveArt ) ) . ") ";
             oxDb::getDb()->Execute( $sSelect);
             $this->resetCounter( "vendorArticle", oxConfig::getParameter( 'oxid' ) );
         }
@@ -122,7 +139,7 @@ class ajaxComponent extends ajaxListComponent
         }
 
         if ( $soxId && $soxId != "-1" && is_array( $aAddArticle ) ) {
-            $sSelect = "update oxarticles set oxvendorid = '$soxId' where oxid in ( '".implode("', '", $aAddArticle )."' )";
+            $sSelect = "update oxarticles set oxvendorid = '$soxId' where oxid in ( ".implode(", ", oxDb::getInstance()->quoteArray( $aAddArticle ) )." )";
 
             oxDb::getDb()->Execute( $sSelect);
             $this->resetCounter( "vendorArticle", $soxId );

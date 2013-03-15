@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: pricealarm_mail.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: pricealarm_mail.php 22485 2009-09-22 06:59:12Z arvydas $
  */
 
 /**
@@ -47,12 +47,11 @@ class PriceAlarm_Mail extends oxAdminDetails
         if ( $myConfig->getConfigParam( 'blEnterNetPrice' ) )
             $sIndex = " * ". (1+$myConfig->getConfigParam( 'dDefaultVAT' )/100);
 
-        $sShopID = $myConfig->getShopID();
+        $sShopID = $myConfig->getShopId();
         //articles price in subshop and baseshop can be different
         $this->_aViewData['iAllCnt'] = 0;
-        $oDB = oxDb::getDb();
         $sQ = "select oxprice, oxartid from oxpricealarm where oxsended = '000-00-00 00:00:00' and oxshopid = '$sShopID' ";
-        $rs = $oDB->execute($sQ);
+        $rs = oxDb::getDb()->execute($sQ);
         if ($rs != false && $rs->recordCount() > 0) {
             $aSimpleCache = array();
             while (!$rs->EOF) {

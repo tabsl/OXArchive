@@ -19,7 +19,7 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 20809 2009-07-13 10:00:20Z arvydas $
+ * $Id: lang.php 22591 2009-09-24 07:09:30Z vilma $
  */
 
 $aLang = array(
@@ -104,6 +104,7 @@ $aLang = array(
                                                       Bertoldstr. 48<br>
                                                       79098 Freiburg<br>
                                                       Deutschland<br>",
+'STEP_1_CHECK_UPDATES'                            => 'Check for available updates regularly',
 'BUTTON_BEGIN_INSTALL'                            => "Start installation",
 'BUTTON_PROCEED_INSTALL'                          => "Proceed with setup",
 
@@ -177,6 +178,8 @@ $aLang = array(
 'PRIVACY_POLICY'                                  => "privacy statements",
 
 'LOAD_DYN_CONTENT_NOTICE'                         => "<p>If checkbox &quot;more information&quot; is set, you will see an additional menu in the admin area of your OXID eShop.</p><p>In that menu you get further information about e-commerce services like Google product search.</p> <p>You can change these settings at any time.</p>",
+'ERROR_SETUP_CANCELLED'                           => "Setup has been cancelled because you didn't accept the license conditions.",
+'BUTTON_START_INSTALL'                            => "Restart setup",
 
 
 );

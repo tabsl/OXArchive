@@ -95,7 +95,7 @@
 
         <tr class="conftext[{cycle}]">
          <td valign="top">
-            <input type=text class="confinput" style="width:270" name=confstrs[sSEOSeparator] value="[{$confstrs.sSEOSeparator}]" [{ $readonly }]>
+            <input type=text class="confinput" style="width:270px;" name=confstrs[sSEOSeparator] value="[{$confstrs.sSEOSeparator}]" [{ $readonly }]>
          </td>
          <td valign="top" width="100%">
            [{ oxmultilang ident="SHOP_SEO_IDSSEPARATOR" }]
@@ -104,7 +104,7 @@
 
         <tr class="conftext[{cycle}]">
          <td valign="top">
-            <input type=text class="confinput" style="width:270" name=confstrs[sSEOuprefix] value="[{$confstrs.sSEOuprefix}]" [{ $readonly }]>
+            <input type=text class="confinput" style="width:270px;" name=confstrs[sSEOuprefix] value="[{$confstrs.sSEOuprefix}]" [{ $readonly }]>
          </td>
          <td valign="top" width="100%">
            [{ oxmultilang ident="SHOP_SEO_SAFESEOPREF" }]
@@ -113,7 +113,7 @@
 
         <tr class="conftext[{cycle}]">
          <td valign="top">
-            <textarea class="confinput" style="width: 270; height: 42" name=confaarrs[aSeoReplaceChars] [{ $readonly }]>[{$confaarrs.aSeoReplaceChars}]</textarea>
+            <textarea class="confinput" style="width: 270px; height: 72px;" name=confaarrs[aSeoReplaceChars] [{ $readonly }]>[{$confaarrs.aSeoReplaceChars}]</textarea>
          </td>
          <td valign="top" width="100%">
            [{ oxmultilang ident="SHOP_SEO_REPLACECHARS" }]
@@ -122,7 +122,7 @@
 
         <tr class="conftext[{cycle}]">
          <td valign="top">
-            <textarea class="confinput" style="width: 270; height: 42" name=confarrs[aSEOReservedWords] [{ $readonly }]>[{$confarrs.aSEOReservedWords}]</textarea>
+            <textarea class="confinput" style="width: 270px; height: 72px;" name=confarrs[aSEOReservedWords] [{ $readonly }]>[{$confarrs.aSEOReservedWords}]</textarea>
          </td>
          <td valign="top" width="100%">
            [{ oxmultilang ident="SHOP_SEO_RESERVEDWORDS" }]
@@ -131,7 +131,7 @@
 
         <tr class="conftext[{cycle}]">
          <td valign="top">
-            <textarea class="confinput" style="width: 270; height: 42" name=confarrs[aSkipTags] [{ $readonly }]>[{$confarrs.aSkipTags}]</textarea><BR>
+            <textarea class="confinput" style="width: 270px; height: 72px;" name=confarrs[aSkipTags] [{ $readonly }]>[{$confarrs.aSkipTags}]</textarea><BR>
          </td>
          <td valign="top" width="100%">
            [{ oxmultilang ident="SHOP_SEO_SKIPTAGS" }]
@@ -146,7 +146,7 @@
 
         <tr class="conftext[{cycle}]">
          <td valign="top">
-           <select class="confinput" style="width:270" name=aStaticUrl[oxseo__oxobjectid] [{ $readonly }] onchange="document.myedit.submit();">
+           <select class="confinput" style="width:270px;" name=aStaticUrl[oxseo__oxobjectid] [{ $readonly }] onchange="document.myedit.submit();">
              <option value="-1">[{ oxmultilang ident="SHOP_SEO_NEWSTATICURL" }]</option>
              [{foreach from=$aStaticUrls item=oItem}]
 
@@ -167,7 +167,7 @@
 
         <tr class="conftext[{cycle}]">
          <td>
-          <input type=text class="confinput" style="width:270" name="aStaticUrl[oxseo__oxstdurl]" id="oxseo__oxstdurl" value="[{if $oActItem->oxseo__oxstdurl}][{$oActItem->oxseo__oxstdurl->getRawValue()}][{/if}]" [{ $readonly }]>
+          <input type=text class="confinput" style="width:270px;" name="aStaticUrl[oxseo__oxstdurl]" id="oxseo__oxstdurl" value="[{if $oActItem->oxseo__oxstdurl}][{$oActItem->oxseo__oxstdurl->getRawValue()}][{/if}]" [{ $readonly }]>
          </td>
          <td>
            [{ oxmultilang ident="SHOP_SEO_STDURL" }]
@@ -177,7 +177,7 @@
         [{foreach from=$languages key=lang item=olang}]
         <tr class="conftext[{cycle}]">
          <td>
-          <input type=text class="confinput" style="width:270" name="aStaticUrl[oxseo__oxseourl][[{ $lang }]]" value="[{$aSeoUrls.$lang.1}]" [{ $readonly }]>
+          <input type=text class="confinput" style="width:270px;" name="aStaticUrl[oxseo__oxseourl][[{ $lang }]]" value="[{$aSeoUrls.$lang.1}]" [{ $readonly }]>
          </td>
          <td>
           [{ $olang->name }]

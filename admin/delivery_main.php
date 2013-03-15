@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: delivery_main.php 17243 2009-03-16 15:16:57Z arvydas $
+ * $Id: delivery_main.php 22483 2009-09-22 06:55:52Z arvydas $
  */
 
 /**
@@ -222,7 +222,7 @@ class Delivery_Main extends oxAdminDetails
             $oDb = oxDb::getDb();
             foreach ( $aChosenSets as $sChosenSet) {
                 // check if we have this entry already in
-                $sID = $oDb->GetOne("select oxid from oxdel2delset where oxdelid = '$soxId' and oxdelsetid = '$sChosenSet'");
+                $sID = $oDb->GetOne("select oxid from oxdel2delset where oxdelid = ".$oDb->quote( $soxId ) ." and oxdelsetid = ".$oDb->quote( $sChosenSet ) );
                 if ( !isset( $sID) || !$sID) {
                         $oDel2delset = oxNew( 'oxbase' );
                         $oDel2delset->init( 'oxdel2delset' );
@@ -248,7 +248,7 @@ class Delivery_Main extends oxAdminDetails
         if ( isset( $soxId) && $soxId != "-1" && isset( $aChosenSets) && $aChosenSets) {
             $oDb = oxDb::getDb();
             foreach ( $aChosenSets as $sChosenSet) {
-                $oDb->Execute( "delete from oxdel2delset where oxdelid = '$soxId' and oxdelsetid = '$sChosenSet'");
+                $oDb->Execute( "delete from oxdel2delset where oxdelid = ".$oDb->quote( $soxId ) ." and oxdelsetid = ".$oDb->quote( $sChosenSet ) );
             }
         }
     }

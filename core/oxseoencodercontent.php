@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxseoencodercontent.php 20953 2009-07-15 13:36:51Z arvydas $
+ * $Id: oxseoencodercontent.php 22590 2009-09-24 06:24:00Z alfonsas $
  */
 
 /**
@@ -126,13 +126,13 @@ class oxSeoEncoderContent extends oxSeoEncoder
     /**
      * deletes content seo entries
      *
-     * @param oxContent $oCont category object
+     * @param string $sId content ids
      *
      * @return null
      */
-    public function onDeleteContent($oCont)
+    public function onDeleteContent($sId)
     {
-        $sId = oxDb::getDb()->quote($oCont->getId());
-        oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sId and oxtype = 'oxcontent'");
+        $sIdQuoted = oxDb::getDb()->quote($sId);
+        oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxcontent'");
     }
 }

@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxajax.php 18346 2009-04-20 08:39:52Z rimvydas.paskevicius $
+ * $Id: oxajax.php 22370 2009-09-17 08:29:36Z arvydas $
  */
 
 // shop path for includes
@@ -130,6 +130,30 @@ class ajaxListComponent extends oxSuperCfg
     }
 
     /**
+     * Return fully formatted query for data loading
+     *
+     * @param string $sQ part of initial query
+     *
+     * @return string
+     */
+    protected function _getDataQuery( $sQ )
+    {
+        return 'select ' . $this->_getQueryCols() . $sQ;
+    }
+
+    /**
+     * Return fully formatted query for data records count
+     *
+     * @param string $sQ part of initial query
+     *
+     * @return string
+     */
+    protected function _getCountQuery( $sQ )
+    {
+        return 'select count( * ) ' . $sQ;
+    }
+
+    /**
      * AJAX call processor function
      *
      * @param string $sFunction name of action to execute (optional)
@@ -144,8 +168,8 @@ class ajaxListComponent extends oxSuperCfg
             $sQAdd = $this->_getQuery();
 
             // formatting SQL queries
-            $sQ      = 'select ' . $this->_getQueryCols() . $sQAdd;
-            $sCountQ = 'select count( * ) ' . $sQAdd;
+            $sQ      = $this->_getDataQuery( $sQAdd );
+            $sCountQ = $this->_getCountQuery( $sQAdd );
 
             $this->_outputResponse( $this->_getData( $sCountQ, $sQ ) );
         }
@@ -279,10 +303,7 @@ class ajaxListComponent extends oxSuperCfg
      */
     protected function _getSorting()
     {
-        $aVisibleCols = $this->_getVisibleColNames();
-        $aSortCol = $aVisibleCols[ $this->_getSortCol() ];
-        $sCol = $aSortCol[3]?$aSortCol[0].oxLang::getInstance()->getLanguageTag():$aSortCol[0];
-        return ' order by ' . getViewName( $aSortCol[1] ) . '.' . $sCol . ' '.$this->_getSortDir().' ';
+        return ' order by _' . $this->_getSortCol() . ' '.$this->_getSortDir().' ';
     }
 
     /**
@@ -571,6 +592,7 @@ if ( $blAjaxCall ) {
 
     // Generic utility method file.
     $sBasePath = getShopBasePath();
+    include_once $sBasePath . 'modules/functions.php';
     include_once $sBasePath . 'core/oxfunctions.php';
     include_once $sBasePath . 'core/adodblite/adodb.inc.php';
     include_once $sBasePath . 'core/oxconfig.php';
@@ -608,6 +630,8 @@ if ( $blAjaxCall ) {
     } else {
 
     }
+
+    $myConfig->pageClose();
 
     // closing session handlers
     // session_write_close();

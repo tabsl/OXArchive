@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxrating.php 17480 2009-03-20 12:33:16Z arvydas $
+ * $Id: oxrating.php 22518 2009-09-22 11:20:00Z arvydas $
  */
 
 /**
@@ -82,7 +82,7 @@ class oxRating extends oxBase
             $sExpDate = date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() - $iRatingLogsTimeout*24*60*60);
             $oDB->execute( "delete from oxratings where oxtimestamp < '$sExpDate'" );
         }
-        $sSelect = "select oxid from oxratings where oxuserid = '$sUserId' and oxtype='$sType' and oxobjectid = '$sObjectId'";
+        $sSelect = "select oxid from oxratings where oxuserid = ".$oDB->quote( $sUserId )." and oxtype=".$oDB->quote( $sType )." and oxobjectid = ".$oDB->quote( $sObjectId );
         if ( $oDB->getOne( $sSelect ) ) {
             return false;
         }

@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: attribute_main.inc.php 17244 2009-03-16 15:17:48Z arvydas $
+ * $Id: attribute_main.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -54,6 +54,7 @@ class ajaxComponent extends ajaxListComponent
     protected function _getQuery()
     {
         $myConfig = $this->getConfig();
+        $oDb      = oxDb::getDb();
 
         $sArticleTable = getViewName('oxarticles');
         $sO2CView      = getViewName('oxobject2category');
@@ -71,18 +72,35 @@ class ajaxComponent extends ajaxListComponent
             if ( $sSynchDelId && $sDelId != $sSynchDelId ) {
                 $sQAdd  = " from $sO2CView as oxobject2category left join $sArticleTable on ";
                 $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?" ( $sArticleTable.oxid=oxobject2category.oxobjectid or $sArticleTable.oxparentid=oxobject2category.oxobjectid)":" $sArticleTable.oxid=oxobject2category.oxobjectid ";
-                $sQAdd .= " where oxobject2category.oxcatnid = '$sDelId' ";
+                $sQAdd .= " where oxobject2category.oxcatnid = " . $oDb->quote( $sDelId ) . " ";
             } else {
                 $sQAdd  = " from oxobject2attribute left join $sArticleTable on $sArticleTable.oxid=oxobject2attribute.oxobjectid ";
-                $sQAdd .= " where oxobject2attribute.oxattrid = '$sDelId' and $sArticleTable.oxid is not null ";
+                $sQAdd .= " where oxobject2attribute.oxattrid = " . $oDb->quote( $sDelId ) . " and $sArticleTable.oxid is not null ";
             }
         }
 
         if ( $sSynchDelId && $sSynchDelId != $sDelId ) {
-            $sQAdd .= " and $sArticleTable.oxid not in ( select oxobject2attribute.oxobjectid from oxobject2attribute where oxobject2attribute.oxattrid = '$sSynchDelId' ) ";
+            $sQAdd .= " and $sArticleTable.oxid not in ( select oxobject2attribute.oxobjectid from oxobject2attribute where oxobject2attribute.oxattrid = " . $oDb->quote( $sSynchDelId ) . " ) ";
         }
 
         return $sQAdd;
+    }
+
+    /**
+     * Return fully formatted query for data loading
+     *
+     * @param string $sQ part of initial query
+     *
+     * @return string
+     */
+    protected function _getDataQuery( $sQ )
+    {
+        $sArtTable = getViewName('oxarticles');
+        $sQ = parent::_getDataQuery( $sQ );
+
+        // display variants or not ?
+        $sQ .= $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ? ' group by '.$sArtTable.'.oxid ' : '';
+        return $sQ;
     }
 
     /**
@@ -99,7 +117,7 @@ class ajaxComponent extends ajaxListComponent
             oxDb::getDb()->Execute( $sQ );
 
         } elseif ( is_array( $aChosenCat ) ) {
-            $sQ = "delete from oxobject2attribute where oxobject2attribute.oxid in ('" . implode( "', '", $aChosenCat ) . "') ";
+            $sQ = "delete from oxobject2attribute where oxobject2attribute.oxid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aChosenCat ) ) . ") ";
             oxDb::getDb()->Execute( $sQ );
         }
     }

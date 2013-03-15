@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype.php 18599 2009-04-28 11:07:50Z arvydas $
+ * $Id: oxerptype.php 22510 2009-09-22 10:38:27Z arvydas $
  */
 
 /**
@@ -353,9 +353,10 @@ class oxERPType
      */
     protected function _directSqlCheckForDeletion($sId)
     {
-        $sSql = "select oxshopid from ".$this->_sTableName." where oxid = '" . $sId . "'";
+        $oDb =oxDb::getDb();
+        $sSql = "select oxshopid from ".$this->_sTableName." where oxid = " .$oDb->quote( $sId );
         try {
-            $iShopId = oxDb::getDb()->getOne($sSql);
+            $iShopId = $oDb->getOne($sSql);
         } catch (Exception $e) {
             // no shopid was found
             return;
@@ -404,10 +405,10 @@ class oxERPType
      */
     public function delete($sID)
     {
-        $myConfig = oxConfig::getInstance();
-        $sSql = "delete from ".$this->_sTableName." where oxid = '" . $sID . "'";
+        $oDb = oxDb::getDb();
+        $sSql = "delete from ".$this->_sTableName." where oxid = " . $oDb->quote( $sID );
 
-        return oxDb::getDb()->Execute($sSql);
+        return $oDb->Execute($sSql);
     }
 
     /**

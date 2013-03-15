@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxuserpayment.php 20503 2009-06-26 14:54:11Z vilma $
+ * $Id: oxuserpayment.php 22548 2009-09-22 13:50:42Z rimvydas.paskevicius $
  */
 
 /**
@@ -151,7 +151,7 @@ class oxUserPayment extends oxBase
 
         //encode sensitive data
         if ( $sValue = $this->oxuserpayments__oxvalue->value ) {
-            $sEncodedValue = oxDb::getDb()->getOne( "select encode( '$sValue', '" . $this->getPaymentKey() . "' )" );
+            $sEncodedValue = oxDb::getDb()->getOne( "select encode( " . oxDb::getDb()->quote( $sValue ) . ", '" . $this->getPaymentKey() . "' )" );
             $this->oxuserpayments__oxvalue->setValue($sEncodedValue);
         }
 
@@ -174,7 +174,7 @@ class oxUserPayment extends oxBase
     {
         //encode sensitive data
         if ( $sValue = $this->oxuserpayments__oxvalue->value ) {
-            $sEncodedValue = oxDb::getDb()->getOne( "select encode( '$sValue', '" . $this->getPaymentKey() . "' )" );
+            $sEncodedValue = oxDb::getDb()->getOne( "select encode( " . oxDb::getDb()->quote( $sValue ) . ", '" . $this->getPaymentKey() . "' )" );
             $this->oxuserpayments__oxvalue->setValue($sEncodedValue);
         }
 
@@ -222,7 +222,7 @@ class oxUserPayment extends oxBase
     {
         $blGet = false;
         if ( $oUser && $sPaymentType != null ) {
-            $sSelect  = 'select oxid from oxuserpayments where oxpaymentsid="' . $sPaymentType . '" and oxuserid="' . $oUser->getId() . '" ';
+            $sSelect  = 'select oxid from oxuserpayments where oxpaymentsid=' . oxDb::getDb()->quote( $sPaymentType ) . ' and oxuserid="' . $oUser->getId() . '" ';
             if ( ( $sOxId = oxDb::getDb()->getOne( $sSelect ) ) ) {
                 $blGet = $this->load( $sOxId );
             }

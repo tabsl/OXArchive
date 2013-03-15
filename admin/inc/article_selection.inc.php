@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_selection.inc.php 21144 2009-07-28 11:06:18Z vilma $
+ * $Id: article_selection.inc.php 22508 2009-09-22 09:57:39Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -47,22 +47,23 @@ class ajaxComponent extends ajaxListComponent
      */
     protected function _getQuery()
     {
-        $sSLViewName = getViewName('oxselectlist');
+        $sSLViewName  = getViewName('oxselectlist');
         $sArtViewName = getViewName('oxarticles');
+        $oDb          = oxDb::getDb();
 
         $sArtId      = oxConfig::getParameter( 'oxid' );
         $sSynchArtId = oxConfig::getParameter( 'synchoxid' );
 
         $sOxid = ( $sArtId ) ? $sArtId : $sSynchArtId;
-        $sQ = "select oxparentid from $sArtViewName where oxid = '$sOxid' and oxparentid != '' ";
-        $sQ .= "and (select count(oxobjectid) from oxobject2selectlist where oxobjectid = '$sOxid') = 0";
+        $sQ = "select oxparentid from $sArtViewName where oxid = " . $oDb->quote( $sOxid ) . " and oxparentid != '' ";
+        $sQ .= "and (select count(oxobjectid) from oxobject2selectlist where oxobjectid = " . $oDb->quote( $sOxid ) . ") = 0";
         $sParentId = oxDb::getDb()->getOne( $sQ );
 
         // all selectlists article is in
         $sQAdd  = " from oxobject2selectlist left join $sSLViewName on $sSLViewName.oxid=oxobject2selectlist.oxselnid ";
-        $sQAdd .= " where oxobject2selectlist.oxobjectid = '$sOxid' ";
+        $sQAdd .= " where oxobject2selectlist.oxobjectid = " . $oDb->quote( $sOxid ) . " ";
         if ( $sParentId ) {
-            $sQAdd .= "or oxobject2selectlist.oxobjectid = '$sParentId' ";
+            $sQAdd .= "or oxobject2selectlist.oxobjectid = " . $oDb->quote( $sParentId ) . " ";
         }
         // all not assigned selectlists
         if ( $sSynchArtId ) {
@@ -86,7 +87,7 @@ class ajaxComponent extends ajaxListComponent
             oxDb::getDb()->Execute( $sQ );
 
         } elseif ( is_array( $aChosenArt ) ) {
-            $sQ = "delete from oxobject2selectlist where oxobject2selectlist.oxid in ('" . implode( "', '", $aChosenArt ) . "') ";
+            $sQ = "delete from oxobject2selectlist where oxobject2selectlist.oxid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aChosenArt ) ) . ") ";
             oxDb::getDb()->Execute( $sQ );
         }
     }

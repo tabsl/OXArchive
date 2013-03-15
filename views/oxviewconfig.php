@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxviewconfig.php 20503 2009-06-26 14:54:11Z vilma $
+ * $Id: oxviewconfig.php 21697 2009-08-19 13:09:31Z vilma $
  */
 
 /**
@@ -85,6 +85,10 @@ class oxViewConfig extends oxSuperCfg
     public function getActTplName()
     {
         $sTplName = oxConfig::getParameter( 'tpl' );
+        // #M1176: Logout from CMS page 
+        if ( !$sTplName ) {
+            $sTplName = $this->getViewConfigParam('tpl');
+        }
         return $sTplName ? basename( $sTplName ) : null;
     }
 

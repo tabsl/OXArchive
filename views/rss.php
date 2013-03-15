@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: rss.php 17481 2009-03-20 12:35:53Z arvydas $
+ * $Id: rss.php 21912 2009-08-27 12:05:37Z arvydas $
  */
 
 /**
@@ -87,9 +87,7 @@ class Rss extends oxUBase
         $oSmarty->assign('channel', $this->getChannel());
         $oSmarty->assign('xmldef', $this->getXmlDef());
 
-        header ("content-type: text/xml");
-
-
+        header( "Content-Type: text/xml; charset=".oxLang::getInstance()->translateString( "charset" ) );
         echo $this->_processOutput( $oSmarty->fetch('rss.tpl', $this->getViewId()) );
 
         // returned rss xml: no further processing

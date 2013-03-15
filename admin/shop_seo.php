@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: shop_seo.php 19048 2009-05-14 06:53:33Z arvydas $
+ * $Id: shop_seo.php 22499 2009-09-22 07:46:50Z arvydas $
  */
 
 /**
@@ -53,7 +53,7 @@ class Shop_Seo extends Shop_Config
         $this->_aViewData['edit'] = $oShop;
 
         // loading static seo urls
-        $sQ = "select oxstdurl, oxobjectid from oxseo where oxtype='static' and oxshopid='".$oShop->getId()."' group by oxobjectid order by oxstdurl";
+        $sQ = "select oxstdurl, oxobjectid from oxseo where oxtype='static' and oxshopid=".oxDb::getDb()->quote( $oShop->getId() )." group by oxobjectid order by oxstdurl";
 
         $oList = oxNew( 'oxlist' );
         $oList->init( 'oxbase', 'oxseo' );
@@ -86,8 +86,9 @@ class Shop_Seo extends Shop_Config
         if ( $sActObject && $sActObject != '-1' ) {
             $this->_aViewData['sActSeoObject'] = $sActObject;
 
-            $sQ = "select oxseourl, oxlang from oxseo where oxobjectid = '$sActObject' and oxshopid = '{$iShopId}'";
-            $oRs = oxDb::getDb(true)->execute( $sQ );
+            $oDb = oxDb::getDb(true);
+            $sQ  = "select oxseourl, oxlang from oxseo where oxobjectid = ".$oDb->quote( $sActObject )." and oxshopid = ".$oDb->quote( $iShopId );
+            $oRs = $oDb->execute( $sQ );
             if ( $oRs != false && $oRs->recordCount() > 0 ) {
                 while ( !$oRs->EOF ) {
                     $aSeoUrls[$oRs->fields['oxlang']] = array( $oRs->fields['oxobjectid'], $oRs->fields['oxseourl'] );
@@ -116,9 +117,10 @@ class Shop_Seo extends Shop_Config
         $oEncoder = oxSeoEncoder::getInstance();
 
         $oShop = oxNew( 'oxshop' );
-        $oShop->load( $soxId );
+        $oShop->loadInLang( $this->_iEditLang, $soxId );
 
         //assigning values
+        $oShop->setLanguage(0);
         $oShop->assign( $aParams );
         $oShop->setLanguage( $this->_iEditLang );
         $oShop->save();
@@ -193,7 +195,8 @@ class Shop_Seo extends Shop_Config
             if ( ( $sObjectid = $aStaticUrl['oxseo__oxobjectid'] ) && $sObjectid != '-1' ) {
                 // active shop id
                 $soxId = oxConfig::getParameter( 'oxid' );
-                oxDb::getDb()->execute( "delete from oxseo where oxobjectid = '{$sObjectid}' and oxshopid = '{$soxId}'" );
+                $oDb = oxDb::getDb();
+                $oDb->execute( "delete from oxseo where oxobjectid = ".$oDb->quote( $sObjectid ) ." and oxshopid = ".$oDb->quote( $soxId ) );
             }
         }
     }

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxactions.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxactions.php 22507 2009-09-22 09:33:55Z sarunas $
  */
 
 /**
@@ -72,11 +72,11 @@ class oxActions extends oxBase
     public function removeArticle( $sOxId )
     {
         // remove actions from articles also
-        $oDB = oxDb::getDb(true);
-        $sDelete = "delete from oxactions2article where oxactionid = '".$this->getId()."' and oxartid = '$sOxId' and oxshopid = '" . $this->getShopId() . "'";
-        $oDB->execute( $sDelete );
+        $oDb = oxDb::getDb(true);
+        $sDelete = "delete from oxactions2article where oxactionid = '".$this->getId()."' and oxartid = ".$oDb->quote($sOxId)." and oxshopid = '" . $this->getShopId() . "'";
+        $oDb->execute( $sDelete );
 
-        return ( bool ) $oDB->affected_Rows();
+        return ( bool ) $oDb->affected_Rows();
     }
 
     /**
@@ -99,9 +99,9 @@ class oxActions extends oxBase
 
 
         // remove actionss from articles also
-        $oDB = oxDb::getDb(true);
-        $sDelete = "delete from oxactions2article where oxactionid = '$sOxId' and oxshopid = '" . $this->getShopId() . "'";
-        $oDB->execute( $sDelete );
+        $oDb = oxDb::getDb(true);
+        $sDelete = "delete from oxactions2article where oxactionid = ".$oDb->quote($sOxId)." and oxshopid = '" . $this->getShopId() . "'";
+        $oDb->execute( $sDelete );
 
         return parent::delete( $sOxId );
     }

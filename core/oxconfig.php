@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxconfig.php 20457 2009-06-25 13:21:33Z vilma $
+ * $Id: oxconfig.php 22669 2009-09-28 07:43:10Z sarunas $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -412,7 +412,7 @@ class oxConfig extends oxSuperCfg
         } catch ( oxCookieException $oEx ) {
             // redirect to start page and display the error
             oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
-            oxUtils::getInstance()->redirect( $this->getShopHomeURL() .'cl=start' );
+            oxUtils::getInstance()->redirect( $this->getShopHomeURL() .'cl=start', true, 302 );
         }
 
         //application initialization
@@ -654,6 +654,7 @@ class oxConfig extends oxSuperCfg
         return $this->_iShopId;
     }
 
+
     /**
      * Active Shop id setter
      *
@@ -681,8 +682,8 @@ class oxConfig extends oxSuperCfg
             $aServerVars     = $myUtilsServer->getServerVar();
             $aHttpsServerVar = $myUtilsServer->getServerVar( 'HTTPS' );
 
-            $this->_blIsSsl = ( isset( $aHttpsServerVar ) && $this->getConfigParam( 'sSSLShopURL' ) &&
-                         ( $aHttpsServerVar == 'on' || $aHttpsServerVar == '1' ) ); // 1&1 provides "1"
+            $this->_blIsSsl = ( isset( $aHttpsServerVar ) && ( $this->getConfigParam( 'sSSLShopURL' ) || $this->getConfigParam( 'sMallSSLShopURL' ) ) &&
+                         ( $aHttpsServerVar === 'on' || $aHttpsServerVar == '1' ) ); // 1&1 provides "1"
 
             //additional special handling for profihost customers
             if ( isset( $aServerVars['HTTP_X_FORWARDED_SERVER'] ) &&
@@ -708,7 +709,11 @@ class oxConfig extends oxSuperCfg
             return false;
         }
 
-        $sCurrentHost = preg_replace( '/\/\w*\.php.*/', '', $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'] );
+        $oUtilsServer = oxUtilsServer::getInstance();
+        $sHost = $oUtilsServer->getServerVar( 'HTTP_HOST' );
+        $sScriptName = $oUtilsServer->getServerVar( 'SCRIPT_NAME' );
+
+        $sCurrentHost = preg_replace( '/\/\w*\.php.*/', '', $sHost . $sScriptName );
 
         //remove double slashes all the way
         $sCurrentHost = str_replace( '/', '', $sCurrentHost );
@@ -1242,7 +1247,10 @@ class oxConfig extends oxSuperCfg
 
             return $sAltUrl;
         }
-        $sUrl = $this->getUrl( $sFile, $this->_sPictureDir, $blAdmin, $blSSL, null, $iLang, $iShopId );
+
+        $blNativeImg = $this->getConfigParam( 'blNativeImages' );
+
+        $sUrl = $this->getUrl( $sFile, $this->_sPictureDir, $blAdmin, $blSSL, $blNativeImg, $iLang, $iShopId );
         if ( $sFile && $this->getConfigParam('blFormerTplSupport') ) {
             $sUrl = str_replace( $this->getPictureUrl( null, $blAdmin, $blSSL, $iLang, $iShopId ), '', $sUrl );
         }
@@ -1343,7 +1351,8 @@ class oxConfig extends oxSuperCfg
      */
     public function getResourceUrl( $sFile, $blAdmin = false , $blSSL = null , $iLang = null )
     {
-        return $this->getUrl( $sFile, $this->_sResourceDir, $blAdmin, $blSSL, false, $iLang );
+        $blNativeImg = $this->getConfigParam( 'blNativeImages' );
+        return $this->getUrl( $sFile, $this->_sResourceDir, $blAdmin, $blSSL, $blNativeImg, $iLang );
     }
 
     /**
@@ -1761,8 +1770,9 @@ class oxConfig extends oxSuperCfg
             $sShopId = $this->getShopId();
         }
 
-        $sQ  = "select oxvartype, DECODE( oxvarvalue, '".$this->getConfigParam( 'sConfigKey' )."') as oxvarvalue from oxconfig where oxshopid = '$sShopId' and oxvarname = '$sVarName'";
-        $oRs = oxDb::getDb(true)->Execute( $sQ );
+        $oDb = oxDb::getDb(true);
+        $sQ  = "select oxvartype, DECODE( oxvarvalue, '".$this->getConfigParam( 'sConfigKey' )."') as oxvarvalue from oxconfig where oxshopid = '$sShopId' and oxvarname = ".$oDb->quote($sVarName);
+        $oRs = $oDb->Execute( $sQ );
 
         $sValue = null;
         if ( $oRs != false && $oRs->recordCount() > 0 ) {

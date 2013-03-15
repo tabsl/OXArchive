@@ -29,7 +29,6 @@
  */
 class oxSimpleVariant extends oxI18n
 {
-
     /**
      * Use lazy loading for this item
      *
@@ -63,7 +62,29 @@ class oxSimpleVariant extends oxI18n
     }
 
     /**
-     * Implementing (faking) performance friendly method from oxArticle
+     * Magic getter, deals with deprecated values
+     *
+     * @param string $sName Variable name
+     *
+     * @return mixed
+     */
+    public function __get($sName)
+    {
+        $myUtils = oxUtils::getInstance();
+        switch ($sName) {
+            case 'aSelectlist' :
+                if ( $this->getConfig()->getConfigParam( 'bl_perfLoadSelectLists' ) ) {
+                    return $this->aSelectlist = $this->getSelectLists();
+                }
+                return;
+                break;
+        }
+
+        return parent::__get($sName);
+    }
+
+    /**
+     * Implementing (fakeing) performance friendly method from oxArticle
      *oxbase
      *
      * @return null

@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: category_update.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: category_update.php 21896 2009-08-27 07:59:00Z arvydas $
  */
 
 /**
@@ -29,19 +29,31 @@
 class Category_Update extends oxAdminView
 {
     /**
-     * Loads category tree object, executes update and returns name of template
-     * file "category_update.tpl".
+     * Current class template name.
      *
-     * @return string
+     * @var string
      */
-    public function render()
+    protected $_sThisTemplate = "category_update.tpl";
+
+    /**
+     * Category list object
+     *
+     * @var oxCategoryList
+     */
+    protected $_oCatList = null;
+
+    /**
+     * Returns category list object
+     *
+     * @return
+     */
+    public function getCatListUpdateInfo()
     {
-        parent::render();
+        if ( $this->_oCatList == null ) {
+            $this->_oCatList = oxNew( "oxCategoryList" );
+            $this->_oCatList->updateCategoryTree( false );
+        }
 
-        // parent categorie tree
-        $oCatTree = oxNew( "oxCategoryList" );
-        $oCatTree->updateCategoryTree();
-
-        return "category_update.tpl";
+        return $this->_oCatList->getUpdateInfo();
     }
 }

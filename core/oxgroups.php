@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxgroups.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxgroups.php 22560 2009-09-22 14:58:12Z rimvydas.paskevicius $
  */
 
 /**
@@ -76,16 +76,16 @@ class oxGroups extends oxBase
 
 
         // deleting related data records
-        $sDelete = 'delete from oxobject2group where oxobject2group.oxgroupsid = "'.$sOXID.'"';
+        $sDelete = 'delete from oxobject2group where oxobject2group.oxgroupsid = ' . $oDB->quote( $sOXID );
         $rs = $oDB->execute( $sDelete );
 
-        $sDelete = 'delete from oxobject2delivery where oxobject2delivery.oxobjectid = "'.$sOXID.'"';
+        $sDelete = 'delete from oxobject2delivery where oxobject2delivery.oxobjectid = ' . $oDB->quote( $sOXID );
         $rs = $oDB->execute( $sDelete );
 
-        $sDelete = 'delete from oxobject2discount where oxobject2discount.oxobjectid = "'.$sOXID.'"';
+        $sDelete = 'delete from oxobject2discount where oxobject2discount.oxobjectid = ' . $oDB->quote( $sOXID );
         $rs = $oDB->execute( $sDelete );
 
-        $sDelete = 'delete from oxobject2payment where oxobject2payment.oxobjectid = "'.$sOXID.'"';
+        $sDelete = 'delete from oxobject2payment where oxobject2payment.oxobjectid = ' . $oDB->quote( $sOXID );
         $rs = $oDB->execute( $sDelete );
 
         return $rs->EOF;

@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: order_remark.php 17190 2009-03-13 12:20:25Z arvydas $
+ * $Id: order_remark.php 22485 2009-09-22 06:59:12Z arvydas $
  */
 
 /**
@@ -50,7 +50,7 @@ class Order_Remark extends oxAdminDetails
             // all remark
             $oRems = oxNew( "oxlist" );
             $oRems->init( "oxremark");
-            $sSelect = "select * from oxremark where oxparentid='".$oOrder->oxorder__oxuserid->value."' order by oxcreate desc";
+            $sSelect = "select * from oxremark where oxparentid=".oxDb::getDb()->quote( $oOrder->oxorder__oxuserid->value )." order by oxcreate desc";
             $oRems->selectString( $sSelect );
             foreach ($oRems as $key => $val) {
                 if ( $val->oxremark__oxid->value == $sRemoxId) {
@@ -92,9 +92,10 @@ class Order_Remark extends oxAdminDetails
 
         $sNewText   = oxConfig::getParameter( "remarktext");
         $sNewHeader = oxConfig::getParameter( "remarkheader");
-        $oRemark->oxremark__oxtext->setValue($sNewText);
-        $oRemark->oxremark__oxheader->setValue($sNewHeader);
-        $oRemark->oxremark__oxparentid->setValue($oOrder->oxorder__oxuserid->value);
+        $oRemark->oxremark__oxtext = new oxField($sNewText);
+        $oRemark->oxremark__oxheader = new oxField($sNewHeader);
+        $oRemark->oxremark__oxtype = new oxField("r");
+        $oRemark->oxremark__oxparentid = new oxField($oOrder->oxorder__oxuserid->value);
         $oRemark->save();
     }
 

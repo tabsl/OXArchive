@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: recommlist.php 20503 2009-06-26 14:54:11Z vilma $
+ * $Id: recommlist.php 21990 2009-08-31 12:40:28Z arvydas $
  */
 
 /**
@@ -584,5 +584,29 @@ class RecommList extends oxUBase
         }
 
         return $sAddParams;
+    }
+
+    /**
+     * get link of current view
+     *
+     * @param int $iLang requested language
+     *
+     * @return string
+     */
+    public function getLink( $iLang = null )
+    {
+        $sLink = parent::getLink( $iLang );
+
+        if ( oxUtils::getInstance()->seoIsActive() ) {
+            if ( $sRecommId = $this->getRecommId() ) {
+                $sLink .= ( ( strpos( $sLink, '?' ) === false ) ? '?' : '&amp;' ) . "recommid={$sRecommId}";
+            }
+
+            if ( $sSearch = $this->getSearchForHtml() ) {
+                $sLink .= ( ( strpos( $sLink, '?' ) === false ) ? '?' : '&amp;' ) . "searchrecomm={$sSearch}";
+            }
+        }
+
+        return $sLink;
     }
 }

@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: guestbook.php 17315 2009-03-17 16:18:58Z arvydas $
+ * $Id: guestbook.php 21767 2009-08-21 12:24:05Z arvydas $
  */
 
 /**
@@ -136,7 +136,10 @@ class GuestBook extends oxUBase
         $this->_aViewData['entries'] = $this->getEntries();
 
         // page navigation object
-        $this->_aViewData['pageNavigation'] = $this->getPageNavigation;
+        $this->_aViewData['pageNavigation'] = $this->getPageNavigation();
+
+        // @deprecated, added to fix top navigation problem
+        $this->getPageNavigation = $this->getPageNavigation();
 
         return $this->_sThisTemplate;
     }
