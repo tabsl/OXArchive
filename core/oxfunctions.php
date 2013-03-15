@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxfunctions.php 44073 2012-04-19 10:42:18Z tomas $
+ * @version   SVN: $Id: oxfunctions.php 46477 2012-06-20 13:27:50Z edvardas.gineika $
  */
 
 /**
@@ -100,7 +100,7 @@ function oxAutoload( $sClass )
         $myUtilsObject = oxUtilsObject::getInstance();
         foreach ( $aModules as $sParentName => $sModuleName ) {
             // looking for module parent class
-            if ( stripos( $sModuleName, $sClass ) !== false ) {
+            if (  preg_match('/\b'.$sClass.'($|\&)/i', $sModuleName )  ) {  
                 $myUtilsObject->getClassName( $sParentName );
                 break;
             }

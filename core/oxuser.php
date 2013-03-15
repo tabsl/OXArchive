@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 42869 2012-03-14 14:31:06Z vilma $
+ * @version   SVN: $Id: oxuser.php 49702 2012-09-21 15:43:04Z tomas $
  */
 
 /**
@@ -645,26 +645,34 @@ class oxUser extends oxBase
             $sOXID = $this->getId();
         }
 
-        $sSelect = 'SELECT oxid FROM '.$this->getViewName().'
-                    WHERE ( oxusername = '.$oDb->quote( $this->oxuser__oxusername->value).'';
-
-        if ( $sOXID ) {
-            $sSelect.= " or oxid = ".$oDb->quote( $sOXID ) . " ) ";
-        } else {
-            $sSelect.= ' ) ';
-        }
-
+        $sShopSelect = '';
         if ( !$this->_blMallUsers && $this->oxuser__oxrights->value != 'malladmin') {
-            $sSelect .= ' AND oxshopid = "'.$this->getConfig()->getShopId().'" ';
+            $sShopSelect = ' AND oxshopid = "'.$this->getConfig()->getShopId().'" ';
         }
 
-        $blExists = false;
-        if ( ( $sOxid = oxDb::getDb()->getOne( $sSelect ) ) ) {
+        //#4543 Query optimisation by splitting it into two, might need an logics optimisation as well
+        if ( $sOXID ) {
+            $sSelect = 'SELECT oxid FROM '.$this->getViewName().'
+                    WHERE ( oxid = '.$oDb->quote( $sOXID ).' ) ';
+            $sSelect .= $sShopSelect;
+
+            if ( ( $sOxid = $oDb->getOne( $sSelect ) ) ) {
+                // update - set oxid
+                $this->setId( $sOxid );
+                return true;
+            }
+        }
+
+        $sSelect = 'SELECT oxid FROM '.$this->getViewName().'
+                    WHERE ( oxusername = '.$oDb->quote( $this->oxuser__oxusername->value).' ) ';
+        $sSelect .= $sShopSelect;
+
+        if ( ( $sOxid = $oDb->getOne( $sSelect ) ) ) {
              // update - set oxid
             $this->setId( $sOxid );
-            $blExists = true;
+            return true;
         }
-        return $blExists;
+        return false;
     }
 
     /**

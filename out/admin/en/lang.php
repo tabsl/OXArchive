@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 44196 2012-04-23 12:59:15Z juergen.busch $
+ * @version   SVN: $Id: lang.php 50504 2012-10-15 12:24:42Z juergen.busch $
  */
 
 /*
@@ -717,13 +717,13 @@ $aLang = array(
 'DYNSCREEN_LIST_SERVICE'                                   => 'Service Area',
 'EDITOR_PLAINTEXT_HINT'                                    => '<b>Note:</b> If you need to preserve text line breaks (e.g. plaintext e-mails), please use tab "html CODE" instead of "Design".',
 //eFire related contents will appear only for users located in Germany
-'EFIRE_USERNAME'                                           => 'eFire External Transaction username',
-'EFIRE_PASSWORD'                                           => 'eFire External Transaction password',
+'EFIRE_USERNAME'                                           => 'Externer Transaktions Login (user name)',
+'EFIRE_PASSWORD'                                           => 'Externes Transaktions Passwort (password)',
 'EFIRE_DOWNLOADER'                                         => 'Downloader',
-'EFIRE_DOWNLOADER_ERROR'                                   => 'Error downloading eFire connector: %s',
-'EFIRE_DOWNLOADER_SUCCESS'                                 => 'Connector downloaded successfully',
-'EFIRE_GETCONNECTOR'                                       => 'If you have registered for OXID eFire you can get your personalized Shop-Connector right here.',
-'EFIRE_CONNECTORINSTRUCTION'                               => 'Fill in your "Externer Transaktions Login" and "Externer Transaktions Login" which you have previously entered in OXID eFire and press "Download" button to get OXID eFire Shop-Connector.',
+'EFIRE_DOWNLOADER_ERROR'                                   => 'Error downloading shop connector: %s',
+'EFIRE_DOWNLOADER_SUCCESS'                                 => 'Shop connector downloaded successfully',
+'EFIRE_GETCONNECTOR'                                       => 'Once you are registered with OXID eFire you\'ll be able to download your personalized copy of the shop connector and install it directly to the right shop location.',
+'EFIRE_CONNECTORINSTRUCTION'                               => 'Please enter "Externer Transaktions Login" and "Externes Transaktions Passwort" that you previously have entered in OXID eFire options ("Einstellungen").',
 'EFIRE_SAVECREDENTIALS'                                    => 'Save your credentials for future use',
 'EFIRE_USERDETAILS'                                        => 'User',
 'EFIRE_USERPASSHASH'                                       => 'Password hash',
@@ -1075,8 +1075,8 @@ $aLang = array(
 'SHOP_CONFIG_SHOWORDERBUTTONONTHETOP'                      => 'Show an additional "Submit Order" Button at the Top in 4th Order Step (By default "Submit Order" Button is shown only on the Bottom of the Page).',
 'SHOP_CONFIG_CALCULATEVATFORDELIVERY'                      => 'Display shipping costs as net price and VAT (instead of gross) in shopping cart and invoice',
 'SHOP_CONFIG_CALCDELVATONTOP'                              => 'Enter Shipping Costs as net Price (plus VAT)',
-'SHOP_CONFIG_CALCULATEVATFORWRAPPING'                      => 'Display VAT contained in Gift Wrapping in Shopping Cart and Invoice',
-'SHOP_CONFIG_CALCWRAPVATONTOP'                             => 'Enter Gift Wrapping Prices as net Price (plus VAT)',
+'SHOP_CONFIG_CALCULATEVATFORWRAPPING'                      => 'Display VAT contained in Gift Wrappings and Greeting Cards in Shopping Cart and Invoice',
+'SHOP_CONFIG_CALCWRAPVATONTOP'                             => 'Enter Gift Wrapping and Greeting Card Prices as net Price (plus VAT)',
 'SHOP_CONFIG_CALCULATEVATOFORPAYCHARGE'                    => 'Display VAT contained in Payment Method Charges in Shopping Cart and Invoice',
 'SHOP_CONFIG_CMSFOLDER'                                    => 'CMS Page Folders',
 'SHOP_CONFIG_CNTOFNEWS'                                    => 'Number of News which are displayed in the News Box',

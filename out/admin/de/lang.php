@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 44195 2012-04-23 12:58:55Z juergen.busch $
+ * @version   SVN: $Id: lang.php 50503 2012-10-15 12:24:20Z juergen.busch $
  */
 
 $sLangName  = 'Deutsch';
@@ -711,13 +711,13 @@ $aLang = array(
 'DYNSCREEN_LIST_SERVICE'                                   => 'Servicebereich',
 'EDITOR_PLAINTEXT_HINT'                                    => '<b>Anmerkung:</b> Wenn Sie Zeilenumbrüche unverändert übernehmen möchten (z. B. für plaintext E-Mail), dann benutzen Sie "Source" anstatt "Design".',
 //eFire related contents will appear only for users located in Germany
-'EFIRE_USERNAME'                                           => 'OXID eFire Externer Transaktions Login',
-'EFIRE_PASSWORD'                                           => 'OXID eFire Externes Transaktions Passwort',
+'EFIRE_USERNAME'                                           => 'Externer Transaktions Login',
+'EFIRE_PASSWORD'                                           => 'Externes Transaktions Passwort',
 'EFIRE_DOWNLOADER'                                         => 'Downloader',
-'EFIRE_DOWNLOADER_ERROR'                                   => 'Fehler beim Herunterladen des OXID eFire Shop-Connectors: %s',
-'EFIRE_DOWNLOADER_SUCCESS'                                 => 'OXID eFire Shop-Connector erfolgreich geladen',
-'EFIRE_GETCONNECTOR'                                       => 'Sofern Sie sich bei OXID eFire registriert haben, laden Sie hier Ihren persönlichen Shop-Connector.',
-'EFIRE_CONNECTORINSTRUCTION'                               => 'Geben Sie dazu Ihren Externen Transaktions Login und Externes Transaktions Passwort ein, den Sie in OXID eFire unter "Einstellungen" eingegeben haben.',
+'EFIRE_DOWNLOADER_ERROR'                                   => 'Fehler beim Herunterladen des Shop-Connectors: %s',
+'EFIRE_DOWNLOADER_SUCCESS'                                 => 'Shop-Connector erfolgreich geladen',
+'EFIRE_GETCONNECTOR'                                       => 'Sofern Sie sich bei OXID eFire registriert haben, laden Sie hier Ihren persönlichen Shop-Connector direkt in den Shop.',
+'EFIRE_CONNECTORINSTRUCTION'                               => 'Geben Sie dazu Ihren Externen Transaktions Login und das Externe Transaktions Passwort ein, wie in OXID eFire unter "Einstellungen" hinterlegt.',
 'EFIRE_SAVECREDENTIALS'                                    => 'Einstellungen für zukünftige Verbindungen zu OXID eFire speichern',
 'EFIRE_USERDETAILS'                                        => 'Benutzer',
 'EFIRE_USERPASSHASH'                                       => 'Passwort Prüfsumme (Hash)',
@@ -1069,8 +1069,8 @@ $aLang = array(
 'SHOP_CONFIG_SHOWORDERBUTTONONTHETOP'                      => 'Im 4ten Bestellschritt einen zusätzlichen "Bestellung absenden" Button oben anzeigen (Wenn die Einstellung nicht aktiv ist, wird nur der "Bestellung absenden" Button weiter unten angezeigt).',
 'SHOP_CONFIG_CALCULATEVATFORDELIVERY'                      => 'Im Warenkorb und in der Rechnung die Versandkosten als Nettobetrag und Mehrwertsteuer anstatt als Bruttobetrag anzeigen',
 'SHOP_CONFIG_CALCDELVATONTOP'                              => 'Versandkosten als Nettopreise eingeben (Versandkosten zuzüglich MwSt.)',
-'SHOP_CONFIG_CALCULATEVATFORWRAPPING'                      => 'Die in den Geschenkverpackungskosten enthaltene Mehrwertsteuer im Warenkorb und in der Rechnung anzeigen',
-'SHOP_CONFIG_CALCWRAPVATONTOP'                             => 'Verpackungskosten als Nettopreise eingeben (Verpackungskosten zuzüglich MwSt.)',
+'SHOP_CONFIG_CALCULATEVATFORWRAPPING'                      => 'Die in Geschenkverpackungen und Grußkarten enthaltene Mehrwertsteuer im Warenkorb und in der Rechnung anzeigen',
+'SHOP_CONFIG_CALCWRAPVATONTOP'                             => 'Kosten für Geschenkverpackungen und Grußkarten als Nettopreise eingeben (zuzüglich MwSt.)',
 'SHOP_CONFIG_CALCULATEVATOFORPAYCHARGE'                    => 'Die in den Zahlungsarten-Gebühren enthaltene Mehrwertsteuer im Warenkorb und in der Rechnung anzeigen',
 'SHOP_CONFIG_CMSFOLDER'                                    => 'Ordner für CMS-Seiten',
 'SHOP_CONFIG_CNTOFNEWS'                                    => 'Anzahl der Nachrichten, die in der Nachrichten-Box links angezeigt werden',

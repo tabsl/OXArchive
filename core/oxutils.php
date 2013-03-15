@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutils.php 42933 2012-03-16 09:49:42Z linas.kukulskis $
+ * @version   SVN: $Id: oxutils.php 49879 2012-09-28 12:36:38Z tomas $
  */
 
 /**
@@ -1340,7 +1340,7 @@ class oxUtils extends oxSuperCfg
      */
     public function setLangCache( $sCacheName, $aLangCache )
     {
-        $sCache = "<?php\n\$aLangCache = ".var_export( $aLangCache, true ).";";
+        $sCache = "<?php\n\$aLangCache = ".var_export( $aLangCache, true ).";\n?>";
         $blRes = file_put_contents($this->getCacheFilePath($sCacheName), $sCache);
         return $blRes;
     }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoder.php 44336 2012-04-25 10:40:22Z linas.kukulskis $
+ * @version   SVN: $Id: oxseoencoder.php 51387 2012-11-06 09:11:01Z andrius.silgalis $
  */
 
 /**
@@ -612,12 +612,10 @@ class oxSeoEncoder extends oxSuperCfg
         $sUri = $this->encodeString( $sUri );
 
         // basic string preparation
-        $sUri = strip_tags( $sUri );
         $oStr = getStr();
-
+        $sUri = $oStr->strip_tags( $sUri );
 
         // if found ".html" or "/" at the end - removing it temporary
-        $oStr = getStr();
         $sExt = $this->_getUrlExtension();
         if ($sExt === null) {
             $aMatched = array();
@@ -1142,11 +1140,11 @@ class oxSeoEncoder extends oxSuperCfg
 
             $oStr = getStr();
             if ( $sKeywords !== false ) {
-                $sKeywords = $oDb->quote( $oStr->htmlspecialchars( $this->encodeString( strip_tags( $sKeywords ), false ) ) );
+                $sKeywords = $oDb->quote( $oStr->htmlspecialchars( $this->encodeString( $oStr->strip_tags( $sKeywords ), false ) ) );
             }
 
             if ( $sDescription !== false ) {
-                $sDescription = $oDb->quote( $oStr->htmlspecialchars( strip_tags( $sDescription ) ) );
+                $sDescription = $oDb->quote( $oStr->htmlspecialchars( $oStr->strip_tags( $sDescription ) ) );
             }
 
             $sQ = "insert into oxobject2seodata

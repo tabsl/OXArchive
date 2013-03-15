@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: alist.php 44498 2012-04-30 06:58:51Z saulius.stasiukaitis $
+ * @version   SVN: $Id: alist.php 51387 2012-11-06 09:11:01Z andrius.silgalis $
  */
 
 /**
@@ -461,8 +461,9 @@ class aList extends oxUBase
         }
 
         // making safe for output
+        $sDescription = getStr()->html_entity_decode( $sDescription );
+        $sDescription = getStr()->strip_tags( $sDescription );
         $sDescription = getStr()->cleanStr($sDescription);
-        $sDescription = strip_tags( getStr()->html_entity_decode( $sDescription ) );
         $sDescription = getStr()->htmlspecialchars( $sDescription );
         return trim( $sDescription );
     }
@@ -578,7 +579,7 @@ class aList extends oxUBase
         if ( count( $aArticleList = $this->getArticleList() ) ) {
             $oStr = getStr();
             foreach ( $aArticleList as $oProduct ) {
-                $sDesc = strip_tags( trim( $oStr->strtolower( $oProduct->getArticleLongDesc()->value ) ) );
+                $sDesc = $oStr->strip_tags( trim( $oStr->strtolower( $oProduct->getArticleLongDesc()->value ) ) );
 
                 //removing dots from string (they are not cleaned up during general string cleanup)
                 $sDesc = $oStr->preg_replace( "/\./", " ", $sDesc );

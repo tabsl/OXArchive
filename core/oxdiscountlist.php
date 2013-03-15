@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdiscountlist.php 43062 2012-03-21 09:14:58Z tomas $
+ * @version   SVN: $Id: oxdiscountlist.php 49762 2012-09-25 15:12:13Z tomas $
  */
 
 /**
@@ -340,15 +340,13 @@ class oxDiscountList extends oxList
     {
         $aDiscLog = array();
         reset( $aDiscounts );
-        //#3587
-        $oPrice->multiply($dAmount);
 
         // price object to correctly perform calculations
         $dOldPrice = $oPrice->getBruttoPrice();
 
         while (list( , $oDiscount ) = each( $aDiscounts ) ) {
-            //#3587
-            $oDiscount->applyDiscount( $oPrice, $dAmount );
+
+            $oDiscount->applyDiscount( $oPrice );
             $dNewPrice = $oPrice->getBruttoPrice();
 
             if ( !isset( $aDiscLog[$oDiscount->getId()] ) ) {
@@ -356,13 +354,9 @@ class oxDiscountList extends oxList
             }
 
             $aDiscLog[$oDiscount->getId()]->dDiscount += $dOldPrice - $dNewPrice;
-            ////#3587
-            //$aDiscLog[$oDiscount->getId()]->dDiscount *= $dAmount;
+            $aDiscLog[$oDiscount->getId()]->dDiscount *= $dAmount;
             $dOldPrice = $dNewPrice;
         }
-        ////#3587
-        $oPrice->divide($dAmount);
-
         return $aDiscLog;
     }
     /**

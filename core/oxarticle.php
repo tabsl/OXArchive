@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 45763 2012-05-31 07:00:42Z edvardas.gineika $
+ * @version   SVN: $Id: oxarticle.php 51755 2012-11-13 13:40:15Z vaidas.matulevicius $
  */
 
 // defining supported link types
@@ -635,6 +635,16 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     public function disablePriceLoad()
     {
         $this->_blLoadPrice = false;
+    }
+
+    /**
+     * Enable article price loading, if disabled.
+     *
+     * @return null
+     */
+    public function enablePriceLoad()
+    {
+        $this->_blLoadPrice = true;
     }
 
     /**
@@ -3579,9 +3589,10 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             return true;
         }
 
-        $aDoubleCopyFields = array('oxarticles__oxprice', 'oxarticles__oxvat');
+        // certain fields with zero value treat as empty
+        $aZeroValueFields = array('oxarticles__oxprice', 'oxarticles__oxvat', 'oxarticles__oxunitquantity');
 
-        if (!$mValue && in_array( $sFieldName, $aDoubleCopyFields ) ) {
+        if (!$mValue && in_array( $sFieldName, $aZeroValueFields ) ) {
             return true;
         }
 

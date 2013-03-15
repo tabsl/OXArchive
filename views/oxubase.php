@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 44498 2012-04-30 06:58:51Z saulius.stasiukaitis $
+ * @version   SVN: $Id: oxubase.php 51387 2012-11-06 09:11:01Z andrius.silgalis $
  */
 
 /**
@@ -1187,7 +1187,7 @@ class oxUBase extends oxView
             $oContent = oxNew( 'oxcontent' );
             if ( $oContent->loadByIdent( $sMetaIdent ) &&
                  $oContent->oxcontents__oxactive->value ) {
-                return strip_tags( $oContent->oxcontents__oxcontent->value );
+                return getStr()->strip_tags( $oContent->oxcontents__oxcontent->value );
             }
         }
     }
@@ -1492,7 +1492,7 @@ class oxUBase extends oxView
             // decoding html entities
             $sMeta = $oStr->html_entity_decode( $sMeta );
             // stripping HTML tags
-            $sMeta = strip_tags( $sMeta );
+            $sMeta = $oStr->strip_tags( $sMeta );
 
             // removing some special chars
             $sMeta = $oStr->cleanStr( $sMeta );

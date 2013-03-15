@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: details.php 44339 2012-04-25 10:58:25Z mindaugas.rimgaila $
+ * @version   SVN: $Id: details.php 51526 2012-11-08 11:00:31Z aurimas.gladutis $
  */
 
 /**
@@ -294,6 +294,7 @@ class Details extends oxUBase
                 //lets additionally add parent article if it is sellable
                 if ( count( $this->_aVariantList ) && $myConfig->getConfigParam( 'blVariantParentBuyable' ) ) {
                     //#1104S if parent is buyable load selectlists too
+                    $oParent->enablePriceLoad();
                     $oParent->aSelectlist = $oParent->getSelectLists();
                     $this->_aVariantList = array_merge( array( $oParent ), $this->_aVariantList->getArray() );
                 }
@@ -426,9 +427,7 @@ class Details extends oxUBase
             $oProduct = $this->getProduct();
 
             $sMeta = $oProduct->getArticleLongDesc()->value;
-            $sMeta = str_replace( array( '<br>', '<br />', '<br/>' ), "\n", $sMeta );
             $sMeta = $oProduct->oxarticles__oxtitle->value.' - '.$sMeta;
-            $sMeta = strip_tags( $sMeta );
         }
         return parent::_prepareMetaDescription( $sMeta, $iLength, $blDescTag );
     }

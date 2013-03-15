@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilspic.php 39206 2011-10-12 13:30:56Z arvydas.vapsva $
+ * @version   SVN: $Id: oxutilspic.php 51431 2012-11-06 15:29:38Z aurimas.gladutis $
  */
 
 /**
@@ -141,8 +141,11 @@ class oxUtilsPic extends oxSuperCfg
             if ( !$myConfig->getConfigParam( 'sAltImageUrl' ) ) {
                 // deleting various size generated images
                 $sGenPath = str_replace( '/master/', '/generated/', $sAbsDynImageDir );
-                foreach ( glob( "{$sGenPath}*/{$sPicName}" ) as $sFile ) {
-                    $blDeleted = unlink( $sFile );
+                $aFiles = glob( "{$sGenPath}*/{$sPicName}" );
+                if ( is_array($aFiles) ) {
+                    foreach ( $aFiles as $sFile ) {
+                        $blDeleted = unlink( $sFile );
+                    }
                 }
             }
         }
