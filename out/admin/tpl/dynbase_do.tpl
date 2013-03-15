@@ -20,7 +20,7 @@
         [{/if}]
     [{/if}]
 [{else}]
-[{ oxmultilang ident="AUCTMASTER_DO_EXPORTING1" }] [{ $iStart}] [{ oxmultilang ident="AUCTMASTER_DO_EXPORTING2" }] [{ $iEnd }].
+  [{ oxmultilang ident="GENEXPORT_EXPRUNNING" }] [{ oxmultilang ident="GENEXPORT_EXPORTEDITEMS" }] [{$iExpItems|default:0}]
 [{/if}]
 
 [{include file="bottomitem.tpl"}]

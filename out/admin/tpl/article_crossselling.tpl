@@ -1,37 +1,5 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign}]
 
-<script type="text/javascript">
-<!--
-function EditThis( sID)
-{
-    var oTransfer = document.getElementById("transfer");
-    oTransfer.oxid.value=sID;
-    oTransfer.cl.value='article_main';
-    oTransfer.submit();
-
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.actedit.value = 0;
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
-function SetSticker( sStickerId, oObject)
-{
-    if ( oObject.selectedIndex != -1)
-    {   oSticker = document.getElementById(sStickerId);
-        oSticker.style.display = "";
-        oSticker.style.backgroundColor = "#FFFFCC";
-        oSticker.style.borderWidth = "1px";
-        oSticker.style.borderColor = "#000000";
-        oSticker.style.borderStyle = "solid";
-        oSticker.innerHTML         = oObject.item(oObject.selectedIndex).innerHTML;
-    }
-    else
-        oSticker.style.display = "none";
-}
-//-->
-</script>
-
 [{ if $readonly }]
     [{assign var="readonly" value="readonly disabled"}]
 [{else}]

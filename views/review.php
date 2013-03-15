@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: review.php 19359 2009-05-25 14:30:41Z vilma $
+ * $Id: review.php 20503 2009-06-26 14:54:11Z vilma $
  */
 
 /**
@@ -295,7 +295,7 @@ class Review extends oxUBase
             $sReviewUser = oxConfig::getParameter( 'reviewuser' );
             $sReviewUser = ( !$sReviewUser ) ? oxConfig::getParameter( 'reviewuserid' ) : $sReviewUser;
             if ( $sReviewUser ) {
-            	$oUser = oxNew( 'oxuser' );
+                $oUser = oxNew( 'oxuser' );
                 $sReviewUserId = $oUser->getReviewUserId( $sReviewUser );
             }
 

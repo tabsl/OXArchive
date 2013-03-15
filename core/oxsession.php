@@ -19,13 +19,15 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxsession.php 19892 2009-06-16 13:30:17Z arvydas $
+ * $Id: oxsession.php 21102 2009-07-23 12:21:10Z vilma $
  */
 
-
+DEFINE('_DB_SESSION_HANDLER', getShopBasePath() . 'core/adodblite/session/adodb-session.php');
 // Including database session managing class if needed.
-if (oxConfig::getInstance()->getConfigParam( 'blAdodbSessionHandler' ) )
-    require_once getShopBasePath() . 'core/adodb/session/adodb-session.php';
+if (oxConfig::getInstance()->getConfigParam( 'blAdodbSessionHandler' ) ) {
+    $oDB = oxDb::getDb();
+    require_once _DB_SESSION_HANDLER;
+}
 
 /**
  * Session manager.
@@ -178,8 +180,6 @@ class oxSession extends oxSuperCfg
 
     /**
      * Starts shop session, generates unique session ID, extracts user IP.
-     *
-     * @throws oxSystemComponentException
      *
      * @return null
      */
@@ -400,6 +400,7 @@ class oxSession extends oxSuperCfg
     public function url($url)
     {
         $myConfig = $this->getConfig();
+        $blForceSID = false;
         if (strpos(" ".$url, "https:") === 1 && !$myConfig->isSsl()) {
             $blForceSID = true;
         }

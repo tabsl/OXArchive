@@ -2,30 +2,6 @@
 
 <script type="text/javascript">
 <!--
-[{ if $updatelist == 1}]
-    UpdateList('[{ $oxid }]');
-[{ /if}]
-
-function UpdateList( sID)
-{
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-function SetSticker( sStickerId, oObject)
-{
-    if ( oObject.selectedIndex != -1)
-    {   oSticker = document.getElementById(sStickerId);
-        oSticker.style.display = "";
-        oSticker.style.backgroundColor = "#FFFFCC";
-        oSticker.style.borderWidth = "1px";
-        oSticker.style.borderColor = "#000000";
-        oSticker.style.borderStyle = "solid";
-        oSticker.innerHTML         = oObject.item(oObject.selectedIndex).innerHTML;
-    }
-    else
-        oSticker.style.display = "none";
-}
 function SchnellSortManager(oObj)
 {   oRadio = document.getElementsByName("editval[oxcategories__oxdefsortmode]");
     if(oObj.value)

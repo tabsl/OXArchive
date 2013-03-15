@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: details.php 19886 2009-06-16 12:39:06Z alfonsas $
+ * $Id: details.php 21122 2009-07-24 08:19:07Z arvydas $
  */
 
 /**
@@ -229,6 +229,7 @@ class Details extends oxUBase
         if ( $sParentId && $this->_oParent === null ) {
             $this->_oParent = false;
             if ( ( $oParent = oxNewArticle( $sParentId ) ) ) {
+                $this->_processProduct( $oParent );
                 $this->_oParent = $oParent;
             }
         }
@@ -275,11 +276,38 @@ class Details extends oxUBase
 
             // setting link type for variants ..
             foreach ( $this->_aVariantList as $oVariant ) {
-                $oVariant->setLinkType( $this->getLinkType() );
+                $this->_processProduct( $oVariant );
             }
 
         }
         return $this->_aVariantList;
+    }
+
+    /**
+     * In case list type is "search" returns search parameters which will be added to product details link
+     *
+     * @return string | null
+     */
+    protected function _getAddUrlParams()
+    {
+        if ( $this->getListType() == "search" ) {
+            return $this->getDynUrlParams();
+        }
+    }
+
+    /**
+     * Processes product by setting link type and in case list type is search adds search parameters to details link
+     *
+     * @param object $oProduct
+     *
+     * @return null
+     */
+    protected function _processProduct( $oProduct )
+    {
+        $oProduct->setLinkType( $this->getLinkType() );
+        if ( $sAddParams = $this->_getAddUrlParams() ) {
+            $oProduct->appendLink( $sAddParams );
+        }
     }
 
     /**
@@ -473,14 +501,15 @@ class Details extends oxUBase
 
             $sKeywords = implode( ", ", $aKeywords );
 
+            $sKeywords = parent::_prepareMetaKeyword( $sKeywords, $blRemoveDuplicatedWords );
+
             //adding searchkeys info
             if ( $sSearchKeys = trim( $oProduct->oxarticles__oxsearchkeys->value ) ) {
-                $sSearchKeys = preg_replace( "/\s+/", ", ", $sSearchKeys );
-                $sKeywords .= ", " . $sSearchKeys;
+                $sKeywords .= ", " . parent::_prepareMetaKeyword( $sSearchKeys, false );
             }
         }
 
-        return parent::_prepareMetaKeyword( $sKeywords, false );
+        return $sKeywords;
     }
 
     /**
@@ -716,7 +745,7 @@ class Details extends oxUBase
 
             // object is not yet loaded
             $this->_oProduct = oxNew( 'oxarticle' );
-            $this->_oProduct->setSkipAbPrice( true );
+            //$this->_oProduct->setSkipAbPrice( true );
 
             if ( !$this->_oProduct->load( $sOxid ) ) {
                 $myUtils->redirect( $myConfig->getShopHomeURL() );
@@ -731,7 +760,7 @@ class Details extends oxUBase
                 $myUtils->showMessageAndExit( '' );
             }
 
-            $this->_oProduct->setLinkType( $this->getLinkType() );
+            $this->_processProduct( $this->_oProduct );
             $this->_blIsInitialized = true;
         }
 
@@ -740,8 +769,6 @@ class Details extends oxUBase
 
     /**
      * Returns current view link type
-     *
-     * @param string $sListType current list type [optional]
      *
      * @return int
      */
@@ -870,11 +897,7 @@ class Details extends oxUBase
      */
     public function drawParentUrl()
     {
-        if ( ( $oParent = $this->_getParentProduct( $this->getProduct()->oxarticles__oxparentid->value ) ) ) {
-            if ( $this->getConfig()->getConfigParam( 'blVariantParentBuyable' ) || count( $this->getVariantList() ) > 0 ) {
-                return true;
-            }
-        }
+        return $this->getProduct()->isVariant();
     }
 
     /**

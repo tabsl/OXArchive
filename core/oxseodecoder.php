@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxseodecoder.php 19308 2009-05-22 14:08:20Z arvydas $
+ * $Id: oxseodecoder.php 21171 2009-07-29 08:51:28Z arvydas $
  */
 
 /**
@@ -42,17 +42,11 @@ class oxSeoDecoder extends oxSuperCfg
         $oStr = getStr();
         $aRet = array();
         $sUrl = $oStr->html_entity_decode( $sUrl );
-        if (($iPos = strpos($sUrl, '?')) !== false) {
-            $aParams = explode('&', $oStr->substr($sUrl, $iPos+1));
-            foreach ($aParams as $sParam) {
-                $aP = explode('=', $sParam);
-                if (count($aP) == 2) {
-                    if (($sName = trim($aP[0])) && ($sValue = trim($aP[1]))) {
-                        $aRet[$sName] = rawurldecode($sValue);
-                    }
-                }
-            }
+
+        if ( ( $iPos = strpos( $sUrl, '?' ) ) !== false ) {
+            parse_str( $oStr->substr( $sUrl, $iPos+1 ), $aRet );
         }
+
         return $aRet;
     }
 
@@ -259,7 +253,7 @@ class oxSeoDecoder extends oxSuperCfg
         $sParams = preg_replace( "/^$sPath/", '', $sParams );
 
         // this should not happen on most cases, because this redirect is handled by .htaccess
-        if ( $sParams && !ereg( '\.html$', $sParams ) && !ereg( '\/$', $sParams ) ) {
+        if ( $sParams && !preg_match( '/\.html$/', $sParams ) && !preg_match( '/\/$/', $sParams ) ) {
             oxUtils::getInstance()->redirect( $this->getConfig()->getShopURL() . $sParams . '/', false );
         }
 

@@ -135,7 +135,7 @@ class oxStrRegular
     /**
      * PHP htmlspecialchars() function wrapper
      *
-     * @param string $sString        string being converted
+     * @param string $sString string being converted
      *
      * @return string
      */
@@ -283,7 +283,7 @@ class oxStrRegular
      *
      * @return string
      */
-    public function cleanStr( $sStr, $sCleanChr = ' ', $aSkipChars = null )
+    public function cleanStr( $sStr, $sCleanChr = ' ')
     {
         return $this->preg_replace( "/\"|\'|\:|\!|\?|\n|\r|\t|\x95|\xa0|;/", $sCleanChr, $sStr );
     }

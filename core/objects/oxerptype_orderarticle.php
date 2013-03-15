@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_orderarticle.php 18599 2009-04-28 11:07:50Z arvydas $
+ * $Id: oxerptype_orderarticle.php 20535 2009-06-30 00:58:33Z alfonsas $
  */
 
 require_once 'oxerptype.php';
@@ -201,9 +201,11 @@ class oxERPType_OrderArticle extends oxERPType
                 case 'OXTOTALVAT':
                     // We need to round this value here
                     return "round(OXVATPRICE * OXAMOUNT, 5) as OXTOTALVAT";
+                    break;
                 case 'OXTPRICE':
                 case 'OXAKTION':
                     return "'' as $sField";
+                    break;
             }
         }
         return parent::getSqlFieldName($sField, $iLanguage, $iShopID);

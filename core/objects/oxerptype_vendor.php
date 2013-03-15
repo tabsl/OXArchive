@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_vendor.php 18033 2009-04-09 12:15:54Z arvydas $
+ * $Id: oxerptype_vendor.php 20535 2009-06-30 00:58:33Z alfonsas $
  */
 
 require_once 'oxerptype.php';
@@ -104,8 +104,10 @@ class oxERPType_Vendor extends oxERPType
                 case 'OXSEOID_2':
                 case 'OXSEOID_3':
                     return "'' as $sField";
+                    break;
                 case 'OXACTIV':
                     return "OXACTIVE as OXACTIV";
+                    break;
             }
         }
         return parent::getSqlFieldName($sField, $iLanguage, $iShopID);

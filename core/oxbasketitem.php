@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxbasketitem.php 16608 2009-02-19 13:31:39Z vilma $
+ * $Id: oxbasketitem.php 20973 2009-07-16 11:10:05Z arvydas $
  */
 
 /**
@@ -201,8 +201,8 @@ class oxBasketItem extends oxSuperCfg
      *  - oxbasketitem::_setArticle();
      *  - oxbasketitem::setAmount();
      *  - oxbasketitem::_setSelectList();
-     *  - oxbasketitem::setPersParams().
-     *  - oxbasketitem::setBundle();
+     *  - oxbasketitem::setPersParams();
+     *  - oxbasketitem::setBundle().
      *
      * @param string $sProductID product id
      * @param double $dAmount    amount
@@ -221,6 +221,27 @@ class oxBasketItem extends oxSuperCfg
         $this->_setSelectList( $aSel );
         $this->setPersParams( $aPersParam );
         $this->setBundle( $blBundle );
+    }
+
+    /**
+     * Initializes basket item from oxorderarticle object
+     *  - oxbasketitem::_setFromOrderArticle() - assigns $oOrderArticle parameter
+     *  to oxBasketItem::_oArticle. Thus oxOrderArticle is used as oxArticle (calls
+     *  standard methods implemented by oxIArticle interface);
+     *  - oxbasketitem::setAmount();
+     *  - oxbasketitem::_setSelectList();
+     *  - oxbasketitem::setPersParams().
+     *
+     * @param oxorderarticle $oOrderArticle order article to load info from
+     *
+     * @return null
+     */
+    public function initFromOrderArticle( $oOrderArticle )
+    {
+        $this->_setFromOrderArticle( $oOrderArticle );
+        $this->setAmount( $oOrderArticle->oxorderarticles__oxamount->value );
+        $this->_setSelectList( $oOrderArticle->getOrderArticleSelectList() );
+        $this->setPersParams( $oOrderArticle->getPersParams() );
     }
 
     /**
@@ -360,34 +381,47 @@ class oxBasketItem extends oxSuperCfg
     /**
      * Retrieves the article
      *
+     * @param string $sProductId product id
+     *
      * @throws oxArticleException exception
      *
      * @return oxarticle
      */
-    public function getArticle()
+    public function getArticle( $sProductId = null )
     {
-        if ( !$this->_sProductId ) {
-            //this excpetion may not be caught, anyhow this is a critical exception
-            $oEx = oxNew( 'oxArticleException' );
-            $oEx->setMessage( 'EXCEPTION_ARTICLE_NOPRODUCTID' );
-            throw $oEx;
+        if ( $this->_oArticle === null ) {
+            $sProductId = $sProductId ? $sProductId : $this->_sProductId;
+            if ( !$sProductId ) {
+                //this excpetion may not be caught, anyhow this is a critical exception
+                $oEx = oxNew( 'oxArticleException' );
+                $oEx->setMessage( 'EXCEPTION_ARTICLE_NOPRODUCTID' );
+                throw $oEx;
+            }
+
+            $this->_oArticle = oxNew( 'oxarticle' );
+
+            // performance:
+            // - skipping variants loading
+            // - skipping 'ab' price info
+            // - load parent field
+            $this->_oArticle->setNoVariantLoading( true );
+            $this->_oArticle->setSkipAbPrice( true );
+            $this->_oArticle->setLoadParentData( true );
+            if ( !$this->_oArticle->load( $sProductId ) ) {
+                $oEx = oxNew( 'oxNoArticleException' );
+                $oEx->setMessage( 'EXCEPTION_ARTICLE_ARTICELDOESNOTEXIST' );
+                $oEx->setArticleNr( $sProductId );
+                throw $oEx;
+            }
+
+            // cant put not buyable product to basket
+            if ( !$this->_oArticle->isBuyable() ) {
+                $oEx = oxNew( 'oxArticleInputException' );
+                $oEx->setMessage( 'EXCEPTION_ARTICLE_ARTICELNOTBUYABLE' );
+                $oEx->setArticleNr( $sProductId );
+                throw $oEx;
+            }
         }
-
-
-        if ( $this->_oArticle ) {
-            return $this->_oArticle;
-        }
-
-        $this->_oArticle = oxNew( 'oxarticle' );
-
-        // performance:
-        // - skipping variants loading
-        // - skipping 'ab' price info
-        // - load parent field
-        $this->_oArticle->setNoVariantLoading( true );
-        $this->_oArticle->setSkipAbPrice( true );
-        $this->_oArticle->setLoadParentData( true );
-        $this->_oArticle->load( $this->_sProductId );
 
         return $this->_oArticle;
     }
@@ -676,14 +710,7 @@ class oxBasketItem extends oxSuperCfg
      */
     protected function _setArticle( $sProductId )
     {
-        $oArticle = oxNew( 'oxarticle' );
-
-        if ( !$oArticle->load( $sProductId ) ) {
-            $oEx = oxNew( 'oxNoArticleException' );
-            $oEx->setMessage( 'EXCEPTION_ARTICLE_ARTICELDOESNOTEXIST' );
-            $oEx->setArticleNr( $sProductId );
-            throw $oEx;
-        }
+        $oArticle = $this->getArticle( $sProductId );
 
         // product ID
         $this->_sProductId = $sProductId;
@@ -697,7 +724,7 @@ class oxBasketItem extends oxSuperCfg
 
         // icon and details URL's
         $this->_sIcon = $oArticle->oxarticles__oxicon->value;
-        $this->_sLink = $oArticle->oxdetaillink;
+        $this->_sLink = $oArticle->getLink();
 
         // shop Ids
         $this->_sShopId       = $this->getConfig()->getShopId();
@@ -706,6 +733,33 @@ class oxBasketItem extends oxSuperCfg
         // SSL/NON SSL image paths
         $this->_sDimageDirNoSsl = $oArticle->nossl_dimagedir;
         $this->_sDimageDirSsl   = $oArticle->ssl_dimagedir;
+    }
+
+    /**
+     * Assigns general product parameters to oxbasketitem object:
+     *  - sProduct    - oxarticle object ID;
+     *  - title       - products title;
+     *  - sShopId     - current shop ID;
+     *  - sNativeShopId  - article shop ID;
+     *
+     * @param oxorderarticle $oOrderArticle order article
+     *
+     * @return null
+     */
+    protected function _setFromOrderArticle( $oOrderArticle )
+    {
+        // overriding whole article
+        $this->_oArticle = $oOrderArticle;
+
+        // product ID
+        $this->_sProductId = $oOrderArticle->getProductId();
+
+        // products title
+        $this->_sTitle = $oOrderArticle->oxarticles__oxtitle->value;
+
+        // shop Ids
+        $this->_sShopId       = $this->getConfig()->getShopId();
+        $this->_sNativeShopId = $oOrderArticle->oxarticles__oxshopid->value;
     }
 
     /**

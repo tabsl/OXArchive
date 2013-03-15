@@ -9,18 +9,7 @@
 
 <script type="text/javascript">
 <!--
-[{ if $updatelist == 1}]
-    UpdateList('[{ $oxid }]');
-[{ /if}]
-
-function UpdateList( sID)
-{
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
-function EditThis( sID, sListType)
+function editThis( sID, sListType)
 {
     var oTransfer = document.getElementById("transfer");
     oTransfer.oxid.value=sID;
@@ -67,11 +56,11 @@ function EditThis( sID, sListType)
               <tr><td class="edittext" height="17" colspan="2" style="color: #D81F01;"><b>[{ oxmultilang ident="PRICEALARM_MAIN_ERROR" }]</b></td></tr>
               [{/if}]
               <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="PRICEALARM_MAIN_EMAIL" }]</b></td><td class="edittext">[{$edit->oxpricealarm__oxemail->value}]</td></tr>
-              <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="PRICEALARM_MAIN_CUSTOMER" }]</b></td><td class="edittext" nowrap><a href="Javascript:EditThis( '[{$edit->oUser->oxuser__oxid->value}]','user');" class="edittext">[{$edit->oUser->oxuser__oxlname->value}] [{$edit->oUser->oxuser__oxfname->value}]</a></td></tr>
+              <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="PRICEALARM_MAIN_CUSTOMER" }]</b></td><td class="edittext" nowrap><a href="Javascript:editThis( '[{$edit->oUser->oxuser__oxid->value}]','user');" class="edittext">[{$edit->oUser->oxuser__oxlname->value}] [{$edit->oUser->oxuser__oxfname->value}]</a></td></tr>
               <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="GENERAL_LANGUAGE" }]</b></td><td class="edittext" nowrap>[{$edit_lang}]</td></tr>
               <tr><td class="edittext" height="17" nowrap><b>[{ oxmultilang ident="PRICEALARM_MAIN_SUBSCRIPTIONDATE" }]&nbsp;&nbsp;</b></td><td class="edittext" nowrap>[{$edit->oxpricealarm__oxinsert|oxformdate}]</td></tr>
               <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="PRICEALARM_MAIN_MAILINGDATE" }]</b></td><td class="edittext">[{$edit->oxpricealarm__oxsended|oxformdate}]</td></tr>
-              <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="PRICEALARM_MAIN_PRODUCT" }]</b></td><td class="edittext"><a href="Javascript:EditThis( '[{$edit->oArticle->oxarticles__oxid->value}]','article');" class="edittext">[{$edit->oArticle->oxarticles__oxtitle->value}]</a></td></tr>
+              <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="PRICEALARM_MAIN_PRODUCT" }]</b></td><td class="edittext"><a href="Javascript:editThis( '[{$edit->oArticle->oxarticles__oxid->value}]','article');" class="edittext">[{$edit->oArticle->oxarticles__oxtitle->value}]</a></td></tr>
               <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="PRICEALARM_MAIN_CUSTOMERPRICE" }]</b></td><td class="edittext">[{$edit->oxpricealarm__oxprice->value}] [{ $edit->oxpricealarm__oxcurrency->value }]</td></tr>
               <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="PRICEALARM_MAIN_REGULARPRICE" }]</b></td><td class="edittext">[{$edit->oArticle->fprice}] [{ $edit->oxpricealarm__oxcurrency->value }]</td></tr>
               <tr><td class="edittext" height="17"><br><br><br></td><td class="edittext">

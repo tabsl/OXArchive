@@ -2,48 +2,8 @@
 
 <script type="text/javascript">
 <!--
-[{ if $updatelist == 1}]
-    UpdateList('[{ $oxid }]');
-[{ /if}]
-
-function UpdateList( sID)
-{
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
-function EditThis( sID)
-{
-    var oTransfer = document.getElementById("transfer");
-    oTransfer.oxid.value=sID;
-    oTransfer.cl.value='content_main';
-    oTransfer.submit();
-
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
-function UnlockMenue(obj)
-{
-    if( obj.checked)
-    {
-        document.getElementById('oxtype1').disabled = true;
-        document.getElementById('oxtype2').disabled = true;
-        document.getElementById('oxtype3').disabled = true;
-    }
-    else
-    {
-        document.getElementById('oxtype1').disabled = false;
-        document.getElementById('oxtype2').disabled = false;
-        document.getElementById('oxtype3').disabled = false;
-    }
-}
-
 function ShowMenueFields( iVal)
 {
-
     if( iVal == 2)
     {
         document.getElementById('cattree').style.visibility = 'visible';

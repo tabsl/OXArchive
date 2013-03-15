@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: user_address.php 17191 2009-03-13 12:21:00Z arvydas $
+ * $Id: user_address.php 20428 2009-06-23 14:46:14Z vilma $
  */
 
 /**
@@ -104,9 +104,7 @@ class User_Address extends oxAdminDetails
 
         if ( $aParams['oxaddress__oxid'] == "-1")
             $aParams['oxaddress__oxid'] = null;
-        // #1899 (R)
-        if ( isset($aParams['oxaddress__oxcompany']))
-            oxConfig::checkSpecialChars($aParams['oxaddress__oxcompany']);
+
         //$aParams = $oAdress->ConvertNameArray2Idx( $aParams);
         $oAdress->assign( $aParams);
         $oAdress->save();

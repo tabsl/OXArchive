@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: vendorlist.php 19752 2009-06-10 13:01:01Z arvydas $
+ * $Id: vendorlist.php 20503 2009-06-26 14:54:11Z vilma $
  */
 
 /**
@@ -392,7 +392,7 @@ class VendorList extends aList
      * Returns current view keywords seperated by comma
      * (calls parent::_collectMetaKeyword())
      *
-     * @param string $sKeywords data to use as keywords
+     * @param string $sKeywords               data to use as keywords
      * @param bool   $blRemoveDuplicatedWords remove dublicated words
      *
      * @return string

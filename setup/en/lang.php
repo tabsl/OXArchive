@@ -19,7 +19,7 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 19389 2009-05-26 14:12:21Z vilma $
+ * $Id: lang.php 20809 2009-07-13 10:00:20Z arvydas $
  */
 
 $aLang = array(
@@ -69,14 +69,14 @@ $aLang = array(
 'MOD_MOD_REWRITE'                                 => 'apache mod_rewrite module',
 'MOD_ALLOW_URL_FOPEN'                             => 'allow_url_fopen or fsockopen to port 80',
 'MOD_PHP4_COMPAT'                                 => 'Zend compatibility mode must be off',
-'MOD_PHPVERSION'                                  => 'PHP version at least 5.2.0',
+'MOD_PHP_VERSION'                                  => 'PHP version at least 5.2.0',
 'MOD_REQUEST_URI'                                 => 'REQUEST_URI set',
-'MOD_LIBXML2'                                     => 'LIB XML2',
-'MOD_PHP-XML'                                     => 'DOM',
-'MOD_JSON'                                        => 'JSON',
-'MOD_ICONV'                                       => 'ICONV',
+'MOD_LIB_XML2'                                     => 'LIB XML2',
+'MOD_PHP_XML'                                     => 'DOM',
+'MOD_J_SON'                                        => 'JSON',
+'MOD_I_CONV'                                       => 'ICONV',
 'MOD_TOKENIZER'                                   => 'Tokenizer',
-'MOD_BCMATH'                                      => 'BCMath',
+'MOD_BC_MATH'                                      => 'BCMath',
 'MOD_MYSQL_CONNECT'                               => 'MySQL module for MySQL 5',
 'MOD_GD_INFO'                                     => 'GDlib v2 [v1] incl. JPEG support',
 'MOD_INI_SET'                                     => 'ini_set allowed',
@@ -117,6 +117,7 @@ $aLang = array(
 'STEP_3_DB_HOSTNAME'                              => "Database hostname or IP",
 'STEP_3_DB_USER_NAME'                             => "Database username",
 'STEP_3_DB_PASSWORD'                              => "Database password",
+'STEP_3_DB_PASSWORD_SHOW'                         => "Show password",
 'STEP_3_DB_DATABSE_NAME'                          => "Database name",
 'STEP_3_DB_DEMODATA'                              => "Demodata",
 'STEP_3_UTFMODE'                                  => "Use UTF-8 character encoding",

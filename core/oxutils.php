@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutils.php 19911 2009-06-16 21:12:28Z tomas $
+ * $Id: oxutils.php 21099 2009-07-23 07:43:26Z vilma $
  */
 
 /**
@@ -27,7 +27,7 @@
  */
 require_once getShopBasePath()."core/smarty/Smarty.class.php";
 
-/** 
+/**
  * general utils class, used as a singelton
  *
  */
@@ -52,7 +52,7 @@ class oxUtils extends oxSuperCfg
      *
      * @var string
      */
-    protected $_sEmailTpl = "^([-!#\$%&'*+./0-9=?A-Z^_`a-z{|}~\177])+@([-!#\$%&'*+/0-9=?A-Z^_`a-z{|}~\177]+\\.)+[a-zA-Z]{2,6}\$";
+    protected $_sEmailTpl = "/^([-!#\$%&'*+.\/0-9=?A-Z^_`a-z{|}~\177])+@([-!#\$%&'*+\/0-9=?A-Z^_`a-z{|}~\177]+\\.)+[a-zA-Z]{2,6}\$/i";
 
     /**
      * Some files, like object structure should not be deleted, because thay are changed rarely
@@ -62,6 +62,13 @@ class oxUtils extends oxSuperCfg
      * @var string
      */
     protected $_sPermanentCachePattern = "/c_fieldnames_/";
+
+    /**
+     * File cache contents.
+     *
+     * @var array
+     */
+    protected $_aFileCacheContents = array();
 
     /**
      * resturns a single instance of this class
@@ -221,6 +228,8 @@ class oxUtils extends oxSuperCfg
     /**
      * Returns formatted currency string, according to formatting standards.
      *
+     * @deprecated use oxLang::formatCurrency
+     *
      * @param double $dValue  Plain price
      * @param object $oActCur Object of active currency
      *
@@ -310,7 +319,7 @@ class oxUtils extends oxSuperCfg
     {
         $blValid = true;
         if ( $sEmail != 'admin' ) {
-            $blValid = ( eregi( $this->_sEmailTpl, $sEmail ) != 0 );
+            $blValid = ( preg_match( $this->_sEmailTpl, $sEmail ) != 0 );
         }
 
         return $blValid;
@@ -461,54 +470,44 @@ class oxUtils extends oxSuperCfg
         }
     }
 
-    /**
-     * Reads or write to filecache
-     *
-     * @param boolean $blMode true == write, false == read
-     * @param string  $sName  key under which the input should be stored
-     * @param string  $sInput the content which should be stored in file cache
-     *
-     * @return string
-     */
-    protected function _oxFileCache( $blMode, $sName, $sInput = null )
-    {
-        $sFilePath = $this->_getCacheFilePath( $sName );
-        $sRet = null;
-        if ( $blMode) {
-            // write to cache
-
-            //if ( is_writable($sFilePath))
-            // dodger: somehow iswriteable always says no on windows machines
-
-            $hFile = fopen( $sFilePath, "w");
-            if ( $hFile) {
-                fwrite( $hFile, $sInput);
-                fclose( $hFile);
-            }
-        } else {   // read it
-            if ( file_exists( $sFilePath) && is_readable($sFilePath)) {
-                // read it
-                $sRet = file_get_contents( $sFilePath);
-            }
-        }
-        return $sRet;
-    }
 
     /**
-     * Stores contents to file cache by given key.
+     * Adds contents to cache contents by given key. Returns true on success.
+     * All file caches are supposed to be written once by commitFileCache() method.
      *
      * @param string $sKey      Cache key
-     * @param mixed  $sContents Contents to cache
+     * @param mixed  $,Contents Contents to cache
      *
-     * @return mixed
+     * @return bool
      */
-    public function toFileCache($sKey, $sContents)
+    public function toFileCache($sKey, $mContents)
     {
-        $sStaticCacheKey = 'staticfilecache|' . $sKey;
-        $this->toStaticCache($sStaticCacheKey, $sContents);
+        $sFilePath = $this->_getCacheFilePath( $sKey );
+        $iCurTime = oxUtilsDate::getInstance()->getTime();
 
-        $sContents = serialize($sContents);
-        return $this->_oxFileCache(true, $sKey, $sContents);
+        //T2009-05-26
+        //due to possible race conditions
+        //check if there are any other cache files already opened for writing by another process
+        //additionally perform the check for older (aged 40 or more secs) locked files
+        if (!isset($this->_aFileCacheContents[$sKey]) && file_exists($sFilePath) && abs($iCurTime - filectime($sFilePath) < 40) ) {
+            //then leave the cache to be dealt by another process and do nothing
+            return false;
+        }
+        //the above code ensures that $_aFileCacheContet is writen only in case cache file has not been started
+        //by another process
+
+        $this->_aFileCacheContents[$sKey] = $mContents;
+
+        //start a blank file to inform other processes we are dealing with it.
+        if (!file_exists($sFilePath)) {
+            $hFile = fopen( $sFilePath, "w");
+            if ( $hFile) {
+                fwrite( $hFile, null);
+                fclose( $hFile);
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -520,20 +519,46 @@ class oxUtils extends oxSuperCfg
      */
     public function fromFileCache( $sKey )
     {
-        $sStaticCacheKey = "staticfilecache|$sKey";
+        if (isset($this->_aFileCacheContents[$sKey]))
+            return $this->_aFileCacheContents[$sKey];
 
-        //using static cache for even faster fetch
-        $sRes = $this->fromStaticCache( $sStaticCacheKey );
+        $sRes = null;
+        // read the file
+        $sFilePath = $this->_getCacheFilePath( $sKey );
+		if (!file_exists( $sFilePath))
+			return null;
+        if ( file_exists( $sFilePath) && is_readable($sFilePath)) {
+            // read it
+            $sRes = file_get_contents( $sFilePath);
+            if (!$sRes)
+                return null;
+        }
+        $sRes = unserialize($sRes);
 
-        if ( is_null( $sRes ) ) {
-            $sRes = $this->_oxFileCache( false, $sKey );
-            if (!is_null($sRes)) {
-                $sRes = unserialize( $sRes );
-                $this->toStaticCache( $sStaticCacheKey, $sRes );
+        return $sRes;
+    }
+
+    /**
+     * Writes all cache contents to file at once. This method was introduced due to possible race conditions
+     *
+     * @return null;
+     */
+    public function commitFileCache()
+    {
+        foreach($this->_aFileCacheContents as $sKey => $mContents) {
+            $mContents = serialize($mContents);
+            $sFilePath = $this->_getCacheFilePath( $sKey );
+            //if ( is_writable($sFilePath))
+            // dodger: somehow is_writeable() always says no on windows machines
+            $hFile = fopen( $sFilePath, "w");
+            if ( $hFile) {
+                fwrite( $hFile, $mContents);
+                fclose( $hFile);
             }
         }
 
-        return $sRes;
+        //empty buffer
+        //$this->_aFileCacheContents = array();
     }
 
     /**
@@ -858,6 +883,18 @@ class oxUtils extends oxSuperCfg
     }
 
     /**
+     * set header sent to browser
+     *
+     * @param string $sHeader header to sent
+     *
+     * @return null
+     */
+    public function setHeader($sHeader)
+    {
+        header($sHeader);
+    }
+
+    /**
      * adds the given paramters at the end of the given url
      *
      * @param string $sUrl    a url
@@ -931,7 +968,7 @@ class oxUtils extends oxSuperCfg
             }
         } elseif ( isset( $aPrice[0] ) && isset($aPrice[1] ) ) {
             // A. removing unused part of information
-            $aName[0] = ereg_replace( "!P!.*", "", $aName[0] );
+            $aName[0] = preg_replace( "/!P!.*/", "", $aName[0] );
         }
 
         $oObject->name  = $aName[0];
@@ -1111,7 +1148,8 @@ class oxUtils extends oxSuperCfg
     public function setLangCache( $sCacheName, $aLangCache )
     {
         $sCache = "<?php\n\$aLangCache = ".var_export( $aLangCache, true ).";";
-        $this->_oxFileCache( true, $sCacheName, $sCache );
+        $blRes = file_put_contents($this->_getCacheFilePath($sCacheName), $sCache);
+        return $blRes;
     }
 
     /**

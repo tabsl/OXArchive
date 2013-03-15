@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutilsstring.php 19886 2009-06-16 12:39:06Z alfonsas $
+ * $Id: oxutilsstring.php 21092 2009-07-22 14:42:13Z vilma $
  */
 
 /**
@@ -94,7 +94,7 @@ class oxUtilsString
         $sString = trim( $sString );
 
         //multiple whitespaces
-        $sString = ereg_replace( "[ \t\n\r]+", " ", $sString );
+        $sString = preg_replace( "/[ \t\n\r]+/", " ", $sString );
         $oStr = getStr();
         if ( $oStr->strlen( $sString ) > $iLength && $iLength != -1 ) {
             $sString = $oStr->substr( $sString, 0, $iLength );

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_user.php 18599 2009-04-28 11:07:50Z arvydas $
+ * $Id: oxerptype_user.php 20535 2009-06-30 00:58:33Z alfonsas $
  */
 
 require_once 'oxerptype.php';
@@ -226,19 +226,26 @@ class oxERPType_User extends oxERPType
             switch ($sField) {
                 case 'OXACTIV':
                     return "OXACTIVE as OXACTIV";
+                    break;
                 case 'OXACTIVFROM':
                     return "OXACTIVEFROM as OXACTIVEFROM";
+                    break;
                 case 'OXACTIVTO':
                     return "OXACTIVETO as OXACTIVTO";
+                    break;
                 case 'OXCOUNTRY':
                     return "(select oxtitle from oxcountry where oxcountry.oxid=OXCOUNTRYID limit 1) as OXCOUNTRY";
+                    break;
                 case 'OXBUERGELLASTCHECK':
                     return "'0000-00-00 00:00:00' as $sField";
+                    break;
                 case 'OXBUERGELADRESSSTATUS':
                     return "'0' as $sField";
+                    break;
                 case 'OXBUERGELTEXT':
                 case 'OXBUERGELADRESSTEXT':
                     return "'' as $sField";
+                    break;
             }
         }
 

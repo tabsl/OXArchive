@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdiscount.php 18143 2009-04-14 12:00:18Z rimvydas.paskevicius $
+ * $Id: oxdiscount.php 20698 2009-07-09 14:01:43Z sarunas $
  */
 
 /**
@@ -114,14 +114,14 @@ class oxDiscount extends oxI18n
         }
 
         // check if this article is assigned
-        $sArticleID = "";
-        if ($oArticle->oxarticles__oxparentid->value) {
-            $sArticleID = "(oxobjectid = '".$oArticle->getId()."' or oxobjectid = '{$oArticle->oxarticles__oxparentid->value}')";
+        $sArticleId = "";
+        if ( $sParentId = $oArticle->getProductParentId() ) {
+            $sArticleId = "(oxobjectid = '".$oArticle->getProductId()."' or oxobjectid = '{$sParentId}')";
         } else {
-            $sArticleID = "oxobjectid = '".$oArticle->getId()."'";
+            $sArticleId = "oxobjectid = '".$oArticle->getProductId()."'";
         }
 
-        $sQ = "select 1 from oxobject2discount where oxdiscountid = '{$this->oxdiscount__oxid->value}' and $sArticleID and oxtype = 'oxarticles'";
+        $sQ = "select 1 from oxobject2discount where oxdiscountid = '{$this->oxdiscount__oxid->value}' and {$sArticleId} and oxtype = 'oxarticles'";
         $blOk = (bool) $myDB->getOne( $sQ );
         if ( $blOk ) {
             return true;
@@ -162,18 +162,19 @@ class oxDiscount extends oxI18n
 
         $myDB = oxDb::getDb();
         // check if this article is assigned
-        $sArticleID = "";
-        if ( $oArticle->oxarticles__oxparentid->value ) {
-            $sArticleID = "(oxobjectid = '".$oArticle->getId()."' or oxobjectid = '{$oArticle->oxarticles__oxparentid->value}')";
+        $sArticleId = "";
+        if ( $sParentId = $oArticle->getProductParentId() ) {
+            $sArticleId = "(oxobjectid = '".$oArticle->getProductId()."' or oxobjectid = '{$sParentId}')";
         } else {
-            $sArticleID = "oxobjectid = '".$oArticle->getId()."'";
+            $sArticleId = "oxobjectid = '".$oArticle->getProductId()."'";
         }
-        $sQ = "select 1 from oxobject2discount where oxdiscountid = '{$this->oxdiscount__oxid->value}' and $sArticleID and oxtype = 'oxarticles'";
+        $sQ = "select 1 from oxobject2discount where oxdiscountid = '{$this->oxdiscount__oxid->value}' and ($sArticleId) and oxtype = 'oxarticles'";
         if ( !( $blOk = ( bool ) $myDB->getOne( $sQ ) ) ) {
 
             // checkin article cateogry
             $blOk = $this->_checkForArticleCategories( $oArticle );
         }
+
         return $blOk;
     }
 
@@ -250,8 +251,11 @@ class oxDiscount extends oxI18n
         if ( $this->oxdiscount__oxamount->value && ( $oSummary->iArticleCount < $this->oxdiscount__oxamount->value || $oSummary->iArticleCount > $this->oxdiscount__oxamountto->value ) ) {
             return false;
             // price check
-        } elseif ( $this->oxdiscount__oxprice->value && ( $oSummary->dArticlePrice < $this->oxdiscount__oxprice->value || $oSummary->dArticlePrice > $this->oxdiscount__oxpriceto->value ) ) {
-            return false;
+        } elseif ($this->oxdiscount__oxprice->value) {
+            $dRate = $this->getConfig()->getActShopCurrencyObject()->rate;
+            if ( $oSummary->dArticlePrice < $this->oxdiscount__oxprice->value*$dRate || $oSummary->dArticlePrice > $this->oxdiscount__oxpriceto->value*$dRate ) {
+                return false;
+            }
         }
 
         // oxobject2discount configuration check
@@ -273,7 +277,7 @@ class oxDiscount extends oxI18n
             return false;
         }
 
-        $sSelect = "select 1 from oxobject2discount where oxdiscountid='".$this->getId()."' and oxobjectid='".$oArticle->getId()."' ";
+        $sSelect = "select 1 from oxobject2discount where oxdiscountid='".$this->getId()."' and oxobjectid='".$oArticle->getProductId()."' ";
         if ( !( $blOk = (bool) oxDb::getDb()->getOne( $sSelect ) ) ) {
             // additional checks for amounts and other dependencies
             $blOk = $this->_checkForArticleCategories( $oArticle );

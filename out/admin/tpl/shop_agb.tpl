@@ -2,18 +2,6 @@
 
 <script type="text/javascript">
 <!--
-[{ if $updatelist == 1}]
-    UpdateList('[{ $oxid }]');
-[{ /if}]
-
-function UpdateList( sID)
-{
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.fnc.value='';
-    oSearch.submit();
-}
-
 function loadLang(obj)
 {
     var langvar = document.getElementById("agblang");
@@ -36,6 +24,7 @@ function loadLang(obj)
     <input type="hidden" name="cl" value="shop_agb">
     <input type="hidden" name="fnc" value="">
     <input type="hidden" name="actshop" value="[{ $shop->id }]">
+    <input type="hidden" name="updatenav" value="">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
 </form>
 

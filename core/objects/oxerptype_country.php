@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_country.php 18032 2009-04-09 12:14:09Z arvydas $
+ * $Id: oxerptype_country.php 20535 2009-06-30 00:58:33Z alfonsas $
  */
 
 require_once 'oxerptype.php';
@@ -105,7 +105,8 @@ class oxERPType_Country extends oxERPType
             switch ($sField) {
                 case 'OXACTIV':
                     return "OXACTIVE as OXACTIV";
-                }
+                    break;
+            }
         }
         return parent::getSqlFieldName($sField, $iLanguage, $iShopID);
     }

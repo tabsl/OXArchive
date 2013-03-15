@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcmp_categories.php 19886 2009-06-16 12:39:06Z alfonsas $
+ * $Id: oxcmp_categories.php 21224 2009-07-31 13:37:17Z vilma $
  */
 
 /**
@@ -73,7 +73,7 @@ class oxcmp_categories extends oxView
             $blArtLoaded = $oProduct ? true : false;
             if ( !$blArtLoaded ) {
                 $oProduct = oxNew( 'oxarticle' );
-                $oProduct->setSkipAbPrice( true );
+                //$oProduct->setSkipAbPrice( true );
                 if ( $oProduct->load( $sActProduct ) ) {
 
                     // storing for reuse
@@ -330,7 +330,7 @@ class oxcmp_categories extends oxView
         // removed this check according to problems: if listtype is set, but active category not.
         // e.g. in details change language
 
-        if ( !$sListType && ( $sSearchPar || $sSearchCat || $sSearchVnd ) ) {
+        if ( ( !$sListType || $sListType == 'search' ) && ( $sSearchPar || $sSearchCat || $sSearchVnd ) ) {
             // setting list type directly
             $sListType = 'search';
         } else {
@@ -348,7 +348,7 @@ class oxcmp_categories extends oxView
 
             // vendor ?
             $blVendor = false;
-            if ( !$blManufacturer && $sActCat && $this->getConfig()->getConfigParam( 'bl_perfLoadVendorTree' ) && eregi( '^v_.?', $sActCat ) ) {
+            if ( !$blManufacturer && $sActCat && $this->getConfig()->getConfigParam( 'bl_perfLoadVendorTree' ) && preg_match( '/^v_.?/i', $sActCat ) ) {
                 // such vendor is available ?
                 if ( substr( $sActCat, 2 ) == $oProduct->getVendorId() ) {
                     $blVendor = true;

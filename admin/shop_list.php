@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: shop_list.php 19181 2009-05-18 15:14:56Z rimvydas.paskevicius $
+ * $Id: shop_list.php 20948 2009-07-15 11:15:06Z arvydas $
  */
 
 /**
@@ -152,7 +152,7 @@ class Shop_List extends oxAdminList
     {
         $myConfig  = $this->getConfig();
 
-        $soxId   = oxConfig::getParameter( "oxid");
+        $soxId   = oxConfig::getParameter( "delshopid");
 
 
         // try to remove directories

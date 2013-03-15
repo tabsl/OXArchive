@@ -1,75 +1,18 @@
 [{include file="headitem.tpl" box="list"
-    title="PRICEALARM_SEND_TITLE"|oxmultilangassign box="list" 
-    meta_refresh_sec="2" 
+    title="PRICEALARM_SEND_TITLE"|oxmultilangassign box="list"
+    meta_refresh_sec="2"
     meta_refresh_url="`$shop->selflink`?cl=pricealarm_send&iStart=`$iStart`&iAllCnt=`$iAllCnt`"
 }]
 
 <script type="text/javascript">
 <!--
-function EditThis( sID)
+window.onload = function ()
 {
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    oTransfer.oxid.value=sID;
-    oTransfer.cl.value='[{if $actlocation}][{$actlocation}][{else}][{ $default_edit }][{/if}]';
-
-    //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();
-
-    var oSearch = document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
+    top.reloadEditFrame();
+    [{ if $updatelist == 1}]
+        top.oxid.admin.updateList('[{ $oxid }]');
+    [{ /if}]
 }
-
-function DeleteThis( sID)
-{
-    blCheck = confirm("[{ oxmultilang ident="GENERAL_YOUWANTTODELETE" }]");
-    if( blCheck == true)
-    {
-        var oSearch = document.getElementById("search");
-        oSearch.oxid.value=sID;
-        oSearch.fnc.value='deleteentry';
-        oSearch.actedit.value=0;
-        oSearch.submit();
-
-        var oTransfer = parent.edit.document.getElementById("transfer");
-        oTransfer.oxid.value='-1';
-        oTransfer.cl.value='[{ $default_edit }]';
-
-        //forcing edit frame to reload after submit
-        top.forceReloadingEditFrame();
-    }
-}
-
-function ChangeEditBar( sLocation, sPos)
-{
-    var oSearch = document.getElementById("search");
-    oSearch.actedit.value=0;
-    oSearch.submit();
-
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    oTransfer.cl.value=sLocation;
-
-    //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();
-}
-
-function ChangeLanguage()
-{
-    var oSearch = document.getElementById("search");
-    oSearch.language.value=oSearch.changelang.value;
-    oSearch.editlanguage.value=oSearch.changelang.value;
-    oSearch.submit();
-
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    oTransfer.innerHTML += '<input type="hidden" name="language" value="'+oSearch.changelang.value+'">';
-    oTransfer.innerHTML += '<input type="hidden" name="editlanguage" value="'+oSearch.changelang.value+'">';
-
-    //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();
-}
-
-window.onLoad = top.reloadEditFrame();
-
 //-->
 </script>
 <body>

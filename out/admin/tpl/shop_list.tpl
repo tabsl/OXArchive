@@ -8,74 +8,31 @@
 
 <script type="text/javascript">
 <!--
-function EditThis( sID)
+function editThis( sID)
 {
-    var oTransfer = parent.edit.document.getElementById("transfer");
+    var oTransfer = top.basefrm.edit.document.getElementById( "transfer" );
     oTransfer.oxid.value = sID;
-    oTransfer.cl.value='[{if $actlocation}][{$actlocation}][{else}][{ $default_edit }][{/if}]';
+    oTransfer.cl.value = top.oxid.admin.getClass( sID );
     oTransfer.fnc.value = 'chshp';
 
     //forcing edit frame to reload after submit
     top.forceReloadingEditFrame();
 
-    var oSearch = document.getElementById("search");
+    var oSearch = top.basefrm.list.document.getElementById( "search" );
     oSearch.oxid.value = sID;
-
     oSearch.submit();
 }
 
-function DeleteThis( sID)
+
+window.onload = function ()
 {
-    var currentshop = [{$oxid}];
-    var newshop = (sID == currentshop)?1:currentshop;
-
-    blCheck = confirm("[{ oxmultilang ident="SHOP_LIST_YOUWANTTODELETE" }]");
-    if( blCheck == true)
-    {   var oSearch = document.getElementById("search");
-        oSearch.oxid.value=sID;
-        oSearch.fnc.value='Deleteentry';
-        oSearch.actedit.value=0;
-        oSearch.submit();
-
-        var oTransfer = parent.edit.document.getElementById("transfer");
-        oTransfer.oxid.value = newshop;
-        oTransfer.actshop.value = newshop;
-        oTransfer.cl.value='[{ $default_edit }]';
-
-        //forcing edit frame to reload after submit
-        top.forceReloadingEditFrame();
-    }
+    [{ if $updatenav }]
+    var oTransfer = top.basefrm.edit.document.getElementById( "transfer" );
+    oTransfer.updatenav.value = 1;
+    oTransfer.cl.value = '[{ $default_edit }]';
+    [{ /if}]
+    top.reloadEditFrame();
 }
-
-function ChangeEditBar( sLocation, sPos)
-{
-    var oSearch = document.getElementById("search");
-    oSearch.actedit.value=sPos;
-    oSearch.submit();
-
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    oTransfer.cl.value=sLocation;
-
-    //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();
-}
-
-[{ if $updatemain }]
-    UpdateMain('[{ $oxid }]');
-[{ /if}]
-
-function UpdateMain( sID)
-{
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    oTransfer.oxid.value=sID;
-    oTransfer.cl.value='[{ $default_edit }]';
-
-    //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();
-}
-
-window.onLoad = top.reloadEditFrame();
-
 //-->
 </script>
 
@@ -86,6 +43,7 @@ window.onLoad = top.reloadEditFrame();
 <input type="hidden" name="sort" value="[{ $sort }]">
 <input type="hidden" name="actedit" value="[{ $actedit }]">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
+<input type="hidden" name="delshopid" value="">
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="updatenav" value="">
 

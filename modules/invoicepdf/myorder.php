@@ -19,7 +19,7 @@
  * @package modules
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: myorder.php 18978 2009-05-12 15:45:00Z arvydas $
+ * $Id: myorder.php 20623 2009-07-03 09:14:26Z vilma $
  */
 
 /**
@@ -907,6 +907,8 @@ class MyOrder extends MyOrder_parent
             $sText = $this->translate( 'ORDER_OVERVIEW_PDF_TAXIDNR' ).' '.$oShop->oxshops__oxvatnumber->value;
             $oPdf->text( 195 - $oPdf->getStringWidth( $sText ), $iTop + 12, $sText );
             $iTop += 8;
+        } else {
+        	$iTop += 4;
         }
 
         // invoice number

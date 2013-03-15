@@ -2,32 +2,6 @@
 
 <script type="text/javascript">
 <!--
-function EditThis( sID)
-{
-    var oSearch = document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.fnc.value='';
-    oSearch.cl.value='article_main';
-    oSearch.submit();
-
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value = sID;
-    oSearch.actedit.value=0;
-    oSearch.submit();
-}
-
-function DeleteThis( sID)
-{
-    blCheck = confirm("[{ oxmultilang ident="ARTICLE_VARIANT_YOUWANTTODELETE" }]");
-    if( blCheck == true)
-    {
-        var oSearch = document.getElementById("search");
-        oSearch.fnc.value='deletevariant';
-        oSearch.voxid.value=sID;
-        oSearch.submit();
-    }
-}
-
 function SetSticker( sStickerId, oObject)
 {
     if ( oObject.selectedIndex != -1)
@@ -42,7 +16,31 @@ function SetSticker( sStickerId, oObject)
     else
         oSticker.style.display = "none";
 }
+function deleteThis( sID)
+{
+    blCheck = confirm("[{ oxmultilang ident="ARTICLE_VARIANT_YOUWANTTODELETE" }]");
+    if( blCheck == true)
+    {
+        var oSearch = document.getElementById("search");
+        oSearch.fnc.value='deletevariant';
+        oSearch.voxid.value=sID;
+        oSearch.submit();
+    }
+}
+function editThis( sID )
+{
+    var oTransfer = top.basefrm.edit.document.getElementById( "transfer" );
+    oTransfer.oxid.value = sID;
+    oTransfer.cl.value = top.basefrm.list.sDefClass;
 
+    //forcing edit frame to reload after submit
+    top.forceReloadingEditFrame();
+
+    var oSearch = top.basefrm.list.document.getElementById( "search" );
+    oSearch.oxid.value = sID;
+    oSearch.actedit.value = 0;
+    oSearch.submit();
+}
 //-->
 </script>
 
@@ -137,7 +135,7 @@ function SetSticker( sStickerId, oObject)
         <input type="text" class="editinput" size="32" maxlength="[{$edit->oxarticles__oxvarname->fldmax_length}]" name="editval[oxarticles__oxvarname]" value="[{$edit->oxarticles__oxvarname->value}]" [{ $readonly }]>
         [{if !$shop->buyableparent}]<input class="edittext" type="submit" value="[{ oxmultilang ident="ARTICLE_VARIANT_ARTSAVE" }]" [{ $readonly }]>[{/if}]
         <br><br>
-        
+
         <div style="overflow-x:auto;">
         <table cellspacing="0" cellpadding="0" border="0" width="730">
           <tr>
@@ -189,7 +187,7 @@ function SetSticker( sStickerId, oObject)
           <tr id="test_variant.[{$_cnt1}]">
             [{assign var="listclass" value=listitem$blWhite }]
             [{assign var="hasvariants" value=true }]
-            <td class="[{ $listclass}]"><a href="Javascript:EditThis('[{ $listitem->oxarticles__oxid->value}]');" class="[{ $listclass}]" [{include file="help.tpl" helpid=editvariant}] [{ $readonly }]><img src="[{$shop->imagedir}]/editvariant.gif" width="15" height="15" alt="" border="0" align="absmiddle"></a></td>
+            <td class="[{ $listclass}]"><a href="Javascript:editThis('[{ $listitem->oxarticles__oxid->value}]');" class="[{ $listclass}]" [{include file="help.tpl" helpid=editvariant}] [{ $readonly }]><img src="[{$shop->imagedir}]/editvariant.gif" width="15" height="15" alt="" border="0" align="absmiddle"></a></td>
             <td class="[{ $listclass}]" align="center"><input class="edittext" type="checkbox" name="editval[[{ $listitem->oxarticles__oxid->value}]][oxarticles__oxactive]" value='1' [{if $listitem->oxarticles__oxactive->value == 1}]checked[{/if}] [{ $readonly }]></td>
             <td class="[{ $listclass}]"><input type="text" class="editinput" size="15" maxlength="[{$listitem->oxarticles__oxvarselect->fldmax_length}]" name="editval[[{ $listitem->oxarticles__oxid->value}]][oxarticles__oxvarselect]" value="[{$listitem->oxarticles__oxvarselect->value}]" [{ $readonly }]></td>
             <td class="[{ $listclass}]"><input type="text" class="editinput" size="10" maxlength="[{$listitem->oxarticles__oxartnum->fldmax_length}]" name="editval[[{ $listitem->oxarticles__oxid->value}]][oxarticles__oxartnum]" value="[{$listitem->oxarticles__oxartnum->value}]" [{ $readonly }]></td>
@@ -205,7 +203,7 @@ function SetSticker( sStickerId, oObject)
               </select>
             </td>
             <td class="[{ $listclass}]">
-              <a href="Javascript:DeleteThis('[{ $listitem->oxarticles__oxid->value }]');" class="delete"[{include file="help.tpl" helpid=item_delete}]></a>
+              <a href="Javascript:deleteThis('[{ $listitem->oxarticles__oxid->value }]');" class="delete"[{include file="help.tpl" helpid=item_delete}]></a>
             </td>
           </tr>
 
@@ -291,7 +289,7 @@ function SetSticker( sStickerId, oObject)
           </tr>
         </table>
         </div>
-        
+
         [{ $shop->hiddensid }]
         <input type="hidden" name="cl" value="article_variant">
         <input type="hidden" name="fnc" value="">

@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: order_overview.php 18765 2009-05-04 13:11:33Z vilma $
+ * $Id: order_overview.php 20582 2009-07-01 12:33:12Z arvydas $
  */
 
     // DTAUS
@@ -55,7 +55,7 @@ class Order_Overview extends oxAdminDetails
             $this->_aViewData["edit"]          = $oOrder;
             $this->_aViewData["orderArticles"] = $oOrder->getOrderArticles();
             $this->_aViewData["giftCard"]      = $oOrder->getGiftCard();
-            $this->_aViewData["paymentType"]   = $oOrder->getPaymentType();
+            $this->_aViewData["paymentType"]   = $this->getPaymentType( $oOrder );
             $this->_aViewData["deliveryType"]  = $oOrder->getDelSet();
         }
 
@@ -78,6 +78,29 @@ class Order_Overview extends oxAdminDetails
         $this->_aViewData["currency"] = $oCur;
 
         return "order_overview.tpl";
+    }
+
+    /**
+     * Returns user payment used for current order. In case current order was executed using
+     * credit card and user payment info is not stored in db (if oxConfig::blStoreCreditCardInfo = false),
+     * just for preview user payment is set from oxpayment
+     *
+     * @param object $oOrder
+     *
+     * @return oxuserpayment
+     */
+    protected function getPaymentType( $oOrder )
+    {
+        if ( !( $oUserPayment = $oOrder->getPaymentType() ) && $oOrder->oxorder__oxpaymenttype->value ) {
+                $oPayment = oxNew( "oxpayment" );
+            if ( $oPayment->load( $oOrder->oxorder__oxpaymenttype->value ) ) {
+                // in case due to security reasons payment info was not kept in db
+                $oUserPayment = oxNew( "oxuserpayment" );
+                $oUserPayment->oxpayments__oxdesc->value = $oPayment->oxpayments__oxdesc->value;
+            }
+        }
+
+        return $oUserPayment;
     }
 
     /**

@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
 <!--
-function EditThis( sID)
+function editThis ( sID )
 {
     [{assign var="shMen" value=1}]
 
@@ -42,19 +42,13 @@ function EditThis( sID)
     oTransfer.submit();
 }
 
-function ChangeLanguage()
+function changeLanguage()
 {
     var oList = document.getElementById("showlist");
     oList.language.value=oList.changelang.value;
     oList.editlanguage.value=oList.changelang.value;
     oList.submit();
 }
-
-function ChangeListSize()
-{
-    document.forms.showlist.submit();
-}
-
 //-->
 </script>
 
@@ -97,12 +91,12 @@ function ChangeListSize()
     <td class="listfilter" nowrap>
         <div class="r1"><div class="b1">
         <div class="find">
-            <select name="changelang" class="editinput" onChange="Javascript:ChangeLanguage();">
+            <select name="changelang" class="editinput" onChange="Javascript:changeLanguage();">
               [{foreach from=$languages item=lang}]
               <option value="[{ $lang->id }]" [{ if $lang->selected}]SELECTED[{/if}]>[{ $lang->name }]</option>
               [{/foreach}]
             </select>
-            <select name="viewListSize" class="editinput" onChange="JavaScript:ChangeListSize()">
+            <select name="viewListSize" class="editinput" onChange="JavaScript:top.oxid.admin.changeListSize()">
               <option value="50" [{ if $viewListSize == 50 }]SELECTED[{/if}]>50</option>
               <option value="100" [{ if $viewListSize == 100 }]SELECTED[{/if}]>100</option>
               <option value="200" [{ if $viewListSize == 200 }]SELECTED[{/if}]>200</option>
@@ -127,9 +121,9 @@ function ChangeListSize()
 [{ foreach from=$mylist item=oReview }]
 [{assign var="_cnt" value=$_cnt+1}]
 <tr id="row.[{$_cnt}]">
-    <td align="center" class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:EditThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{ $oReview->oxreviews__oxcreate|oxformdate }]</a></td>
-    <td class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:EditThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{ $oReview->oxreviews__oxtext->value }]</a></td>
-    <td class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:EditThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{if $oReview->oxreviews__oxparentid->value}][{ $oReview->oxreviews__parenttitle->value }] [{ $oReview->oxreviews__oxvarselect->value }][{else}][{$oReview->oxreviews__oxtitle->value}][{/if}]</a></td>
+    <td align="center" class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:editThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{ $oReview->oxreviews__oxcreate|oxformdate }]</a></td>
+    <td class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:editThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{ $oReview->oxreviews__oxtext->value }]</a></td>
+    <td class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:editThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{if $oReview->oxreviews__oxparentid->value}][{ $oReview->oxreviews__parenttitle->value }] [{ $oReview->oxreviews__oxvarselect->value }][{else}][{$oReview->oxreviews__oxtitle->value}][{/if}]</a></td>
 </tr>
 [{if $blWhite == "2"}]
     [{assign var="blWhite" value=""}]

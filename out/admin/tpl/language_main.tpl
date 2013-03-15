@@ -2,50 +2,13 @@
 
 <script type="text/javascript">
 <!--
-[{ if $updatelist == 1}]
-    UpdateList('[{ $oxid }]');
-[{ /if}]
-
-function UpdateList( sID)
+window.onload = function ()
 {
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
-function EditThis( sID)
-{
-    var oTransfer = document.getElementById("transfer");
-    oTransfer.oxid.value=sID;
-    oTransfer.cl.value='article_main';
-    oTransfer.submit();
-
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
-function ChangeLstrt()
-{
-    var oSearch = document.getElementById("search");
-    if (oSearch != null && oSearch.lstrt != null)
-        oSearch.lstrt.value=0
-}
-
-function UnlockSave(obj)
-{   var saveButton = document.myedit.saveArticle;
-    if ( saveButton != null && obj != null )
-    {   if (obj.value.length > 0)
-            saveButton.disabled = false;
-        else
-            saveButton.disabled = true;
-    }
-}
-function ChangeLanguage(obj)
-{
-    var oTransfer = document.getElementById("transfer");
-    oTransfer.language.value=obj.value;
-    oTransfer.submit();
+    [{ if $updatelist == 1}]
+        top.oxid.admin.updateList('[{ $oxid }]');
+    [{ /if}]
+    var oField = top.oxid.admin.getLockTarget();
+    oField.onchange = oField.onkeyup = oField.onmouseout = top.oxid.admin.unlockSave;
 }
 //-->
 </script>
@@ -93,7 +56,7 @@ function ChangeLanguage(obj)
             [{ oxmultilang ident="LANGUAGE_ABBERVATION" }]
             </td>
             <td class="edittext">
-            <input type="text" class="editinput" size="5" maxlength="3" name="editval[abbr]" value="[{$edit.abbr}]" [{if !$oxparentid}]onchange="JavaScript:UnlockSave(this);" onkeyup="JavaScript:UnlockSave(this);" onmouseout="JavaScript:UnlockSave(this);"[{/if}] [{ $readonly }]>
+            <input type="text" class="editinput" size="5" maxlength="3" id="oLockTarget" name="editval[abbr]" value="[{$edit.abbr}]" [{ $readonly }]>
             </td>
         </tr>
         <tr>
@@ -152,7 +115,7 @@ function ChangeLanguage(obj)
             <td class="edittext"><br><br>
             </td>
             <td class="edittext"><br><br>
-            <input type="submit" class="edittext" name="saveArticle" value="[{ oxmultilang ident="GENERAL_SAVE" }]" onClick="Javascript:document.myedit.fnc.value='save'"" [{ $readonly }]><br>
+            <input type="submit"  [{if !$edit.abbr}]disabled[{/if}] class="edittext" id="oLockButton" name="saveArticle" value="[{ oxmultilang ident="GENERAL_SAVE" }]" onClick="Javascript:document.myedit.fnc.value='save'"" [{ $readonly }]><br>
             </td>
         </tr>
         </table>

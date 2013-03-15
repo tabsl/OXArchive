@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxadmindetails.php 18599 2009-04-28 11:07:50Z arvydas $
+ * $Id: oxadmindetails.php 20074 2009-06-22 13:40:26Z sarunas $
  */
 
 /**
@@ -189,7 +189,8 @@ class oxAdminDetails extends oxAdminView
                 $this->_oEditor->plugins['templateFilter']->protect( '[{', '}]' );
                 if ( $myConfig->getConfigParam( 'bl_perfParseLongDescinSmarty' ) ) {
                     $this->_oEditor->plugins['templateFilter']->assign( '[{$oViewConf->getCurrentHomeDir()}]', $myConfig->getShopURL() );
-                    $this->_oEditor->plugins['templateFilter']->assign( '[{$oViewConf->getCurrentHomeDir()}]', $myConfig->getSSLShopURL() );
+                    // note: in "[{ $" the space is needed for this parameter not to override previous call. see assign fnc of templateFilter
+                    $this->_oEditor->plugins['templateFilter']->assign( '[{ $oViewConf->getCurrentHomeDir()}]', $myConfig->getSSLShopURL() );
                 }
             }
 

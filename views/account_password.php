@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: account_password.php 18038 2009-04-09 12:21:40Z arvydas $
+ * $Id: account_password.php 20503 2009-06-26 14:54:11Z vilma $
  */
 
 
@@ -106,7 +106,7 @@ class Account_Password extends Account
                     return oxUtilsView::getInstance()->addErrorToDisplay('ACCOUNT_PASSWORD_ERRPASSWORDTOSHORT', false, true);
                 default:
                     return oxUtilsView::getInstance()->addErrorToDisplay('ACCOUNT_PASSWORD_ERRPASSWDONOTMATCH', false, true);
-                }
+            }
         }
 
         if ( !$sOldPass || !$oUser->isSamePassword( $sOldPass ) ) {

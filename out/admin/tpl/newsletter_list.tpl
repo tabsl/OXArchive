@@ -2,55 +2,13 @@
 
 <script type="text/javascript">
 <!--
-function EditThis( sID)
+window.onload = function ()
 {
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    oTransfer.oxid.value=sID;
-    oTransfer.cl.value='[{if $actlocation}][{$actlocation}][{else}][{ $default_edit }][{/if}]';
-
-    //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();
-
-    var oSearch = document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
+    top.reloadEditFrame();
+    [{ if $updatelist == 1}]
+        top.oxid.admin.updateList('[{ $oxid }]');
+    [{ /if}]
 }
-
-function DeleteThis( sID)
-{
-    blCheck = confirm("[{ oxmultilang ident="GENERAL_YOUWANTTODELETE" }]");
-    if( blCheck == true)
-    {
-        var oSearch = document.getElementById("search");
-        oSearch.oxid.value=sID;
-        oSearch.fnc.value='deleteentry';
-        oSearch.actedit.value=0;
-        oSearch.submit();
-
-        var oTransfer = parent.edit.document.getElementById("transfer");
-        oTransfer.oxid.value='-1';
-        oTransfer.cl.value='[{ $default_edit }]';
-
-        //forcing edit frame to reload after submit
-        top.forceReloadingEditFrame();
-    }
-}
-
-function ChangeEditBar( sLocation, sPos)
-{
-    var oSearch = document.getElementById("search");
-    oSearch.actedit.value=sPos;
-    oSearch.submit();
-
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    oTransfer.cl.value=sLocation;
-
-    //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();
-}
-
-window.onLoad = top.reloadEditFrame();
-
 //-->
 </script>
 
@@ -94,10 +52,10 @@ window.onLoad = top.reloadEditFrame();
     [{ if $listitem->getId() == $oxid }]
         [{assign var="listclass" value=listitem4 }]
     [{ /if}]
-    <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating">&nbsp;<a href="Javascript:EditThis('[{ $listitem->oxnewsletter__oxid->value}]');" class="[{ $listclass}]">[{ $listitem->oxnewsletter__oxtitle->value }]</a></div></td>
+    <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating">&nbsp;<a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxnewsletter__oxid->value}]');" class="[{ $listclass}]">[{ $listitem->oxnewsletter__oxtitle->value }]</a></div></td>
     <td class="[{ $listclass}]">
     [{ if !$listitem->isOx() }]
-        <a href="Javascript:DeleteThis('[{ $listitem->oxnewsletter__oxid->value }]');" class="delete" id="del.[{$_cnt}]" align="middle" [{include file="help.tpl" helpid=item_delete}]></a></td>
+        <a href="Javascript:top.oxid.admin.deleteThis('[{ $listitem->oxnewsletter__oxid->value }]');" class="delete" id="del.[{$_cnt}]" align="middle" [{include file="help.tpl" helpid=item_delete}]></a></td>
     [{/if}]
 </tr>
 [{if $blWhite == "2"}]
@@ -106,9 +64,9 @@ window.onLoad = top.reloadEditFrame();
 [{assign var="blWhite" value="2"}]
 [{/if}]
 [{/foreach}]
-</form>
 [{include file="pagenavisnippet.tpl" cplspan="2"}]
 </table>
+</form>
 </div>
 
 

@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: adminguestbook_main.php 17188 2009-03-13 12:19:11Z arvydas $
+ * $Id: adminguestbook_main.php 20714 2009-07-10 08:38:53Z sarunas $
  */
 
 /**
@@ -68,8 +68,6 @@ class Adminguestbook_Main extends oxAdminDetails
             }
             $this->_aViewData["edit"] =  $oLinks;
         }
-
-        $this->_aViewData['editor'] = $this->_generateTextEditor( "100%", 300, $oLinks, 'oxgbentries__oxcontent', 'agb.tpl.css' );
 
         //show "active" checkbox if moderating is active
         $this->_aViewData['blShowActBox'] = $myConfig->getConfigParam( 'blGBModerate' );

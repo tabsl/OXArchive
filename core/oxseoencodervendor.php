@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxseoencodervendor.php 19752 2009-06-10 13:01:01Z arvydas $
+ * $Id: oxseoencodervendor.php 20953 2009-07-15 13:36:51Z arvydas $
  */
 
 /**
@@ -57,6 +57,16 @@ class oxSeoEncoderVendor extends oxSeoEncoder
     }
 
     /**
+     * Returns target "extension" (/)
+     *
+     * @return string
+     */
+    protected function _getUrlExtension()
+    {
+        return '/';
+    }
+
+    /**
      * Returns part of SEO url excluding path
      *
      * @param oxVendor $oVendor vendor object
@@ -89,7 +99,7 @@ class oxSeoEncoderVendor extends oxSeoEncoder
             }
 
             $sSeoUrl .= $this->_prepareTitle( $oVendor->oxvendor__oxtitle->value .'/' );
-            $sSeoUrl  = $this->_getUniqueSeoUrl( $sSeoUrl, '/', $oVendor->getId(), $iLang );
+            $sSeoUrl  = $this->_processSeoUrl( $sSeoUrl, $oVendor->getId(), $iLang );
 
             // save to db
             $this->_saveToDb( 'oxvendor', $oVendor->getId(), $oVendor->getStdLink(), $sSeoUrl, $iLang );

@@ -1,21 +1,6 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE_1"|oxmultilangassign}]
 <script type="text/javascript">
 <!--
-function SetSticker( sStickerId, oObject)
-{
-    if ( oObject.selectedIndex != -1)
-    {   oSticker = document.getElementById(sStickerId);
-        oSticker.style.display = "";
-        oSticker.style.backgroundColor = "#FFFFCC";
-        oSticker.style.borderWidth = "1px";
-        oSticker.style.borderColor = "#000000";
-        oSticker.style.borderStyle = "solid";
-        oSticker.innerHTML         = oObject.item(oObject.selectedIndex).innerHTML;
-    }
-    else
-        oSticker.style.display = "none";
-}
-
 function LoadPayment( oObject)
 {   oObject = document.getElementById("paymaster");
     if ( oObject != null && oObject.selectedIndex != -1)

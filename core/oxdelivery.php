@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdelivery.php 19551 2009-06-02 08:36:03Z arvydas $
+ * $Id: oxdelivery.php 20615 2009-07-02 15:49:30Z arvydas $
  */
 
 /**
@@ -358,8 +358,8 @@ class oxDelivery extends oxI18n
 
                 //V FS#1954 - load delivery for variants from parent article
                 $oArticle   = $oContent->getArticle();
-                $sProductId = $oArticle->getId();
-                $sParentId  = $oArticle->oxarticles__oxparentid->value ? $oArticle->oxarticles__oxparentid->value : false;
+                $sProductId = $oArticle->getProductId();
+                $sParentId  = $oArticle->getProductParentId();
 
                 if ( $blHasArticles && (in_array( $sProductId, $aDeliveryArticles ) || ( $sParentId && in_array( $sParentId, $aDeliveryArticles ) ) ) ) {
                     $blUse = true;

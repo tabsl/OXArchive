@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdb.php 17248 2009-03-16 15:22:07Z arvydas $
+ * $Id: oxdb.php 21182 2009-07-29 13:30:48Z arvydas $
  */
 
 /**
@@ -128,7 +128,9 @@ class oxDb extends oxSuperCfg
         //You can find the redefinition of ADODB_SESS_LIFE @ oxconfig.php:: line ~ 390.
         $ADODB_SESS_LIFE       = 3000 * 60;
         $ADODB_SESSION_TBL     = "oxsessions";
-        $ADODB_SESSION_DRIVER  = $ADODB_DRIVER;
+        //hardcoding to mysql as otherwise it is not set in some cases
+        //$ADODB_SESSION_DRIVER  = $ADODB_DRIVER;
+        $ADODB_SESSION_DRIVER  = "mysql";
         $ADODB_SESSION_USER    = $myConfig->getConfigParam( 'dbUser' );
         $ADODB_SESSION_PWD     = $myConfig->getConfigParam( 'dbPwd' );
         $ADODB_SESSION_DB      = $myConfig->getConfigParam( 'dbName' );

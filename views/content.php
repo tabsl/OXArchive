@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: content.php 19632 2009-06-05 13:14:07Z arvydas $
+ * $Id: content.php 21008 2009-07-20 07:31:26Z arvydas $
  */
 
 /**
@@ -100,9 +100,9 @@ class Content extends oxUBase
         parent::render();
 
         if ( $sTplName = $this->_getTplName() ) {
-            $this->_sThisTemplate = $sTplName;
+            $this->_sThisTemplate = $sTpl = $sTplName;
         } else {
-            $this->_aViewData['oxcid'] = $this->getContentId();
+            $this->_aViewData['oxcid'] = $sTpl = $this->getContentId();
             $this->_aViewData['oContent'] = $this->getContent();
         }
 
@@ -111,6 +111,7 @@ class Content extends oxUBase
             $this->_sThisTemplate = $this->_sThisPlainTemplate;
         }
 
+        $this->_aViewData['tpl'] = $sTpl;
         return $this->_sThisTemplate;
     }
 
@@ -136,7 +137,8 @@ class Content extends oxUBase
      * Returns current view keywords seperated by comma
      * If $sKeywords parameter comes empty, sets to it current content title
      *
-     * @param string $sKeywords data to use as keywords
+     * @param string $sKeywords               data to use as keywords
+     * @param bool   $blRemoveDuplicatedWords remove dublicated words
      *
      * @return string
      */

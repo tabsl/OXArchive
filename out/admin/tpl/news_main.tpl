@@ -6,22 +6,6 @@
     [{assign var="readonly" value=""}]
 [{/if}]
 
-<script type="text/javascript">
-<!--
-[{ if $updatelist == 1}]
-    UpdateList('[{ $oxid }]');
-[{ /if}]
-
-function UpdateList( sID)
-{
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
-//-->
-</script>
-
 <form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
     [{ $shop->hiddensid }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxfunctions.php 18054 2009-04-09 16:47:26Z arvydas $
+ * $Id: oxfunctions.php 21136 2009-07-27 14:49:28Z rimvydas.paskevicius $
  */
 
 /**
@@ -46,6 +46,7 @@ function __autoload( $sClass )
         $aClassDirs = array( $sBasePath . 'core/',
                              $sBasePath . 'views/',
                              $sBasePath . 'core/exception/',
+                             $sBasePath . 'core/interface/',
                              $sBasePath . 'admin/reports/',
                              $sBasePath . 'admin/',
                              $sBasePath . 'modules/',
@@ -89,9 +90,20 @@ if ( !function_exists( 'error_404_handler' ) ) {
      */
     function error_404_handler($sUrl = '')
     {
-        header("HTTP/1.0 404 Not Found");
-        echo "Page not found.";
-        exit(0);
+        $oUtils = oxUtils::getInstance();
+        $oUtils->setHeader("HTTP/1.0 404 Not Found");
+        $sReturn = "Page not found.";
+        try {
+            $oView = oxNew('oxubase');
+            $oView->init();
+            $oView->render();
+            $oView->addTplParam('sUrl', $sUrl);
+            if ($sRet = oxUtilsView::getInstance()->getTemplateOutput('err_404.tpl', $oView)) {
+                $sReturn = $sRet;
+            }
+        } catch (Exception $e) {
+        }
+        $oUtils->showMessageAndExit( $sReturn );
     }
 }
 
@@ -402,7 +414,8 @@ if ( !function_exists( 'getRequestUrl' ) ) {
                 $sRequest = 'index.php' . getStr()->substr( $sRequest, $iPos );
 
                 // removing possible session id
-                $sRequest = preg_replace( '/((\&)?sid=[^&]*(&)?)/', '', $sRequest );
+                $sRequest = preg_replace( '/(&|\?){1}sid=[^&]*&?/', '$1', $sRequest );
+                $sRequest = preg_replace( '/&$/', '', $sRequest );
                 return str_replace( '&', '&amp;', $sRequest );
             }
         }

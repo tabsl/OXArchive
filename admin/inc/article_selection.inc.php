@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_selection.inc.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: article_selection.inc.php 21144 2009-07-28 11:06:18Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -48,17 +48,25 @@ class ajaxComponent extends ajaxListComponent
     protected function _getQuery()
     {
         $sSLViewName = getViewName('oxselectlist');
+        $sArtViewName = getViewName('oxarticles');
 
         $sArtId      = oxConfig::getParameter( 'oxid' );
         $sSynchArtId = oxConfig::getParameter( 'synchoxid' );
 
-        if ( $sArtId ) {
-            // all categories article is in
-            $sQAdd  = " from oxobject2selectlist left join $sSLViewName on $sSLViewName.oxid=oxobject2selectlist.oxselnid ";
-            $sQAdd .= " where oxobject2selectlist.oxobjectid = '$sArtId' ";
-        } else {
-            $sQAdd  = " from $sSLViewName  where $sSLViewName.oxid not in ( select oxobject2selectlist.oxselnid from oxobject2selectlist left join $sSLViewName on $sSLViewName.oxid=oxobject2selectlist.oxselnid ";
-            $sQAdd .= " where oxobject2selectlist.oxobjectid = '$sSynchArtId' ) ";
+        $sOxid = ( $sArtId ) ? $sArtId : $sSynchArtId;
+        $sQ = "select oxparentid from $sArtViewName where oxid = '$sOxid' and oxparentid != '' ";
+        $sQ .= "and (select count(oxobjectid) from oxobject2selectlist where oxobjectid = '$sOxid') = 0";
+        $sParentId = oxDb::getDb()->getOne( $sQ );
+
+        // all selectlists article is in
+        $sQAdd  = " from oxobject2selectlist left join $sSLViewName on $sSLViewName.oxid=oxobject2selectlist.oxselnid ";
+        $sQAdd .= " where oxobject2selectlist.oxobjectid = '$sOxid' ";
+        if ( $sParentId ) {
+            $sQAdd .= "or oxobject2selectlist.oxobjectid = '$sParentId' ";
+        }
+        // all not assigned selectlists
+        if ( $sSynchArtId ) {
+            $sQAdd  = " from $sSLViewName  where $sSLViewName.oxid not in ( select oxobject2selectlist.oxselnid $sQAdd ) ";
         }
 
         return $sQAdd;

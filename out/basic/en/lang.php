@@ -19,7 +19,7 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 19866 2009-06-16 10:33:17Z alfonsas $
+ * $Id: lang.php 21166 2009-07-28 14:56:10Z arvydas $
  */
 
 
@@ -240,7 +240,7 @@ $aLang = array(
 'BASKET_SUBMITCOUPON'                             => "Submit Coupon",
 'BASKET_NEXTSTEP2'                                => "Continue to Next Step",
 'BASKET_POPUP_FULL_ADDEDARTICLETOBASKET'          => "You just added a product to the cart.",
-'BASKET_POPUP_FULL_DISPLAYCART'                   => "To the till",
+'BASKET_POPUP_FULL_DISPLAYCART'                   => "Proceed to checkout",
 'BASKET_POPUP_FULL_CONTINUESHOPPING'              => "Continue Shopping",
 'BASKET_POPUP_ADDEDARTICLETOBASKET'               => "You just added a product to the cart.",
 'BASKET_POPUP_CONTINUESHOPPING'                   => "Continue Shopping",
@@ -348,6 +348,7 @@ $aLang = array(
 'DETAILS_PERSPARAM_STAR'                          => "Star",
 'DETAILS_PERSPARAM_STARS'                         => "Stars",
 'EMAIL_NEWSLETTEROPTIN_HTML_NEWSLETTER'           => "Newsletter",
+'EMAIL_NEWSLETTERDBOPTINMAIL_SUBJECT'             => "Newsletter",
 'EMAIL_ORDER_CUST_HTML_ORDERNOMBER'               =>"Order No.",
 'EMAIL_ORDER_CUST_HTML_PRODUCT'                   =>"Product",
 'EMAIL_ORDER_CUST_HTML_QUANTITY'                  =>"Quantity",
@@ -426,6 +427,10 @@ $aLang = array(
 'EMAIL_WISHLIST_HTML_TOMYWISHLISTCLICKHERE1'      =>"To go to my wishlist",
 'EMAIL_WISHLIST_HTML_TOMYWISHLISTCLICKHERE2'      =>"click here.",
 'EMAIL_WISHLIST_HTML_WITHLOVE'                    =>"With love,",
+'ERR_404TITLE'                                    =>'Error',
+'ERR_404'                                         =>'The requested page could not be found.',
+'ERR_404_PREURL'                                  =>'The requested page ',
+'ERR_404_POSTURL'                                 =>'could not be found.',
 'ERR_ACCESSDENIEDTITLE'                           =>'Error.',
 'ERR_ACCESSDENIED'                                =>'Access denied.',
 'ERR_EXPIRED_DAYS_TITLE'                          =>"OXID eShop Error",
@@ -514,7 +519,7 @@ $aLang = array(
 'INC_ACCOUNT_HEADER_UPDATEYOURBILLINGSHIPPINGSET' =>"Update your billing and delivery settings",
 'INC_ACCOUNT_HEADER_ADDRESS'                      =>"My Address",
 'INC_ACCOUNT_HEADER_TOBASKET'                     =>"Display Cart",
-'INC_ACCOUNT_HEADER_TOPAYMENT'                    =>"To the till",
+'INC_ACCOUNT_HEADER_TOPAYMENT'                    =>"Proceed to checkout",
 'INC_ACCOUNT_HEADER_ORDERHISTORY'                 =>"Order History",
 'INC_ACCOUNT_HEADER_ORDERS'                       =>"Orders:",
 'INC_ACCOUNT_HEADER_MYWISHLIST'                   =>"My Gift Registry",
@@ -1124,7 +1129,7 @@ $aLang = array(
 'USER_BIRTHDATE'                                  => "Birthdate:",
 'USER_BIRTHDAYMESSAGE'                            => "Tell us your birthday<br>so that we can surprise you.",
 'USER_SUBSCRIBENEWSLETTER'                        => "Subscribe Newsletter:",
-'USER_SUBSCRIBENEWSLETTER_MESSAGE'                => "You can cancel the Newsletter at any time without charge.",
+'USER_SUBSCRIBENEWSLETTER_MESSAGE'                => "It's possible to cancel newsletter at any time.",
 'USER_YOURMESSAGE'                                => "What I wanted to say...:",
 'USER_MESSAGEHERE'                                => "Here you can enter an optional message.",
 'USER_SHIPPINGADDRESS'                            => "Shipping Addresses",
@@ -1201,7 +1206,6 @@ $aLang = array(
 'EXCEPTION_PAGE_HEADLINE'                         => 'The shop is temporary offline<br>Please come back later<br><br>Thank you for understanding.',
 'EXCEPTION_FILE_ERRORINFILE'                      => 'Error in file!',
 'EXCEPTION_CONNECTION_NODB'                       => 'No connection to database!',
-'EXCEPTION_ACTIONNOTPOSSIBLEATTHEMOMENT'          => 'This action is at the moment not possible!',
 'EXCEPTION_ACCESSRIGHT_ACCESSDENIED'              => 'Access denied, no sufficient rights!',
 'EXCEPTION_VOUCHER_NOVOUCHER'                     => 'Coupon invalid!',
 'EXCEPTION_VOUCHER_TOTALBELOWZERO'                => 'Pruchase price below 0,- is not allowed!',
@@ -1219,6 +1223,7 @@ $aLang = array(
 'EXCEPTION_CONNECTION_IPAYMENTPROXYFAULT'         => 'Error during communication with the IPayment server!',
 'EXCEPTION_CONNECTION_IPAYMENTPROXYERROR'         => 'Error during communication with the IPayment server!',
 'EXCEPTION_ARTICLE_ARTICELDOESNOTEXIST'           => "Article doesn't exist!",
+'EXCEPTION_ARTICLE_ARTICELNOTBUYABLE'             => "Product is not buyable",
 'EXCEPTION_OUTOFSTOCK_OUTOFSTOCK'                 => 'No enought items of this article in stock! Available:',
 'EXCEPTION_ARTICLE_NOPRODUCTID'                   => 'No product id given!',
 'EXCEPTION_INPUT_INVALIDAMOUNT'                   => 'Please enter a valid amount for this product!',

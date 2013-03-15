@@ -1,22 +1,5 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign}]
 
-<script type="text/javascript">
-<!--
-function EditThis( sID)
-{
-    var oTransfer = document.getElementById("transfer");
-    oTransfer.oxid.value=sID;
-    oTransfer.cl.value='article_main';
-    oTransfer.submit();
-
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
-//-->
-</script>
-
 [{ if $readonly }]
     [{assign var="readonly" value="readonly disabled"}]
 [{else}]

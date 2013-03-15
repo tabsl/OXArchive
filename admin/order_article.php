@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: order_article.php 19117 2009-05-15 12:44:08Z vilma $
+ * $Id: order_article.php 20543 2009-06-30 06:24:21Z arvydas $
  */
 
 /**
@@ -65,7 +65,7 @@ class Order_Article extends oxAdminDetails
             $sOrderId = oxConfig::getParameter( 'oxid' );
 
             //get article id
-            $sQ = "select oxid from oxarticles where oxarticles.oxartnum = '$sArtNum'";
+            $sQ = "select oxid from oxarticles where oxarticles.oxartnum = '{$sArtNum}'";
             if ( ( $sArtId = oxDb::getDb()->getOne( $sQ ) ) && $dAmount > 0 ) {
                 $oOrderArticle = oxNew( 'oxorderArticle' );
                 $oOrderArticle->oxorderarticles__oxartid  = new oxField( $sArtId );
@@ -90,20 +90,25 @@ class Order_Article extends oxAdminDetails
     {
         // get article id
         $sOrderArtId = oxConfig::getParameter( 'sArtID' );
-        $sQ = "select oxartid from oxorderarticles where oxid = '$sOrderArtId'";
-        if ( ( $sArtId = oxDb::getDb()->getOne( $sQ ) ) ) {
+        $sOrderId = oxConfig::getParameter( 'oxid' );
 
-            $oOrderArticle = oxNew( 'oxorderarticle' );
-            $oOrderArticle->oxorderarticles__oxartid  = new oxField( $sArtId );
-            $oOrderArticle->oxorderarticles__oxartnum = new oxField( $sOrderArtId );
-            $oOrderArticle->oxorderarticles__oxamount = new oxField( 0 );
-            $aOrderArticles[] = $oOrderArticle;
+        $oOrderArticle = oxNew( 'oxorderarticle' );
+        $oOrder = oxNew( 'oxorder' );
 
-            $oOrder = oxNew( 'oxorder' );
-            $sOrderId = oxConfig::getParameter( 'oxid' );
-            if ( $oOrder->load( $sOrderId ) ) {
-                $oOrder->recalculateOrder( $aOrderArticles );
+        // order and order article exits?
+        if ( $oOrderArticle->load( $sOrderArtId ) && $oOrder->load( $sOrderId ) ) {
+            $myConfig = $this->getConfig();
+
+            // restoring stock info if needed
+            if ( $myConfig->getConfigParam( 'blUseStock' ) ) {
+                $oOrderArticle->updateArticleStock( $oOrderArticle->oxorderarticles__oxamount->value, $myConfig->getConfigParam('blAllowNegativeStock') );
             }
+
+            // deleting record
+            $oOrderArticle->delete();
+
+            // recalculating order
+            $oOrder->recalculateOrder();
         }
     }
 
@@ -130,19 +135,54 @@ class Order_Article extends oxAdminDetails
 
         // stock information
         if ( $myConfig->getConfigParam( 'blUseStock' ) ) {
-            $oArticle->updateArticleStock($oArticle->oxorderarticles__oxamount->value * $sStockSign, $myConfig->getConfigParam('blAllowNegativeStock'));
+            $oArticle->updateArticleStock( $oArticle->oxorderarticles__oxamount->value * $sStockSign, $myConfig->getConfigParam('blAllowNegativeStock') );
         }
 
-        $sQ = "update oxorderarticles set oxstorno = '{$oArticle->oxorderarticles__oxstorno->value}' where oxid = '$sOrderArtId'";
+        $sQ = "update oxorderarticles set oxstorno = '{$oArticle->oxorderarticles__oxstorno->value}' where oxid = '{$sOrderArtId}'";
         oxDb::getDb()->execute( $sQ );
 
         //get article id
-        $sQ = "select oxartid from oxorderarticles where oxid = '$sOrderArtId'";
+        $sQ = "select oxartid from oxorderarticles where oxid = '{$sOrderArtId}'";
         if ( ( $sArtId = oxDb::getDb()->getOne( $sQ ) ) ) {
             $oOrder = oxNew( 'oxorder' );
             if ( $oOrder->load( oxConfig::getParameter( 'oxid' ) ) ) {
-                $oOrder->recalculateOrder( array() );
+                $oOrder->recalculateOrder();
             }
+        }
+    }
+
+    /**
+     * Updates order articles stock and recalculates order
+     *
+     * @return null
+     */
+    public function updateOrder()
+    {
+        $aOrderArticles = oxConfig::getParameter( 'aOrderArticles' );
+
+        $oOrder = oxNew( 'oxorder' );
+        if ( is_array( $aOrderArticles ) && $oOrder->load( oxConfig::getParameter( 'oxid' ) ) ) {
+
+            $myConfig = $this->getConfig();
+            $oOrderArticles = $oOrder->getOrderArticles();
+
+            $blUseStock = $myConfig->getConfigParam( 'blUseStock' );
+            foreach ( $oOrderArticles as $oOrderArticle ) {
+                $sItemId = $oOrderArticle->getId();
+                if ( isset( $aOrderArticles[$sItemId] ) ) {
+
+                    // update stock
+                    if ( $blUseStock ) {
+                        $oOrderArticle->setNewAmount( $aOrderArticles[$sItemId]['oxamount'] );
+                    } else {
+                        $oOrderArticle->assign( $aOrderArticles[$sItemId] );
+                        $oOrderArticle->save();
+                    }
+                }
+            }
+
+            // recalculating order
+            $oOrder->recalculateOrder();
         }
     }
 }

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcategory.php 19455 2009-05-28 11:56:34Z arvydas $
+ * $Id: oxcategory.php 20457 2009-06-25 13:21:33Z vilma $
  */
 
 /**
@@ -140,34 +140,36 @@ class oxCategory extends oxI18n
         switch ( $sName ) {
             case 'aSubCats':
                 return $this->_aSubCats;
-
+                break;
             case 'aContent':
                 return $this->_aContentCats;
-
+                break;
             case 'iArtCnt':
                 return $this->getNrOfArticles();
-
+                break;
             case 'isVisible':
                 return $this->getIsVisible();
-
+                break;
             case 'expanded':
                 return $this->getExpanded();
-
+                break;
             case 'hasSubCats':
                 return $this->getHasSubCats();
-
+                break;
             case 'hasVisibleSubCats':
                 return $this->getHasVisibleSubCats();
-
+                break;
             case 'openlink':
             case 'closelink':
             case 'link':
                 //case 'toListLink':
                 //case 'noparamlink':
                 return $this->getLink();
+                break;
             case 'dimagedir':
                 return $this->getPictureUrl();
-            }
+                break;
+        }
         return parent::__get($sName);
     }
 

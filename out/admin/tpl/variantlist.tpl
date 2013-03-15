@@ -6,7 +6,9 @@ function JumpVariant(obj)
     var oTransfer = document.getElementById("transfer");
     oTransfer.oxid.value=obj.value;
     oTransfer.cl.value='article_main';
-    oTransfer.submit();
+
+    //forcing edit frame to reload after submit
+    top.forceReloadingEditFrame();
 
     var oSearch = parent.list.document.getElementById("search");
     oSearch.oxid.value=obj.value;

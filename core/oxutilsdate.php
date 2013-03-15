@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutilsdate.php 18599 2009-04-28 11:07:50Z arvydas $
+ * $Id: oxutilsdate.php 21097 2009-07-23 07:05:52Z vilma $
  */
 
 /**
@@ -95,7 +95,7 @@ class oxUtilsDate extends oxSuperCfg
         }
 
         // remove time as it is same in english as in german
-        $aData = split( ' ', trim( $sDBDateIn ) );
+        $aData = explode( ' ', trim( $sDBDateIn ) );
 
         // preparing time array
         $sTime = ( isset( $aData[1] ) && $oStr->strstr( $aData[1], ':' ) )?$aData[1]:'';
@@ -103,7 +103,7 @@ class oxUtilsDate extends oxSuperCfg
 
         // preparind date array
         $sDate = isset( $aData[0] )?$aData[0]:'';
-        $aDate = split( '[/.-]', $sDate );
+        $aDate = preg_split( '/[\/.-]/', $sDate );
 
         // choosing format..
         if ( $sTime ) {

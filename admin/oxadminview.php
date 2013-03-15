@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxadminview.php 19793 2009-06-11 14:43:24Z sarunas $
+ * $Id: oxadminview.php 21146 2009-07-28 11:13:14Z arvydas $
  */
 
 /**
@@ -546,7 +546,7 @@ class oxAdminView extends oxView
     }
 
     /**
-     * Marks seo entires as expired (oxseo::oxexpired = 2), leans up tag couds cache
+     * Marks seo entires as expired (oxseo::oxexpired = 2), cleans up tag clouds cache
      *
      * @return null
      */

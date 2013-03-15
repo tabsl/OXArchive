@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_orderstatus.php 18599 2009-04-28 11:07:50Z arvydas $
+ * $Id: oxerptype_orderstatus.php 20535 2009-06-30 00:58:33Z alfonsas $
  */
 
 require_once 'oxerptype.php';
@@ -151,9 +151,11 @@ class oxERPType_OrderStatus extends oxERPType
         switch ($sField) {
             case 'OXERPSTATUS_STATUS':
                 return "(OXERPSTATUS) as OXERPSTATUS";
+                break;
             case 'OXERPSTATUS_TIME':
             case 'OXERPSTATUS_TRACKID':
                 return "'' as $sField";
+                break;
         }
 
         return parent::getSqlFieldName($sField, $iLanguage, $iShopID);

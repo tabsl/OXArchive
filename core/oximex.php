@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oximex.php 17694 2009-03-31 12:06:13Z vilma $
+ * $Id: oximex.php 21012 2009-07-20 11:04:39Z arvydas $
  */
 
 /**
@@ -349,9 +349,7 @@ class oxImex extends oxBase
             // you may change field to "fldname" and add to $aFieldTypesToSkip
             // "oxlongdesc" value to skip only longdesc field
             //
-            if ( in_array($oObj->fldtype, $aFieldTypesToSkip)) {
-                $blSkipStripTags = true;
-            } elseif ( in_array($oObj->fldname, $aFieldTypesToSkip)) {
+            if ( in_array( $oObj->fldtype, $aFieldTypesToSkip ) || in_array( $oObj->fldname, $aFieldTypesToSkip ) ) {
                 $blSkipStripTags = true;
             }
         }
@@ -495,23 +493,21 @@ class oxImex extends oxBase
         // thnx to Volker Dörk for this function and his help here
         $myConfig = $this->getConfig();
 
-        $sRet = "";
-
         $sNewLine = "\r\n";
-
-        $oOrderlist = oxNew( "oxlist" );
-        $oOrderlist->init( "oxorder" );
 
         $sSelect = "select * from oxorder where 1 ";
 
-        if ( !empty( $iFromOrderNr)) {
+        if ( $iFromOrderNr !== null ) {
             $sSelect .= "and oxordernr >= $iFromOrderNr ";
         }
-        if ( !empty( $iToOrderNr)) {
+
+        if ( $iToOrderNr !== null ) {
             $sSelect .= "and oxordernr <= $iToOrderNr ";
         }
 
-        $oOrderlist->selectString( $sSelect);
+        $oOrderlist = oxNew( "oxlist" );
+        $oOrderlist->init( "oxorder" );
+        $oOrderlist->selectString( $sSelect );
 
         if ( !$oOrderlist->count() ) {
             return null;
@@ -519,14 +515,13 @@ class oxImex extends oxBase
 
         $sExport  = "<?xml version=\"1.0\" encoding=\"ISO-8859-15\"?>$sNewLine";
         $sExport .= "<Bestellliste>$sNewLine";
-        $sRet .= $sExport;
+        $sRet     = $sExport;
 
-        //foreach (array_keys( $oOrderlist) as $key) {
-        foreach ($oOrderlist->arrayKeys() as $key) {
+        foreach ( $oOrderlist->arrayKeys() as $key ) {
             $oOrder = $oOrderlist[$key];
 
             $oUser = oxNew( "oxuser" );
-            $oUser->load( $oOrder->oxorder__oxuserid->value);
+            $oUser->load( $oOrder->oxorder__oxuserid->value );
 
             $sExport  = "<Bestellung zurückgestellt=\"Nein\" bearbeitet=\"Nein\" übertragen=\"Nein\">$sNewLine";
             $sExport .= "<Bestellnummer>".$oOrder->oxorder__oxordernr->value."</Bestellnummer>$sNewLine";
@@ -552,23 +547,23 @@ class oxImex extends oxBase
             $sExport .= "<Telefon2>".$this->interForm($oUser->oxuser__oxprivfon->value)."</Telefon2>$sNewLine";
             $sExport .= "<Fax>".$this->interForm($oOrder->oxorder__oxbillfax->value)."</Fax>$sNewLine";
 
+            $sDelComp    = "";
+            $sDelfName   = "";
+            $sDellName   = "";
+            $sDelStreet  = "";
+            $sDelZip     = "";
+            $sDelCity    = "";
+            $sDelCountry = "";
+
             // lieferadresse
             if ( $oOrder->oxorder__oxdellname->value) {
                 $sDelComp   = $oOrder->oxorder__oxdelcompany->value;
                 $sDelfName  = $oOrder->oxorder__oxdelfname->value;
                 $sDellName  = $oOrder->oxorder__oxdellname->value;
-                $sDelStreet = $oOrder->oxorder__oxdelstreet->value;
+                $sDelStreet = $oOrder->oxorder__oxdelstreet->value." ".$oOrder->oxorder__oxdelstreetnr->value;
                 $sDelZip    = $oOrder->oxorder__oxdelzip->value;
                 $sDelCity   = $oOrder->oxorder__oxdelcity->value;
                 $sDelCountry= $oOrder->oxorder__oxdelcountry->value;
-            } else {
-                $sDelComp   = "";
-                $sDelfName  = "";
-                $sDellName  = "";
-                $sDelStreet = "";
-                $sDelZip    = "";
-                $sDelCity   = "";
-                $sDelCountry= "";
             }
 
             $sExport .= "<Lieferadresse>$sNewLine";
@@ -584,33 +579,17 @@ class oxImex extends oxBase
             $sExport .= "<Matchcode>".$this->interForm($oOrder->oxorder__oxbilllname->value).", ".$this->interForm($oOrder->oxorder__oxbillfname->value)."</Matchcode>$sNewLine";
 
             // ermitteln ob steuerbar oder nicht
-            $sCountry = strtolower( $oUser->oxuser__oxcountryid->value);
+            $sCountry = strtolower( $oUser->oxuser__oxcountryid->value );
             $aHomeCountry = $myConfig->getConfigParam( 'aHomeCountry' );
-            if ( is_array( $aHomeCountry ) && in_array( $sCountry, $aHomeCountry ) ) {
-                $sSteuerbar = "ja";
-            } else {
-                $sSteuerbar = "nein";
-            }
+            $sSteuerbar = ( is_array( $aHomeCountry ) && in_array( $sCountry, $aHomeCountry ) ) ? "ja" : "nein";
 
-            $sExport .= "<fSteuerbar>".$this->interForm($sSteuerbar)."</fSteuerbar>$sNewLine";
+            $sExport .= "<fSteuerbar>".$this->interForm( $sSteuerbar )."</fSteuerbar>$sNewLine";
             $sExport .= "</Kunde>$sNewLine";
             $sExport .= "<Artikelliste>$sNewLine";
             $sRet .= $sExport;
 
             $dSumNetPrice = 0;
             $dSumBrutPrice = 0;
-
-            /*
-            if( $oOrder->oxorder__oxdelcost->value)
-            {   // add virtual article for delivery costs
-                $oDelCost = oxNew( "oxorderarticle" );
-                $oDelCost->oxorderarticles__oxvat->setValue(0);
-                $oDelCost->oxorderarticles__oxnetprice->setValue($oOrder->oxorder__oxdelcost->value);
-                $oDelCost->oxorderarticles__oxamount->setValue(1);
-                $oDelCost->oxorderarticles__oxtitle->setValue("Versandkosten");
-                $oDelCost->oxorderarticles__oxbrutprice->setValue($oOrder->oxorder__oxdelcost->value);
-                $oOrder->oArticles['oxdelcostid'] = $oDelCost;
-            }*/
 
             $oOrderArticles = $oOrder->getOrderArticles();
             foreach ($oOrderArticles->arrayKeys() as $key) {
@@ -664,14 +643,11 @@ class oxImex extends oxBase
             $oPayment = oxNew( "oxpayment" );
             $oPayment->load( $oOrder->oxorder__oxpaymenttype->value);
 
-            //print_r($oPayment);
-
             $sExport .= "<Art>".$oPayment->oxpayments__oxdesc->value."</Art>$sNewLine";
             $sExport .= "</Zahlung>$sNewLine";
 
             $sExport .= "</Bestellung>$sNewLine";
             $sRet .= $sExport;
-
 
             $oOrder->oxorder__oxexport->setValue(1);
             $oOrder->save();

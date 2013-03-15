@@ -13,6 +13,22 @@
 
   <script type="text/javascript">
   <!--
+    // standard messages
+    var sUnassignMessage = "[{ oxmultilang ident='GENERAL_YOUWANTTOUNASSIGN' }]";
+    var sDeleteMessage   = "[{ oxmultilang ident='GENERAL_YOUWANTTODELETE' }]";;
+
+    // class info
+    var sDefClass = '[{ $default_edit }]';
+    var sActClass = '[{$actlocation}]';
+
+    [{ if $updatelist == 1}]
+    window.onload = function ()
+    {
+        top.oxid.admin.updateList('[{ $oxid }]');
+    }
+    [{ /if}]
+
+
     var ajaxpopup = null;
     function showDialog( sParams )
     {
@@ -68,7 +84,7 @@
   </script>
 
 </head>
-<body [{if $sOnLoadFnc}]onload="[{ $sOnLoadFnc }]();"[{/if}]>
+<body>
 <div id="oxajax_data"></div>
 <div class="[{$box|default:'box'}]">
 [{include file="inc_error.tpl" Errorlist=$Errors.default}]

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxpdf.php 19886 2009-06-16 12:39:06Z alfonsas $
+ * $Id: oxpdf.php 21092 2009-07-22 14:42:13Z vilma $
  */
 
 $myConfig = oxConfig::getInstance();
@@ -198,12 +198,12 @@ define('K_SMALL_RATIO', 2/3);
 /**
  * Including language file
  */
-require_once( $sTcPdfPath . "config/lang/eng.php" );
+require_once $sTcPdfPath . "config/lang/eng.php";
 
 /**
  * Including parent class
  */
-require_once( $sTcPdfPath . "tcpdf.php");
+require_once $sTcPdfPath . "tcpdf.php";
 
 /**
  * TCPDF class wrapper, set/overrides oxid specific functionality
@@ -215,14 +215,16 @@ class oxPDF extends TCPDF
      * This is the class constructor.
      * It allows to set up the page format, the orientation and
      * the measure unit used in all the methods (except for the font sizes).
-     * @since 1.0
-     * @param string $orientation page orientation. Possible values are (case insensitive):<ul><li>P or Portrait (default)</li><li>L or Landscape</li></ul>
-     * @param string $unit User measure unit. Possible values are:<ul><li>pt: point</li><li>mm: millimeter (default)</li><li>cm: centimeter</li><li>in: inch</li></ul><br />A point equals 1/72 of inch, that is to say about 0.35 mm (an inch being 2.54 cm). This is a very common unit in typography; font sizes are expressed in that unit.
-     * @param mixed $format The format used for pages. It can be either one of the following values (case insensitive) or a custom format in the form of a two-element array containing the width and the height (expressed in the unit given by unit).<ul><li>4A0</li><li>2A0</li><li>A0</li><li>A1</li><li>A2</li><li>A3</li><li>A4 (default)</li><li>A5</li><li>A6</li><li>A7</li><li>A8</li><li>A9</li><li>A10</li><li>B0</li><li>B1</li><li>B2</li><li>B3</li><li>B4</li><li>B5</li><li>B6</li><li>B7</li><li>B8</li><li>B9</li><li>B10</li><li>C0</li><li>C1</li><li>C2</li><li>C3</li><li>C4</li><li>C5</li><li>C6</li><li>C7</li><li>C8</li><li>C9</li><li>C10</li><li>RA0</li><li>RA1</li><li>RA2</li><li>RA3</li><li>RA4</li><li>SRA0</li><li>SRA1</li><li>SRA2</li><li>SRA3</li><li>SRA4</li><li>LETTER</li><li>LEGAL</li><li>EXECUTIVE</li><li>FOLIO</li></ul>
-     * @param boolean $unicode TRUE means that the input text is unicode (default = true)
-     * @param boolean $diskcache if TRUE reduce the RAM memory usage by caching temporary data on filesystem (slower).
-     * @param String $encoding charset encoding; default is UTF-8
+     *
+     * @param string  $orientation page orientation. Possible values are (case insensitive):<ul><li>P or Portrait (default)</li><li>L or Landscape</li></ul>
+     * @param string  $unit        User measure unit. Possible values are:<ul><li>pt: point</li><li>mm: millimeter (default)</li><li>cm: centimeter</li><li>in: inch</li></ul><br />A point equals 1/72 of inch, that is to say about 0.35 mm (an inch being 2.54 cm). This is a very common unit in typography; font sizes are expressed in that unit.
+     * @param mixed   $format      The format used for pages. It can be either one of the following values (case insensitive) or a custom format in the form of a two-element array containing the width and the height (expressed in the unit given by unit).<ul><li>4A0</li><li>2A0</li><li>A0</li><li>A1</li><li>A2</li><li>A3</li><li>A4 (default)</li><li>A5</li><li>A6</li><li>A7</li><li>A8</li><li>A9</li><li>A10</li><li>B0</li><li>B1</li><li>B2</li><li>B3</li><li>B4</li><li>B5</li><li>B6</li><li>B7</li><li>B8</li><li>B9</li><li>B10</li><li>C0</li><li>C1</li><li>C2</li><li>C3</li><li>C4</li><li>C5</li><li>C6</li><li>C7</li><li>C8</li><li>C9</li><li>C10</li><li>RA0</li><li>RA1</li><li>RA2</li><li>RA3</li><li>RA4</li><li>SRA0</li><li>SRA1</li><li>SRA2</li><li>SRA3</li><li>SRA4</li><li>LETTER</li><li>LEGAL</li><li>EXECUTIVE</li><li>FOLIO</li></ul>
+     * @param boolean $unicode     TRUE means that the input text is unicode (default = true)
+     * @param string  $encoding    charset encoding; default is UTF-8
+     * @param boolean $diskcache   if TRUE reduce the RAM memory usage by caching temporary data on filesystem (slower).
+     *
      * @access public
+     * @since 1.0
      */
     public function __construct( $orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8', $diskcache=false )
     {
@@ -237,130 +239,143 @@ class oxPDF extends TCPDF
      * Prints a cell (rectangular area) with optional borders, background color and html text string.
      * The upper-left corner of the cell corresponds to the current position. After the call, the current position moves to the right or to the next line.<br />
      * If automatic page breaking is enabled and the cell goes beyond the limit, a page break is done before outputting.
-     * @param float $w Cell width. If 0, the cell extends up to the right margin.
-     * @param float $h Cell minimum height. The cell extends automatically if needed.
-     * @param float $x upper-left corner X coordinate
-     * @param float $y upper-left corner Y coordinate
-     * @param string $html html text to print. Default value: empty string.
-     * @param mixed $border Indicates if borders must be drawn around the cell. The value can be either a number:<ul><li>0: no border (default)</li><li>1: frame</li></ul>or a string containing some or all of the following characters (in any order):<ul><li>L: left</li><li>T: top</li><li>R: right</li><li>B: bottom</li></ul>
-     * @param int $ln Indicates where the current position should go after the call. Possible values are:<ul><li>0: to the right (or left for RTL language)</li><li>1: to the beginning of the next line</li><li>2: below</li></ul> Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value: 0.
-     * @param int $fill Indicates if the cell background must be painted (1) or transparent (0). Default value: 0.
+     *
+     * @param string  $html   html text to print. Default value: empty string.
+     * @param int     $ln     Indicates where the current position should go after the call. Possible values are:<ul><li>0: to the right (or left for RTL language)</li><li>1: to the beginning of the next line</li><li>2: below</li></ul> Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value: 0.
+     * @param int     $fill   Indicates if the cell background must be painted (1) or transparent (0). Default value: 0.
      * @param boolean $reseth if true reset the last cell height (default true).
-     * @param string $align Allows to center or align the text. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
-     * @param boolean $autopadding if true, uses internal padding and automatically adjust it to account for line width.
+     * @param float   $cell   if true, the cell extends up to the margin.
+     * @param string  $align  allows to center or align the text. Possible values are:<ul><li>L : left align</li><li>C : center</li><li>R : right align</li><li>'' : empty string : left for LTR or right for RTL</li></ul>
+     *
      * @access public
+     * @return null
      * @uses MultiCell()
      * @see Multicell(), writeHTML()
      */
     public function WriteHTML($html, $ln=true, $fill=false, $reseth=false, $cell=false, $align='')
     {
         //HTML parser
-        $html=str_replace("\n",' ',$html);
-        $a=preg_split('/<(.*)>/U',$html,-1,PREG_SPLIT_DELIM_CAPTURE);
-        foreach($a as $i=>$e)
-        {
-            if($i%2==0)
-            {
+        $html = str_replace( "\n", ' ', $html );
+        $a    = preg_split('/<(.*)>/U', $html, -1, PREG_SPLIT_DELIM_CAPTURE );
+        foreach ($a as $i=>$e) {
+            if ($i%2==0) {
                 //Text
-                if($this->HREF)
-                    $this->PutLink($this->HREF,$e);
-                else
-                    $this->Write(5,$e);
-            }
-            else
-            {
+                if ($this->HREF) {
+                    $this->PutLink( $this->HREF, $e );
+                } else {
+                    $this->Write( 5, $e );
+                }
+            } else {
                 //Tag
-                if($e{0}=='/')
-                    $this->CloseTag(strtoupper(substr($e,1)));
-                else
-                {
+                if ($e{0}=='/') {
+                    $this->CloseTag(strtoupper(substr($e, 1)));
+                } else {
                     //Extract attributes
-                    $a2=explode(' ',$e);
+                    $a2=explode(' ', $e);
                     $tag=strtoupper(array_shift($a2));
                     $attr=array();
-                    foreach($a2 as $v)
-                        if(ereg('^([^=]*)=["\']?([^"\']*)["\']?$',$v,$a3))
+                    foreach ($a2 as $v) {
+                        if (preg_match('/^([^=]*)=["\']?([^"\']*)["\']?$/', $v, $a3)) {
                             $attr[strtoupper($a3[1])]=$a3[2];
-                    $this->OpenTag($tag,$attr);
+                        }
+                    }
+                    $this->OpenTag($tag, $attr);
                 }
             }
         }
     }
 
     /**
+     * Opening tag
      *
-     * @return
-     * @param object $tag
-     * @param object $attr
+     * @param object $tag  tag name
+     * @param object $attr attributes
+     *
+     * @return null
      */
     public function OpenTag($tag,$attr)
     {
-        //Opening tag
-        if($tag=='B' or $tag=='I' or $tag=='U')
-            $this->SetStyle($tag,true);
-        if($tag=='A')
-            $this->HREF=$attr['HREF'];
-        if($tag=='BR')
+        if ( $tag=='B' or $tag=='I' or $tag=='U' ) {
+            $this->SetStyle($tag, true);
+        }
+
+        if ( $tag=='A' ) {
+            $this->HREF = $attr['HREF'];
+        }
+
+        if ( $tag=='BR' ) {
             $this->Ln(5);
+        }
     }
 
     /**
+     * Closing tag
      *
-     * @return
-     * @param object $tag
+     * @param object $tag tag name
+     *
+     * @return null
      */
     public function CloseTag($tag)
     {
-        //Closing tag
-        if($tag=='B' or $tag=='I' or $tag=='U')
-            $this->SetStyle($tag,false);
-        if($tag=='A')
-            $this->HREF='';
+        if ( $tag=='B' or $tag=='I' or $tag=='U' ) {
+            $this->SetStyle($tag, false);
+        }
+
+        if ( $tag=='A' ) {
+            $this->HREF = '';
+        }
     }
 
     /**
+     * Modify style and select corresponding font
      *
-     * @return
-     * @param object $tag
-     * @param object $enable
+     * @param object $tag    tag name
+     * @param object $enable enable style
+     *
+     * @return null
      */
     public function SetStyle($tag,$enable)
     {
-        //Modify style and select corresponding font
         $this->$tag+=($enable ? 1 : -1);
         $style='';
-        foreach(array('B','I','U') as $s)
-            if($this->$s>0)
+        foreach (array('B', 'I', 'U') as $s) {
+            if ($this->$s>0) {
                 $style.=$s;
-        $this->SetFont('',$style);
+            }
+        }
+        $this->SetFont('', $style);
     }
 
     /**
+     * Put a hyperlink
      *
-     * @return
-     * @param object $URL
-     * @param object $txt
+     * @param object $URL link url
+     * @param object $txt link text
+     *
+     * @return null
      */
-    public function PutLink($URL,$txt)
+    public function PutLink($URL, $txt)
     {
-        //Put a hyperlink
-        $this->SetTextColor(0,0,255);
-        $this->SetStyle('U',true);
-        $this->Write(5,$txt,$URL);
-        $this->SetStyle('U',false);
-        $this->SetTextColor(0);
+        $this->SetTextColor( 0, 0, 255 );
+        $this->SetStyle( 'U', true );
+        $this->Write( 5, $txt, $URL );
+        $this->SetStyle( 'U', false );
+        $this->SetTextColor( 0 );
     }
 
     /**
     * Prints a character string.
     * The origin is on the left of the first charcter, on the baseline.
     * This method allows to place a string precisely on the page.
-    * @param float $x Abscissa of the origin
-    * @param float $y Ordinate of the origin
-    * @param string $txt String to print
-    * @param int $stroke outline size in points (0 = disable)
-    * @param boolean $clip if true activate clipping mode (you must call StartTransform() before this function and StopTransform() to stop the clipping tranformation).
+    *
+    * @param float   $x      Abscissa of the origin
+    * @param float   $y      Ordinate of the origin
+    * @param string  $txt    String to print
+    * @param int     $stroke outline size in points (0 = disable)
+    * @param boolean $clip   if true activate clipping mode (you must call StartTransform() before this function and StopTransform() to stop the clipping tranformation).
+    *
     * @access public
+    * @return null
     * @since 1.0
     * @deprecated deprecated since version 4.3.005 (2008-11-25)
     * @see Cell(), Write(), MultiCell(), WriteHTML(), WriteHTMLCell()
@@ -368,26 +383,26 @@ class oxPDF extends TCPDF
     public function Text($x,$y,$txt, $stroke=0, $clip=false)
     {
         // replaces some special code to chars
-        $txt = str_replace( "&nbsp;", " ", $txt);
-        $txt = str_replace( "&auml;", "ä", $txt);
-        $txt = str_replace( "&ouml;", "ö", $txt);
-        $txt = str_replace( "&uuml;", "ü", $txt);
-        $txt = str_replace( "&Auml;", "Ä", $txt);
-        $txt = str_replace( "&Ouml;", "Ö", $txt);
-        $txt = str_replace( "&Uuml;", "Ü", $txt);
+        $txt = str_replace( "&nbsp;", " ", $txt );
+        $txt = str_replace( "&auml;", "ä", $txt );
+        $txt = str_replace( "&ouml;", "ö", $txt );
+        $txt = str_replace( "&uuml;", "ü", $txt );
+        $txt = str_replace( "&Auml;", "Ä", $txt );
+        $txt = str_replace( "&Ouml;", "Ö", $txt );
+        $txt = str_replace( "&Uuml;", "Ü", $txt );
         $txt = str_replace( "&szlig;", "ß", $txt);
 
         // replacing html specific codes
 
         // if this doesn't help, we should create own entity table
         // and replace codes to symbols
-        $txt = html_entity_decode($txt);
+        $txt = html_entity_decode( $txt );
 
         // cleaning up possible html code
-        $txt = strip_tags($txt);
+        $txt = strip_tags( $txt );
 
         //parent::Text($x,$y,$txt, $stroke, $clip);
-        parent::Text($x,$y,$txt);
+        parent::Text( $x, $y, $txt );
     }
 
     /**

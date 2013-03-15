@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: contact.php 19888 2009-06-16 12:43:36Z rimvydas.paskevicius $
+ * $Id: contact.php 21018 2009-07-20 15:00:38Z vilma $
  */
 
 /**
@@ -137,7 +137,7 @@ class Contact extends oxUBase
             return false;
         }
 
-        $sMessage  = oxLang::getInstance()->translateString( 'CONTACT_FROM' )." ".$aParams['oxuser__oxsal']." ".$aParams['oxuser__oxfname']." ".$aParams['oxuser__oxlname']."(".$aParams['oxuser__oxusername'].")\n\n";
+        $sMessage  = oxLang::getInstance()->translateString( 'CONTACT_FROM' )." ".$aParams['oxuser__oxsal']." ".$aParams['oxuser__oxfname']." ".$aParams['oxuser__oxlname']."(".$aParams['oxuser__oxusername'].")<br /><br />";
         $sMessage .= nl2br( $sBody );
 
         $oEmail = oxNew( 'oxemail' );

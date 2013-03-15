@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcontent.php 17768 2009-04-02 10:52:12Z sarunas $
+ * $Id: oxcontent.php 20457 2009-06-25 13:21:33Z vilma $
  */
 
 /**
@@ -85,7 +85,8 @@ class oxContent extends oxI18n
         switch ( $sName ) {
             case 'expanded':
                 return $this->getExpanded();
-            }
+                break;
+        }
         return parent::__get( $sName );
     }
 

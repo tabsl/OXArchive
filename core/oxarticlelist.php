@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxarticlelist.php 19349 2009-05-25 11:34:37Z arvydas $
+ * $Id: oxarticlelist.php 20654 2009-07-07 10:58:13Z sarunas $
  */
 
 /**
@@ -619,7 +619,11 @@ class oxArticleList extends oxList
         }
 
         if ( $this->_sCustomSorting ) {
-            $sQ .= " order by {$sArticleTable}.{$this->_sCustomSorting} ";
+            $sSort = $this->_sCustomSorting;
+            if (strpos($sSort, '.') === false) {
+                $sSort = $sArticleTable.'.'.$sSort;
+            }
+            $sQ .= " order by $sSort ";
         }
 
         $this->selectString( $sQ );
@@ -656,7 +660,11 @@ class oxArticleList extends oxList
         }
 
         if ( $this->_sCustomSorting ) {
-            $sQ .= " order by {$sArticleTable}.{$this->_sCustomSorting} ";
+            $sSort = $this->_sCustomSorting;
+            if (strpos($sSort, '.') === false) {
+                $sSort = $sArticleTable.'.'.$sSort;
+            }
+            $sQ .= " order by $sSort ";
         }
 
         return $this->_createIdListFromSql( $sQ );

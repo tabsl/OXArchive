@@ -2,27 +2,22 @@
 
 <script type="text/javascript">
 <!--
-[{ if $updatelist == 1}]
-    UpdateList('[{ $oxid }]');
-[{ /if}]
-
-function EditThis( sID)
+function editThis(sID)
 {
     var oSearch = document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.cl.value='article_main';
+    oSearch.oxid.value = sID;
+    oSearch.cl.value = 'article_main';
     oSearch.submit();
 
     var oSearch = parent.list.document.getElementById("search");
     oSearch.sort.value = '';
     oSearch.fnc.value = '';
     oSearch.lstrt.value = '';
-    oSearch.oxid.value=sID;
-    oSearch.cl.value='article_list';
-    oSearch.actedit.value=1;
+    oSearch.oxid.value = sID;
+    oSearch.cl.value = 'article_list';
+    oSearch.actedit.value = 1;
     oSearch.submit();
 }
-
 function EditVoucher( sID)
 {
     var oSearch = document.getElementById("search");
@@ -36,15 +31,6 @@ function EditVoucher( sID)
     oSearch.actedit.value=1;
     oSearch.submit();
 }
-
-
-function UpdateList( sID)
-{
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
 function DeleteThisArticle( sID)
 {
     blCheck = confirm("[{ oxmultilang ident="ORDER_ARTICLE_YOUWANTTODELETE" }]");
@@ -95,9 +81,9 @@ function StornoThisArticle( sID)
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
 <form name="search" id="search" action="[{ $shop->selflink }]" method="post">
     [{ $shop->hiddensid }]
-    <input type="hidden" name="cl" value="article_main">
+    <input type="hidden" name="cl" value="order_article">
     <input type="hidden" name="oxid" value="[{ $oxid }]">
-    <input type="hidden" name="fnc" value="">
+    <input type="hidden" name="fnc" value="updateOrder">
 <tr>
     <td class="listheader first">[{ oxmultilang ident="GENERAL_SUM" }]</td>
     <td class="listheader" height="15">&nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_ITEMNR" }]</td>
@@ -118,9 +104,9 @@ function StornoThisArticle( sID)
     [{else}]
         [{assign var="listclass" value=listitem$blWhite }]
     [{/if}]
-    <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxamount->value }]</td>
-    <td valign="top" class="[{ $listclass}]" height="15">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:EditThis('[{ $listitem->oxarticles__oxid->value}]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxartnum->value }]</a></td>
-    <td valign="top" class="[{ $listclass}]">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:EditThis('[{ $listitem->oxarticles__oxid->value }]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxtitle->value|string_format:"%.20s"|strip_tags }]</a></td>
+    <td valign="top" class="[{ $listclass}]">[{ if $listitem->oxorderarticles__oxstorno->value != 1 }]<input type="text" name="aOrderArticles[[{$listitem->getId()}]][oxamount]" value="[{ $listitem->oxorderarticles__oxamount->value }]" class="listedit">[{else}][{ $listitem->oxorderarticles__oxamount->value }][{/if}]</td>
+    <td valign="top" class="[{ $listclass}]" height="15">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:editThis('[{ $listitem->oxarticles__oxid->value}]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxartnum->value }]</a></td>
+    <td valign="top" class="[{ $listclass}]">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:editThis('[{ $listitem->oxarticles__oxid->value }]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxtitle->value|string_format:"%.20s"|strip_tags }]</a></td>
     <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxselvariant->value }]</td>
     <td valign="top" class="[{ $listclass}]">
         [{ if $listitem->aPersParam }]
@@ -144,8 +130,11 @@ function StornoThisArticle( sID)
 [{/if}]
 [{/foreach}]
 </table>
-</form>
 
+<input type="submit" value="[{ oxmultilang ident="ORDER_ARTICLE_UPDATE_STOCK" }]">
+
+</form>
+<br /><br />
     <table border="0" cellspacing="0" cellpadding="0">
     <form method="POST" name="AddThisArticle" id="AddThisArticle" action="[{ $shop->selflink }]">
     [{ $shop->hiddensid }]

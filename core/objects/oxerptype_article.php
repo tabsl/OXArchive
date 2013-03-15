@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_article.php 19206 2009-05-19 11:14:40Z arvydas $
+ * $Id: oxerptype_article.php 20535 2009-06-30 00:58:33Z alfonsas $
  */
 
 require_once 'oxerptype.php';
@@ -300,6 +300,7 @@ class oxERPType_Article extends oxERPType
             case 'OXLONGDESC_3':
                 // take from oxartextends
                 return "(select $sField from oxartextends where ".$this->getTableName($iShopID).".oxid = oxartextends.oxid limit 1) as $sField";
+                break;
         }
 
         if ('1' == oxERPBase::getUsedDbFieldsVersion()) {
@@ -310,12 +311,16 @@ class oxERPType_Article extends oxERPType
                 case 'OXSEOID_2':
                 case 'OXSEOID_3':
                     return "'' as $sField";
+                    break;
                 case 'OXACTIV':
                     return "OXACTIVE as OXACTIV";
+                    break;
                 case 'OXACTIVFROM':
                     return "OXACTIVEFROM as OXACTIVFROM";
+                    break;
                 case 'OXACTIVTO':
                     return "OXACTIVETO as OXACTIVTO";
+                    break;
             }
         }
 
@@ -336,10 +341,10 @@ class oxERPType_Article extends oxERPType
         $oCompat = oxNew('OXERPCompatability');
         if ( !$oCompat->isArticleNullLongDescComatable() ) {
 
-            $aLongDescriptionFields = array('OXLONGDESC_1','OXLONGDESC_2','OXLONGDESC_3');
+            $aLongDescriptionFields = array('OXLONGDESC_1', 'OXLONGDESC_2', 'OXLONGDESC_3');
 
             foreach ( $aLongDescriptionFields as $iKey => $sField ) {
-                if ( in_array($sField,$this->_aFieldList ) ) {
+                if ( in_array($sField, $this->_aFieldList ) ) {
                     unset($aLongDescriptionFields[$iKey]);
                 }
             }

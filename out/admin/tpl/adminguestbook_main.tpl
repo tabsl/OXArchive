@@ -1,20 +1,5 @@
 [{include file="headitem.tpl" title="ADMINGB_TITLE"|oxmultilangassign}]
 
-<script type="text/javascript">
-<!--
-[{ if $updatelist == 1}]
-    UpdateList('[{ $oxid }]');
-[{ /if}]
-
-function UpdateList( sID)
-{
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-//-->
-</script>
-
 [{ if $readonly }]
     [{assign var="readonly" value="readonly disabled"}]
 [{else}]
@@ -36,7 +21,6 @@ function UpdateList( sID)
   <input type="hidden" name="oxid" value="[{ $oxid }]">
   <input type="hidden" name="voxid" value="[{ $oxid }]">
   <input type="hidden" name="editval[oxgbentries__oxid]" value="[{ $oxid }]">
-  <input type="hidden" name="editval[oxgbentries__oxcontent]" value="">
   <tr>
     <td valign="top" class="edittext" width="250">
       <table cellspacing="0" cellpadding="0" border="0">
@@ -71,9 +55,7 @@ function UpdateList( sID)
 
     <!-- Anfang rechte Seite -->
     <td valign="top" class="edittext vr" align="left">
-
-          [{ $editor }]
-
+      <textarea class="editinput" cols="100" rows="17" wrap="VIRTUAL" name="editval[oxgbentries__oxcontent]" [{ $readonly }]>[{$edit->oxgbentries__oxcontent->value}]</textarea>
     </td>
   </tr>
 </table>

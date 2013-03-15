@@ -156,3 +156,6 @@ ul.req ul{padding:0;margin:0;}
 ul.req li.group {border:none;float:left;font-weight:bold;width:32%;}
 ul.req li.coll {border:none;float:left;font-weight:bold;width:32%;}
 ul.req li.clear{clear:left;diplay:none;border:none;visibility:collapse;height:0px;padding:0;margin:0;display:block;line-height: 0;}
+
+.inputHelpBtn {display: inline; position: relative; padding-left: 16px; padding-right: 5px; margin-left: 5px; margin-left: 1px !ie; border: 1px solid #f00;}
+.inputHelpBtn a {display: block; position: absolute; left: 0px; top: 0px; top: 3px !ie; background: url(../img/help_button.gif) no-repeat; width: 16px; height: 16px; overflow: hidden;}

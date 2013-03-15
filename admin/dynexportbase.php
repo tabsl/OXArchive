@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: dynexportbase.php 18628 2009-04-28 14:29:39Z arvydas $
+ * $Id: dynexportbase.php 21075 2009-07-21 11:59:29Z arvydas $
  */
 
 /**
@@ -199,6 +199,7 @@ class DynExportBase extends oxAdminDetails
     public function run()
     {
         $blContinue = true;
+        $iExportedItems = 0;
 
         $this->fpFile = @fopen( $this->_sFilePath, "a");
         if ( !isset( $this->fpFile) || !$this->fpFile) {
@@ -211,7 +212,7 @@ class DynExportBase extends oxAdminDetails
             $this->_aExportResultset = oxConfig::getParameter( "aExportResultset");
 
             for ( $i = $iStart; $i < $iStart + $this->iExportPerTick; $i++) {
-                if ( !$this->nextTick( $i)) {
+                if ( ( $iExportedItems = $this->nextTick( $i ) ) === false ) {
                     // end reached
                     $this->stop( ERR_SUCCESS);
                     $blContinue = false;
@@ -222,7 +223,7 @@ class DynExportBase extends oxAdminDetails
                 // make ticker continue
                 $this->_aViewData['refresh'] = 0;
                 $this->_aViewData['iStart']  = $i;
-                $this->_aViewData['iEnd']    = oxConfig::getParameter("iEnd");
+                $this->_aViewData['iExpItems'] = $iExportedItems;
             }
             fclose( $this->fpFile);
         }

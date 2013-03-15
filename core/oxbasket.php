@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxbasket.php 19617 2009-06-04 15:20:49Z alfonsas $
+ * $Id: oxbasket.php 20970 2009-07-16 09:04:17Z arvydas $
  */
 
 /**
@@ -224,6 +224,13 @@ class oxBasket extends oxSuperCfg
      protected $_blCheckStock = true;
 
     /**
+     * discount calculation marker
+     *
+     * @var bool
+     */
+    protected $_blCalcDiscounts = true;
+
+    /**
      * Checks if configuration allows basket usage or if user agent is search engine
      *
      * @return bool
@@ -319,7 +326,9 @@ class oxBasket extends oxSuperCfg
                 //$oBasketItem->dAmount = 0;
                 $blRemoveItem = true;
 
-            } catch( oxOutOfStockException $oEx ){
+            } catch( oxOutOfStockException $oEx ) {
+                // rethrow later
+            } catch ( oxArticleInputException $oEx ) {
                 // rethrow later
             }
 
@@ -329,7 +338,6 @@ class oxBasket extends oxSuperCfg
         //in case amount is 0 removing item
         if ( $this->_aBasketContents[$sItemId]->getAmount() == 0 || $blRemoveItem ) {
             $this->removeItem( $sItemId );
-            $blRemoveItem = true;
         } elseif ( $blBundle ) { //marking bundles
             $this->_aBasketContents[$sItemId]->setBundle( true );
         }
@@ -346,6 +354,31 @@ class oxBasket extends oxSuperCfg
             throw $oEx;
         }
         return $this->_aBasketContents[$sItemId];
+    }
+
+    /**
+     * Adds order article to basket (method normally used while recalculating order)
+     *
+     * @param oxorderarticle $oOrderArticle order article to store in basket
+     *
+     * @return oxbasketitem
+     */
+    public function addOrderArticleToBasket( $oOrderArticle )
+    {
+        // adding only if amount > 0
+        if ( $oOrderArticle->oxorderarticles__oxamount->value > 0 ) {
+            $sItemId = $oOrderArticle->getId();
+
+            //inserting new
+            $this->_aBasketContents[$sItemId] = oxNew( 'oxbasketitem' );
+            $this->_aBasketContents[$sItemId]->initFromOrderArticle( $oOrderArticle );
+            $this->_aBasketContents[$sItemId]->setWrapping( $oOrderArticle->oxorderarticles__oxwrapid->value );
+
+            //calling update method
+            $this->onUpdate();
+
+            return $this->_aBasketContents[$sItemId];
+        }
     }
 
     /**
@@ -501,7 +534,6 @@ class oxBasket extends oxSuperCfg
                 }
 
                 $aBundles[$oDiscount->oxdiscount__oxitmartid->value] += $oDiscount->getBundleAmount( $dAmount );
-
             }
         }
 
@@ -583,6 +615,8 @@ class oxBasket extends oxSuperCfg
         $this->_oDiscountProductsPriceList = oxNew( 'oxpricelist' );
         $this->_oNotDiscountedProductsPriceList = oxNew( 'oxpricelist' );
 
+        $oDiscountList = oxDiscountList::getInstance();
+
         foreach ( $this->_aBasketContents as $oBasketItem ) {
             $this->_iProductsCnt++;
             $this->_dItemsCnt += $oBasketItem->getAmount();
@@ -595,9 +629,9 @@ class oxBasket extends oxSuperCfg
                 $this->_oProductsPriceList->addToPriceList( $oBasketItem->getPrice() );
 
                 $oBasketPrice->setBruttoPriceMode();
-                if ( !$oArticle->skipDiscounts() ) {
+                if ( !$oArticle->skipDiscounts() && $this->canCalcDiscounts() ) {
                     // apply basket type discounts
-                    $aItemDiscounts = $oArticle->applyBasketDiscounts( $oBasketPrice, oxDiscountList::getInstance()->getBasketItemDiscounts( $oArticle, $this, $this->getBasketUser() ), $oBasketItem->getAmount() );
+                    $aItemDiscounts = $oDiscountList->applyBasketDiscounts( $oBasketPrice, $oDiscountList->getBasketItemDiscounts( $oArticle, $this, $this->getBasketUser() ), $oBasketItem->getAmount() );
                     if ( is_array($this->_aItemDiscounts) && is_array($aItemDiscounts) ) {
                         $this->_aItemDiscounts = $this->_mergeDiscounts( $this->_aItemDiscounts, $aItemDiscounts);
                     }
@@ -621,6 +655,28 @@ class oxBasket extends oxSuperCfg
                 $oBasketItem->setPrice( $oPrice );
             }
         }
+    }
+
+    /**
+     *
+     *
+     * @param bool $blCalcDiscounts
+     *
+     * @return null
+     */
+    public function setDiscountCalcMode( $blCalcDiscounts )
+    {
+        $this->_blCalcDiscounts = $blCalcDiscounts;
+    }
+
+    /**
+     * Returns true if discount calculation is enabled
+     *
+     * @return bool
+     */
+    public function canCalcDiscounts()
+    {
+        return $this->_blCalcDiscounts;
     }
 
     /**
@@ -678,7 +734,7 @@ class oxBasket extends oxSuperCfg
             $aDeliveryList = oxDeliveryList::getInstance()->getDeliveryList( $this,
                                         $oUser,
                                         $this->_findDelivCountry(),
-                                        oxConfig::getParameter( 'sShipSet' )
+                                        $this->getShippingId()
                                     );
 
             if ( count( $aDeliveryList ) > 0 ) {
@@ -779,7 +835,20 @@ class oxBasket extends oxSuperCfg
         if ( isset( $this->_aCosts['oxpayment'] ) ) {
             $this->_oPrice->add( $this->_aCosts['oxpayment']->getBruttoPrice() );
         }
+    }
 
+    /**
+     * Voucher discount setter
+     *
+     * @param double $dDiscount voucher discount value
+     *
+     * @return null
+     */
+    public function setVoucherDiscount( $dDiscount )
+    {
+        $this->_oVoucherDiscount = oxNew( 'oxPrice' );
+        $this->_oVoucherDiscount->setBruttoPriceMode();
+        $this->_oVoucherDiscount->add( $dDiscount );
     }
 
     /**
@@ -789,45 +858,48 @@ class oxBasket extends oxSuperCfg
      */
     protected function _calcVoucherDiscount()
     {
-        $this->_oVoucherDiscount = oxNew( 'oxPrice' );
-        $this->_oVoucherDiscount->setBruttoPriceMode();
+        if ( $this->_oVoucherDiscount === null || ( $this->_blUpdateNeeded && !$this->isAdmin() ) ) {
+
+            $this->_oVoucherDiscount = oxNew( 'oxPrice' );
+            $this->_oVoucherDiscount->setBruttoPriceMode();
 
 
-        // calculating price to apply discount
-        $dPrice = $this->_oDiscountProductsPriceList->getBruttoSum() - $this->_oTotalDiscount->getBruttoPrice();
+            // calculating price to apply discount
+            $dPrice = $this->_oDiscountProductsPriceList->getBruttoSum() - $this->_oTotalDiscount->getBruttoPrice();
 
-        // recalculating
-        if ( count( $this->_aVouchers ) ) {
-            $oLang = oxLang::getInstance();
-            foreach ( $this->_aVouchers as $sVoucherId => $oStdVoucher ) {
-                $oVoucher = oxNew( 'oxvoucher' );
-                try { // checking
-                    $oVoucher->load( $oStdVoucher->sVoucherId );
+            // recalculating
+            if ( count( $this->_aVouchers ) ) {
+                $oLang = oxLang::getInstance();
+                foreach ( $this->_aVouchers as $sVoucherId => $oStdVoucher ) {
+                    $oVoucher = oxNew( 'oxvoucher' );
+                    try { // checking
+                        $oVoucher->load( $oStdVoucher->sVoucherId );
 
-                    if ( !$this->_blSkipVouchersAvailabilityChecking ) {
-                        $oVoucher->checkBasketVoucherAvailability( $this->_aVouchers, $dPrice );
-                        $oVoucher->checkUserAvailability( $this->getBasketUser() );
+                        if ( !$this->_blSkipVouchersAvailabilityChecking ) {
+                            $oVoucher->checkBasketVoucherAvailability( $this->_aVouchers, $dPrice );
+                            $oVoucher->checkUserAvailability( $this->getBasketUser() );
+                        }
+
+                        // assigning real voucher discount value as this is the only place where real value is calculated
+                        $dVoucherdiscount = $oVoucher->getDiscountValue( $dPrice );
+
+                        // acumulating discount value
+                        $this->_oVoucherDiscount->add( $dVoucherdiscount );
+
+                        // collecting formatted for preview
+                        $oStdVoucher->fVoucherdiscount = $oLang->formatCurrency( $dVoucherdiscount, $this->getBasketCurrency() );
+
+                        // substracting voucher discount
+                        $dPrice -= $dVoucherdiscount;
+                    } catch ( oxVoucherException $oEx ) {
+
+                        // removing voucher on error
+                        $oVoucher->unMarkAsReserved();
+                        unset( $this->_aVouchers[$sVoucherId] );
+
+                        // storing voucher error info
+                        oxUtilsView::getInstance()->addErrorToDisplay($oEx, false, true);
                     }
-
-                    // assigning real voucher discount value as this is the only place where real value is calculated
-                    $dVoucherdiscount = $oVoucher->getDiscountValue( $dPrice );
-
-                    // acumulating discount value
-                    $this->_oVoucherDiscount->add( $dVoucherdiscount );
-
-                    // collecting formatted for preview
-                    $oStdVoucher->fVoucherdiscount = $oLang->formatCurrency( $dVoucherdiscount, $this->getBasketCurrency() );
-
-                    // substracting voucher discount
-                    $dPrice -= $dVoucherdiscount;
-                } catch ( oxVoucherException $oEx ) {
-
-                       // removing voucher on error
-                    $oVoucher->unMarkAsReserved();
-                    unset( $this->_aVouchers[$sVoucherId] );
-
-                    // storing voucher error info
-                    oxUtilsView::getInstance()->addErrorToDisplay($oEx, false, true);
                 }
             }
         }
@@ -908,22 +980,21 @@ class oxBasket extends oxSuperCfg
      */
     protected function _calcBasketTotalDiscount()
     {
-        if ( $this->isAdmin() && $this->_oTotalDiscount && $this->_oTotalDiscount->getBruttoPrice() != 0 ) {
-            return;
-        }
-        $this->_oTotalDiscount = oxNew( 'oxPrice' );
-        $this->_oTotalDiscount->setBruttoPriceMode();
+        if ( $this->_oTotalDiscount === null || ( $this->_blUpdateNeeded && !$this->isAdmin() ) ) {
+            $this->_oTotalDiscount = oxNew( 'oxPrice' );
+            $this->_oTotalDiscount->setBruttoPriceMode();
 
-        if ( is_array($this->_aDiscounts) ) {
-            foreach ( $this->_aDiscounts as $oDiscount ) {
+            if ( is_array($this->_aDiscounts) ) {
+                foreach ( $this->_aDiscounts as $oDiscount ) {
 
-                // skipping bundle discounts
-                if ( $oDiscount->sType == 'itm' ) {
-                    continue;
+                    // skipping bundle discounts
+                    if ( $oDiscount->sType == 'itm' ) {
+                        continue;
+                    }
+
+                    // add discount value to total basket discount
+                    $this->_oTotalDiscount->add( $oDiscount->dDiscount );
                 }
-
-                // add discount value to total basket discount
-                $this->_oTotalDiscount->add( $oDiscount->dDiscount );
             }
         }
     }
@@ -1111,42 +1182,39 @@ class oxBasket extends oxSuperCfg
 
         $myConfig = $this->getConfig();
         foreach ( $this->_aBasketContents as $oBasketItem ) {
-            if ( !$oBasketItem->isBundle() ) {
-                if ( ( $oArticle = $oBasketItem->getArticle() ) ) {
-
-                    $aCatIds = $oArticle->getCategoryIds();
-                    //#M530 if price is not loaded for articles
-                    $dPrice = 0;
-                    if ( $oArticle->getPrice() != null ) {
-                        $dPrice  = $oArticle->getPrice()->getBruttoPrice();
-                    }
-
-                    foreach ( $aCatIds as $sCatId ) {
-                        if ( !isset( $this->_aBasketSummary->aCategories[$sCatId] ) ) {
-                            $this->_aBasketSummary->aCategories[$sCatId] = new Oxstdclass();
-                        }
-
-                        $this->_aBasketSummary->aCategories[$sCatId]->dPrice  += $dPrice * $oBasketItem->getAmount();
-                        $this->_aBasketSummary->aCategories[$sCatId]->dAmount += $oBasketItem->getAmount();
-                        $this->_aBasketSummary->aCategories[$sCatId]->iCount++;
-                    }
-
-                    // variant handling
-                    if ( $oArticle->oxarticles__oxparentid->value && $myConfig->getConfigParam( 'blVariantParentBuyable' ) ) {
-                        if ( !isset( $this->_aBasketSummary->aArticles[$oArticle->oxarticles__oxparentid->value] ) ) {
-                            $this->_aBasketSummary->aArticles[$oArticle->oxarticles__oxparentid->value] = 0;
-                        }
-                        $this->_aBasketSummary->aArticles[$oArticle->oxarticles__oxparentid->value] += $oBasketItem->getAmount();
-                    }
-
-                    if ( !isset( $this->_aBasketSummary->aArticles[$oBasketItem->getProductId()] ) ) {
-                        $this->_aBasketSummary->aArticles[$oBasketItem->getProductId()] = 0;
-                    }
-
-                    $this->_aBasketSummary->aArticles[$oBasketItem->getProductId()] += $oBasketItem->getAmount();
-                    $this->_aBasketSummary->iArticleCount += $oBasketItem->getAmount();
-                    $this->_aBasketSummary->dArticlePrice += $dPrice * $oBasketItem->getAmount();
+            if ( !$oBasketItem->isBundle() && $oArticle = $oBasketItem->getArticle() ) {
+                $aCatIds = $oArticle->getCategoryIds();
+                //#M530 if price is not loaded for articles
+                $dPrice = 0;
+                if ( $oArticle->getPrice() != null ) {
+                    $dPrice  = $oArticle->getPrice()->getBruttoPrice();
                 }
+
+                foreach ( $aCatIds as $sCatId ) {
+                    if ( !isset( $this->_aBasketSummary->aCategories[$sCatId] ) ) {
+                        $this->_aBasketSummary->aCategories[$sCatId] = new Oxstdclass();
+                    }
+
+                    $this->_aBasketSummary->aCategories[$sCatId]->dPrice  += $dPrice * $oBasketItem->getAmount();
+                    $this->_aBasketSummary->aCategories[$sCatId]->dAmount += $oBasketItem->getAmount();
+                    $this->_aBasketSummary->aCategories[$sCatId]->iCount++;
+                }
+
+                // variant handling
+                if ( $sParentId = $oArticle->getProductParentId() && $myConfig->getConfigParam( 'blVariantParentBuyable' ) ) {
+                    if ( !isset( $this->_aBasketSummary->aArticles[$sParentId] ) ) {
+                        $this->_aBasketSummary->aArticles[$sParentId] = 0;
+                    }
+                    $this->_aBasketSummary->aArticles[$sParentId] += $oBasketItem->getAmount();
+                }
+
+                if ( !isset( $this->_aBasketSummary->aArticles[$oBasketItem->getProductId()] ) ) {
+                    $this->_aBasketSummary->aArticles[$oBasketItem->getProductId()] = 0;
+                }
+
+                $this->_aBasketSummary->aArticles[$oBasketItem->getProductId()] += $oBasketItem->getAmount();
+                $this->_aBasketSummary->iArticleCount += $oBasketItem->getAmount();
+                $this->_aBasketSummary->dArticlePrice += $dPrice * $oBasketItem->getAmount();
             }
         }
         return $this->_aBasketSummary;
@@ -1533,9 +1601,18 @@ class oxBasket extends oxSuperCfg
              $this->_sShippingSetId = oxConfig::getParameter( 'sShipSet' );
         }
 
+        $sActPaymentId = $this->getPaymentId();
         // setting default if none is set
-        if ( !$this->_sShippingSetId && $this->getPaymentId() != 'oxempty' ) {
-            $this->_sShippingSetId = 'oxidstandard';
+        if ( !$this->_sShippingSetId && $sActPaymentId != 'oxempty' ) {
+            $oUser = $this->getUser();
+
+            // choosing first preferred delivery set
+            list( , $sActShipSet ) = oxDeliverySetList::getInstance()->getDeliverySetData( null, $oUser, $this );
+            // in case nothing was found and no user set - choosing default
+            $this->_sShippingSetId = $sActShipSet ? $sActShipSet : ( $oUser ? null : 'oxidstandard' );
+        } elseif ( !$this->isAdmin() && $sActPaymentId == 'oxempty' ) {
+            // in case 'oxempty' is payment id - delivery set must be reset
+            $this->_sShippingSetId = null;
         }
 
         return $this->_sShippingSetId;

@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcmp_user.php 18327 2009-04-17 14:58:36Z alfonsas $
+ * $Id: oxcmp_user.php 21145 2009-07-28 11:10:29Z vilma $
  */
 
 /**
@@ -194,11 +194,6 @@ class oxcmp_user extends oxView
             return 'user';
         } catch( oxCookieException $oEx ){
             oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
-            return 'user';
-        } catch( oxConnectionException $oEx ){
-            //connection to external resource broken, change message and pass to the view
-            $oEx->setMessage( 'EXCEPTION_ACTIONNOTPOSSIBLEATTHEMOMENT' );
-            oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true );
             return 'user';
         }
         // finalizing ..
@@ -497,7 +492,11 @@ class oxcmp_user extends oxView
         // collecting values to check
         $aDelAdress = $this->_getDelAddressData();
         // if user company name, user name and additional info has special chars
-        $aRawVal = array('oxuser__oxcompany', 'oxuser__oxaddinfo', 'oxuser__oxfname', 'oxuser__oxlname');
+        $aRawVal = array('oxuser__oxcompany', 'oxuser__oxaddinfo', 'oxuser__oxfname',
+                            'oxuser__oxlname', 'oxuser__oxstreet', 'oxuser__oxstreetnr',
+                            'oxuser__oxcity', 'oxuser__oxfon', 'oxuser__oxfax',
+                            'oxuser__oxmobfon', 'oxuser__oxprivfon');
+
         $aInvAdress = oxConfig::getParameter( 'invadr', $aRawVal );
 
         $sUserName  = $oUser->oxuser__oxusername->value;
@@ -659,7 +658,7 @@ class oxcmp_user extends oxView
                 $oUser->oxuser__oxactive   = new oxField(1, oxField::T_RAW);
                 $oUser->oxuser__oxrights   = new oxField('user', oxField::T_RAW);
                 $oUser->oxuser__oxshopid   = new oxField($this->getConfig()->getShopId(), oxField::T_RAW);
-                list ($sFName, $sLName)    = split(' ', $aData['fullname']);
+                list ($sFName, $sLName)    = explode(' ', $aData['fullname']);
                 $oUser->oxuser__oxfname    = new oxField($sFName, oxField::T_RAW);
                 $oUser->oxuser__oxlname    = new oxField($sLName, oxField::T_RAW);
 
@@ -690,10 +689,6 @@ class oxcmp_user extends oxView
                 $oUser->openIdLogin( $oUser->oxuser__oxusername->value );
             } catch ( oxUserException $oEx ) {
                 // for login component send excpetion text to a custom component (if defined)
-                oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true );
-            } catch( oxConnectionException $oEx ) {
-                //connection to external resource broken, change message and pass to the view
-                $oEx->setMessage( 'EXCEPTION_ACTIONNOTPOSSIBLEATTHEMOMENT' );
                 oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true );
             }
 

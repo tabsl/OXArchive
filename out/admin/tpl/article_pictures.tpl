@@ -2,29 +2,6 @@
 
 <script type="text/javascript">
 <!--
-[{ if $updatelist == 1}]
-    UpdateList('[{ $oxid }]');
-[{ /if}]
-
-function UpdateList( sID)
-{
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
-function EditThis( sID)
-{
-    var oTransfer = document.getElementById("transfer");
-    oTransfer.oxid.value=sID;
-    oTransfer.cl.value='article_main';
-    oTransfer.submit();
-
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.actedit.value = 0;
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
 function DeletePic( sField )
 {
     var oForm = document.getElementById("myedit");
@@ -32,7 +9,20 @@ function DeletePic( sField )
     oForm.fnc.value='save';
     oForm.submit();
 }
+function editThis( sID )
+{
+    var oTransfer = top.basefrm.edit.document.getElementById( "transfer" );
+    oTransfer.oxid.value = sID;
+    oTransfer.cl.value = top.basefrm.list.sDefClass;
 
+    //forcing edit frame to reload after submit
+    top.forceReloadingEditFrame();
+
+    var oSearch = top.basefrm.list.document.getElementById( "search" );
+    oSearch.oxid.value = sID;
+    oSearch.actedit.value = 0;
+    oSearch.submit();
+}
 //-->
 </script>
 
@@ -73,7 +63,7 @@ function DeletePic( sField )
             <b>[{ oxmultilang ident="GENERAL_VARIANTE" }]</b>
             </td>
             <td class="edittext" colspan="2">
-            <a href="Javascript:EditThis('[{ $parentarticle->oxarticles__oxid->value}]');" class="edittext"><b>[{ $parentarticle->oxarticles__oxartnum->value }] [{ $parentarticle->oxarticles__oxtitle->value }]</b></a>
+            <a href="Javascript:editThis('[{ $parentarticle->oxarticles__oxid->value}]');" class="edittext"><b>[{ $parentarticle->oxarticles__oxartnum->value }] [{ $parentarticle->oxarticles__oxtitle->value }]</b></a>
             </td>
         </tr>
         [{ /if}]

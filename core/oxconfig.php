@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxconfig.php 19886 2009-06-16 12:39:06Z alfonsas $
+ * $Id: oxconfig.php 20457 2009-06-25 13:21:33Z vilma $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -493,6 +493,7 @@ class oxConfig extends oxSuperCfg
                         break;
                     default:
                         $this->setConfigParam( $sVarName, $sVarVal );
+                        break;
                 }
 
                 $oRs->moveNext();
@@ -1026,8 +1027,8 @@ class oxConfig extends oxSuperCfg
      * Returns url to out dir
      *
      * @param bool $blSSL       Whether to force ssl
-     * @param bool $blNativeImg Whether to force native image dirs
      * @param bool $blAdmin     Whether to force admin
+     * @param bool $blNativeImg Whether to force native image dirs
      *
      * @return string
      */
@@ -1777,7 +1778,8 @@ class oxConfig extends oxSuperCfg
                     break;
                 default:
                     $sValue = $sVarVal;
-                }
+                    break;
+            }
         }
         return $sValue;
     }

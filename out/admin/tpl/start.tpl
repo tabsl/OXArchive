@@ -54,7 +54,7 @@ function reloadListFrame()
 {
   if (top.basefrm.list) {
       if (top.basefrm.list.document.reloadFrame) {
-          top.basefrm.edit.UpdateList();
+          top.oxid.admin.updateList();
       }
   }
 }
@@ -65,33 +65,13 @@ function reloadListEditFrames()
   reloadEditFrame();
 }
 
-
 function loadEditFrame(sUrl)
 {
     top.basefrm.edit.document.location = sUrl;
 }
-
-
-[{*
-function focusPopup()
-{
-    var oItem = parent.parent.document.getElementById('basefrm').contentDocument.getElementById('edit');
-    if ( oItem && oItem.contentDocument && oItem.contentDocument.body && oItem.contentDocument.body.ajaxpopup ) {
-        console.log(oItem.contentDocument.ajaxpopup);
-    }
-}
-
-function registerPopupHandler()
-{
-    var oItem = document.getElementById('navigation');
-    if ( oItem ) {
-        oItem.contentDocument.getElementById('navigation').contentDocument.body.onclick = focusPopup;
-    }
-}
-window.onload = registerPopupHandler;
-*}]
 //-->
 </script>
+<script type="text/javascript" src="[{$shop->basetpldir}]oxid.js"></script>
 </html>
 
 <frameset rows="54,*" border="0">

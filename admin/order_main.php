@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: order_main.php 18346 2009-04-20 08:39:52Z rimvydas.paskevicius $
+ * $Id: order_main.php 20675 2009-07-08 13:44:08Z arvydas $
  */
 
 /**
@@ -52,15 +52,15 @@ class Order_Main extends oxAdminDetails
             $this->_aViewData["updatelist"] =  "1";
         }
 
-        if ( $soxId != "-1" && isset( $soxId)) {
+        if ( $soxId != "-1" && isset( $soxId ) ) {
             // load object
             $oOrder = oxNew( "oxorder" );
-            $oOrder->Load( $soxId);
+            $oOrder->load( $soxId);
 
             // paid ?
             if ( $oOrder->oxorder__oxpaid->value != "0000-00-00 00:00:00") {
                 $oOrder->blIsPaid = true;
-                $oOrder->oxorder__oxpaid->setValue( oxUtilsDate::getInstance()->formatDBDate( $oOrder->oxorder__oxpaid->value));
+                $oOrder->oxorder__oxpaid->setValue( oxUtilsDate::getInstance()->formatDBDate( $oOrder->oxorder__oxpaid->value ) );
             }
 
             $this->_aViewData["edit"] =  $oOrder;
@@ -76,7 +76,7 @@ class Order_Main extends oxAdminDetails
                 // order sum in default currency
                 $dPrice = $oOrder->oxorder__oxtotalbrutsum->value / $oOrder->oxorder__oxcurrate->value;
 
-                $this->_aViewData["oPayments"] =  oxPaymentList::getInstance()->getPaymentList( $oOrder->oxorder__oxdeltype->value, $dPrice, $oUser );
+                $this->_aViewData["oPayments"] = oxPaymentList::getInstance()->getPaymentList( $oOrder->oxorder__oxdeltype->value, $dPrice, $oUser );
             }
 
             // any voucher used ?
@@ -84,7 +84,6 @@ class Order_Main extends oxAdminDetails
         }
 
         $this->_aViewData["sNowValue"] = date("Y-m-d H:i:s", oxUtilsDate::getInstance()->getTime());
-
         return "order_main.tpl";
     }
 
@@ -100,9 +99,6 @@ class Order_Main extends oxAdminDetails
         $aParams    = oxConfig::getParameter( "editval");
         $aDynvalues = oxConfig::getParameter( "dynvalue");
 
-        $blChangeDelivery = false;
-        $blChangeDiscount = false;
-
             // shopid
             $sShopID = oxSession::getVar( "actshop");
             $aParams['oxorder__oxshopid'] = $sShopID;
@@ -110,12 +106,6 @@ class Order_Main extends oxAdminDetails
         $oOrder = oxNew( "oxorder" );
         if ( $soxId != "-1") {
             $oOrder->load( $soxId);
-            if ( $oOrder->oxorder__oxdelcost->value != $aParams['oxorder__oxdelcost'] ) {
-                $blChangeDelivery = true;
-            }
-            if ( $oOrder->oxorder__oxdiscount->value != $aParams['oxorder__oxdiscount'] ) {
-                $blChangeDiscount = true;
-            }
         } else {
             $aParams['oxorder__oxid'] = null;
         }
@@ -130,18 +120,20 @@ class Order_Main extends oxAdminDetails
             $oPayment->save();
         }
 
-        $oOrder->save();
+        // keeps old delivery cost
+        $oOrder->reloadDelivery( false );
 
-        if ( $blChangeDelivery || $blChangeDiscount ) {
-            $oOrder->recalculateOrder( array(), $blChangeDelivery, $blChangeDiscount );
-        }
+        // keeps old discount
+        $oOrder->reloadDiscount( false );
+
+        $oOrder->recalculateOrder();
 
         // set oxid if inserted
         if ( $soxId == "-1")
             oxSession::setVar( "saved_oxid", $oOrder->oxorder__oxid->value);
 
         // reloading upper frame
-        $this->_aViewData["updatelist"] =  "1";
+        $this->_aViewData["updatelist"] = "1";
     }
 
     /**
@@ -203,15 +195,12 @@ class Order_Main extends oxAdminDetails
      */
     public function changeDelSet()
     {
-        $soxId  = oxConfig::getParameter( "oxid");
         $oOrder = oxNew( "oxorder" );
-        if ($oOrder->load( $soxId)) {
-            $sDelType = oxConfig::getParameter( "setDelSet");
-            $oOrder->oxorder__oxdeltype->setValue($sDelType);
-            $oOrder->oxorder__oxpaymenttype->setValue("oxempty");
-            $oOrder->save();
-
-            $oOrder->recalculateOrder( array() );
+        if ( ( $sDelSetId = oxConfig::getParameter( "setDelSet" ) ) &&
+             $oOrder->load( oxConfig::getParameter( "oxid" ) ) ) {
+            $oOrder->oxorder__oxpaymenttype->setValue( "oxempty" );
+            $oOrder->setDelivery( $sDelSetId );
+            $oOrder->recalculateOrder();
         }
     }
 
@@ -223,14 +212,11 @@ class Order_Main extends oxAdminDetails
      */
     public function changePayment()
     {
-        $soxId  = oxConfig::getParameter( "oxid");
         $oOrder = oxNew( "oxorder" );
-        if ($oOrder->load( $soxId)) {
-            $sPayment = oxConfig::getParameter( "setPayment");
-            $oOrder->oxorder__oxpaymenttype->setValue($sPayment);
-            $oOrder->save();
-
-            $oOrder->recalculateOrder( array() );
+        if ( ( $sPayId = oxConfig::getParameter( "setPayment") ) &&
+             $oOrder->load( oxConfig::getParameter( "oxid" ) ) ) {
+            $oOrder->oxorder__oxpaymenttype->setValue( $sPayId );
+            $oOrder->recalculateOrder();
         }
     }
 }

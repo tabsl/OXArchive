@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: shop_config.php 17644 2009-03-27 14:00:12Z arvydas $
+ * $Id: shop_config.php 21092 2009-07-22 14:42:13Z vilma $
  */
 
 /**
@@ -300,7 +300,7 @@ class Shop_Config extends oxAdminDetails
 
         foreach ($aLines as $sLine) {
             $sLine = trim($sLine);
-            if ($sLine != "" && ereg("(.+)=>(.+)", $sLine, $regs)) {
+            if ($sLine != "" && preg_match("/(.+)=>(.+)/", $sLine, $regs)) {
                 $key = trim($regs[1]);
                 $val = trim($regs[2]);
                 if ($key != "" && $val != "")

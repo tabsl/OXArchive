@@ -8,34 +8,27 @@
 
 <script type="text/javascript">
 <!--
-[{ if $updatelist == 1}]
-    UpdateList('[{ $oxid }]');
-[{ /if}]
-
-function UpdateList( sID)
+window.onload = function ()
 {
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
+    [{ if $updatelist == 1}]
+        top.oxid.admin.updateList('[{ $oxid }]');
+    [{ /if}]
+    top.reloadEditFrame();
 }
-
-function EditThis( sID)
+function editThis( sID )
 {
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    oTransfer.oxid.value=sID;
-    oTransfer.cl.value='article_main';
+    var oTransfer = top.basefrm.edit.document.getElementById( "transfer" );
+    oTransfer.oxid.value = sID;
+    oTransfer.cl.value = top.basefrm.list.sDefClass;
 
     //forcing edit frame to reload after submit
     top.forceReloadingEditFrame();
 
-    var oSearch = parent.list.document.getElementById("search");
+    var oSearch = top.basefrm.list.document.getElementById( "search" );
+    oSearch.oxid.value = sID;
     oSearch.actedit.value = 0;
-    oSearch.oxid.value=sID;
     oSearch.submit();
 }
-
-window.onLoad = top.reloadEditFrame();
-
 //-->
 </script>
 
@@ -82,7 +75,7 @@ window.onLoad = top.reloadEditFrame();
               <b>[{ oxmultilang ident="GENERAL_VARIANTE" }]</b>
             </td>
             <td class="edittext">
-              <a href="Javascript:EditThis('[{ $parentarticle->oxarticles__oxid->value}]');" class="edittext"><b>[{ $parentarticle->oxarticles__oxartnum->value }] [{ $parentarticle->oxarticles__oxtitle->value }]</b></a>
+              <a href="Javascript:editThis('[{ $parentarticle->oxarticles__oxid->value}]');" class="edittext"><b>[{ $parentarticle->oxarticles__oxartnum->value }] [{ $parentarticle->oxarticles__oxtitle->value }]</b></a>
             </td>
           </tr>
           [{ /if}]

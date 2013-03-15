@@ -2,21 +2,13 @@
 
 <script type="text/javascript">
 <!--
-function ChangeEditBar( sLocation, sPos)
+window.onload = function ()
 {
-    var oSearch = document.getElementById("search");
-    oSearch.actedit.value=sPos;
-    oSearch.submit();
-
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    oTransfer.cl.value=sLocation;
-
-    //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();
+    top.reloadEditFrame();
+    [{ if $updatelist == 1}]
+        top.oxid.admin.updateList('[{ $oxid }]');
+    [{ /if}]
 }
-
-window.onLoad = top.reloadEditFrame();
-
 //-->
 </script>
 

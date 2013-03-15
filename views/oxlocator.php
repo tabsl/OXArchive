@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxlocator.php 19619 2009-06-04 15:34:45Z arvydas $
+ * $Id: oxlocator.php 20503 2009-06-26 14:54:11Z vilma $
  */
 
 /**
@@ -543,8 +543,9 @@ class oxLocator extends oxSuperCfg
     /**
      * Searches for current article in article list and sets previous/next product ids
      *
-     * @param oxarticle $oArticle current Article
-     * @param object    $oIdList  articles list containing only fake article objects !!!
+     * @param oxarticle $oArticle       current Article
+     * @param object    $oIdList        articles list containing only fake article objects !!!
+     * @param oxubase   $oLocatorTarget oxubase object
      *
      * @return integer
      */

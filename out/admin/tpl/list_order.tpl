@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
 <!--
-function EditThis( sID)
+function editThis( sID )
 {
     [{assign var="shMen" value=1}]
 
@@ -41,13 +41,6 @@ function EditThis( sID)
     oTransfer.cl.value='admin_order';
     oTransfer.submit();
 }
-
-function ChangeListSize()
-{
-    document.forms.showlist.submit();
-}
-
-
 //-->
 </script>
 
@@ -90,16 +83,16 @@ function ChangeListSize()
         <div class="r1"><div class="b1">
         <input class="listedit" type="text" size="15" maxlength="128" name="where[oxorderarticles.oxtitle]" value="[{ $where->oxorderarticles__oxtitle }]">
         </div></div>
-    </td>    
+    </td>
     <td class="listfilter" colspan="2">
         <div class="r1">
           <div class="b1">
           <div class="find">
-          <select name="viewListSize" class="editinput" onChange="JavaScript:ChangeListSize()">
+          <select name="viewListSize" class="editinput" onChange="JavaScript:top.oxid.admin.changeListSize()">
             <option value="50" [{ if $viewListSize == 50 }]SELECTED[{/if}]>50</option>
             <option value="100" [{ if $viewListSize == 100 }]SELECTED[{/if}]>100</option>
             <option value="200" [{ if $viewListSize == 200 }]SELECTED[{/if}]>200</option>
-          </select>          
+          </select>
           <input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]">
         </div>
         </div>
@@ -120,11 +113,11 @@ function ChangeListSize()
     [{assign var="_cnt" value=$_cnt+1}]
     <tr id="row.[{$_cnt}]">
 
-    <td class="listitem[{ $blWhite }]"><a href="Javascript:EditThis( '[{ $oOrder->oxorder__oxorderid->value }]');" class="listitem[{ $blWhite }]">[{ $oOrder->oxorder__oxorderdate|oxformdate }]</a></td>
-    <td class="listitem[{ $blWhite }]"><a href="Javascript:EditThis( '[{ $oOrder->oxorder__oxorderid->value }]');" class="listitem[{ $blWhite }]">[{ $oOrder->oxorder__oxartnum->value }]</a></td>
-    <td class="listitem[{ $blWhite }]"><a href="Javascript:EditThis( '[{ $oOrder->oxorder__oxorderid->value }]');" class="listitem[{ $blWhite }]">[{ $oOrder->oxorder__oxorderamount->value }]</a></td>
-    <td class="listitem[{ $blWhite }]"><a href="Javascript:EditThis( '[{ $oOrder->oxorder__oxorderid->value }]');" class="listitem[{ $blWhite }]">[{ $oOrder->oxorder__oxtitle->getRawValue() }]</a></td>
-    <td class="listitem[{ $blWhite }]"><a href="Javascript:EditThis( '[{ $oOrder->oxorder__oxorderid->value }]');" class="listitem[{ $blWhite }]">[{ $oOrder->oxorder__oxprice->value }]</a></td>
+    <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{ $oOrder->oxorder__oxorderid->value }]');" class="listitem[{ $blWhite }]">[{ $oOrder->oxorder__oxorderdate|oxformdate }]</a></td>
+    <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{ $oOrder->oxorder__oxorderid->value }]');" class="listitem[{ $blWhite }]">[{ $oOrder->oxorder__oxartnum->value }]</a></td>
+    <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{ $oOrder->oxorder__oxorderid->value }]');" class="listitem[{ $blWhite }]">[{ $oOrder->oxorder__oxorderamount->value }]</a></td>
+    <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{ $oOrder->oxorder__oxorderid->value }]');" class="listitem[{ $blWhite }]">[{ $oOrder->oxorder__oxtitle->getRawValue() }]</a></td>
+    <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{ $oOrder->oxorder__oxorderid->value }]');" class="listitem[{ $blWhite }]">[{ $oOrder->oxorder__oxprice->value }]</a></td>
 </tr>
 [{if $blWhite == "2"}]
     [{assign var="blWhite" value=""}]

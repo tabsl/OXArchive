@@ -2,26 +2,12 @@
 
 <script type="text/javascript">
 <!--
-[{ if $updatelist == 1}]
-    UpdateList('[{ $oxid }]');
-[{ /if}]
-
-function UpdateList( sID)
-{
-    var oSearch = document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
-function refreshParent() 
+window.onload = function ()
 {
     var oSearch = opener.parent.list.document.getElementById("search");
-    oSearch.oxid.value='-1'; 
+    oSearch.oxid.value='-1';
     oSearch.submit();
 }
-
-refreshParent();
-
 //-->
 </script>
 

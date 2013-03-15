@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxnavigationtree.php 19835 2009-06-15 06:57:28Z sarunas $
+ * $Id: oxnavigationtree.php 20610 2009-07-02 12:25:48Z sarunas $
  */
 
 /**
@@ -32,6 +32,11 @@ class OxNavigationTree extends oxSuperCfg
      * stores DOM object for all navigation tree
      */
     protected $_oDom = null;
+    
+    /**
+     * keeps unmodified dom
+     */
+    protected $_oInitialDom = null;
 
     /**
      * Dynamix XML path
@@ -92,12 +97,14 @@ class OxNavigationTree extends oxSuperCfg
     /**
      * Adds links to xml nodes to resolve paths
      *
+     * @param DomDocument $oDom where to add links
+     *
      * @return null
      */
-    protected function _addLinks()
+    protected function _addLinks( $oDom )
     {
         $sURL   = $this->_getAdminUrl();
-        $oXPath = new DomXPath( $this->_oDom );
+        $oXPath = new DomXPath( $oDom );
 
         // building
         $oNodeList = $oXPath->query( "//SUBMENU[@cl]" );
@@ -118,16 +125,17 @@ class OxNavigationTree extends oxSuperCfg
     /**
      * Loads data form XML file, and merges it with main oDomXML.
      *
-     * @param string $sMenuFile whitch file to load
+     * @param string      $sMenuFile which file to load
+     * @param DomDocument $oDom      where to load
      *
      * @return null
      */
-    protected function _loadFromFile( $sMenuFile )
+    protected function _loadFromFile( $sMenuFile, $oDom )
     {
         $oDomFile = new DomDocument();
         $oDomFile->preserveWhiteSpace = false;
         if ( @$oDomFile->load( $sMenuFile ) ) {
-            $this->_merge( $oDomFile );
+            $this->_merge( $oDomFile, $oDom );
         }
     }
 
@@ -353,14 +361,15 @@ class OxNavigationTree extends oxSuperCfg
     /**
      * If oDomXML exist meges nodes
      *
-     * @param object $oDomNew DOMDocument
+     * @param DomDocument $oDomNew   what to merge
+     * @param DomDocument $oDom      where to merge
      *
      * @return null
      */
-    protected function _merge( $oDomNew )
+    protected function _merge( $oDomNew, $oDom )
     {
-        $oXPath = new DOMXPath( $this->_oDom );
-        $this->_mergeNodes( $this->_oDom->documentElement, $oDomNew->documentElement, $oXPath, $this->_oDom, '/OX' );
+        $oXPath = new DOMXPath( $oDom );
+        $this->_mergeNodes( $oDom->documentElement, $oDomNew->documentElement, $oXPath, $oDom, '/OX' );
     }
 
     /**
@@ -532,18 +541,14 @@ class OxNavigationTree extends oxSuperCfg
     }
 
     /**
-     * Returns DomXML
+     * get initial dom, not modified by init method
      *
      * @return DOMDocument
      */
-    public function getDomXml()
+    protected function _getInitialDom()
     {
-        if ( !$this->_oDom ) {
-
+        if ( !$this->_oInitialDom ) {
             $myOxUtlis = oxUtils::getInstance();
-
-            $this->_oDom = new DOMDocument();
-            $this->_oDom->appendChild( new DOMElement( 'OX' ) );
 
             if ( is_array( $aFilesToLoad = $this->_getMenuFiles() ) ) {
 
@@ -571,27 +576,41 @@ class OxNavigationTree extends oxSuperCfg
                     $blReload = true;
                 }
 
-                // fully reloading and building pathes
+                $this->_oInitialDom = new DOMDocument();
                 if ( true || $blReload ) {
+                    // fully reloading and building pathes
+                    $this->_oInitialDom->appendChild( new DOMElement( 'OX' ) );
 
                     foreach ( $aFilesToLoad as $sDynPath ) {
-                        $this->_loadFromFile( $sDynPath );
+                        $this->_loadFromFile( $sDynPath, $this->_oInitialDom );
                     }
 
                     // adds links to menu items
-                    $this->_addLinks( $this->_oDom );
+                    $this->_addLinks( $this->_oInitialDom );
 
                     // adds links to dynamic parts
-                    $this->_addDynLinks( $this->_oDom );
+                    $this->_addDynLinks( $this->_oInitialDom );
                     // writing to cache
                     $myOxUtlis->toFileCache( 'menu_' . $sDynLang . '_xml', $this->getDomXml()->saveXML() );
                 } else {
                     // loading from cached file
-                    $this->_oDom = new DomDocument();
-                    $this->_oDom->preserveWhiteSpace = false;
-                    $this->_oDom->loadXML( $sCacheContents );
+                    $this->_oInitialDom->preserveWhiteSpace = false;
+                    $this->_oInitialDom->loadXML( $sCacheContents );
                 }
             }
+        }
+        return $this->_oInitialDom;
+    }
+
+    /**
+     * Returns DomXML
+     *
+     * @return DOMDocument
+     */
+    public function getDomXml()
+    {
+        if ( !$this->_oDom ) {
+            $this->_oDom = clone $this->_getInitialDom();
         }
 
         return $this->_oDom;
@@ -722,7 +741,7 @@ class OxNavigationTree extends oxSuperCfg
     {
         $sClassId = null;
 
-        $oXPath = new DOMXPath( $this->_oDom );
+        $oXPath = new DOMXPath( $this->_getInitialDom() );
         $oNodeList = $oXPath->query( "//*[@cl='{$sClassName}' or @list='{$sClassName}']" );
 
         if ( $oNodeList->length ) {

@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
 <!--
-function EditThis( sID)
+function editThis( sID)
 {
     var oTransfer = document.getElementById("transfer");
     oTransfer.oxid.value=sID;
@@ -18,15 +18,13 @@ function EditThis( sID)
     }
 }
 
-function ChangeLanguage()
+function changeLanguage()
 {
     var oList = document.getElementById("showlist");
     oList.language.value=oList.changelang.value;
     oList.editlanguage.value=oList.changelang.value;
     oList.submit();
 }
-
-
 //-->
 </script>
 
@@ -42,75 +40,75 @@ function ChangeLanguage()
 </form>
 
 [{if $sql}]
-	<span class="listitem">
-	[{ oxmultilang ident="SHOWLIST_SQL" }] :[{$sql}]<br> 
-	[{ oxmultilang ident="SHOWLIST_CNT" }] : [{$resultcount}]<br>
-	</span>
+    <span class="listitem">
+    [{ oxmultilang ident="SHOWLIST_SQL" }] :[{$sql}]<br>
+    [{ oxmultilang ident="SHOWLIST_CNT" }] : [{$resultcount}]<br>
+    </span>
 [{/if}]
 [{ if $noresult }]
-	<span class="listitem">
-		<b>[{ oxmultilang ident="SHOWLIST_NORESULTS" }]</b><br><br>
-	</span>
+    <span class="listitem">
+        <b>[{ oxmultilang ident="SHOWLIST_NORESULTS" }]</b><br><br>
+    </span>
 [{/if}]
 <table cellspacing="0" cellpadding="0" border="0" width="99%">
 <tr class="listitem">
 <td height="4"></td>
 </tr>
 <tr>
-	<td class="listedit" height="15">&nbsp;</td>
-	<form name="showlist" id="showlist" action="[{ $shop->selflink }]" method="post">
-	[{ $shop->hiddensid }]
-	<input type="hidden" name="cl" value="showlist">
-	<input type="hidden" name="sort" value="">
-	<input type="hidden" name="file" value="[{ $sFile }]">
-	[{if $blEmployMultilanguage}]
-	<input type="hidden" name="language" value="[{ $actlang }]">
+    <td class="listedit" height="15">&nbsp;</td>
+    <form name="showlist" id="showlist" action="[{ $shop->selflink }]" method="post">
+    [{ $shop->hiddensid }]
+    <input type="hidden" name="cl" value="showlist">
+    <input type="hidden" name="sort" value="">
+    <input type="hidden" name="file" value="[{ $sFile }]">
+    [{if $blEmployMultilanguage}]
+    <input type="hidden" name="language" value="[{ $actlang }]">
     <input type="hidden" name="editlanguage" value="[{ $actlang }]">
     [{/if}]
-	[{foreach from=$finput key=iSel item=field}]
-	[{if $field != "oxid"}]
+    [{foreach from=$finput key=iSel item=field}]
+    [{if $field != "oxid"}]
         <td class="listedit">
-    	[{if $field != "none" }]
-    		    <input class="listedit" type="text" size="15" maxlength="128" name="where[[{$iSel}]]" value="[{$where.$iSel}]">
-    	[{/if}]
+        [{if $field != "none" }]
+                <input class="listedit" type="text" size="15" maxlength="128" name="where[[{$iSel}]]" value="[{$where.$iSel}]">
+        [{/if}]
         </td>
-   	[{/if}]
-	[{/foreach}]
-	<td class="listedit" nowrap>
-	[{if $blEmployMultilanguage}]
-	<select name="changelang" class="editinput" onChange="Javascript:ChangeLanguage();">
-	    [{foreach from=$languages item=lang}]
-	    <option value="[{ $lang->id }]" [{ if $lang->selected}]SELECTED[{/if}]>[{ $lang->name }]</option>
-	    [{/foreach}]
-	    </select>
-	[{/if}]
-	<input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]">
-	</td>
+       [{/if}]
+    [{/foreach}]
+    <td class="listedit" nowrap>
+    [{if $blEmployMultilanguage}]
+    <select name="changelang" class="editinput" onChange="Javascript:changeLanguage();">
+        [{foreach from=$languages item=lang}]
+        <option value="[{ $lang->id }]" [{ if $lang->selected}]SELECTED[{/if}]>[{ $lang->name }]</option>
+        [{/foreach}]
+        </select>
+    [{/if}]
+    <input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]">
+    </td>
 </tr>
 <tr>
     <td class="listheader" height="15">&nbsp;</td>
-	[{foreach from=$fieldnameslist key=iSel item=field}]
-	[{ if $field.multilang != "oxid" }]
-	    <td class="listheader"><a href="javascript:document.forms.showlist.sort.value='[{$field.sorting}]';document.forms.showlist.submit();" class="listheader">[{$field.multilang}]</a></td>
-	[{/if}]
-	[{/foreach}]
-	<td class="listheader" height="15">&nbsp;</td>
+    [{foreach from=$fieldnameslist key=iSel item=field}]
+    [{ if $field.multilang != "oxid" }]
+        <td class="listheader"><a href="javascript:document.forms.showlist.sort.value='[{$field.sorting}]';document.forms.showlist.submit();" class="listheader">[{$field.multilang}]</a></td>
+    [{/if}]
+    [{/foreach}]
+    <td class="listheader" height="15">&nbsp;</td>
 </tr>
 
 [{foreach from=$resultset item=row}]
 <tr>
-	<td class="listitem[{ $blWhite }]" height="15">&nbsp;</td>
-	[{foreach from=$fieldlist key=iSel item=field}]
-		[{ if $field != "oxid" }]
-	    <td class="listitem[{ $blWhite }]"><a href="Javascript:EditThis( '[{$row.oxid}]');" class="listitem[{ $blWhite }]">[{ $row.$field }]</a></td>
-		[{/if}]
-	[{/foreach}]
-	<td class="listitem[{ $blWhite }]" height="15">&nbsp;</td>
+    <td class="listitem[{ $blWhite }]" height="15">&nbsp;</td>
+    [{foreach from=$fieldlist key=iSel item=field}]
+        [{ if $field != "oxid" }]
+        <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{$row.oxid}]');" class="listitem[{ $blWhite }]">[{ $row.$field }]</a></td>
+        [{/if}]
+    [{/foreach}]
+    <td class="listitem[{ $blWhite }]" height="15">&nbsp;</td>
 </tr>
 [{if $blWhite == "2"}]
-	[{assign var="blWhite" value=""}]
+    [{assign var="blWhite" value=""}]
 [{else}]
-	[{assign var="blWhite" value="2"}]
+    [{assign var="blWhite" value="2"}]
 [{/if}]
 [{/foreach}]
 
@@ -126,7 +124,7 @@ function ChangeLanguage()
 
 [{/if}]
 <script type="text/javascript">
-if (parent.parent) 
+if (parent.parent)
 {   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->getRawValue()|oxaddslashes}]";
     parent.parent.sMenuItem    = "";
     parent.parent.sMenuSubItem = "[{$header}]";

@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: genexport_do.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: genexport_do.php 21075 2009-07-21 11:59:29Z arvydas $
  */
 
 /**
@@ -45,17 +45,15 @@ class GenExport_Do extends DynExportBase
      *
      * @return bool
      */
-    public function nextTick( $iCnt)
+    public function nextTick( $iCnt )
     {
-        $blContinue = true;
-
-        $oArticle = $this->getOneArticle( $iCnt, $blContinue);
-
-        if ( isset( $oArticle) && $oArticle) {
+        $iExportedItems = $iCnt;
+        if ( $oArticle = $this->getOneArticle( $iCnt, $blContinue ) ) {
             $smarty = oxUtilsView::getInstance()->getSmarty();
             $smarty->assign_by_ref( "linenr", $iCnt );
             $smarty->assign_by_ref( "article", $oArticle );
-            $this->write( $smarty->fetch( "genexport.tpl", $this->getViewID()) );
+            $this->write( $smarty->fetch( "genexport.tpl", $this->getViewID() ) );
+            return ++$iExportedItems;
         }
 
         return $blContinue;

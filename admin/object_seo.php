@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: object_seo.php 19622 2009-06-04 16:54:41Z arvydas $
+ * $Id: object_seo.php 21225 2009-07-31 14:07:41Z arvydas $
  */
 
 /**
@@ -62,7 +62,8 @@ class Object_Seo extends oxAdminDetails
             $aSeoData = ( is_array( $aSeoData ) && isset( $aSeoData[0] ) )?$aSeoData[0]:array();
 
             // setting default values if empty
-            if ( !isset( $aSeoData['OXSEOURL'] ) || !$aSeoData['OXSEOURL'] ) {
+            if ( !isset( $aSeoData['OXSEOURL'] ) || !$aSeoData['OXSEOURL'] ||
+                 ( isset( $aSeoData['OXEXPIRED'] ) && $aSeoData['OXEXPIRED'] ) ) {
                 $aSeoData['OXSEOURL'] = $this->_getSeoUrl( $oObject );
             }
 
@@ -164,13 +165,23 @@ class Object_Seo extends oxAdminDetails
             $oEncoder = oxSeoEncoder::getInstance();
 
             // marking self and page links as expired
-            $oEncoder->markAsExpired( $sOxid, $this->getconfig()->getShopId(), 1, $this->_iEditLang );
+            $oEncoder->markAsExpired( $sOxid, $this->getconfig()->getShopId(), 1, $this->getEditLang() );
 
             // saving
-            $oEncoder->addSeoEntry( $sOxid, $iShopId, $this->_iEditLang, $this->_getStdUrl( oxConfig::getParameter( 'oxid' ) ),
+            $oEncoder->addSeoEntry( $sOxid, $iShopId, $this->getEditLang(), $this->_getStdUrl( oxConfig::getParameter( 'oxid' ) ),
                                     $aSeoData['oxseourl'], $this->_getSeoEntryType(), $aSeoData['oxfixed'],
-                                    trim( $aSeoData['oxkeywords'] ), trim( $aSeoData['oxdescription'] ), $this->processParam( $aSeoData['oxparams'] ) );
+                                    trim( $aSeoData['oxkeywords'] ), trim( $aSeoData['oxdescription'] ), $this->processParam( $aSeoData['oxparams'] ), true );
         }
+    }
+
+    /**
+     * Returns edit language id
+     *
+     * @return int
+     */
+    public function getEditLang()
+    {
+        return $this->_iEditLang;
     }
 
     /**

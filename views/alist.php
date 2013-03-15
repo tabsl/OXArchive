@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: alist.php 19632 2009-06-05 13:14:07Z arvydas $
+ * $Id: alist.php 20575 2009-07-01 10:35:29Z arvydas $
  */
 
 /**
@@ -446,12 +446,12 @@ class aList extends oxUBase
     /**
      * Returns current view keywords seperated by comma
      *
-     * @param string $sKeywords data to use as keywords
+     * @param string $sKeywords               data to use as keywords
      * @param bool   $blRemoveDuplicatedWords remove dublicated words
      *
      * @return string
      */
-    protected function _prepareMetaKeyword( $sKeywords, $blRemoveDuplicatedWords = false )
+    protected function _prepareMetaKeyword( $sKeywords, $blRemoveDuplicatedWords = true )
     {
         $sKeywords = '';
         if ( ( $oCategory = $this->getActCategory() ) ) {
@@ -793,7 +793,6 @@ class aList extends oxUBase
     public function getPageNavigation()
     {
         if ( $this->_oPageNavigation === null ) {
-            $this->_oPageNavigation = false;
             $this->_oPageNavigation = $this->generatePageNavigation();
         }
         return $this->_oPageNavigation;

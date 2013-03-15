@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: dyn_adbutler.php 17209 2009-03-13 16:32:12Z arvydas $
+ * $Id: dyn_adbutler.php 21190 2009-07-29 15:14:45Z vilma $
  */
 
 /**
@@ -39,7 +39,9 @@ class dyn_adbutler extends dyn_interface
     {
         parent::render();
 
-        $this->_aViewData["edit"] = $this->_getEditShop( oxSession::getVar( "actshop") );
+        $oShop = oxNew( "oxshop" );
+        $oShop->load( oxSession::getVar( "actshop") );
+        $this->_aViewData["edit"] = $oShop;
 
         return "dyn_adbutler.tpl";
     }
@@ -56,10 +58,28 @@ class dyn_adbutler extends dyn_interface
 
         $oShop = oxNew( "oxshop" );
         $oShop->load( $soxId);
+        
+        $aParams['oxshops__oxadbutlerid'] = $this->_checkId($aParams['oxshops__oxadbutlerid']);
 
         //$aParams = $oShop->ConvertNameArray2Idx( $aParams);
         $oShop->assign( $aParams);
 
         $oShop->save();
+    }
+
+    /**
+     * Checks if entered id has 9 numbers, if not adds zeros to the front.
+     *
+     * @param string $sProgrammId programm id
+     *
+     * @return string
+     */
+    public function _checkId( $sProgrammId )
+    {
+        $iIdLen = strlen( $sProgrammId );
+        if ( $iIdLen < 9 ) {
+        	$sProgrammId = str_repeat( "0", 9-$iIdLen ) . $sProgrammId;
+        }
+        return $sProgrammId;
     }
 }

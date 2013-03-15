@@ -33,7 +33,7 @@
             [{/if}]
         [{/if}]
     [{else}]
-     [{ oxmultilang ident="AUCTMASTER_DO_EXPORTING1" }][{ $iStart}] [{ oxmultilang ident="AUCTMASTER_DO_EXPORTING2" }] [{ $iEnd }].
+     [{ oxmultilang ident="AUCTMASTER_DO_EXPORTING1" }][{ $iStart|default:0}] [{ oxmultilang ident="AUCTMASTER_DO_EXPORTING2" }] [{ $iEnd }].
     [{/if}]
 </td>
 </table>

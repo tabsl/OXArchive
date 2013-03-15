@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: start.php 19384 2009-05-26 13:16:18Z rimvydas.paskevicius $
+ * $Id: start.php 20551 2009-06-30 12:04:07Z arvydas $
  */
 
 /**
@@ -223,7 +223,7 @@ class Start extends oxUBase
      * If $sKeywords parameter comes empty, sets to it article title and description.
      * It happens if current view has no meta data defined in oxcontent table
      *
-     * @param string $sKeywords data to use as keywords
+     * @param string $sKeywords               data to use as keywords
      * @param bool   $blRemoveDuplicatedWords remove dublicated words
      *
      * @return string
@@ -237,7 +237,7 @@ class Start extends oxUBase
             $sKeywords = $oDescField->value;
         }
 
-        return parent::_prepareMetaKeyword( $sKeywords, true );
+        return parent::_prepareMetaKeyword( $sKeywords, $blRemoveDuplicatedWords );
     }
 
     /**

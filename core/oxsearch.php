@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxsearch.php 18825 2009-05-06 08:05:58Z vilma $l
+ * $Id: oxsearch.php 20457 2009-06-25 13:21:33Z vilma $l
  */
 
 /**
@@ -213,7 +213,7 @@ class oxSearch extends oxSuperCfg
                 $sSelect = "select {$sSelectFields} from {$sArticleTable}, {$sO2CView} as
                             oxobject2category {$sDescTable} where oxobject2category.oxcatnid='{$sInitialSearchCat}' and
                             oxobject2category.oxobjectid={$sArticleTable}.oxid and {$sDescJoin} ";
-           }
+            }
         }
 
         $sSelect .= $oArticle->getSqlActiveSnippet();

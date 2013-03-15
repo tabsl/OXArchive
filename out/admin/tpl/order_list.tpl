@@ -8,40 +8,6 @@
 
 <script type="text/javascript">
 <!--
-function EditThis( sID)
-{
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    oTransfer.oxid.value=sID;
-    oTransfer.cl.value='[{if $actlocation}][{$actlocation}][{else}][{ $default_edit }][{/if}]';
-
-    //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();
-
-    var oSearch = document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
-function DeleteThis( sID)
-{
-    blCheck = confirm("[{ oxmultilang ident="GENERAL_YOUWANTTODELETE" }]");
-    if( blCheck == true)
-    {
-        var oTransfer = parent.edit.document.getElementById("transfer");
-        oTransfer.oxid.value='-1';
-        oTransfer.cl.value='[{ $default_edit }]';
-
-        //forcing edit frame to reload after submit
-        top.forceReloadingEditFrame();
-
-        var oSearch = document.getElementById("search");
-        oSearch.oxid.value=sID;
-        oSearch.fnc.value='deleteentry';
-        oSearch.actedit.value=0;
-        oSearch.submit();
-    }
-}
-
 function StornoThisArticle( sID)
 {
     blCheck = confirm("[{ oxmultilang ident="ORDER_LIST_YOUWANTTOSTORNO" }]");
@@ -61,25 +27,13 @@ function StornoThisArticle( sID)
        oSearch.submit();
     }
 }
-
-function ChangeEditBar( sLocation, sPos)
+window.onload = function ()
 {
-    var oSearch = document.getElementById("search");
-    oSearch.actedit.value=sPos;
-    oSearch.submit();
-
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    if ( oTransfer!= null)
-    {
-        oTransfer.cl.value=sLocation;
-
-        //forcing edit frame to reload after submit
-        top.forceReloadingEditFrame();
-    }
+    top.reloadEditFrame();
+    [{ if $updatelist == 1}]
+        top.oxid.admin.updateList('[{ $oxid }]');
+    [{ /if}]
 }
-
-window.onLoad = top.reloadEditFrame();
-
 //-->
 </script>
 
@@ -159,13 +113,13 @@ window.onLoad = top.reloadEditFrame();
     [{ if $listitem->getId() == $oxid }]
         [{assign var="listclass" value=listitem4 }]
     [{ /if}]
-    <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating">&nbsp;<a href="Javascript:EditThis('[{ $listitem->oxorder__oxid->value}]');" class="[{ $listclass}]">[{ $listitem->oxorder__oxorderdate|oxformdate:'datetime':true }]</a></div></td>
-    <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:EditThis('[{ $listitem->oxorder__oxid->value}]');" class="[{ $listclass}]">[{ $listitem->oxorder__oxpaid|oxformdate }]</a></div></td>
-    <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:EditThis('[{ $listitem->oxorder__oxid->value}]');" class="[{ $listclass}]">[{ $listitem->oxorder__oxordernr->value }]</a></div></td>
-    <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:EditThis('[{ $listitem->oxorder__oxid->value}]');" class="[{ $listclass}]">[{ $listitem->oxorder__oxbilllname->value }] [{ $listitem->oxorder__oxbillfname->value }]</a></div></td>
+    <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating">&nbsp;<a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxorder__oxid->value}]');" class="[{ $listclass}]">[{ $listitem->oxorder__oxorderdate|oxformdate:'datetime':true }]</a></div></td>
+    <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxorder__oxid->value}]');" class="[{ $listclass}]">[{ $listitem->oxorder__oxpaid|oxformdate }]</a></div></td>
+    <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxorder__oxid->value}]');" class="[{ $listclass}]">[{ $listitem->oxorder__oxordernr->value }]</a></div></td>
+    <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxorder__oxid->value}]');" class="[{ $listclass}]">[{ $listitem->oxorder__oxbilllname->value }] [{ $listitem->oxorder__oxbillfname->value }]</a></div></td>
     <td class="[{ $listclass}]">
         [{if !$readonly}]
-            <a href="Javascript:DeleteThis('[{ $listitem->oxorder__oxid->value }]');" class="delete" id="del.[{$_cnt}]" [{include file="help.tpl" helpid=item_delete}]></a>
+            <a href="Javascript:top.oxid.admin.deleteThis('[{ $listitem->oxorder__oxid->value }]');" class="delete" id="del.[{$_cnt}]" [{include file="help.tpl" helpid=item_delete}]></a>
         [{/if}]</td>
     <td class="[{ $listclass}]">
         [{if !$readonly}]
@@ -179,9 +133,9 @@ window.onLoad = top.reloadEditFrame();
 [{assign var="blWhite" value="2"}]
 [{/if}]
 [{/foreach}]
-</form>
 [{include file="pagenavisnippet.tpl" colspan="6"}]
 </table>
+</form>
 </div>
 
 [{include file="pagetabsnippet.tpl"}]

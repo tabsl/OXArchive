@@ -2,51 +2,30 @@
 
 <script type="text/javascript">
 <!--
-[{ if $updatelist == 1}]
-    UpdateList('[{ $oxid }]');
-[{ /if}]
-function UpdateList( sID)
+function editThis( sID )
 {
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.fnc.value='';
-    oSearch.submit();
-}
+    var oTransfer = top.basefrm.edit.document.getElementById( "transfer" );
+    oTransfer.oxid.value = sID;
+    oTransfer.cl.value = top.basefrm.list.sDefClass;
 
-function EditThis( sID)
-{
-    var oTransfer = document.getElementById("transfer");
-    oTransfer.oxid.value=sID;
-    oTransfer.cl.value='article_main';
-    oTransfer.submit();
+    //forcing edit frame to reload after submit
+    top.forceReloadingEditFrame();
 
-    var oSearch = parent.list.document.getElementById("search");
+    var oSearch = top.basefrm.list.document.getElementById( "search" );
+    oSearch.oxid.value = sID;
     oSearch.actedit.value = 0;
-    oSearch.oxid.value=sID;
     oSearch.submit();
 }
-
-function ChangeLstrt()
+[{if !$oxparentid}]
+window.onload = function ()
 {
-    var oSearch = document.getElementById("search");
-    if (document.search != null && document.search.lstrt != null)
-        oSearch.lstrt.value=0;
+    [{ if $updatelist == 1}]
+        top.oxid.admin.updateList('[{ $oxid }]');
+    [{ /if}]
+    var oField = top.oxid.admin.getLockTarget();
+    oField.onchange = oField.onkeyup = oField.onmouseout = top.oxid.admin.unlockSave;
 }
-
-function UnlockSave(obj)
-{   var saveButton = document.myedit.saveArticle;
-    if ( saveButton != null && obj != null )
-    {
-        if (obj.value.length > 0)
-        {
-            saveButton.disabled = false;
-        }
-        else
-        {
-            saveButton.disabled = true;
-        }
-    }
-}
+[{/if}]
 //-->
 </script>
 
@@ -96,7 +75,7 @@ function UnlockSave(obj)
                     <b>[{ oxmultilang ident="ARTICLE_MAIN_VARIANTE" }]</b>
                 </td>
                 <td class="edittext">
-                  <a href="Javascript:EditThis('[{ $parentarticle->oxarticles__oxid->value}]');" class="edittext"><b>[{ $parentarticle->oxarticles__oxartnum->value }] [{ $parentarticle->oxarticles__oxtitle->value}] [{if !$parentarticle->oxarticles__oxtitle->value }][{ $parentarticle->oxarticles__oxvarselect->value }][{/if}]</b></a>
+                  <a href="Javascript:editThis('[{ $parentarticle->oxarticles__oxid->value}]');" class="edittext"><b>[{ $parentarticle->oxarticles__oxartnum->value }] [{ $parentarticle->oxarticles__oxtitle->value}] [{if !$parentarticle->oxarticles__oxtitle->value }][{ $parentarticle->oxarticles__oxvarselect->value }][{/if}]</b></a>
                 </td>
               </tr>
               [{ /if}]
@@ -127,7 +106,7 @@ function UnlockSave(obj)
                     [{ oxmultilang ident="ARTICLE_MAIN_TITLE" }]&nbsp;
                   </td>
                   <td class="edittext">
-                    <input type="text" class="editinput" size="32" maxlength="[{$edit->oxarticles__oxtitle->fldmax_length}]" name="editval[oxarticles__oxtitle]" value="[{$edit->oxarticles__oxtitle->value}]" [{if !$oxparentid}]onchange="JavaScript:UnlockSave(this);" onkeyup="JavaScript:UnlockSave(this);" onmouseout="JavaScript:UnlockSave(this);"[{/if}] [{ $readonly }]>
+                    <input type="text" class="editinput" size="32" maxlength="[{$edit->oxarticles__oxtitle->fldmax_length}]" id="oLockTarget" name="editval[oxarticles__oxtitle]" value="[{$edit->oxarticles__oxtitle->value}]">
                   </td>
                 </tr>
                 <tr>
@@ -245,7 +224,7 @@ function UnlockSave(obj)
 
               <tr>
                 <td class="edittext" colspan="2"><br><br>
-                <input type="submit" class="edittext" name="saveArticle" value="[{ oxmultilang ident="ARTICLE_MAIN_SAVE" }]" onClick="Javascript:document.myedit.fnc.value='save'" [{ if !$edit->oxarticles__oxtitle->value && !$oxparentid }]disabled[{/if}] [{ $readonly }]>
+                <input type="submit" class="edittext" id="oLockButton" name="saveArticle" value="[{ oxmultilang ident="ARTICLE_MAIN_SAVE" }]" onClick="Javascript:document.myedit.fnc.value='save'" [{ if !$edit->oxarticles__oxtitle->value && !$oxparentid }]disabled[{/if}] [{ $readonly }]>
                 [{if $oxid!=-1 && !$readonly}]
                   <input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="ARTICLE_MAIN_ARTCOPY" }]" onClick="Javascript:document.myedit.fnc.value='copyArticle';" [{ $readonly }]>&nbsp;&nbsp;&nbsp;
                 [{/if}]
@@ -257,7 +236,7 @@ function UnlockSave(obj)
                 [{ oxmultilang ident="ARTICLE_MAIN_INCATEGORY" }]
                 </td>
                 <td class="edittext">
-                <select name="art_category" class="editinput" onChange="Javascript:ChangeLstrt()" [{ $readonly }]>
+                <select name="art_category" class="editinput" onChange="Javascript:top.oxid.admin.changeLstrt()" [{ $readonly }]>
                 <option value="-1">[{ oxmultilang ident="ARTICLE_MAIN_NONE" }]</option>
                 [{foreach from=$oView->getCategoryList() item=pcat}]
                 <option value="[{ $pcat->oxcategories__oxid->value }]">[{ $pcat->oxcategories__oxtitle->value|oxtruncate:40:"..":true }]</option>

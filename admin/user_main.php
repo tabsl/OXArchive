@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: user_main.php 17243 2009-03-16 15:16:57Z arvydas $
+ * $Id: user_main.php 20428 2009-06-23 14:46:14Z vilma $
  */
 
 /**
@@ -149,10 +149,6 @@ class User_Main extends oxAdminDetails
         // checkbox handling
         if ( !isset( $aParams['oxuser__oxactive']))
             $aParams['oxuser__oxactive'] = 0;
-
-        // #1899 (R)
-        if ( isset($aParams['oxuser__oxcompany']))
-            oxConfig::checkSpecialChars($aParams['oxuser__oxcompany']);
 
         $oUser = oxNew( "oxuser" );
         if ( $soxId != "-1")

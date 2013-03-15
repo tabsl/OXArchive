@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxuser.php 19837 2009-06-15 07:32:08Z vilma $
+ * $Id: oxuser.php 20690 2009-07-09 10:46:21Z alfonsas $
  */
 
 /**
@@ -176,22 +176,31 @@ class oxUser extends oxBase
         switch ( $sParamName ) {
             case 'oGroups':
                 return $this->_oGroups = $this->getUserGroups();
+                break;
             case 'iCntNoticeListArticles':
                 return $this->_iCntNoticeListArticles = $this->getNoticeListArtCnt();
+                break;
             case 'iCntWishListArticles':
                 return $this->_iCntWishListArticles = $this->getWishListArtCnt();
+                break;
             case 'iCntRecommLists':
                 return $this->_iCntRecommLists = $this->getRecommListsCount();
+                break;
             case 'oAddresses':
                 return $this->_oAddresses = $this->getUserAddresses();
+                break;
             case 'oPayments':
                 return $this->_oPayments = $this->getUserPayments();
+                break;
             case 'oxuser__oxcountry':
                 return $this->oxuser__oxcountry = $this->getUserCountry();
+                break;
             case 'sDBOptin':
                 return $this->sDBOptin = $this->getNewsSubscription()->getOptInStatus();
+                break;
             case 'sEmailFailed':
                 return $this->sEmailFailed = $this->getNewsSubscription()->getOptInEmailStatus();
+                break;
         }
     }
 
@@ -291,27 +300,47 @@ class oxUser extends oxBase
     /**
      * Returns user defined Address list object
      *
-     * @param string $sOXID object ID (default is null)
+     * @param string $sUserId object ID (default is null)
      *
      * @return object
      */
-    public function getUserAddresses( $sOXID = null )
+    public function getUserAddresses( $sUserId = null )
     {
 
-        if ( isset( $this->_oAddresses ) ) {
-            return $this->_oAddresses;
-        }
+        if ( $this->_oAddresses == null ) {
 
-        if ( !$sOXID ) {
-            $sOXID = $this->getId();
-        }
+            $sSelect = "select * from oxaddress where oxaddress.oxuserid = '".( $sUserId ? $sUserId : $this->getId() )."'";
 
-        //P
-        $this->_oAddresses = oxNew( 'oxlist' );
-        $this->_oAddresses->init( "oxbase", "oxaddress" );
-        $sSelect = 'select * from oxaddress where oxaddress.oxuserid = "'.$sOXID.'" ';
-        $this->_oAddresses->selectString( $sSelect );
+            //P
+            $this->_oAddresses = oxNew( 'oxlist' );
+            $this->_oAddresses->init( "oxbase", "oxaddress" );
+            $this->_oAddresses->selectString( $sSelect );
+
+            // marking selected
+            if ( $sAddressId = $this->getSelectedAddressId() ) {
+                foreach ( $this->_oAddresses as $oAddress ) {
+                    $oAddress->selected = 0;
+                    if ( $oAddress->getId() == $sAddressId ) {
+                        $oAddress->selected = 1;
+                        break;
+                    }
+                }
+            }
+        }
         return $this->_oAddresses;
+    }
+
+    /**
+     * Returns user chosen address id ("oxaddressid" or "deladrid")
+     *
+     * @return string
+     */
+    public function getSelectedAddressId()
+    {
+        if ( !( $sAddressId = oxConfig::getParameter( "oxaddressid") ) ) {
+            $sAddressId = oxSession::getVar( "deladrid" );
+        }
+        return $sAddressId;
     }
 
     /**
@@ -324,41 +353,31 @@ class oxUser extends oxBase
      */
     public function getSelectedAddress( $sWishId = false )
     {
-        $sAddressId = oxConfig::getParameter( "oxaddressid");
-        if ( !$sAddressId ) {
-            $sAddressId = oxSession::getVar( "deladrid" );
-        }
-
-        if ( $sAddressId ) {
-            $sWishId = null;
-        }
-
         $oAddresses = $this->getUserAddresses();
-        if ( $sWishId && $oAddresses->count()) {
-            foreach ( $oAddresses as $oAddress ) {
-                $oAddress->selected = 0;
-                if ( $oAddress->oxaddress__oxaddressuserid->value == $sWishId ) {
-                    $oAddress->selected = 1;
-                    return $oAddress->getId();
+        if ( $oAddresses->count() ) {
+            if ( $sAddressId = $this->getSelectedAddressId() ) {
+                foreach ( $oAddresses as $oAddress ) {
+                    if ( $oAddress->selected == 1 ) {
+                        $sAddressId = $oAddress->getId();
+                        break;
+                    }
+                }
+            } elseif ( $sWishId ) {
+                foreach ( $oAddresses as $oAddress ) {
+                    $oAddress->selected = 0;
+                    if ( $oAddress->oxaddress__oxaddressuserid->value == $sWishId ) {
+                        $oAddress->selected = 1;
+                        $sAddressId = $oAddress->getId();
+                    }
                 }
             }
-        }
 
-        if ( !$sAddressId && $oAddresses->count() ) {
-            $oAddresses->rewind();
-            if ( ( $oCurAdress = $oAddresses->current() ) ) {
-                $sAddressId = $oCurAdress->getId();
-            }
-        }
-
-        // #597A
-        if ( $sAddressId ) {
-            foreach ( $oAddresses as $oAddress ) {
-                $oAddress->selected = 0;
-                if ( $oAddress->getId() == $sAddressId ) {
-                    $oAddress->selected = 1;
-                    break;
-                }
+            // in case none is set - setting first one
+            if ( !$sAddressId ) {
+                $oAddresses->rewind();
+                $oAddress = $oAddresses->current();
+                $oAddress->selected = 1;
+                $sAddressId = $oAddress->getId();
             }
         }
 
@@ -425,6 +444,7 @@ class oxUser extends oxBase
         if ( $blAddRemark && $blRet ) {
             $oRemark = oxNew( 'oxremark' );
             $oRemark->oxremark__oxtext     = new oxField(oxLang::getInstance()->translateString( 'usrRegistered' ), oxField::T_RAW);
+            $oRemark->oxremark__oxtype     = new oxField('r', oxField::T_RAW);
             $oRemark->oxremark__oxparentid = new oxField($this->getId(), oxField::T_RAW);
             $oRemark->save();
         }
@@ -483,10 +503,8 @@ class oxUser extends oxBase
             $oDB = oxDb::getDb();
 
             // deleting stored payment, address, group dependencies, remarks info
-            $rs = $oDB->execute( 'delete from oxuserpayments where oxuserpayments.oxuserid = "'.$sOXID.'" ' );
             $rs = $oDB->execute( 'delete from oxaddress where oxaddress.oxuserid = "'.$sOXID.'" ' );
             $rs = $oDB->execute( 'delete from oxobject2group where oxobject2group.oxobjectid = "'.$sOXID.'" ');
-            $rs = $oDB->execute( 'delete from oxremark where oxparentid = "'.$sOXID.'" ' );
 
             // deleting notice/wish lists
             $rs = $oDB->execute( 'delete oxuserbasketitems.* from oxuserbasketitems, oxuserbaskets where oxuserbasketitems.oxbasketid = oxuserbaskets.oxid and oxuserid = "'.$sOXID.'" ' );
@@ -494,6 +512,9 @@ class oxUser extends oxBase
 
             // deleting Newsletter subscription
             $rs = $oDB->execute( 'delete from oxnewssubscribed where oxuserid = "'.$sOXID.'" ');
+
+            // and leaving all order related information
+            $rs = $oDB->execute( 'delete from oxremark where oxparentid = "'.$sOXID.'" and oxtype !="o"' );
 
             $blDeleted = $rs->EOF;
         }
@@ -643,10 +664,7 @@ class oxUser extends oxBase
     public function getActiveCountry()
     {
         $sDeliveryCountry = '';
-        if (!($soxAddressId = oxConfig::getParameter( 'deladrid' ))) {
-            $soxAddressId = oxSession::getVar( 'deladrid' );
-        }
-        if ( $soxAddressId ) {
+        if ( $soxAddressId = oxConfig::getParameter( 'deladrid' ) ) {
             $oDelAddress = oxNew( 'oxbase' );
             $oDelAddress->init( 'oxaddress' );
             $oDelAddress->load( $soxAddressId );
@@ -685,7 +703,7 @@ class oxUser extends oxBase
         // user without password found - lets use
         if ( isset( $sOXID ) && $sOXID ) {
             // try to update
-            $this->setId( $sOXID );
+            $this->delete( $sOXID );
         } elseif ( $this->_blMallUsers ) { // must be sure if there is no dublicate user
             $sQ = "select oxid from oxuser where oxusername = '{$this->oxuser__oxusername->value}' and oxusername != '' ";
             if ( $oDB->getOne( $sQ ) ) {
@@ -1214,7 +1232,7 @@ class oxUser extends oxBase
         // load from DB
         $aData = $oDb->getAll( $sSelect );
         $sOXID = @$aData[0][0];
-        if ( isset( $sOXID ) && $sOXID && !@$aData[0][1] ) {
+        if ( isset( $sOXID ) && $sOXID ) {
 
             if ( !$this->load( $sOXID ) ) {
                 $oEx = oxNew( 'oxUserException' );
@@ -2239,4 +2257,5 @@ class oxUser extends oxBase
         $sUserId = oxDb::getDb()->getOne('select oxid from oxuser where md5(concat("oxid", oxpassword, oxusername )) = "'.$sReviewUserHash.'"');
         return $sUserId;
     }
+
 }

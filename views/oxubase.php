@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxubase.php 19752 2009-06-10 13:01:01Z arvydas $
+ * $Id: oxubase.php 21135 2009-07-27 10:56:53Z rimvydas.paskevicius $
  */
 
 /**
@@ -1066,6 +1066,7 @@ class oxUBase extends oxView
     {
         if ( $this->_sMetaKeywords === null ) {
             $this->_sMetaKeywords = false;
+            $blRemoveDuplicatedWords = true;
             // set special meta keywords ?
             if ( oxUtils::getInstance()->seoIsActive() && ( $sOxid = $this->_getSeoObjectId() ) &&
                  ( $sKeywords = oxSeoEncoder::getInstance()->getMetaData( $sOxid, 'oxkeywords' ) ) ) {
@@ -1073,12 +1074,14 @@ class oxUBase extends oxView
             } elseif ( $this->_sMetaKeywordsIdent ) {
                 $oContent = oxNew( 'oxcontent' );
                 if ( $oContent->loadByIdent( $this->_sMetaKeywordsIdent ) && $oContent->oxcontents__oxactive->value ) {
-                    $this->_sMetaKeywords = strip_tags( $oContent->oxcontents__oxcontent->value );
+                	$this->_sMetaKeywords = strip_tags( $oContent->oxcontents__oxcontent->value );
+                    $blRemoveDuplicatedWords = false;
                 }
             }
 
-            $this->_sMetaKeywords = $this->_prepareMetaKeyword( $this->_sMetaKeywords );
+            $this->_sMetaKeywords = $this->_prepareMetaKeyword( $this->_sMetaKeywords, $blRemoveDuplicatedWords );
         }
+        
         return $this->_sMetaKeywords;
     }
 
@@ -1364,7 +1367,7 @@ class oxUBase extends oxView
 
             // removing duplicate words
             if ( $blRemoveDuplicatedWords ) {
-                $sMeta = $this->_removeDuplicatedWords( $sMeta );
+                $sMeta = $this->_removeDuplicatedWords( $sMeta, $this->getConfig()->getConfigParam( 'aSkipTags' ) );
             }
 
             // some special cases
@@ -1380,7 +1383,8 @@ class oxUBase extends oxView
     /**
      * Returns current view keywords seperated by comma
      *
-     * @param string $sKeywords data to use as keywords
+     * @param string $sKeywords               data to use as keywords
+     * @param bool   $blRemoveDuplicatedWords if true - performs additional dublicate cleaning
      *
      * @return string of keywords seperated by comma
      */
@@ -1389,10 +1393,8 @@ class oxUBase extends oxView
 
         $sString = $this->_prepareMetaDescription( $sKeywords, -1, false );
 
-        $aSkipTags = $this->getConfig()->getConfigParam( 'aSkipTags' );
-
         if ( $blRemoveDuplicatedWords ) {
-            $sString = $this->_removeDuplicatedWords( $sString, $aSkipTags );
+            $sString = $this->_removeDuplicatedWords( $sString, $this->getConfig()->getConfigParam( 'aSkipTags' ) );
         }
 
         // removing in admin defined strings
@@ -1438,7 +1440,7 @@ class oxUBase extends oxView
             $aStrings[$iNum] = $oStr->strtolower( $aStrings[$iNum] );
             // removing in admin defined strings
             if ( in_array( $aStrings[$iNum], $aSkipTags ) ) {
-              unset( $aStrings[$iNum] );
+                unset( $aStrings[$iNum] );
             }
         }
 
@@ -2086,7 +2088,7 @@ class oxUBase extends oxView
      *
      * @return  stdClass    $pageNavigation Object with pagenavigation data
      */
-    public function generatePageNavigation( )
+    public function generatePageNavigation()
     {
         startProfile('generatePageNavigation');
         // generate the page navigation
@@ -2096,7 +2098,7 @@ class oxUBase extends oxView
         $iActPage = $this->getActPage();
         $pageNavigation->actPage   = $iActPage + 1;
 
-        $sUrl = $this->generatePageNavigationUrl( );
+        $sUrl = $this->generatePageNavigationUrl();
 
         if ( $iActPage > 0) {
             $pageNavigation->previousPage = $this->_addPageNrParam( $sUrl, $iActPage - 1 );

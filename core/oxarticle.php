@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxarticle.php 19670 2009-06-09 10:37:39Z sarunas $
+ * $Id: oxarticle.php 21219 2009-07-31 12:23:49Z arvydas $
  */
 
 // defining supported link types
@@ -36,7 +36,7 @@ define( 'OXARTICLE_LINKTYPE_TAG', 4 );
  *
  * @package core
  */
-class oxArticle extends oxI18n
+class oxArticle extends oxI18n implements oxIArticle
 {
     /**
      * Object core table name
@@ -88,14 +88,14 @@ class oxArticle extends oxI18n
 
     /**
      * Persistent Parameter.
-     * 
+     *
      * @var array
      */
     protected $_aPersistParam  = null;
 
     /**
      * Status of article - buyable/not buyable.
-     * 
+     *
      * @var bool
      */
     protected $_blNotBuyable   = false;
@@ -103,7 +103,7 @@ class oxArticle extends oxI18n
     /**
      * Indicates if we should load variants for current article. When $_blLoadVariants is set to false then
      * neither simple nor full variants for this article are loaded.
-     * 
+     *
      * @var bool
      */
     protected $_blLoadVariants = true;
@@ -116,7 +116,7 @@ class oxArticle extends oxI18n
     protected $_aVariants = null;
 
     /**
-     * Article variants without 
+     * Article variants without
      *
      * @var array
      */
@@ -384,23 +384,6 @@ class oxArticle extends oxI18n
             return true;
         }
         return isset( $this->$sName );
-    }
-
-    /**
-     * Magic setter. disallows oxlongdesc to go to aFieldNames
-     *
-     * @param string $sName  Long field name
-     * @param mixed  $sValue Field value
-     *
-     * @return null
-     */
-    public function __set( $sName, $sValue)
-    {
-        if ($sName == 'oxarticles__oxlongdesc') {
-            $this->$sName = $sValue;
-            return;
-        }
-        return parent::__set($sName, $sValue);
     }
 
     /**
@@ -816,20 +799,6 @@ class oxArticle extends oxI18n
     }
 
     /**
-     * Sets data field value
-     *
-     * @param string $sFieldName index OR name (eg. 'oxarticles__oxtitle') of a data field to set
-     * @param string $sValue     value of data field
-     * @param int    $iDataType  field type
-     *
-     * @return null
-     */
-    protected function _setFieldData( $sFieldName, $sValue, $iDataType = oxField::T_TEXT)
-    {
-        parent::_setFieldData( $sFieldName, $sValue, $iDataType);
-    }
-
-    /**
      * Loads object data from DB (object data ID must be passed to method).
      * Converts dates (oxarticle::oxarticles__oxinsert, oxarticle::oxarticles__oxtimestamp)
      * to international format (oxutils.php oxUtilsDate::getInstance()->formatDBDate(...)).
@@ -1118,7 +1087,6 @@ class oxArticle extends oxI18n
             return $this->_aVariantsWithNotOrderables;
         }
 
-        //return ;
         if (!$this->_blLoadVariants) {
             return array();
         }
@@ -1146,6 +1114,7 @@ class oxArticle extends oxI18n
         } else {
             //loading variants
             $oVariants = oxNew( 'oxarticlelist' );
+            $oVariants->getBaseObject()->modifyCacheKey('_variants');
         }
 
         startProfile("selectVariants");
@@ -1575,6 +1544,8 @@ class oxArticle extends oxI18n
     /**
      * Calculates price of article (adds taxes, currency and discounts).
      *
+     * @param oxPrice $oPrice price object
+     *
      * @return oxPrice
      */
     protected function _calculatePrice( $oPrice )
@@ -1588,7 +1559,8 @@ class oxArticle extends oxI18n
         $this->_applyCurrency( $oPrice );
         // apply discounts
         if ( !$this->skipDiscounts() ) {
-            $this->_applyDiscounts($oPrice, oxDiscountList::getInstance()->getArticleDiscounts($this, $this->getArticleUser()));
+            $oDiscountList = oxDiscountList::getInstance();
+            $oDiscountList->applyDiscounts( $oPrice, $oDiscountList->getArticleDiscounts($this, $this->getArticleUser() ) );
         }
 
         return $oPrice;
@@ -1653,7 +1625,8 @@ class oxArticle extends oxI18n
         // apply discounts
         if ( !$this->skipDiscounts() ) {
             // apply general discounts
-            $this->_applyDiscounts( $oBasketPrice, oxDiscountList::getInstance()->getArticleDiscounts( $this, $oUser ) );
+            $oDiscountList = oxDiscountList::getInstance();
+            $oDiscountList->applyDiscounts( $oBasketPrice, $oDiscountList->getArticleDiscounts( $this, $oUser ) );
         }
 
         // returning final price object
@@ -1668,29 +1641,14 @@ class oxArticle extends oxI18n
      * @param array   $aDiscounts Discount array
      * @param amount  $dAmount    Amount in basket
      *
+     * @deprecated use oxDiscountList::applyBasketDiscounts() instead
+     *
      * @return array
      */
     public function applyBasketDiscounts(oxPrice $oPrice, $aDiscounts, $dAmount = 1)
     {
-        $aDiscLog = array();
-        reset( $aDiscounts );
-
-        // price object to correctly perform calculations
-        $dOldPrice = $oPrice->getBruttoPrice();
-
-        while (list( , $oDiscount) = each($aDiscounts)) {
-            $oDiscount->applyDiscount( $oPrice );
-            $dNewPrice = $oPrice->getBruttoPrice();
-
-            if (!isset($aDiscLog[$oDiscount->getId()])) {
-                $aDiscLog[$oDiscount->getId()] = $oDiscount->getSimpleDiscount();
-            }
-
-            $aDiscLog[$oDiscount->getId()]->dDiscount += $dOldPrice - $dNewPrice;
-            $aDiscLog[$oDiscount->getId()]->dDiscount *= $dAmount;
-            $dOldPrice = $dNewPrice;
-        }
-        return $aDiscLog;
+        $oDiscountList = oxDiscountList::getInstance();
+        return $oDiscountList->applyBasketDiscounts( $oPrice, $aDiscounts, $dAmount );
     }
 
     /**
@@ -2219,6 +2177,19 @@ class oxArticle extends oxI18n
     }
 
     /**
+     * Returns standard product Tag URL
+     *
+     * @param string $sTag tag
+     *
+     * @return string
+     */
+    public function getStdTagLink( $sTag )
+    {
+        $sStdTagLink = $this->getConfig()->getShopHomeURL( $this->getLanguage(), false );
+        return $sStdTagLink . "cl=details&amp;anid=".$this->getId()."&amp;listtype=tag&amp;searchtag=".rawurlencode( $sTag );
+    }
+
+    /**
      * Returns article tags
      *
      * @return string;
@@ -2668,6 +2639,9 @@ class oxArticle extends oxI18n
     /**
      * Removes object data fields (oxarticles__oxtimestamp, oxarticles__oxparentid, oxarticles__oxinsert).
      */
+    /**
+     * @return null
+     */
     protected function _skipSaveFields()
     {
         $myConfig = $this->getConfig();
@@ -2809,7 +2783,8 @@ class oxArticle extends oxI18n
 
         $oUser = $this->getArticleUser();
 
-        $aDiscountList = oxDiscountList::getInstance()->getArticleDiscounts($this, $oUser );
+        $oDiscountList = oxDiscountList::getInstance();
+        $aDiscountList = $oDiscountList->getArticleDiscounts( $this, $oUser );
 
         $oLowestPrice = null;
 
@@ -2826,7 +2801,7 @@ class oxArticle extends oxI18n
             $oItemPrice = oxNew( 'oxprice' );
             if ( $oItem->oxprice2article__oxaddabs->value) {
                 $oItemPrice->setPrice( $oItem->oxprice2article__oxaddabs->value );
-                $this->_applyDiscounts( $oItemPrice, $aDiscountList );
+                $oDiscountList->applyDiscounts( $oItemPrice, $aDiscountList );
                 $this->_applyCurrency( $oItemPrice, $oCur );
             } else {
                 $oItemPrice->setPrice( $dBasePrice );
@@ -2905,6 +2880,8 @@ class oxArticle extends oxI18n
      * apply article and article use
      *
      * @param oxPrice $oPrice target price
+     *
+     * @return null
      */
     public function applyVats( oxPrice $oPrice )
     {
@@ -2919,21 +2896,20 @@ class oxArticle extends oxI18n
      * @param oxprice $oPrice     Price object
      * @param array   $aDiscounts Discount list
      *
+     * @deprecated use oxDiscountList::applyDiscounts() instead
+     *
      * @return null
      */
     protected function _applyDiscounts( $oPrice, $aDiscounts )
     {
-        reset( $aDiscounts );
-        while ( list( , $oDiscount ) = each( $aDiscounts ) ) {
-            $oDiscount->applyDiscount( $oPrice );
-        }
+        $oDiscountList = oxDiscountList::getInstance();
+        $oDiscountList->applyDiscounts( $oPrice, $aDiscounts );
     }
 
     /**
      * Applies discounts which should be applied in general case (for 0 amount)
      *
-     * @param oxprice $oPrice     Price object
-     * @param array   $aDiscounts Discount list
+     * @param oxprice $oPrice Price object
      *
      * @return null
      */
@@ -2941,7 +2917,8 @@ class oxArticle extends oxI18n
     {
         // apply discounts
         if ( !$this->skipDiscounts() ) {
-            $this->_applyDiscounts($oPrice, oxDiscountList::getInstance()->getArticleDiscounts($this, $this->getArticleUser()));
+            $oDiscountList = oxDiscountList::getInstance();
+            $oDiscountList->applyDiscounts( $oPrice, $oDiscountList->getArticleDiscounts( $this, $this->getArticleUser() ) );
         }
     }
 
@@ -2998,8 +2975,8 @@ class oxArticle extends oxI18n
             $sTargetFile = str_replace('_th', '_ico', $sSourceFile);
 
             if ($sSourceFile == $sTargetFile) {
-                $sPattern = '(\.[a-z0-9]*$)';
-                $sTargetFile = eregi_replace($sPattern, '_ico\\1', $sTargetFile);
+                $sPattern = '/(\.[a-z0-9]*$)/i';
+                $sTargetFile = preg_replace($sPattern, '_ico\\1', $sTargetFile);
             }
 
             $sTarget = $myConfig->getAbsDynImageDir().'/icon/'. basename($sTargetFile);
@@ -3080,7 +3057,8 @@ class oxArticle extends oxI18n
         if ( !$iAttrPercent || $iAttrPercent < 0 || $iAttrPercent > 1) {
             $iAttrPercent = 0.70;
         }
-        $iHitMin = round( $iCnt * $iAttrPercent + 0.5);
+        // #1137V iAttributesPercent = 100 doesnt work
+        $iHitMin = ceil( $iCnt * $iAttrPercent );
 
         // we do not use lists here as we dont need this overhead right now
         $aList= array();
@@ -3317,8 +3295,9 @@ class oxArticle extends oxI18n
         $aDoubleCopyFields = array('oxarticles__oxprice',
                                        'oxarticles__oxvat');
 
-        if (!$mValue && in_array($sFieldName, $aDoubleCopyFields))
+        if (!$mValue && in_array($sFieldName, $aDoubleCopyFields)) {
             return true;
+        }
 
 
         if (!strcmp($mValue, '0000-00-00 00:00:00') || !strcmp($mValue, '0000-00-00')) {
@@ -4002,7 +3981,8 @@ class oxArticle extends oxI18n
 
         $this->_blIsRangePrice = false;
 
-        if ($this->_blSkipAbPrice && !$this->_blNotBuyableParent) {
+        // if parent is buyable - do not apply range price calcculations
+        if ($this->_blSkipAbPrice || !$this->_blNotBuyableParent) {
             return;
         }
 
@@ -4054,5 +4034,45 @@ class oxArticle extends oxI18n
             $this->_blIsRangePrice = true;
             $this->_calculatePrice( $this->getPrice() );
         }
+    }
+
+    /**
+     * Returns product id (oxid)
+     *
+     * @return string
+     */
+    public function getProductId()
+    {
+        return $this->getId();
+    }
+
+    /**
+     * Returns product parent id (oxparentid)
+     *
+     * @return string
+     */
+    public function getProductParentId()
+    {
+        return $this->oxarticles__oxparentid->value;
+    }
+
+    /**
+     * Returns false if object is not derived from oxorderarticle class
+     *
+     * @return bool
+     */
+    public function isOrderArticle()
+    {
+        return false;
+    }
+
+    /**
+     * Returns TRUE if product is variant, and false if not
+     *
+     * @return bool
+     */
+    public function isVariant()
+    {
+        return (bool) ( isset( $this->oxarticles__oxparentid ) ? $this->oxarticles__oxparentid->value : false );
     }
 }

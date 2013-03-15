@@ -7,7 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=[{$charset}]">
     <script language="javascript">
         //reloading list frame if needed
-        window.onLoad = top.reloadListEditFrames();
+        window.onload = top.reloadListEditFrames;
     </script>
 </head>
 <body>

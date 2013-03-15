@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxseoencoderarticle.php 19702 2009-06-09 16:07:30Z arvydas $
+ * $Id: oxseoencoderarticle.php 21221 2009-07-31 12:41:23Z arvydas $
  */
 
 /**
@@ -63,6 +63,16 @@ class oxSeoEncoderArticle extends oxSeoEncoder
     }
 
     /**
+     * Returns target "extension" (.html)
+     *
+     * @return string
+     */
+    protected function _getUrlExtension()
+    {
+        return '.html';
+    }
+
+    /**
      * Checks if current article is in same language as preferred (language id passed by param).
      * In case languages are not the same - reloads article object in different language
      *
@@ -100,15 +110,14 @@ class oxSeoEncoderArticle extends oxSeoEncoder
         }
 
         $iShopId = $this->getConfig()->getShopId();
-
-        $sStdUrl = "index.php?cl=details&amp;anid=".$oArticle->getId()."&amp;listtype=tag&amp;searchtag=".rawurlencode( $sTag );
-        $sSeoUrl = $this->_loadFromDb( 'dynamic', $this->_getDynamicObjectId( $iShopId, $sStdUrl ), $iLang );
+        $sStdUrl = $oArticle->getStdTagLink( $sTag );
+        $sSeoUrl = $this->_loadFromDb( 'dynamic', $this->getDynamicObjectId( $iShopId, $sStdUrl ), $iLang );
         if ( !$sSeoUrl ) {
 
             // generating new if not found
             $sSeoUrl  = oxSeoEncoderTag::getInstance()->getTagUri( $sTag, $iLang );
             $sSeoUrl .= $this->_prepareArticleTitle( $oArticle );
-            $sSeoUrl  = $this->_getUniqueSeoUrl( $sSeoUrl, '.html', $this->_getStaticObjectId( $iShopId, $sStdUrl ), $iLang );
+            $sSeoUrl  = $this->_processSeoUrl( $sSeoUrl, $this->_getStaticObjectId( $iShopId, $sStdUrl ), $iLang );
 
             $sSeoUrl = $this->_getDynamicUri( $sStdUrl, $sSeoUrl, $iLang );
         }
@@ -152,7 +161,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
             // writing category path
             $sSeoUrl  = oxSeoEncoderCategory::getInstance()->getCategoryUri( $oCategory );
             $sSeoUrl .= $this->_prepareArticleTitle( $oArticle );
-            $sSeoUrl  = $this->_getUniqueSeoUrl( $sSeoUrl, '.html', $oArticle->getId(), $iLang );
+            $sSeoUrl  = $this->_processSeoUrl( $sSeoUrl, $oArticle->getId(), $iLang );
 
             $this->_saveToDb( 'oxarticle', $oArticle->getId(), $oArticle->getStdLink(), $sSeoUrl, $iLang, null, 0, false, false, $sActCatId );
         }
@@ -181,7 +190,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
         $oView = $this->getConfig()->getActiveView();
         $oActCat = null;
 
-        if ( $oView instanceof oxUBase ) {
+        if ( $oView instanceof oxview ) {
             $oActCat = $oView->getActCategory();
         }
 
@@ -190,7 +199,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
         }
 
         //load details link from DB
-        if ( !( $sSeoUrl = $this->_loadFromDb( 'oxarticle', $oArticle->getId(), $iLang, null, $sActCatId, false ) ) ) {
+        if ( !( $sSeoUrl = $this->_loadFromDb( 'oxarticle', $oArticle->getId(), $iLang, null, $sActCatId, $sActCatId ? true : false ) ) ) {
 
             $oArticle = $this->_getProductForLang( $oArticle, $iLang );
 
@@ -200,7 +209,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
             // create uri for all categories
             $oCategorys = $this->getSeoCategories( $oArticle, $iLang );
             if (!$oCategorys->count()) {
-                $sSeoUrl = $this->_getUniqueSeoUrl( $sTitle, '.html', $oArticle->getId(), $iLang );
+                $sSeoUrl = $this->_processSeoUrl( $sTitle, $oArticle->getId(), $iLang );
                 $this->_saveToDb( 'oxarticle', $oArticle->getId(), $oArticle->getStdLink(), $sSeoUrl, $iLang );
             } else {
                 $sTmpSeoUrl = '';
@@ -209,7 +218,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
                     // writing category path
                     $sTmpSeoUrl = $oEncoder->getCategoryUri( $oCategory );
                     $sTmpSeoUrl .= $sTitle;
-                    $sTmpSeoUrl  = $this->_getUniqueSeoUrl( $sTmpSeoUrl, '.html', $oArticle->getId(), $iLang );
+                    $sTmpSeoUrl  = $this->_processSeoUrl( $sTmpSeoUrl, $oArticle->getId(), $iLang );
 
                     $this->_saveToDb( 'oxarticle', $oArticle->getId(), $oArticle->getStdLink(), $sTmpSeoUrl, $iLang, null, 0, false, false, $oCategory->oxcategories__oxrootid->value);
                     if ($oCategory->oxcategories__oxrootid->value == $sActCatId) {
@@ -298,11 +307,11 @@ class oxSeoEncoderArticle extends oxSeoEncoder
 
             // create uri for all categories
             if ( !$sActVendorId || !$oVendor ) {
-                $sSeoUrl = $this->_getUniqueSeoUrl( $sTitle, '.html', $oArticle->getId(), $iLang );
+                $sSeoUrl = $this->_processSeoUrl( $sTitle, $oArticle->getId(), $iLang );
                 $this->_saveToDb( 'oxarticle', $oArticle->getId(), $oArticle->getStdLink(), $sSeoUrl, $iLang );
             } else {
                 $sSeoUrl = oxSeoEncoderVendor::getInstance()->getVendorUri( $oVendor, $iLang );
-                $sSeoUrl = $this->_getUniqueSeoUrl( $sSeoUrl . $sTitle, '.html', $oArticle->getId(), $iLang );
+                $sSeoUrl = $this->_processSeoUrl( $sSeoUrl . $sTitle, $oArticle->getId(), $iLang );
 
                 $this->_saveToDb( 'oxarticle', $oArticle->getId(), $oArticle->getStdLink(), $sSeoUrl, $iLang, null, 0, false, false, $sActVendorId );
             }
@@ -344,11 +353,11 @@ class oxSeoEncoderArticle extends oxSeoEncoder
 
             // create uri for all categories
             if ( !$sActManufacturerId || !$oManufacturer ) {
-                $sSeoUrl = $this->_getUniqueSeoUrl( $sTitle, '.html', $oArticle->getId(), $iLang );
+                $sSeoUrl = $this->_processSeoUrl( $sTitle, $oArticle->getId(), $iLang );
                 $this->_saveToDb( 'oxarticle', $oArticle->getId(), $oArticle->getStdLink(), $sSeoUrl, $iLang );
             } else {
                 $sSeoUrl = oxSeoEncoderManufacturer::getInstance()->getManufacturerUri( $oManufacturer, $iLang );
-                $sSeoUrl = $this->_getUniqueSeoUrl( $sSeoUrl . $sTitle, '.html', $oArticle->getId(), $iLang );
+                $sSeoUrl = $this->_processSeoUrl( $sSeoUrl . $sTitle, $oArticle->getId(), $iLang );
 
                 $this->_saveToDb( 'oxarticle', $oArticle->getId(), $oArticle->getStdLink(), $sSeoUrl, $iLang, null, 0, false, false, $sActManufacturerId );
             }
@@ -422,7 +431,8 @@ class oxSeoEncoderArticle extends oxSeoEncoder
                 from oxobject2category as o2c
                 left join {$sCatTable} as catroots
                     on o2c.oxcatnid=catroots.oxid
-                where o2c.oxobjectid = '$sArtId'";
+                where o2c.oxobjectid = '$sArtId'
+                order by o2c.oxtime";
 
         $aRoots = $oDb->getAll($sQ);
 

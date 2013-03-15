@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_seo.php 19623 2009-06-04 16:55:21Z arvydas $
+ * $Id: article_seo.php 21225 2009-07-31 14:07:41Z arvydas $
  */
 
 /**
@@ -40,6 +40,13 @@ class Article_Seo extends Object_Seo
      * @var string
      */
     protected $_sActCatType = null;
+
+    /**
+     * Chosen category type
+     *
+     * @var string
+     */
+    protected $_iActCatLang = null;
 
     /**
      * Article deepest categoy nodes list
@@ -87,6 +94,7 @@ class Article_Seo extends Object_Seo
         $this->_aViewData["oTags"]           = $this->_getTagList( $oArticle );
         $this->_aViewData["sCatId"]          = $this->getSelectedCategoryId();
         $this->_aViewData["sCatType"]        = $this->_sActCatType;
+        $this->_aViewData["sCatLang"]        = $this->_iActCatLang;
 
         return parent::render();
     }
@@ -98,9 +106,15 @@ class Article_Seo extends Object_Seo
      */
     protected function _getSeoDataSql( $oObject, $iShopId, $iLang )
     {
-        $sParam = ( $sCat = $this->getSelectedCategoryId() ) ? " and oxparams = '$sCat' " : '';
-        $sQ = "select * from oxseo where oxobjectid = '".$oObject->getId()."' and
-               oxshopid = '{$iShopId}' and oxlang = {$iLang} {$sParam} ";
+        if ( $this->_sActCatType == 'oxtag' ) {
+            $sObjectId = oxSeoEncoderArticle::getInstance()->getDynamicObjectId( $iShopId, $oObject->getStdTagLink( $this->getTag() ) );
+            $sQ = "select * from oxseo where oxobjectid = '".$sObjectId."' and
+                   oxshopid = '{$iShopId}' and oxlang = {$this->_iActCatLang} ";
+        } else {
+            $sParam = ( $sCat = $this->getSelectedCategoryId() ) ? " and oxparams = '$sCat' " : '';
+            $sQ = "select * from oxseo where oxobjectid = '".$oObject->getId()."' and
+                   oxshopid = '{$iShopId}' and oxlang = {$iLang} {$sParam} ";
+        }
         return $sQ;
     }
 
@@ -184,7 +198,16 @@ class Article_Seo extends Object_Seo
     protected function _getTagList( $oArticle )
     {
         $oTagCloud = oxNew("oxTagCloud");
-        return $oTagCloud->getTags( $oArticle->getId() );
+        $aLangs = $oArticle->getAvailableInLangs();
+
+        $aLangTags = array();
+        foreach ( $aLangs as $iLang => $sLangTitle ) {
+            if ( count( $aTags = $oTagCloud->getTags( $oArticle->getId(), false, $iLang ) ) ) {
+                $aLangTags[$iLang] = $aTags;
+            }
+        }
+
+        return $aLangTags;
     }
 
     /**
@@ -201,7 +224,11 @@ class Article_Seo extends Object_Seo
             $aSeoData = oxConfig::getParameter( 'aSeoData' );
             if ( $aSeoData && isset( $aSeoData['oxparams'] ) ) {
                 if ( $sData = $aSeoData['oxparams'] ) {
-                    $this->_sActCatId   = substr( $sData, strpos( $sData, '#' ) + 1 );
+                    $this->_sActCatId = substr( $sData, strpos( $sData, '#' ) + 1 );
+                    if ( strpos( $this->_sActCatId, '#' ) !== false ) {
+                        $this->_sActCatId = substr( $this->_sActCatId, 0, strpos( $this->_sActCatId, '#' ) );
+                    }
+                    $this->_iActCatLang = substr( $sData, strrpos( $sData, '#' ) + 1 );
                     $this->_sActCatType = substr( $sData, 0, strpos( $sData, '#' ) );
                 }
             } else {
@@ -255,7 +282,7 @@ class Article_Seo extends Object_Seo
                 }
         }
 
-        oxSeoEncoderArticle::getInstance()->getArticleUrl( $oArticle, null, $sType );
+        oxSeoEncoderArticle::getInstance()->getArticleUrl( $oArticle, $this->getEditLang(), $sType );
         return parent::_getSeoUrl( $oArticle );
     }
 
@@ -267,8 +294,7 @@ class Article_Seo extends Object_Seo
     public function getActCategory()
     {
         $oCat = oxNew( 'oxcategory' );
-        $oCat->load( $this->_sActCatId );
-        if ( $oCat->isPriceCategory() ) {
+        if ( $oCat->load( $this->_sActCatId ) ) {
             return $oCat;
         }
     }
@@ -301,8 +327,7 @@ class Article_Seo extends Object_Seo
             $sStdUrl = "index.php?cl=details&amp;anid=".$oObject->getId()."&amp;listtype=tag&amp;searchtag=".rawurlencode( $sTag );
             $sObjectId = md5( strtolower( $oObject->getShopId() . $sStdUrl ) );
             $sQ = "select oxseourl from oxseo where oxobjectid = '".$sObjectId."'
-                   and oxshopid = '{$iShopId}' and oxlang = {$this->_iEditLang}";
-
+                   and oxshopid = '{$iShopId}' and oxlang = {$this->_iActCatLang}";
         } else {
             $sQ = "select oxseourl from oxseo where oxobjectid = '".$oObject->getId()."'
                    and oxshopid = '{$iShopId}' and oxlang = {$this->_iEditLang}
@@ -310,7 +335,21 @@ class Article_Seo extends Object_Seo
         }
 
         return $sQ;
-     }
+    }
+
+    /**
+     * Returns edit language id. In case current url is tag url - returns tag language
+     *
+     * @return int
+     */
+    public function getEditLang()
+    {
+        $iLang = $this->_iEditLang;
+        if ( $this->getTag() ) {
+            $iLang = (int) $this->_iActCatLang;
+        }
+        return $iLang;
+    }
 
     /**
      * Returns seo entry ident

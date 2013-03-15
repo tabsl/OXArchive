@@ -15,19 +15,19 @@
   [{if $_cnt == 0}]
     [{assign var="_state" value=$_state|cat:" first"}]
   [{/if}]
-  
+
   [{if $_cnt == $editnavi->length -1 }]
     [{assign var="_state" value=$_state|cat:" last"}]
   [{/if}]
-  
+
   [{ if $edit->getAttribute('external') == 'true' }]
     [{assign var="_action" value="ChangeExternal"}]
     [{assign var="_param1" value=$edit->getAttribute('location')}]
   [{else}]
-    [{assign var="_action" value="ChangeEditBar"}]
+    [{assign var="_action" value=$sEditAction|default:"top.oxid.admin.changeEditBar"}]
     [{assign var="_param1" value=$edit->getAttribute('cl')}]
   [{/if}]
-  
+
   <td class="tab [{$_state}]">
       <div class="r1"><div class="b1">
           [{ if $oxid != "-1" || $noOXIDCheck }]
@@ -37,7 +37,7 @@
           [{/if}]
       </div></div>
   </td>
-  
+
   [{assign var="_cnt" value=$_cnt+1 }]
 [{/foreach}]
   <td class="line"></td>

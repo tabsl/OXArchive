@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxpayment.php 19539 2009-06-01 20:08:00Z alfonsas $
+ * $Id: oxpayment.php 20457 2009-06-25 13:21:33Z vilma $
  */
 
 /**
@@ -122,10 +122,9 @@ class oxPayment extends oxI18n
     public function getDynValues()
     {
         if ( !$this->_aDynValues ) {
-
             $sRawDynValue = null;
-            if( is_object($this->oxpayments__oxvaldesc) ) {
-               $sRawDynValue = $this->oxpayments__oxvaldesc->getRawValue();
+            if ( is_object($this->oxpayments__oxvaldesc ) ) {
+                $sRawDynValue = $this->oxpayments__oxvaldesc->getRawValue();
             }
 
             $this->_aDynValues = oxUtils::getInstance()->assignValuesFromText( $sRawDynValue );

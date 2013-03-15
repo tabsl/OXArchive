@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: recommlist.php 18934 2009-05-11 13:53:24Z vilma $
+ * $Id: recommlist.php 20503 2009-06-26 14:54:11Z vilma $
  */
 
 /**
@@ -230,7 +230,7 @@ class RecommList extends oxUBase
      */
     public function saveReview()
     {
-        $sReviewText = trim( ( string ) oxConfig::getParameter( 'rvw_txt' , true ) );
+        $sReviewText = trim( ( string ) oxConfig::getParameter( 'rvw_txt', true ) );
         $dRating     = oxConfig::getParameter( 'recommlistrating' );
         if ( $dRating < 0 || $dRating > 5 ) {
             $dRating = null;

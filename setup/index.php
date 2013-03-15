@@ -19,7 +19,7 @@
  * @package setup
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: index.php 18114 2009-04-14 07:53:45Z vilma $
+ * $Id: index.php 20950 2009-07-15 12:09:27Z rimvydas.paskevicius $
  */
 
 
@@ -565,7 +565,10 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
               echo '<b>',$aLang['STEP_0_ERROR_TEXT'],'</b>';
           }
 // startpage, licence
-} elseif ( $istep == $aSetupSteps['STEP_WELCOME'] ) {
+}
+
+
+if ( $istep == $aSetupSteps['STEP_WELCOME'] ) {
     // ---------------------------------------------------------
     // WELCOME
     // ---------------------------------------------------------
@@ -580,7 +583,7 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
     } else {
         $iAdminLang = 0;
     }
-    
+
     setcookie("oxidadminlanguage", $iAdminLang, time()+31536000, "/");
 
 ?>
@@ -665,7 +668,10 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
 </form>
 
 <?PHP
-} elseif ( $istep == $aSetupSteps['STEP_LICENSE'] ) {
+}
+
+
+if ( $istep == $aSetupSteps['STEP_LICENSE'] ) {
     // ---------------------------------------------------------
     // LICENCE
     // ---------------------------------------------------------
@@ -689,7 +695,10 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
   <input type="submit" id="step2Submit" class="edittext" value="<?php echo( $aLang['BUTTON_LICENCE'] ) ?>">
 </form>
 <?PHP
-} elseif ( $istep == $aSetupSteps['STEP_DB_INFO'] ) {
+}
+
+
+if ( $istep == $aSetupSteps['STEP_DB_INFO'] ) {
     // ---------------------------------------------------------
     // ENTER DATABASE INFO
     // ---------------------------------------------------------
@@ -713,6 +722,29 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
     $blMbStringOn = $oSysReq->getModuleInfo( 'mb_string' );
     $blUnicodeSupport = $oSysReq->getModuleInfo( 'unicode_support' );
 ?>
+<script>
+/**
+ * Replaces password type field into plain and vice versa
+ */
+function changeField()
+{
+    var oField = document.getElementsByName( "aDB[dbPwd]" );
+    doChange( oField[0], oField[1] );
+    doChange( oField[1], oField[0] )
+}
+function doChange( oField1, oField2 )
+{
+    if ( oField1.disabled ) {
+        oField1.disabled = '';
+        oField1.style.display = '';
+        oField1.value = oField2.value;
+    } else {
+        oField1.disabled = 'disabled';
+        oField1.style.display = 'none';
+        oField2.value = oField1.value;
+    }
+}
+</script>
 
 <?php echo( $aLang['STEP_3_DESC'] ) ?><br>
 <br>
@@ -734,7 +766,10 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
   </tr>
   <tr>
     <td><?php echo( $aLang['STEP_3_DB_PASSWORD'] ) ?>:</td>
-    <td>&nbsp;&nbsp;<input size="40" name="aDB[dbPwd]" class="editinput" value="<?php echo( $aDB['dbPwd']);?>"> </td>
+    <td>
+        &nbsp;&nbsp;<input size="40" name="aDB[dbPwd]" id="sDbPass" class="editinput" type="password" value="<?php echo( $aDB['dbPwd']);?>"><input size="40" name="aDB[dbPwd]" id="sDbPassPlain" class="editinput" type="text" disabled="disabled" style="display:none">
+        <input type="checkbox" id="sDbPassCheckbox" onClick="JavaScript:changeField();"><?php echo( $aLang['STEP_3_DB_PASSWORD_SHOW'] ) ?>
+    </td>
   </tr>
   <tr>
     <td><?php echo( $aLang['STEP_3_DB_DEMODATA'] ) ?>:</td>
@@ -746,22 +781,22 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
   <tr>
     <td><?php echo( $aLang['STEP_3_UTFMODE'] ) ?>:</td>
     <td>
-        &nbsp;&nbsp;<input type="checkbox" name="aDB[iUtfMode]" value="1" <?php if( $aDB['iUtfMode'] == 1 && $blMbStringOn > 1 && $blUnicodeSupport > 1) { echo( "checked"); } echo ($blMbStringOn > 1 && $blUnicodeSupport > 1) ? '' : 'disabled'; ?>>
-        <?php 
+        &nbsp;&nbsp;<input type="checkbox" name="aDB[iUtfMode]" value="1" <?php if( (isset($aDB['iUtfMode']) && $aDB['iUtfMode'] == 1) && $blMbStringOn > 1 && $blUnicodeSupport > 1) { echo( "checked"); } echo ($blMbStringOn > 1 && $blUnicodeSupport > 1) ? '' : 'disabled'; ?>>
+        <?php
             if ( $blMbStringOn > 1 && $blUnicodeSupport > 1 ) {
-            	echo ( $aLang['STEP_3_UTFINFO'] );
+                echo ( $aLang['STEP_3_UTFINFO'] );
             } else {
-                echo ( $aLang['STEP_3_UTFNOTSUPPORTED'] ); 
+                echo ( $aLang['STEP_3_UTFNOTSUPPORTED'] );
                 if ( $blMbStringOn < 2 ) {
-                    echo ( $aLang['STEP_3_UTFNOTSUPPORTED1'] ); 
+                    echo ( $aLang['STEP_3_UTFNOTSUPPORTED1'] );
                 }
                 if ( ($blMbStringOn + $blUnicodeSupport) == 2) {
-                	echo ","; 
+                    echo ",";
                 }
                 if ( $blUnicodeSupport < 2 ) {
-                    echo ( $aLang['STEP_3_UTFNOTSUPPORTED2'] ); 
+                    echo ( $aLang['STEP_3_UTFNOTSUPPORTED2'] );
                 }
-                echo "."; 
+                echo ".";
             }
         ?>
         <br>
@@ -772,7 +807,10 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
 <input type="submit" id="step3Submit" class="edittext" value="<?php echo( $aLang['BUTTON_DB_INSTALL'] ) ?>">
 </form>
 <?PHP
-} elseif ( $istep == $aSetupSteps['STEP_DB_CONNECT'] ) {
+}
+
+
+if ( $istep == $aSetupSteps['STEP_DB_CONNECT'] ) {
     // ---------------------------------------------------------
     // CHECK DATABASE
     // ---------------------------------------------------------
@@ -821,7 +859,10 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
     if ( $blCreated)
         echo( "<b>" . sprintf($aLang['STEP_3_1_DB_CREATE_IS_OK'], $aDB['dbName']) . "</b><br>");
     echo( "<br>" . $aLang['STEP_3_1_CREATING_TABLES'] . "<br>");
-} elseif ( $istep == $aSetupSteps['STEP_DB_CREATE'] ) {
+}
+
+
+if ( $istep == $aSetupSteps['STEP_DB_CREATE'] ) {
     // ---------------------------------------------------------
     // CREATE DATABASE
     // ---------------------------------------------------------
@@ -845,7 +886,7 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
     $sqlDir = 'sql';
 
     //settting database collation
-    setMySqlCollation( $aDB['iUtfMode'] );
+    setMySqlCollation( isset($aDB['iUtfMode'])?$aDB['iUtfMode']:0 );
 
     $sProblems = QueryFile(  "$sqlDir/database.sql" ,$aDB);
     if ( strlen( $sProblems)) {
@@ -872,7 +913,7 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
     saveDynPagesSettings();
 
     //applying utf-8 specific queries
-    if ( $aDB['iUtfMode'] ) {
+    if ( isset($aDB['iUtfMode'])?$aDB['iUtfMode']:0 ) {
         QueryFile(  "$sqlDir/latin1_to_utf8.sql" ,$aDB);
 
         //converting oxconfig table field 'oxvarvalue' values to utf
@@ -885,7 +926,10 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
     include "headitem.php";
     include "bottomitem.php";
     exit();
-} elseif ( $istep == $aSetupSteps['STEP_DIRS_INFO'] ) {
+}
+
+
+if ( $istep == $aSetupSteps['STEP_DIRS_INFO'] ) {
     $title =  $aLang['STEP_4_TITLE'];
     include "headitem.php";
 
@@ -954,7 +998,10 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
 <input type="submit" id="step4Submit" class="edittext" value="<?php echo( $aLang['BUTTON_WRITE_DATA'] ) ?>">
 </form>
 <?PHP
-} elseif ( $istep == $aSetupSteps['STEP_DIRS_WRITE'] ) {
+}
+
+
+if ( $istep == $aSetupSteps['STEP_DIRS_WRITE'] ) {
     // ---------------------------------------------------------
     // CHECK PATH
     // ---------------------------------------------------------
@@ -1067,18 +1114,17 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
     include "bottomitem.php";
     exit();
 
-} elseif ( $istep == $aSetupSteps['STEP_SERIAL'] ) {
+}
 
 
 
 
 
-} elseif ( $istep == $aSetupSteps['STEP_SERIAL_SAVE'] ) {
 
 
 
 
-} elseif ( $istep == $aSetupSteps['STEP_FINISH'] ) {
+if ( $istep == $aSetupSteps['STEP_FINISH'] ) {
     // ---------------------------------------------------------
     // END
     // ---------------------------------------------------------

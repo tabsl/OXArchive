@@ -1,35 +1,5 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign}]
 
-<script type="text/javascript">
-<!--
-[{ if $updatelist == 1}]
-    UpdateList('[{ $oxid }]');
-[{ /if}]
-
-function EditThis( sID)
-{
-    var oSearch = document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.cl.value='article_main';
-    oSearch.submit();
-
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.sort.value = '';
-    oSearch.cl.value='article_list';
-    oSearch.actedit.value=1;
-    oSearch.submit();
-}
-
-function UpdateList( sID)
-{
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
-//-->
-</script>
-
 [{ if $readonly}]
     [{assign var="readonly" value="readonly disabled"}]
 [{else}]
@@ -60,8 +30,8 @@ function UpdateList( sID)
 <tr>
     [{assign var="listclass" value=listitem$blWhite }]
     <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxamount->value }]</td>
-    <td valign="top" class="[{ $listclass}]" height="15">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:EditThis('[{ $listitem->oxarticles__oxid->value}]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxartnum->value }]</a></td>
-    <td valign="top" class="[{ $listclass}]">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:EditThis('[{ $listitem->oxarticles__oxid->value }]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxtitle->value|string_format:"%.30s"|strip_tags }]</a></td>
+    <td valign="top" class="[{ $listclass}]" height="15">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxarticles__oxid->value}]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxartnum->value }]</a></td>
+    <td valign="top" class="[{ $listclass}]">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxarticles__oxid->value }]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxtitle->value|string_format:"%.30s"|strip_tags }]</a></td>
     <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxselvariant->value }]</td>
     <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxshortdesc->value|string_format:"%.30s"|strip_tags }]</td>
 </tr>

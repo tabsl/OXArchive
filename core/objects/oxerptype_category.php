@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_category.php 18032 2009-04-09 12:14:09Z arvydas $
+ * $Id: oxerptype_category.php 20535 2009-06-30 00:58:33Z alfonsas $
  */
 
 require_once 'oxerptype.php';
@@ -142,21 +142,28 @@ class oxERPType_Category extends oxERPType
             switch ($sField) {
                 case 'OXTYPE':
                     return "'0' as $sField";
+                    break;
                 case 'OXSEOID':
                 case 'OXSEOID_1':
                 case 'OXSEOID_2':
                 case 'OXSEOID_3':
                     return "'' as $sField";
+                    break;
                 case 'OXACTIV':
                     return "OXACTIVE as OXACTIV";
+                    break;
                 case 'OXACTIV_1':
                     return "OXACTIVE_1 as OXACTIV_1";
+                    break;
                 case 'OXACTIV_2':
                     return "OXACTIVE_2 as OXACTIV_2";
+                    break;
                 case 'OXACTIV_3':
                     return "OXACTIVE_3 as OXACTIV_3";
+                    break;
                 case 'OXORDER':
                     return "OXSORT as $sField";
+                    break;
             }
         }
         return parent::getSqlFieldName($sField, $iLanguage, $iShopID);

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxvatselector.php 18924 2009-05-11 11:40:10Z sarunas $
+ * $Id: oxvatselector.php 20503 2009-06-26 14:54:11Z vilma $
  */
 
 /**
@@ -200,7 +200,7 @@ class oxVatSelector extends oxSuperCfg
     /**
      * get article user vat
      *
-     * @param oxArticle article object
+     * @param oxArticle $oArticle article object
      *
      * @return double | false
      */

@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: pricealarm_send.php 19841 2009-06-15 08:00:07Z rimvydas.paskevicius $
+ * $Id: pricealarm_send.php 21005 2009-07-20 05:16:20Z alfonsas $
  */
 
 /**
@@ -55,19 +55,20 @@ class PriceAlarm_Send extends oxAdminList
         $iAllCnt    = oxConfig::getParameter( "iAllCnt");
             // #1140 R
             $sSelect = "select oxpricealarm.oxid, oxpricealarm.oxemail, oxpricealarm.oxartid, oxpricealarm.oxprice from oxpricealarm, oxarticles where oxarticles.oxid = oxpricealarm.oxartid and oxpricealarm.oxsended = '0000-00-00 00:00:00'";
-            if (isset($iStart))
+            if (isset($iStart)) {
                 $rs = $oDB->SelectLimit( $sSelect, $myConfig->getConfigParam( 'iCntofMails' ), $iStart);
-            else
+            } else {
                 $rs = $oDB->Execute( $sSelect);
+            }
 
             $iAllCnt_counting=0;
 
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     $oArticle = oxNew("oxarticle" );
-                    $oArticle->load($rs->fields[2]);
-                    if ($oArticle->getPrice()->getBruttoPrice() <= $rs->fields[3]) {
-                        $this->sendeMail( $rs->fields[1], $rs->fields[2], $rs->fields[0], $rs->fields[3]);
+                    $oArticle->load($rs->fields['oxid']);
+                    if ($oArticle->getPrice()->getBruttoPrice() <= $rs->fields['oxprice']) {
+                        $this->sendeMail( $rs->fields['oxemail'], $rs->fields['oxartid'], $rs->fields['oxid'], $rs->fields['oxprice']);
                         $iAllCnt_counting++;
                     }
                     $rs->moveNext();
@@ -189,9 +190,7 @@ class PriceAlarm_Send extends oxAdminList
         $oLang->setTplLanguage( $old_iLang );
 
         if ( $blSuccess) {
-            $timeout = time();
-            $now = date("Y-m-d H:i:s", $timeout);
-            $oAlarm->oxpricealarm__oxsended->setValue($now);
+            $oAlarm->oxpricealarm__oxsended->setValue( date( "Y-m-d H:i:s" ) );
             $oAlarm->save();
         }
 

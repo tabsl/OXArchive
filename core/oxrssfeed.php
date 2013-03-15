@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxrssfeed.php 18027 2009-04-09 11:32:17Z arvydas $
+ * $Id: oxrssfeed.php 20530 2009-06-29 14:08:45Z sarunas $
  */
 
 /**
@@ -187,8 +187,11 @@ class oxRssFeed extends oxSuperCfg
         foreach ($oList as $oArticle) {
             $oItem = new oxStdClass();
             $oActCur = $this->getConfig()->getActShopCurrencyObject();
-            $sPrice = $oArticle->getPriceFromPrefix().$oLang->formatCurrency( $oArticle->getPrice()->getBruttoPrice(), $oActCur );
-            $oItem->title                   = strip_tags($oArticle->oxarticles__oxtitle->value . " " . $sPrice . " ". $oActCur->sign);
+            $sPrice = '';
+            if ( $oPrice = $oArticle->getPrice() ) {
+                $sPrice =  " " . $oArticle->getPriceFromPrefix().$oLang->formatCurrency( $oPrice->getBruttoPrice(), $oActCur ) . " ". $oActCur->sign;
+            }
+            $oItem->title                   = strip_tags($oArticle->oxarticles__oxtitle->value . $sPrice);
             $oItem->guid     = $oItem->link = $myUtils->prepareUrlForNoSession($oArticle->getLink());
             $oItem->isGuidPermalink         = true;
             $oItem->description             = $oArticle->getArticleLongDesc()->value; //oxarticles__oxshortdesc->value;

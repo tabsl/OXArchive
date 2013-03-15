@@ -6,24 +6,6 @@
 
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign}]
 
-<script type="text/javascript">
-<!--
-function EditThis( sID)
-{
-    var oTransfer = document.getElementById("transfer");
-    oTransfer.oxid.value=sID;
-    oTransfer.cl.value='article_main';
-    oTransfer.submit();
-
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.actedit.value = 0;
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
-//-->
-</script>
-
 <form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
     [{ $shop->hiddensid }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">

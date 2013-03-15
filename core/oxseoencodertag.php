@@ -112,10 +112,10 @@ class oxSeoEncoderTag extends oxSeoEncoder
     /**
      * Returns tag SEO url for specified page
      *
-     * @param string $sTag manufacturer object
-     * @param int          $iPage       page tu prepare number
-     * @param int          $iLang       language
-     * @param bool         $blFixed     fixed url marker (default is false)
+     * @param string $sTag    manufacturer object
+     * @param int    $iPage   page tu prepare number
+     * @param int    $iLang   language
+     * @param bool   $blFixed fixed url marker (default is false)
      *
      * @return string
      */

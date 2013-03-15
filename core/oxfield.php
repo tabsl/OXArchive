@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxfield.php 18029 2009-04-09 11:34:25Z arvydas $
+ * $Id: oxfield.php 20457 2009-06-25 13:21:33Z vilma $
  */
 
 /**
@@ -68,8 +68,10 @@ class oxField // extends oxSuperCfg
         switch ( $sName ) {
             case 'rawValue':
                 return ($this->rawValue !== null);
+                break;
             case 'value':
                 return ($this->value !== null);
+                break;
                 //return true;
         }
         return false;
@@ -87,6 +89,7 @@ class oxField // extends oxSuperCfg
         switch ( $sName ) {
             case 'rawValue':
                 return $this->value;
+                break;
             case 'value':
                 if (is_string($this->rawValue)) {
                     $this->value = getStr()->htmlspecialchars( $this->rawValue );
@@ -98,8 +101,10 @@ class oxField // extends oxSuperCfg
                     unset($this->rawValue);
                 }
                 return $this->value;
+                break;
             default:
                 return null;
+                break;
         }
     }
 

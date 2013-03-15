@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxemail.php 19352 2009-05-25 13:16:24Z vilma $
+ * $Id: oxemail.php 21166 2009-07-28 14:56:10Z arvydas $
  */
 /**
  * Includes PHP mailer class.
@@ -298,11 +298,12 @@ class oxEmail extends phpmailer
      * Sets mailer additional settings and sends ordering mail to user.
      * Returns true on success.
      *
-     * @param oxOrder $oOrder Order object
+     * @param oxOrder $oOrder   Order object
+     * @param string  $sSubject user defined subject [optional]
      *
      * @return bool
      */
-    public function sendOrderEmailToUser( $oOrder )
+    public function sendOrderEmailToUser( $oOrder, $sSubject = null )
     {
         $myConfig = $this->getConfig();
 
@@ -320,7 +321,7 @@ class oxEmail extends phpmailer
         // setting some deprecated variables
         $oOrder->oDelSet = $oOrder->getDelSet();
 
-        $oUser = $oOrder->getUser();
+        $oUser = $oOrder->getOrderUser();
         // create messages
         $smarty = oxUtilsView::getInstance()->getSmarty();
         $smarty->assign( "charset", oxLang::getInstance()->translateString("charset"));
@@ -355,11 +356,15 @@ class oxEmail extends phpmailer
         $this->setAltBody( $smarty->fetch( $sCustPLAIN) );
 
         // #586A
-        if ( $smarty->template_exists( $this->_sOrderUserSubjectTemplate) ) {
-            $this->setSubject( $smarty->fetch( $this->_sOrderUserSubjectTemplate) );
-        } else {
-            $this->setSubject( $oShop->oxshops__oxordersubject->value." (#".$oOrder->oxorder__oxordernr->value.")" );
+        if ( $sSubject === null ) {
+            if ( $smarty->template_exists( $this->_sOrderUserSubjectTemplate) ) {
+                $sSubject = $smarty->fetch( $this->_sOrderUserSubjectTemplate );
+            } else {
+                $sSubject = $oShop->oxshops__oxordersubject->value." (#".$oOrder->oxorder__oxordernr->value.")";
+            }
         }
+
+        $this->setSubject( $sSubject );
 
         $sFullName = $oUser->oxuser__oxfname->value . " " . $oUser->oxuser__oxlname->value;
 
@@ -375,11 +380,12 @@ class oxEmail extends phpmailer
      * Sets mailer additional settings and sends ordering mail to shop owner.
      * Returns true on success.
      *
-     * @param oxOrder $oOrder Order object
+     * @param oxOrder $oOrder   Order object
+     * @param string  $sSubject user defined subject [optional]
      *
      * @return bool
      */
-    public function sendOrderEmailToOwner( $oOrder )
+    public function sendOrderEmailToOwner( $oOrder, $sSubject = null )
     {
         $myConfig = $this->getConfig();
 
@@ -393,8 +399,8 @@ class oxEmail extends phpmailer
         $oOrder = $this->_addUserInfoOrderEMail( $oOrder );
 
         // send confirmation to shop owner
-        $sFullName = $oOrder->getUser()->oxuser__oxfname->value . " " . $oOrder->getUser()->oxuser__oxlname->value;
-        $this->setFrom( $oOrder->getUser()->oxuser__oxusername->value, $sFullName );
+        $sFullName = $oOrder->getOrderUser()->oxuser__oxfname->value . " " . $oOrder->getOrderUser()->oxuser__oxlname->value;
+        $this->setFrom( $oOrder->getOrderUser()->oxuser__oxusername->value, $sFullName );
 
         $oLang = oxLang::getInstance();
         $iOrderLang = $oLang->getTplLanguage();
@@ -415,7 +421,7 @@ class oxEmail extends phpmailer
         $smarty->assign( "order", $oOrder );
         $smarty->assign( "shop", $oShop );
         $smarty->assign( "oViewConf", $oShop );
-        $smarty->assign( "user", $oOrder->getUser() );
+        $smarty->assign( "user", $oOrder->getOrderUser() );
         $smarty->assign( "currency", $myConfig->getActShopCurrencyObject() );
         $smarty->assign( "basket", $oOrder->getBasket() );
         $smarty->assign( "payment", $oOrder->getPayment() );
@@ -439,22 +445,26 @@ class oxEmail extends phpmailer
 
         //Sets subject to email
         // #586A
-        if ( $smarty->template_exists( $this->_sOrderOwnerSubjectTemplate) )
-            $this->setSubject( $smarty->fetch( $this->_sOrderOwnerSubjectTemplate) );
-        else
-            $this->setSubject( $oShop->oxshops__oxordersubject->value." (#".$oOrder->oxorder__oxordernr->value.")" );
+        if ( $sSubject === null ) {
+            if ( $smarty->template_exists( $this->_sOrderOwnerSubjectTemplate) ) {
+                $sSubject = $smarty->fetch( $this->_sOrderOwnerSubjectTemplate );
+            } else {
+                 $sSubject = $oShop->oxshops__oxordersubject->value." (#".$oOrder->oxorder__oxordernr->value.")";
+            }
+        }
 
+        $this->setSubject( $sSubject );
         $this->setRecipient( $oShop->oxshops__oxowneremail->value, $oLang->translateString("order") );
 
-        if ( $oOrder->getUser()->oxuser__oxusername->value != "admin" )
-            $this->setReplyTo( $oOrder->getUser()->oxuser__oxusername->value, $sFullName );
+        if ( $oOrder->getOrderUser()->oxuser__oxusername->value != "admin" )
+            $this->setReplyTo( $oOrder->getOrderUser()->oxuser__oxusername->value, $sFullName );
 
         $blSuccess = $this->send();
 
         // add user history
         $oRemark = oxNew( "oxremark" );
         $oRemark->oxremark__oxtext      = new oxField($this->getAltBody(), oxField::T_RAW);
-        $oRemark->oxremark__oxparentid  = new oxField($oOrder->getUser()->getId(), oxField::T_RAW);
+        $oRemark->oxremark__oxparentid  = new oxField($oOrder->getOrderUser()->getId(), oxField::T_RAW);
         $oRemark->oxremark__oxtype      = new oxField("o", oxField::T_RAW);
         $oRemark->save();
 
@@ -470,11 +480,12 @@ class oxEmail extends phpmailer
      * Sets mailer additional settings and sends registration mail to user.
      * Returns true on success.
      *
-     * @param oxUser $oUser User object
+     * @param oxUser $oUser    user object
+     * @param string $sSubject user defined subject [optional]
      *
      * @return bool
      */
-    public function sendRegisterEmail( $oUser )
+    public function sendRegisterEmail( $oUser, $sSubject = null )
     {
         // add user defined stuff if there is any
         $oUser = $this->_addUserRegisterEmail( $oUser );
@@ -502,7 +513,7 @@ class oxEmail extends phpmailer
         $this->setBody( $smarty->fetch( "email_register_html.tpl") );
         $this->setAltBody( $smarty->fetch( "email_register_plain.tpl") );
 
-        $this->setSubject( $oShop->oxshops__oxregistersubject->value );
+        $this->setSubject( ( $sSubject !== null ) ? $sSubject : $oShop->oxshops__oxregistersubject->value );
 
         $sFullName = $oUser->oxuser__oxfname->value . " " . $oUser->oxuser__oxlname->value;
 
@@ -517,10 +528,11 @@ class oxEmail extends phpmailer
      * Returns true on success.
      *
      * @param string $sEmailAddress user email address
+     * @param string $sSubject      user defined subject [optional]
      *
      * @return bool
      */
-    public function sendForgotPwdEmail( $sEmailAddress )
+    public function sendForgotPwdEmail( $sEmailAddress, $sSubject = null )
     {
         $myConfig = $this->getConfig();
 
@@ -560,7 +572,7 @@ class oxEmail extends phpmailer
                 $this->setAltBody( $smarty->fetch( "email_forgotpwd_plain.tpl") );
 
                 //sets subject of email
-                $this->setSubject( $oShop->oxshops__oxforgotpwdsubject->value );
+                $this->setSubject( ( $sSubject !== null ) ? $sSubject : $oShop->oxshops__oxforgotpwdsubject->value );
 
                 $sFullName = $oUser->oxuser__oxfname->value . " " . $oUser->oxuser__oxlname->value;
 
@@ -607,11 +619,12 @@ class oxEmail extends phpmailer
      * Sets mailer additional settings and sends "NewsletterDBOptInMail" mail to user.
      * Returns true on success.
      *
-     * @param oxUser $oUser User object
+     * @param oxUser $oUser    user object
+     * @param string $sSubject user defined subject [optional]
      *
      * @return bool
      */
-    public function sendNewsletterDbOptInMail( $oUser )
+    public function sendNewsletterDbOptInMail( $oUser, $sSubject = null )
     {
 
         // add user defined stuff if there is any
@@ -638,7 +651,7 @@ class oxEmail extends phpmailer
 
         $this->setBody( $smarty->fetch("email_newsletteroptin_html.tpl") );
         $this->setAltBody( $smarty->fetch( "email_newsletteroptin_plain.tpl") );
-        $this->setSubject( "Newsletter " . $oShop->oxshops__oxname->getRawValue() );
+        $this->setSubject( ( $sSubject !== null ) ? $sSubject : oxLang::getInstance()->translateString("EMAIL_NEWSLETTERDBOPTINMAIL_SUBJECT") . " " . $oShop->oxshops__oxname->getRawValue() );
 
         $sFullName = $oUser->oxuser__oxfname->value . " " . $oUser->oxuser__oxlname->value;
 
@@ -653,12 +666,13 @@ class oxEmail extends phpmailer
      * Sets mailer additional settings and sends "newsletter" mail to user.
      * Returns true on success.
      *
-     * @param oxNewsletter $oNewsLetter Newsletter object
-     * @param oxUser       $oUser       User object
+     * @param oxNewsletter $oNewsLetter newsletter object
+     * @param oxUser       $oUser       user object
+     * @param string       $sSubject    user defined subject [optional]
      *
      * @return bool
      */
-    public function sendNewsletterMail( $oNewsLetter, $oUser )
+    public function sendNewsletterMail( $oNewsLetter, $oUser, $sSubject = null )
     {
         // shop info
         $oShop = $this->_getShop();
@@ -676,7 +690,7 @@ class oxEmail extends phpmailer
             $this->setBody( $oNewsLetter->getPlainText() );
         }
 
-        $this->setSubject( $oNewsLetter->oxnewsletter__oxtitle->value );
+        $this->setSubject( ( $sSubject !== null ) ? $sSubject : $oNewsLetter->oxnewsletter__oxtitle->value );
 
         $sFullName = $oUser->oxuser__oxfname->value . " " . $oUser->oxuser__oxlname->value;
         $this->setRecipient( $oUser->oxuser__oxusername->value, $sFullName );
@@ -747,11 +761,12 @@ class oxEmail extends phpmailer
      * Sets mailer additional settings and sends "SendedNowMail" mail to user.
      * Returns true on success.
      *
-     * @param oxOrder $oOrder Order object
+     * @param oxOrder $oOrder   order object
+     * @param string  $sSubject user defined subject [optional]
      *
      * @return bool
      */
-    public function sendSendedNowMail( $oOrder )
+    public function sendSendedNowMail( $oOrder, $sSubject = null )
     {
         $myConfig = $this->getConfig();
 
@@ -811,7 +826,7 @@ class oxEmail extends phpmailer
         $smarty->security_settings['INCLUDE_ANY'] = $aStore['INCLUDE_ANY'] ;
 
         //Sets subject to email
-        $this->setSubject( $oShop->oxshops__oxsendednowsubject->value );
+        $this->setSubject( ( $sSubject !== null ) ? $sSubject : $oShop->oxshops__oxsendednowsubject->value );
 
         $sFullName = $oOrder->oxorder__oxbillfname->value . " " . $oOrder->oxorder__oxbilllname->value;
 
@@ -922,11 +937,12 @@ class oxEmail extends phpmailer
     /**
      * Sends reminder email to shop owner.
      *
-     * @param array $aBasketContents array of objects to pass to template
+     * @param array  $aBasketContents array of objects to pass to template
+     * @param string $sSubject        user defined subject [optional]
      *
      * @return bool
      */
-    public function sendStockReminder( $aBasketContents )
+    public function sendStockReminder( $aBasketContents, $sSubject = null )
     {
         $myConfig = $this->getConfig();
 
@@ -971,7 +987,7 @@ class oxEmail extends phpmailer
         $this->setFrom( $oShop->oxshops__oxowneremail->value, $oShop->oxshops__oxname->getRawValue() );
         $this->setBody( $smarty->fetch($sPathToTemplate.$this->_sReminderMailTemplate) );
         $this->setAltBody( "" );
-        $this->setSubject( $oLang->translateString('EMAIL_STOCKREMINDER_SUBJECT') );
+        $this->setSubject( ( $sSubject !== null ) ? $sSubject : $oLang->translateString('EMAIL_STOCKREMINDER_SUBJECT') );
 
         return $this->send();
     }
@@ -1018,12 +1034,13 @@ class oxEmail extends phpmailer
      * Sends a notification to the shop owner that pricealarm was subscribed.
      * Returns true on success.
      *
-     * @param array        $aParams Parameters array
-     * @param oxpricealarm $oAlarm  oxPriceAlarm object
+     * @param array        $aParams  Parameters array
+     * @param oxpricealarm $oAlarm   oxPriceAlarm object
+     * @param string       $sSubject user defined subject [optional]
      *
      * @return bool
      */
-    public function sendPriceAlarmNotification( $aParams, $oAlarm )
+    public function sendPriceAlarmNotification( $aParams, $oAlarm, $sSubject = null )
     {
         $this->_clearMailer();
         $oShop = $this->_getShop();
@@ -1050,8 +1067,7 @@ class oxEmail extends phpmailer
         $smarty->assign( "currency", $oCur );
 
         $this->setRecipient( $oShop->oxshops__oxorderemail->value, $oShop->oxshops__oxname->getRawValue() );
-        $sSubject = $oLang->translateString( 'EMAIL_PRICEALARM_OWNER_SUBJECT', $iAlarmLang ) . " " . $oArticle->oxarticles__oxtitle->value;
-        $this->setSubject( $sSubject );
+        $this->setSubject( ( $sSubject !== null ) ? $sSubject : $oLang->translateString( 'EMAIL_PRICEALARM_OWNER_SUBJECT', $iAlarmLang ) . " " . $oArticle->oxarticles__oxtitle->value );
         $this->setBody( $smarty->fetch( $this->_sOwnerPricealarmTemplate ) );
         $this->setFrom( $aParams['email'], "" );
         $this->setReplyTo( $aParams['email'], "" );
@@ -1167,7 +1183,7 @@ class oxEmail extends phpmailer
     public function setBody( $sBody = null, $blClearSid = true )
     {
         if ( $blClearSid ) {
-            $sBody = eregi_replace("sid=[A-Z0-9\.]+", "sid=x&amp;shp=" . $this->getConfig()->getShopId(), $sBody);
+            $sBody = preg_replace("/sid=[A-Z0-9\.]+/i", "sid=x&amp;shp=" . $this->getConfig()->getShopId(), $sBody);
         }
 
         $this->Body = $sBody;
@@ -1195,7 +1211,7 @@ class oxEmail extends phpmailer
     public function setAltBody( $sAltBody = null, $blClearSid = true )
     {
         if ( $blClearSid ) {
-            $sAltBody = eregi_replace("sid=[A-Z0-9\.]+", "sid=x&amp;shp=" . $this->getConfig()->getShopId(), $sAltBody);
+            $sAltBody = preg_replace("/sid=[A-Z0-9\.]+/i", "sid=x&amp;shp=" . $this->getConfig()->getShopId(), $sAltBody);
         }
 
         // A. alt body is used for plain text emails so we should eliminate HTML entities

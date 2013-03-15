@@ -3,30 +3,6 @@
 
 <script type="text/javascript">
 <!--
-[{ if $updatelist == 1}]
-    UpdateList('[{ $oxid }]');
-[{ /if}]
-
-function UpdateList( sID)
-{
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
-function EditThis( sID)
-{
-    var oTransfer = document.getElementById("transfer");
-    oTransfer.oxid.value=sID;
-    oTransfer.cl.value='article_main';
-    oTransfer.submit();
-
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.actedit.value = 0;
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
 function loadLang(obj)
 {
     var langvar = document.getElementById("agblang");
@@ -34,27 +10,19 @@ function loadLang(obj)
         langvar.value = obj.value;
     document.myedit.submit();
 }
-
-function SetSticker( sStickerId, oObject)
+function editThis( sID )
 {
-    if ( oObject.selectedIndex != -1)
-    {   oSticker = document.getElementById(sStickerId);
-        oSticker.style.display = "";
-        oSticker.style.backgroundColor = "#FFFFCC";
-        oSticker.style.borderWidth = "1px";
-        oSticker.style.borderColor = "#000000";
-        oSticker.style.borderStyle = "solid";
-        oSticker.innerHTML         = oObject.item(oObject.selectedIndex).innerHTML;
+    var oTransfer = top.basefrm.edit.document.getElementById( "transfer" );
+    oTransfer.oxid.value = sID;
+    oTransfer.cl.value = top.basefrm.list.sDefClass;
 
-        if (sStickerId == "_2")
-            document.getElementsByName("defaultButton")[0].disabled = false;
-    }
-    else
-    {
-        oSticker.style.display = "none";
-        if (sStickerId == "_2")
-            document.getElementsByName("defaultButton")[0].disabled = true;
-    }
+    //forcing edit frame to reload after submit
+    top.forceReloadingEditFrame();
+
+    var oSearch = top.basefrm.list.document.getElementById( "search" );
+    oSearch.oxid.value = sID;
+    oSearch.actedit.value = 0;
+    oSearch.submit();
 }
 //-->
 </script>
@@ -91,7 +59,7 @@ function SetSticker( sStickerId, oObject)
                   <b>[{ oxmultilang ident="GENERAL_VARIANTE" }]</b>
                 </td>
                 <td class="edittext">
-                  <a href="Javascript:EditThis('[{ $parentarticle->oxarticles__oxid->value}]');" class="edittext"><b>[{ $parentarticle->oxarticles__oxartnum->value }] [{ $parentarticle->oxarticles__oxtitle->value }]</b></a>
+                  <a href="Javascript:editThis('[{ $parentarticle->oxarticles__oxid->value}]');" class="edittext"><b>[{ $parentarticle->oxarticles__oxartnum->value }] [{ $parentarticle->oxarticles__oxtitle->value }]</b></a>
                 </td>
               </tr>
               [{ /if}]

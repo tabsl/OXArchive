@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcategorylist.php 18365 2009-04-20 13:08:55Z tomas $
+ * $Id: oxcategorylist.php 20457 2009-06-25 13:21:33Z vilma $
  */
 
 
@@ -556,6 +556,7 @@ class oxCategoryList extends oxList
             case 'aPath':
             case 'aFullPath':
                 return $this->getPath();
+                break;
         }
         return parent::__get($sName);
     }

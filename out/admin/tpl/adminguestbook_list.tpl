@@ -8,70 +8,13 @@
 
 <script type="text/javascript">
 <!--
-function EditThis( sID)
+window.onload = function ()
 {
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    oTransfer.oxid.value=sID;
-    oTransfer.cl.value='[{if $actlocation}][{$actlocation}][{else}][{ $default_edit }][{/if}]';
-
-    //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();
-
-    var oSearch = document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
+    top.reloadEditFrame();
+    [{ if $updatelist == 1}]
+        top.oxid.admin.updateList('[{ $oxid }]');
+    [{ /if}]
 }
-
-function DeleteThis( sID)
-{
-    var blCheck = window.confirm("[{ oxmultilang ident="GENERAL_YOUWANTTODELETE" }]");
-    if( blCheck == true)
-    {
-        var oTransfer = parent.edit.document.getElementById("transfer");
-        oTransfer.oxid.value='-1';
-        oTransfer.cl.value='[{ $default_edit }]';
-
-        //forcing edit frame to reload after submit
-        top.forceReloadingEditFrame();
-
-        var oSearch = document.getElementById("search");
-        oSearch.oxid.value=sID;
-        oSearch.fnc.value='deleteentry';
-        oSearch.actedit.value=0;
-        oSearch.submit();
-    }
-}
-
-function ChangeEditBar( sLocation, sPos)
-{
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    oTransfer.cl.value=sLocation;
-
-    //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();
-
-    var oSearch = document.getElementById("search");
-    oSearch.actedit.value=sPos;
-    oSearch.submit();
-}
-
-function ChangeLanguage()
-{
-    var oSearch = document.getElementById("search");
-    oSearch.language.value=oSearch.changelang.value;
-    oSearch.editlanguage.value=oSearch.changelang.value;
-    oSearch.submit();
-
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    oTransfer.innerHTML += '<input type="hidden" name="language" value="'+oSearch.changelang.value+'">';
-    oTransfer.innerHTML += '<input type="hidden" name="editlanguage" value="'+oSearch.changelang.value+'">';
-
-    //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();
-}
-
-window.onLoad = top.reloadEditFrame();
-
 //-->
 </script>
 
@@ -116,10 +59,10 @@ window.onLoad = top.reloadEditFrame();
     [{ if $listitem->getId() == $oxid }]
         [{assign var="listclass" value=listitem4 }]
     [{ /if}]
-    <td valign="top" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid }]new[{/if}]" height="15"><div class="listitemfloating">&nbsp;<a href="Javascript:EditThis('[{ $listitem->oxgbentries__oxid->value}]');" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]">[{ $listitem->oxgbentries__oxcreate|oxformdate }]</a></div></td>
-    <td valign="top" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]"><div class="listitemfloating">&nbsp;<a href="Javascript:EditThis('[{ $listitem->oxgbentries__oxid->value}]');" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]">[{ $listitem->oxuser__oxfname->value }] [{ $listitem->oxuser__oxlname->value }]</a></div></td>
-    <td valign="top" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]"><div class="listitemfloating">&nbsp;<a href="Javascript:EditThis('[{ $listitem->oxgbentries__oxid->value}]');" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]">[{ $listitem->oxgbentries__oxcontent->value|oxtruncate:300:"..":false  }]</a></div></td>
-    <td  class="[{ $listclass}]">[{if !$readonly}]<a href="Javascript:DeleteThis('[{ $listitem->oxgbentries__oxid->value }]');" class="delete" id="del.[{$_cnt}]" [{include file="help.tpl" helpid=item_delete}]></a>[{/if}]</td>
+    <td valign="top" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid }]new[{/if}]" height="15"><div class="listitemfloating">&nbsp;<a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxgbentries__oxid->value}]');" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]">[{ $listitem->oxgbentries__oxcreate|oxformdate }]</a></div></td>
+    <td valign="top" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]"><div class="listitemfloating">&nbsp;<a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxgbentries__oxid->value}]');" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]">[{ $listitem->oxuser__oxfname->value }] [{ $listitem->oxuser__oxlname->value }]</a></div></td>
+    <td valign="top" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]"><div class="listitemfloating">&nbsp;<a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxgbentries__oxid->value}]');" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]">[{ $listitem->oxgbentries__oxcontent->value|oxtruncate:300:"..":false  }]</a></div></td>
+    <td  class="[{ $listclass}]">[{if !$readonly}]<a href="Javascript:top.oxid.admin.deleteThis('[{ $listitem->oxgbentries__oxid->value }]');" class="delete" id="del.[{$_cnt}]" [{include file="help.tpl" helpid=item_delete}]></a>[{/if}]</td>
 
 </tr>
 [{if $blWhite == "2"}]
@@ -128,9 +71,9 @@ window.onLoad = top.reloadEditFrame();
 [{assign var="blWhite" value="2"}]
 [{/if}]
 [{/foreach}]
-</form>
 [{include file="pagenavisnippet.tpl"}]
 </table>
+</form>
 </div>
 
 [{include file="pagetabsnippet.tpl"}]

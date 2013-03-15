@@ -1,16 +1,7 @@
-[{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign sOnLoadFnc='setSmtpField' }]
+[{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign }]
 
 <script type="text/javascript">
 <!--
-function UpdateList()
-{
-    sID = '[{ $oxid }]';
-    var oSearch = parent.list.document.getElementById("search");
-    oSearch.oxid.value=sID;
-    oSearch.submit();
-}
-
-
 function loadLang(obj)
 {
     var langvar = document.getElementById("agblang");
@@ -18,17 +9,6 @@ function loadLang(obj)
         langvar.value = obj.value;
     document.myedit.submit();
 }
-
-function UnlockSave(obj)
-{   var saveButton = document.myedit.save;
-    if ( saveButton != null && obj != null )
-    {   if (obj.value.length > 0)
-            saveButton.disabled = false;
-        else
-            saveButton.disabled = true;
-    }
-}
-
 function setSmtpField()
 {
     var sPass = '';
@@ -53,6 +33,19 @@ function modSmtpField()
     }
 }
 
+
+window.onload = function ()
+{
+    [{ if $updatelist == 1}]
+        top.oxid.admin.updateList('[{ $oxid }]');
+    [{ /if}]
+
+    setSmtpField();
+
+
+    var oField = top.oxid.admin.getLockTarget();
+    oField.onchange = oField.onkeyup = oField.onmouseout = top.oxid.admin.unlockSave;
+}
 //-->
 </script>
 
@@ -68,6 +61,7 @@ function modSmtpField()
     <input type="hidden" name="cl" value="shop_main">
     <input type="hidden" name="fnc" value="">
     <input type="hidden" name="actshop" value="[{ $shop->id }]">
+    <input type="hidden" name="updatenav" value="">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
 </form>
 
@@ -253,7 +247,7 @@ function modSmtpField()
                 [{ oxmultilang ident="SHOP_MAIN_SHOPNAME" }]
             </td>
             <td class="edittext">
-                <input type="text" class="editinput" size="35" maxlength="[{$edit->oxshops__oxname->fldmax_length}]" name="editval[oxshops__oxname]" value="[{$edit->oxshops__oxname->value}]" onchange="JavaScript:UnlockSave(this);" onkeyup="JavaScript:UnlockSave(this);" onmouseout="JavaScript:UnlockSave(this);" [{ $readonly}]>
+                <input type="text" class="editinput" size="35" maxlength="[{$edit->oxshops__oxname->fldmax_length}]" name="editval[oxshops__oxname]" value="[{$edit->oxshops__oxname->value}]" id="oLockTarget" [{ $readonly}]>
             </td>
         </tr>
         [{ if !$IsOXDemoShop }]
@@ -361,7 +355,7 @@ function modSmtpField()
           <tr>
             <td class="edittext"></td>
             <td class="edittext"><br>
-              <input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="GENERAL_SAVE" }]" onClick="Javascript:document.myedit.fnc.value='save'"" [{ if $oxid==-1 }]disabled[{/if}] [{ $readonly}]>
+              <input type="submit" class="edittext" id="oLockButton" name="save" value="[{ oxmultilang ident="GENERAL_SAVE" }]" onClick="Javascript:document.myedit.fnc.value='save'"" [{ if $oxid==-1 }]disabled[{/if}] [{ $readonly}]>
             </td>
           </tr>
         [{else}]
@@ -375,21 +369,6 @@ function modSmtpField()
 </table>
 
 </form>
-
-<script type="text/javascript">
-<!--
-[{ if $updatelist == 1}]
-    //UpdateList('[{ $oxid }]');
-    //Reloading list
-    top.forceReloadingListFrame();
-[{ /if}]
-
-[{ if $updatenav }]
-    UpdateNav();
-[{ /if}]
--->
-</script>
-
 
 [{include file="bottomnaviitem.tpl"}]
 

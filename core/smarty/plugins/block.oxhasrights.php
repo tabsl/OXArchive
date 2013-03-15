@@ -19,7 +19,7 @@
  * @package smartyPlugins
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: block.oxhasrights.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: block.oxhasrights.php 21149 2009-07-28 13:32:07Z arvydas $
  */
 
 /**

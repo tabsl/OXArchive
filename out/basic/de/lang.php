@@ -19,17 +19,17 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 19866 2009-06-16 10:33:17Z alfonsas $
+ * $Id: lang.php 21166 2009-07-28 14:56:10Z arvydas $
  */
 
- 
+
 /* -----------------------
 --  ADAPTING THIS FILE  --
 --------------------------
-If you want to adapt this language file, use cust_lang.php instead. 
+If you want to adapt this language file, use cust_lang.php instead.
 Further information is available in the manual at
 http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/editing-language-files
-*/ 
+*/
 
 $sLangName  = "Deutsch";
 $iLangNr    = 0;
@@ -348,6 +348,7 @@ $aLang = array(
 'DETAILS_PERSPARAM_STAR'                          => "Stern",
 'DETAILS_PERSPARAM_STARS'                         => "Sterne",
 'EMAIL_NEWSLETTEROPTIN_HTML_NEWSLETTER'           => "Newsletter",
+'EMAIL_NEWSLETTERDBOPTINMAIL_SUBJECT'             => "Newsletter",
 'EMAIL_ORDER_CUST_HTML_ORDERNOMBER'               =>"Bestellnr.",
 'EMAIL_ORDER_CUST_HTML_PRODUCT'                   =>"Artikel",
 'EMAIL_ORDER_CUST_HTML_QUANTITY'                  =>"Anzahl",
@@ -426,6 +427,10 @@ $aLang = array(
 'EMAIL_WISHLIST_HTML_TOMYWISHLISTCLICKHERE1'      =>"Um zu meinem Wunschzettel zu kommen bitte",
 'EMAIL_WISHLIST_HTML_TOMYWISHLISTCLICKHERE2'      =>"hier klicken.",
 'EMAIL_WISHLIST_HTML_WITHLOVE'                    =>"Alles liebe,",
+'ERR_404TITLE'                                    =>'Fehler',
+'ERR_404'                                         =>'Die angeforderte Seite konnte nicht gefunden werden.',
+'ERR_404_PREURL'                                  =>'Die angeforderte Seite ',
+'ERR_404_POSTURL'                                 =>'konnte nicht gefunden werden.',
 'ERR_ACCESSDENIEDTITLE'                           =>'Fehler.',
 'ERR_ACCESSDENIED'                                =>'Zugriff verweigert.',
 'ERR_EXPIRED_DAYS_TITLE'                          =>"OXID eShop Fehler",
@@ -828,10 +833,10 @@ $aLang = array(
 'ORDER_IAGREETORIGHTOFWITHDRAWAL1'                => "die",
 'ORDER_IAGREETORIGHTOFWITHDRAWAL3'                => "habe ich gelesen.",
 'ORDER_RIGHTOFWITHDRAWAL'                         => "Widerrufsrecht",
-'ORDER_RIGHTOFWITHDRAWAL_TEXT'                    => "Verbraucher können ihre Vertragserklärung innerhalb von zwei Wochen ohne Angabe von 
-                                                      Gründen in Textform (z. B. Brief, Fax, E-Mail) oder durch Rücksendung der Sache widerrufen. 
-                                                      Die Frist beginnt frühestens mit Erhalt der Ware und einer ausführlichen Belehrung in Textform. 
-                                                      Zur Wahrung der Widerrufsfrist genügt die rechtzeitige Absendung des Widerrufs oder der Sache. 
+'ORDER_RIGHTOFWITHDRAWAL_TEXT'                    => "Verbraucher können ihre Vertragserklärung innerhalb von zwei Wochen ohne Angabe von
+                                                      Gründen in Textform (z. B. Brief, Fax, E-Mail) oder durch Rücksendung der Sache widerrufen.
+                                                      Die Frist beginnt frühestens mit Erhalt der Ware und einer ausführlichen Belehrung in Textform.
+                                                      Zur Wahrung der Widerrufsfrist genügt die rechtzeitige Absendung des Widerrufs oder der Sache.
                                                       Der Widerruf ist zu richten an: ",
 'ORDER_RIGHTOFWITHDRAWAL_MOREINFO1'               => "Hier finden Sie die Einzelheiten zu Ihrem ",
 'ORDER_SUBMITORDER'                               => "Bestellung absenden",
@@ -1200,7 +1205,6 @@ $aLang = array(
 'EXCEPTION_PAGE_HEADLINE'                         => 'Der Shop ist vorübergehend offline...',
 'EXCEPTION_FILE_ERRORINFILE'                      => 'Fehler in Datei!',
 'EXCEPTION_CONNECTION_NODB'                       => 'Keine Verbindung zur Datenbank möglich!',
-'EXCEPTION_ACTIONNOTPOSSIBLEATTHEMOMENT'          => 'Diese Aktion ist zur Zeit nicht möglich!',
 'EXCEPTION_ACCESSRIGHT_ACCESSDENIED'              => 'Zugriff verweigert, keine ausreichenden Rechte!',
 'EXCEPTION_VOUCHER_NOVOUCHER'                     => 'Gutschein ungültig!',
 'EXCEPTION_VOUCHER_TOTALBELOWZERO'                => 'Einkaufswert unter 0,- nicht erlaubt!',
@@ -1218,6 +1222,7 @@ $aLang = array(
 'EXCEPTION_CONNECTION_IPAYMENTPROXYFAULT'         => 'Fehler bei der Kommunikation mit dem IPaymentserver!',
 'EXCEPTION_CONNECTION_IPAYMENTPROXYERROR'         => 'Fehler bei der Kommunikation mit dem IPaymentserver!',
 'EXCEPTION_ARTICLE_ARTICELDOESNOTEXIST'           => 'Artikel existiert nicht!',
+'EXCEPTION_ARTICLE_ARTICELNOTBUYABLE'             => "Artikel ist nicht kaufbar",
 'EXCEPTION_OUTOFSTOCK_OUTOFSTOCK'                 => 'Der Lagerbestand dieses Artikels ist nicht ausreichend! Verfügbar:',
 'EXCEPTION_ARTICLE_NOPRODUCTID'                   => 'Keine Artikel ID angegeben!',
 'EXCEPTION_INPUT_INVALIDAMOUNT'                   => 'Bitte geben Sie eine gültige Menge für das Artikel ein!',

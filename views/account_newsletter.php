@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: account_newsletter.php 16306 2009-02-05 10:28:05Z rimvydas.paskevicius $
+ * $Id: account_newsletter.php 20619 2009-07-03 06:16:01Z vilma $
  */
 
 /**
@@ -48,7 +48,7 @@ class Account_Newsletter extends Account
      *
      * @var integer
      */
-    protected $_iSubsriptionStatus = 0;
+    protected $_iSubscriptionStatus = 0;
 
     /**
      * If user is not logged in - returns name of template account_newsletter::_sThisLoginTemplate,
@@ -119,13 +119,13 @@ class Account_Newsletter extends Account
         if ( ! ( $iStatus = oxConfig::getParameter( 'status' ) ) ) {
             $oUser->removeFromGroup( 'oxidnewsletter' );
             $oUser->getNewsSubscription()->setOptInStatus( 0 );
-            $this->_iSubsriptionStatus = -1;
+            $this->_iSubscriptionStatus = -1;
         } else {
             // assign user to newsletter group
             $oUser->addToGroup( 'oxidnewsletter' );
             $oUser->getNewsSubscription()->setOptInEmailStatus( 0 );
             $oUser->getNewsSubscription()->setOptInStatus( 1 );
-            $this->_iSubsriptionStatus = 1;
+            $this->_iSubscriptionStatus = 1;
         }
 
         //to maintain compatibility we still set the old template variable using new getter
@@ -145,6 +145,6 @@ class Account_Newsletter extends Account
      */
     public function getSubscriptionStatus()
     {
-        return $this->_iSubsriptionStatus;
+        return $this->_iSubscriptionStatus;
     }
 }

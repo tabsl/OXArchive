@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxorderarticle.php 17248 2009-03-16 15:22:07Z arvydas $
+ * $Id: oxorderarticle.php 20672 2009-07-08 11:38:22Z arvydas $
  */
 
 /**
@@ -27,7 +27,7 @@
  * Performs copying of article.
  * @package core
  */
-class oxOrderArticle extends oxBase
+class oxOrderArticle extends oxBase implements oxIArticle
 {
     /**
      * Current class name
@@ -96,6 +96,27 @@ class oxOrderArticle extends oxBase
     public $fnetprice = null;
 
     /**
+     * Order article selection list
+     *
+     * @var array
+     */
+    protected $_aOrderArticleSelList = null;
+
+    /**
+     * Order article instance
+     *
+     * @var oxarticle
+     */
+    protected $_oOrderArticle = null;
+
+    /**
+     * New order article marker
+     *
+     * @var bool
+     */
+    protected $_blIsNewOrderItem = false;
+
+    /**
      * Class constructor, initiates class constructor (parent::oxbase()).
      */
     public function __construct()
@@ -135,6 +156,7 @@ class oxOrderArticle extends oxBase
     {
         parent::assign( $dbRecord );
         $this->_setDeprecatedValues();
+        $this->_setArticleParams();
     }
 
     /**
@@ -268,4 +290,342 @@ class oxOrderArticle extends oxBase
         }
         return parent::_setFieldData($sFieldName, $sValue, $iDataType);
     }
+
+    /**
+     * Executes oxOrderArticle::load() and returns its result
+     *
+     * @return bool
+     */
+    public function loadInLang( $iLanguage, $sOxid )
+    {
+        return $this->load( $sOxid );
+    }
+
+    /**
+     * Returns ordered article id, implements iBaseArticle interface getter method
+     *
+     * @return string
+     */
+    public function getProductId()
+    {
+        return $this->oxorderarticles__oxartid->value;
+    }
+
+    /**
+     * Returns product parent id (oxparentid)
+     *
+     * @return string
+     */
+    public function getProductParentId()
+    {
+        // when this field will be introduced there will be no need to load from real article
+        if ( isset( $this->oxorderarticles__oxartparentid ) && $this->oxorderarticles__oxartparentid->value !== false ) {
+            return $this->oxorderarticles__oxartparentid->value;
+        }
+
+        $oArticle = oxNew( "oxarticle" );
+        $sQ = "select oxparentid from " . $oArticle->getViewName() . " where oxid='" . $this->getProductId() . "'";
+        $this->oxarticles__oxparentid = new oxField( oxDb::getDb()->getOne( $sQ ) );
+        return $this->oxarticles__oxparentid->value;
+    }
+
+    /**
+     * Sets article parameters to current object, so this object can be used for basket calculation
+     *
+     * @return null
+     */
+    protected function _setArticleParams()
+    {
+        // creating needed fields
+        $this->oxarticles__oxstock  = $this->oxorderarticles__oxamount;
+        $this->oxarticles__oxtitle  = $this->oxorderarticles__oxtitle;
+        $this->oxarticles__oxwidth  = $this->oxorderarticles__oxwidth;
+        $this->oxarticles__oxlength = $this->oxorderarticles__oxlength;
+        $this->oxarticles__oxheight = $this->oxorderarticles__oxheight;
+        $this->oxarticles__oxweight = $this->oxorderarticles__oxweight;
+        $this->oxarticles__oxsubclass  = $this->oxorderarticles__oxsubclass;
+        $this->oxarticles__oxartnum    = $this->oxorderarticles__oxartnum;
+        $this->oxarticles__oxshortdesc = $this->oxorderarticles__oxshortdesc;
+
+        $this->oxarticles__oxvat    = $this->oxorderarticles__oxvat;
+        $this->oxarticles__oxprice  = $this->oxorderarticles__oxprice;
+        $this->oxarticles__oxbprice = $this->oxorderarticles__oxbprice;
+
+        $this->oxarticles__oxthumb = $this->oxorderarticles__oxthumb;
+        $this->oxarticles__oxpic1  = $this->oxorderarticles__oxpic1;
+        $this->oxarticles__oxpic2  = $this->oxorderarticles__oxpic2;
+        $this->oxarticles__oxpic3  = $this->oxorderarticles__oxpic3;
+        $this->oxarticles__oxpic4  = $this->oxorderarticles__oxpic4;
+        $this->oxarticles__oxpic5  = $this->oxorderarticles__oxpic5;
+
+        $this->oxarticles__oxfile     = $this->oxorderarticles__oxfile;
+        $this->oxarticles__oxdelivery = $this->oxorderarticles__oxdelivery;
+        $this->oxarticles__oxissearch = $this->oxorderarticles__oxissearch;
+        $this->oxarticles__oxfolder   = $this->oxorderarticles__oxfolder;
+        $this->oxarticles__oxtemplate = $this->oxorderarticles__oxtemplate;
+        $this->oxarticles__oxexturl   = $this->oxorderarticles__oxexturl;
+        $this->oxarticles__oxurlimg   = $this->oxorderarticles__oxurlimg;
+        $this->oxarticles__oxurldesc  = $this->oxorderarticles__oxurldesc;
+        $this->oxarticles__oxshopid   = $this->oxorderarticles__oxordershopid;
+        $this->oxarticles__oxquestionemail = $this->oxorderarticles__oxquestionemail;
+        $this->oxarticles__oxsearchkeys    = $this->oxorderarticles__oxsearchkeys;
+    }
+
+    /**
+     * Returns true, implements iBaseArticle interface method
+     *
+     * @param double $dAmount stock to check
+     *
+     * @return bool
+     */
+    public function checkForStock( $dAmount )
+    {
+        return true;
+    }
+
+    /**
+     * Loads, caches and returns real order article instance. If article is not
+     * available (deleted from db or so) false is returned
+     *
+     * @param string $sArticleId article id (optional, is not passed oxorderarticles__oxartid will be used)
+     *
+     * @return oxarticle | false
+     */
+    protected function _getOrderArticle( $sArticleId = null )
+    {
+        if ( $this->_oOrderArticle === null ) {
+            $this->_oOrderArticle = false;
+
+            $sArticleId = $sArticleId ? $sArticleId : $this->getProductId();
+            $oArticle = oxNew( "oxArticle" );
+            if ( $oArticle->load( $sArticleId ) ) {
+                $this->_oOrderArticle = $oArticle;
+            }
+        }
+        return $this->_oOrderArticle;
+    }
+
+    /**
+     * Returns article select lists, implements iBaseArticle interface method
+     *
+     * @return array
+     */
+    public function getSelectLists( $sKeyPrefix = null )
+    {
+        $aSelLists = array();
+        if ( $oArticle = $this->_getOrderArticle() ) {
+            $aSelLists = $oArticle->getSelectLists();
+        }
+        return $aSelLists;
+    }
+
+    /**
+     * Returns order article selection list array
+     *
+     * @param string $sArtId           ordered article id [optional]
+     * @param string $sOrderArtSelList order article selection list [optional]
+     *
+     * @return array
+     */
+    public function getOrderArticleSelectList( $sArtId = null, $sOrderArtSelList = null )
+    {
+        if ( $this->_aOrderArticleSelList === null ) {
+
+            $sOrderArtSelList = $sOrderArtSelList ? $sOrderArtSelList : $this->oxorderarticles__oxselvariant->value;
+
+            $aList = array();
+            $aRet  = array();
+
+            if ( $oArticle = $this->_getOrderArticle( $sArtId ) ) {
+                $aList = explode( ",", $sOrderArtSelList );
+                $oStr = getStr();
+
+                $aArticleSelList = $oArticle->getSelectLists();
+
+                //formating temporary list array from string
+                foreach ( $aList as $sList ) {
+                    if ( $sList ) {
+
+                        $aVal = explode( ":", $sList );
+                        if ( isset($aVal[0]) && isset($aVal[1])) {
+                            $sOrderArtListTitle = $oStr->strtolower( trim($aVal[0]) );
+                            $sOrderArtSelValue  = $oStr->strtolower( trim($aVal[1]) );
+
+                            //checking article list for matches with article list stored in oxorderitem
+                            $iSelListNum = 0;
+                            if ( count($aArticleSelList) > 0 ) {
+                                foreach ( $aArticleSelList as $aSelect ) {
+                                    //chek if selects titles are equal
+
+                                    if ( $oStr->strtolower($aSelect['name']) == $sOrderArtListTitle ) {
+                                        //try to find matching select items value
+                                        $iSelValueNum = 0;
+                                        foreach ( $aSelect as $oSel ) {
+                                            if ( $oStr->strtolower($oSel->name) == $sOrderArtSelValue ) {
+                                                // found, adding tu return array
+                                                $aRet[$iSelListNum] = $iSelValueNum;
+                                            }
+                                            //next article list item
+                                            $iSelValueNum++;
+                                        }
+                                    }
+                                    //next article list
+                                    $iSelListNum++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            $this->_aOrderArticleSelList = $aRet;
+        }
+
+        return $this->_aOrderArticleSelList;
+    }
+
+    /**
+     * Returns basket order article price
+     *
+     * @param double   $dAmount  basket item amount
+     * @param array    $aSelList chosen selection list
+     * @param oxbasket $oBasket  basket
+     *
+     * @return oxprice
+     */
+    public function getBasketPrice( $dAmount, $aSelList, $oBasket )
+    {
+        return $this->getPrice();
+    }
+
+    /**
+     * Returns false, implements iBaseArticle interface method
+     *
+     * @return bool
+     */
+    public function skipDiscounts()
+    {
+        return false;
+    }
+
+    /**
+     * Returns empty array, implements iBaseArticle interface getter method
+     *
+     * @param bool $blSkipCache force reload or not (default false - no reload)
+     *
+     * @return array
+     */
+    public function getCategoryIds( $blSkipCache = false )
+    {
+        $aCatIds = array();
+        if ( $oOrderArticle = $this->_getOrderArticle() ) {
+            $aCatIds = $oOrderArticle->getCategoryIds( $blSkipCache );
+        }
+        return $aCatIds;
+    }
+
+    /**
+     * Returns current session language id
+     *
+     * @return int
+     */
+    public function getLanguage()
+    {
+        return oxLang::getInstance()->getBaseLanguage();
+    }
+
+    /**
+     * Returns base article price from database
+     *
+     * @param double $dAmount article amount. Default is 1
+     *
+     * @return double
+     */
+    public function getBasePrice( $dAmount = 1 )
+    {
+        return $this->getPrice();
+    }
+
+    /**
+     * Returns order article unit price
+     *
+     * @return oxprice
+     */
+    public function getPrice()
+    {
+        $oBasePrice = oxNew( 'oxPrice' );
+        // prices in db are ONLY brutto
+        $oBasePrice->setBruttoPriceMode();
+        $oBasePrice->setVat( $this->oxorderarticles__oxvat->value );
+        $oBasePrice->setPrice( $this->oxorderarticles__oxbprice->value );
+
+        return $oBasePrice;
+    }
+
+    /**
+     * Marks object as new order item (this marker useful when recalculating stocks after order recalculation)
+     *
+     * @param bool $blIsNew marker value - TRUE if this item is newy added to order
+     *
+     * @return null
+     */
+    public function setIsNewOrderItem( $blIsNew )
+    {
+        $this->_blIsNewOrderItem = $blIsNew;
+    }
+
+    /**
+     * Returns TRUE if current order article is newly added to order
+     *
+     * @return bool
+     */
+    public function isNewOrderItem()
+    {
+        return $this->_blIsNewOrderItem;
+    }
+
+    /**
+     * Ordered article stock setter. Before setting new stock value additionally checks for
+     * original article stock value. Is stock values <= preferred, adjusts order stock according
+     * to it
+     *
+     * @param int $iNewAmount new ordered items amount
+     *
+     * @return null
+     */
+    public function setNewAmount( $iNewAmount )
+    {
+        if ( $iNewAmount >= 0 ) {
+            // to update stock we must first check if it is possible - article exists?
+            $oArticle = oxNew( "oxarticle" );
+            if ( $oArticle->load( $this->oxorderarticles__oxartid->value ) ) {
+
+                // updating stock info
+                $iStockChange = $iNewAmount - $this->oxorderarticles__oxamount->value;
+                if ( $iStockChange > 0 && ( $iOnStock = $oArticle->checkForStock( $iStockChange ) ) !== false ) {
+                    if ( $iOnStock !== true ) {
+                        $iStockChange = $iOnStock;
+                        $iNewAmount   = $this->oxorderarticles__oxamount->value + $iStockChange;
+                    }
+                }
+
+                $this->updateArticleStock( $iStockChange * -1, $this->getConfig()->getConfigParam( 'blAllowNegativeStock' ) );
+
+                // updating self
+                $this->oxorderarticles__oxamount = new oxField ( $iNewAmount, oxField::T_RAW );
+                $this->save();
+            }
+        }
+    }
+
+    /**
+     * Returns true if object is derived from oxorderarticle class
+     *
+     * @return bool
+     */
+    public function isOrderArticle()
+    {
+        return true;
+    }
+
 }

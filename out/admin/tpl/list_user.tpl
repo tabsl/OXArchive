@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
 <!--
-function EditThis( sID)
+function editThis( sID)
 {
     [{assign var="shMen" value=1}]
 
@@ -40,11 +40,6 @@ function EditThis( sID)
     oTransfer.oxid.value = sID;
     oTransfer.cl.value = 'admin_user';
     oTransfer.submit();
-}
-
-function ChangeListSize()
-{
-    document.forms.showlist.submit();
 }
 //-->
 </script>
@@ -91,7 +86,7 @@ function ChangeListSize()
         <div class="r1">
           <div class="b1">
             <div class="find">
-              <select name="viewListSize" class="editinput" onChange="JavaScript:ChangeListSize()">
+              <select name="viewListSize" class="editinput" onChange="JavaScript:top.oxid.admin.changeListSize()">
                 <option value="50" [{ if $viewListSize == 50 }]SELECTED[{/if}]>50</option>
                 <option value="100" [{ if $viewListSize == 100 }]SELECTED[{/if}]>100</option>
                 <option value="200" [{ if $viewListSize == 200 }]SELECTED[{/if}]>200</option>
@@ -116,10 +111,10 @@ function ChangeListSize()
     [{assign var="_cnt" value=$_cnt+1}]
     <tr id="row.[{$_cnt}]">
 
-    <td class="listitem[{ $blWhite }]"><a href="Javascript:EditThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxfname->value }]</a></td>
-    <td class="listitem[{ $blWhite }]"><a href="Javascript:EditThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxlname->value }]</a></td>
-    <td class="listitem[{ $blWhite }]"><a href="Javascript:EditThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxusername->value }]</a></td>
-    <td class="listitem[{ $blWhite }]"><a href="Javascript:EditThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxregister|oxformdate }]</a></td>
+    <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxfname->value }]</a></td>
+    <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxlname->value }]</a></td>
+    <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxusername->value }]</a></td>
+    <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxregister|oxformdate }]</a></td>
 </tr>
 [{if $blWhite == "2"}]
     [{assign var="blWhite" value=""}]

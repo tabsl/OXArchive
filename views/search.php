@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: search.php 18044 2009-04-09 12:25:33Z arvydas $
+ * $Id: search.php 21168 2009-07-29 07:42:32Z arvydas $
  */
 
 /**
@@ -135,6 +135,11 @@ class Search extends oxUBase
      */
     public function init()
     {
+        if ( oxUtils::getInstance()->seoIsActive() ) {
+            // cleaning category id tracked by SEO
+            $this->setSessionCategoryId( null );
+        }
+
         parent::init();
 
         $myConfig = $this->getConfig();

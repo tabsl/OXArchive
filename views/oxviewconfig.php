@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxviewconfig.php 19755 2009-06-10 14:16:24Z arvydas $
+ * $Id: oxviewconfig.php 20503 2009-06-26 14:54:11Z vilma $
  */
 
 /**
@@ -99,7 +99,7 @@ class oxViewConfig extends oxSuperCfg
         $sCatnid  = $this->getActCatId();
         $sTplName = $this->getActTplName();
 
-        $sLink = $this->getConfig()->getShopHomeURL()."cl={$sClass}&amp;".( $sCatnid ? "cnid={$sCatnid} " : '' )."&amp;fnc=logout".( $sTplName ? "&amp;tpl=".basename( $sTplName ) : '' )."&amp;redirect=1";
+        $sLink = $this->getConfig()->getShopHomeURL()."cl={$sClass}&amp;".( $sCatnid ? "cnid={$sCatnid}" : '' )."&amp;fnc=logout".( $sTplName ? "&amp;tpl=".basename( $sTplName ) : '' )."&amp;redirect=1";
         return $this->getSession()->processUrl( $sLink );
     }
 
@@ -251,7 +251,7 @@ class oxViewConfig extends oxSuperCfg
     {
         startProfile('oxviewconfig::__call');
         if ( stripos( $sMethodName, 'get' ) === 0 ) {
-            return $this->__get( substr( $sMethodName, 3 ) );
+            return $this->getViewVar( substr( $sMethodName, 3 ) );
         }
         stopProfile('oxviewconfig::__call');
     }
@@ -825,6 +825,18 @@ class oxViewConfig extends oxSuperCfg
      * @return mixed
      */
     public function __get( $sVarName )
+    {
+        return $this->getViewVar( $sVarName );
+    }
+
+    /**
+     * Returns view config variable value if possible
+     *
+     * @param string $sVarName name of variable to return
+     *
+     * @return mixed
+     */
+    public function getViewVar( $sVarName )
     {
         startProfile('oxviewconfig::__get');
 

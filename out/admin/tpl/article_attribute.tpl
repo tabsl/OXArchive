@@ -2,65 +2,19 @@
 
 <script type="text/javascript">
 <!--
-function EditThis( sID)
+function editThis( sID )
 {
-    var oTransfer = document.getElementById("transfer");
-    oTransfer.oxid.value=sID;
-    oTransfer.cl.value='article_main';
-    oTransfer.submit();
+    var oTransfer = top.basefrm.edit.document.getElementById( "transfer" );
+    oTransfer.oxid.value = sID;
+    oTransfer.cl.value = top.basefrm.list.sDefClass;
 
-    var oSearch = parent.list.document.getElementById("search");
+    //forcing edit frame to reload after submit
+    top.forceReloadingEditFrame();
+
+    var oSearch = top.basefrm.list.document.getElementById( "search" );
+    oSearch.oxid.value = sID;
     oSearch.actedit.value = 0;
-    oSearch.oxid.value=sID;
     oSearch.submit();
-}
-
-function VerifySelectedAttribute ()
-{
-    var countSelected = 0;
-    var allartattr = document.getElementsByName("allartattr[]");
-    var iCtr = 0;
-    if ( allartattr != null)
-    {   oOptions = allartattr.item(0);
-        while ( oOptions.item(iCtr) != null)
-        {   if (oOptions.item(iCtr).selected == true)
-                countSelected++;
-            iCtr++;
-        }
-    }
-
-    if (countSelected > 1) { alert("[{ oxmultilang ident="ARTICLE_ATTRIBUTE_TOOMANYATTRIBUTES" }]"); return false; }
-    if (countSelected == 0) { alert("[{ oxmultilang ident="ARTICLE_ATTRIBUTE_NOATTRIBUTES" }]"); return false; }
-
-    document.myedit.fnc.value = 'changeAttributeValue';
-    document.myedit.submit();
-    return true;
-}
-
-function VerifyAttributeValue ()
-{   // commented due to #957
-    //if ("" != document.myedit.attr_value.value)
-    //{
-        document.myedit.fnc.value = 'saveAttributeValue';
-        document.myedit.submit();
-        return true;
-    //} else alert("Please enter a new value.");
-}
-
-
-function SetSticker( sStickerId, oObject)
-{
-    if ( oObject.selectedIndex != -1)
-    {   oSticker = document.getElementById(sStickerId);
-        oSticker.style.display = "";
-        oSticker.style.backgroundColor = "#FFFFCC";
-        oSticker.style.borderWidth = "1px";
-        oSticker.style.borderColor = "#000000";
-        oSticker.style.borderStyle = "solid";
-        oSticker.innerHTML         = oObject.item(oObject.selectedIndex).innerHTML;
-    }
-    else
-        oSticker.style.display = "none";
 }
 //-->
 </script>
@@ -84,7 +38,7 @@ function SetSticker( sStickerId, oObject)
       <td valign="top" class="edittext">
 
         [{if $oxparentid }]
-          <b>[{ oxmultilang ident="GENERAL_VARIANTE" }]<a href="Javascript:EditThis('[{ $parentarticle->oxarticles__oxid->value}]');" class="edittext"><b>[{ $parentarticle->oxarticles__oxartnum->value }] [{ $parentarticle->oxarticles__oxtitle->value }]</b></a><br>
+          <b>[{ oxmultilang ident="GENERAL_VARIANTE" }]<a href="Javascript:editThis('[{ $parentarticle->oxarticles__oxid->value}]');" class="edittext"><b>[{ $parentarticle->oxarticles__oxartnum->value }] [{ $parentarticle->oxarticles__oxtitle->value }]</b></a><br>
           <br>
         [{/if}]
 

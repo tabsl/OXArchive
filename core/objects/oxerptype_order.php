@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_order.php 18032 2009-04-09 12:14:09Z arvydas $
+ * $Id: oxerptype_order.php 20535 2009-06-30 00:58:33Z alfonsas $
  */
 
 require_once 'oxerptype.php';
@@ -201,11 +201,14 @@ class oxERPType_Order extends oxERPType
             switch ($sField) {
                 case 'OXBILLCOUNTRY':
                     return "(select oxtitle from oxcountry where oxcountry.oxid = OXBILLCOUNTRYID limit 1) as OXBILLCOUNTRY";
+                    break;
                 case 'OXDELCOUNTRY':
                     return "(select oxtitle from oxcountry where oxcountry.oxid = OXDELCOUNTRYID limit 1) as OXDELCOUNTRY";
+                    break;
                 case 'OXPHAPPROVED':
                 case 'OXPHISPHORDER':
                     return "'' as $sField";
+                    break;
             }
         }
         return parent::getSqlFieldName($sField, $iLanguage, $iShopID);

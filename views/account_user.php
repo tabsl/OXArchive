@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: account_user.php 18038 2009-04-09 12:21:40Z arvydas $
+ * $Id: account_user.php 20634 2009-07-03 14:24:34Z arvydas $
  */
 
 /**
@@ -95,20 +95,19 @@ class Account_User extends Account
     public function getDeliverAddress()
     {
         // is logged in ?
-        if ( $this->_oDelAddress === null ) {
-            $this->_oDelAddress = false;
-
-            if ( $oUser = $this->getUser() ) {
-                $sAddressId = $oUser->getSelectedAddress();
-                if ( $sAddressId && $sAddressId != '-1' ) {
-                    $this->_oDelAddress = oxNew( 'oxbase' );
-                    $this->_oDelAddress->init( 'oxaddress' );
-                    $this->_oDelAddress->load( $sAddressId );
+        if ( $oUser = $this->getUser() ) {
+            $oAdresses = $oUser->getUserAddresses();
+            if ( $oAdresses->count() ) {
+                foreach ( $oAdresses as $oAddress ) {
+                    if ( $oAddress->selected == 1 ) {
+                        return $oAddress;
+                    }
                 }
             }
         }
 
-        return $this->_oDelAddress;
+        $oAdresses->rewind();
+        return $oAdresses->current();;
     }
 
     /**

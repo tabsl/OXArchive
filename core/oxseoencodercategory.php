@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxseoencodercategory.php 19702 2009-06-09 16:07:30Z arvydas $
+ * $Id: oxseoencodercategory.php 20953 2009-07-15 13:36:51Z arvydas $
  */
 
 /**
@@ -59,6 +59,16 @@ class oxSeoEncoderCategory extends oxSeoEncoder
         }
 
         return self::$_instance;
+    }
+
+    /**
+     * Returns target "extension" (/)
+     *
+     * @return string
+     */
+    protected function _getUrlExtension()
+    {
+        return '/';
     }
 
     /**
@@ -150,7 +160,7 @@ class oxSeoEncoderCategory extends oxSeoEncoder
             }
 
             foreach ( $aCacheMap as $sId => $sUri ) {
-                $this->_aCatCache[$sId.'_'.$iLang] = $this->_getUniqueSeoUrl( $sSeoUrl.$sUri.'/', '/', $sId, $iLang );
+                $this->_aCatCache[$sId.'_'.$iLang] = $this->_processSeoUrl( $sSeoUrl.$sUri.'/', $sId, $iLang );
                 $this->_saveToDb( 'oxcategory', $sId, $aStdLinks[$sId], $this->_aCatCache[$sId.'_'.$iLang], $iLang );
             }
 

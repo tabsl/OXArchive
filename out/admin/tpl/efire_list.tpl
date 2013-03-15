@@ -8,48 +8,21 @@
 
 <script type="text/javascript">
 <!--
-function EditThis( sID)
-{
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    oTransfer.oxid.value = sID;
-
-    //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();
-
-    var oSearch = document.getElementById("search");
-    oSearch.oxid.value = sID;
-    oSearch.submit();
-}
-
-function ChangeEditBar( sLocation, sPos)
-{
-    var oSearch = document.getElementById("search");
-    oSearch.actedit.value=sPos;
-    oSearch.submit();
-
-    var oTransfer = parent.edit.document.getElementById("transfer");
-    oTransfer.cl.value=sLocation;
-
-    //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();
-}
-
 [{ if $updatemain }]
-    UpdateMain('[{ $oxid }]');
-[{ /if}]
-
-function UpdateMain( sID)
-{
     var oTransfer = parent.edit.document.getElementById("transfer");
     oTransfer.oxid.value=sID;
     oTransfer.cl.value='[{ $default_edit }]';
 
     //forcing edit frame to reload after submit
     top.forceReloadingEditFrame();
+[{ /if}]
+window.onload = function ()
+{
+    top.reloadEditFrame();
+    [{ if $updatelist == 1}]
+        top.oxid.admin.updateList('[{ $oxid }]');
+    [{ /if}]
 }
-
-window.onLoad = top.reloadEditFrame();
-
 //-->
 </script>
 

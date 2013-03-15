@@ -2,13 +2,12 @@
 
 <script type="text/javascript">
 <!--
-
-function ChangeEditBar( sLocation, sPos)
+function changeEditBar( sLocation, sPos )
 {
-    parent.edit.location='[{ $shop->selflink }]?cl=' + sLocation;
+    parent.edit.location = '[{ $shop->selflink }]?cl=' + sLocation;
 
     var oSearch = document.getElementById("search");
-    oSearch.actedit.value=sPos;
+    oSearch.actedit.value = sPos;
     oSearch.submit();
 }
 
@@ -37,7 +36,7 @@ function ChangeExternal( sLocation, sPos)
 <b>[{ oxmultilang ident="GENERAL_OXIDESHOP" }]</b> - [{ oxmultilang ident="DYNSCREEN_LIST_SERVICE" }]
 </div>
 
-[{include file="pagetabsnippet.tpl" noOXIDCheck="true"}]
+[{include file="pagetabsnippet.tpl" noOXIDCheck="true" sEditAction="changeEditBar" }]
 
 
 <script type="text/javascript">

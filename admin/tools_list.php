@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: tools_list.php 18807 2009-05-05 14:57:36Z arvydas $
+ * $Id: tools_list.php 21092 2009-07-22 14:42:13Z vilma $
  */
 
 /**
@@ -239,7 +239,7 @@ class Tools_List extends oxAdminList
                 $sSQL[$iPos] = ' ';
         }
 
-        if (!empty($sSQL) && ereg("[^[:space:]]+", $sSQL)) {
+        if (!empty($sSQL) && preg_match("/[^[:space:]]+/", $sSQL)) {
             $this->aSQLs[] = $sSQL;
         }
         return true;

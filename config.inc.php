@@ -34,12 +34,17 @@
         $this->sShopDir     = '<sShopDir_ce>';
         $this->sCompileDir  = '<sCompileDir_ce>';
 
+    // Template theme name, a directory in out/ folder containing all needed resources
     $this->sTheme = 'basic';
 
-    // utf mode in shop 0 - off, 1 - on
+    // Uncoment only for former (pre version 4) template compatibility
+    // $this->blFormerTplSupport = true;
+    // $this->blFixedWidthLayout = 1;
+
+    // UTF-8 mode in shop 0 - off, 1 - on
     $this->iUtfMode  = '<iUtfMode>';
 
-    //File type whitelist for file upload
+    // File type whitelist for file upload
     $this->aAllowedUploadTypes = array('jpg', 'gif', 'png', 'pdf', 'mp3', 'avi', 'mpg', 'mpeg', 'doc', 'xls', 'ppt');
 
     // timezone information
@@ -65,17 +70,22 @@
     // Log all modifications performed in Admin
     $this->blLogChangesInAdmin = 0;
 
+    // Force admin email
     $this->sAdminEmail = '';
-
-    // Use browser cookies to store session id (no sid parameter in URL)
-    $this->blSessionUseCookies = 1;
 
     // in case session must be started on first user page visit (not only on
     // session required action) set this option value 1
     $this->blForceSessionStart = 0;
 
-    // uncomment the following line if you want euro sign leave unchanged in output
-    // the default is to convert euro sign symbol to html entity
+    // Use browser cookies to store session id (no sid parameter in URL)
+    $this->blSessionUseCookies = 1;
+
+    // set this parameter when your shop runs on different subdomains in ssl/non ssl mode
+    // e.g. if you setup "ssl.shop.com"/"www.shop.com" - config value should be ".shop.com"
+    $this->sCookieDomain = null;
+
+    // uncomment the following line if you want to leave euro sign unchanged in output
+    // by default is set to convert euro sign symbol to html entity
     // $this->blSkipEuroReplace = true;
 
 
@@ -97,11 +107,3 @@
 
     // Deactivate Static URL's for these Robots
     $this->aRobotsExcept = array();
-
-    // Only for former templates: Fixed Shop Width
-    $this->blFixedWidthLayout = 1;
-
-    // set this parameter when your shop runs on different subdomains in ssl/non ssl mode
-    // e.g. if you setup "ssl.shop.com"/"www.shop.com" - config value should be ".shop.com"
-    $this->sCookieDomain = null;
-

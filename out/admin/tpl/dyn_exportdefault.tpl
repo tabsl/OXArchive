@@ -39,14 +39,14 @@
             [{ oxmultilang ident="GENERAL_SEARCHKEY" }]
             </td>
             <td class="edittext">
-			<input type="text" class="editinput" size="39" maxlength="128" name="search" value="" [{ $readonly }]>
+            <input type="text" class="editinput" size="39" maxlength="128" name="search" value="" [{ $readonly }]>
             </td>
         </tr>
         <tr>
             <td class="edittext" width="180" height="40">
             </td>
             <td class="edittext">
-			<input type="submit" class="edittext" style="width: 210px;" name="save" value="[{ oxmultilang ident="GENERAL_ESTART" }]" [{ $readonly }]>
+            <input type="submit" class="edittext" style="width: 210px;" name="save" value="[{ oxmultilang ident="GENERAL_ESTART" }]" [{ $readonly }]>
             </td>
         </tr>
         </table>
@@ -56,20 +56,20 @@
     <td valign="top" class="edittext" align="left">
 
         <table cellspacing="0" cellpadding="0" border="0">
-        <tr>
+        <!--<tr>
             <td class="edittext" width="180" height="40">
             [{ oxmultilang ident="GENERAL_EXPORTDELCOST" }]
             </td>
             <td class="edittext">
-			<input type="text" class="editinput" size="10" maxlength="10" name="sExportDelCost" value="0,00" [{ $readonly }]> &euro;
+            <input type="text" class="editinput" size="10" maxlength="10" name="sExportDelCost" value="0,00" [{ $readonly }]> &euro;
             </td>
-        </tr>
+        </tr>-->
         <tr>
             <td class="edittext" width="180" height="40">
             [{ oxmultilang ident="GENERAL_EXPORTMINSTOCK" }]
             </td>
             <td class="edittext">
-			<input type="text" class="editinput" size="10" maxlength="10" name="sExportMinStock" value="1" [{ $readonly }]>
+            <input type="text" class="editinput" size="10" maxlength="10" name="sExportMinStock" value="1" [{ $readonly }]>
             </td>
         </tr>
         <tr>
@@ -77,7 +77,7 @@
             [{ oxmultilang ident="GENERAL_EXPORTMINPRICE" }]
             </td>
             <td class="edittext">
-			<input type="text" class="editinput" size="10" maxlength="10" name="sExportMinPrice" value="0" [{ $readonly }]>
+            <input type="text" class="editinput" size="10" maxlength="10" name="sExportMinPrice" value="0" [{ $readonly }]>
             </td>
         </tr>
         <tr>
@@ -101,7 +101,7 @@
             [{ oxmultilang ident="GENERAL_EXPORTCAMPAIGN" }]
             </td>
             <td class="edittext">
-			<input type="text" class="editinput" size="20" maxlength="10" name="sExportCampaign" value="" [{ $readonly }]>
+            <input type="text" class="editinput" size="20" maxlength="10" name="sExportCampaign" value="" [{ $readonly }]>
             </td>
         </tr>
         <tr>
@@ -115,11 +115,11 @@
         </table>
 
         <!--
-		Bitte Land f&uuml;r Versandkosten w&auml;hlen : <br>
-		<select name="country" class="editinput" style="width: 210px;" [{ $readonly }]>
-		[{foreach from=$countrylist item=oCountry}]
-		<option value="[{ $oCountry->oxcountry__oxid->value }]">[{ $oCountry->oxcountry__oxtitle->value }]</option>
-		[{/foreach}]
+        Bitte Land f&uuml;r Versandkosten w&auml;hlen : <br>
+        <select name="country" class="editinput" style="width: 210px;" [{ $readonly }]>
+        [{foreach from=$countrylist item=oCountry}]
+        <option value="[{ $oCountry->oxcountry__oxid->value }]">[{ $oCountry->oxcountry__oxtitle->value }]</option>
+        [{/foreach}]
         -->
     </td>
     </form>

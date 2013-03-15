@@ -101,7 +101,7 @@ class oxStrMb
     {
         // additional check according to bug in PHP 5.2.0 version
         if ( !$sHaystack ) {
-        	return false;
+            return false;
         }
         return mb_strstr($sHaystack, $sNeedle, false, $this->_sEncoding);
     }
@@ -133,7 +133,7 @@ class oxStrMb
     /**
      * PHP htmlspecialchars() function wrapper
      *
-     * @param string $sString        string being converted
+     * @param string $sString string being converted
      *
      * @return string
      */
@@ -264,7 +264,7 @@ class oxStrMb
             if ( preg_match( $sRegexp, $sString, $aMatches ) ) {
                 $sStr = $aMatches[0];
                 $sReturn .= preg_replace( '/\s$/s', '', $sStr ) . $sBreak;
-                $sString = $this->substr( $sString , mb_strlen( $sStr, $this->_sEncoding ) );
+                $sString = $this->substr( $sString, mb_strlen( $sStr, $this->_sEncoding ) );
             } else {
                 break;
             }

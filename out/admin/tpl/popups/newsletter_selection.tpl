@@ -39,8 +39,19 @@
         {
             return 'fnc=removegroupfromnewsletter';
         }
+        YAHOO.oxid.container1.onSuccessCalback = reloadParentFrame;
+        YAHOO.oxid.container2.onSuccessCalback = reloadParentFrame;
     }
     $E.onDOMReady( initAoc );
+    // reloading frame after group assignment..
+    function reloadParentFrame()
+    {
+        try {
+            if (window.opener && window.opener.document && window.opener.document.myedit) {
+                window.opener.document.myedit.submit();
+            }
+        } catch ( oErr ) {}
+    }
 </script>
 
     <table width="100%">

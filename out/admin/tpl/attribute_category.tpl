@@ -1,20 +1,5 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign}]
 
-<script type="text/javascript">
-<!--
-[{ if $updatelist == 1}]
-    UpdateList('[{ $oxid }]');
-[{ /if}]
-
-function UpdateList( sID)
-{
-    parent.list.document.search.oxid.value=sID;
-    parent.list.document.search.submit();
-}
-
-//-->
-</script>
-
 [{ if $readonly }]
     [{assign var="readonly" value="readonly disabled"}]
 [{else}]

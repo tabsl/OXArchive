@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxtagcloud.php 19609 2009-06-04 07:33:12Z arvydas $
+ * $Id: oxtagcloud.php 21223 2009-07-31 13:02:17Z arvydas $
  */
 
 if (!defined('OXTAGCLOUD_MINFONT')) {
@@ -50,10 +50,11 @@ class oxTagCloud extends oxSuperCfg
      *
      * @param string $sArtId     article id
      * @param bool   $blExtended if can extend tags
+     * @param int    $iLang      preferred language [optional]
      *
      * @return array
      */
-    public function getTags($sArtId = null, $blExtended = false)
+    public function getTags($sArtId = null, $blExtended = false, $iLang = null )
     {
         $oDb = oxDb::getDb(true);
         if ($blExtended) {
@@ -69,7 +70,7 @@ class oxTagCloud extends oxSuperCfg
             $iAmount = 0;
         }
 
-        $sField = "oxartextends.oxtags".oxLang::getInstance()->getLanguageTag();
+        $sField = "oxartextends.oxtags".oxLang::getInstance()->getLanguageTag( $iLang );
 
         $sArtView = getViewName('oxarticles');
         $sQ = "select $sField as oxtags from $sArtView as oxarticles left join oxartextends on oxarticles.oxid=oxartextends.oxid where oxarticles.oxactive=1 AND $sArticleSelect";
@@ -101,10 +102,11 @@ class oxTagCloud extends oxSuperCfg
      * Sorts passed tag array. Using MySQL for sorting (to keep user defined ordering way).
      *
      * @param array $aTags tags to sort
+     * @param int   $iLang      preferred language [optional]
      *
      * @return array
      */
-    protected function _sortTags( $aTags )
+    protected function _sortTags( $aTags, $iLang = null )
     {
         if ( is_array( $aTags ) && count( $aTags ) ) {
             $oDb = oxDb::getDb( true );
@@ -116,7 +118,7 @@ class oxTagCloud extends oxSuperCfg
                 $sSubQ .= 'select '.$oDb->quote( $sKey ).' as _oxsort, '.$oDb->quote( $sTag ).' as _oxval';
             }
 
-            $sField = "oxartextends.oxtags".oxLang::getInstance()->getLanguageTag();
+            $sField = "oxartextends.oxtags".oxLang::getInstance()->getLanguageTag( $iLang );
 
             // forcing collation
             $sSubQ = "select {$sField} as _oxsort, 'ox_skip' as _oxval from oxartextends limit 1 union $sSubQ";
@@ -140,15 +142,16 @@ class oxTagCloud extends oxSuperCfg
      *
      * @param string $sArtId     article id
      * @param bool   $blExtended if can extend tags
+     * @param int    $iLang      preferred language [optional]
      *
      * @return string
      */
-    public function getTagCloud($sArtId = null, $blExtended = false)
+    public function getTagCloud($sArtId = null, $blExtended = false, $iLang = null )
     {
         $myUtils = oxUtils::getInstance();
 
         $sTagCloud = null;
-        $sCacheKey = $this->_getCacheKey($blExtended);
+        $sCacheKey = $this->_getCacheKey($blExtended, $iLang );
         if ( $this->_sCacheKey && !$sArtId ) {
             $sTagCloud = $myUtils->fromFileCache( $sCacheKey );
         }
@@ -157,7 +160,7 @@ class oxTagCloud extends oxSuperCfg
             return $sTagCloud;
         }
 
-        $aTags = $this->getTags($sArtId, $blExtended);
+        $aTags = $this->getTags($sArtId, $blExtended, $iLang);
         if (!count($aTags)) {
             if ($this->_sCacheKey && !$sArtId) {
                 $sTagCloud = false;
@@ -170,7 +173,7 @@ class oxTagCloud extends oxSuperCfg
         $blSeoIsActive = $myUtils->seoIsActive();
         $oSeoEncoderTag = oxSeoEncoderTag::getInstance();
 
-        $iLang = oxLang::getInstance()->getBaseLanguage();
+        $iLang = ( $iLang !== null ) ? $iLang : oxLang::getInstance()->getBaseLanguage();
         $sUrl = $this->getConfig()->getShopUrl();
         $oStr = getStr();
 
@@ -181,7 +184,7 @@ class oxTagCloud extends oxSuperCfg
             } else {
                 $sLink = $sUrl . $oSeoEncoderTag->getStdTagUri( $sTag ) . "&amp;lang=" . $iLang;
             }
-            $sTagCloud .= "<a style='font-size:". $this->_getFontSize($sRelevance, $iMaxHit) ."%;' href='$sLink'>".$oStr->htmlentities($sTag)."</a> ";
+            $sTagCloud .= "<a style='font-size:". $iFontSize ."%;' class='tagitem_". $iFontSize . "' href='$sLink'>".$oStr->htmlentities($sTag)."</a> ";
         }
 
         if ( $this->_sCacheKey && !$sArtId ) {
@@ -269,29 +272,32 @@ class oxTagCloud extends oxSuperCfg
     /**
      * Resets tag cache
      *
+     * @param int $iLang preferred language [optional]
+     *
      * @return null
      */
-    public function resetTagCache()
+    public function resetTagCache( $iLang = null )
     {
         $myUtils = oxUtils::getInstance();
 
-        $sCacheKey1 = $this->_getCacheKey(true);
-        $myUtils->toFileCache($sCacheKey1, null);
+        $sCacheKey1 = $this->_getCacheKey( true, $iLang );
+        $myUtils->toFileCache( $sCacheKey1, null );
 
-        $sCacheKey2 = $this->_getCacheKey(false);
-        $myUtils->toFileCache($sCacheKey2, null);
+        $sCacheKey2 = $this->_getCacheKey( false, $iLang );
+        $myUtils->toFileCache( $sCacheKey2, null );
     }
 
     /**
      * Returns tag cache key name.
      *
      * @param bool $blExtended Whether to display full list
+     * @param int  $iLang      preferred language [optional]
      *
      * @return null
      */
-    protected function _getCacheKey($blExtended)
+    protected function _getCacheKey( $blExtended, $iLang = null )
     {
-        return $this->_sCacheKey."_".$this->getConfig()->getShopId()."_".oxLang::getInstance()->getBaseLanguage()."_".$blExtended;
+        return $this->_sCacheKey."_".$this->getConfig()->getShopId()."_".( ( $iLang !== null ) ? $iLang : oxLang::getInstance()->getBaseLanguage() ) ."_".$blExtended;
     }
 
 }

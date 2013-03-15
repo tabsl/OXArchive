@@ -63,6 +63,16 @@ class oxSeoEncoderManufacturer extends oxSeoEncoder
     }
 
     /**
+     * Returns target "extension" (/)
+     *
+     * @return string
+     */
+    protected function _getUrlExtension()
+    {
+        return '/';
+    }
+
+    /**
      * Returns part of SEO url excluding path
      *
      * @param oxmanufacturer $oManufacturer manufacturer object
@@ -95,7 +105,7 @@ class oxSeoEncoderManufacturer extends oxSeoEncoder
             }
 
             $sSeoUrl .= $this->_prepareTitle( $oManufacturer->oxmanufacturers__oxtitle->value .'/' );
-            $sSeoUrl  = $this->_getUniqueSeoUrl( $sSeoUrl, '/', $oManufacturer->getId(), $iLang );
+            $sSeoUrl  = $this->_processSeoUrl( $sSeoUrl, $oManufacturer->getId(), $iLang );
 
             // save to db
             $this->_saveToDb( 'oxmanufacturer', $oManufacturer->getId(), $oManufacturer->getStdLink(), $sSeoUrl, $iLang );
