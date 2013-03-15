@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: report_visitor_absolute.php 27071 2010-04-06 15:34:42Z arvydas $
+ * @version   SVN: $Id: report_visitor_absolute.php 38450 2011-08-26 11:41:42Z vilma $
  */
 
 if ( !class_exists( "report_visitor_absolute") ) {
@@ -136,7 +136,7 @@ class Report_visitor_absolute extends report_base
         // New graph with a drop shadow
         $graph = new Graph(800, 600);
 
-        $graph->setBackgroundImage( $myConfig->getAbsAdminImageDir()."/reportbgrnd.jpg", BGIMG_FILLFRAME);
+        $graph->setBackgroundImage( $myConfig->getImageDir(true)."/reportbgrnd.jpg", BGIMG_FILLFRAME);
 
         // Use a "text" X-scale
         $graph->setScale("textlin");
@@ -271,7 +271,7 @@ class Report_visitor_absolute extends report_base
         // New graph with a drop shadow
         $graph = new Graph( max( 800, count( $aDataX) * 80), 600);
 
-        $graph->setBackgroundImage( $myConfig->getAbsAdminImageDir()."/reportbgrnd.jpg", BGIMG_FILLFRAME);
+        $graph->setBackgroundImage( $myConfig->getImageDir(true)."/reportbgrnd.jpg", BGIMG_FILLFRAME);
 
         // Use a "text" X-scale
         $graph->setScale("textlin");

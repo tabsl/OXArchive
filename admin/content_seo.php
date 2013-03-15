@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: content_seo.php 27759 2010-05-14 10:10:17Z arvydas $
+ * @version   SVN: $Id: content_seo.php 38166 2011-08-12 16:03:55Z arvydas.vapsva $
  */
 
 /**
@@ -27,19 +27,6 @@
  */
 class Content_Seo extends Object_Seo
 {
-    /**
-     * Returns objects seo url
-     *
-     * @param oxcontent $oContent active content object
-     *
-     * @return string
-     */
-    protected function _getSeoUrl( $oContent )
-    {
-        $this->_getEncoder()->getContentUrl( $oContent );
-        return parent::_getSeoUrl( $oContent );
-    }
-
     /**
      * Returns url type
      *
@@ -49,7 +36,7 @@ class Content_Seo extends Object_Seo
     {
         return 'oxcontent';
     }
-
+    
     /**
      * Returns current object type seo encoder object
      *
@@ -58,5 +45,18 @@ class Content_Seo extends Object_Seo
     protected function _getEncoder()
     {
         return oxSeoEncoderContent::getInstance();
+    }
+    
+    /**
+     * Returns seo uri
+     *
+     * @return string
+     */
+    public function getEntryUri()
+    {
+        $oContent = oxNew( 'oxcontent' );
+        if ( $oContent->load( $this->getEditObjectId() ) ) {
+            return $this->_getEncoder()->getContentUri( $oContent, $this->getEditLang() );
+        }
     }
 }

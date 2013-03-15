@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_extend.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: article_extend.inc.php 38298 2011-08-19 13:07:29Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -130,9 +130,14 @@ class ajaxComponent extends ajaxListComponent
 
         } elseif ( is_array( $aRemoveCat ) && count( $aRemoveCat ) ) {
 
-            $sQ = 'delete from oxobject2category where oxid in (' . implode( ', ', oxDb::getInstance()->quoteArray( $aRemoveCat ) ) . ')';
+
+            $sQ = "delete from oxobject2category where";
+            $sQ .= " oxid in (" . implode( ', ', oxDb::getInstance()->quoteArray( $aRemoveCat ) ) . ')';
             $oDb->Execute( $sQ );
 
+
+            // updating oxtime values
+            $this->_updateOxTime( $soxId );
         }
 
         $this->resetArtSeoUrl( $soxId );
@@ -175,17 +180,41 @@ class ajaxComponent extends ajaxListComponent
                     continue;
 
                 $oNew->setId( $myUtilsObj->generateUID() );
-                $oNew->oxobject2category__oxobjectid = new oxField($soxId);
-                $oNew->oxobject2category__oxcatnid   = new oxField($sAdd);
-                $oNew->oxobject2category__oxtime     = new oxField(time());
+                $oNew->oxobject2category__oxobjectid = new oxField( $soxId );
+                $oNew->oxobject2category__oxcatnid   = new oxField( $sAdd );
+                $oNew->oxobject2category__oxtime     = new oxField( time() );
 
 
                 $oNew->save();
             }
 
+            $this->_updateOxTime( $soxId );
+
             $this->resetArtSeoUrl( $soxId );
             $this->resetContentCache();
         }
+    }
+
+    /**
+     * Updates oxtime value for product
+     *
+     * @param string $soxId product id
+     *
+     * @return null
+     */
+    protected function _updateOxTime( $soxId )
+    {
+        $oDb = oxDb::getDb();
+        $sO2CView = $this->_getViewName('oxobject2category');
+        $soxId = $oDb->quote( $soxId );
+
+        // updating oxtime values
+        $sQ  = "update oxobject2category set oxtime = 0 where oxobjectid = {$soxId} and oxid = (
+                    select oxid from (
+                        select oxid from {$sO2CView} where oxobjectid = {$soxId} order by oxtime limit 1
+                    ) as _tmp
+                )";
+        $oDb->execute( $sQ );
     }
 
     /**

@@ -19,7 +19,7 @@
  * @package   smarty_plugins
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: function.oxscript.php 36584 2011-06-28 10:04:06Z linas.kukulskis $
+ * @version   SVN: $Id: function.oxscript.php 38109 2011-08-10 14:56:40Z tomas $
  */
 
 /**
@@ -79,9 +79,15 @@ function smarty_function_oxscript($params, &$smarty)
     } else {
         ksort( $aInclude );
 
+        $aOutUrls = array();
+
         foreach ($aInclude as $aPriority) {
             foreach ($aPriority as $sSrc) {
-                $sOutput .= '<script type="text/javascript" src="'.$sSrc.'"></script>'.PHP_EOL;
+                //checking for dublicates #3062
+                if (!in_array($sSrc, $aOutUrls)) {
+                    $sOutput .= '<script type="text/javascript" src="'.$sSrc.'"></script>'.PHP_EOL;
+                }
+                $aOutUrls[] = $sSrc;
             }
         }
         $myConfig->setGlobalParameter($sIncludes, null);

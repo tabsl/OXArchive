@@ -1,6 +1,14 @@
 # Uncomment this line if you execute SQL manually for MySQL 5
 # SET @@session.sql_mode = '';
 
+UPDATE `oxshops`
+SET
+    `OXTITLEPREFIX` = 'OXID Surf- und Kiteshop'
+    , `OXTITLEPREFIX_1` = 'OXID Surf and Kite Shop'
+    , `OXSTARTTITLE` = 'Der Onlineshop für Wassersport und Sommerspass'
+    , `OXSTARTTITLE_1` = 'Online Shop for water sports and summertime'
+WHERE `OXID` = 'oxbaseshop';
+
 #
 # Data for table `oxaccessoire2article`
 #

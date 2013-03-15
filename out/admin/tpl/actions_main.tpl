@@ -181,7 +181,7 @@ function DeletePic( sField )
 
                           <tr>
                             <td class="text">
-                                <b>[{ oxmultilang ident="PROMOTIONS_BANNER_PICTUREUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}]):</b>
+                                <b>[{ oxmultilang ident="PROMOTIONS_BANNER_PICTUREUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}]):</b>
                             </td>
                             <td class="edittext">
                                 <input class="editinput" name="myfile[PROMO@oxactions__oxpic]" type="file" size="26"[{$readonly_fields}]>

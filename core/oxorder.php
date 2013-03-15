@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 33967 2011-03-24 11:25:33Z arvydas.vapsva $
+ * @version   SVN: $Id: oxorder.php 38354 2011-08-23 15:06:26Z arvydas.vapsva $
  */
 
 /**
@@ -271,7 +271,7 @@ class oxOrder extends oxBase
         $sTitle = null;
         if ( $sCountryId && $sCountryId != '-1' ) {
             $oCountry = oxNew( 'oxcountry' );
-            $oCountry->load( $sCountryId );
+            $oCountry->loadInLang( $this->getOrderLanguage(), $sCountryId );
             $sTitle = $oCountry->oxcountry__oxtitle->value;
         }
 

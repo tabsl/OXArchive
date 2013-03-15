@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: user.php 35529 2011-05-23 07:31:20Z arunas.paskevicius $
+ * @version   SVN: $Id: user.php 38198 2011-08-17 14:02:47Z arunas.paskevicius $
  */
 
 /**
@@ -171,10 +171,16 @@ class User extends oxUBase
     public function getOrderRemark()
     {
         if ( $this->_sOrderRemark === null ) {
-            $this->_sOrderRemark = false;
-            if ( $sOrderRemark = oxSession::getVar( 'ordrem' ) ) {
-                $this->_sOrderRemark = oxConfig::checkSpecialChars( $sOrderRemark );
+            $sOrderRemark = false;
+            // if already connected, we can use the session            
+            if ( $this->getUser() ) {
+                $sOrderRemark = oxSession::getVar( 'ordrem' );                
+            } else {
+                // not connected so nowhere to save, we're gonna use what we get from post
+                $sOrderRemark = oxConfig::getParameter( 'order_remark', true );
             }
+            
+            $this->_sOrderRemark = $sOrderRemark ? oxConfig::checkSpecialChars( $sOrderRemark ) : false;
         }
         return $this->_sOrderRemark;
     }

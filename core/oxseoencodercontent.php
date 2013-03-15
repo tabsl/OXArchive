@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencodercontent.php 28421 2010-06-18 08:54:27Z sarunas $
+ * @version   SVN: $Id: oxseoencodercontent.php 38137 2011-08-11 13:31:10Z arvydas.vapsva $
  */
 
 /**
@@ -78,9 +78,27 @@ class oxSeoEncoderContent extends oxSeoEncoder
      * @param int       $iLang        language
      * @param bool      $blRegenerate if TRUE forces seo url regeneration
      *
+     * @deprecated since 20110810 use oxSeoEncoderContent::getContentUri()
+     * @todo after you remove this method also change all other calls with public method
+     *
      * @return string
      */
     protected function _getContentUri( $oCont, $iLang = null, $blRegenerate = false )
+    {
+        return $this->getContentUri( $oCont, $iLang, $blRegenerate );
+    }
+
+    /**
+     * Returns SEO uri for content object. Includes parent category path info if
+     * content is assigned to it
+     *
+     * @param oxcontent $oCont        content category object
+     * @param int       $iLang        language
+     * @param bool      $blRegenerate if TRUE forces seo url regeneration
+     *
+     * @return string
+     */
+    public function getContentUri( $oCont, $iLang = null, $blRegenerate = false )
     {
         if (!isset($iLang)) {
             $iLang = $oCont->getLanguage();

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: category_main.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: category_main.inc.php 38298 2011-08-19 13:07:29Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -151,6 +151,7 @@ class ajaxComponent extends ajaxListComponent
             $myUtilsObject = oxUtilsObject::getInstance();
             $oActShop = $myConfig->getActiveShop();
 
+            $sProdIds = "";
             foreach ( $aArticles as $sAdd) {
 
                 // check, if it's already in, then don't add it again
@@ -158,15 +159,47 @@ class ajaxComponent extends ajaxListComponent
                 if ( $oDb->getOne( $sSelect ) )
                     continue;
 
-                $oNew->oxobject2category__oxid       = new oxField($oNew->setId( $myUtilsObject->generateUID() ));
-                $oNew->oxobject2category__oxobjectid = new oxField($sAdd);
-                $oNew->oxobject2category__oxcatnid   = new oxField($sCategoryID);
-                $oNew->oxobject2category__oxtime     = new oxField(time());
+                $oNew->oxobject2category__oxid       = new oxField( $oNew->setId( $myUtilsObject->generateUID() ) );
+                $oNew->oxobject2category__oxobjectid = new oxField( $sAdd );
+                $oNew->oxobject2category__oxcatnid   = new oxField( $sCategoryID );
+                $oNew->oxobject2category__oxtime     = new oxField( time() );
                 $oNew->save();
+
+                if ( $sProdIds ) {
+                    $sProdIds .= ",";
+                }
+                $sProdIds .= $oDb->quote( $sAdd ) ;
             }
+
+            // updating oxtime values
+            $this->_updateOxTime( $sProdIds );
 
             $this->resetArtSeoUrl( $aArticles );
             $this->resetCounter( "catArticle", $sCategoryID );
+        }
+    }
+
+    /**
+     * Updates oxtime value for products
+     *
+     * @param string $sProdIds product ids: "id1", "id2", "id3"
+     *
+     * @return null
+     */
+    protected function _updateOxTime( $sProdIds )
+    {
+        if ( $sProdIds ) {
+            $sO2CView = $this->_getViewName('oxobject2category');
+            $sQ = "update oxobject2category set oxtime = 0 where oxid in (
+                      select _tmp.oxid from (
+                          select oxobject2category.oxid from (
+                              select min(oxtime) as oxtime, oxobjectid from {$sO2CView} where oxobjectid in ( {$sProdIds} ) group by oxobjectid
+                          ) as _subtmp
+                          left join oxobject2category on oxobject2category.oxtime = _subtmp.oxtime and oxobject2category.oxobjectid = _subtmp.oxobjectid
+                      ) as _tmp
+                   )";
+
+            oxDb::getDb()->execute( $sQ );
         }
     }
 
@@ -190,13 +223,20 @@ class ajaxComponent extends ajaxListComponent
             $oDb->Execute( $sQ );
 
         } elseif ( is_array( $aArticles ) && count( $aArticles ) ) {
+            $sProdIds = implode( ", ", oxDb::getInstance()->quoteArray( $aArticles ) );
+
+            $sDelete = "delete from oxobject2category where";
+            $sWhere = " oxcatnid=".$oDb->quote( $sCategoryID );
             if ( !$this->getConfig()->getConfigParam( 'blVariantsSelection' ) ) {
-                $sQ = "delete from oxobject2category where oxcatnid=".$oDb->quote( $sCategoryID )." and oxobjectid in ( select oxid from oxarticles where oxparentid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aArticles ) ) . ") )";
+                $sQ = $sDelete.$sWhere." and oxobjectid in ( select oxid from oxarticles where oxparentid in ( {$sProdIds} ) )";
                 $oDb->execute( $sQ );
             }
-            $sQ = "delete from oxobject2category where oxcatnid=".$oDb->quote( $sCategoryID )." and oxobjectid in ( " . implode( ", ", oxDb::getInstance()->quoteArray( $aArticles ) ) . ")";
+            $sQ = $sDelete.$sWhere." and oxobjectid in ( {$sProdIds} )";
             $oDb->execute( $sQ );
 
+
+            // updating oxtime values
+            $this->_updateOxTime( $sProdIds );
         }
 
         $this->resetArtSeoUrl( $sAdd );

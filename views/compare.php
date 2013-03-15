@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: compare.php 35529 2011-05-23 07:31:20Z arunas.paskevicius $
+ * @version   SVN: $Id: compare.php 38154 2011-08-12 10:23:04Z arunas.paskevicius $
  */
 
 /**
@@ -32,7 +32,7 @@ class Compare extends oxUBase
      * Number of possible compare pages.
      * @var integer
      */
-    protected $_iCntPages = null;
+    protected $_iCntPages = 1;
 
     /**
      * Number of user's orders.

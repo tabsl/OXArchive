@@ -19,7 +19,7 @@
  * @package   modules
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: myorder.php 35660 2011-05-30 10:06:48Z arunas.paskevicius $
+ * @version   SVN: $Id: myorder.php 38173 2011-08-16 09:04:24Z linas.kukulskis $
  */
 
 /**
@@ -32,6 +32,12 @@ class PdfBlock
      * @var array
      */
     protected $_aCache = array();
+
+    /**
+     * string default Font
+     * @var array
+     */
+    protected $_sFont = 'Arial';
 
     /**
      * Stores cacheable parameters
@@ -143,6 +149,16 @@ class PdfBlock
                     break;
             }
         }
+    }
+
+    /**
+     * Caches SetFont call with parameters
+     *
+     * @return string
+     */
+    public function getFont()
+    {
+        return $this->_sFont;
     }
 }
 
@@ -473,7 +489,7 @@ class PdfArticleSummary extends PdfBlock
         $oLang = oxLang::getInstance();
 
         // total netto price (A. very unprecise, impossible to count because of many factors)
-        $this->font( 'Arial', 'B', 10 );
+        $this->font( $this->getFont(), 'B', 10 );
         if ( $this->_oData->oxorder__oxdelvat->value || $this->_oData->oxorder__oxwrapvat->value || $this->_oData->oxorder__oxpayvat->value ) {
 
             // collecting total net price
@@ -503,7 +519,7 @@ class PdfArticleSummary extends PdfBlock
         $oPayment->loadInLang( $this->_oData->getSelectedLang(), $this->_oData->oxorder__oxpaymenttype->value );
 
         $text = $this->_oData->translate( 'ORDER_OVERVIEW_PDF_SELPAYMENT' ).$oPayment->oxpayments__oxdesc->value;
-        $this->font( 'Arial', '', 10 );
+        $this->font( $this->getFont(), '', 10 );
         $this->text( 15, $iStartPos + 4, $text );
         $iStartPos += 4;
     }
@@ -518,7 +534,7 @@ class PdfArticleSummary extends PdfBlock
     protected function _setPayUntilInfo( &$iStartPos )
     {
         $text = $this->_oData->translate( 'ORDER_OVERVIEW_PDF_PAYUPTO' ).date( 'd.m.Y', mktime( 0, 0, 0, date ( 'm' ), date ( 'd' ) + 7, date( 'Y' ) ) );
-        $this->font( 'Arial', '', 10 );
+        $this->font( $this->getFont(), '', 10 );
         $this->text( 15, $iStartPos + 4, $text );
         $iStartPos += 4;
     }
@@ -533,7 +549,7 @@ class PdfArticleSummary extends PdfBlock
     public function generate( $iStartPos )
     {
 
-        $this->font( 'Arial', '', 10 );
+        $this->font( $this->getFont(), '', 10 );
         $siteH = $iStartPos;
 
         // #1147 discount for vat must be displayed
@@ -659,8 +675,9 @@ class MyOrder extends MyOrder_parent
 
         $oPdf->line( 15, 272, 195, 272 );
 
+        $oPdfBlock = new PdfBlock();
         /* column 1 - company name, shop owner info, shop address */
-        $oPdf->setFont( 'Arial', '', 7 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 7 );
         $oPdf->text( 15, 275, strip_tags( $oShop->oxshops__oxcompany->getRawValue() ) );
         $oPdf->text( 15, 278, strip_tags( $oShop->oxshops__oxfname->getRawValue() ).' '. strip_tags( $oShop->oxshops__oxlname->getRawValue() ) );
         $oPdf->text( 15, 281, strip_tags( $oShop->oxshops__oxstreet->getRawValue() ) );
@@ -694,8 +711,9 @@ class MyOrder extends MyOrder_parent
         // new page with shop logo
         $this->pdfHeader( $oPdf );
 
+        $oPdfBlock = new PdfBlock();
         // column names
-        $oPdf->setFont( 'Arial', '', 8 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 8 );
         $oPdf->text( 15, 50, $this->translate( 'ORDER_OVERVIEW_PDF_AMOUNT' ) );
         $oPdf->text( 30, 50, $this->translate( 'ORDER_OVERVIEW_PDF_ARTID') );
         $oPdf->text( 45, 50, $this->translate( 'ORDER_OVERVIEW_PDF_DESC' ) );
@@ -792,14 +810,15 @@ class MyOrder extends MyOrder_parent
             $sSal = $oLang->translateString($this->oxorder__oxbillsal->value, $this->_iSelectedLang);
         } catch (Exception $e) {
         }
-        $oPdf->setFont( 'Arial', '', 10 );
+        $oPdfBlock = new PdfBlock();
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 10 );
         $oPdf->text( 15, 59, $sSal);
         $oPdf->text( 15, 63, $this->oxorder__oxbillfname->getRawValue().' '.$this->oxorder__oxbilllname->getRawValue() );
         $oPdf->text( 15, 67, $this->oxorder__oxbillcompany->getRawValue() );
         $oPdf->text( 15, 71, $this->oxorder__oxbillstreet->getRawValue().' '.$this->oxorder__oxbillstreetnr->value );
-        $oPdf->setFont( 'Arial', 'B', 10 );
+        $oPdf->setFont( $oPdfBlock->getFont(), 'B', 10 );
         $oPdf->text( 15, 75, $this->oxorder__oxbillzip->value.' '.$this->oxorder__oxbillcity->getRawValue() );
-        $oPdf->setFont( 'Arial', '', 10 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 10 );
         $oPdf->text( 15, 79, $this->oxorder__oxbillcountry->getRawValue() );
     }
 
@@ -818,16 +837,17 @@ class MyOrder extends MyOrder_parent
             $sSal = $oLang->translateString($this->oxorder__oxdelsal->value, $this->_iSelectedLang);
         } catch (Exception $e) {
         }
-        $oPdf->setFont( 'Arial', '', 6 );
+        $oPdfBlock = new PdfBlock();
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 6 );
         $oPdf->text( 15, 87, $this->translate( 'ORDER_OVERVIEW_PDF_DELIVERYADDRESS' ) );
-        $oPdf->setFont( 'Arial', '', 10 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 10 );
         $oPdf->text( 15, 91, $sSal);
         $oPdf->text( 15, 95, $this->oxorder__oxdellname->getRawValue().' '.$this->oxorder__oxdelfname->getRawValue() );
         $oPdf->text( 15, 99, $this->oxorder__oxdelcompany->getRawValue() );
         $oPdf->text( 15, 103, $this->oxorder__oxdelstreet->getRawValue().' '.$this->oxorder__oxdelstreetnr->value );
-        $oPdf->setFont( 'Arial', 'B', 10 );
+        $oPdf->setFont( $oPdfBlock->getFont(), 'B', 10 );
         $oPdf->text( 15, 107, $this->oxorder__oxdelzip->value.' '.$this->oxorder__oxdelcity->getRawValue() );
-        $oPdf->setFont( 'Arial', '', 10 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 10 );
         $oPdf->text( 15, 111, $this->oxorder__oxdelcountry->getRawValue() );
     }
 
@@ -847,7 +867,7 @@ class MyOrder extends MyOrder_parent
         }
 
         $oCurr = $this->getCurrency();
-
+        $oPdfBlock = new PdfBlock();
         // product list
         foreach ( $this->_oArticles as $key => $oOrderArt ) {
 
@@ -855,7 +875,7 @@ class MyOrder extends MyOrder_parent
             if ( $iStartPos > 243 ) {
                 $this->pdffooter( $oPdf );
                 $iStartPos = $this->pdfheaderplus( $oPdf );
-                $oPdf->setFont( 'Arial', '', 10 );
+                $oPdf->setFont( $oPdfBlock->getFont(), '', 10 );
             } else {
                 $iStartPos = $iStartPos + 4;
             }
@@ -864,11 +884,11 @@ class MyOrder extends MyOrder_parent
             $oPdf->text( 20 - $oPdf->getStringWidth( $oOrderArt->oxorderarticles__oxamount->value ), $iStartPos, $oOrderArt->oxorderarticles__oxamount->value );
 
             // product number
-            $oPdf->setFont( 'Arial', '', 8 );
+            $oPdf->setFont( $oPdfBlock->getFont(), '', 8 );
             $oPdf->text( 28, $iStartPos, $oOrderArt->oxorderarticles__oxartnum->value );
 
             // product title
-            $oPdf->setFont( 'Arial', '', 10 );
+            $oPdf->setFont( $oPdfBlock->getFont(), '', 10 );
             $oPdf->text( 45, $iStartPos, substr( strip_tags( $this->_replaceExtendedChars( $oOrderArt->oxorderarticles__oxtitle->getRawValue(), true ) ), 0, 58 ) );
 
             if ( $blShowPrice ) {
@@ -916,6 +936,7 @@ class MyOrder extends MyOrder_parent
     {
         // preparing order curency info
         $myConfig = $this->getConfig();
+        $oPdfBlock = new PdfBlock();
 
         $this->_oCur = $myConfig->getCurrencyObject( $this->oxorder__oxcurrency->value );
         if ( !$this->_oCur ) {
@@ -926,7 +947,7 @@ class MyOrder extends MyOrder_parent
         $oShop = $this->_getActShop();
 
         // shop information
-        $oPdf->setFont( 'Arial', '', 6 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 6 );
         $oPdf->text( 15, 55, $oShop->oxshops__oxname->getRawValue().' - '.$oShop->oxshops__oxstreet->getRawValue().' - '.$oShop->oxshops__oxzip->value.' - '.$oShop->oxshops__oxcity->getRawValue() );
 
         // billing address
@@ -943,12 +964,12 @@ class MyOrder extends MyOrder_parent
 
         // user info
         $sText = $this->translate( 'ORDER_OVERVIEW_PDF_FILLONPAYMENT' );
-        $oPdf->setFont( 'Arial', '', 5 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 5 );
         $oPdf->text( 195 - $oPdf->getStringWidth( $sText ), 55, $sText );
 
         // customer number
         $sCustNr = $this->translate( 'ORDER_OVERVIEW_PDF_CUSTNR').' '.$oUser->oxuser__oxcustnr->value;
-        $oPdf->setFont( 'Arial', '', 7 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 7 );
         $oPdf->text( 195 - $oPdf->getStringWidth( $sCustNr ), 59, $sCustNr );
 
         // setting position if delivery address is used
@@ -960,7 +981,7 @@ class MyOrder extends MyOrder_parent
 
         // shop city
         $sText = $oShop->oxshops__oxcity->getRawValue().', '.date( 'd.m.Y' );
-        $oPdf->setFont( 'Arial', '', 10 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 10 );
         $oPdf->text( 195 - $oPdf->getStringWidth( $sText ), $iTop + 8, $sText );
 
         // shop VAT number
@@ -982,18 +1003,18 @@ class MyOrder extends MyOrder_parent
         }
 
         // order number
-        $oPdf->setFont( 'Arial', '', 12 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 12 );
         $oPdf->text( 15, $iTop, $this->translate( 'ORDER_OVERVIEW_PDF_PURCHASENR' ).' '.$this->oxorder__oxordernr->value );
 
         // order date
-        $oPdf->setFont( 'Arial', '', 10 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 10 );
         $aOrderDate = explode( ' ', $this->oxorder__oxorderdate->value );
         $sOrderDate = oxUtilsDate::getInstance()->formatDBDate( $aOrderDate[0]);
         $oPdf->text( 15, $iTop + 8, $this->translate( 'ORDER_OVERVIEW_PDF_ORDERSFROM' ).$sOrderDate.$this->translate( 'ORDER_OVERVIEW_PDF_ORDERSAT' ).$oShop->oxshops__oxurl->value );
         $iTop += 16;
 
         // product info header
-        $oPdf->setFont( 'Arial', '', 8 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 8 );
         $oPdf->text( 15, $iTop, $this->translate( 'ORDER_OVERVIEW_PDF_AMOUNT' ) );
         $oPdf->text( 30, $iTop, $this->translate( 'ORDER_OVERVIEW_PDF_ARTID' ) );
         $oPdf->text( 45, $iTop, $this->translate( 'ORDER_OVERVIEW_PDF_DESC' ) );
@@ -1008,7 +1029,7 @@ class MyOrder extends MyOrder_parent
 
         // #345
         $siteH = $iTop;
-        $oPdf->setFont( 'Arial', '', 10 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 10 );
 
         // order articles
         $this->_setOrderArticlesToPdf( $oPdf, $siteH, true );
@@ -1040,6 +1061,7 @@ class MyOrder extends MyOrder_parent
     {
         $myConfig = $this->getConfig();
         $oShop    = $this->_getActShop();
+        $oPdfBlock = new PdfBlock();
 
         $oLang = oxLang::getInstance();
         $sSal = $this->oxorder__oxdelsal->value;
@@ -1055,19 +1077,19 @@ class MyOrder extends MyOrder_parent
         }
 
         // shop info
-        $oPdf->setFont( 'Arial', '', 6 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 6 );
         $oPdf->text( 15, 55, $oShop->oxshops__oxname->getRawValue().' - '.$oShop->oxshops__oxstreet->getRawValue().' - '.$oShop->oxshops__oxzip->value.' - '.$oShop->oxshops__oxcity->getRawValue() );
 
         // delivery address
-        $oPdf->setFont( 'Arial', '', 10 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 10 );
         if ( $this->oxorder__oxdelsal->value ) {
             $oPdf->text( 15, 59, $sSal );
             $oPdf->text( 15, 63, $this->oxorder__oxdellname->getRawValue().' '.$this->oxorder__oxdelfname->getRawValue() );
             $oPdf->text( 15, 67, $this->oxorder__oxdelcompany->getRawValue() );
             $oPdf->text( 15, 71, $this->oxorder__oxdelstreet->getRawValue().' '.$this->oxorder__oxdelstreetnr->value );
-            $oPdf->setFont( 'Arial', 'B', 10 );
+            $oPdf->setFont( $oPdfBlock->getFont(), 'B', 10 );
             $oPdf->text( 15, 75, $this->oxorder__oxdelzip->value.' '.$this->oxorder__oxdelcity->getRawValue() );
-            $oPdf->setFont( 'Arial', '', 10 );
+            $oPdf->setFont( $oPdfBlock->getFont(), '', 10 );
             $oPdf->text( 15, 79, $this->oxorder__oxdelcountry->getRawValue() );
         } else {
             // no delivery address - billing address is used for delivery
@@ -1080,17 +1102,17 @@ class MyOrder extends MyOrder_parent
 
         // user info
         $sText = $this->translate( 'ORDER_OVERVIEW_PDF_FILLONPAYMENT' );
-        $oPdf->setFont( 'Arial', '', 5 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 5 );
         $oPdf->text( 195 - $oPdf->getStringWidth( $sText ), 70, $sText );
 
         // customer number
         $sCustNr = $this->translate( 'ORDER_OVERVIEW_PDF_CUSTNR' ).' '.$oUser->oxuser__oxcustnr->value;
-        $oPdf->setFont( 'Arial', '', 7 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 7 );
         $oPdf->text( 195 - $oPdf->getStringWidth( $sCustNr ), 73, $sCustNr );
 
         // shops city
         $sText = $oShop->oxshops__oxcity->getRawValue().', '.date( 'd.m.Y' );
-        $oPdf->setFont( 'Arial', '', 10 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 10 );
         $oPdf->text( 195 - $oPdf->getStringWidth( $sText ), 95, $sText );
 
         $iTop = 99;
@@ -1111,17 +1133,17 @@ class MyOrder extends MyOrder_parent
         }
 
         // order number
-        $oPdf->setFont( 'Arial', '', 12 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 12 );
         $oPdf->text( 15, 108, $this->translate( 'ORDER_OVERVIEW_PDF_DELIVNOTE' ).' '.$this->oxorder__oxordernr->value );
 
         // order date
         $aOrderDate = explode( ' ', $this->oxorder__oxorderdate->value );
         $sOrderDate = oxUtilsDate::getInstance()->formatDBDate( $aOrderDate[0]);
-        $oPdf->setFont( 'Arial', '', 10 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 10 );
         $oPdf->text(15, 119, $this->translate( 'ORDER_OVERVIEW_PDF_ORDERSFROM' ).$sOrderDate.$this->translate( 'ORDER_OVERVIEW_PDF_ORDERSAT' ).$oShop->oxshops__oxurl->value );
 
         // product info header
-        $oPdf->setFont( 'Arial', '', 8 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 8 );
         $oPdf->text( 15, 128, $this->translate( 'ORDER_OVERVIEW_PDF_AMOUNT' ) );
         $oPdf->text( 30, 128, $this->translate( 'ORDER_OVERVIEW_PDF_ARTID' ) );
         $oPdf->text( 45, 128, $this->translate( 'ORDER_OVERVIEW_PDF_DESC' ) );
@@ -1130,7 +1152,7 @@ class MyOrder extends MyOrder_parent
         $oPdf->line( 15, 130, 195, 130 );
 
         // product list
-        $oPdf->setFont( 'Arial', '', 10 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 10 );
         $siteH = 130;
 
         // order articles
@@ -1141,7 +1163,7 @@ class MyOrder extends MyOrder_parent
         $siteH += 4;
 
         // payment date
-        $oPdf->setFont( 'Arial', '', 10 );
+        $oPdf->setFont( $oPdfBlock->getFont(), '', 10 );
         $text = $this->translate( 'ORDER_OVERVIEW_PDF_PAYUPTO' ).date( 'd.m.Y', mktime( 0, 0, 0, date ( 'm' ), date ( 'd' ) + 7, date( 'Y' ) ) );
         $oPdf->text( 15, $siteH + 4, $text );
     }

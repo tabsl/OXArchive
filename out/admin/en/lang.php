@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 37228 2011-07-21 14:16:20Z juergen.busch $
+ * @version   SVN: $Id: lang.php 38391 2011-08-24 15:09:50Z vilma $
  */
 
 /*
@@ -252,6 +252,7 @@ $aLang = array(
 'GENERAL_MENUITEM'                                         => 'Administer Products',
 'GENERAL_MANUFACTURER'                                     => 'Manufacturer',
 'GENERAL_MAX_FILE_UPLOAD'                                  => 'max.',
+'GENERAL_MAX_PICTURE_DIMENSIONS'                           => 'max. 1500*1500 px',
 'GENERAL_NAME'                                             => 'Name',
 'GENERAL_NO'                                               => 'No',
 'GENERAL_NOITEMSSEL'                                       => 'No Product selected',
@@ -277,7 +278,7 @@ $aLang = array(
 'GENERAL_SEARCH'                                           => 'Search',
 'GENERAL_SEARCHKEY'                                        => 'Optional Search Keys',
 'GENERAL_SEARCHKEYS'                                       => 'Search Keys',
-'GENERAL_SENDEMAIL'                                        => 'Send e-mail ?',
+'GENERAL_SENDEMAIL'                                        => 'Send e-mail?',
 'GENERAL_SENDON'                                           => 'Shipped on',
 'GENERAL_SETBACKSENDTIME'                                  => 'Reset Shipping Date',
 'GENERAL_SEO_FIXED'                                        => 'Fixed URL',
@@ -316,7 +317,7 @@ $aLang = array(
 'GENERAL_VARIANTE'                                         => 'Variant of ',
 'GENERAL_VENDOR'                                           => 'Vendor',
 'GENERAL_VOUCHERS'                                         => 'Coupon Discount',
-'GENERAL_YOUWANTTODELETE'                                  => 'Do you really want to delete this entry ?',
+'GENERAL_YOUWANTTODELETE'                                  => 'Do you really want to delete this entry?',
 'GENERAL_YOUWANTTOUNASSIGN'                                => 'Do you really want to unassign this entry from current shop?',
 'GENERAL_YES'                                              => 'Yes',
 'GENERAL_ZIPCITY'                                          => 'ZIP, City',
@@ -1262,7 +1263,7 @@ $aLang = array(
 'SYSREQ_OPEN_SSL'                                          => 'OpenSSL',
 'SYSREQ_SOAP'                                              => 'SOAP',
 'SYSREQ_UNICODE_SUPPORT'                                   => 'UTF-8 support',
-'SYSREQ_BUG53632'                                          => 'Possible issues on server due to PHP Bug #53632',
+'SYSREQ_BUG53632'                                          => 'Possible issues on server due to PHP Bugs',
 'SYSREQ_MEMORY_LIMIT'                                      => 'PHP Memory limit (min. 14MB, 30MB recommended)',
 'SYSREQ_DESCRIPTION_PASS'                                  => 'System health is good.',
 'SYSREQ_DESCRIPTION_PMIN'                                  => 'System health might be broken.',

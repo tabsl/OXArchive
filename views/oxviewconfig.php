@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxviewconfig.php 36720 2011-07-05 11:09:24Z linas.kukulskis $
+ * @version   SVN: $Id: oxviewconfig.php 38300 2011-08-19 13:24:05Z linas.kukulskis $
  */
 
 /**
@@ -374,7 +374,13 @@ class oxViewConfig extends oxSuperCfg
     public function getBaseDir()
     {
         if ( ( $sValue = $this->getViewConfigParam( 'basedir' ) ) === null ) {
-            $sValue = $this->getConfig()->getShopURL();
+
+            if ( $this->getConfig()->isSsl() ) {
+                $sValue = $this->getConfig()->getSSLShopURL();
+            } else {
+                $sValue = $this->getConfig()->getShopURL();
+            }
+
             $this->setViewConfigParam( 'basedir', $sValue );
         }
         return $sValue;

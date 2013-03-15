@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdbmetadatahandler.php 23405 2009-10-20 15:29:03Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxpicturehandler.php 38186 2011-08-17 07:40:53Z linas.kukulskis $
  */
 
 /**
@@ -48,7 +48,6 @@ class oxPictureHandler extends oxSuperCfg
         }
 
         if ( !self::$_instance instanceof oxPictureHandler ) {
-
             self::$_instance = oxNew( 'oxPictureHandler' );
             if ( defined( 'OXID_PHP_UNIT' ) ) {
                 modInstances::addMod( __CLASS__, self::$_instance);

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcategory.php 37102 2011-07-15 14:26:58Z arvydas.vapsva $
+ * @version   SVN: $Id: oxcategory.php 38134 2011-08-11 13:22:49Z arvydas.vapsva $
  */
 
 /**
@@ -140,7 +140,7 @@ class oxCategory extends oxI18n implements oxIUrl
      * @var array
      */
     protected static $_aCatAttributes = array();
-    
+
     /**
      * Class constructor, initiates parent constructor (parent::oxI18n()).
      */
@@ -723,13 +723,13 @@ class oxCategory extends oxI18n implements oxIUrl
     public function getAttributes()
     {
         $sActCat = $this->getId();
-        
+
         $sKey = md5( $sActCat . serialize( oxSession::getVar( 'session_attrfilter' ) ) );
         if ( !isset( self::$_aCatAttributes[$sKey] ) ) {
             $oAttrList = oxNew( "oxAttributeList" );
-            $oAttrList->getCategoryAttributes( $sActCat, $this->getLanguage() );                       
+            $oAttrList->getCategoryAttributes( $sActCat, $this->getLanguage() );
             self::$_aCatAttributes[$sKey] = $oAttrList;
-        }                
+        }
 
         return self::$_aCatAttributes[$sKey];
     }
@@ -1099,5 +1099,15 @@ class oxCategory extends oxI18n implements oxIUrl
     public function getLongDesc()
     {
         return oxUtilsView::getInstance()->parseThroughSmarty( $this->oxcategories__oxlongdesc->getRawValue(), $this->getId().$this->getLanguage() );
+    }
+
+    /**
+     * Returns category title
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->oxcategories__oxtitle->value;
     }
 }

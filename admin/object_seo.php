@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: object_seo.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: object_seo.php 38325 2011-08-22 12:30:00Z arvydas.vapsva $
  */
 
 /**
@@ -38,102 +38,96 @@ class Object_Seo extends oxAdminDetails
     {
         parent::render();
 
-        if ( ( $oObject= $this->_getObject( $this->getEditObjectId() ) ) ) {
-
-            $iShopId  = $this->getConfig()->getShopId();
-            $oOtherLang = $oObject->getAvailableInLangs();
-            if (!isset($oOtherLang[$this->_iEditLang])) {
-                // echo "language entry doesn't exist! using: ".key($oOtherLang);
-                $oObject->loadInLang( key( $oOtherLang ), $this->getEditObjectId() );
-            }
-            $this->_aViewData['edit'] = $oObject;
-
-            $aLangs = oxLang::getInstance()->getLanguageNames();
-            foreach ( $aLangs as $id => $language) {
-                $oLang= new oxStdClass();
-                $oLang->sLangDesc = $language;
-                $oLang->selected = ($id == $this->_iEditLang);
-                $this->_aViewData['otherlang'][$id] = clone $oLang;
+        if ( $sType = $this->_getType() ) {
+            $oObject = oxNew( $sType );
+            if ( $oObject->load( $this->getEditObjectId() ) ) {
+                $oOtherLang = $oObject->getAvailableInLangs();
+                if ( !isset( $oOtherLang[$iLang] ) ) {
+                    $oObject->loadInLang( key( $oOtherLang ), $this->getEditObjectId() );
+                }
+                $this->_aViewData['edit'] = $oObject;
             }
 
-            // loading SEO part
-            $this->_getSeoUrl( $oObject );
-            $sQ = $this->_getSeoDataSql( $oObject, $iShopId, $this->_iEditLang );
-            $aSeoData = oxDb::getDb(true)->getArray( $sQ );
-            $aSeoData = ( is_array( $aSeoData ) && isset( $aSeoData[0] ) )?$aSeoData[0]:array();
+        }
 
-            // passing to view
-            $this->_aViewData['aSeoData'] = $aSeoData;
+        $iLang  = $this->getEditLang();
+        $aLangs = oxLang::getInstance()->getLanguageNames();
+        foreach ( $aLangs as $sLangId => $sLanguage ) {
+            $oLang = new oxStdClass();
+            $oLang->sLangDesc = $sLanguage;
+            $oLang->selected  = ( $sLangId == $iLang );
+            $this->_aViewData['otherlang'][$sLangId] = clone $oLang;
         }
 
         return 'object_seo.tpl';
     }
 
     /**
-     * Returns SQL to fetch seo data
-     *
-     * @param oxbase $oObject object to load seo info
-     * @param int    $iShopId active shop id
-     * @param int    $iLang   active language id
-     *
-     * @return string
-     */
-    protected function _getSeoDataSql( $oObject, $iShopId, $iLang )
-    {
-        return "select * from oxseo
-               left join oxobject2seodata on
-                   oxobject2seodata.oxobjectid = oxseo.oxobjectid and
-                   oxobject2seodata.oxshopid = oxseo.oxshopid and
-                   oxobject2seodata.oxlang = oxseo.oxlang
-               where
-                   oxseo.oxobjectid = ".oxDb::getDb()->quote( $oObject->getId() )." and
-                   oxseo.oxshopid = '{$iShopId}' and oxseo.oxlang = {$iLang} ";
-    }
-
-    /**
-     * Returns objects seo url
-     *
-     * @param object $oObject object to return url
-     *
-     * @return string
-     */
-    protected function _getSeoUrl( $oObject )
-    {
-        return oxDb::getDb()->getOne( $this->_getSeoUrlQuery( $oObject, $this->getConfig()->getShopId() ) );
-    }
-
-    /**
-     * Returns query for selecting seo url
-     *
-     * @param object $oObject object to build query
-     * @param int    $iShopId shop id
-     *
-     * @return string
-     */
-     protected function _getSeoUrlQuery( $oObject, $iShopId )
-     {
-        return "select oxseourl from oxseo where oxobjectid = '".$oObject->getId()."' and oxshopid = '{$iShopId}' and oxlang = {$this->_iEditLang} ";
-     }
-
-    /**
-     * Returns seo object
-     *
-     * @param string $sOxid object id
+     * Saves selection list parameters changes.
      *
      * @return mixed
      */
-    protected function _getObject( $sOxid )
+    public function save()
     {
-        if ( $this->_oObject === null && ( $sType = $this->_getType() ) ) {
-            $this->_oObject = false;
+        // saving/updating seo params
+        if ( ( $sOxid = $this->_getSaveObjectId() ) ) {
+            $aSeoData = oxConfig::getParameter( 'aSeoData' );
+            $iShopId  = $this->getConfig()->getShopId();
+            $iLang    = $this->getEditLang();
 
-            // load object
-            $oObject = oxNew( $sType );
-            if ( $oObject->loadInLang( $this->_iEditLang, $sOxid ) ) {
-                $this->_oObject = $oObject;
+            // checkbox handling
+            if ( !isset( $aSeoData['oxfixed'] ) ) {
+                $aSeoData['oxfixed'] = 0;
             }
+
+            $oEncoder = $this->_getEncoder();
+
+            // marking self and page links as expired
+            $oEncoder->markAsExpired( $sOxid, $iShopId, 1, $iLang );
+
+            // saving
+            $oEncoder->addSeoEntry( $sOxid, $iShopId, $iLang, $this->_getStdUrl( $sOxid ),
+                                    $aSeoData['oxseourl'], $this->_getSeoEntryType(), $aSeoData['oxfixed'],
+                                    trim( $aSeoData['oxkeywords'] ), trim( $aSeoData['oxdescription'] ), $this->processParam( $aSeoData['oxparams'] ), true, $this->_getAltSeoEntryId() );
         }
-        return $this->_oObject;
+    }
+
+    /**
+     * Returns id of object which must be saved
+     *
+     * @return string
+     */
+    protected function _getSaveObjectId()
+    {
+        return $this->getEditObjectId();
+    }
+
+    /**
+     * Returns object seo data
+     *
+     * @param string $sMetaType meta data type (oxkeywords/oxdescription)
+     *
+     * @return string
+     */
+    public function getEntryMetaData( $sMetaType )
+    {
+        return $this->_getEncoder()->getMetaData( $this->getEditObjectId(), $sMetaType, $this->getConfig()->getShopId(), $this->getEditLang() );
+    }
+
+    /**
+     * Returns TRUE if current seo entry has fixed state
+     *
+     * @return bool
+     */
+    public function isEntryFixed()
+    {
+        $iLang   = (int) $this->getEditLang();
+        $iShopId = $this->getConfig()->getShopId();
+
+        $sQ = "select oxfixed from oxseo where
+                   oxseo.oxobjectid = ".oxDb::getDb()->quote( $this->getEditObjectId() )." and
+                   oxseo.oxshopid = '{$iShopId}' and oxseo.oxlang = {$iLang} and oxparams = '' ";
+        return (bool) oxDb::getDb()->getOne( $sQ );
     }
 
     /**
@@ -154,35 +148,11 @@ class Object_Seo extends oxAdminDetails
      */
     protected function _getStdUrl( $sOxid )
     {
-        return $this->_getObject( $sOxid )->getBaseStdLink( $this->_iEditLang, true, false );
-    }
-
-    /**
-     * Saves selection list parameters changes.
-     *
-     * @return mixed
-     */
-    public function save()
-    {
-        // saving/updating seo params
-        if ( ( $sOxid = $this->_getSeoEntryId() ) ) {
-            $aSeoData = oxConfig::getParameter( 'aSeoData' );
-            $iShopId  = $this->getConfig()->getShopId();
-
-            // checkbox handling
-            if ( !isset( $aSeoData['oxfixed'] ) ) {
-                $aSeoData['oxfixed'] = 0;
+        if ( $sType = $this->_getType() ) {
+            $oObject = oxNew( $sType );
+            if ( $oObject->load( $sOxid ) ) {
+               return $oObject->getBaseStdLink( $this->getEditLang(), true, false );
             }
-
-            $oEncoder = $this->_getEncoder();
-
-            // marking self and page links as expired
-            $oEncoder->markAsExpired( $sOxid, $iShopId, 1, $this->getEditLang() );
-
-            // saving
-            $oEncoder->addSeoEntry( $sOxid, $iShopId, $this->getEditLang(), $this->_getStdUrl( $sOxid ),
-                                    $aSeoData['oxseourl'], $this->_getSeoEntryType(), $aSeoData['oxfixed'],
-                                    trim( $aSeoData['oxkeywords'] ), trim( $aSeoData['oxdescription'] ), $this->processParam( $aSeoData['oxparams'] ), true, $this->_getAltSeoEntryId() );
         }
     }
 
@@ -197,34 +167,12 @@ class Object_Seo extends oxAdminDetails
     }
 
     /**
-     * Returns seo entry ident
-     *
-     * @deprecated should be used object_seo::_getSeoEntryId()
-     *
-     * @return string
-     */
-    protected function getSeoEntryId()
-    {
-        return $this->_getSeoEntryId();
-    }
-
-    /**
      * Returns alternative seo entry id
      *
      * @return null
      */
     protected function _getAltSeoEntryId()
     {
-    }
-
-    /**
-     * Returns seo entry ident
-     *
-     * @return string
-     */
-    protected function _getSeoEntryId()
-    {
-        return $this->getEditObjectId();
     }
 
     /**
@@ -256,6 +204,55 @@ class Object_Seo extends oxAdminDetails
      */
     protected function _getEncoder()
     {
-        return oxSeoEncoder::getInstance();
     }
+
+    /**
+     * Returns seo uri
+     *
+     * @return string
+     */
+    public function getEntryUri()
+    {
+    }
+
+    /**
+     * Returns true if SEO object id has suffix enabled. Default is FALSE
+     *
+     * @return bool
+     */
+    public function isEntrySuffixed()
+    {
+        return false;
+    }
+
+    /**
+     * Returns TRUE if seo object supports suffixes. Default is FALSE
+     *
+     * @return bool
+     */
+    public function isSuffixSupported()
+    {
+        return false;
+    }
+
+    /**
+     * Returns FALSE, as this view does not support category selector
+     *
+     * @return bool
+     */
+    public function showCatSelect()
+    {
+        return false;
+    }
+
+    /**
+     * Returns FALSE, as this view does not support active selection type
+     *
+     * @return bool
+     */
+    public function getActCatType()
+    {
+        return false;
+    }
+
 }

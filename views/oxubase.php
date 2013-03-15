@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 37871 2011-08-01 12:15:05Z arvydas.vapsva $
+ * @version   SVN: $Id: oxubase.php 38119 2011-08-11 09:58:34Z linas.kukulskis $
  */
 
 /**
@@ -2176,10 +2176,10 @@ class oxUBase extends oxView
     }
 
     /**
-     * Adds page number parameter to url and returns modified url
+     * Adds page number parameter to url and returns modified url, if page number 0 drops from url
      *
      * @param string $sUrl  url to add page number
-     * @param string $iPage active page number
+     * @param int    $iPage active page number
      * @param int    $iLang language id
      *
      * @return string
@@ -2187,7 +2187,16 @@ class oxUBase extends oxView
     protected function _addPageNrParam( $sUrl, $iPage, $iLang = null )
     {
         if ( $iPage ) {
-            $sUrl .= ( ( strpos( $sUrl, '?' ) === false ) ? '?' : '&amp;' ) . 'pgNr='.$iPage;
+            if ( ( strpos( $sUrl, 'pgNr=' ) ) ) {
+                $sUrl = preg_replace('/pgNr=[0-9]*/', 'pgNr='.$iPage, $sUrl);
+            } else {
+                $sUrl .= ( ( strpos( $sUrl, '?' ) === false ) ? '?' : '&amp;' ) . 'pgNr='.$iPage;
+            }
+        } else {
+           $sUrl = preg_replace('/pgNr=[0-9]*/', '', $sUrl);
+           $sUrl = preg_replace('/\&amp\;\&amp\;/', '&amp;', $sUrl);
+           $sUrl = preg_replace('/\?\&amp\;/', '?', $sUrl);
+           $sUrl = preg_replace('/\&amp\;$/', '', $sUrl);
         }
         return $sUrl;
     }

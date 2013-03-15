@@ -96,7 +96,7 @@ function DeletePic( sField )
         </tr>
         <tr>
             <td class="edittext">
-            [{ oxmultilang ident="WRAPPING_MAIN_PICUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
+            [{ oxmultilang ident="WRAPPING_MAIN_PICUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}])
             </td>
             <td class="edittext" colspan="2">
             <input class="editinput" name="myfile[WP@oxwrapping__oxpic]" size="26" type="file" [{ $readonly }]>

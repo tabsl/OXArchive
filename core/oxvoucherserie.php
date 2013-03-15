@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvoucherserie.php 31954 2010-12-17 13:33:40Z sarunas $
+ * @version   SVN: $Id: oxvoucherserie.php 38297 2011-08-19 12:45:26Z vilma $
  */
 
 /**
@@ -72,7 +72,7 @@ class oxVoucherSerie extends oxBase
         $this->unsetDiscountRelations();
         $this->unsetUserGroups();
         $this->deleteVoucherList();
-        parent::delete( $sOxId );
+        return parent::delete( $sOxId );
     }
 
     /**

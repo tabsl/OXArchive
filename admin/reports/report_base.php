@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: report_base.php 27049 2010-04-06 11:53:26Z arvydas $
+ * @version   SVN: $Id: report_base.php 38450 2011-08-26 11:41:42Z vilma $
  */
 
 /**
@@ -113,14 +113,14 @@ class Report_base extends oxAdminView
      *
      * @param int    $iXSize         graph image x size
      * @param int    $iYSize         graph image y size
-     * @param string $sBackgroundImg background filler image (full path) [oxConfig::getAbsAdminImageDir()."/reportbgrnd.jpg"]
+     * @param string $sBackgroundImg background filler image (full path) [oxConfig::getImageDir( true ) ."/reportbgrnd.jpg"]
      * @param string $sScaleType     graph scale type ["textlin"]
      *
      * @return Graph
      */
     public function getGraph( $iXSize, $iYSize, $sBackgroundImg = null, $sScaleType = "textlin" )
     {
-        $sBackgroundImg = $sBackgroundImg ? $sBackgroundImg : $this->getConfig()->getAbsAdminImageDir()."/reportbgrnd.jpg";
+        $sBackgroundImg = $sBackgroundImg ? $sBackgroundImg : $this->getConfig()->getImageDir( true )."/reportbgrnd.jpg";
 
         // New graph with a drop shadow
         $oGraph = new Graph( $iXSize, $iYSize );

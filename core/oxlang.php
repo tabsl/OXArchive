@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlang.php 37946 2011-08-04 08:51:40Z linas.kukulskis $
+ * @version   SVN: $Id: oxlang.php 38193 2011-08-17 12:24:51Z linas.kukulskis $
  */
 
 /**
@@ -676,8 +676,10 @@ class oxLang extends oxSuperCfg
 
             $sAdminPath = $sOutDir . 'admin/' . $sLang . '/';
             $aLangFiles[] = $sAdminPath . "lang.php";
-            $aLangFiles = array_merge( $aLangFiles, glob( $sAdminPath."*_lang.php" ) );
-
+            $aTmpFiles = glob( $sAdminPath."*_lang.php" );
+            if ( is_array( $aTmpFiles ) && count( $aTmpFiles ) ) {
+                $aLangFiles = array_merge( $aLangFiles, $aTmpFiles);
+            }
             return count( $aLangFiles ) ? $aLangFiles : false;
         }
 
@@ -685,35 +687,49 @@ class oxLang extends oxSuperCfg
         $sGenericPath = $sOutDir . $sLang . '/';
         if ( $sGenericPath ) {
             $aLangFiles[] = $sGenericPath . "lang.php";
-            $aLangFiles = array_merge( $aLangFiles, glob( $sGenericPath."*_lang.php" ) );
+            $aTmpFiles = glob( $sGenericPath."*_lang.php" );
+            if ( is_array($aTmpFiles ) && count( $aTmpFiles ) ) {
+                $aLangFiles = array_merge( $aLangFiles, $aTmpFiles );
+            }
         }
 
         //get theme lang files
         if ( $sTheme ) {
             $sThemePath = $sOutDir . $sTheme .'/' . $sLang . '/';
             $aLangFiles[] = $sThemePath . "lang.php";
-            $aLangFiles = array_merge( $aLangFiles, glob( $sThemePath."*_lang.php" ) );
+            $aTmpFiles = glob( $sThemePath."*_lang.php" );
+            if ( is_array( $aTmpFiles) && count( $aTmpFiles ) ) {
+                $aLangFiles = array_merge( $aLangFiles, $aTmpFiles );
+            }
         }
 
         //get custom theme lang files
-
-        if ( $sCustomTheme) {
+        if ( $sCustomTheme ) {
             $sCustPath = $sOutDir . $sCustomTheme .'/' . $sLang . '/';
             $aLangFiles[] = $sCustPath . "lang.php";
-            $aLangFiles = array_merge( $aLangFiles, glob( $sCustPath."*_lang.php" ) );
+            $aTmpFiles = glob( $sCustPath."*_lang.php" );
+            if ( is_array( $aTmpFiles ) && count( $aTmpFiles ) ) {
+                $aLangFiles = array_merge( $aLangFiles, $aTmpFiles );
+            }
 
             // custom theme shop languages
             if ( $sCustomTheme ) {
                 $sShopPath = $sOutDir . $sCustomTheme .'/' . $sShopId . '/' . $sLang . '/';
                 $aLangFiles[] = $sShopPath . "lang.php";
-                $aLangFiles = array_merge( $aLangFiles, glob( $sShopPath."*_lang.php" ) );
+                $aTmpFiles = glob( $sShopPath."*_lang.php" );
+                if ( is_array( $aTmpFiles ) && count( $aTmpFiles ) ) {
+                    $aLangFiles = array_merge( $aLangFiles, $aTmpFiles );
+                }
             }
         } else {
             // theme shop languages
             if ( $sTheme ) {
                 $sShopPath = $sOutDir . $sTheme .'/' . $sShopId . '/' . $sLang . '/';
                 $aLangFiles[] = $sShopPath . "lang.php";
-                $aLangFiles = array_merge( $aLangFiles, glob( $sShopPath."*_lang.php" ) );
+                $aTmpFiles = glob( $sShopPath."*_lang.php" );
+                if ( is_array( $aTmpFiles ) && count( $aTmpFiles ) ) {
+                    $aLangFiles = array_merge( $aLangFiles, $aTmpFiles );
+                }
             }
         }
 
@@ -1050,5 +1066,31 @@ class oxLang extends oxSuperCfg
                 return (int) $oLang->id;
             }
         }
+    }
+
+    /**
+     * Returns all multi language tables
+     *
+     * @return array
+     */
+    public function getMultiLangTables()
+    {
+        $aTables = array( "oxarticles", "oxartextends", "oxattribute",
+                          "oxcategories", "oxcontents", "oxcountry",
+                          "oxdelivery", "oxdiscount", "oxgroups",
+                          "oxlinks", "oxnews", "oxobject2attribute",
+                          "oxpayments", "oxselectlist", "oxshops",
+                          "oxactions", "oxwrapping", "oxdeliveryset",
+                          "oxvendor", "oxmanufacturers", "oxmediaurls",
+                          "oxstates" );
+
+
+        $aMultiLangTables = $this->getConfig()->getConfigParam( 'aMultiLangTables' );
+
+        if ( is_array( $aMultiLangTables ) ) {
+            $aTables = array_merge($aTables, $aMultiLangTables);
+        }
+
+        return $aTables;
     }
 }

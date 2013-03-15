@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 37449 2011-07-27 15:25:50Z linas.kukulskis $
+ * @version   SVN: $Id: oxconfig.php 38339 2011-08-23 09:01:01Z linas.kukulskis $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -577,12 +577,11 @@ class oxConfig extends oxSuperCfg
         }
 
         $sValue = null;
-        if ( isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] == 'POST' && isset( $_POST[$sName] ) ) {
+
+        if ( isset( $_POST[$sName] ) ) {
             $sValue = $_POST[$sName];
-        } elseif ( isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] == 'GET' && isset( $_GET[$sName] ) ) {
+        } elseif ( isset( $_GET[$sName] ) ) {
             $sValue = $_GET[$sName];
-        } else {
-            $sValue = null;
         }
 
         // TODO: remove this after special charts concept implementation

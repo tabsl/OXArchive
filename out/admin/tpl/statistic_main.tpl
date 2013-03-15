@@ -13,10 +13,21 @@
 <input type="hidden" name="oxid" value="[{$oxid}]">
 <input type="hidden" name="editval[oxstatistics__oxid]" value="[{$oxid}]">
 
-<table cellspacing="0" cellpadding="0" border="0">
+<table cellspacing="0" cellpadding="0" border="0" width="100%">
 <tr>
-    <td valign="top">
-
+    <td class="edittext" valign="top">
+        [{ oxmultilang ident="STASTISTIC_MAIN_SAVEUNDER" }]<br>
+        <input type="text" class="editinput" size="32" maxlength="[{$edit->oxstatistics__oxtitle->fldmax_length}]" name="editval[oxstatistics__oxtitle]" value="[{$edit->oxstatistics__oxtitle->value}]" [{ $readonly }]>
+        [{ oxinputhelp ident="HELP_STASTISTIC_MAIN_SAVEUNDER" }]
+        <br>
+        <br><input type="submit" class="edittext" id="_savereportsbtn" name="save" value="[{ oxmultilang ident="STASTISTIC_MAIN_SAVE" }]" onClick="Javascript:document.myedit.target='edit';document.myedit.fnc.value='save'"><br>
+    </td>
+    <td valign="top" class="edittext">
+        [{ if $oxid && $oxid != '-1' }]
+        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="STASTISTIC_MAIN_ASSIGNREPORT" }]" class="edittext" onclick="JavaScript:showDialog('&cl=statistic_main&aoc=1&oxid=[{ $oxid }]');">
+        [{/if}]
+    </td>
+    <td valign="top" class="edittext">
         <table cellspacing="0" cellpadding="0" border="0">
         <tr>
           <td class="edittext">
@@ -38,25 +49,8 @@
             <br>
           </td>
         </tr>
-
-        <tr>
-            <td class="edittext"><br><br>
-            [{ oxmultilang ident="STASTISTIC_MAIN_SAVEUNDER" }]<br>
-            <input type="text" class="editinput" size="32" maxlength="[{$edit->oxstatistics__oxtitle->fldmax_length}]" name="editval[oxstatistics__oxtitle]" value="[{$edit->oxstatistics__oxtitle->value}]" [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_STASTISTIC_MAIN_SAVEUNDER" }]
-            <br>
-            <br><input type="submit" class="edittext" id="_savereportsbtn" name="save" value="[{ oxmultilang ident="STASTISTIC_MAIN_SAVE" }]" onClick="Javascript:document.myedit.target='edit';document.myedit.fnc.value='save'"><br>
-            </td>
-        </tr>
-
         </table>
     </td>
-    <td valign="top" class="edittext">
-        [{ if $oxid && $oxid != '-1' }]
-        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="STASTISTIC_MAIN_ASSIGNREPORT" }]" class="edittext" onclick="JavaScript:showDialog('&cl=statistic_main&aoc=1&oxid=[{ $oxid }]');">
-        [{/if}]
-    </td>
-
     </tr>
 
 </table>

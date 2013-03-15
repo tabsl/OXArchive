@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: category_seo.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: category_seo.php 38284 2011-08-19 11:30:55Z vilma $
  */
 
 /**
@@ -28,76 +28,20 @@
 class Category_Seo extends Object_Seo
 {
     /**
-     * Loads article parameters and passes them to Smarty engine, returns
-     * name of template file "article_main.tpl".
-     *
-     * @return string
-     */
-    public function render()
-    {
-        $oCategory = $this->_getObject( $this->getEditObjectId() );
-
-
-        $this->_aViewData["edit"] = $oCategory;
-        $this->_aViewData['blShowSuffixEdit'] = true;
-        $this->_aViewData['blShowSuffix'] = $oCategory ? $oCategory->oxcategories__oxshowsuffix->value : false;
-
-        return parent::render();
-    }
-
-    /**
-     * Returns SQL to fetch seo data
-     *
-     * @param oxbase $oObject object to load seo info
-     * @param int    $iShopId active shop id
-     * @param int    $iLang   active language id
-     *
-     * @return string
-     */
-    protected function _getSeoDataSql( $oObject, $iShopId, $iLang )
-    {
-        return parent::_getSeoDataSql( $oObject, $iShopId, $iLang )." and oxparams = '' ";
-    }
-
-    /**
-     * Returns objects seo url
-     *
-     * @param oxcategory $oCategory active category object
-     *
-     * @return string
-     */
-    protected function _getSeoUrl( $oCategory )
-    {
-        $this->_getEncoder()->getCategoryUrl( $oCategory );
-        return parent::_getSeoUrl( $oCategory );
-    }
-
-    /**
-     * Returns url type
-     *
-     * @return string
-     */
-    protected function _getType()
-    {
-        return 'oxcategory';
-    }
-
-    /**
      * Updating showsuffix field
      *
      * @return null
      */
     public function save()
     {
-        if ( $sOxid = $this->getEditObjectId() ) {
-            $oCategory = oxNew( 'oxbase' );
-            $oCategory->init( 'oxcategories' );
-            if ( $oCategory->load( $sOxid ) ) {
-                $oCategory->oxcategories__oxshowsuffix = new oxField( (int) oxConfig::getParameter( 'blShowSuffix' ) );
-                $oCategory->save();
+        $sOxid = $this->getEditObjectId();
+        $oCategory = oxNew( 'oxbase' );
+        $oCategory->init( 'oxcategories' );
+        if ( $oCategory->load( $sOxid ) ) {
+            $oCategory->oxcategories__oxshowsuffix = new oxField( (int) oxConfig::getParameter( 'blShowSuffix' ) );
+            $oCategory->save();
 
-                $this->_getEncoder()->markRelatedAsExpired( $oCategory );
-            }
+            $this->_getEncoder()->markRelatedAsExpired( $oCategory );
         }
 
         return parent::save();
@@ -111,5 +55,51 @@ class Category_Seo extends Object_Seo
     protected function _getEncoder()
     {
         return oxSeoEncoderCategory::getInstance();
+    }
+
+    /**
+     * This SEO object supports suffixes so return TRUE
+     *
+     * @return bool
+     */
+    public function isSuffixSupported()
+    {
+        return true;
+    }
+
+    /**
+     * Returns url type
+     *
+     * @return string
+     */
+    protected function _getType()
+    {
+        return 'oxcategory';
+    }
+
+    /**
+     * Returns true if SEO object id has suffix enabled
+     *
+     * @return bool
+     */
+    public function isEntrySuffixed()
+    {
+        $oCategory = oxNew( 'oxcategory' );
+        if ( $oCategory->load( $this->getEditObjectId() ) ) {
+            return (bool) $oCategory->oxcategories__oxshowsuffix->value;
+        }
+    }
+
+    /**
+     * Returns seo uri
+     *
+     * @return string
+     */
+    public function getEntryUri()
+    {
+        $oCategory = oxNew( 'oxcategory' );
+        if ( $oCategory->load( $this->getEditObjectId() ) ) {
+            return $this->_getEncoder()->getCategoryUri( $oCategory, $this->getEditLang() );
+        }
     }
 }

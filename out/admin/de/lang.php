@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 37227 2011-07-21 14:15:55Z juergen.busch $
+ * @version   SVN: $Id: lang.php 38391 2011-08-24 15:09:50Z vilma $
  */
 
 $sLangName  = 'Deutsch';
@@ -247,6 +247,7 @@ $aLang = array(
 'GENERAL_MENUITEM'                                         => 'Artikel verwalten',
 'GENERAL_MANUFACTURER'                                     => 'Hersteller',
 'GENERAL_MAX_FILE_UPLOAD'                                  => 'max.',
+'GENERAL_MAX_PICTURE_DIMENSIONS'                           => 'max. 1500*1500 px',
 'GENERAL_NAME'                                             => 'Name',
 'GENERAL_NO'                                               => 'Nein',
 'GENERAL_NOITEMSSEL'                                       => 'Kein Artikel ausgewählt',
@@ -1255,7 +1256,7 @@ $aLang = array(
 'SYSREQ_OPEN_SSL'                                          => 'OpenSSL',
 'SYSREQ_SOAP'                                              => 'SOAP',
 'SYSREQ_UNICODE_SUPPORT'                                   => 'UTF-8 Unterstützung',
-'SYSREQ_BUG53632'                                          => 'Mögliche Probleme mit Server durch PHP Bug #53632',
+'SYSREQ_BUG53632'                                          => 'Mögliche Probleme mit Server durch PHP Bugs',
 'SYSREQ_MEMORY_LIMIT'                                      => 'PHP Memory limit (min. 14MB, 30MB empfohlen)',
 'SYSREQ_DESCRIPTION_PASS'                                  => 'Erfüllt.',
 'SYSREQ_DESCRIPTION_PMIN'                                  => 'Nicht oder nur teilweise erfüllt. Dieser OXID eShop kann sich in Bereichen unerwartet verhalten.',

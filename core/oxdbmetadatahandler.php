@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdbmetadatahandler.php 34564 2011-04-10 13:01:27Z alfonsas $
+ * @version   SVN: $Id: oxdbmetadatahandler.php 38187 2011-08-17 08:06:12Z linas.kukulskis $
  */
 
 /**
@@ -33,6 +33,7 @@ class oxDbMetaDataHandler extends oxSuperCfg
      * @var array
      */
     protected $_aDbTablesFields = null;
+
 
     /**
      *
@@ -222,13 +223,6 @@ class oxDbMetaDataHandler extends oxSuperCfg
         $sTableSet = getLangTableName($sTable, $iLang);
         $sNewField = $sField.'_'.$iLang;
 
-        if ($iLang>1) {
-            $iPrevLang = $iLang-1;
-            $sPrevField = $sField.'_'.$iPrevLang;
-        } else {
-            $sPrevField = $sField;
-        }
-
         $aRes = oxDb::getDb()->getAll("show create table {$sTable}");
         $sTableSql = $aRes[0][1];
 
@@ -238,13 +232,13 @@ class oxDbMetaDataHandler extends oxSuperCfg
         $aIndexSql = array();
         if ( count($aIndex) ) {
             foreach ( $aIndex as $sIndexSql ) {
-                if ( preg_match("/\([^)]*\b" . $sPrevField . "\b[^)]*\)/i", $sIndexSql )  ) {
+                if ( preg_match("/\([^)]*\b" . $sField . "\b[^)]*\)/i", $sIndexSql )  ) {
 
                     //removing index name - new will be added automaticly
                     $sIndexSql = preg_replace("/(.*\bKEY\s+)`[^`]+`/", "$1", $sIndexSql );
 
                     //replacing previous field name with new one
-                    $sIndexSql = preg_replace("/\b" . $sPrevField . "\b/", $sNewField, $sIndexSql );
+                    $sIndexSql = preg_replace("/\b" . $sField . "\b/", $sNewField, $sIndexSql );
 
                     $aIndexSql[] =  "ALTER TABLE `$sTableSet` ADD ". $sIndexSql;
                 }
@@ -359,7 +353,7 @@ class oxDbMetaDataHandler extends oxSuperCfg
         if ( is_array($aFields) && count($aFields) > 0 ) {
             foreach ( $aFields as $sField ) {
                 $sNewFieldName = $sField . "_" . $iNewLang;
-                if ( !$this->fieldExists( $sNewFieldName, $sTable ) ) {
+                if ( !$this->tableExists($sTableSet) || !$this->fieldExists( $sNewFieldName, $sTableSet ) ) {
 
                     //getting add field sql
                     $aSql[] = $this->_getAddFieldSql($sTable, $sField, $iNewLang);
@@ -486,10 +480,7 @@ class oxDbMetaDataHandler extends oxSuperCfg
      */
     public function updateViews()
     {
-        //preventing edit foranyone except malladmin
-        if ( oxSession::getVar("malladmin") ) {
-            oxDb::getInstance()->updateViews();
-        }
+        oxDb::getInstance()->updateViews();
     }
 
 }

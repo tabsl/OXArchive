@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvendor.php 37101 2011-07-15 14:26:31Z arvydas.vapsva $
+ * @version   SVN: $Id: oxvendor.php 38134 2011-08-11 13:22:49Z arvydas.vapsva $
  */
 
 /**
@@ -388,5 +388,15 @@ class oxVendor extends oxI18n implements oxIUrl
     public function getThumbUrl()
     {
         return false;
+    }
+
+    /**
+     * Returns vendor title
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->oxvendor__oxtitle->value;
     }
 }

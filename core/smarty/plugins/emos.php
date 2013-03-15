@@ -36,14 +36,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: emos.php 37970 2011-08-04 15:47:54Z tomas $
+ * $Id: emos.php 38350 2011-08-23 13:54:20Z tomas $
  */
 
 /**
  * PHP Helper Class to construct a ECONDA Monitor statement for the later
  * inclusion in a HTML/PHP Page.
  */
-class EMOS
+class Emos
 {
     /**
      * the EMOS statement consists of 3 parts
@@ -70,7 +70,7 @@ class EMOS
      *
      * @var string
      */
-    protected $_sPostScript = "";
+    protected $_sPostscript = "";
 
     /**
      * path to the empos2.js script-file
@@ -250,7 +250,7 @@ class EMOS
 
         return $this->_sPrescript.
                $this->_sIncScript.
-               $this->_sPostScript;
+               $this->_sPostscript;
     }
 
     /**
@@ -515,19 +515,19 @@ class EMOS
     /**
      * constructs a emosECPageArray of given $sEvent type
      *
-     * @param EMOS_Item $oItem  a instance of class EMOS_Item
-     * @param string    $sEvent Type of this event ("add","c_rmv","c_add")
+     * @param EMOS_Item $oItem      an instance of class EMOS_Item
+     * @param string    $sEvent     Type of this event ("view","c_rmv","c_add")
      *
      * @return string
      */
-    protected function _setEmosECPageArray( $oItem, $sEvent )
+    protected function _setEmosECPageArray( $oItem, $sEvent)
     {
         $oItem = $this->_emos_ItemFormat( $oItem );
 
-        $this->_ecEvent[] = array($sEvent, $oItem->productId, $oItem->productName,
+        $this->_ecEvent = array(array($sEvent, $oItem->productId, $oItem->productName,
                  $oItem->price, $oItem->productGroup,
                  $oItem->quantity, $oItem->variant1,
-                 $oItem->variant2, $oItem->variant3);
+                 $oItem->variant2, $oItem->variant3));
     }
 
     /**
@@ -608,27 +608,27 @@ class EMOS
         "src=\"" . $this->_sPathToFile . $this->_sScriptFileName . "\">" .
         "</script>" . $this->_br;
 
-        $this->_sPostScript  = '<script type="text/javascript"><!--' . $this->_br;
-        $this->_sPostScript .= $this->_tab . 'var emospro = {};' . $this->_br;
+        $this->_sPostscript  = '<script type="text/javascript"><!--' . $this->_br;
+        $this->_sPostscript .= $this->_tab . 'var emospro = {};' . $this->_br;
 
-        $this->_sPostScript .= $this->_addJsFormat( "content", $this->_content);
-        $this->_sPostScript .= $this->_addJsFormat( "orderProcess", $this->_orderProcess);
-        $this->_sPostScript .= $this->_addJsFormat( "siteid", $this->_siteid);
-        $this->_sPostScript .= $this->_addJsFormat( "langid", $this->_langid);
-        $this->_sPostScript .= $this->_addJsFormat( "countryid", $this->_countryid);
-        $this->_sPostScript .= $this->_addJsFormat( "pageid", $this->_pageid);
-        $this->_sPostScript .= $this->_addJsFormat( "scontact", $this->_scontact);
-        $this->_sPostScript .= $this->_addJsFormat( "download", $this->_download);
-        $this->_sPostScript .= $this->_addJsFormat( "billing", array($this->_billing));
+        $this->_sPostscript .= $this->_addJsFormat( "content", $this->_content);
+        $this->_sPostscript .= $this->_addJsFormat( "orderProcess", $this->_orderProcess);
+        $this->_sPostscript .= $this->_addJsFormat( "siteid", $this->_siteid);
+        $this->_sPostscript .= $this->_addJsFormat( "langid", $this->_langid);
+        $this->_sPostscript .= $this->_addJsFormat( "countryid", $this->_countryid);
+        $this->_sPostscript .= $this->_addJsFormat( "pageid", $this->_pageid);
+        $this->_sPostscript .= $this->_addJsFormat( "scontact", $this->_scontact);
+        $this->_sPostscript .= $this->_addJsFormat( "download", $this->_download);
+        $this->_sPostscript .= $this->_addJsFormat( "billing", array($this->_billing));
 
-        $this->_sPostScript .= $this->_addJsFormat( "search", array(array($this->_searchQuery, $this->_searchNumberOfHits)) );
-        $this->_sPostScript .= $this->_addJsFormat( "register", array(array($this->_registerUser, $this->_registerResult)) );
-        $this->_sPostScript .= $this->_addJsFormat( "login", array(array($this->_loginUser, $this->_loginResult)));
+        $this->_sPostscript .= $this->_addJsFormat( "search", array(array($this->_searchQuery, $this->_searchNumberOfHits)) );
+        $this->_sPostscript .= $this->_addJsFormat( "register", array(array($this->_registerUser, $this->_registerResult)) );
+        $this->_sPostscript .= $this->_addJsFormat( "login", array(array($this->_loginUser, $this->_loginResult)));
 
-        $this->_sPostScript .= $this->_addJsFormat( "ec_Event", $this->_ecEvent);
+        $this->_sPostscript .= $this->_addJsFormat( "ec_Event", $this->_ecEvent);
 
-        $this->_sPostScript .= $this->_tab . 'window.emosPropertiesEvent(emospro);' . $this->_br;
-        $this->_sPostScript .= '//-->' . $this->_br . '</script>' . $this->_br;
+        $this->_sPostscript .= $this->_tab . 'window.emosPropertiesEvent(emospro);' . $this->_br;
+        $this->_sPostscript .= '//-->' . $this->_br . '</script>' . $this->_br;
 
     }
 

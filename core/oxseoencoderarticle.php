@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoderarticle.php 36446 2011-06-17 14:56:03Z arvydas.vapsva $
+ * @version   SVN: $Id: oxseoencoderarticle.php 38137 2011-08-11 13:31:10Z arvydas.vapsva $
  */
 
 /**
@@ -105,9 +105,25 @@ class oxSeoEncoderArticle extends oxSeoEncoder
      * @param oxarticle $oArticle article object
      * @param int       $iLang    language id
      *
+     * @deprecated since 20110810 use oxSeoEncoderArticle::getArticleRecommUri()
+     * @todo after you remove this method also change all other calls with public method
+     *
      * @return string
      */
     protected function _getArticleRecommUri( $oArticle, $iLang )
+    {
+        return $this->getArticleRecommUri( $oArticle, $iLang );
+    }
+
+    /**
+     * Returns SEO uri for passed article and active tag
+     *
+     * @param oxarticle $oArticle article object
+     * @param int       $iLang    language id
+     *
+     * @return string
+     */
+    public function getArticleRecommUri( $oArticle, $iLang )
     {
         $sSeoUri = null;
         if ( $oRecomm = $this->_getRecomm( $oArticle, $iLang ) ) {
@@ -177,9 +193,25 @@ class oxSeoEncoderArticle extends oxSeoEncoder
      * @param int       $iLang        language id
      * @param bool      $blRegenerate if TRUE forces seo url regeneration
      *
+     * @deprecated since 20110810 use oxSeoEncoderArticle::getArticleTagUri()
+     * @todo after you remove this method also change all other calls with public method
+     *
      * @return string
      */
     protected function _getArticleTagUri( $oArticle, $iLang, $blRegenerate = false )
+    {
+        return $this->getArticleTagUri( $oArticle, $iLang, $blRegenerate );
+    }
+    /**
+     * Returns SEO uri for passed article and active tag
+     *
+     * @param oxarticle $oArticle     article object
+     * @param int       $iLang        language id
+     * @param bool      $blRegenerate if TRUE forces seo url regeneration
+     *
+     * @return string
+     */
+    public function getArticleTagUri( $oArticle, $iLang, $blRegenerate = false )
     {
         $sSeoUri = null;
         if ( $sTag = $this->_getTag( $oArticle, $iLang ) ) {
@@ -264,9 +296,26 @@ class oxSeoEncoderArticle extends oxSeoEncoder
      * @param int       $iLang        language id
      * @param bool      $blRegenerate if TRUE forces seo url regeneration
      *
+     * @deprecated since 20110810 use oxSeoEncoderArticle::getArticleUri()
+     * @todo after you remove this method also change all other calls with public method
+     *
      * @return string
      */
     protected function _getArticleUri( $oArticle, $iLang, $blRegenerate = false )
+    {
+        return $this->getArticleUri( $oArticle, $iLang, $blRegenerate );
+    }
+
+    /**
+     * Returns SEO uri for passed article
+     *
+     * @param oxarticle $oArticle     article object
+     * @param int       $iLang        language id
+     * @param bool      $blRegenerate if TRUE forces seo url regeneration
+     *
+     * @return string
+     */
+    public function getArticleUri( $oArticle, $iLang, $blRegenerate = false )
     {
         startProfile(__FUNCTION__);
 
@@ -347,9 +396,25 @@ class oxSeoEncoderArticle extends oxSeoEncoder
      * @param oxarticle $oArticle article object
      * @param int       $iLang    language id
      *
+     * @deprecated since 20110810 use oxSeoEncoderArticle::getArticleMainUri()
+     * @todo after you remove this method also change all other calls with public method
+     *
      * @return string
      */
     protected function _getArticleMainUri( $oArticle, $iLang )
+    {
+        return $this->getArticleMainUri( $oArticle, $iLang );
+    }
+
+    /**
+     * Returns SEO uri for passed article
+     *
+     * @param oxarticle $oArticle article object
+     * @param int       $iLang    language id
+     *
+     * @return string
+     */
+    public function getArticleMainUri( $oArticle, $iLang )
     {
         startProfile(__FUNCTION__);
 
@@ -431,9 +496,26 @@ class oxSeoEncoderArticle extends oxSeoEncoder
      * @param int       $iLang        language id
      * @param bool      $blRegenerate if TRUE forces seo url regeneration
      *
+     * @deprecated since 20110810 use oxSeoEncoderArticle::getArticleVendorUri()
+     * @todo after you remove this method also change all other calls with public method
+     *
      * @return string
      */
     protected function _getArticleVendorUri( $oArticle, $iLang, $blRegenerate = false )
+    {
+        return $this->getArticleVendorUri( $oArticle, $iLang, $blRegenerate );
+    }
+
+    /**
+     * Returns vendor seo uri for current article
+     *
+     * @param oxarticle $oArticle     article object
+     * @param int       $iLang        language id
+     * @param bool      $blRegenerate if TRUE forces seo url regeneration
+     *
+     * @return string
+     */
+    public function getArticleVendorUri( $oArticle, $iLang, $blRegenerate = false )
     {
         startProfile(__FUNCTION__);
 
@@ -509,9 +591,26 @@ class oxSeoEncoderArticle extends oxSeoEncoder
      * @param int       $iLang        language id
      * @param bool      $blRegenerate if TRUE forces seo url regeneration
      *
+     * @deprecated since 20110810 use oxSeoEncoderArticle::getArticleManufacturerUri()
+     * @todo after you remove this method also change all other calls with public method
+     *
      * @return string
      */
     protected function _getArticleManufacturerUri( $oArticle, $iLang, $blRegenerate = false )
+    {
+        return $this->getArticleManufacturerUri( $oArticle, $iLang, $blRegenerate );
+    }
+
+    /**
+     * Returns manufacturer seo uri for current article
+     *
+     * @param oxarticle $oArticle     article object
+     * @param int       $iLang        language id
+     * @param bool      $blRegenerate if TRUE forces seo url regeneration
+     *
+     * @return string
+     */
+    public function getArticleManufacturerUri( $oArticle, $iLang, $blRegenerate = false )
     {
         $sSeoUri = null;
         startProfile(__FUNCTION__);

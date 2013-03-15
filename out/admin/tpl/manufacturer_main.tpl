@@ -83,7 +83,7 @@ window.onload = function ()
         </tr>
         <tr>
             <td class="edittext">
-            [{ oxmultilang ident="MANUFACTURER_MAIN_ICONUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}]):<br>
+            [{ oxmultilang ident="MANUFACTURER_MAIN_ICONUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}]):<br>
             </td>
             <td class="edittext">
             <input class="editinput" name="myfile[MICO@oxmanufacturers__oxicon]" type="file" [{ $readonly }]>

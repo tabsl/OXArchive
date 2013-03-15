@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdb.php 36963 2011-07-12 07:59:29Z arvydas.vapsva $
+ * @version   SVN: $Id: oxdb.php 38080 2011-08-09 11:39:57Z linas.kukulskis $
  */
 
 
@@ -222,6 +222,8 @@ class oxDb extends oxSuperCfg
             self::$_oDB->execute( 'SET CHARACTER_SET_DATABASE = utf8' );
             self::$_oDB->execute( 'SET character_set_results = utf8' );
             self::$_oDB->execute( 'SET character_set_server = utf8' );
+        } elseif ( $myConfig->getConfigParam('sDefaultDatabaseConnection') != '' ) {
+            self::$_oDB->execute( 'SET NAMES ' . $myConfig->getConfigParam('sDefaultDatabaseConnection') );
         }
 
         return self::$_oDB;

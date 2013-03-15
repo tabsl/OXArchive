@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: manufacturer_seo.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: manufacturer_seo.php 38166 2011-08-12 16:03:55Z arvydas.vapsva $
  */
 
 /**
@@ -28,69 +28,17 @@
 class Manufacturer_Seo extends Object_Seo
 {
     /**
-     * Render manufacturer seo view.
-     *
-     * @return string
-     */
-    public function render()
-    {
-        $this->_aViewData['blShowSuffixEdit'] = true;
-        $this->_aViewData['blShowSuffix'] = $this->_getObject( $this->getEditObjectId() )->oxmanufacturers__oxshowsuffix->value;
-
-        return parent::render();
-    }
-
-    /**
-     * Returns SQL to fetch seo data
-     *
-     * @param oxbase $oObject object to load seo info
-     * @param int    $iShopId active shop id
-     * @param int    $iLang   active language id
-     *
-     * @return string
-     */
-    protected function _getSeoDataSql( $oObject, $iShopId, $iLang )
-    {
-        return parent::_getSeoDataSql( $oObject, $iShopId, $iLang )." and oxparams = '' ";
-    }
-
-    /**
-     * Returns objects seo url
-     *
-     * @param oxmanufacturer $oManufacturer active manufacturer object
-     *
-     * @return string
-     */
-    protected function _getSeoUrl( $oManufacturer )
-    {
-        $this->_getEncoder()->getManufacturerUrl( $oManufacturer );
-        return parent::_getSeoUrl( $oManufacturer );
-    }
-
-    /**
-     * Returns url type
-     *
-     * @return string
-     */
-    protected function _getType()
-    {
-        return 'oxmanufacturer';
-    }
-
-    /**
      * Updating showsuffix field
      *
      * @return null
      */
     public function save()
     {
-        if ( $sOxid = $this->getEditObjectId() ) {
-            $oManufacturer = oxNew( 'oxbase' );
-            $oManufacturer->init( 'oxmanufacturers' );
-            if ( $oManufacturer->load( $sOxid ) ) {
-                $oManufacturer->oxmanufacturers__oxshowsuffix = new oxField( (int) oxConfig::getParameter( 'blShowSuffix' ) );
-                $oManufacturer->save();
-            }
+        $oManufacturer = oxNew( 'oxbase' );
+        $oManufacturer->init( 'oxmanufacturers' );
+        if ( $oManufacturer->load( $this->getEditObjectId() ) ) {
+            $oManufacturer->oxmanufacturers__oxshowsuffix = new oxField( (int) oxConfig::getParameter( 'blShowSuffix' ) );
+            $oManufacturer->save();
         }
 
         return parent::save();
@@ -104,5 +52,51 @@ class Manufacturer_Seo extends Object_Seo
     protected function _getEncoder()
     {
         return oxSeoEncoderManufacturer::getInstance();
+    }
+
+    /**
+     * This SEO object supports suffixes so return TRUE
+     *
+     * @return bool
+     */
+    public function isSuffixSupported()
+    {
+        return true;
+    }
+
+    /**
+     * Returns url type
+     *
+     * @return string
+     */
+    protected function _getType()
+    {
+        return 'oxmanufacturer';
+    }
+
+    /**
+     * Returns true if SEO object id has suffix enabled
+     *
+     * @return bool
+     */
+    public function isEntrySuffixed()
+    {
+        $oManufacturer = oxNew( 'oxmanufacturer' );
+        if ( $oManufacturer->load( $this->getEditObjectId() ) ) {
+            return (bool) $oManufacturer->oxmanufacturers__oxshowsuffix->value;
+        }
+    }
+
+    /**
+     * Returns seo uri
+     *
+     * @return string
+     */
+    public function getEntryUri()
+    {
+        $oManufacturer = oxNew( 'oxmanufacturer' );
+        if ( $oManufacturer->load( $this->getEditObjectId() ) ) {
+            return $this->_getEncoder()->getManufacturerUri( $oManufacturer, $this->getEditLang() );
+        }
     }
 }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsysrequirements.php 35096 2011-05-03 14:52:43Z sarunas $
+ * @version   SVN: $Id: oxsysrequirements.php 38391 2011-08-24 15:09:50Z vilma $
  */
 
 /**
@@ -204,6 +204,7 @@ class oxSysRequirements
      * Version check for http://bugs.php.net/53632
      * Assumme that PHP versions < 5.3.5 and < 5.2.17 may have this issue, so
      * informing users about possible issues
+     * PHP version 5.3.7 has security bug too.
      *
      * @return int
      */
@@ -211,7 +212,9 @@ class oxSysRequirements
     {
         $iState = 1;
         if ( version_compare( PHP_VERSION, "5.3", ">=" ) ) {
-            $iState = version_compare( PHP_VERSION, "5.3.5", ">=" ) ? 2 : $iState;
+            if ( version_compare( PHP_VERSION, "5.3.5", ">=" ) && version_compare( PHP_VERSION, "5.3.7", "!=" ) ) {
+                $iState = 2;
+            }
         } elseif ( version_compare( PHP_VERSION, '5.2', ">=" ) ) {
             $iState = version_compare( PHP_VERSION, "5.2.17", ">=" ) ? 2 : $iState;
         }

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: details.php 36706 2011-07-04 15:02:30Z arvydas.vapsva $
+ * @version   SVN: $Id: details.php 38369 2011-08-24 10:41:37Z arvydas.vapsva $
  */
 
 /**
@@ -291,7 +291,7 @@ class Details extends oxUBase
                 $this->_aVariantList = $oParent->getFullVariants( false );
 
                 //lets additionally add parent article if it is sellable
-                if ( $myConfig->getConfigParam( 'blVariantParentBuyable' ) ) {
+                if ( count( $this->_aVariantList ) && $myConfig->getConfigParam( 'blVariantParentBuyable' ) ) {
                     //#1104S if parent is buyable load selectlists too
                     $oParent->aSelectlist = $oParent->getSelectLists();
                     $this->_aVariantList = array_merge( array( $oParent ), $this->_aVariantList->getArray() );

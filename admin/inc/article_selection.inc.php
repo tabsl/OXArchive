@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_selection.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: article_selection.inc.php 38133 2011-08-11 12:56:21Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -109,11 +109,13 @@ class ajaxComponent extends ajaxListComponent
         }
 
         if ( $soxId && $soxId != "-1" && is_array( $aAddSel ) ) {
+            $oDb = oxDb::getDb();
             foreach ($aAddSel as $sAdd) {
                 $oNew = oxNew( "oxbase" );
                 $oNew->init( "oxobject2selectlist" );
                 $oNew->oxobject2selectlist__oxobjectid = new oxField($soxId);
                 $oNew->oxobject2selectlist__oxselnid   = new oxField($sAdd);
+                $oNew->oxobject2selectlist__oxsort     = new oxField( ( int ) $oDb->getOne( "select max(oxsort) + 1 from oxobject2selectlist where oxobjectid =  " . $oDb->quote( $soxId ) . " " ) );
                 $oNew->save();
             }
         }

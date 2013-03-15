@@ -148,7 +148,7 @@ function editThis( sID )
           </tr>
           <tr>
             <td class="edittext">
-              [{ oxmultilang ident="ARTICLE_EXTEND_FILEUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
+              [{ oxmultilang ident="ARTICLE_EXTEND_FILEUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}])
             </td>
             <td class="edittext">
               <input class="editinput" name="myfile[FL@oxarticles__oxfile]" type="file" [{ $readonly }]>

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: vendor_seo.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: vendor_seo.php 38166 2011-08-12 16:03:55Z arvydas.vapsva $
  */
 
 /**
@@ -28,87 +28,17 @@
 class Vendor_Seo extends Object_Seo
 {
     /**
-     * Executes parent method parent::render(),
-     * and returns name of template file
-     * "object_main.tpl".
-     *
-     * @return string
-     */
-    public function render()
-    {
-        $this->_aViewData['blShowSuffixEdit'] = true;
-        $this->_aViewData['blShowSuffix'] = $this->_getObject( $this->getEditObjectId() )->oxvendor__oxshowsuffix->value;
-
-        return parent::render();
-    }
-
-    /**
-     * Returns SQL to fetch seo data
-     *
-     * @param oxbase $oObject object to load seo info
-     * @param int    $iShopId active shop id
-     * @param int    $iLang   active language id
-     *
-     * @return string
-     */
-    protected function _getSeoDataSql( $oObject, $iShopId, $iLang )
-    {
-        return parent::_getSeoDataSql( $oObject, $iShopId, $iLang )." and oxparams = '' ";
-    }
-
-    /**
-     * Returns objects seo url
-     *
-     * @param oxvendor $oVendor active vendor object
-     *
-     * @return string
-     */
-    protected function _getSeoUrl( $oVendor )
-    {
-        $this->_getEncoder()->getVendorUrl( $oVendor );
-        return parent::_getSeoUrl( $oVendor );
-    }
-
-    /**
-     * Returns seo object
-     *
-     * @param string $sOxid object id
-     *
-     * @return mixed
-     */
-    protected function _getObject( $sOxid )
-    {
-        // load object
-        $oVendor = oxNew( 'oxvendor' );
-        if ( $oVendor->loadInLang( $this->_iEditLang, $sOxid ) ) {
-            return $oVendor;
-        }
-    }
-
-    /**
-     * Returns url type
-     *
-     * @return string
-     */
-    protected function _getType()
-    {
-        return 'oxvendor';
-    }
-
-    /**
      * Updating showsuffix field
      *
      * @return null
      */
     public function save()
     {
-        if ( $sOxid = $this->getEditObjectId() ) {
-            $oVendor = oxNew( 'oxbase' );
-            $oVendor->init( 'oxvendor' );
-            if ( $oVendor->load( $sOxid ) ) {
-                $oVendor->oxvendor__oxshowsuffix = new oxField( (int) oxConfig::getParameter( 'blShowSuffix' ) );
-                $oVendor->save();
-            }
+        $oVendor = oxNew( 'oxbase' );
+        $oVendor->init( 'oxvendor' );
+        if ( $oVendor->load( $this->getEditObjectId() ) ) {
+            $oVendor->oxvendor__oxshowsuffix = new oxField( (int) oxConfig::getParameter( 'blShowSuffix' ) );
+            $oVendor->save();
         }
 
         return parent::save();
@@ -122,5 +52,51 @@ class Vendor_Seo extends Object_Seo
     protected function _getEncoder()
     {
         return oxSeoEncoderVendor::getInstance();
+    }
+
+    /**
+     * This SEO object supports suffixes so return TRUE
+     *
+     * @return bool
+     */
+    public function isSuffixSupported()
+    {
+        return true;
+    }
+
+    /**
+     * Returns true if SEO object id has suffix enabled
+     *
+     * @return bool
+     */
+    public function isEntrySuffixed()
+    {
+        $oVendor = oxNew( 'oxvendor' );
+        if ( $oVendor->load( $this->getEditObjectId() ) ) {
+            return (bool) $oVendor->oxvendor__oxshowsuffix->value;
+        }
+    }
+    
+    /**
+     * Returns url type
+     *
+     * @return string
+     */
+    protected function _getType()
+    {
+        return 'oxvendor';
+    }
+    
+    /**
+     * Returns seo uri
+     *
+     * @return string
+     */
+    public function getEntryUri()
+    {
+        $oVendor = oxNew( 'oxvendor' );
+        if ( $oVendor->load( $this->getEditObjectId() ) ) {
+            return $this->_getEncoder()->getVendorUri( $oVendor, $this->getEditLang() );
+        }
     }
 }

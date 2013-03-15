@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxfunctions.php 35286 2011-05-10 07:05:03Z sarunas $
+ * @version   SVN: $Id: oxfunctions.php 38194 2011-08-17 12:38:09Z linas.kukulskis $
  */
 
 /**
@@ -405,7 +405,8 @@ if ( !function_exists( 'getLangTableIdx' ) ) {
     function getLangTableIdx( $iLangId )
     {
         $iLangPerTable = oxConfig::getInstance()->getConfigParam( "iLangPerTable" );
-        $iLangPerTable = $iLangPerTable ? $iLangPerTable : 8;
+        //#0002718 min language count per table 2
+        $iLangPerTable = ( $iLangPerTable > 1 ) ? $iLangPerTable : 8;
 
         $iTableIdx = (int) ( $iLangId / $iLangPerTable );
         return $iTableIdx;
@@ -425,7 +426,7 @@ if ( !function_exists( 'getLangTableName' ) ) {
     function getLangTableName( $sTable, $iLangId )
     {
         $iTableIdx = getLangTableIdx( $iLangId );
-        if ( $iTableIdx && in_array($sTable, getMultilangTables())) {
+        if ( $iTableIdx && in_array($sTable, oxLang::getInstance()->getMultiLangTables())) {
             $sLangTableSuffix = oxConfig::getInstance()->getConfigParam( "sLangTableSuffix" );
             $sLangTableSuffix = $sLangTableSuffix ? $sLangTableSuffix : "_set";
 
@@ -433,28 +434,6 @@ if ( !function_exists( 'getLangTableName' ) ) {
         }
 
         return $sTable;
-    }
-}
-
-if ( !function_exists( 'getMultilangTables' ) ) {
-    /**
-     * Returns multilanguage tables array
-     *
-     * @return array
-     */
-    function getMultilangTables()
-    {
-        $aTables = array( "oxarticles", "oxartextends", "oxattribute",
-                          "oxcategories", "oxcontents", "oxcountry",
-                          "oxdelivery", "oxdiscount", "oxgroups",
-                          "oxlinks", "oxnews", "oxobject2attribute",
-                          "oxpayments", "oxselectlist", "oxshops",
-                          "oxactions", "oxwrapping", "oxdeliveryset",
-                          "oxvendor", "oxmanufacturers", "oxmediaurls",
-                          "oxstates" );
-
-
-        return $aTables;
     }
 }
 
@@ -476,7 +455,7 @@ if ( !function_exists( 'getViewName' ) ) {
             $sViewSfx = '';
 
 
-            $blIsMultiLang = in_array( $sTable, getMultilangTables() );
+            $blIsMultiLang = in_array( $sTable, oxLang::getInstance()->getMultiLangTables() );
             if ( $iLangId != -1 && $blIsMultiLang ) {
                 $oLang = oxLang::getInstance();
                 $iLangId = $iLangId !== null ? $iLangId : oxLang::getInstance()->getBaseLanguage();

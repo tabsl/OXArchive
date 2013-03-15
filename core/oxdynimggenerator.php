@@ -59,7 +59,7 @@ if ( !function_exists( "getConfig" ) ) {
     function getConfig()
     {
         // custom functions file
-        include getShopBasePath() . 'modules/functions.php';
+        include_once getShopBasePath() . 'modules/functions.php';
 
         // Generic utility method file
         include_once getShopBasePath() . 'core/oxfunctions.php';

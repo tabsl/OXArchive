@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxi18n.php 34547 2011-04-09 14:24:32Z sarunas $
+ * @version   SVN: $Id: oxi18n.php 38348 2011-08-23 13:17:10Z arvydas.vapsva $
  */
 
 /**
@@ -129,16 +129,17 @@ class oxI18n extends oxBase
      *
      * @return bool
      */
-    public function isMultilingualField($sFieldName)
+    public function isMultilingualField( $sFieldName )
     {
-        if (isset($this->_aFieldNames[$sFieldName])) {
+        $sFieldName = strtolower( $sFieldName );
+        if ( isset( $this->_aFieldNames[$sFieldName] ) ) {
             return (bool) $this->_aFieldNames[$sFieldName];
         }
 
         //not inited field yet
         //and note that this is should be called only in first call after tmp dir is empty
         startProfile('!__CACHABLE2__!');
-        $blIsMultilang = (bool) $this->_getFieldStatus($sFieldName);
+        $blIsMultilang = (bool) $this->_getFieldStatus( $sFieldName );
         stopProfile('!__CACHABLE2__!');
         return (bool) $blIsMultilang;
     }
@@ -264,10 +265,10 @@ class oxI18n extends oxBase
      *
      * @return int
      */
-    protected function _getFieldStatus($sFieldName)
+    protected function _getFieldStatus( $sFieldName )
     {
-        $aAllField = $this->_getAllFields(true);
-        if (isset($aAllField[$sFieldName."_1"])) {
+        $aAllField = $this->_getAllFields( true );
+        if ( isset( $aAllField[strtolower( $sFieldName ) . "_1"] ) ) {
             return 1;
         }
         return 0;
@@ -454,7 +455,7 @@ class oxI18n extends oxBase
                 $aUpdateTables = $this->_getLanguageSetTables();
             }
             foreach ($aUpdateTables as $sLangTable) {
-                $sUpdate= "insert into $sLangTable set ".$this->_getUpdateFieldsForTable( $sLangTable, false ) . 
+                $sUpdate= "insert into $sLangTable set ".$this->_getUpdateFieldsForTable( $sLangTable, false ) .
                           " on duplicate key update ".$this->_getUpdateFieldsForTable( $sLangTable );
 
                 $blRet = (bool) oxDB::getDb()->execute( $sUpdate);
@@ -561,16 +562,16 @@ class oxI18n extends oxBase
      *
      * @return array
      */
-    protected function _getAllFields($blReturnSimple = false)
+    protected function _getAllFields( $blReturnSimple = false )
     {
-        if ($this->_blEmployMultilanguage) {
-            return parent::_getAllFields($blReturnSimple);
+        if ( $this->_blEmployMultilanguage ) {
+            return parent::_getAllFields( $blReturnSimple );
         } else {
             $sViewName = $this->getViewName();
-            if (!$sViewName) {
+            if ( !$sViewName ) {
                 return array();
             }
-            return $this->_getTableFields($sViewName, $blReturnSimple);
+            return $this->_getTableFields( $sViewName, $blReturnSimple );
         }
     }
 
@@ -604,10 +605,9 @@ class oxI18n extends oxBase
      *
      * @return bool
      */
-    protected function _canFieldBeNull($sFieldName)
+    protected function _canFieldBeNull( $sFieldName )
     {
-        return parent::_canFieldBeNull(
-                preg_replace('/_\d{1,2}$/', '', $sFieldName)
-                );
+        $sFieldName = preg_replace( '/_\d{1,2}$/', '', $sFieldName );
+        return parent::_canFieldBeNull( $sFieldName );
     }
 }

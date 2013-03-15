@@ -88,7 +88,7 @@ function editThis( sID )
               </colgroup>
               <tr>
                   <th colspan="5" valign="top">
-                     [{ oxmultilang ident="GENERAL_ARTICLE_PICTURES" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
+                     [{ oxmultilang ident="GENERAL_ARTICLE_PICTURES" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}])
                      [{ oxinputhelp ident="HELP_ARTICLE_PICTURES_PIC1" }]
                   </th>
               </tr>
@@ -157,7 +157,7 @@ function editThis( sID )
 
               <tr>
                 <td class="index" nowrap>
-                    [{ oxmultilang ident="GENERAL_THUMB" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
+                    [{ oxmultilang ident="GENERAL_THUMB" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}])
                     [{ oxinputhelp ident="HELP_ARTICLE_PICTURES_THUMB" }]
                 </td>
                 <td class="text">
@@ -181,7 +181,7 @@ function editThis( sID )
 
               <tr>
                 <td class="index" nowrap>
-                    [{ oxmultilang ident="ARTICLE_PICTURES_ICON" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
+                    [{ oxmultilang ident="ARTICLE_PICTURES_ICON" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}])
                     [{ oxinputhelp ident="HELP_ARTICLE_PICTURES_ICON" }]
                 </td>
                 <td class="text">

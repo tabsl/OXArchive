@@ -1151,26 +1151,33 @@ class OxSetupUtils extends oxSetupCore
      *
      * @param string $sPath           path to remove
      * @param bool   $blDeleteSuccess removal state marker
+     * @param int    $iMode           remove mode: 0 files and folders, 1 - files only
+     * @param array  $aSkipFiles      files which should not be deleted (default null)
+     * @param array  $aSkipFolders    folders which should not be deleted (default null)
      *
      * @return bool
      */
-    public function removeDir( $sPath, $blDeleteSuccess )
+    public function removeDir( $sPath, $blDeleteSuccess, $iMode = 0, $aSkipFiles = array(), $aSkipFolders = array() )
     {
 
         if ( is_file( $sPath ) || is_dir( $sPath ) ) {
             // setting path to remove
             $d = dir( $sPath );
             $d->handle;
-            while ( false !== ( $entry = $d->read() ) ) {
-                if ( $entry != "." &&  $entry != ".." ) {
+            while ( false !== ( $sEntry = $d->read() ) ) {
+                if ( $sEntry != "." &&  $sEntry != ".." ) {
 
-                    $sFilePath = $sPath."/".$entry;
+                    $sFilePath = $sPath."/".$sEntry;
                     if ( is_file( $sFilePath ) ) {
-                        $blDeleteSuccess = $blDeleteSuccess * @unlink ( $sFilePath);
+                        if ( !in_array( basename( $sFilePath ), $aSkipFiles ) ) {
+                            $blDeleteSuccess = $blDeleteSuccess * @unlink ( $sFilePath );
+                        }
                     } elseif ( is_dir( $sFilePath ) ) {
                         // removing direcotry contents
-                        $this->removeDir( $sFilePath, $blDeleteSuccess );
-                        $blDeleteSuccess = $blDeleteSuccess * @rmdir ( $sFilePath );
+                        $this->removeDir( $sFilePath, $blDeleteSuccess, $iMode, $aSkipFiles, $aSkipFolders );
+                        if ( $iMode === 0 && !in_array( basename( $sFilePath ), $aSkipFolders ) ) {
+                            $blDeleteSuccess = $blDeleteSuccess * @rmdir ( $sFilePath );
+                        }
                     } else {
                         // there are some other objects ?
                         $blDeleteSuccess = $blDeleteSuccess * false;
@@ -1290,37 +1297,59 @@ class OxSetupUtils extends oxSetupCore
     public function checkPaths( $aParams )
     {
         $sBaseOut = $this->getBaseOutDir();
-        $aPaths = array($aParams['sShopDir']."/config.inc.php",
-                        // product required paths
-                        $aParams['sShopDir']."/$sBaseOut/master/product/1",
-                        $aParams['sShopDir']."/$sBaseOut/master/product/2",
-                        $aParams['sShopDir']."/$sBaseOut/master/product/3",
-                        $aParams['sShopDir']."/$sBaseOut/master/product/4",
-                        $aParams['sShopDir']."/$sBaseOut/master/product/5",
-                        $aParams['sShopDir']."/$sBaseOut/master/product/6",
-                        $aParams['sShopDir']."/$sBaseOut/master/product/7",
-                        $aParams['sShopDir']."/$sBaseOut/master/product/8",
-                        $aParams['sShopDir']."/$sBaseOut/master/product/9",
-                        $aParams['sShopDir']."/$sBaseOut/master/product/10",
-                        $aParams['sShopDir']."/$sBaseOut/master/product/11",
-                        $aParams['sShopDir']."/$sBaseOut/master/product/12",
-                        $aParams['sShopDir']."/$sBaseOut/master/product/icon",
-                        $aParams['sShopDir']."/$sBaseOut/master/product/thumb",
-                        // category required paths
-                        $aParams['sShopDir']."/$sBaseOut/master/category/icon",
-                        $aParams['sShopDir']."/$sBaseOut/master/category/promo_icon",
-                        $aParams['sShopDir']."/$sBaseOut/master/category/thumb",
-                        // manufacturer required paths
-                        $aParams['sShopDir']."/$sBaseOut/master/manufacturer/icon",
-                        // vendor required paths
-                        $aParams['sShopDir']."/$sBaseOut/master/vendor/icon",
-                        // wrapping required paths
-                        $aParams['sShopDir']."/$sBaseOut/master/wrapping",
-                        //
-                        $aParams['sShopDir']."/out/azure/src/bg",
-                        $aParams['sShopDir']."/out/azure/src",
-                        $aParams['sShopDir']."/log",
-                        $aParams['sCompileDir']);
+        $aPaths = array(
+            $aParams['sShopDir']."/config.inc.php",
+            $aParams['sShopDir']."/log",
+            $aParams['sCompileDir'],
+
+            // promo & media
+            $aParams['sShopDir']."/$sBaseOut/promo",
+            $aParams['sShopDir']."/$sBaseOut/media",
+
+            // Master
+                // product required paths
+                $aParams['sShopDir']."/$sBaseOut/master/product/1",
+                $aParams['sShopDir']."/$sBaseOut/master/product/2",
+                $aParams['sShopDir']."/$sBaseOut/master/product/3",
+                $aParams['sShopDir']."/$sBaseOut/master/product/4",
+                $aParams['sShopDir']."/$sBaseOut/master/product/5",
+                $aParams['sShopDir']."/$sBaseOut/master/product/6",
+                $aParams['sShopDir']."/$sBaseOut/master/product/7",
+                $aParams['sShopDir']."/$sBaseOut/master/product/8",
+                $aParams['sShopDir']."/$sBaseOut/master/product/9",
+                $aParams['sShopDir']."/$sBaseOut/master/product/10",
+                $aParams['sShopDir']."/$sBaseOut/master/product/11",
+                $aParams['sShopDir']."/$sBaseOut/master/product/12",
+                $aParams['sShopDir']."/$sBaseOut/master/product/icon",
+                $aParams['sShopDir']."/$sBaseOut/master/product/thumb",
+                // category required paths
+                $aParams['sShopDir']."/$sBaseOut/master/category/icon",
+                $aParams['sShopDir']."/$sBaseOut/master/category/promo_icon",
+                $aParams['sShopDir']."/$sBaseOut/master/category/thumb",
+                // manufacturer required paths
+                $aParams['sShopDir']."/$sBaseOut/master/manufacturer/icon",
+                // vendor required paths
+                $aParams['sShopDir']."/$sBaseOut/master/vendor/icon",
+                // wrapping required paths
+                $aParams['sShopDir']."/$sBaseOut/master/wrapping",
+
+            // Generated
+                // product required paths
+                $aParams['sShopDir']."/$sBaseOut/generated/product/1",
+                $aParams['sShopDir']."/$sBaseOut/generated/product/2",
+                $aParams['sShopDir']."/$sBaseOut/generated/product/3",
+                $aParams['sShopDir']."/$sBaseOut/generated/product/4",
+                $aParams['sShopDir']."/$sBaseOut/generated/product/5",
+                $aParams['sShopDir']."/$sBaseOut/generated/product/6",
+                $aParams['sShopDir']."/$sBaseOut/generated/product/icon",
+                $aParams['sShopDir']."/$sBaseOut/generated/product/thumb",
+                // category required paths
+                $aParams['sShopDir']."/$sBaseOut/generated/category/icon",
+                $aParams['sShopDir']."/$sBaseOut/generated/category/promo_icon",
+                $aParams['sShopDir']."/$sBaseOut/generated/category/thumb",
+                // manufacturer required paths
+                $aParams['sShopDir']."/$sBaseOut/generated/manufacturer/icon",
+           );
 
         foreach ( $aPaths as $sPath) {
             $this->checkFileOrDirectory( $sPath );
@@ -1743,7 +1772,9 @@ class oxSetupView extends oxSetupCore
     }
 
     /**
-     * Checks if setup deletion is on and deletes setup files if possible, return deletion status
+     * If demo data installation is OFF, tries to delete demo pictures also
+     * checks if setup deletion is ON and deletes setup files if possible,
+     * return deletion status
      *
      * @return bool
      */
@@ -1751,11 +1782,25 @@ class oxSetupView extends oxSetupCore
     {
         //finalizing installation
         $blDeleted = true;
-        $aSetupConfig = $this->getInstance( "OxSetupSession" )->getSessionParam( "aSetupConfig" );
+        $oSession  = $this->getInstance( "OxSetupSession" );
+        $oUtils    = $this->getInstance( "oxSetupUtils" );
+        $sPath    = getInstallPath();
 
+        $aDemoConfig = $oSession->getSessionParam( "aDB" );
+        if ( !isset( $aDemoConfig['dbiDemoData'] ) || $aDemoConfig['dbiDemoData'] != '1' ) {
+            $sPrfx  = $this->getInstance( "oxSetup" )->getVersionPrefix();
+
+            // "/generated" cleanup
+            $oUtils->removeDir( $sPath . "out/pictures{$sPrfx}/generated", true );
+
+            // "/master" cleanup, leaving nopic
+            $oUtils->removeDir( $sPath . "out/pictures{$sPrfx}/master", true, 1, array( "nopic.jpg" ) );
+        }
+
+        $aSetupConfig = $oSession->getSessionParam( "aSetupConfig" );
         if ( isset( $aSetupConfig['blDelSetupDir'] ) && $aSetupConfig['blDelSetupDir'] ) {
             // removing setup files
-            $blDeleted = $this->getInstance( "oxSetupUtils" )->removeDir( getInstallPath()."setup", true );
+            $blDeleted = $oUtils->removeDir( $sPath . "setup", true );
         }
         return $blDeleted;
     }
@@ -2363,7 +2408,9 @@ class oxSetupAps extends oxSetupCore
         $aParams["check_for_updates"] = $oUtils->getEnvVar( "SETTINGS_check_for_updates" );
 
         // default country language
+        $aParams["setup_lang"] = $oUtils->getEnvVar( "SETTINGS_location_lang" );
         $aParams["location_lang"] = $oUtils->getEnvVar( "SETTINGS_location_lang" );
+        $aParams["country_lang"] = $oUtils->getEnvVar( "SETTINGS_country_lang" );
 
         // enable dyn content?
         $aParams["use_dyn_pages"] = (int) $oUtils->getEnvVar( "SETTINGS_use_dynamic_pages" );

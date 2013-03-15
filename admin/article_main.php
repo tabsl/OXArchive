@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_main.php 33736 2011-03-10 15:36:39Z arvydas.vapsva $
+ * @version   SVN: $Id: article_main.php 38097 2011-08-10 08:14:35Z arvydas.vapsva $
  */
 
 /**
@@ -282,9 +282,9 @@ class Article_Main extends oxAdminDetails
 
         $oNew = oxNew( "oxbase");
         $oNew->init( "oxobject2category" );
-        $oNew->oxobject2category__oxtime = new oxField(time());
-        $oNew->oxobject2category__oxobjectid = new oxField($sOXID);
-        $oNew->oxobject2category__oxcatnid = new oxField($sCatID);
+        $oNew->oxobject2category__oxtime     = new oxField( 0 );
+        $oNew->oxobject2category__oxobjectid = new oxField( $sOXID );
+        $oNew->oxobject2category__oxcatnid   = new oxField( $sCatID );
 
         $oNew->save();
 

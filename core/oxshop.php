@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxshop.php 34554 2011-04-09 19:51:23Z alfonsas $
+ * @version   SVN: $Id: oxshop.php 38193 2011-08-17 12:24:51Z linas.kukulskis $
  */
 
 /**
@@ -86,7 +86,7 @@ class oxShop extends oxI18n
         $oDB        = oxDb::getDb();
         $aLanguages = oxLang::getInstance()->getLanguageIds();
 
-        $aTables = $aMultilangTables = getMultilangTables();
+        $aTables = $aMultilangTables = oxLang::getInstance()->getMultiLangTables();
 
         $aQ = array();
 

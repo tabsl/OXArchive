@@ -171,3 +171,13 @@
      * saves subshopid in session
      */
     $this->blDeprecatedSubshopsInSessions = false;
+
+    /**
+     * Default database conection character set
+     */
+    $this->sDefaultDatabaseConnection = '';
+
+    /**
+     * Additional multi language tables
+     */
+    $this->aMultiLangTables = null;

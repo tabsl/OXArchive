@@ -5,7 +5,7 @@
         [{ oxmultilang ident="GENERAL_LANGUAGE" }]
     </td>
     <td align="left">
-        <select name="editlanguage" id="test_editlanguage" class="saveinnewlanginput" onChange="Javascript:document.myedit.submit();">
+        <select name="editlanguage" id="test_editlanguage" class="saveinnewlanginput" onChange="Javascript:document.myedit.submit();" [{$custreadonly}]>
         [{foreach from=$otherlang key=lang item=olang}]
         <option value="[{ $lang }]"[{ if $olang->selected}]SELECTED[{/if}]>[{ $olang->sLangDesc }]</option>
         [{/foreach}]
@@ -15,7 +15,7 @@
     [{ if $posslang }]
     <tr>
     <td align="left">
-        <input type="submit" name="save" value="[{ oxmultilang ident="GENERAL_SAVEIN" }]" class="saveinnewlangtext" style="width: 100;" onClick="Javascript:document.myedit.fnc.value='saveinnlang'" [{$readonly}] [{$readonly_fields}]>
+        <input type="submit" name="save" value="[{ oxmultilang ident="GENERAL_SAVEIN" }]" class="saveinnewlangtext" style="width: 100;" onClick="Javascript:document.myedit.fnc.value='saveinnlang'" [{$readonly}] [{$readonly_fields}] [{$custreadonly}]>
     </td>
     <td align="left">
         <select name="new_lang" class="saveinnewlanginput" [{$readonly}] [{$readonly_fields}]>

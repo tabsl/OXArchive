@@ -136,7 +136,7 @@ function LockAssignment(obj)
         </tr>
         <tr>
             <td class="edittext">
-            [{ oxmultilang ident="CATEGORY_MAIN_THUMBUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
+            [{ oxmultilang ident="CATEGORY_MAIN_THUMBUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}])
             </td>
             <td class="edittext" colspan="2">
             <input class="editinput" name="myfile[TC@oxcategories__oxthumb]" type="file"  size="26" [{$readonly}]>
@@ -158,7 +158,7 @@ function LockAssignment(obj)
         </tr>
         <tr>
             <td class="edittext">
-            [{ oxmultilang ident="CATEGORY_MAIN_ICONUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
+            [{ oxmultilang ident="CATEGORY_MAIN_ICONUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}])
             </td>
             <td class="edittext" colspan="2">
             <input class="editinput" name="myfile[CICO@oxcategories__oxicon]" type="file" size="26" >
@@ -180,7 +180,7 @@ function LockAssignment(obj)
         </tr>
         <tr>
             <td class="edittext">
-            [{ oxmultilang ident="CATEGORY_MAIN_ICONUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
+            [{ oxmultilang ident="CATEGORY_MAIN_ICONUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}])
             </td>
             <td class="edittext" colspan="2">
             <input class="editinput" name="myfile[PICO@oxcategories__oxpromoicon]" type="file" size="26" >

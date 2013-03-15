@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: manufacturerlist.php 33397 2011-02-21 09:47:15Z arvydas.vapsva $
+ * @version   SVN: $Id: manufacturerlist.php 38301 2011-08-19 14:03:25Z linas.kukulskis $
  */
 
 /**
@@ -282,7 +282,7 @@ class ManufacturerList extends aList
         if ( $this->_aArticleList === null ) {
             $this->_aArticleList = array();
             if ( ( $oManufacturerTree = $this->getManufacturerTree() ) ) {
-                if ( ( $oManufacturer = $this->getActManufacturer() ) && ( $oManufacturer->getId() != 'root' ) ) {
+                if ( ( $oManufacturer = $this->getActManufacturer() ) && ( $oManufacturer->getId() != 'root' ) && $oManufacturer->getIsVisible() ) {
                     list( $aArticleList, $iAllArtCnt ) = $this->_loadArticles( $oManufacturer );
                     if ( $iAllArtCnt ) {
                         $this->_aArticleList = $aArticleList;

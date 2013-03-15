@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_user.php 35122 2011-05-05 08:07:12Z linas.kukulskis $
+ * @version   SVN: $Id: oxcmp_user.php 38156 2011-08-12 10:44:57Z vilma $
  */
 
 // defining login/logout states
@@ -124,10 +124,10 @@ class oxcmp_user extends oxView
 
         // load session user
         $this->_loadSessionUser();
-
         if ( $this->getConfig()->getConfigParam( 'blInvitationsEnabled' ) ) {
             // get invitor ID
             $this->getInvitor();
+            $this->setRecipient();
         }
 
         parent::init();
@@ -516,9 +516,11 @@ class oxcmp_user extends oxView
                 $oUser->acceptTerms();
             }
 
-            if ( $this->getConfig()->getConfigParam( 'blInvitationsEnabled' ) && $sUserId = oxConfig::getParameter( "su" ) ) {
+            $sUserId = oxSession::getVar( "su" );
+            $sRecEmail = oxSession::getVar( "re" );
+            if ( $this->getConfig()->getConfigParam( 'blInvitationsEnabled' ) && $sUserId && $sRecEmail ) {
                 // setting registration credit points..
-                $oUser->setCreditPointsForRegistrant( $sUserId );
+                $oUser->setCreditPointsForRegistrant( $sUserId, $sRecEmail );
             }
 
             // assigning to newsletter
@@ -763,7 +765,7 @@ class oxcmp_user extends oxView
     }
 
     /**
-     * Returns invitor id
+     * Gets from URL invitor id
      *
      * @return null
      */
@@ -772,6 +774,19 @@ class oxcmp_user extends oxView
         $sSu = oxSession::getVar( 'su' );
         if ( !$sSu && ( $sSuNew = oxConfig::getParameter( 'su' ) ) ) {
             oxSession::setVar( 'su', $sSuNew );
+        }
+    }
+
+    /**
+     * sets from URL invitor id
+     *
+     * @return null
+     */
+    public function setRecipient()
+    {
+        $sRe = oxSession::getVar( 're' );
+        if ( !$sRe && ( $sReNew = oxConfig::getParameter( 're' ) ) ) {
+            oxSession::setVar( 're', $sReNew );
         }
     }
 }

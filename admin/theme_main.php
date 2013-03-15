@@ -75,6 +75,7 @@ class Theme_Main extends oxAdminDetails
         }
         try {
             $oTheme->activate();
+            $this->resetContentCache();
         } catch (oxException $oEx) {
             oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
             $oEx->debugOut();

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 36613 2011-06-28 15:04:37Z arunas.paskevicius $
+ * @version   SVN: $Id: oxuser.php 38346 2011-08-23 12:39:01Z vilma $
  */
 
 /**
@@ -159,6 +159,13 @@ class oxUser extends oxBase
      */
     protected $_sWishId = null;
 
+     /**
+     * Country title field
+     *
+     * @var object
+     */
+    protected $_oUserCountryTitle = null;
+
     /**
      * Class constructor, initiates parent constructor (parent::oxBase()).
      *
@@ -265,16 +272,20 @@ class oxUser extends oxBase
      */
     public function getUserCountry( $sCountryId = null, $iLang = null )
     {
-        $oDb = oxDb::getDb();
-        if ( !$sCountryId ) {
-            $sCountryId = $this->oxuser__oxcountryid->value;
+        if ( $this->_oUserCountryTitle == null || $sCountryId ) {
+            $sId = $sCountryId ? $sCountryId : $this->oxuser__oxcountryid->value;
+            $oDb = oxDb::getDb();
+            $sViewName = getViewName( 'oxcountry', $iLang );
+            $sQ = "select oxtitle from {$sViewName} where oxid = " . $oDb->quote( $sId ) . " ";
+            $oCountry = new oxField( $oDb->getOne( $sQ ), oxField::T_RAW);
+            if ( !$sCountryId ) {
+                $this->_oUserCountryTitle = $oCountry;
+            }
+        } else {
+            return $this->_oUserCountryTitle;
         }
 
-        $sViewName = getViewName( 'oxcountry', $iLang );
-        $sQ = "select oxtitle from {$sViewName} where oxid = " . $oDb->quote( $sCountryId ) . " ";
-        $this->oxuser__oxcountry = new oxField( $oDb->getOne( $sQ ), oxField::T_RAW);
-
-        return $this->oxuser__oxcountry;
+        return $oCountry;
     }
 
     /**
@@ -419,14 +430,14 @@ class oxUser extends oxBase
             if ( $sAddressId = $this->getSelectedAddressId() ) {
                 foreach ( $oAddresses as $oAddress ) {
                     if ( $oAddress->getId() == $sAddressId ) {
-                        $oAddress->selected = 1;                            
+                        $oAddress->selected = 1;
                         $oAddress->setSelected();
                         $oSelectedAddress = $oAddress;
                         break;
                     }
                 }
             }
-            
+
             // in case none is set - setting first one
             if ( !$oSelectedAddress ) {
                 if ( !$sAddressId || $sAddressId >= 0 ) {
@@ -434,11 +445,11 @@ class oxUser extends oxBase
                     $oAddress = $oAddresses->current();
                 } else {
                     $aAddresses = $oAddresses->getArray();
-                    $oAddress   = array_pop( $aAddresses );                    
+                    $oAddress   = array_pop( $aAddresses );
                 }
                 $oAddress->selected = 1;
                 $oAddress->setSelected();
-                $oSelectedAddress = $oAddress;                
+                $oSelectedAddress = $oAddress;
             }
         }
         $this->_oSelAddress = $oSelectedAddress;
@@ -2265,30 +2276,31 @@ class oxUser extends oxBase
      * Assigns registration points for invited user and
      * its inviter (calls oxUser::setInvitationCreditPoints())
      *
-     * @param string $sUserId inviter user id
+     * @param string $sUserId   inviter user id
+     * @param string $sRecEmail recipient (registrant) email
      *
      * @return bool
      */
-    public function setCreditPointsForRegistrant( $sUserId )
+    public function setCreditPointsForRegistrant( $sUserId, $sRecEmail )
     {
         $blSet   = false;
+        $oDb = oxDb::getDb();
         $iPoints = $this->getConfig()->getConfigParam( 'dPointsForRegistration' );
-        if ( $iPoints ) {
+        // check if this invitation is still not accepted
+        $iPending = $oDb->getOne( "select count(oxuserid) from oxinvitations where oxuserid = ".$oDb->quote( $sUserId )." and md5(oxemail) = ".$oDb->quote( $sRecEmail )." and oxpending = 1 and oxaccepted = 0" );
+        if ( $iPoints && $iPending ) {
             $this->oxuser__oxpoints = new oxField( $iPoints, oxField::T_RAW );
             if ( $blSet = $this->save() ) {
-                $oDb = oxDb::getDb();
-
                 // updating users statistics
-                $oDb->execute( "UPDATE oxinvitations SET oxpending = '0', oxaccepted = '1' where oxuserid = ". $oDb->quote( $sUserId ) );
-
+                $oDb->execute( "UPDATE oxinvitations SET oxpending = '0', oxaccepted = '1' where oxuserid = ".$oDb->quote( $sUserId )." and md5(oxemail) = ".$oDb->quote( $sRecEmail ) );
                 $oInvUser = oxNew( "oxuser" );
                 if ( $oInvUser->load( $sUserId ) ) {
                     $blSet = $oInvUser->setCreditPointsForInviter();
                 }
             }
-
-            oxSession::deleteVar( 'su' );
         }
+        oxSession::deleteVar( 'su' );
+        oxSession::deleteVar( 're' );
 
         return $blSet;
     }
@@ -2328,4 +2340,28 @@ class oxUser extends oxBase
 
         return $blRet;
     }
+
+    /**
+     * Updating invitations statistics
+     *
+     * @param array $aRecEmail array of recipients emails
+     *
+     * @return null
+     */
+    public function updateInvitationStatistics( $aRecEmail )
+    {
+        $oDb = oxDb::getDb( true );
+        $sUserId = $this->getId();
+
+        if ( $sUserId && is_array( $aRecEmail ) && count( $aRecEmail ) > 0 ) {
+            //iserting statistics about invitation
+            $sDate = oxUtilsDate::getInstance()->formatDBDate( date("Y-m-d"), true );
+            $aRecEmail = oxDb::getInstance()->quoteArray( $aRecEmail );
+            foreach ( $aRecEmail as $sRecEmail ) {
+                $sSql = "INSERT INTO oxinvitations SET oxuserid = '$sUserId', oxemail = $sRecEmail,  oxdate='$sDate', oxpending = '1', oxaccepted = '0', oxtype = '1' ";
+                $oDb->execute( $sSql );
+            }
+        }
+    }
+
 }

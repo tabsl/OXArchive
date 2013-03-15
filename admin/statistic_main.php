@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: statistic_main.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: statistic_main.php 38161 2011-08-12 12:44:20Z vilma $
  */
 
 /**
@@ -117,10 +117,7 @@ class Statistic_Main extends oxAdminDetails
         else
             $aParams['oxstatistics__oxid'] = null;
 
-        $aAllreports = oxSession::getVar( "stat_reports_$soxId");
-
         $aParams['oxstatistics__oxshopid'] = $sShopID;
-        $oStat->setReports($aAllreports);
         $oStat->assign($aParams);
         $oStat->save();
 
@@ -166,7 +163,7 @@ class Statistic_Main extends oxAdminDetails
         $oSmarty = oxUtilsView::getInstance()->getSmarty();
         $oSmarty->assign( "time_from", $sTimeFrom." 23:59:59" );
         $oSmarty->assign( "time_to", $sTimeTo." 23:59:59" );
-        $oSmarty->assign( "shop", $oShop );
+        $oSmarty->assign( "oViewConf", $this->_aViewData["oViewConf"]);
 
         echo( $oSmarty->fetch( "report_pagehead.tpl" ) );
         foreach ( $aAllreports as $file ) {
