@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxbasket.php 14775 2008-12-16 14:36:44Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxbasket.php 17683 2009-03-31 08:14:05Z arvydas $
  */
 
 /**
@@ -216,6 +217,13 @@ class oxBasket extends oxSuperCfg
     protected $_oDeliveryPrice = null;
 
     /**
+     * Basket product stock check (live db check) status
+     *
+     * @var bool
+     */
+     protected $_blCheckStock = true;
+
+    /**
      * Checks if configuration allows basket usage or if user agent is search engine
      *
      * @return bool
@@ -293,6 +301,8 @@ class oxBasket extends oxSuperCfg
 
             //updating existing
             try {
+                // setting stock check status
+                $this->_aBasketContents[$sItemId]->setStockCheckStatus( $this->getStockCheckMode() );
                 $this->_aBasketContents[$sItemId]->setAmount( $dAmount, $blOverride );
             } catch( oxOutOfStockException $oEx ) {
                 // rethrow later
@@ -302,6 +312,7 @@ class oxBasket extends oxSuperCfg
             //inserting new
             $oBasketItem = oxNew( 'oxbasketitem' );
             try {
+                $oBasketItem->setStockCheckStatus( $this->getStockCheckMode() );
                 $oBasketItem->init( $sProductID, $dAmount, $aSel, $aPersParam, $blBundle );
             } catch( oxNoArticleException $oEx ) {
                 // in this case that the article does not exist remove the item from the basket by setting its amount to 0
@@ -327,8 +338,8 @@ class oxBasket extends oxSuperCfg
         $this->onUpdate();
 
             // updating basket history
-            if ( !$blBundle && !$blRemoveItem ) {
-                $this->_addItemToSavedBasket( $this->_aBasketContents[$sItemId]->getProductId(), $dAmount, $aSel, $blOverride );
+            if ( !$blBundle ) {
+                $this->_addItemToSavedBasket( $sProductID, $dAmount, $aSel, $blOverride );
             }
 
         if ( $oEx ) {
@@ -337,7 +348,27 @@ class oxBasket extends oxSuperCfg
         return $this->_aBasketContents[$sItemId];
     }
 
+    /**
+     * Sets stock control mode
+     *
+     * @param bool $blCheck stock control mode
+     *
+     * @return null
+     */
+    public function setStockCheckMode( $blCheck )
+    {
+        $this->_blCheckStock = $blCheck;
+    }
 
+    /**
+     * Returns stock control mode
+     *
+     * @return bool
+     */
+    public function getStockCheckMode()
+    {
+        return $this->_blCheckStock;
+    }
 
     /**
      * Returns unique basket item identifier which consist from product ID,
@@ -381,10 +412,11 @@ class oxBasket extends oxSuperCfg
     protected function _clearBundles()
     {
         reset( $this->_aBasketContents );
-        while ( list( $sItemKey, $oBasketItem ) = each( $this->_aBasketContents ) )
+        while ( list( $sItemKey, $oBasketItem ) = each( $this->_aBasketContents ) ) {
             if ( $oBasketItem->isBundle() ) {
                 $this->removeItem( $sItemKey );
             }
+        }
     }
 
     /**
@@ -766,6 +798,7 @@ class oxBasket extends oxSuperCfg
 
         // recalculating
         if ( count( $this->_aVouchers ) ) {
+            $oLang = oxLang::getInstance();
             foreach ( $this->_aVouchers as $sVoucherId => $oStdVoucher ) {
                 $oVoucher = oxNew( 'oxvoucher' );
                 try { // checking
@@ -783,7 +816,7 @@ class oxBasket extends oxSuperCfg
                     $this->_oVoucherDiscount->add( $dVoucherdiscount );
 
                     // collecting formatted for preview
-                    $oStdVoucher->fVoucherdiscount = oxLang::getInstance()->formatCurrency( $dVoucherdiscount, $this->getBasketCurrency() );
+                    $oStdVoucher->fVoucherdiscount = $oLang->formatCurrency( $dVoucherdiscount, $this->getBasketCurrency() );
 
                     // substracting voucher discount
                     $dPrice -= $dVoucherdiscount;
@@ -875,6 +908,9 @@ class oxBasket extends oxSuperCfg
      */
     protected function _calcBasketTotalDiscount()
     {
+        if ( $this->_oTotalDiscount && $this->_oTotalDiscount->getBruttoPrice() != 0 ) {
+            return;
+        }
         $this->_oTotalDiscount = oxNew( 'oxPrice' );
         $this->_oTotalDiscount->setBruttoPriceMode();
 
@@ -989,9 +1025,7 @@ class oxBasket extends oxSuperCfg
         $this->_oPrice->setBruttoPriceMode();
 
             // 0. merging basket history
-            if ( !$this->getConfig()->getConfigParam( 'blPerfNoBasketSaving' ) ) {
-                $this->_mergeSavedBasket();
-            }
+            $this->_mergeSavedBasket();
 
         //  0. remove all bundles
         $this->_clearBundles();
@@ -1081,7 +1115,11 @@ class oxBasket extends oxSuperCfg
                 if ( ( $oArticle = $oBasketItem->getArticle() ) ) {
 
                     $aCatIds = $oArticle->getCategoryIds();
-                    $dPrice  = $oArticle->getPrice()->getBruttoPrice();
+                    //#M530 if price is not loaded for articles
+                    $dPrice = 0;
+                    if ( $oArticle->getPrice() != null ) {
+                        $dPrice  = $oArticle->getPrice()->getBruttoPrice();
+                    }
 
                     foreach ( $aCatIds as $sCatId ) {
                         if ( !isset( $this->_aBasketSummary->aCategories[$sCatId] ) ) {
@@ -1208,11 +1246,12 @@ class oxBasket extends oxSuperCfg
 
         //P sum vat values
         $this->dVAT = array_sum( $this->_oProductsPriceList->getVatInfo() );
+        $oLang = oxLang::getInstance();
 
         // formatting final values
         $this->fproductsprice    = $this->getFProductsPrice();
         $this->fproductsnetprice = $this->getProductsNetPrice();
-        $this->fVAT = oxLang::getInstance()->formatCurrency( $this->dVAT, $this->getBasketCurrency());
+        $this->fVAT = $oLang->formatCurrency( $this->dVAT, $this->getBasketCurrency());
 
         // delivery costs
         if ( $oDeliveryCost = $this->getCosts( 'oxdelivery' ) ) {
@@ -1223,8 +1262,8 @@ class oxBasket extends oxSuperCfg
             $this->fDelVATPercent   = $oDeliveryCost->getVat() / 100; // needed to divide, because in template value is multyplied by 100
 
             // formating values
-            $this->fdeliverycost    = oxLang::getInstance()->formatCurrency( $this->ddeliverycost, $this->getBasketCurrency() );
-            $this->fdeliverynetcost = oxLang::getInstance()->formatCurrency( $this->ddeliverynetcost, $this->getBasketCurrency() );
+            $this->fdeliverycost    = $oLang->formatCurrency( $this->ddeliverycost, $this->getBasketCurrency() );
+            $this->fdeliverynetcost = $oLang->formatCurrency( $this->ddeliverynetcost, $this->getBasketCurrency() );
             $this->fDelVAT          = $this->getDelCostVat();
         }
 
@@ -1237,7 +1276,7 @@ class oxBasket extends oxSuperCfg
             $this->dWrappingVAT   = $oWrappingCost->getVatValue();
 
             //formating values
-            $this->fWrappingPrice      = oxLang::getInstance()->formatCurrency( $this->dWrappingPrice, $this->getBasketCurrency() );
+            $this->fWrappingPrice      = $oLang->formatCurrency( $this->dWrappingPrice, $this->getBasketCurrency() );
             $this->fWrappingNetto      = $this->getWrappCostNet();
             $this->fWrappingVAT        = $this->getWrappCostVat();
             $this->fWrappingVATPercent = $this->getWrappCostVatPercent();
@@ -1251,7 +1290,7 @@ class oxBasket extends oxSuperCfg
             $this->dAddPaymentSumVAT = $oPaymentCost->getVatValue();
 
             //formating values
-            $this->fAddPaymentSum    = oxLang::getInstance()->formatCurrency( $this->dAddPaymentSum, $this->getBasketCurrency() );
+            $this->fAddPaymentSum    = $oLang->formatCurrency( $this->dAddPaymentSum, $this->getBasketCurrency() );
             $this->fAddPaymentSumVAT = $this->getPayCostVat();
             $this->fAddPaymentSumVATPercent = $this->getPayCostVatPercent();
             $this->fAddPaymentNetSum = $this->getPayCostNet();
@@ -1260,7 +1299,7 @@ class oxBasket extends oxSuperCfg
         //P
         // basket total prices
         $this->dprice = $this->_oPrice->getBruttoPrice();
-        $this->fprice = oxLang::getInstance()->formatCurrency( $this->dprice, $this->getBasketCurrency() );
+        $this->fprice = $oLang->formatCurrency( $this->dprice, $this->getBasketCurrency() );
 
         // product info
         $this->iCntProducts = $this->getProductsCount();
@@ -1279,7 +1318,7 @@ class oxBasket extends oxSuperCfg
         $this->aDiscounts = $this->getDiscounts();
         if ( count($this->aDiscounts) > 0 ) {
             foreach ($this->aDiscounts as $oDiscount) {
-                $oDiscount->fDiscount = oxLang::getInstance()->formatCurrency( $oDiscount->dDiscount, $this->getBasketCurrency() );
+                $oDiscount->fDiscount = $oLang->formatCurrency( $oDiscount->dDiscount, $this->getBasketCurrency() );
             }
         }
         $this->dDiscount  = $this->getTotalDiscount()->getBruttoPrice();
@@ -1287,11 +1326,26 @@ class oxBasket extends oxSuperCfg
         // voucher info
         $this->aVouchers = $this->getVouchers();
         $this->dVoucherDiscount = $this->getVoucherDiscValue();
-        $this->fVoucherDiscount = oxLang::getInstance()->formatCurrency( $this->dVoucherDiscount, $this->getBasketCurrency() );
+        $this->fVoucherDiscount = $oLang->formatCurrency( $this->dVoucherDiscount, $this->getBasketCurrency() );
         $this->dSkippedDiscount = $this->hasSkipedDiscount();
 
     }
 
+
+    /**
+     * Checks if basket can be merged. Returns true if can
+     *
+     * @return bool
+     */
+    protected function _canMergeBasket()
+    {
+        $blCan = true;
+        if ( $this->getConfig()->getConfigParam( 'blPerfNoBasketSaving' ) ||
+             $this->_blBasketMerged || $this->isAdmin() ) {
+            $blCan = false;
+        }
+        return $blCan;
+    }
 
     /**
      * Populates current basket from the saved one.
@@ -1301,35 +1355,34 @@ class oxBasket extends oxSuperCfg
      */
     protected function _mergeSavedBasket()
     {
-        if ( $this->_blBasketMerged ) {
-            return;
-        }
+        if ( $this->_canMergeBasket() ) {
 
-        $oUser = $this->getBasketUser();
-        if ( !$oUser ) {
-            $this->_blBasketMerged = false;
-            return;
-        }
-
-        $oBasket = $oUser->getBasket( 'savedbasket' );
-
-        // restoring from saved history
-        $aSavedItems = $oBasket->getItems();
-        foreach ( $aSavedItems as $oItem ) {
-            try {
-                $this->addToBasket( $oItem->getId(), $oItem->dAmount, $oItem->aSelList, null, true );
-            } catch( oxArticleException $oEx ) {
-                // caught and ignored
+            $oUser = $this->getBasketUser();
+            if ( !$oUser ) {
+                $this->_blBasketMerged = false;
+                return;
             }
-        }
 
-        // refreshing history
-        foreach ( $this->_aBasketContents as $oBasketItem ) {
-            $oBasket->addItemToBasket( $oBasketItem->getProductId(), $oBasketItem->getAmount(), $oBasketItem->getSelList(), true );
-        }
+            $oBasket = $oUser->getBasket( 'savedbasket' );
 
-        // marking basked as saved
-        $this->_blBasketMerged = true;
+            // restoring from saved history
+            $aSavedItems = $oBasket->getItems();
+            foreach ( $aSavedItems as $oItem ) {
+                try {
+                    $this->addToBasket( $oItem->oxuserbasketitems__oxartid->value, $oItem->oxuserbasketitems__oxamount->value, $oItem->getSelList(), null, true );
+                } catch( oxArticleException $oEx ) {
+                    // caught and ignored
+                }
+            }
+
+            // refreshing history
+            foreach ( $this->_aBasketContents as $oBasketItem ) {
+                $oBasket->addItemToBasket( $oBasketItem->getProductId(), $oBasketItem->getAmount(), $oBasketItem->getSelList(), true );
+            }
+
+            // marking basked as saved
+            $this->_blBasketMerged = true;
+        }
     }
 
     /**
@@ -1391,7 +1444,7 @@ class oxBasket extends oxSuperCfg
                 $oDelAdress = oxNew( 'oxbase' );
                 $oDelAdress->init( 'oxaddress' );
                 if ( $oDelAdress->load( $sAddressId ) ) {
-                   $sDelivCountry = $oDelAdress->oxaddress__oxcountryid->value;
+                    $sDelivCountry = $oDelAdress->oxaddress__oxcountryid->value;
                 }
             }
 
@@ -1670,8 +1723,9 @@ class oxBasket extends oxSuperCfg
             }
         }
 
+        $oLang = oxLang::getInstance();
         foreach ( $aAllVats as $sKey => $dVat ) {
-            $aVats[$sKey] = oxLang::getInstance()->formatCurrency( $dVat, $this->getBasketCurrency() );
+            $aVats[$sKey] = $oLang->formatCurrency( $dVat, $this->getBasketCurrency() );
         }
 
         return $aVats;
@@ -2013,7 +2067,8 @@ class oxBasket extends oxSuperCfg
      */
     public function getFDeliveryCosts()
     {
-        if ( $oDeliveryCost = $this->getCosts( 'oxdelivery' ) ) {
+        $oDeliveryCost = $this->getCosts( 'oxdelivery' );
+        if ( $oDeliveryCost && $oDeliveryCost->getBruttoPrice()) {
             return oxLang::getInstance()->formatCurrency( $oDeliveryCost->getBruttoPrice(), $this->getBasketCurrency() );
         }
         return false;
@@ -2030,6 +2085,20 @@ class oxBasket extends oxSuperCfg
             return $oDeliveryCost->getBruttoPrice();
         }
         return false;
+    }
+
+    /**
+     * Sets total discount value
+     *
+     * @param double $dDiscount new total discount value
+     *
+     * @return null
+     */
+    public function setTotalDiscount( $dDiscount )
+    {
+        $this->_oTotalDiscount = oxNew( 'oxPrice' );
+        $this->_oTotalDiscount->setBruttoPriceMode();
+        $this->_oTotalDiscount->add( $dDiscount );
     }
 
 }

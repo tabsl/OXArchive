@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxvendor.php 14482 2008-12-05 08:34:48Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxvendor.php 17768 2009-04-02 10:52:12Z sarunas $
  */
 
 /**
@@ -165,7 +166,7 @@ class oxVendor extends oxI18n
             $oRootVendor->setId( 'root' );
             $oRootVendor->setLanguage( $iLang );
             $oRootVendor->oxvendor__oxicon      = new oxField('');
-            $oRootVendor->oxvendor__oxtitle     = new oxField(oxLang::getInstance()->translateString( 'byBrand', $iLang, false ) );
+            $oRootVendor->oxvendor__oxtitle     = new oxField(oxLang::getInstance()->translateString( 'byVendor', $iLang, false ) );
             $oRootVendor->oxvendor__oxshortdesc = new oxField('');
             self::$_aRootVendor[$iLang] = $oRootVendor;
         }
@@ -307,5 +308,28 @@ class oxVendor extends oxI18n
         return $this->getConfig()->getPictureUrl( 'icon/'.$this->oxvendor__oxicon->value );
     }
 
-}
+    /**
+     * Empty method, called in templates when vendor is used in same code like category
+     *
+     * @return null
+     */
+    public function getContentCats()
+    {
+    }
 
+    /**
+     * Delete this object from the database, returns true on success.
+     *
+     * @param string $sOXID Object ID(default null)
+     *
+     * @return bool
+     */
+    public function delete( $sOXID = null)
+    {
+        if (parent::delete($sOXID)) {
+            oxSeoEncoderVendor::getInstance()->onDeleteVendor($this);
+            return true;
+        }
+        return false;
+    }
+}

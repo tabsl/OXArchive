@@ -20,7 +20,6 @@
 <input type="hidden" name="oxid" value="[{ $oxid }]">
 <input type="hidden" name="editval[oxuserpayments__oxid]" value="[{ $oxpaymentid }]">
 <input type="hidden" name="editval[oxuserpayments__oxuserid]" value="[{ $oxid }]">
-[{include file="autosave.form.tpl"}]
 
 <table cellspacing="0" cellpadding="0" border="0"  width="98%">
 
@@ -37,7 +36,7 @@
         <tr>
             <td class="edittext">
                 <select name="oxpaymentid" class="editinput" style="width:320px;" onChange="document.myedit.submit();" [{ $readonly}]>
-					<option value="-1">[{ oxmultilang ident="USER_PAYMENT_NEWPAYMENT" }]</option>
+                    <option value="-1">[{ oxmultilang ident="USER_PAYMENT_NEWPAYMENT" }]</option>
                     [{foreach from=$edituser->oPayments item=payment}]
                     <option value="[{ $payment->oxuserpayments__oxid->value }]" [{ if $payment->selected}]SELECTED[{/if}]>[{ $payment->oxpayments__oxdesc->value }]</option>
                     [{/foreach}]

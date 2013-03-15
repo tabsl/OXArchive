@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: register.php 13915 2008-10-30 11:14:36Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: register.php 17315 2009-03-17 16:18:58Z arvydas $
  */
 
 /**
@@ -49,12 +50,11 @@ class Register extends User
     protected $_aMustFillFields = null;
 
     /**
-     * Current view search engine indexing state:
-     *     0 - index without limitations
-     *     1 - no index / no follow
-     *     2 - no index / follow
+     * Current view search engine indexing state
+     *
+     * @var int
      */
-    protected $_iViewIndexState = 1;
+    protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXNOFOLLOW;
 
     /**
      * Executes parent::render(), passes error code to template engine,
@@ -119,4 +119,40 @@ class Register extends User
         }
         return $this->_aMustFillFields;
     }
+
+    /**
+     * Return deliver address
+     *
+     * @return oxbase | false
+     */
+    public function getDelAddress()
+    {
+        // is logged in ?
+        if ( $this->_oDelAddress === null ) {
+            $this->_oDelAddress = false;
+
+            if ( $oUser = $this->getUser() ) {
+                $sAddressId = $oUser->getSelectedAddress();
+                if ( $sAddressId && $sAddressId != '-1' ) {
+                    $this->_oDelAddress = oxNew( 'oxbase' );
+                    $this->_oDelAddress->init( 'oxaddress' );
+                    $this->_oDelAddress->load( $sAddressId );
+                }
+            }
+        }
+
+        return $this->_oDelAddress;
+    }
+
+    /**
+     * Generats facke address for selection
+     *
+     * @param object &$oAddresses user address list
+     *
+     * @return null
+     */
+    protected function _addFakeAddress( $oAddresses )
+    {
+    }
+
 }

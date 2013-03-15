@@ -1,4 +1,4 @@
-[{ oxmultilang ident="EMAIL_WISHLIST_HTML_MYWISHLISTBY" }] [{ $shop->oxshops__oxname->value }]
+[{ oxmultilang ident="EMAIL_WISHLIST_HTML_MYWISHLISTBY" }] [{ $shop->oxshops__oxname->getRawValue() }]
 
 [{$userinfo->send_message}]
 

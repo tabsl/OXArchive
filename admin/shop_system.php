@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: shop_system.php 14015 2008-11-06 13:30:18Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: shop_system.php 17243 2009-03-16 15:16:57Z arvydas $
  */
 
 /**
@@ -48,9 +49,10 @@ class Shop_System extends Shop_Config
 
         $aConfArrs = array();
 
-        $iLang = oxLang::getInstance()->getTplLanguage();
+        $oLang = oxLang::getInstance();
+        $iLang = $oLang->getTplLanguage();
 
-        $aLanguages = oxLang::getInstance()->getLanguageArray();
+        $aLanguages = $oLang->getLanguageArray();
         $sLangAbbr = $aLanguages[$iLang]->abbr;
 
         // loading shop location countries list (defines in which country shop exists)

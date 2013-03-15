@@ -104,7 +104,7 @@
                       </tr>
                       <tr onclick="JavaScript:document.getElementsByName('wrapping[[{$basketindex}]]')['[{$ictr}]'].checked=true;">
                         <td></td>
-                        <td colspan="2"><img src="[{$wrapping->getPictureUrl()}]/0/[{$wrapping->oxwrapping__oxpic->value}]" alt="[{$wrapping->oxwrapping__oxname->value}]"></td>
+                        <td colspan="2"><img src="[{$wrapping->getPictureUrl()}]0/[{$wrapping->oxwrapping__oxpic->value}]" alt="[{$wrapping->oxwrapping__oxname->value}]"></td>
                       </tr>
                       [{assign var="ictr" value="`$ictr+1`"}]
                     [{/foreach}]
@@ -162,7 +162,7 @@
                             <span id="test_CardItemNamePrice_[{$smarty.foreach.GreetCards.iteration}]">[{$card->oxwrapping__oxname->value}] ([{$card->getFPrice() }] [{ $currency->sign}])</span>
                         </div>
                         <div class="card_body">
-                            <img src="[{$card->getPictureUrl()}]/0/[{$card->oxwrapping__oxpic->value}]" alt="[{$card->oxwrapping__oxname->value}]">
+                            <img src="[{$card->getPictureUrl()}]0/[{$card->oxwrapping__oxpic->value}]" alt="[{$card->oxwrapping__oxname->value}]">
                         </div>
                      </div>
 

@@ -30,7 +30,6 @@ function UpdateList( sID)
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
 <input type="hidden" name="editval[oxnewsletter__oxid]" value="[{ $oxid }]">
-[{include file="autosave.form.tpl"}]
 
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
 <tr>

@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxorderarticle.php 14392 2008-11-26 16:50:36Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxorderarticle.php 17248 2009-03-16 15:22:07Z arvydas $
  */
 
 /**
@@ -236,9 +237,10 @@ class oxOrderArticle extends oxBase
         $this->aPersParam = $this->getPersParams();
 
         if ( $this->oxorderarticles__oxstorno->value != 1 ) {
-            $this->ftotbrutprice = oxLang::getInstance()->formatCurrency( $this->oxorderarticles__oxbrutprice->value );
-            $this->fbrutprice    = oxLang::getInstance()->formatCurrency( $this->oxorderarticles__oxbprice->value );
-            $this->fnetprice     = oxLang::getInstance()->formatCurrency( $this->oxorderarticles__oxnprice->value );
+            $oLang = oxLang::getInstance();
+            $this->ftotbrutprice = $oLang->formatCurrency( $this->oxorderarticles__oxbrutprice->value );
+            $this->fbrutprice    = $oLang->formatCurrency( $this->oxorderarticles__oxbprice->value );
+            $this->fnetprice     = $oLang->formatCurrency( $this->oxorderarticles__oxnprice->value );
         }
     }
 

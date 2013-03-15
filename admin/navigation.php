@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: navigation.php 14757 2008-12-16 09:00:48Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: navigation.php 17958 2009-04-07 14:29:36Z rimvydas.paskevicius $
  */
 
 /**
@@ -36,6 +37,7 @@ class Navigation extends oxAdminView
     public function render()
     {
         parent::render();
+        $myUtilsServer = oxUtilsServer::getInstance();
 
         $sItem = oxConfig::getParameter( "item");
         if ( !isset( $sItem) || !$sItem ) {
@@ -43,7 +45,7 @@ class Navigation extends oxAdminView
 
             $aFavorites = oxConfig::getParameter( "favorites");
             if(is_array($aFavorites)) {
-                oxUtilsServer::getInstance()->setOxCookie('oxidadminfavorites',implode('|',$aFavorites));
+                $myUtilsServer->setOxCookie('oxidadminfavorites',implode('|',$aFavorites));
             }
 
         } else {
@@ -54,8 +56,11 @@ class Navigation extends oxAdminView
             $sVersion = str_replace( array("EE.","PE."), "", $this->_sShopVersion);
             $this->_aViewData["sVersion"] =  trim($sVersion);
 
+            // #661 execute stuff we run each time when we start admin once
+            $this->_aViewData['aMessage'] = $this->_doStartUpChecks();
+
             // favorite navigation
-            $aFavorites = explode('|',oxUtilsServer::getInstance()->getOxCookie('oxidadminfavorites'));
+            $aFavorites = explode('|',$myUtilsServer->getOxCookie('oxidadminfavorites'));
 
             if(is_array($aFavorites) && count($aFavorites)) {
                  $this->_aViewData["menufavorites"] = $this->getNavigation()->getListNodes($aFavorites);
@@ -63,7 +68,7 @@ class Navigation extends oxAdminView
             }
 
             // history navigation
-            $aHistory = explode('|',oxUtilsServer::getInstance()->getOxCookie('oxidadminhistory'));
+            $aHistory = explode('|',$myUtilsServer->getOxCookie('oxidadminhistory'));
             if(is_array($aHistory) && count($aHistory)) {
                 $this->_aViewData["menuhistory"] = $this->getNavigation()->getListNodes($aHistory);
             }
@@ -90,7 +95,7 @@ class Navigation extends oxAdminView
     }
 
     /**
-     * destroy session, redirects to admin login
+     * Destroy session, redirects to admin login and clears cache
      *
      * @return null
      */
@@ -102,7 +107,7 @@ class Navigation extends oxAdminView
         $oUser = oxNew( "oxuser" );
         $oUser->logout();
 
-        // dodger - Task #1364 — Logout-Button
+        // dodger - Task #1364 - Logout-Button
         // store
         $sSID = $mySession->getId();
 
@@ -115,6 +120,75 @@ class Navigation extends oxAdminView
             oxDb::getDb()->Execute( $sSQL);
         }
 
+        //reseting content cache if needed
+        $blDeleteCacheOnLogout = $this->getConfig()->getConfigParam( 'blClearCacheOnLogout' );
+        if ( $blDeleteCacheOnLogout ) {
+
+                oxUtils::getInstance()->oxResetFileCache();
+        }
+
         oxUtils::getInstance()->redirect( 'index.php' );
+    }
+
+    /**
+     * Every Time Admin starts we perform these checks
+     * returns some messages if there is something to display
+     *
+     * @return string
+     */
+    protected function _doStartUpChecks()
+    {   // #661
+        $aMessage = array();
+/*
+            // check if there are any links in oxobject2category which are outdated or old
+            $sSQL = "select oxobject2category.oxid from oxcategories, oxobject2category left join oxarticles on oxarticles.oxid = oxobject2category.oxobjectid  where oxcategories.oxid = oxobject2category.oxcatnid and oxarticles.oxid is null";
+            $iCnt = 0;
+            $sDel = "";
+            $rs = oxDb::getDb()->Execute( $sSQL);
+            if ($rs != false && $rs->recordCount() > 0) {
+                while (!$rs->EOF) {
+                    if ( $iCnt)
+                        $sDel .= ",";
+                    $sDel .= "'".$rs->fields[0]."'";
+                    $iCnt++;
+                    $rs->moveNext();
+                }
+                // delete it now
+                oxDb::getDb()->Execute("delete from oxobject2category where oxid in ($sDel)");
+                $aMessage['message'] = "- Deleted $iCnt old/outdated entries in table oxobject2category.<br>";
+            }
+*/
+        // check if system reguirements are ok
+        $oSysReq = new oxSysRequirements();
+        if ( !$oSysReq->getSysReqStatus() ) {
+            $aMessage['warning']  = oxLang::getInstance()->translateString('NAVIGATION_SYSREQ_MESSAGE');
+            $aMessage['warning'] .= '<a href="?cl=sysreq" target="basefrm">';
+            $aMessage['warning'] .= oxLang::getInstance()->translateString('NAVIGATION_SYSREQ_MESSAGE2').'</a>';
+        }
+
+        // version check
+        if ( $sVersionNotice = $this->_checkVersion() ) {
+            $aMessage['message'] .= $sVersionNotice;
+        }
+
+        return $aMessage;
+    }
+
+    /**
+     * Checks if newer shop version available. If true - returns message
+     *
+     * @return string
+     */
+    protected function _checkVersion()
+    {
+            $sVersion = 'CE';
+
+        $sQuery = 'http://admin.oxid-esales.com/'.$sVersion.'/onlinecheck.php?getlatestversion';
+        if ( $sVersion = oxUtilsFile::getInstance()->readRemoteFileAsString( $sQuery ) ) {
+            // current version is older ..
+            if ( version_compare( $this->getConfig()->getVersion(), $sVersion ) == '-1' ) {
+                return sprintf( oxLang::getInstance()->translateString( 'NAVIGATION_NEWVERSIONAVAILABLE' ), $sVersion );
+            }
+        }
     }
 }

@@ -9,7 +9,7 @@
 <body>
 
 <script type="text/javascript">
-    parent.sShopTitle = "[{$actshop}]";
+    parent.sShopTitle = "[{$actshop|oxaddslashes}]";
     parent.setTitle();
 </script>
 
@@ -19,10 +19,12 @@
 </p>
 <hr>
 
-[{if $sMessage }]
+[{if $aMessage }]
     <div class="messagebox">
-        [{ oxmultilang ident="MAIN_INFO" }] :<br><br>
-        [{ $sMessage }]
+        [{ oxmultilang ident="MAIN_INFO" }]:<br>
+        [{foreach from=$aMessage item=sMessage key=class }]
+            <p class="[{$class}]">[{ $sMessage }]</p>
+        [{/foreach}]
     </div>
     <hr>
 [{/if}]

@@ -1,15 +1,15 @@
 [{assign var="template_title" value="REGISTER_MYACCOUNT"|oxmultilangassign}]
 [{include file="_header.tpl" title=$template_title location=$template_title}]
 
-<form action="[{ $oViewConf->getSelfActionLink() }]" name="order" method="post">
+<form action="[{ $oViewConf->getSslSelfLink() }]" name="order" method="post">
 
     <strong id="test_openAccHeader" class="boxhead">[{ oxmultilang ident="REGISTER_OPENACCOUNT" }]</strong>
     [{assign var="aMustFillFields" value=$oView->getMustFillFields() }]
     <div class="box info">
         [{ $oViewConf->getHiddenSid() }]
+        [{ $oViewConf->getNavFormParams() }]
         <input type="hidden" name="fnc" value="registeruser">
         <input type="hidden" name="cl" value="register">
-        <input type="hidden" name="cnid" value="[{$oViewConf->getActCatId()}]">
         <input type="hidden" name="lgn_cook" value="0">
         <input type="hidden" name="option" value="3">
         <table class="form" width="100%">
@@ -126,7 +126,7 @@
                     <input type="text" size="3" maxlength="2" name="invadr[oxuser__oxbirthdate][day]" value="[{if $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00"}][{$oxcmp_user->oxuser__oxbirthdate->value|date_format:"%d" }][{else}][{$invadr.oxuser__oxbirthdate.day }][{/if}]">&nbsp;&nbsp;
                     <input type="text" size="3" maxlength="2" name="invadr[oxuser__oxbirthdate][month]" value="[{if $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00" }][{$oxcmp_user->oxuser__oxbirthdate->value|date_format:"%m" }][{else}][{$invadr.oxuser__oxbirthdate.month }][{/if}]">&nbsp;&nbsp;
                     <input type="text" size="8" maxlength="4" name="invadr[oxuser__oxbirthdate][year]" value="[{if $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00" }][{$oxcmp_user->oxuser__oxbirthdate->value|date_format:"%Y" }][{else}][{$invadr.oxuser__oxbirthdate.year }][{/if}]">
-                [{if isset($aMustFillFields.oxuser__oxbirthdate) }]*[{/if}]
+                [{if isset($aMustFillFields.oxuser__oxbirthdate) }]<span class="req">*</span>[{/if}]
             </td>
             </tr>
             [{/if}]
@@ -136,13 +136,13 @@
             <tr>
                 <td colspan="2">
                     <div class="showHideShippAddr">
-	                    [{if !$oView->showShipAddress()}]
-	                    <span class="btn"><input type="submit" class="btn" name="blshowshipaddress" value="[{ oxmultilang ident="REGISTER_DIFFERENTSHIPPINGADDRESS" }]"></span>
-	                    [{else}]
-	                    <span class="btn"><input type="submit" class="btn" name="blhideshipaddress" value="[{ oxmultilang ident="REGISTER_DISABLESHIPPINGADDRESS" }]"></span>
-	                    [{/if}]
-	                    <br><br>
-	                    <span class="note">[{ oxmultilang ident="REGISTER_NOTE" }]</span> [{ oxmultilang ident="REGISTER_DIFFERENTDELIVERYADDRESS" }]
+                        [{if !$oView->showShipAddress()}]
+                        <span class="btn"><input type="submit" class="btn" name="blshowshipaddress" value="[{ oxmultilang ident="REGISTER_DIFFERENTSHIPPINGADDRESS" }]"></span>
+                        [{else}]
+                        <span class="btn"><input type="submit" class="btn" name="blhideshipaddress" value="[{ oxmultilang ident="REGISTER_DISABLESHIPPINGADDRESS" }]"></span>
+                        [{/if}]
+                        <br><br>
+                        <span class="note">[{ oxmultilang ident="REGISTER_NOTE" }]</span> [{ oxmultilang ident="REGISTER_DIFFERENTDELIVERYADDRESS" }]
                     </div>
                 </td>
             </tr>
@@ -151,7 +151,7 @@
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_ADDRESSES" }]</label></td>
                 <td>
-                    <select name="oxaddressid" onchange="oxid.reload(this.value === '-1','order','user','');">
+                    <select name="oxaddressid" onchange="oxid.form.reload(this.value === '-1','order','user','');oxid.form.clear(this.value !== '-1','order',/oxaddress__/);">
                         <option value="-1" SELECTED>[{ oxmultilang ident="REGISTER_NEWADDRESSES" }]</option>
                         [{if $oxcmp_user }]
                             [{foreach from=$oxcmp_user->getUserAddresses() item=address}]

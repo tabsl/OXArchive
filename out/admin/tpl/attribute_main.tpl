@@ -48,7 +48,6 @@ function SetSticker( sStickerId, oObject)
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
 <input type="hidden" name="editval[oxattribute__oxid]" value="[{ $oxid }]">
-[{include file="autosave.form.tpl"}]
 
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
 <tr>
@@ -75,7 +74,7 @@ function SetSticker( sStickerId, oObject)
             <td class="edittext">
             </td>
             <td class="edittext"><br>
-                [{include file="language.tpl"}]
+                [{include file="language_edit.tpl"}]
             </td>
         </tr>
         <tr>

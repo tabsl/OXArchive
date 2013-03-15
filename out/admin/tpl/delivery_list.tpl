@@ -64,8 +64,6 @@ function UnassignThis( sID)
 
 function ChangeEditBar( sLocation, sPos)
 {
-    [{include file="autosave.script.tpl"}]
-
     var oSearch = document.getElementById("search");
     oSearch.actedit.value=sPos;
     oSearch.submit();
@@ -135,7 +133,7 @@ window.onLoad = top.reloadEditFrame();
 </tr>
 <tr>
     <td class="listheader first" height="15" align="center"><a href="Javascript:document.search.sort.value='oxsort';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_SORT" }]</a></td>
-    <td class="listheader" height="15" colspan="2">&nbsp;<a href="Javascript:document.search.sort.value='oxtitle';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_DESCRIPTION" }]</a></td>
+    <td class="listheader" height="15" colspan="2">&nbsp;<a href="Javascript:document.search.sort.value='oxtitle';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_NAME" }]</a></td>
 </tr>
 
 [{assign var="blWhite" value=""}]
@@ -175,7 +173,7 @@ window.onLoad = top.reloadEditFrame();
 
 <script type="text/javascript">
 if (parent.parent)
-{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->value}]";
+{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->getRawValue()|oxaddslashes}]";
     parent.parent.sMenuItem    = "[{ oxmultilang ident="DELIVERY_LIST_MENUITEM" }]";
     parent.parent.sMenuSubItem = "[{ oxmultilang ident="DELIVERY_LIST_MENUSUBITEM" }]";
     parent.parent.sWorkArea    = "[{$_act}]";

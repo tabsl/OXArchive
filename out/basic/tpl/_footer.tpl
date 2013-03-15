@@ -4,7 +4,8 @@
     <div id="footer">
         <div class="bar copy">
             <div class="left" id="delivery_link">
-                    <a href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=info&amp;tpl=delivery_info.tpl" }]" rel="nofollow">[{ oxmultilang ident="INC_FOOTER_INCLTAXANDPLUSSHIPPING" }]</a>
+                [{assign var="oCont" value=$oView->getContentByIdent("oxdeliveryinfo") }]
+                <a href="[{ $oCont->getLink() }]" rel="nofollow">[{ oxmultilang ident="INC_FOOTER_INCLTAXANDPLUSSHIPPING" }]</a>
             </div>
             <div class="right">
                 &copy; <a href="http://www.oxid-esales.com">[{ oxmultilang ident="INC_FOOTER_SOFTWAREFROMOXIDESALES" }]</a>
@@ -17,8 +18,10 @@
             <a id="test_link_footer_help" href="[{ oxgetseourl ident=$oViewConf->getHelpLink() }]" rel="nofollow">[{ oxmultilang ident="INC_FOOTER_HELP" }]</a> |
             <a id="test_link_footer_guestbook" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=guestbook" }]" rel="nofollow">[{ oxmultilang ident="INC_FOOTER_GUESTBOOK" }]</a> |
             <a id="test_link_footer_links" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=links" }]">[{ oxmultilang ident="INC_FOOTER_LINKS" }]</a> |
-            <a id="test_link_footer_impressum" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=info&amp;tpl=impressum.tpl" }]" rel="nofollow">[{ oxmultilang ident="INC_FOOTER_IMPRESSUM" }]</a> |
-            <a id="test_link_footer_terms" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=info&amp;tpl=agb.tpl" }]" rel="nofollow">[{ oxmultilang ident="INC_FOOTER_TERMS" }]</a> |
+            [{assign var="oCont" value=$oView->getContentByIdent("oximpressum") }]
+            <a id="test_link_footer_impressum" href="[{ $oCont->getLink() }]" rel="nofollow">[{ $oCont->oxcontents__oxtitle->value }]</a> |
+            [{assign var="oCont" value=$oView->getContentByIdent("oxagb") }]
+            <a id="test_link_footer_terms" href="[{ $oCont->getLink() }]" rel="nofollow">[{ $oCont->oxcontents__oxtitle->value }]</a> |
             <br>
             [{oxhasrights ident="TOBASKET"}]
             <a id="test_link_footer_basket" href="[{ oxgetseourl ident=$oViewConf->getBasketLink() }]" rel="nofollow">[{ oxmultilang ident="INC_FOOTER_CART" }]</a> |
@@ -36,8 +39,8 @@
         </div>
 
         <div class="shopicons">
-            <div class="left"><img src="[{$oViewConf->getImageUrl()}]/cc.jpg" alt=""></div>
-            <div class="right"><a href="http://www.oxid-esales.com"><img src="[{$oViewConf->getImageUrl()}]/oxid_powered.jpg" alt="[{ oxmultilang ident="INC_FOOTER_SOFTWAREANDSYSTEMBYOXID" }]" height="30" width="80"></a></div>
+            <div class="left"><img src="[{$oViewConf->getImageUrl()}]cc.jpg" alt=""></div>
+            <div class="right"><a href="http://www.oxid-esales.com"><img src="[{$oViewConf->getImageUrl()}]oxid_powered.jpg" alt="[{ oxmultilang ident="INC_FOOTER_SOFTWAREANDSYSTEMBYOXID" }]" height="30" width="80"></a></div>
         </div>
 
         <div class="footertext">[{oxcontent ident="oxstdfooter"}]</div>
@@ -48,7 +51,7 @@
 <div id="mask"></div>
 [{if $popup}][{include file=$popup}][{/if}]
 <script type="text/javascript" src="[{ $oViewConf->getResourceUrl() }]oxid.js"></script>
-[{oxid_include_dynamic file="dyn/newbasketitem.tpl" }]
+[{oxid_include_dynamic file="dyn/newbasketitem_popup.tpl"}]
 <script type="text/javascript">[{oxscript}][{oxid_include_dynamic file="dyn/oxscript.tpl" }]</script>
 <!--[if lt IE 7]><script type="text/javascript">oxid.popup.addShim();</script><![endif]-->
 </body>

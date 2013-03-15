@@ -178,9 +178,6 @@
             [{ if $edit && $edit->oxorder__oxtransstatus->value }]
                 [{ oxmultilang ident="ORDER_OVERVIEW_INTSTATUS" }]:&nbsp;<b>[{ $edit->oxorder__oxtransstatus->value }]</b><br>
             [{/if}]
-            [{ if $edit->oxorder__oxphisphorder->value }]<br>
-            [{ oxmultilang ident="ORDER_OVERVIEW_PRICEHAMORDER" }] <b>[{if $edit->oxorder__oxphapproved->value != "0000-00-00 00:00:00"}][{ $edit->oxorder__oxphapproved|oxformdate }][{else}]NEIN[{ oxmultilang ident="GENERAL_SUMTOTAL" }][{/if}]</b><br>
-            [{/if}]
             <br>
             <b>[{ oxmultilang ident="GENERAL_REVIEW" }]: </b>
             <br>

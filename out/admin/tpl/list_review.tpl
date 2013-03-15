@@ -106,7 +106,7 @@ function ChangeLanguage()
 <tr>
     <td class="listheader first"><a href="javascript:document.forms.showlist.sort.value='oxreviews.oxcreate';document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxcreate" }]</a></td>
     <td class="listheader"><a href="javascript:document.forms.showlist.sort.value='oxreviews.oxtext';document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxtext" }]</a></td>
-    <td class="listheader"><a href="javascript:document.forms.showlist.sort.value='oxarticles.oxtitle';document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxtitle" }]</a></td>
+    <td class="listheader"><a href="javascript:document.forms.showlist.sort.value='arttitle ';document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxtitle" }]</a></td>
 </tr>
 
 [{ foreach from=$mylist item=oReview }]
@@ -114,7 +114,7 @@ function ChangeLanguage()
 <tr id="row.[{$_cnt}]">
     <td align="center" class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:EditThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{ $oReview->oxreviews__oxcreate|oxformdate }]</a></td>
     <td class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:EditThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{ $oReview->oxreviews__oxtext->value }]</a></td>
-    <td class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:EditThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{ $oReview->oxreviews__oxtitle->value }]</a></td>
+    <td class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:EditThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{if $oReview->oxreviews__oxparentid->value}][{ $oReview->oxreviews__parenttitle->value }] [{ $oReview->oxreviews__oxvarselect->value }][{else}][{$oReview->oxreviews__oxtitle->value}][{/if}]</a></td>
 </tr>
 [{if $blWhite == "2"}]
     [{assign var="blWhite" value=""}]
@@ -130,7 +130,7 @@ function ChangeLanguage()
 
 <script type="text/javascript">
 if (parent.parent)
-{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->value}]";
+{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->getRawValue()|oxaddslashes}]";
     parent.parent.sMenuItem    = "";
     parent.parent.sMenuSubItem = "[{ oxmultilang ident="snpreviewlistheader" }]";
     parent.parent.sWorkArea    = "[{$_act}]";

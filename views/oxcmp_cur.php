@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxcmp_cur.php 13614 2008-10-24 09:36:52Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxcmp_cur.php 16306 2009-02-05 10:28:05Z rimvydas.paskevicius $
  */
 
 /**
@@ -137,6 +138,11 @@ class oxcmp_cur extends oxView
         // search vendor
         if ( $sVal = oxConfig::getParameter( 'searchvendor' ) ) {
             $sURL .= "&amp;searchvendor={$sVal}";
+        }
+
+        // search manufacturer
+        if ( $sVal = oxConfig::getParameter( 'searchmanufacturer' ) ) {
+            $sURL .= "&amp;searchmanufacturer={$sVal}";
         }
 
         reset( $this->aCurrencies );

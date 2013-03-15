@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: tools_list.php 14641 2008-12-11 14:11:43Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: tools_list.php 17644 2009-03-27 14:00:12Z arvydas $
  */
 
 /**
@@ -59,7 +60,8 @@ class Tools_List extends oxAdminList
         }
 
         $sUpdateSQL = trim(stripslashes($sUpdateSQL));
-        $iLen = strlen($sUpdateSQL);
+        $oStr = getStr();
+        $iLen = $oStr->strlen($sUpdateSQL);
         if ( $this->_prepareSQL(trim(stripslashes($sUpdateSQL)), $iLen)) {
             $aQueries = $this->aSQLs;
             $this->_aViewData["aQueries"] = array();
@@ -77,11 +79,11 @@ class Tools_List extends oxAdminList
 
                     if ( strlen( $sUpdateSQL)>0) {
                         $aPassedQueries[$iQueriesCounter] = nl2br( htmlentities($sUpdateSQL));
-                        if ( strlen( $aPassedQueries[$iQueriesCounter]) > 200)
-                            $aPassedQueries[$iQueriesCounter] = substr( $aPassedQueries[$iQueriesCounter], 0, 200)."...";
+                        if ( getStr()->strlen( $aPassedQueries[$iQueriesCounter]) > 200)
+                            $aPassedQueries[$iQueriesCounter] = $oStr->substr( $aPassedQueries[$iQueriesCounter], 0, 200)."...";
 
-                        while ( $sUpdateSQL[ strlen( $sUpdateSQL)-1] == ";") {
-                            $sUpdateSQL = substr( $sUpdateSQL, 0, ( strlen( $sUpdateSQL)-1));
+                        while ( $sUpdateSQL[ $oStr->strlen( $sUpdateSQL)-1] == ";") {
+                            $sUpdateSQL = $oStr->substr( $sUpdateSQL, 0, ( $oStr->strlen( $sUpdateSQL)-1));
                         }
 
                         $oDB->execute( $sUpdateSQL);
@@ -147,38 +149,6 @@ class Tools_List extends oxAdminList
     }
 
     /**
-     * Performs data import.
-     *
-     * @return null
-     */
-    public function doimport()
-    {
-        $myConfig = $this->getConfig();
-        $sFilepath = oxConfig::getParameter( "filepath");
-        oxSession::setVar( "filepath", $sFilepath);
-
-        $iStart = oxConfig::getParameter( "iStart");
-        if ( !isset( $iStart))
-            $iStart = 0;
-
-        $oImex = oxNew( "oximex" );
-
-        if ( !$oImex->import( $iStart, $myConfig->getConfigParam( 'iImportNrofLines' ), $sFilepath)) {
-            oxSession::deleteVar( "imex_fnc");
-            oxSession::deleteVar( "rStart");
-            oxSession::deleteVar( "rparam");
-            oxSession::deleteVar( "filepath");
-            oxSession::deleteVar( "atables");
-            oxSession::setVar( "finished", 2);
-        } else {
-             // continue
-            $iStart += $myConfig->getConfigParam( 'iImportNrofLines' );
-            oxSession::setVar( "rStart", $iStart);
-            oxSession::setVar( "imex_fnc", "doimport");
-        }
-    }
-
-    /**
      * Method parses givent SQL queries string and returns array on success
      *
      * @param string  $sSQL    SQL queries
@@ -191,6 +161,7 @@ class Tools_List extends oxAdminList
         $sChar = "";
         $sStrStart = "";
         $blString  = false;
+        $oStr = getStr();
 
         //removing "mysqldump" application comments
         while ( preg_match("/^\-\-.*\n/", $sSQL))
@@ -202,7 +173,7 @@ class Tools_List extends oxAdminList
             $sChar = $sSQL[$iPos];
             if ( $blString) {
                 while ( true) {
-                    $iPos = strpos( $sSQL, $sStrStart, $iPos);
+                    $iPos = $oStr->strpos( $sSQL, $sStrStart, $iPos);
                     //we are at the end of string ?
                     if (!$iPos) {
                         $this->aSQLs[] = $sSQL;
@@ -227,9 +198,9 @@ class Tools_List extends oxAdminList
                     }
                 }
             } elseif ( $sChar == ";") { // delimiter found, appending query array
-                $this->aSQLs[] = substr( $sSQL, 0, $iPos);
-                $sSQL = ltrim( substr( $sSQL, min( $iPos + 1, $iSQLlen)));
-                $iSQLlen = strlen( $sSQL);
+                $this->aSQLs[] = $oStr->substr( $sSQL, 0, $iPos);
+                $sSQL = ltrim( $oStr->substr( $sSQL, min( $iPos + 1, $iSQLlen)));
+                $iSQLlen = $oStr->strlen( $sSQL);
                 if ( $iSQLlen)
                     $iPos      = -1;
                 else
@@ -239,16 +210,16 @@ class Tools_List extends oxAdminList
                 $sStrStart = $sChar;
             } elseif ( $sChar == "#" || ( $sChar == ' ' && $iPos > 1 && $sSQL[$iPos-2] . $sSQL[$iPos-1] == '--')) {  // removing # commented query code
                 $iCommStart = (( $sSQL[$iPos] == "#") ? $iPos : $iPos-2);
-                $iCommEnd = (strpos(' ' . $sSQL, "\012", $iPos+2))
-                           ? strpos(' ' . $sSQL, "\012", $iPos+2)
-                           : strpos(' ' . $sSQL, "\015", $iPos+2);
+                $iCommEnd = ($oStr->strpos(' ' . $sSQL, "\012", $iPos+2))
+                           ? $oStr->strpos(' ' . $sSQL, "\012", $iPos+2)
+                           : $oStr->strpos(' ' . $sSQL, "\015", $iPos+2);
                 if ( !$iCommEnd) {
                     if ( $iCommStart > 0)
-                        $this->aSQLs[] = trim(substr($sSQL, 0, $iCommStart));
+                        $this->aSQLs[] = trim($oStr->substr($sSQL, 0, $iCommStart));
                     return true;
                 } else {
-                    $sSQL = substr($sSQL, 0, $iCommStart).ltrim(substr($sSQL, $iCommEnd));
-                    $iSQLlen = strlen($sSQL);
+                    $sSQL = $oStr->substr($sSQL, 0, $iCommStart).ltrim($oStr->substr($sSQL, $iCommEnd));
+                    $iSQLlen = $oStr->strlen($sSQL);
                     $iPos--;
                 }
             } elseif ( 32358 < 32270 && ($sChar == '!' && $iPos > 1  && $sSQL[$iPos-2] . $sSQL[$iPos-1] == '/*'))  // removing comments like /**/

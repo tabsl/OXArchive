@@ -17,9 +17,9 @@ function UpdateList( sID)
 </script>
 
 [{ if $readonly }]
-	[{assign var="readonly" value="readonly disabled"}]
+    [{assign var="readonly" value="readonly disabled"}]
 [{else}]
-	[{assign var="readonly" value=""}]
+    [{assign var="readonly" value=""}]
 [{/if}]
 
 <form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
@@ -35,14 +35,13 @@ function UpdateList( sID)
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
 <input type="hidden" name="editval[oxorder__oxid]" value="[{ $oxid }]">
-[{include file="autosave.form.tpl"}]
 
 <table cellspacing="0" cellpadding="0" border="0"  width="98%">
 <tr>
     <td valign="top" class="edittext">
-	
-		<b>[{ oxmultilang ident="GENERAL_BILLADDRESS" }]</b><br>
-		<br>
+
+        <b>[{ oxmultilang ident="GENERAL_BILLADDRESS" }]</b><br>
+        <br>
         <table cellspacing="0" cellpadding="0" border="0">
         <tr>
             <td class="edittext">
@@ -154,7 +153,7 @@ function UpdateList( sID)
             <td class="edittext">
             </td>
             <td class="edittext"><br>
-    		<input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="GENERAL_SAVE" }]" onClick="Javascript:document.myedit.fnc.value='save'"" [{ $readonly }]>
+            <input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="GENERAL_SAVE" }]" onClick="Javascript:document.myedit.fnc.value='save'"" [{ $readonly }]>
             </td>
         </tr>
         </table>
@@ -163,9 +162,9 @@ function UpdateList( sID)
     <!-- Anfang rechte Seite -->
     <td valign="top" class="edittext" align="left" width="50%">
 
-		<b>[{ oxmultilang ident="GENERAL_DELIVERYADDRESS" }]:</b><br>
-		<br>
-		
+        <b>[{ oxmultilang ident="GENERAL_DELIVERYADDRESS" }]:</b><br>
+        <br>
+
         <table cellspacing="0" cellpadding="0" border="0">
         <tr>
             <td class="edittext">

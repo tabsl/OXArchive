@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: dynexportbase.php 13619 2008-10-24 09:40:23Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: dynexportbase.php 17644 2009-03-27 14:00:12Z arvydas $
  */
 
 /**
@@ -272,8 +273,9 @@ class DynExportBase extends oxAdminDetails
         // remove html entities, remove html tags
         $sOutput = $this->_unHTMLEntities( strip_tags( $sOutput));
 
-        if ( strlen( $sOutput) > $iMaxSize - 3) {
-            $sOutput = substr( $sOutput, 0, $iMaxSize - 5) . "...";
+        $oStr = getStr();
+        if ( $oStr->strlen( $sOutput) > $iMaxSize - 3) {
+            $sOutput = $oStr->substr( $sOutput, 0, $iMaxSize - 5) . "...";
         }
         return $sOutput;
     }
@@ -469,11 +471,6 @@ class DynExportBase extends oxAdminDetails
             $blContinue = false;
             return null;
         }
-
-        //mall mode
-        // MALL OFF
-        /*if ($myConfig->isMall() && $sShopID != "oxbaseshop")
-            $oArticle->oxdetaillink .= "&actshop=$sShopID";*/
 
         $oArticle = $this->_setCampaignDetailLink($oArticle);
 
@@ -761,15 +758,16 @@ class DynExportBase extends oxAdminDetails
 
             $sLang = oxLang::getInstance()->getBaseLanguage();
             $sCatView = getViewName('oxcategories');
+            $oDb = oxDb::getDb();
 
             // Load all root cat's == all trees
             $sSQL = "select oxid from $sCatView where oxparentid = 'oxrootid'";
-            $rs = oxDb::getDb()->Execute( $sSQL);
+            $rs = $oDb->Execute( $sSQL);
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     // now load each tree
                     $sSQL = "SELECT s.oxid, s.oxtitle".(($sLang)?"_$sLang":"").", s.oxparentid, count( * ) AS LEVEL FROM oxcategories v, oxcategories s WHERE s.oxrootid = '".$rs->fields[0]."' and v.oxrootid='".$rs->fields[0]."' and s.oxleft BETWEEN v.oxleft AND v.oxright  AND s.oxhidden = '0' GROUP BY s.oxleft order by level";
-                    $rs2 = oxDb::getDb()->Execute( $sSQL);
+                    $rs2 = $oDb->Execute( $sSQL);
                     if ($rs2 != false && $rs2->recordCount() > 0) {
                         while (!$rs2->EOF) {
                             // store it
@@ -864,6 +862,8 @@ class DynExportBase extends oxAdminDetails
          //Saulius: variant title added
         $sTitle = $oArticle->oxarticles__oxvarselect->value?" ".$oArticle->oxarticles__oxvarselect->value:"";
         $oArticle->oxarticles__oxtitle->setValue($oArticle->oxarticles__oxtitle->value.$sTitle);
+
+
         // check for variant url - exporting direct variant links
         if ($oArticle->oxarticles__oxparentid->value) {
             $oArticle->oxdetaillink = str_replace($oArticle->oxarticles__oxparentid->value, $sOXID, $oArticle->oxdetaillink);

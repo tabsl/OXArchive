@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxcategorylist.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxcategorylist.php 17944 2009-04-07 12:38:30Z sarunas $
  */
 
 
@@ -94,15 +95,18 @@ class oxCategoryList extends oxList
      */
     protected function _getSelectString($blReverse = false)
     {
-        $sViewName  = $this->getBaseObject()->getViewName();
-        $sFieldList = $this->getBaseObject()->getSelectFields();
-        //$sFieldList = "oxid, oxparentid, oxleft, oxright, oxrootid, oxsort, oxtitle, oxpricefrom, oxpriceto, oxicon ";
+        $oBaseObject = $this->getBaseObject();
+        $sViewName  = $oBaseObject->getViewName();
+        //$sFieldList = $oBaseObject->getSelectFields();
+        //excluding long desc
+        $sLangSuffix = oxLang::getInstance()->getLanguageTag();
+        $sFieldList = "oxid, oxactive$sLangSuffix as oxactive, oxhidden, oxparentid, oxdefsort, oxdefsortmode, oxleft, oxright, oxrootid, oxsort, oxtitle$sLangSuffix as oxtitle, oxpricefrom, oxpriceto, oxicon ";
         $sWhere     = $this->_getDepthSqlSnippet();
 
         $sOrdDir    = $blReverse?'desc':'asc';
         $sOrder     = "$sViewName.oxrootid $sOrdDir, $sViewName.oxleft $sOrdDir";
 
-            $sFieldList.= ",not $sViewName.oxactive as remove";
+            $sFieldList.= ",not $sViewName.".$oBaseObject->getSqlFieldName( 'oxactive' )." as remove";
 
 
         return "select $sFieldList from $sViewName where $sWhere order by $sOrder";
@@ -183,6 +187,9 @@ class oxCategoryList extends oxList
             // remove inactive categories
             $this->_ppRemoveInactiveCategories();
 
+            // add active cat as full object
+            $this->_ppLoadFullCategory($sActCat);
+
             // builds navigation path
             $this->_ppAddPathInfo();
 
@@ -194,6 +201,20 @@ class oxCategoryList extends oxList
         }
 
         stopProfile("buildTree");
+    }
+
+    /**
+     * set full category object in tree
+     * 
+     * @param string $sId category id
+     */
+    protected function _ppLoadFullCategory($sId)
+    {
+        $oNewCat = oxNew('oxcategory');
+        if ($oNewCat->load($sId)) {
+            // replace aArray object with fully loaded category
+            $this->_aArray[$sId] = $oNewCat;
+        }
     }
 
     /**
@@ -363,11 +384,14 @@ class oxCategoryList extends oxList
      */
     protected function _ppBuildTree()
     {
-
+        startProfile("_sortCats");
+        $aIds = $this->sortCats();
+        stopProfile("_sortCats");
         $aTree = array();
         foreach ($this->_aArray as $oCat) {
             $sParentId = $oCat->oxcategories__oxparentid->value;
             if ( $sParentId != 'oxrootid') {
+                $this->_aArray[$sParentId]->setSortingIds( $aIds );
                 $this->_aArray[$sParentId]->setSubCat($oCat, $oCat->getId());
             } else {
                 $aTree[$oCat->getId()] = $oCat;
@@ -375,9 +399,35 @@ class oxCategoryList extends oxList
         }
 
         // Sort root categories
-        uasort($aTree, array(oxNew('oxCategory'), "cmpCat"));
+        $oCategory = oxNew('oxcategory');
+        $oCategory->setSortingIds( $aIds );
+        uasort($aTree, array( $oCategory, 'cmpCat' ) );
 
         $this->assign($aTree);
+    }
+
+    /**
+     * Sorts category tree after oxsort and oxtitle fields and returns ids.
+     *
+     * @return array $aIds
+     */
+    public function sortCats()
+    {
+        $oDB = oxDb::getDb();
+        $sViewName  = getViewName('oxcategories');
+        $sSortSql = "SELECT oxid FROM $sViewName ORDER BY oxparentid, oxsort, oxtitle";
+        $aIds = array();
+        $rs = $oDB->execute($sSortSql);
+        $cnt = 0;
+        if ($rs != false && $rs->recordCount() > 0) {
+            while (!$rs->EOF) {
+                $aIds[$rs->fields[0]] = $cnt;
+                $cnt++;
+                $rs->moveNext();
+            }
+        }
+
+        return $aIds;
     }
 
     /**

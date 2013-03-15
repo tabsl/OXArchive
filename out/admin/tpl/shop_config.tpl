@@ -46,7 +46,6 @@ function _groupExp(el) {
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
 <input type="hidden" name="editval[oxshops__oxid]" value="[{ $oxid }]">
-[{include file="autosave.form.tpl"}]
 
 
     <div class="groupExp">
@@ -441,54 +440,6 @@ function _groupExp(el) {
 
     <div class="groupExp">
         <div>
-            <a href="#" onclick="_groupExp(this);return false;" class="rc"><b>[{ oxmultilang ident="SHOP_OPTIONS_GROUP_LANGUAGE" }]</b></a>
-            <dl>
-                <dt>
-                    <input type=text class="txt" name=confstrs[sDefaultLang] value="[{$confstrs.sDefaultLang}]" [{ $readonly}]>
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_DEFAULTLANGUAGE" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-            <dl>
-                <dt>
-                    <textarea class="txtfield" name=confaarrs[aLanguages] [{ $readonly}]>[{$confaarrs.aLanguages}]</textarea>
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_SETORDELETELANGUAGE" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-            [{ if !$isMall }]
-            <dl>
-                <dt>
-                   <textarea class="txtfield" name=confarrs[aLanguageURLs] [{ $readonly}]>[{$confarrs.aLanguageURLs}]</textarea>
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_SETORDELETELANGUAGEURL" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-            <dl>
-                <dt>
-                   <textarea class="txtfield" name=confarrs[aLanguageSSLURLs] [{ $readonly}]>[{$confarrs.aLanguageSSLURLs}]</textarea>
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_SETORDELETELANGUAGESSLURL" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-            [{/if}]
-
-         </div>
-    </div>
-
-    <div class="groupExp">
-        <div>
             <a href="#" onclick="_groupExp(this);return false;" class="rc"><b>[{ oxmultilang ident="SHOP_OPTIONS_GROUP_PICTURES" }]</b></a>
             <dl>
                 <dt>
@@ -605,7 +556,7 @@ function _groupExp(el) {
 
             <dl>
                 <dt>
-                    <input type=text class="txtfield" name=confstrs[sCntOfNewsLoaded] value="[{$confstrs.sCntOfNewsLoaded}]" [{ $readonly}]>
+                    <input type=text class="txt" name=confstrs[sCntOfNewsLoaded] value="[{$confstrs.sCntOfNewsLoaded}]" [{ $readonly}]>
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_CNTOFNEWS" }]

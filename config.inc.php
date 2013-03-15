@@ -17,7 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package main
- * @copyright © OXID eSales AG 2003-2009
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
  */
 
 
@@ -34,6 +35,9 @@
         $this->sCompileDir  = '<sCompileDir_ce>';
 
     $this->sTheme = 'basic';
+
+    // utf mode in shop 0 - off, 1 - on
+    $this->iUtfMode  = '<iUtfMode>';
 
     //File type whitelist for file upload
     $this->aAllowedUploadTypes = array('jpg', 'gif', 'png', 'pdf', 'mp3', 'avi', 'mpg', 'mpeg', 'doc', 'xls', 'ppt');

@@ -44,8 +44,6 @@ function DeleteThis( sID)
 
 function ChangeEditBar( sLocation, sPos)
 {
-    [{include file="autosave.script.tpl"}]
-
     var oSearch = document.getElementById("search");
     oSearch.actedit.value=sPos;
     oSearch.submit();
@@ -185,7 +183,7 @@ window.onLoad = top.reloadEditFrame();
 
 <script type="text/javascript">
 if (parent.parent)
-{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->value}]";
+{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->getRawValue()|oxaddslashes}]";
     parent.parent.sMenuItem    = "[{ oxmultilang ident="COUNTRY_LIST_MENUITEM" }]";
     parent.parent.sMenuSubItem = "[{ oxmultilang ident="COUNTRY_LIST_MENUSUBITEM" }]";
     parent.parent.sWorkArea    = "[{$_act}]";

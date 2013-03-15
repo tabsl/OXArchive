@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxbasketitem.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxbasketitem.php 16608 2009-02-19 13:31:39Z vilma $
  */
 
 /**
@@ -189,6 +190,13 @@ class oxBasketItem extends oxSuperCfg
     protected $_sWishArticleId = null;
 
     /**
+     * Article stock check (live db check) status
+     *
+     * @var bool
+     */
+    protected $_blCheckArticleStock = true;
+
+    /**
      * Assigns basic params to basket item
      *  - oxbasketitem::_setArticle();
      *  - oxbasketitem::setAmount();
@@ -228,11 +236,33 @@ class oxBasketItem extends oxSuperCfg
     }
 
     /**
+     * Sets stock control mode
+     *
+     * @param bool $blStatus stock control mode
+     *
+     * @return null
+     */
+    public function setStockCheckStatus( $blStatus )
+    {
+        $this->_blCheckArticleStock = $blStatus;
+    }
+
+    /**
+     * Returns stock control mode
+     *
+     * @return bool
+     */
+    public function getStockCheckStatus()
+    {
+        return $this->_blCheckArticleStock;
+    }
+
+    /**
      * Sets item amount and weight which depends on amount
      * ( oxbasketitem::dAmount, oxbasketitem::dWeight )
      *
      * @param double $dAmount    amount
-     * @param bool   $blOverride overide
+     * @param bool   $blOverride overide current amoutn or not
      *
      * @throws oxOutOfStockException, oxArticleInputException
      *
@@ -254,23 +284,28 @@ class oxBasketItem extends oxSuperCfg
         $oArticle = $this->getArticle();
 
 
-        // checking for stock
-        $iOnStock = $oArticle->checkForStock( $dAmount );
-
-        if ( $iOnStock !== true ) {
-            if ( $iOnStock === false ) {
-                // no stock !
-                $dAmount = 0;
-            } else {
-                // limited stock
-                $dAmount = $iOnStock;
-            }
-        }
+        // setting default
+        $iOnStock = true;
 
         if ( $blOverride ) {
             $this->_dAmount  = $dAmount;
         } else {
             $this->_dAmount += $dAmount;
+        }
+
+        // checking for stock
+        if ( $this->getStockCheckStatus() == true ) {
+            $iOnStock = $oArticle->checkForStock( $this->_dAmount );
+            if ( $iOnStock !== true ) {
+                if ( $iOnStock === false ) {
+                    // no stock !
+                    $this->_dAmount = 0;
+                } else {
+                    // limited stock
+                    $this->_dAmount = $iOnStock;
+                    $blOverride = true;
+                }
+            }
         }
 
         // calculating general weight
@@ -280,7 +315,7 @@ class oxBasketItem extends oxSuperCfg
             $oEx = oxNew( 'oxOutOfStockException' );
             $oEx->setMessage( 'EXCEPTION_OUTOFSTOCK_OUTOFSTOCK' );
             $oEx->setArticleNr( $oArticle->oxarticles__oxartnum->value );
-            $oEx->setRemainingAmount( $dAmount );
+            $oEx->setRemainingAmount( $this->_dAmount );
             throw $oEx;
         }
     }
@@ -865,7 +900,7 @@ class oxBasketItem extends oxSuperCfg
      * @return string
      */
     public function getVatPercent()
-    {        
+    {
         return oxLang::getInstance()->formatVat( $this->getPrice()->getVat() );
     }
 

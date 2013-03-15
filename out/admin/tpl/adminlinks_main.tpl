@@ -40,9 +40,6 @@ function UpdateList( sID)
         <input type="hidden" name="editval[oxlinks__oxid]" value="[{ $oxid }]">
         <input type="hidden" name="editval[oxlinks__oxurldesc]" value="">
         [{* T workaround for #1552 *}]
-        [{if !$readonly}]
-            [{include file="autosave.form.tpl"}]
-        [{/if}]
         <tr>
           <td valign="top" class="edittext">
             <table cellspacing="0" cellpadding="0" border="0">
@@ -74,7 +71,7 @@ function UpdateList( sID)
                 <td class="edittext">
                 </td>
                 <td class="edittext"><br>
-                [{include file="language.tpl"}]
+                [{include file="language_edit.tpl"}]
                 </td>
               </tr>
               <tr>

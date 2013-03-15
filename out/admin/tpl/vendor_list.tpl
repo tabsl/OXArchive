@@ -1,4 +1,4 @@
-[{include file="headitem.tpl" title="VENDOR_MAIN_TITLE"|oxmultilangassign box="list"}]
+[{include file="headitem.tpl" title="VENDOR_LIST_TITLE"|oxmultilangassign box="list"}]
 
 [{if $readonly}]
     [{assign var="readonly" value="readonly disabled"}]
@@ -64,8 +64,6 @@ function UnassignThis( sID)
 
 function ChangeEditBar( sLocation, sPos)
 {
-    [{include file="autosave.script.tpl"}]
-
     var oSearch = document.getElementById("search");
     oSearch.actedit.value=sPos;
     oSearch.submit();
@@ -135,7 +133,7 @@ window.onLoad = top.reloadEditFrame();
     </td>
 </tr>
 <tr>
-    <td class="listheader first" height="15">&nbsp;<a href="Javascript:document.search.sort.value='oxtitle';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_VENDOR" }]</a></td>
+    <td class="listheader first" height="15">&nbsp;<a href="Javascript:document.search.sort.value='oxtitle';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_TITLE" }]</a></td>
     <td class="listheader" height="15" colspan="2"><a href="Javascript:document.search.sort.value='oxshortdesc';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_SHORTDESC" }]</a></td>
 </tr>
 
@@ -177,7 +175,7 @@ window.onLoad = top.reloadEditFrame();
 
 <script type="text/javascript">
 if (parent.parent)
-{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->value}]";
+{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->getRawValue()|oxaddslashes}]";
     parent.parent.sMenuItem    = "[{ oxmultilang ident="VENDOR_LIST_MENUITEM" }]";
     parent.parent.sMenuSubItem = "[{ oxmultilang ident="VENDOR_LIST_MENUSUBITEM" }]";
     parent.parent.sWorkArea    = "[{$_act}]";

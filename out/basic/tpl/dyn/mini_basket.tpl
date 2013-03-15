@@ -49,9 +49,7 @@
           <div class="ta_right">
               [{ $oViewConf->getHiddenSid() }]
               <input type="hidden" name="cl" value="basket">
-              <div class="tocart">
-                <input id="test_[{$_basket_testid}]Open" type="submit" class="btn" value="[{ oxmultilang ident="INC_RIGHTITEM_DISPLAYBASKET" }]">
-              </div>
+              <div class="tocart"><input id="test_[{$_basket_testid}]Open" type="submit" class="btn" value="[{ oxmultilang ident="INC_RIGHTITEM_DISPLAYBASKET" }]"></div>
           </div>
         </form>
 

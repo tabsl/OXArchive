@@ -84,7 +84,6 @@ function modSmtpField()
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
 <input type="hidden" name="editval[oxshops__oxid]" value="[{ $oxid }]">
-[{include file="autosave.form.tpl"}]
 
 <table border="0" width="98%">
 <tr>
@@ -92,7 +91,7 @@ function modSmtpField()
         <table cellspacing="0" cellpadding="0" border="0">
         <tr>
          <td class="edittext"  [{if !($edit->oxshops__oxproductive->value)}]style="border: 3px Red; border-style: solid none solid solid;"[{/if}]>
-            [{ oxmultilang ident="SHOP_EXTEND_PRODUCTIVE" }]
+            [{ oxmultilang ident="SHOP_MAIN_PRODUCTIVE" }]
          </td>
          <td class="edittext" [{if !($edit->oxshops__oxproductive->value)}]style="border: 3px Red; border-style: solid solid solid none;"[{/if}]>
             <input type=checkbox name=editval[oxshops__oxproductive] value=true  [{if ($edit->oxshops__oxproductive->value)}]checked[{/if}] [{ $readonly}]>
@@ -108,7 +107,7 @@ function modSmtpField()
         </tr>
         <tr>
             <td class="edittext" >
-                        [{ oxmultilang ident="SHOP_EXTEND_COMPANY" }]
+               [{ oxmultilang ident="SHOP_MAIN_COMPANY" }]
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="35" maxlength="[{$edit->oxshops__oxcompany->fldmax_length}]" name="editval[oxshops__oxcompany]" value="[{$edit->oxshops__oxcompany->value}]" [{ $readonly}]>
@@ -174,7 +173,7 @@ function modSmtpField()
         </tr>
         <tr>
             <td class="edittext" >
-                        [{ oxmultilang ident="SHOP_EXTEND_BANKNAME" }]
+                        [{ oxmultilang ident="SHOP_MAIN_BANKNAME" }]
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="35" maxlength="[{$edit->oxshops__oxbankname->fldmax_length}]" name="editval[oxshops__oxbankname]" value="[{$edit->oxshops__oxbankname->value}]" [{ $readonly}]>
@@ -182,7 +181,7 @@ function modSmtpField()
         </tr>
         <tr>
             <td class="edittext" >
-                        [{ oxmultilang ident="SHOP_EXTEND_BANKCODE" }]
+                        [{ oxmultilang ident="SHOP_MAIN_BANKCODE" }]
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="35" maxlength="[{$edit->oxshops__oxbankcode->fldmax_length}]" name="editval[oxshops__oxbankcode]" value="[{$edit->oxshops__oxbankcode->value}]" [{ $readonly}]>
@@ -190,7 +189,7 @@ function modSmtpField()
         </tr>
         <tr>
             <td class="edittext" >
-                        [{ oxmultilang ident="SHOP_EXTEND_BANKNUMBER" }]
+                        [{ oxmultilang ident="SHOP_MAIN_BANKNUMBER" }]
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="35" maxlength="[{$edit->oxshops__oxbanknumber->fldmax_length}]" name="editval[oxshops__oxbanknumber]" value="[{$edit->oxshops__oxbanknumber->value}]" [{ $readonly}]>
@@ -198,7 +197,7 @@ function modSmtpField()
         </tr>
         <tr>
             <td class="edittext" >
-                        [{ oxmultilang ident="SHOP_EXTEND_BICCODE" }]
+                        [{ oxmultilang ident="SHOP_MAIN_BICCODE" }]
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="35" maxlength="[{$edit->oxshops__oxbiccode->fldmax_length}]" name="editval[oxshops__oxbiccode]" value="[{$edit->oxshops__oxbiccode->value}]" [{ $readonly}]>
@@ -206,7 +205,7 @@ function modSmtpField()
         </tr>
         <tr>
             <td class="edittext" >
-                        [{ oxmultilang ident="SHOP_EXTEND_IBANNUMBER" }]
+                        [{ oxmultilang ident="SHOP_MAIN_IBANNUMBER" }]
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="35" maxlength="[{$edit->oxshops__oxibannumber->fldmax_length}]" name="editval[oxshops__oxibannumber]" value="[{$edit->oxshops__oxibannumber->value}]" [{ $readonly}]>
@@ -215,7 +214,7 @@ function modSmtpField()
 
         <tr>
             <td class="edittext" >
-                        [{ oxmultilang ident="SHOP_EXTEND_VATNUMBER" }]
+                        [{ oxmultilang ident="SHOP_MAIN_VATNUMBER" }]
             </td>
             <td class="edittext">
             <input type="text" name="editval[oxshops__oxvatnumber]" value="[{$edit->oxshops__oxvatnumber->value}]" size="35" maxlength="[{$edit->oxshops__oxvatnumber->fldmax_length}]" class="editinput" [{ $readonly}]>
@@ -224,7 +223,7 @@ function modSmtpField()
 
         <tr>
             <td class="edittext" >
-                        [{ oxmultilang ident="SHOP_EXTEND_HRBNR" }]
+                        [{ oxmultilang ident="SHOP_MAIN_HRBNR" }]
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="35" maxlength="[{$edit->oxshops__oxhrbnr->fldmax_length}]" name="editval[oxshops__oxhrbnr]" value="[{$edit->oxshops__oxhrbnr->value}]" [{ $readonly}]>
@@ -232,7 +231,7 @@ function modSmtpField()
         </tr>
         <tr>
             <td class="edittext" >
-                        [{ oxmultilang ident="SHOP_EXTEND_COURT" }]
+                        [{ oxmultilang ident="SHOP_MAIN_COURT" }]
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="35" maxlength="[{$edit->oxshops__oxcourt->fldmax_length}]" name="editval[oxshops__oxcourt]" value="[{$edit->oxshops__oxcourt->value}]" [{ $readonly}]>

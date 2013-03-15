@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxdiscount.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxdiscount.php 17903 2009-04-06 14:38:41Z arvydas $
  */
 
 /**
@@ -83,7 +84,7 @@ class oxDiscount extends oxI18n
     /**
      * Checks if discount is setup for article
      *
-     * @param object $oArticle article object
+     * @param oxarticle $oArticle article object
      *
      * @return bool
      */
@@ -98,12 +99,16 @@ class oxDiscount extends oxI18n
             return false;
         }
 
+        if ( $this->oxdiscount__oxpriceto->value < $oArticle->getBasePrice() ) {
+            return false;
+        }
+
         $myDB = oxDb::getDb();
 
         //check for global discount (no articles, no categories)
         $sQ = "select 1 from oxobject2discount where oxdiscountid = '{$this->oxdiscount__oxid->value}' and ( oxtype = 'oxarticles' or oxtype = 'oxcategories')";
         $blOk = (bool) $myDB->getOne( $sQ );
-        
+
         if ( !$blOk ) {
             return true;
         }
@@ -182,7 +187,6 @@ class oxDiscount extends oxI18n
     public function isForBasketAmount( $oBasket )
     {
         $dAmount = 0;
-        $oBasketInfo  = $oBasket->getBasketSummary();
         $aBasketItems = $oBasket->getContents();
         foreach ( $aBasketItems as $oBasketItem ) {
 
@@ -197,9 +201,9 @@ class oxDiscount extends oxI18n
 
             if ( $blForBasketItem ) {
                 if ( $this->oxdiscount__oxprice->value ) {
-                    $dAmount += $oBasketArticle->getPrice()->getBruttoPrice() * $oBasketInfo->aArticles[$oBasketArticle->getId()];
+                    $dAmount += $oBasketArticle->getPrice()->getBruttoPrice() * $oBasketItem->getAmount();
                 } elseif ( $this->oxdiscount__oxamount->value ) {
-                    $dAmount += $oBasketInfo->aArticles[$oBasketArticle->getId()];
+                    $dAmount += $oBasketItem->getAmount();
                 }
             }
         }

@@ -40,7 +40,6 @@ function EditThis( sID)
 <input type="hidden" name="voxid" value="[{ $oxid }]">
 <input type="hidden" name="oxparentid" value="[{ $oxparentid }]">
 <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
-[{include file="autosave.form.tpl"}]
 
 
   <table cellspacing="0" cellpadding="0" border="0" height="100%" width="100%">

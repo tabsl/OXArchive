@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxcontent.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxcontent.php 17768 2009-04-02 10:52:12Z sarunas $
  */
 
 /**
@@ -105,7 +106,7 @@ class oxContent extends oxI18n
     public function getExpanded()
     {
         if ( !isset( $this->_blExpanded ) ) {
-            $this->_blExpanded = ( $this->getId() == oxConfig::getParameter( 'tpl' ) );
+            $this->_blExpanded = ( $this->getId() == oxConfig::getParameter( 'oxcid' ) );
         }
         return $this->_blExpanded;
     }
@@ -198,7 +199,7 @@ class oxContent extends oxI18n
                 $sAdd .= "&amp;cnid=$sParentId";
             }
         }
-        return $this->getConfig()->getShopHomeURL() . "cl=content&amp;tpl=" . $this->getId() . $sAdd;
+        return $this->getConfig()->getShopHomeURL() . "cl=content&amp;oxcid=" . $this->getId() . $sAdd;
     }
 
     /**
@@ -219,4 +220,19 @@ class oxContent extends oxI18n
         return parent::_setFieldData($sFieldName, $sValue, $iDataType);
     }
 
+    /**
+     * Delete this object from the database, returns true on success.
+     *
+     * @param string $sOXID Object ID(default null)
+     *
+     * @return bool
+     */
+    public function delete( $sOXID = null)
+    {
+        if (parent::delete($sOXID)) {
+            oxSeoEncoderContent::getInstance()->onDeleteContent($this);
+            return true;
+        }
+        return false;
+    }
 }

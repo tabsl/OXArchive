@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxcmp_utils.php 13958 2008-11-04 11:00:00Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxcmp_utils.php 16748 2009-02-24 11:24:53Z vilma $
  */
 
 /**
@@ -131,9 +132,9 @@ class oxcmp_utils extends oxView
             // #843C there was problem then field "blIsOnComparisonList" was not set to article object
             if ( ( $oProduct = $this->_oParent->getViewProduct() ) ) {
                 if ( isset( $aItems[$oProduct->getId()] ) ) {
-                    $oProduct->blIsOnComparisonList = true;
+                    $oProduct->setOnComparisonList( true );
                 } else {
-                    $oProduct->blIsOnComparisonList = false;
+                    $oProduct->setOnComparisonList( false );
                 }
             }
 
@@ -141,9 +142,9 @@ class oxcmp_utils extends oxView
             if ( is_array( $aViewProds ) && count( $aViewProds ) ) {
                 foreach ( $aViewProds as $oProduct ) {
                     if ( isset( $aItems[$oProduct->getId()] ) ) {
-                        $oProduct->blIsOnComparisonList = true;
+                        $oProduct->setOnComparisonList( true );
                     } else {
-                        $oProduct->blIsOnComparisonList = false;
+                        $oProduct->setOnComparisonList( false );
                     }
                 }
             }

@@ -8,13 +8,13 @@
      <div>
       [{ oxmultilang ident="ACCOUNT_PASSWORD_PASSWORDCHANGED" }]
      </div>
-    [{else }]
+    [{elseif $oView->hasPassword() }]
       <form action="[{ $oViewConf->getSelfActionLink() }]" name="changepassword" method="post">
         <div class="account">
             [{ $oViewConf->getHiddenSid() }]
+            [{ $oViewConf->getNavFormParams() }]
             <input type="hidden" name="fnc" value="changePassword">
             <input type="hidden" name="cl" value="account_password">
-            <input type="hidden" name="cnid" value="[{ $oViewConf->getActCatId() }]">
             <input type="hidden" name="CustomError" value='user'>
             <strong class="h4">[{ oxmultilang ident="ACCOUNT_PASSWORD_TOCHANGEPASSWORD" }]</strong>
             <div class="dot_sep"></div>
@@ -41,6 +41,10 @@
             <br><br>
         </div>
        </form>
+    [{else }]
+      <div>
+        <a id="test_LoginLostPwd" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=forgotpwd" }]" class="link" rel="nofollow">[{ oxmultilang ident="ACCOUNT_PASSWORD_CHANGEPASSWORD" }]</a>
+      </div>
     [{/if }]
 </div>
 

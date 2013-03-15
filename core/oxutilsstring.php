@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxutilsstring.php 14368 2008-11-26 07:36:13Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxutilsstring.php 17826 2009-04-03 14:15:59Z vilma $
  */
 
 /**
@@ -29,7 +30,7 @@ class oxUtilsString
     /**
      * oxUtils class instance.
      *
-     * @var oxutils* instance
+     * @var oxutils instance
      */
     private static $_instance = null;
 
@@ -68,9 +69,10 @@ class oxUtilsString
      */
     public function prepareCSVField($sInField)
     {
-        if (strstr($sInField, '"')) {
+        $oStr = getStr();
+        if ($oStr->strstr($sInField, '"')) {
             return '"'.str_replace('"', '""', $sInField).'"';
-        } elseif (strstr($sInField, ';')) {
+        } elseif ($oStr->strstr($sInField, ';')) {
             return '"'.$sInField.'"';
         }
         return $sInField;
@@ -88,12 +90,13 @@ class oxUtilsString
     public function minimizeTruncateString( $sString, $iLength )
     {
         $sString = str_replace( ",", " ", $sString );
-        //leading and ending whitesapces
-        $sString = ereg_replace( "^[ \t\n\r\v]+|[ \t\n\r\v]+$", "", $sString );
+        //leading and ending whitespaces
+        $sString = trim( $sString );
         //multiple whitespaces
-        $sString = ereg_replace( "[ \t\n\r\v]+", " ", $sString );
-        if ( strlen( $sString ) > $iLength && $iLength != -1 ) {
-            $sString = substr( $sString, 0, $iLength );
+        $sString = ereg_replace( "[ \t\n\r]+", " ", $sString );
+        $oStr = getStr();
+        if ( $oStr->strlen( $sString ) > $iLength && $iLength != -1 ) {
+            $sString = $oStr->substr( $sString, 0, $iLength );
         }
         return $sString;
     }
@@ -107,10 +110,9 @@ class oxUtilsString
      */
     public function prepareStrForSearch($sSearchStr)
     {
-        if ( preg_match( "/(ä|ö|ü|Ä|Ö|Ü|ß|(&amp;))/", $sSearchStr ) ) {
-            return str_replace( array('ä',      'ö',      'ü',      'Ä',      'Ö',      'Ü',      'ß',       '&amp;' ),
-                                array('&auml;', '&ouml;', '&uuml;', '&Auml;', '&Ouml;', '&Uuml;', '&szlig;', '&' ),
-                                $sSearchStr);
+        $oStr = getStr();
+        if ( $oStr->hasSpecialChars( $sSearchStr ) ) {
+            return $oStr->recodeEntities( $sSearchStr, true, array( '&amp;' ), array( '&' ) );
         }
 
         return '';

@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxutilsobject.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxutilsobject.php 17248 2009-03-16 15:22:07Z arvydas $
  */
 
 /**
@@ -224,6 +225,28 @@ class oxUtilsObject extends oxSuperCfg
         $sClassName = basename( $sClassName );
 
         return $sClassName;
+    }
+
+    /**
+     * Returns if modul exists.
+     *
+     * @param string $sClassName  Class name
+     * @param string $sModuleName Modul name
+     *
+     * @return bool
+     */
+    public function isModuleActive( $sClassName, $sModuleName )
+    {
+        $aModules = $this->getConfig()->getConfigParam( 'aModules' );
+        if ( is_array( $aModules ) && array_key_exists( $sClassName, $aModules ) ) {
+            $aClassChain = explode( "&", $aModules[$sClassName] );
+            foreach ($aClassChain as $sModule) {
+                if ( basename($sModule) == $sModuleName ) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

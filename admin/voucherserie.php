@@ -17,8 +17,10 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * @copyright © OXID eSales AG 2003-2009
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
  */
 
 /**

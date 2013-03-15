@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: article_seo.php 13672 2008-10-25 08:56:58Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: article_seo.php 17706 2009-03-31 13:59:00Z vilma $
  */
 
 /**
@@ -34,6 +35,13 @@ class Article_Seo extends Object_Seo
     protected $_sActCatId = null;
 
     /**
+     * Chosen category type
+     *
+     * @var string
+     */
+    protected $_sActCatType = null;
+
+    /**
      * Article deepest categoy nodes list
      *
      * @var oxlist
@@ -46,6 +54,13 @@ class Article_Seo extends Object_Seo
      * @var oxlist
      */
     protected $_oArtVendors = null;
+
+    /**
+     * Article deepest manufacturer list
+     *
+     * @var oxlist
+     */
+    protected $_oArtManufacturers = null;
 
     /**
      * Active article object
@@ -68,7 +83,9 @@ class Article_Seo extends Object_Seo
         $this->_aViewData["blShowCatSelect"] = true;
         $this->_aViewData["oCategories"] = $this->_getCategoryList( $oArticle );
         $this->_aViewData["oVendors"]    = $this->_getVendorList( $oArticle );
+        $this->_aViewData["oManufacturers"] = $this->_getManufacturerList( $oArticle );
         $this->_aViewData["sCatId"]      = $this->getActCategory();
+        $this->_aViewData["sCatType"]    = $this->_sActCatType;
 
         return parent::render();
     }
@@ -80,7 +97,8 @@ class Article_Seo extends Object_Seo
      */
     protected function _getSeoDataSql( $oObject, $iShopId, $iLang )
     {
-        $sParam = ( $sCat = $this->getActCategory() ) ? " and oxparams = '$sCat'" : '';
+        //$sParam = ( $sCat = $this->getActCategory() ) ? " and oxparams = '$sCat' and oxtype = '{$this->_sActCatType}' " : '';
+        $sParam = ( $sCat = $this->getActCategory() ) ? " and oxparams = '$sCat' " : '';
         $sQ = "select * from oxseo where oxobjectid = '".$oObject->getId()."' and
                oxshopid = '{$iShopId}' and oxlang = {$iLang} {$sParam} ";
         return $sQ;
@@ -122,6 +140,27 @@ class Article_Seo extends Object_Seo
     }
 
     /**
+     * Returns list with deepest article categories
+     *
+     * @return oxlist
+     */
+    protected function _getManufacturerList( $oArticle )
+    {
+        if ( $this->_oArtManufacturers === null ) {
+            $this->_oArtManufacturers = false;
+
+            if ( $oArticle->oxarticles__oxmanufacturerid->value ) {
+                $oManufacturer = oxNew( 'oxmanufacturer' );
+                if ( $oManufacturer->loadInLang( $this->_iEditLang, $oArticle->oxarticles__oxmanufacturerid->value ) ) {
+                    $this->_oArtManufacturers = oxNew( 'oxList', 'oxmanufacturer' );
+                    $this->_oArtManufacturers[] = $oManufacturer;
+                }
+            }
+        }
+        return $this->_oArtManufacturers;
+    }
+
+    /**
      * Returns currently chosen or first from article category deepest list category parent id
      *
      * @return string
@@ -129,14 +168,27 @@ class Article_Seo extends Object_Seo
     public function getActCategory()
     {
         if ( $this->_sActCatId === null) {
-            $this->_sActCatId = false;
+            $this->_sActCatId   = false;
+            $this->_sActCatType = false;
 
             $aSeoData = oxConfig::getParameter( 'aSeoData' );
             if ( $aSeoData && isset( $aSeoData['oxparams'] ) ) {
-                $this->_sActCatId = $aSeoData['oxparams'];
-            } elseif ( ( $oCats = $this->_getCategoryList( $this->_getObject( oxConfig::getParameter( 'oxid' ) ) ) ) ) {
-                $oCats->rewind();
-                $this->_sActCatId = $oCats->current()->oxcategories__oxrootid->value;
+                if ( $sData = $aSeoData['oxparams'] ) {
+                    $this->_sActCatId   = substr( $sData, strpos( $sData, '#' ) + 1 );
+                    $this->_sActCatType = substr( $sData, 0, strpos( $sData, '#' ) );
+                }
+            } else {
+                $oArticle = $this->_getObject( oxConfig::getParameter( 'oxid' ) );
+                if ( $this->_getCategoryList( $oArticle )->count() ) {
+                    $this->_sActCatType = 'oxcategories';
+                    $this->_sActCatId   = $this->_getCategoryList( $oArticle )->current()->oxcategories__oxrootid->value;
+                } elseif ( $this->_getVendorList( $oArticle ) && $this->_getVendorList( $oArticle )->count() ) {
+                    $this->_sActCatType = 'oxvendor';
+                    $this->_sActCatId   = $this->_getVendorList( $oArticle )->current()->getId();
+                } elseif ( $this->_getManufacturerList( $oArticle ) && $this->_getManufacturerList( $oArticle )->count() ) {
+                    $this->_sActCatType = 'oxmanufacturer';
+                    $this->_sActCatId   = $this->_getManufacturerList( $oArticle )->current()->getId();
+                }
             }
         }
 
@@ -150,25 +202,38 @@ class Article_Seo extends Object_Seo
      */
     protected function _getSeoUrl( $oArticle )
     {
-        oxSeoEncoderArticle::getInstance()->getArticleUrl( $this->_getObject( oxConfig::getParameter( 'oxid' ) ) );
+        // setting cat type and id ..
+        $this->getActCategory();
+
+        // choosing type
+        switch ( $this->_sActCatType ) {
+            case 'oxvendor':
+                $sType = 1;
+                break;
+            case 'oxmanufacturer':
+                $sType = 2;
+                break;
+            default:
+                $sType = 0;
+        }
+
+        oxSeoEncoderArticle::getInstance()->getArticleUrl( $oArticle, null, $sType );
         return parent::_getSeoUrl( $oArticle );
     }
 
     /**
-     * Returns seo object
-     * @return mixed
+     * Returns query for selecting seo url
+     *
+     * @param object $oObject object to build query
+     *
+     * @return string
      */
-    protected function _getObject( $sOxid )
-    {
-        if ( $this->_oArticle === null ) {
-            // load object
-            $this->_oArticle = oxNew( 'oxarticle' );
-            if ( !$this->_oArticle->loadInLang( $this->_iEditLang, $sOxid ) ) {
-                $this->_oArticle = false;
-            }
-        }
-        return $this->_oArticle;
-    }
+     protected function _getSeoUrlQuery( $oObject, $iShopId )
+     {
+        return "select oxseourl from oxseo where oxobjectid = '".$oObject->getId()."'
+                and oxshopid = '{$iShopId}' and oxlang = {$this->_iEditLang}
+                and oxparams = '{$this->_sActCatId}' ";
+     }
 
     /**
      * Returns url type
@@ -187,6 +252,30 @@ class Article_Seo extends Object_Seo
     {
         $oArticle = oxNew( 'oxarticle' );
         $oArticle->loadInLang( $this->_iEditLang, $sOxid );
-        return $oArticle->getLink();
+        $sStdLink = $oArticle->getLink();
+
+        // adding vendor or manufacturer id
+        switch ( $this->_sActCatType ) {
+        	case 'oxvendor':
+                $sStdLink .= '&amp;cnid=v_'.$this->getActCategory();
+                break;
+            case 'oxmanufacturer':
+                $sStdLink .= '&amp;mnid='.$this->getActCategory();
+                break;
+        }
+
+        return $sStdLink;
+    }
+
+    /**
+     * Processes parameter before writing to db
+     *
+     * @param string $sParam parameter to process
+     *
+     * @return string
+     */
+    public function processParam( $sParam )
+    {
+        return trim( substr( $sParam, strpos( $sParam, '#') ), '#' );
     }
 }

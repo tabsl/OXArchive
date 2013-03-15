@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-15"?>
 <objects>
   <object table="oxarticles">
 	<field name="oxactive" />
@@ -32,7 +32,7 @@
 	<field name="oxquestionemail" />
 	<field name="oxnonmaterial" />
 	<field name="oxnostocktext" />
-	<field name="oxremindactiv" />
+	<field name="oxremindactive" />
 	<field name="oxorderinfo" />
 	<field name="oxsearchkeys" />
 	<field name="oxshortdesc" />
@@ -52,6 +52,7 @@
 	<field name="oxvarname" />
 	<field name="oxvarselect" />
 	<field name="oxvendorid" />
+	<field name="oxmanufacturerid" />
 	<field name="oxvat" />
 	<field name="oxvpe" />
 	<field name="oxwidth" />

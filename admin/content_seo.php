@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: content_seo.php 13619 2008-10-24 09:40:23Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: content_seo.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
  */
 
 /**
@@ -40,35 +41,11 @@ class Content_Seo extends Object_Seo
     }
 
     /**
-     * Returns seo object
-     * @return oxcontent
-     */
-    protected function _getObject( $sOxid )
-    {
-        // load object
-        $oContent = oxNew( 'oxcontent' );
-        if ( $oContent->loadInLang( $this->_iEditLang, $sOxid ) ) {
-            return $oContent;
-        }
-    }
-
-    /**
      * Returns url type
      * @return string
      */
     protected function _getType()
     {
         return 'oxcontent';
-    }
-
-    /**
-     * Returns objects std url
-     * @return string
-     */
-    protected function _getStdUrl( $sOxid )
-    {
-        $oContent = oxNew( 'oxcontent' );
-        $oContent->loadInLang( $this->_iEditLang, $sOxid );
-        return $oContent->getLink();
     }
 }

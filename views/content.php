@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: content.php 13614 2008-10-24 09:36:52Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: content.php 17676 2009-03-30 15:06:42Z arvydas $
  */
 
 /**
@@ -45,6 +46,18 @@ class Content extends oxUBase
     protected $_sThisTemplate = 'content.tpl';
 
     /**
+     * Current view plain template
+     * @var string
+     */
+    protected $_sThisPlainTemplate = 'content_plain.tpl';
+
+    /**
+     * Current view content category (if available)
+     * @var oxcontent
+     */
+     protected $_oContentCat = null;
+
+    /**
      * Unsets SEO category and call parent::init();
      *
      * @return null
@@ -66,10 +79,10 @@ class Content extends oxUBase
      */
     public function getViewId()
     {
-        if ( isset( $this->_sViewId ) ) {
-            return $this->_sViewId;
+        if ( !isset( $this->_sViewId ) ) {
+            $this->_sViewId = parent::getViewId().'|'.oxConfig::getParameter( 'oxcid' );
         }
-        return $this->_sViewId = parent::getViewId().'|'.oxConfig::getParameter( 'tpl' );
+        return $this->_sViewId;
     }
 
     /**
@@ -78,7 +91,7 @@ class Content extends oxUBase
      * of template to render content::_sThisTemplate
      *
      * Template variables:
-     * <b>tpl</b>, <b>oContent</b>
+     * <b>oxcid</b>, <b>oContent</b>
      *
      * @return  string  $this->_sThisTemplate   current template file name
      */
@@ -86,14 +99,80 @@ class Content extends oxUBase
     {
         parent::render();
 
-        $this->_aViewData['tpl'] = $this->getContentId();
-        $this->_aViewData['oContent'] = $this->getContent();
+        if ( $sTplName = $this->_getTplName() ) {
+            $this->_sThisTemplate = $sTplName;
+        } else {
+            $this->_aViewData['oxcid'] = $this->getContentId();
+            $this->_aViewData['oContent'] = $this->getContent();
+        }
 
-        // generating meta info
-        $this->setMetaDescription( $this->getContent()->oxcontents__oxtitle->value, 200, true );
-        $this->setMetaKeywords( $this->getContent()->oxcontents__oxtitle->value );
+        // sometimes you need to display plain templates (e.g. when showing popups)
+        if ( $this->showPlainTemplate() ) {
+            $this->_sThisTemplate = $this->_sThisPlainTemplate;
+        }
 
         return $this->_sThisTemplate;
+    }
+
+    /**
+     * Returns current view meta data
+     * If $sMeta parameter comes empty, sets to it current content title
+     *
+     * @param string $sMeta     category path
+     * @param int    $iLength   max length of result, -1 for no truncation
+     * @param bool   $blDescTag if true - performs additional dublicate cleaning
+     *
+     * @return string
+     */
+    protected function _prepareMetaDescription( $sMeta, $iLength = 200, $blDescTag = true )
+    {
+        if ( !$sMeta ) {
+            $sMeta = $this->getContent()->oxcontents__oxtitle->value;
+        }
+        return parent::_prepareMetaDescription( $sMeta, $iLength, $blDescTag );
+    }
+
+    /**
+     * Returns current view keywords seperated by comma
+     * If $sKeywords parameter comes empty, sets to it current content title
+     *
+     * @param string $sKeywords data to use as keywords
+     *
+     * @return string
+     */
+    protected function _prepareMetaKeyword( $sKeywords )
+    {
+        if ( !$sKeywords ) {
+            $sKeywords = $this->getContent()->oxcontents__oxtitle->value;
+        }
+        return parent::_prepareMetaKeyword( $sKeywords );
+    }
+
+    /**
+     * If current content is assigned to category returns its object
+     *
+     * @return oxcontent
+     */
+    public function getContentCategory()
+    {
+        if ( $this->_oContentCat === null ) {
+            // setting default status ..
+            $this->_oContentCat = false;
+            if ( ( $oContent = $this->getContent() ) && $oContent->oxcontents__oxtype->value == 2 ) {
+                $this->_oContentCat = $oContent;
+            }
+        }
+        return $this->_oContentCat;
+    }
+
+    /**
+     * Returns true if user forces to display plain template
+     *
+     * @return bool
+     */
+    public function showPlainTemplate()
+    {
+        return (bool) oxConfig::getParameter( 'plain' );
     }
 
     /**
@@ -103,26 +182,39 @@ class Content extends oxUBase
      */
     protected function _getSeoObjectId()
     {
-        return oxConfig::getParameter( 'tpl' );
+        return oxConfig::getParameter( 'oxcid' );
     }
 
     /**
-     * Template variable getter. Returns active content id
+     * Template variable getter. Returns active content id.
+     * If no content id specified, uses "impressum" content id
      *
      * @return object
      */
     public function getContentId()
     {
-        if ( $this->_oContentId === null ) {
-            $this->_oContentId = false;
-            $sContentId = oxConfig::getParameter( 'tpl' );
-            $oContent   = oxNew( 'oxcontent' );
+        if ( $this->_sContentId === null ) {
+            $sContentId = oxConfig::getParameter( 'oxcid' );
+
+            if ( !$sContentId ) {
+                //trying to load content id from tpl variable
+                //usage of tpl variable as content id is deprecated
+                $sContentId = oxConfig::getParameter( 'tpl' );
+            }
+
+            if ( !$sContentId ) {
+                //get default content id (impressum)
+                $sContentId = parent::getContentId();
+            }
+
+            $this->_sContentId = false;
+            $oContent = oxNew( 'oxcontent' );
             if ( $oContent->load( $sContentId ) && $oContent->oxcontents__oxactive->value ) {
-                $this->_oContentId = $sContentId;
+                $this->_sContentId = $sContentId;
                 $this->_oContent = $oContent;
             }
         }
-        return $this->_oContentId;
+        return $this->_sContentId;
     }
 
     /**
@@ -147,9 +239,30 @@ class Content extends oxUBase
      *
      * @return object
      */
-    protected function getSubject()
+    protected function _getSubject()
     {
         return $this->getContent();
     }
 
+    /**
+     *
+     * @return string
+     */
+    protected function _getTplName()
+    {
+        // assign template name
+        $sTplName = oxConfig::getParameter( 'tpl');
+
+        if ( $sTplName ) {
+            // security fix so that you cant access files from outside template dir
+            $sTplName = basename( $sTplName );
+
+            //checking if it is template name, not content id
+            if ( !preg_match("/\.tpl$/", $sTplName) ) {
+                $sTplName = null;
+            }
+        }
+
+        return $sTplName;
+    }
 }

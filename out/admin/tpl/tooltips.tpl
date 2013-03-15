@@ -54,6 +54,7 @@ function popDown(currElem)
 <span class="popUpStyle" id="category_resetnrofarticles" style="position: absolute;visibility: hidden;top:0;left:0;">[{ oxmultilang ident="TOOLTIPS_RESETNROFARTICLESINCAT" }]</span>
 <span class="popUpStyle" id="category_recalcnrofarticles" style="position: absolute;visibility: hidden;top:0;left:0;">[{ oxmultilang ident="TOOLTIPS_RECALCNROFARTICLESINCAT" }]</span>
 <span class="popUpStyle" id="vendor_recalcnrofarticles" style="position: absolute;visibility: hidden;top:0;left:0;">[{ oxmultilang ident="TOOLTIPS_RECALCNROFARTICLESINVND" }]</span>
+<span class="popUpStyle" id="manufacturer_recalcnrofarticles" style="position: absolute;visibility: hidden;top:0;left:0;">[{ oxmultilang ident="TOOLTIPS_RECALCNROFARTICLESINMAN" }]</span>
 <span class="popUpStyle" id="mallcategory_new" style="position: absolute;visibility: hidden;top:0;left:0;">[{ oxmultilang ident="TOOLTIPS_NEWMALLCAT" }]</span>
 <span class="popUpStyle" id="article_new" style="position: absolute;visibility: hidden;top:0;left:0;">[{ oxmultilang ident="TOOLTIPS_NEWARTICLE" }]</span>
 <span class="popUpStyle" id="article_vat" style="position: absolute;visibility: hidden;top:0;left:0;">[{ oxmultilang ident="TOOLTIPS_ARTICLEVAT" }]</span>
@@ -82,6 +83,8 @@ function popDown(currElem)
 <span class="popUpStyle" id="actions_new" style="position: absolute;visibility: hidden;top:0;left:0;">[{ oxmultilang ident="TOOLTIPS_NEWACTIONS" }]</span>
 <span class="popUpStyle" id="vendor_new" style="position: absolute;visibility: hidden;top:0;left:0;">[{ oxmultilang ident="TOOLTIPS_NEWVENDOR" }]</span>
 <span class="popUpStyle" id="vendor_resetnrofarticles" style="position: absolute;visibility: hidden;top:0;left:0;">[{ oxmultilang ident="TOOLTIPS_RESETNROFARTICLESINVND" }]</span>
+<span class="popUpStyle" id="manufacturer_new" style="position: absolute;visibility: hidden;top:0;left:0;">[{ oxmultilang ident="TOOLTIPS_NEWMANUFACTURER" }]</span>
+<span class="popUpStyle" id="manufacturer_resetnrofarticles" style="position: absolute;visibility: hidden;top:0;left:0;">[{ oxmultilang ident="TOOLTIPS_RESETNROFARTICLESINMAN" }]</span>
 <span class="popUpStyle" id="open_help" style="position: absolute;visibility: hidden;top:0;left:0;">[{ oxmultilang ident="TOOLTIPS_OPENHELP" }]</span>
 <span class="popUpStyle" id="searchfieldoxdynamic" style="position: absolute;visibility: hidden;top:0;left:0;">[{ oxmultilang ident="TOOLTIPS_ARTLIST_SEARCHFIELDOXDYNAMIC" }]</span>
 <span class="popUpStyle" id="searchfieldoxtitle" style="position: absolute;visibility: hidden;top:0;left:0;">[{ oxmultilang ident="TOOLTIPS_ARTLIST_SEARCHFIELDOXTITLE" }]</span>

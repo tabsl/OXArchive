@@ -82,7 +82,6 @@ function SetSticker( sStickerId, oObject)
         <input type="hidden" name="voxid" value="[{ $oxid }]">
         <input type="hidden" name="oxparentid" value="[{ $oxparentid }]">
         <input type="hidden" name="editval[article__oxid]" value="[{ $oxid }]">
-        [{include file="autosave.form.tpl"}]
         <tr>
           <td valign="top" class="edittext" style="padding-left:10px;width:50%">
             <table cellspacing="0" cellpadding="0" border="0">
@@ -130,7 +129,7 @@ function SetSticker( sStickerId, oObject)
                   [{ oxmultilang ident="ARTICLE_STOCK_REMINDACTIV" }]
                 </td>
                 <td class="edittext">
-                  <input type="checkbox" class="editinput" name="editval[oxarticles__oxremindactiv]" value='[{if $edit->oxarticles__oxremindactiv->value }][{ $edit->oxarticles__oxremindactiv->value }][{else}]1[{/if}]' [{if $edit->oxarticles__oxremindactiv->value }]checked[{/if}] [{ $readonly }]><input type="text" class="editinput" size="20" maxlength="[{$edit->oxarticles__oxremindamount->fldmax_length}]" name="editval[oxarticles__oxremindamount]" value="[{$edit->oxarticles__oxremindamount->value}]" [{ $readonly }]>
+                  <input type="checkbox" class="editinput" name="editval[oxarticles__oxremindactive]" value='[{if $edit->oxarticles__oxremindactive->value }][{ $edit->oxarticles__oxremindactive->value }][{else}]1[{/if}]' [{if $edit->oxarticles__oxremindactive->value }]checked[{/if}] [{ $readonly }]><input type="text" class="editinput" size="20" maxlength="[{$edit->oxarticles__oxremindamount->fldmax_length}]" name="editval[oxarticles__oxremindamount]" value="[{$edit->oxarticles__oxremindamount->value}]" [{ $readonly }]>
                 </td>
               </tr>
               <tr>
@@ -203,7 +202,7 @@ function SetSticker( sStickerId, oObject)
                   [{/if}]
                 </td>
                 <td class=listitem[{$oddclass}]>
-                  <a href="[{ $shop->selflink }]?cl=article_stock&priceid=[{$amountprice->oxprice2article__oxid->value}]&fnc=deleteprice&oxid=[{$oxid}]" onClick='return confirm("Wollen Sie diesen Eintrag wirklich löschen ?")' class="delete"></a>
+                  <a href="[{ $shop->selflink }]?cl=article_stock&priceid=[{$amountprice->oxprice2article__oxid->value}]&fnc=deleteprice&oxid=[{$oxid}]" onClick='return confirm("Wollen Sie diesen Eintrag wirklich lï¿½schen ?")' class="delete"></a>
                 </td>
               </tr>
             [{/foreach}]

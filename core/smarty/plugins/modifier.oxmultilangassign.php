@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package smartyPlugins
- * @copyright © OXID eSales AG 2003-2009
- * $Id: modifier.oxmultilangassign.php 13723 2008-10-26 22:59:58Z alfonsas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: modifier.oxmultilangassign.php 17246 2009-03-16 15:18:58Z arvydas $
  */
 
 /*
@@ -28,40 +29,31 @@
 * add [{ oxmultilang ident="..." }] where you want to display content
 * -------------------------------------------------------------
 */
-function smarty_modifier_oxmultilangassign($sIdent)
-{    $myConfig = oxConfig::getInstance();
-
-    static $aLangCache = null;
-
-    $iLang = oxLang::getInstance()->getTplLanguage();
-
-    if ( !isset( $iLang ) ) {
-        $iLang = oxLang::getInstance()->getBaseLanguage();
-        if ( !isset( $iLang ) )
-            $iLang = 0;
+function smarty_modifier_oxmultilangassign( $sIdent )
+{
+    if ( !isset( $sIdent ) ) {
+        $sIdent = 'IDENT MISSING';
     }
 
-    if ( !isset( $sIdent ) )
-        $sIdent = "IDENT MISSING";
+    $oLang = oxLang::getInstance();
+    $iLang = $oLang->getTplLanguage();
 
-    $sSourceFile  = $myConfig->getLanguagePath("lang.php",isAdmin(),$iLang);
-    $sSourceFile2 = $myConfig->getLanguagePath("cust_lang.php",isAdmin(),$iLang);
-
-    $sText = "<b>ERROR : Translation for $sIdent not found in $sSourceFile or $sSourceFile2!</b>";
-
-    if( !$aLangCache[$iLang])
-    {   require( $sSourceFile);
-        $aLangCache[$iLang] = $aLang;
-
-        if(is_file($sSourceFile2)){
-            require( $sSourceFile2);
-            $aLangCache[$iLang] = array_merge($aLangCache[$iLang], $aLang);
+    if ( !isset( $iLang ) ) {
+        $iLang = $oLang->getBaseLanguage();
+        if ( !isset( $iLang ) ) {
+            $iLang = 0;
         }
     }
 
-    if( isset( $aLangCache[$iLang][$sIdent])){
-        $sText = $aLangCache[$iLang][$sIdent];
+    try {
+        $sTranslation = $oLang->translateString( $sIdent, $iLang, isAdmin() );
+    } catch ( oxLanguageException $oEx ) {
+        // is thrown in debug mode and has to be caught here, as smarty hangs otherwise!
     }
 
-    return $sText;
+    if ( $sTranslation == $sIdent ) {
+        $sTranslation = '<b>ERROR : Translation for '.$sIdent.' not found!</b>';
+    }
+
+    return $sTranslation;
 }

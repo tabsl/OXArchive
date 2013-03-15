@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: search.php 14012 2008-11-06 13:23:45Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: search.php 17481 2009-03-20 12:35:53Z arvydas $
  */
 
 /**
@@ -94,6 +95,12 @@ class Search extends oxUBase
     protected $_sSearchVendor = null;
 
     /**
+     * Searched manufacturer
+     * @var string
+     */
+    protected $_sSearchManufacturer = null;
+
+    /**
      * If called class is search
      * @var bool
      */
@@ -106,12 +113,11 @@ class Search extends oxUBase
     protected $_oPageNavigation = null;
 
     /**
-     * Current view search engine indexing state:
-     *     0 - index without limitations
-     *     1 - no index / no follow
-     *     2 - no index / follow
+     * Current view search engine indexing state
+     *
+     * @var int
      */
-    protected $_iViewIndexState = 1;
+    protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXNOFOLLOW;
 
     /**
      * Fetches search parameter from GET/POST/session, prepares search
@@ -142,8 +148,11 @@ class Search extends oxUBase
         // searching in vendor #671
         $sInitialSearchVendor = $this->_sSearchVendor = rawurldecode( oxConfig::getParameter( 'searchvendor' ) );
 
+        // searching in Manufacturer #671
+        $sInitialSearchManufacturer = $this->_sSearchManufacturer = rawurldecode( oxConfig::getParameter( 'searchmanufacturer' ) );
+
         $this->_blEmptySearch = false;
-        if ( !$sSearchParamForQuery && !$sInitialSearchCat && !$sInitialSearchVendor ) {
+        if ( !$sSearchParamForQuery && !$sInitialSearchCat && !$sInitialSearchVendor && !$sInitialSearchManufacturer ) {
             //no search string
             $this->_aArticleList = null;
             $this->_blEmptySearch = true;
@@ -155,9 +164,14 @@ class Search extends oxUBase
             $sInitialSearchVendor = null;
         }
 
+        // config allows to search in Manufacturers ?
+        if ( !$myConfig->getConfigParam( 'bl_perfLoadManufacturerTree' ) ) {
+            $sInitialSearchManufacturer = null;
+        }
+
         // searching ..
         $oSearchHandler = oxNew( 'oxsearch' );
-        $oSearchList = $oSearchHandler->getSearchArticles( $sSearchParamForQuery, $sInitialSearchCat, $sInitialSearchVendor, $this->getSortingSql( 'oxsearch' ) );
+        $oSearchList = $oSearchHandler->getSearchArticles( $sSearchParamForQuery, $sInitialSearchCat, $sInitialSearchVendor, $sInitialSearchManufacturer, $this->getSortingSql( 'oxsearch' ) );
 
         // list of found articles
         $this->_aArticleList = $oSearchList;
@@ -165,7 +179,7 @@ class Search extends oxUBase
 
         // skip count calculation if no articles in list found
         if ( $oSearchList->count() ) {
-            $this->_iAllArtCnt = $oSearchHandler->getSearchArticleCount( $sSearchParamForQuery, $sInitialSearchCat, $sInitialSearchVendor );
+            $this->_iAllArtCnt = $oSearchHandler->getSearchArticleCount( $sSearchParamForQuery, $sInitialSearchCat, $sInitialSearchVendor, $sInitialSearchManufacturer );
         }
 
         $iNrofCatArticles = (int) $myConfig->getConfigParam( 'iNrofCatArticles' );
@@ -181,7 +195,8 @@ class Search extends oxUBase
      * <b>articlelist</b>, <b>searchparam</b>, <b>searchparamforhtml</b>
      * <b>searchcnid</b>, <b>searchvendor</b>, <b>searchlink</b>,
      * <b>pageNavigation</b>, <b>searchlink</b>,
-     * <b>articlebargainlist</b>, <b>additionalparams</b>
+     * <b>articlebargainlist</b>, <b>additionalparams</b>,
+     * <b>searchmanufacturer</b>
      *
      * @return  string  current template file name
      */
@@ -197,18 +212,21 @@ class Search extends oxUBase
         $this->_aViewData['searchparam']        = $this->getSearchParam();
         $this->_aViewData['searchcnid']         = $this->getSearchCatId();
         $this->_aViewData['searchvendor']       = $this->getSearchVendor();
+        $this->_aViewData['searchmanufacturer']       = $this->getSearchManufacturer();
 
         $this->_aViewData['pageNavigation'] = $this->getPageNavigation();
         $this->_aViewData['actCategory']    = $this->getActiveCategory();
 
         parent::render();
 
-        if (is_array(oxConfig::getInstance()->getConfigParam( 'aRssSelected' )) && in_array('oxrss_search', oxConfig::getInstance()->getConfigParam( 'aRssSelected' ))) {
+        $myConfig = $this->getConfig();
+        if ( is_array( $myConfig->getConfigParam( 'aRssSelected' ) ) && in_array( 'oxrss_search', $myConfig->getConfigParam( 'aRssSelected' ) ) ) {
             $oRss = oxNew('oxrssfeed');
             $sSearch = oxConfig::getParameter( 'searchparam', true );
             $sCnid = oxConfig::getParameter( 'searchcnid', true );
             $sVendor = oxConfig::getParameter( 'searchvendor', true );
-            $this->addRssFeed($oRss->getSearchArticlesTitle($sSearch, $sCnid, $sVendor), $oRss->getSearchArticlesUrl($sSearch, $sCnid, $sVendor), 'searchArticles');
+            $sManufacturer = oxConfig::getParameter( 'searchmanufacturer', true );
+            $this->addRssFeed($oRss->getSearchArticlesTitle($sSearch, $sCnid, $sVendor, $sManufacturer), $oRss->getSearchArticlesUrl($sSearch, $sCnid, $sVendor, $sManufacturer), 'searchArticles');
         }
 
         // processing list articles
@@ -237,6 +255,10 @@ class Search extends oxUBase
 
         if ( $sParam = rawurldecode( oxConfig::getParameter( 'searchvendor' ) ) ) {
            $sAddParams .= "&amp;searchvendor=$sParam";
+        }
+
+        if ( $sParam = rawurldecode( oxConfig::getParameter( 'searchmanufacturer' ) ) ) {
+           $sAddParams .= "&amp;searchmanufacturer=$sParam";
         }
         return $sAddParams;
     }
@@ -384,6 +406,23 @@ class Search extends oxUBase
             }
         }
         return $this->_sSearchVendor;
+    }
+
+    /**
+     * Template variable getter. Returns searched Manufacturer id
+     *
+     * @return string
+     */
+    public function getSearchManufacturer()
+    {
+        if ( $this->_sSearchManufacturer === null ) {
+            $this->_sSearchManufacturer = false;
+            if ( $this->_isSearchClass() ) {
+                // searching in Manufacturer #671
+                $this->_sSearchManufacturer = rawurldecode( oxConfig::getParameter( 'searchmanufacturer' ) );
+            }
+        }
+        return $this->_sSearchManufacturer;
     }
 
     /**

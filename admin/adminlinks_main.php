@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: adminlinks_main.php 14610 2008-12-10 17:46:54Z tomas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: adminlinks_main.php 17188 2009-03-13 12:19:11Z arvydas $
  */
 
 /**
@@ -131,8 +132,6 @@ class Adminlinks_Main extends oxAdminDetails
         // set oxid if inserted
         if ( $soxId == "-1")
             oxSession::setVar( "saved_oxid", $oLinks->oxlinks__oxid->value);
-
-        return $this->autosave();
     }
 
     /**
@@ -174,7 +173,5 @@ class Adminlinks_Main extends oxAdminDetails
         // set oxid if inserted
         if ( $soxId == "-1")
             oxSession::setVar( "saved_oxid", $oLinks->oxlinks__oxid->value);
-
-        return $this->autosave();
     }
 }

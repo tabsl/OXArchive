@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxactions.php 13617 2008-10-24 09:38:46Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxactions.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
  */
 
 /**
@@ -74,6 +75,8 @@ class oxActions extends oxBase
         $oDB = oxDb::getDb(true);
         $sDelete = "delete from oxactions2article where oxactionid = '".$this->getId()."' and oxartid = '$sOxId' and oxshopid = '" . $this->getShopId() . "'";
         $oDB->execute( $sDelete );
+
+        return ( bool ) $oDB->affected_Rows();
     }
 
     /**

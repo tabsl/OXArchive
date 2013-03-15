@@ -17,14 +17,15 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: rss.php 14012 2008-11-06 13:23:45Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: rss.php 17481 2009-03-20 12:35:53Z arvydas $
  */
 
 /**
  * Shop RSS page.
  */
-class Rss extends oxView
+class Rss extends oxUBase
 {
     /**
      * current rss object
@@ -89,10 +90,22 @@ class Rss extends oxView
         header ("content-type: text/xml");
 
 
-        echo $oSmarty->fetch('rss.tpl', $this->getViewId()) ;
+        echo $this->_processOutput( $oSmarty->fetch('rss.tpl', $this->getViewId()) );
 
         // returned rss xml: no further processing
         exit (0);
+    }
+
+    /**
+     * Processes xml before outputting to user
+     *
+     * @param string $sInput input to process
+     *
+     * @return string
+     */
+    protected function _processOutput( $sInput )
+    {
+        return getStr()->recodeEntities( $sInput );
     }
 
     /**
@@ -103,7 +116,7 @@ class Rss extends oxView
      */
     public function topshop()
     {
-        if (in_array('oxrss_topshop', oxConfig::getInstance()->getConfigParam( 'aRssSelected' ))) {
+        if (in_array('oxrss_topshop', $this->getConfig()->getConfigParam( 'aRssSelected' ))) {
             $this->_oRss->loadTopInShop();
         } else {
             error_404_handler();
@@ -118,7 +131,7 @@ class Rss extends oxView
      */
     public function newarts()
     {
-        if (in_array('oxrss_newest', oxConfig::getInstance()->getConfigParam( 'aRssSelected' ))) {
+        if (in_array('oxrss_newest', $this->getConfig()->getConfigParam( 'aRssSelected' ))) {
             $this->_oRss->loadNewestArticles();
         } else {
             error_404_handler();
@@ -133,7 +146,7 @@ class Rss extends oxView
      */
     public function catarts()
     {
-        if (in_array('oxrss_categories', oxConfig::getInstance()->getConfigParam( 'aRssSelected' ))) {
+        if (in_array('oxrss_categories', $this->getConfig()->getConfigParam( 'aRssSelected' ))) {
             $oCat = oxNew('oxCategory');
             if ($oCat->load(oxConfig::getParameter('cat'))) {
                 $this->_oRss->loadCategoryArticles($oCat);
@@ -151,8 +164,8 @@ class Rss extends oxView
      */
     public function searcharts()
     {
-        if (in_array('oxrss_search', oxConfig::getInstance()->getConfigParam( 'aRssSelected' ))) {
-            $this->_oRss->loadSearchArticles(oxConfig::getParameter('searchparam', true), oxConfig::getParameter('searchcnid'), oxConfig::getParameter('searchvendor'));
+        if (in_array('oxrss_search', $this->getConfig()->getConfigParam( 'aRssSelected' ))) {
+            $this->_oRss->loadSearchArticles( oxConfig::getParameter('searchparam', true), oxConfig::getParameter('searchcnid'), oxConfig::getParameter('searchvendor'), oxConfig::getParameter('searchmanufacturer'));
         } else {
             error_404_handler();
         }
@@ -166,7 +179,7 @@ class Rss extends oxView
      */
     public function recommlists()
     {
-        if (in_array('oxrss_recommlists', oxConfig::getInstance()->getConfigParam( 'aRssSelected' ))) {
+        if (in_array('oxrss_recommlists', $this->getConfig()->getConfigParam( 'aRssSelected' ))) {
             $oArticle = oxNew('oxarticle');
             if ($oArticle->load(oxConfig::getParameter('anid'))) {
                 $this->_oRss->loadRecommLists($oArticle);
@@ -184,7 +197,7 @@ class Rss extends oxView
      */
     public function recommlistarts()
     {
-        if (in_array('oxrss_recommlistarts', oxConfig::getInstance()->getConfigParam( 'aRssSelected' ))) {
+        if (in_array('oxrss_recommlistarts', $this->getConfig()->getConfigParam( 'aRssSelected' ))) {
             $oRecommList = oxNew('oxrecommlist');
             if ($oRecommList->load(oxConfig::getParameter('recommid'))) {
                 $this->_oRss->loadRecommListArticles($oRecommList);
@@ -202,7 +215,7 @@ class Rss extends oxView
      */
     public function bargain()
     {
-        if (in_array('oxrss_bargain', oxConfig::getInstance()->getConfigParam( 'aRssSelected' ))) {
+        if (in_array('oxrss_bargain', $this->getConfig()->getConfigParam( 'aRssSelected' ))) {
             $this->_oRss->loadBargain();
         } else {
             error_404_handler();

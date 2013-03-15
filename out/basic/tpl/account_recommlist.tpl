@@ -8,9 +8,9 @@
     <form action="[{ $oViewConf->getSelfActionLink() }]" name="saverecommlist" method="post">
       <div>
           [{ $oViewConf->getHiddenSid() }]
+          [{ $oViewConf->getNavFormParams() }]
           <input type="hidden" name="fnc" value="saveRecommList">
           <input type="hidden" name="cl" value="account_recommlist">
-          <input type="hidden" name="cnid" value="[{ $oViewConf->getActCatId() }]">
           [{if $actvrecommlist}]
             <input type="hidden" name="recommid" value="[{$actvrecommlist->getId()}]">
           [{/if}]

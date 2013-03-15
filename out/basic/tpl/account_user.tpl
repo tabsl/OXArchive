@@ -8,9 +8,9 @@
     <form action="[{ $oViewConf->getSelfActionLink() }]" name="order" method="post">
       <div class="account">
           [{ $oViewConf->getHiddenSid() }]
+          [{ $oViewConf->getNavFormParams() }]
           <input type="hidden" name="fnc" value="changeuser_testvalues">
           <input type="hidden" name="cl" value="account_user">
-          <input type="hidden" name="cnid" value="[{ $oViewConf->getActCatId() }]">
           <input type="hidden" name="CustomError" value='user'>
           <table class="form" width="90%">
           <tr class="th_sep">
@@ -30,7 +30,7 @@
                 <option [{if $oxcmp_user->oxuser__oxsal->value == "ACCOUNT_USER_MR"|oxmultilangassign }]SELECTED[{/if }]>[{ oxmultilang ident="ACCOUNT_USER_MR" }]</option>
                 <option  [{if $oxcmp_user->oxuser__oxsal->value == "ACCOUNT_USER_MRS"|oxmultilangassign }]SELECTED[{/if }]>[{ oxmultilang ident="ACCOUNT_USER_MRS" }]</option>
               </select>  &nbsp;
-              [{if $oView->isFieldRequired(oxuser__oxsal) }]*[{/if }]
+              [{if $oView->isFieldRequired(oxuser__oxsal) }]<span class="req">*</span>[{/if }]
             </td>
           </tr>
           <tr>
@@ -121,7 +121,7 @@
             <td><label>[{ oxmultilang ident="ACCOUNT_USER_EVENINGPHONE" }]</label></td>
             <td>
               <input type="text" size="37" maxlength="64" name="invadr[oxuser__oxprivfon]" value="[{if $oxcmp_user->oxuser__oxprivfon->value }][{$oxcmp_user->oxuser__oxprivfon->value }][{else}][{$invadr.oxuser__oxprivfon }][{/if}]">
-              [{if $oView->isFieldRequired(oxuser__oxprivfon) }]*[{/if}]
+              [{if $oView->isFieldRequired(oxuser__oxprivfon) }]<span class="req">*</span>[{/if}]
             </td>
           </tr>
           [{if $oViewConf->showBirthdayFields() }]
@@ -131,7 +131,7 @@
               <input type="text" size="3" maxlength="2" name="invadr[oxuser__oxbirthdate][day]" value="[{if $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00"}][{$oxcmp_user->oxuser__oxbirthdate->value|regex_replace:"/^([0-9]{4})[-]([0-9]{1,2})[-]/":"" }][{else}][{$invadr.oxuser__oxbirthdate.day }][{/if}]">&nbsp;&nbsp;
               <input type="text" size="3" maxlength="2" name="invadr[oxuser__oxbirthdate][month]" value="[{if $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00" }][{$oxcmp_user->oxuser__oxbirthdate->value|regex_replace:"/^([0-9]{4})[-]/":""|regex_replace:"/[-]([0-9]{1,2})$/":"" }][{else}][{$invadr.oxuser__oxbirthdate.month }][{/if}]">&nbsp;&nbsp;
                  <input type="text" size="8" maxlength="4" name="invadr[oxuser__oxbirthdate][year]" value="[{if $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00" }][{$oxcmp_user->oxuser__oxbirthdate->value|regex_replace:"/[-]([0-9]{1,2})[-]([0-9]{1,2})$/":"" }][{else}][{$invadr.oxuser__oxbirthdate.year }][{/if}]">
-              [{if $oView->isFieldRequired(oxuser__oxbirthdate) }]*[{/if}]
+              [{if $oView->isFieldRequired(oxuser__oxbirthdate) }]<span class="req">*</span>[{/if}]
             </td>
           </tr>
           [{/if}]

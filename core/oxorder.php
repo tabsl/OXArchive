@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxorder.php 14542 2008-12-08 14:24:48Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxorder.php 17924 2009-04-07 07:57:43Z sarunas $
  */
 
 /**
@@ -178,9 +179,11 @@ class oxOrder extends oxBase
 
         parent::assign( $dbRecord );
 
+        $oUtilsDate = oxUtilsDate::getInstance();
+
         // convert date's to international format
-        $this->oxorder__oxorderdate = new oxField(oxUtilsDate::getInstance()->formatDBDate( $this->oxorder__oxorderdate->value ), oxField::T_RAW);
-        $this->oxorder__oxsenddate  = new oxField(oxUtilsDate::getInstance()->formatDBDate( $this->oxorder__oxsenddate->value ), oxField::T_RAW);
+        $this->oxorder__oxorderdate = new oxField( $oUtilsDate->formatDBDate( $this->oxorder__oxorderdate->value));
+        $this->oxorder__oxsenddate  = new oxField( $oUtilsDate->formatDBDate( $this->oxorder__oxsenddate->value));
 
 
         //get billing country name from billing country id
@@ -352,6 +355,12 @@ class oxOrder extends oxBase
         // payment information
         $oUserPayment = $this->_setPayment( $oBasket->getPaymentId() );
 
+        // set folder information, if order is new
+        // #M575 in recalcualting order case folder must be the same as it was
+        if ( !$blRecalculatingOrder ) {
+            $this->_setFolder();
+        }
+
         //saving all order data to DB
         $this->save();
 
@@ -427,7 +436,7 @@ class oxOrder extends oxBase
         $myConfig = $this->getConfig();
 
         // store IP Adress - default must be FALSE as it is illegal to store
-        if ( $myConfig->getConfigParam( 'blStoreIPs' ) ) {
+        if ( $myConfig->getConfigParam( 'blStoreIPs' ) &&  $this->oxorder__oxip->value === null ) {
             $this->oxorder__oxip = new oxField(oxUtilsServer::getInstance()->getRemoteAddress(), oxField::T_RAW);
         }
 
@@ -451,7 +460,9 @@ class oxOrder extends oxBase
         }
 
         // user remark
-        $this->oxorder__oxremark = new oxField(oxSession::getVar( 'ordrem' ), oxField::T_RAW);
+        if ( $this->oxorder__oxremark->value === null ) {
+            $this->oxorder__oxremark = new oxField(oxSession::getVar( 'ordrem' ), oxField::T_RAW);
+        }
 
         // currency
         $oCur = $myConfig->getActShopCurrencyObject();
@@ -464,8 +475,15 @@ class oxOrder extends oxBase
         }
 
         // general discount
-        if ( ( $oTotalDiscount = $oBasket->getTotalDiscount() ) ) {
-            $this->oxorder__oxdiscount = new oxField($oTotalDiscount->getBruttoPrice(), oxField::T_RAW);
+        $dDiscount = 0;
+        $aDiscounts = $oBasket->getDiscounts();
+        if ( count($aDiscounts) > 0 ) {
+            foreach ($aDiscounts as $oDiscount) {
+                $dDiscount += $oDiscount->dDiscount;
+            }
+        }
+        if ( $dDiscount ) {
+            $this->oxorder__oxdiscount = new oxField($dDiscount, oxField::T_RAW);
         }
 
         //order language
@@ -734,6 +752,14 @@ class oxOrder extends oxBase
             return null;
         }
 
+        // #756M Preserve already stored payment information
+        if( !$aDynvalue && $oUserpayment = $this->getPaymentType() ) {
+            $aStoredDynvalue = $oUserpayment->getDynValues();
+            foreach ( $aStoredDynvalue as $oVal ){
+                $aDynvalue[$oVal->name] = $oVal->value;
+            }
+        }
+
         $oPayment->setDynValues( oxUtils::getInstance()->assignValuesFromText( $oPayment->oxpayments__oxvaldesc->value ) );
 
         // collecting dynamic values
@@ -767,6 +793,17 @@ class oxOrder extends oxBase
 
         // returning user payment object which will be used later in code ...
         return $oUserpayment;
+    }
+
+    /**
+     * Assigns oxfolder as new
+     *
+     * @return null
+     */
+    protected function _setFolder()
+    {
+        $myConfig = $this->getConfig();
+        $this->oxorder__oxfolder    = new oxField(key( $myConfig->getShopConfVar(  'aOrderfolder', $myConfig->getShopId() ) ), oxField::T_RAW);
     }
 
     /**
@@ -969,10 +1006,17 @@ class oxOrder extends oxBase
     protected function _insert()
     {
         $myConfig = $this->getConfig();
+        $oUtilsDate = oxUtilsDate::getInstance();
 
-        $this->oxorder__oxorderdate = new oxField(date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() ), oxField::T_RAW);
+        //V #M525 orderdate must be the same as it was
+        if ( !$this->oxorder__oxorderdate->value ) {
+            $this->oxorder__oxorderdate = new oxField(date( 'Y-m-d H:i:s', $oUtilsDate->getTime() ), oxField::T_RAW);
+        } else {
+            $this->oxorder__oxorderdate = new oxField( $oUtilsDate->formatDBDate( $this->oxorder__oxorderdate->value, true ));
+        }
         $this->oxorder__oxshopid    = new oxField($myConfig->getShopId(), oxField::T_RAW);
-        $this->oxorder__oxfolder    = new oxField(key( $myConfig->getShopConfVar(  'aOrderfolder', $myConfig->getShopId() ) ), oxField::T_RAW);
+
+        $this->oxorder__oxsenddate  = new oxField( $oUtilsDate->formatDBDate( $this->oxorder__oxsenddate->value, true ));
 
         if ( ( $blInsert = parent::_insert() ) ) {
             // setting order number
@@ -995,7 +1039,7 @@ class oxOrder extends oxBase
      */
     protected function _update()
     {
-        $this->oxorder__oxsenddate = new oxField(oxUtilsDate::getInstance()->formatDBDate( $this->oxorder__oxsenddate->value, true ), oxField::T_RAW);
+        $this->oxorder__oxsenddate = new oxField(oxUtilsDate::getInstance()->formatDBDate( $this->oxorder__oxsenddate->value, true ));
         return parent::_update();
     }
 
@@ -1040,9 +1084,8 @@ class oxOrder extends oxBase
         }
 
         // #440 - deleting user payment info
-        if ( $this->oxorder__oxpaymentid->value ) {
-            $oDB = oxDb::getDb();
-            $oDB->execute( 'delete from oxuserpayments where oxuserpayments.oxid = "'.$this->oxorder__oxpaymentid->value.'"' );
+        if ( $oPaymentType = $this->getPaymentType() ) {
+            $oPaymentType->delete();
         }
 
         return parent::delete( $sOxId );
@@ -1055,10 +1098,11 @@ class oxOrder extends oxBase
      *
      * @param array $aNewOrderArticles article list of new order
      * @param bool  $blChangeDelivery  if delivery was changed in admin
+     * @param bool  $blChangeDiscount  if discount was changed in admin
      *
      * @return null
      */
-    public function recalculateOrder( $aNewOrderArticles = array(), $blChangeDelivery = false )
+    public function recalculateOrder( $aNewOrderArticles = array(), $blChangeDelivery = false, $blChangeDiscount = false )
     {
         oxDb::startTransaction();
 
@@ -1094,7 +1138,7 @@ class oxOrder extends oxBase
                         //unset( $this->_oArticles[$sOrderArticleId] );
                         $this->_oArticles->offsetUnset( $sOrderArticleId );
                     } else {
-                  	    $this->_oArticles->next();
+                          $this->_oArticles->next();
                     }
                 }
             }
@@ -1137,14 +1181,14 @@ class oxOrder extends oxBase
             }
 
             // add this order articles to virtual basket and recalculates basket
-            $oBasket = $this->_addOrderArticlesToBasket( $oUser, $this->_oArticles, $blChangeDelivery );
+            $oBasket = $this->_addOrderArticlesToBasket( $oUser, $this->_oArticles, $blChangeDelivery, $blChangeDiscount );
 
             //finalizing order (skipping payment execution, vouchers marking and mail sending)
             $iRet = $this->finalizeOrder( $oBasket, $oUser, true );
 
             //adding back canceled articles
             if ( count($aCanceledArticles) > 0 ) {
-                foreach($aCanceledArticles as $oCanceledOrderArticle ) {
+                foreach ($aCanceledArticles as $oCanceledOrderArticle ) {
                     $oCanceledOrderArticle->save();
                 }
             }
@@ -1218,6 +1262,16 @@ class oxOrder extends oxBase
         return ( ( int ) oxDb::getDb()->getOne( $sQ ) + 1 );
     }
 
+    /**
+     * Returns next possible (free) order bill number.
+     *
+     * @return integer
+     */
+    public function getNextBillNum()
+    {
+        $sQ = 'select max(oxorder.oxbillnr) from oxorder where oxorder.oxshopid = "'.$this->getConfig()->getShopId().'" ';
+        return ( ( int ) oxDb::getDb()->getOne( $sQ ) + 1 );
+    }
 
     /**
      * Loads possible shipping sets for this order
@@ -1226,29 +1280,22 @@ class oxOrder extends oxBase
      */
     public function getShippingSetList()
     {
-        $myConfig = $this->getConfig();
-
         // in which country we deliver
-        $sShipID = $this->oxorder__oxdelcountryid->value;
-
-        if (!$sShipID) {
-            $sShipID = $this->oxorder__oxbillcountryid->value;
+        if ( !( $sShipId = $this->oxorder__oxdelcountryid->value ) ) {
+            $sShipId = $this->oxorder__oxbillcountryid->value;
         }
 
         $oUser = oxNew( "oxuser" );
         $oUser->load( $this->oxorder__oxuserid->value );
 
         // add this order articles to basket and recalculate basket
-        $oBasket = $this->_addOrderArticlesToBasket( $oUser, $this->getOrderArticles() );
-
-        $aOrderDelSetList = array();
+        $oBasket = $this->_addOrderArticlesToBasket( $oUser, $this->getOrderArticles(), false, false, false );
 
         // load fitting deliveries list
-        $oDleliveryList = oxNew( "oxDeliveryList", "core");
-        $oDleliveryList->setCollectFittingDeliveriesSets( true );
-        $aOrderDelSetList = $oDleliveryList->getDeliveryList( $oBasket, $oUser, $sShipID, null );
+        $oDeliveryList = oxNew( "oxDeliveryList", "core" );
+        $oDeliveryList->setCollectFittingDeliveriesSets( true );
 
-        return $aOrderDelSetList;
+        return $oDeliveryList->getDeliveryList( $oBasket, $oUser, $sShipId );
     }
 
     /**
@@ -1260,7 +1307,7 @@ class oxOrder extends oxBase
     {
         $oDB = oxDb::getDb( true );
         $aVouchers = array();
-        $sSelect =  "select oxvouchernr from oxvouchers where oxorderid = '".$this->oxorder__oxid->value."'";
+        $sSelect = "select oxvouchernr from oxvouchers where oxorderid = '".$this->oxorder__oxid->value."'";
         $rs = $oDB->execute( $sSelect);
         if ($rs != false && $rs->recordCount() > 0) {
             while (!$rs->EOF) {
@@ -1491,6 +1538,7 @@ class oxOrder extends oxBase
 
         if ( $sArtId ) {
             $aList = explode( ",", $sOrderArtSelList );
+            $oStr = getStr();
 
             //$oArticle = oxNew( "oxArticle", "core" );
             $oArticle = oxNew( "oxArticle" );
@@ -1502,10 +1550,9 @@ class oxOrder extends oxBase
                 if ( $sList ) {
 
                     $aVal = explode( ":", $sList );
-
                     if ( isset($aVal[0]) && isset($aVal[1])) {
-                        $sOrderArtListTitle = strtolower( trim($aVal[0]) );
-                        $sOrderArtSelValue  = strtolower( trim($aVal[1]) );
+                        $sOrderArtListTitle = $oStr->strtolower( trim($aVal[0]) );
+                        $sOrderArtSelValue  = $oStr->strtolower( trim($aVal[1]) );
 
                         //checking article list for matches with article list stored in oxorderitem
                         $iSelListNum = 0;
@@ -1513,11 +1560,11 @@ class oxOrder extends oxBase
                             foreach ( $aArticleSelList as $aSelect ) {
                                 //chek if selects titles are equal
 
-                                if ( strtolower($aSelect['name']) == $sOrderArtListTitle ) {
+                                if ( $oStr->strtolower($aSelect['name']) == $sOrderArtListTitle ) {
                                     //try to find matching select items value
                                     $iSelValueNum = 0;
                                     foreach ( $aSelect as $oSel ) {
-                                        if ( strtolower($oSel->name) == $sOrderArtSelValue ) {
+                                        if ( $oStr->strtolower($oSel->name) == $sOrderArtSelValue ) {
                                             // found, adding tu return array
                                             $aRet[$iSelListNum] = $iSelValueNum;
                                         }
@@ -1543,21 +1590,24 @@ class oxOrder extends oxBase
      * @param oxUser $oUser            basket user object
      * @param array  $aOrderArticles   order articles
      * @param bool   $blChangeDelivery if delivery was changed in admin
+     * @param bool   $blChangeDiscount if discount was changed in admin
+     * @param bool   $blStockCheck     to check stock
      *
      * @return oxBasket
      */
-    protected function _addOrderArticlesToBasket( $oUser = null, $aOrderArticles = null, $blChangeDelivery = false )
+    protected function _addOrderArticlesToBasket( $oUser = null, $aOrderArticles = null, $blChangeDelivery = false, $blChangeDiscount = false, $blStockCheck = true )
     {
-        $myConfig = $this->getConfig();
-
         $oBasket = oxNew( "oxbasket" );
+
+        // setting stock check mode
+        $oBasket->setStockCheckMode( $blStockCheck );
 
         // setting virtual basket user
         $oBasket->setBasketUser( $oUser );
 
         // setting basket currency order uses
-        $aCurrencies = $myConfig->getCurrencyArray();
-        foreach ($aCurrencies as $oCur) {
+        $aCurrencies = $this->getConfig()->getCurrencyArray();
+        foreach ( $aCurrencies as $oCur ) {
             if ($oCur->name == $this->oxorder__oxcurrency->value) {
                 $oBasketCur = $oCur;
                 break;
@@ -1567,25 +1617,23 @@ class oxOrder extends oxBase
         $oBasket->setBasketCurrency( $oBasketCur );
 
         // if no order articles, return empty basket
-        if (count($aOrderArticles) < 1) {
+        if ( count($aOrderArticles ) < 1 ) {
             return $oBasket;
         }
 
         //adding order articles to basket
         foreach ( $aOrderArticles as $oOrderArticle ) {
-            $sArtId      = $oOrderArticle->oxorderarticles__oxartid->value;
-            $dAmount     = $oOrderArticle->oxorderarticles__oxamount->value;
-            $sSelVariant = $oOrderArticle->oxorderarticles__oxselvariant->value;
 
+            $aPersParam = null;
             if ( $oOrderArticle->oxorderarticles__oxpersparam->value ) {
-                $aPersParam = unserialize($oOrderArticle->oxorderarticles__oxpersparam->value);
-            } else {
-                $aPersParam = null;
+                $aPersParam = unserialize( $oOrderArticle->oxorderarticles__oxpersparam->value );
             }
 
-            $aSel = $this->_makeSelListArray( $sArtId, $sSelVariant );
+            $aSel = $this->_makeSelListArray( $oOrderArticle->oxorderarticles__oxartid->value,
+                                              $oOrderArticle->oxorderarticles__oxselvariant->value );
 
-            $oBasketItem = $oBasket->addToBasket( $sArtId, $dAmount, $aSel, $aPersParam );
+            $oBasketItem = $oBasket->addToBasket( $oOrderArticle->oxorderarticles__oxartid->value,
+                                                  $oOrderArticle->oxorderarticles__oxamount->value, $aSel, $aPersParam );
             if ( $oBasketItem ) {
                 $oBasketItem->setWrapping( $oOrderArticle->oxorderarticles__oxwrapid->value );
             }
@@ -1607,10 +1655,13 @@ class oxOrder extends oxBase
 
         //set shipping
         $oBasket->setShipping( $this->oxorder__oxdeltype->value );
-        //V #M429: Shipping and total prices were not calculated correct 
-        //when user changed delivery costs in admin 
+        //V #M429: Shipping and total prices were not calculated correct
+        //when user changed delivery costs in admin
         if ( $blChangeDelivery ) {
             $oBasket->setDeliveryPrice( $this->getOrderDeliveryPrice() );
+        }
+        if ( $blChangeDiscount ) {
+            $oBasket->setTotalDiscount( $this->oxorder__oxdiscount->value );
         }
         //set basket payment
         $oBasket->setPayment( $this->oxorder__oxpaymenttype->value );
@@ -1632,25 +1683,26 @@ class oxOrder extends oxBase
     {
         if ( $this->oxorder__oxstorno->value != 1 ) {
             $oCur = $this->getConfig()->getActShopCurrencyObject();
+            $oLang = oxLang::getInstance();
 
             $this->totalnetsum   = $this->oxorder__oxtotalnetsum->value;
             $this->totalbrutsum  = $this->oxorder__oxtotalbrutsum->value;
             $this->totalorder    = $this->oxorder__oxtotalordersum->value;
-            $this->ftotalnetsum  = oxLang::getInstance()->formatCurrency( $this->oxorder__oxtotalnetsum->value, $oCur );
-            $this->ftotalbrutsum = oxLang::getInstance()->formatCurrency( $this->oxorder__oxtotalbrutsum->value, $oCur );
-            $this->fdelcost      = oxLang::getInstance()->formatCurrency( $this->oxorder__oxdelcost->value, $oCur );
-            $this->fpaycost      = oxLang::getInstance()->formatCurrency( $this->oxorder__oxpaycost->value, $oCur );
-            $this->fwrapcost     = oxLang::getInstance()->formatCurrency( $this->oxorder__oxwrapcost->value, $oCur );
+            $this->ftotalnetsum  = $oLang->formatCurrency( $this->oxorder__oxtotalnetsum->value, $oCur );
+            $this->ftotalbrutsum = $oLang->formatCurrency( $this->oxorder__oxtotalbrutsum->value, $oCur );
+            $this->fdelcost      = $oLang->formatCurrency( $this->oxorder__oxdelcost->value, $oCur );
+            $this->fpaycost      = $oLang->formatCurrency( $this->oxorder__oxpaycost->value, $oCur );
+            $this->fwrapcost     = $oLang->formatCurrency( $this->oxorder__oxwrapcost->value, $oCur );
             $this->ftotalorder   = $this->getTotalOrderSum();
             $this->totalvouchers = 0;
 
             if ( $this->oxorder__oxvoucherdiscount->value ) {
-                $this->totalvouchers  = oxLang::getInstance()->formatCurrency( $this->oxorder__oxvoucherdiscount->value, $oCur );
+                $this->totalvouchers  = $oLang->formatCurrency( $this->oxorder__oxvoucherdiscount->value, $oCur );
             }
 
             if ( $this->oxorder__oxdiscount->value ) {
                 $this->discount  = $this->oxorder__oxdiscount->value;
-                $this->fdiscount = oxLang::getInstance()->formatCurrency( $this->oxorder__oxdiscount->value, $oCur );
+                $this->fdiscount = $oLang->formatCurrency( $this->oxorder__oxdiscount->value, $oCur );
             }
         }
     }
@@ -1663,7 +1715,6 @@ class oxOrder extends oxBase
     public function getTotalOrderSum()
     {
         $oCur = $this->getConfig()->getActShopCurrencyObject();
-        return oxLang::getInstance()->formatCurrency( $this->oxorder__oxtotalordersum->value, $oCur );
+        return number_format( $this->oxorder__oxtotalordersum->value, $oCur->decimal, '.', '');
     }
-
 }

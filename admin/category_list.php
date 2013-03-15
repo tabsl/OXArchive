@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: category_list.php 14019 2008-11-06 13:35:04Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: category_list.php 17645 2009-03-27 15:00:28Z arvydas $
  */
 
 /**
@@ -69,40 +70,45 @@ class Category_List extends oxAdminList
 
         parent::render();
 
+        $oLang = oxLang::getInstance();
+        $iLang = $oLang->getTplLanguage();
+
         // parent categorie tree
         $oCatTree = oxNew( "oxCategoryList" );
-        $oCatTree->buildList($myConfig->getConfigParam( 'bl_perfLoadCatTree' ));
+        $oCatTree->buildList( $myConfig->getConfigParam( 'bl_perfLoadCatTree' ) );
 
         // add Root as fake category
         // rebuild list as we need the root entry at the first position
         $aNewList = array();
-        $oRoot = new stdClass();
-        $oRoot->oxcategories__oxid    = new oxField(null, oxField::T_RAW);
-        $oRoot->oxcategories__oxtitle = new oxField(oxLang::getInstance()->translateString("viewAll"), oxField::T_RAW);
-
-        $aNewList[] = $oRoot;
-        $oRoot = new stdClass();
-        $oRoot->oxcategories__oxid    = new oxField("oxrootid", oxField::T_RAW);
-        $oRoot->oxcategories__oxtitle = new oxField("-- ".oxLang::getInstance()->translateString("mainCategory")." --", oxField::T_RAW);
+        $oRoot = new oxStdClass();
+        $oRoot->oxcategories__oxid    = new oxField( null, oxField::T_RAW );
+        $oRoot->oxcategories__oxtitle = new oxField( $oLang->translateString("viewAll", $iLang ), oxField::T_RAW );
         $aNewList[] = $oRoot;
 
-        foreach( $oCatTree as $oCategory )
+        $oRoot = new oxStdClass();
+        $oRoot->oxcategories__oxid    = new oxField( "oxrootid", oxField::T_RAW );
+        $oRoot->oxcategories__oxtitle = new oxField( "-- ".$oLang->translateString("mainCategory", $iLang )." --", oxField::T_RAW );
+        $aNewList[] = $oRoot;
+
+        foreach( $oCatTree as $oCategory ) {
             $aNewList[] = $oCategory;
+        }
 
         $oCatTree->assign( $aNewList );
 
-        $sCatView = getViewName('oxcategories');
+        $sCatView = getViewName( 'oxcategories' );
 
-        $aWhere  = oxConfig::getParameter( "where");
-        if ( isset( $aWhere ) && $aWhere ) {
+        $aWhere  = oxConfig::getParameter( "where" );
+        if ( is_array( $aWhere ) && isset( $aWhere["{$sCatView}.oxparentid"] ) ) {
             foreach( $oCatTree as $oCategory ) {
-                if ( $oCategory->oxcategories__oxid->value == $aWhere[$sCatView.'.oxparentid']) {
+                if ( $oCategory->oxcategories__oxid->value == $aWhere["{$sCatView}.oxparentid"]) {
                     $oCategory->selected = 1;
+                    break;
                 }
             }
         }
 
-        $this->_aViewData["cattree"] =  $oCatTree;
+        $this->_aViewData["cattree"] = $oCatTree;
 
         return "category_list.tpl";
     }

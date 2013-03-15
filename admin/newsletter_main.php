@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: newsletter_main.php 14025 2008-11-06 13:42:31Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: newsletter_main.php 17189 2009-03-13 12:19:59Z arvydas $
  */
 
 /**
@@ -92,7 +93,5 @@ class Newsletter_Main extends oxAdminDetails
         // set oxid if inserted
         if ( $soxId == "-1")
             oxSession::setVar( "saved_oxid", $oNewsletter->oxnewsletter__oxid->value);
-
-        return $this->autosave();
     }
 }

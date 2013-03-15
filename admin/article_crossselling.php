@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: article_crossselling.php 14018 2008-11-06 13:33:39Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: article_crossselling.php 17243 2009-03-16 15:16:57Z arvydas $
  */
 
 /**
@@ -96,10 +97,10 @@ class Article_Crossselling extends oxAdminDetails
         if ( !isset($soxId) || $soxId == "-1" || $sTable == null || !$sTable)
             return 0;
 
+        $oDB = oxDb::getDb();
         //means appending article to the end, sorting number will be last number
         if ( !isset($sSorting) || !$sSorting) {
             $sSelect = "select count(*) from $sTable where $sTable.oxarticlenid = '".$soxId."' ";
-            $oDB = oxDb::getDb();
             return $oDB->getOne( $sSelect);
         } else if ( count($aObjectId) > 0) {
             if ( $sSorting == "up") {
@@ -107,7 +108,6 @@ class Article_Crossselling extends oxAdminDetails
                 $sFItmId = $aObjectId[0];
                 foreach ( $aList as $iNum => $aItem) {
                     if ( $aItem[2] == $sFItmId && $iNum > 0) {
-                        $oDB = oxDb::getDb();
                         $sSelect = "update $sTable set $sTable.oxsort=".( $iNum + count($aObjectId) - 1 )." where $sTable.oxobjectid='".$aList[$iNum-1][2]."'";
                         $oDB->execute( $sSelect);
                         foreach ( $aObjectId as $iSNum => $sItem) {
@@ -122,7 +122,6 @@ class Article_Crossselling extends oxAdminDetails
                 $sFItmId = $aObjectId[count($aObjectId)-1];
                 foreach ( $aList as $iNum => $aItem) {
                     if ( $aItem[2] == $sFItmId && $iNum < (count($aList)-1)) {
-                        $oDB = oxDb::getDb();
                         $sSelect = "update $sTable set $sTable.oxsort=".( $iNum - count($aObjectId) + 1 )." where $sTable.oxobjectid='".$aList[$iNum+1][2]."'";
                         $oDB->execute( $sSelect);
                         foreach ( $aObjectId as $iSNum => $sItem) {

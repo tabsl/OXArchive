@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxutilsfile.php 14388 2008-11-26 15:43:17Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxutilsfile.php 16752 2009-02-24 12:45:56Z arvydas $
  */
 
 /**
@@ -33,6 +34,55 @@ class oxUtilsFile extends oxSuperCfg
      */
     private static $_instance = null;
 
+    /**
+     * Image type and its folder information array
+     *
+     * @var array
+     */
+    protected $_aTypeToPath = array( 'ICO'  => 'icon',
+                                     'CICO' => 'icon',
+                                     'TH'   => '0',
+                                     'TC'   => '0',
+                                     'P1'   => '1',
+                                     'P2'   => '2',
+                                     'P3'   => '3',
+                                     'P4'   => '4',
+                                     'P5'   => '5',
+                                     'P6'   => '6',
+                                     'P7'   => '7',
+                                     'P8'   => '8',
+                                     'P9'   => '9',
+                                     'P10'  => '10',
+                                     'P11'  => '11',
+                                     'P12'  => '12',
+                                     'Z1'   => 'z1',
+                                     'Z2'   => 'z2',
+                                     'Z3'   => 'z3',
+                                     'Z4'   => 'z4',
+                                     'Z5'   => 'z5',
+                                     'Z6'   => 'z6',
+                                     'Z7'   => 'z7',
+                                     'Z8'   => 'z8',
+                                     'Z9'   => 'z9',
+                                     'Z10'  => 'z10',
+                                     'Z11'  => 'z11',
+                                     'Z12'  => 'z12'
+                                   );
+
+    /**
+     * Denied file types
+     *
+     * @var array
+     */
+    protected $_aBadFiles = array( 'php', 'jsp', 'cgi', 'cmf', 'exe' );
+
+
+    /**
+     * Allowed to upload files in demo mode ( "white list")
+     *
+     * @var array
+     */
+    protected $_aAllowedFiles = array( 'gif', 'jpg', 'png', 'pdf' );
     /**
      * Returns object instance
      *
@@ -163,6 +213,182 @@ class oxUtilsFile extends oxSuperCfg
     }
 
     /**
+     * Prepares image file name
+     *
+     * @param object $sValue uploadable file name
+     * @param string $sType  image type
+     * @param object $blDemo if true = whecks if file type is defined in oxutilsfile::_aAllowedFiles
+     *
+     * @return string
+     */
+    protected function _prepareImageName( $sValue, $sType, $blDemo = false )
+    {
+        // add type to name
+        $aFilename = explode( ".", $sValue );
+        $sFileType = trim( $aFilename[count( $aFilename )-1] );
+
+        if ( isset( $sFileType ) ) {
+
+            // unallowed files ?
+            if ( in_array( $sFileType, $this->_aBadFiles ) || ( $blDemo && !in_array( $sFileType, $this->_aAllowedFiles ) ) ) {
+                oxUtils::getInstance()->showMessageAndExit( "We don't play this game, go away" );
+            }
+
+            // removing file type
+            if ( count( $aFilename ) > 0 ) {
+                unset( $aFilename[count( $aFilename )-1] );
+            }
+
+            $sFName = '';
+            if ( isset( $aFilename[0] ) ) {
+                $sFName = preg_replace( '/[^a-zA-Z0-9_\.-]/', '', implode( '.', $aFilename ) );
+            }
+
+            $sValue = "{$sFName}_" . strtolower( $sType ) . ".{$sFileType}";
+        }
+
+        return $sValue;
+    }
+
+    /**
+     * Returns image storage path
+     *
+     * @param string $sType image type
+     *
+     * @return string
+     */
+    protected function _getImagePath( $sType )
+    {
+        $sFolder = array_key_exists( $sType, $this->_aTypeToPath ) ? $this->_aTypeToPath[ $sType ] : '0';
+        return $this->getConfig()->getAbsDynImageDir() . "/{$sFolder}/";
+    }
+
+    /**
+     * Prepares (resizes anc copies) images according to its type.
+     * Returns preparation status
+     *
+     * @param string $sType   image type
+     * @param string $sSource image location
+     * @param string $sTarget image copy location
+     *
+     * @return array
+     */
+    protected function _prepareImage( $sType, $sSource, $sTarget )
+    {
+        $myConfig  = $this->getConfig();
+        $oUtilsPic = oxUtilspic::getInstance();
+
+        // add file process here
+        $blCopy = false;
+        switch ( $sType ) {
+            case 'TH':
+                if ( ( $sSize = $myConfig->getConfigParam( 'sThumbnailsize' ) ) ) {
+                    // convert this file
+                    $aSize = explode( '*', $sSize );
+                    $blCopy = $oUtilsPic->resizeImage( $sSource, $sTarget, $aSize[0], $aSize[1] );
+                }
+                break;
+            case 'TC':
+                if ( ( $sSize = $myConfig->getConfigParam( 'sCatThumbnailsize' ) ) ) {
+                    // convert this file
+                    $aSize = explode( '*', $sSize );
+                    $blCopy = $oUtilsPic->resizeImage( $sSource, $sTarget, $aSize[0], $aSize[1] );
+                }
+                break;
+            case 'CICO':
+            case 'ICO':
+                if ( ( $sSize = $myConfig->getConfigParam( 'sIconsize' ) ) ) {
+                    // convert this file
+                    $aSize = explode( '*', $sSize );
+                    $blCopy = $oUtilsPic->resizeImage( $sSource, $sTarget, $aSize[0], $aSize[1] );
+                }
+                break;
+            case 'P1':
+            case 'P2':
+            case 'P3':
+            case 'P4':
+            case 'P5':
+            case 'P6':
+            case 'P7':
+            case 'P8':
+            case 'P9':
+            case 'P10':
+            case 'P11':
+            case 'P12':
+                //
+                $aPType = explode( 'P', $sType );
+                $iPic = intval( $aPType[1] ) - 1;
+
+                // #840A + compatibility with prev. versions
+                $aDetailImageSizes = $myConfig->getConfigParam( 'aDetailImageSizes' );
+                $sDetailImageSize  = $myConfig->getConfigParam( 'sDetailImageSize' );
+                if ( isset( $aDetailImageSizes['oxpic'.intval( $aPType[1] )] ) ) {
+                    $sDetailImageSize = $aDetailImageSizes['oxpic'.intval( $aPType[1] )];
+                }
+
+                if ( $sDetailImageSize ) {
+                    // convert this file
+                    $aSize = explode( '*', $sDetailImageSize );
+                    $blCopy = $oUtilsPic->resizeImage( $sSource, $sTarget, $aSize[0], $aSize[1] );
+
+                    //make an icon
+                    $sIconName = $oUtilsPic->iconName( $sTarget );
+                    $aSize = explode( '*', $myConfig->getConfigParam( 'sIconsize' ) );
+                    $blCopy = $oUtilsPic->resizeImage( $sSource, $sIconName, $aSize[0], $aSize[1] );
+                }
+                break;
+            case 'Z1':
+            case 'Z2':
+            case 'Z3':
+            case 'Z4':
+            case 'Z5':
+            case 'Z6':
+            case 'Z7':
+            case 'Z8':
+            case 'Z9':
+            case 'Z10':
+            case 'Z11':
+            case 'Z12':
+                //
+                $aPType = explode( 'Z', $sType );
+                $iPic = intval( $aPType[1] ) - 1;
+
+                // #840A + compatibility with prev. versions
+                $aZoomImageSizes = $myConfig->getConfigParam( 'aZoomImageSizes' );
+                $sZoomImageSize  = $myConfig->getConfigParam( 'sZoomImageSize' );
+                if ( isset( $aZoomImageSizes['oxzoom'.intval( $aPType[1] )] ) ) {
+                    $sZoomImageSize = $aZoomImageSizes['oxzoom'.intval( $aPType[1] )];
+                }
+
+                //
+                if ( $sZoomImageSize ) {
+                    // convert this file
+                    $aSize = explode( '*', $sZoomImageSize );
+                    $blCopy = $oUtilsPic->resizeImage( $sSource, $sTarget, $aSize[0], $aSize[1] );
+                }
+                break;
+        }
+
+        return $blCopy;
+    }
+
+    /**
+     * Moves image from source to target location
+     *
+     * @param string $sSource image location
+     * @param string $sTarget image copy location
+     */
+    protected function _moveImage( $sSource, $sTarget )
+    {
+        $blDone = false;
+        if ( ( $blDone = move_uploaded_file( $sSource, $sTarget ) ) ) {
+            $blDone = chmod( $sTarget, 0644 );
+        }
+
+        return $blDone;
+    }
+
+    /**
      * Uploaded file processor (filters, etc), sets configuration parameters to
      * passed object and returns it.
      *
@@ -170,262 +396,45 @@ class oxUtilsFile extends oxSuperCfg
      *
      * @return object
      */
-    public function processFiles( $oObject = null )
+    public function processFiles( $oObject = null, $aFiles = array() )
     {
-        global $_FILES;
-        $myConfig = $this->getConfig();
-
-        if ( isset( $_FILES['myfile']['name'])) {
+        $aFiles = $aFiles ? $aFiles : $_FILES;
+        if ( isset( $aFiles['myfile']['name'] ) ) {
 
             // A. protection for demoshops - strictly defining allowed file extensions
-            $blDemo = false;
-            if ( $myConfig->isDemoShop() ) {
-                $blDemo = true;
-                $aAllowedFiles = array( 'gif', 'jpg', 'png', 'pdf' );
-            }
+            $blDemo = (bool) $this->getConfig()->isDemoShop();
 
             // process all files
-            while (list($key, $value) = each($_FILES['myfile']['name'])) {
-                $aSource = $_FILES['myfile']['tmp_name'];
-                $sSource = $aSource[$key];
-                $aFiletype = explode( "@", $key);
-                $key    = $aFiletype[1];
-                $sType  = $aFiletype[0];
-                $value = strtolower( $value);
+            while ( list( $sKey, $sValue ) = each( $aFiles['myfile']['name'] ) ) {
+
+                $aSource = $aFiles['myfile']['tmp_name'];
+                $sSource = $aSource[$sKey];
+                $aFiletype = explode( "@", $sKey );
+                $sKey    = $aFiletype[1];
+                $sType   = $aFiletype[0];
+                $sValue  = strtolower( $sValue );
 
                 // no file ? - skip
-                if (!$value)
-                    continue;
+                if ( $sValue ) {
 
-                // add type to name
-                $aFilename = explode( ".", $value);
+                    // building file name
+                    $sValue = $this->_prepareImageName( $sValue, $sType, $blDemo );
 
-                $sFileType = trim($aFilename[count($aFilename)-1]);
+                    // finding directory
+                    $sTarget = $this->_getImagePath( $sType ) . $sValue;
 
-                //hack?
-                $aBadFiles = array("php", "jsp", "cgi", "cmf", "exe");
+                    // processing images
+                    $blCopy = $this->_prepareImage( $sType, $sSource, $sTarget );
 
-                if ( in_array($sFileType, $aBadFiles) || ( $blDemo && !in_array( $sFileType, $aAllowedFiles ) ) ) {
-                    oxUtils::getInstance()->showMessageAndExit( "We don't play this game, go away" );
-                }
-
-                if ( isset($sFileType)) {
-                    // removing file type
-                    if ( count($aFilename) > 0) {
-                        unset($aFilename[count($aFilename)-1]);
-                    }
-                    $sFName = "";
-                    if ( isset($aFilename[0])) {
-                        $sFName = preg_replace('/[^a-zA-Z0-9_\.-]/', '', implode('.', $aFilename));
-                    }
-                    $value = $sFName . "_" .strtolower($sType).".".$sFileType;
-                }
-                // Directory
-                $iPos = 0;
-                switch( $sType) {
-                    case 'ICO':
-                    case 'CICO':
-                        $iPos = "icon";
-                        break;
-                    case 'TH':
-                    case 'TC':
-                    default:
-                        $iPos = 0;
-                        break;
-                    case 'P1':
-                        $iPos = 1;
-                        break;
-                    case 'P2':
-                        $iPos = 2;
-                        break;
-                    case 'P3':
-                        $iPos = 3;
-                        break;
-                    case 'P4':
-                        $iPos = 4;
-                        break;
-                    case 'P5':
-                        $iPos = 5;
-                        break;
-                    case 'P6':
-                        $iPos = 6;
-                        break;
-                    case 'P7':
-                        $iPos = 7;
-                        break;
-                    case 'P8':
-                        $iPos = 8;
-                        break;
-                    case 'P9':
-                        $iPos = 9;
-                        break;
-                    case 'P10':
-                        $iPos = 10;
-                        break;
-                    case 'P11':
-                        $iPos = 11;
-                        break;
-                    case 'P12':
-                        $iPos = 12;
-                        break;
-                    case 'Z1':
-                        $iPos = 'z1';
-                        break;
-                    case 'Z2':
-                        $iPos = 'z2';
-                        break;
-                    case 'Z3':
-                        $iPos = 'z3';
-                        break;
-                    case 'Z4':
-                        $iPos = 'z4';
-                        break;
-                    case 'Z5':
-                        $iPos = 'z5';
-                        break;
-                    case 'Z6':
-                        $iPos = 'z6';
-                        break;
-                    case 'Z7':
-                        $iPos = 'z7';
-                        break;
-                    case 'Z8':
-                        $iPos = 'z8';
-                        break;
-                    case 'Z9':
-                        $iPos = 'z9';
-                        break;
-                    case 'Z10':
-                        $iPos = 'z10';
-                        break;
-                    case 'Z11':
-                        $iPos = 'z11';
-                        break;
-                    case 'Z12':
-                        $iPos = 'z12';
-                        break;
-
-                }
-
-                $sTarget = $myConfig->getAbsDynImageDir() . "/$iPos/$value";
-
-                // add file process here
-                $blCopy = false;
-                switch ( $sType) {
-                    case 'TH':
-                        if ( $myConfig->getConfigParam( 'sThumbnailsize' )) {
-                            // convert this file
-                            $aSize = explode( "*", $myConfig->getConfigParam( 'sThumbnailsize' ));
-                            $iX = $aSize[0];
-                            $iY = $aSize[1];
-                            $blCopy = oxUtilspic::getInstance()->resizeImage( $sSource, $sTarget, $iX, $iY );
-                        }
-                        break;
-                    case 'TC':
-                        if ( $myConfig->getConfigParam( 'sCatThumbnailsize' )) {
-                            // convert this file
-                            $aSize = explode( "*", $myConfig->getConfigParam( 'sCatThumbnailsize' ));
-                            $iX = $aSize[0];
-                            $iY = $aSize[1];
-                            $blCopy = oxUtilspic::getInstance()->resizeImage( $sSource, $sTarget, $iX, $iY );
-                        }
-                        break;
-                    case 'CICO':
-                    case 'ICO':
-                        if ( $myConfig->getConfigParam( 'sIconsize' ) ) {
-                            // convert this file
-                            $aSize = explode( "*", $myConfig->getConfigParam( 'sIconsize' ) );
-                            $iX = $aSize[0];
-                            $iY = $aSize[1];
-                            $blCopy = oxUtilspic::getInstance()->resizeImage( $sSource, $sTarget, $iX, $iY );
-
-                        }
-                        break;
-                    case 'P1':
-                    case 'P2':
-                    case 'P3':
-                    case 'P4':
-                    case 'P5':
-                    case 'P6':
-                    case 'P7':
-                    case 'P8':
-                    case 'P9':
-                    case 'P10':
-                    case 'P11':
-                    case 'P12':
-                        //
-                        $aPType = explode("P", $sType);
-                        $iPic = intval($aPType[1]) - 1;
-
-                        // #840A + compatibility with prev. versions
-                        $aDetailImageSizes = $myConfig->getConfigParam( 'aDetailImageSizes' );
-                        $sDetailImageSize = $myConfig->getConfigParam( 'sDetailImageSize' );
-                        if ( isset($aDetailImageSizes["oxpic".intval($aPType[1])])) {
-                            $sDetailImageSize = $aDetailImageSizes["oxpic".intval($aPType[1])];
-                        }
-
-                        if ( $sDetailImageSize ) {
-                            // convert this file
-                            $aSize = explode( "*", $sDetailImageSize);
-                            $iX = $aSize[0];
-                            $iY = $aSize[1];
-                            $blCopy = oxUtilspic::getInstance()->resizeImage( $sSource, $sTarget, $iX, $iY );
-
-                            //make an icon
-                            $sIconName = oxUtilsPic::getInstance()->iconName($sTarget);
-                            $aSize = explode( "*", $myConfig->getConfigParam( 'sIconsize' ) );
-                            $iX = $aSize[0];
-                            $iY = $aSize[1];
-                            $blCopy = oxUtilspic::getInstance()->resizeImage( $sSource, $sIconName, $iX, $iY );
-
-                        }
-                        break;
-
-                    case 'Z1':
-                    case 'Z2':
-                    case 'Z3':
-                    case 'Z4':
-                    case 'Z5':
-                    case 'Z6':
-                    case 'Z7':
-                    case 'Z8':
-                    case 'Z9':
-                    case 'Z10':
-                    case 'Z11':
-                    case 'Z12':
-
-                        //
-                        $aPType = explode("Z", $sType);
-                        $iPic = intval($aPType[1]) - 1;
-
-                        // #840A + compatibility with prev. versions
-                        $aZoomImageSizes = $myConfig->getConfigParam( 'aZoomImageSizes' );
-                        $sZoomImageSize  = $myConfig->getConfigParam( 'sZoomImageSize' );
-                        if ( isset($aZoomImageSizes["oxzoom".intval($aPType[1])])) {
-                            $sZoomImageSize = $aZoomImageSizes["oxzoom".intval($aPType[1])];
-                        }
-
-                        //
-                        if ( $sZoomImageSize) {
-                            // convert this file
-                            $aSize = explode( "*", $sZoomImageSize);
-                            $iX = $aSize[0];
-                            $iY = $aSize[1];
-                            $blCopy = oxUtilspic::getInstance()->resizeImage( $sSource, $sTarget, $iX, $iY );
-                        }
-                        break;
-
-                    default:
-                        break;
+                    // moving ..
+                    if ( !$blCopy && $sSource ) {
+                        $this->_moveImage( $sSource, $sTarget );
                     }
 
-                if ( !$blCopy && $sSource) {
-                    move_uploaded_file( $sSource, $sTarget);
-                    chmod( $sTarget, 0644);
-                }
-                // assign the name
-                if ( isset( $value) && $value) {
-                    $oObject->$key->setValue($value);
+                    // assign the name
+                    if ( isset( $sValue ) && $sValue ) {
+                        $oObject->{$sKey}->setValue( $sValue );
+                    }
                 }
             }
         }
@@ -443,17 +452,14 @@ class oxUtilsFile extends oxSuperCfg
      */
     function checkFile( $sFile )
     {
-        $mySession = $this->getSession();
-
         $aCheckCache = oxSession::getVar("checkcache");
 
-        if ( isset( $aCheckCache[$sFile])) {
+        if ( isset( $aCheckCache[$sFile] ) ) {
             return $aCheckCache[$sFile];
         }
 
         $blRet = false;
 
-        //if (@fclose(@fopen( $sFile, "r")))
         if (is_readable( $sFile)) {
             $blRet = true;
         } else {
@@ -462,7 +468,7 @@ class oxUtilsFile extends oxSuperCfg
         }
 
         $aCheckCache[$sFile] = $blRet;
-        oxSession::setVar("checkcache", $aCheckCache);
+        oxSession::setVar( "checkcache", $aCheckCache );
 
         return $blRet;
     }
@@ -477,42 +483,28 @@ class oxUtilsFile extends oxSuperCfg
     function urlValidate( $sLink )
     {
         $aUrlParts = @parse_url( $sLink );
+        $sHost = ( isset( $aUrlParts["host"] ) && $aUrlParts["host"] ) ? $aUrlParts["host"] : null;
 
-        if ( empty( $aUrlParts["host"] ) ) {
-            return( false );
-        }
+        $blValid = false;
+        if ( $sHost ) {
+            $sDocumentPath  = ( isset( $aUrlParts["path"] ) && $aUrlParts["path"] ) ? $aUrlParts["path"] : '/';
+            $sDocumentPath .= ( isset( $aUrlParts["query"] ) && $aUrlParts["query"] ) ? '?' . $aUrlParts["query"] : '';
 
-        if ( !empty( $aUrlParts["path"] ) ) {
-            $sDocumentPath = $aUrlParts["path"];
-        } else {
-            $sDocumentPath = "/";
-        }
+            $sPort = ( isset( $aUrlParts["port"] ) && $aUrlParts["port"] ) ? $aUrlParts["port"] : '80';
 
-        if ( !empty( $aUrlParts["query"] ) ) {
-            $sDocumentPath .= "?" . $aUrlParts["query"];
-        }
+            // Now (HTTP-)GET $documentpath at $sHost";
+            if ( ( $oConn = @fsockopen( $sHost, $sPort, $iErrNo, $sErrStr, 30 ) ) ) {
+                fwrite ( $oConn, "HEAD {$sDocumentPath} HTTP/1.0\r\nHost: {$sHost}\r\n\r\n" );
+                $sResponse = fgets( $oConn, 22 );
+                fclose( $oConn );
 
-        $sHost = $aUrlParts["host"];
-        $sPort = $aUrlParts["port"];
-
-        // Now (HTTP-)GET $documentpath at $host";
-        if (empty( $sPort ) ) {
-            $sPort = "80";
-        }
-        $socket = @fsockopen( $sHost, $sPort, $errno, $errstr, 30 );
-        if (!$socket) {
-            return(false);
-        } else {
-            fwrite ($socket, "HEAD ".$sDocumentPath." HTTP/1.0\r\nHost: $sHost\r\n\r\n");
-            $http_response = fgets( $socket, 22 );
-
-            if ( ereg("200 OK", $http_response, $regs ) ) {
-                return(true);
-                fclose( $socket );
-            } else {
-                return(false);
+                if ( ereg( "200 OK", $sResponse ) ) {
+                    $blValid = true;
+                }
             }
         }
+
+        return $blValid;
     }
 
     /**

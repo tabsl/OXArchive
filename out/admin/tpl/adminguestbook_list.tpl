@@ -44,8 +44,6 @@ function DeleteThis( sID)
 
 function ChangeEditBar( sLocation, sPos)
 {
-    [{include file="autosave.script.tpl"}]
-
     var oTransfer = parent.edit.document.getElementById("transfer");
     oTransfer.cl.value=sLocation;
 
@@ -120,7 +118,7 @@ window.onLoad = top.reloadEditFrame();
     [{ /if}]
     <td valign="top" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid }]new[{/if}]" height="15"><div class="listitemfloating">&nbsp;<a href="Javascript:EditThis('[{ $listitem->oxgbentries__oxid->value}]');" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]">[{ $listitem->oxgbentries__oxcreate|oxformdate }]</a></div></td>
     <td valign="top" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]"><div class="listitemfloating">&nbsp;<a href="Javascript:EditThis('[{ $listitem->oxgbentries__oxid->value}]');" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]">[{ $listitem->oxuser__oxfname->value }] [{ $listitem->oxuser__oxlname->value }]</a></div></td>
-    <td valign="top" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]"><div class="listitemfloating">&nbsp;<a href="Javascript:EditThis('[{ $listitem->oxgbentries__oxid->value}]');" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]">[{ $listitem->oxgbentries__oxcontent->value|truncate:300:"..":false  }]</a></div></td>
+    <td valign="top" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]"><div class="listitemfloating">&nbsp;<a href="Javascript:EditThis('[{ $listitem->oxgbentries__oxid->value}]');" class="[{ $listclass}][{if !$listitem->oxgbentries__oxviewed->value && $listitem->getId() != $oxid}]new[{/if}]">[{ $listitem->oxgbentries__oxcontent->value|oxtruncate:300:"..":false  }]</a></div></td>
     <td  class="[{ $listclass}]">[{if !$readonly}]<a href="Javascript:DeleteThis('[{ $listitem->oxgbentries__oxid->value }]');" class="delete" id="del.[{$_cnt}]" [{include file="help.tpl" helpid=item_delete}]></a>[{/if}]</td>
 
 </tr>
@@ -139,7 +137,7 @@ window.onLoad = top.reloadEditFrame();
 
 <script type="text/javascript">
 if (parent.parent)
-{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->value}]";
+{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->getRawValue()|oxaddslashes}]";
     parent.parent.sMenuItem    = "[{ oxmultilang ident="ADMINGB_LIST_MENUITEM" }]";
     parent.parent.sMenuSubItem = "[{ oxmultilang ident="ADMINGB_LIST_MENUSUBITEM" }]";
     parent.parent.sWorkArea    = "[{$_act}]";

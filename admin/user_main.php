@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: user_main.php 14641 2008-12-11 14:11:43Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: user_main.php 17243 2009-03-16 15:16:57Z arvydas $
  */
 
 /**
@@ -57,17 +58,18 @@ class User_Main extends oxAdminDetails
 
         // User rights
         $aUserRights = array();
+        $oLang = oxLang::getInstance();
 
         $iPos = count( $aUserRights );
         $aUserRights[$iPos] = new OxstdClass();
-        $aUserRights[$iPos]->name = oxLang::getInstance()->translateString( "user", oxLang::getInstance()->getTplLanguage() );
+        $aUserRights[$iPos]->name = $oLang->translateString( "user", $oLang->getTplLanguage() );
         $aUserRights[$iPos]->id   = "user";
 
         if ( $blisMallAdmin ) {
             $iPos = count( $aUserRights );
             $aUserRights[$iPos] = new OxstdClass();
             $aUserRights[$iPos]->id   = "malladmin";
-            $aUserRights[$iPos]->name = oxLang::getInstance()->translateString( "Admin", oxLang::getInstance()->getTplLanguage() );
+            $aUserRights[$iPos]->name = $oLang->translateString( "Admin", $oLang->getTplLanguage() );
         }
 
 
@@ -102,7 +104,7 @@ class User_Main extends oxAdminDetails
 
         // passing country list
         $oCountryList = oxNew( "oxCountryList" );
-        $oCountryList->loadActiveCountries( oxLang::getInstance()->getTplLanguage() );
+        $oCountryList->loadActiveCountries( $oLang->getTplLanguage() );
 
         $this->_aViewData["countrylist"] = $oCountryList;
 
@@ -190,8 +192,6 @@ class User_Main extends oxAdminDetails
             // set oxid if inserted
             if ( $soxId == "-1")
                 oxSession::setVar( "saved_oxid", $oUser->oxuser__oxid->value);
-
-            return $this->autosave();
         } catch (Exception $e) {
             $this->_sSaveError = $e->getMessage();
         }

@@ -6,6 +6,7 @@
   [{if isset($meta_refresh_sec,$meta_refresh_url) }]
   <meta http-equiv=Refresh content="[{$meta_refresh_sec}];URL=[{$meta_refresh_url}]">
   [{/if}]
+  <link rel="shortcut icon" href="[{ $oViewConf->getBaseDir() }]favicon.ico">
   <link rel="stylesheet" href="[{$shop->basetpldir}]main.css">
   <link rel="stylesheet" href="[{$shop->basetpldir}]colors.css">
   [{include file="tooltips.tpl"}]
@@ -25,13 +26,21 @@
 
     window.onclick = focusPopup;
 
+    function cleanupLongDesc( sValue )
+    {
+        if ( sValue == '<br>' || sValue == '<br />' ) {
+            return '';
+        }
+        return sValue;
+    }
+
     function copyLongDesc( sIdent )
     {
         var textVal = null;
         try {
             if ( WPro.editors[sIdent] != null ) {
                WPro.editors[sIdent].prepareSubmission();
-               textVal = WPro.editors[sIdent].getValue();
+               textVal = cleanupLongDesc( WPro.editors[sIdent].getValue() );
             }
         } catch(err) {}
 
@@ -39,7 +48,7 @@
             var varName = 'editor_'+sIdent;
             var varEl = document.getElementById(varName);
             if (varEl != null) {
-                textVal = varEl.value;
+                textVal = cleanupLongDesc( varEl.value );
             }
         }
 

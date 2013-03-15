@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxi18n.php 14388 2008-11-26 15:43:17Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxi18n.php 17248 2009-03-16 15:22:07Z arvydas $
  */
 
 /**
@@ -78,7 +79,7 @@ class oxI18n extends oxBase
     public function setLanguage( $iLang = null )
     {
         $myConfig = $this->getConfig();
-        if( isset($iLang)) {
+        if ( isset($iLang)) {
             $this->_iLanguage = (int) $iLang;
         } else {
             $this->_iLanguage = (int) oxLang::getInstance()->getBaseLanguage();
@@ -209,8 +210,9 @@ class oxI18n extends oxBase
      */
     public function assign($dbRecord)
     {
-        oxLang::getInstance()->getBaseLanguage();
-        $sLangTag = oxLang::getInstance()->getLanguageTag($this->getLanguage());
+        $oLang = oxLang::getInstance();
+        $oLang->getBaseLanguage();
+        $sLangTag = $oLang->getLanguageTag($this->getLanguage());
         if ($this->_blEmployMultilanguage && $sLangTag) {
             foreach ($dbRecord as $sField => $sVal) {
                 //handling multilang

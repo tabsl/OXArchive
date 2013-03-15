@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxbase.php 14504 2008-12-05 12:09:52Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxbase.php 17830 2009-04-03 14:23:31Z tomas $
  */
 
 /**
@@ -149,6 +150,20 @@ class oxBase extends oxSuperCfg
     protected $_blIsSeoObject = false;
 
     /**
+     * Read only for object
+     *
+     * @var bool
+     */
+    protected $_blReadOnly = false;
+
+    /**
+     * Indicates if the item is list element
+     *
+     * @var bool
+     */
+    protected $_blIsInList = false;
+
+    /**
      * Class constructor, sets active shop.
      */
     public function __construct()
@@ -210,6 +225,9 @@ class oxBase extends oxSuperCfg
             return $this->getId();
         }
 
+        if ( $sName == 'blReadOnly' ) {
+            return $this->isReadOnly();
+        }
         // implementing lazy loading fields
         // This part of the code is slow and normally is called before field cache is built.
         // Make sure it is not called after first page is loaded and cache data is fully built.
@@ -242,10 +260,11 @@ class oxBase extends oxSuperCfg
 
                     //save names to cache for next loading
                     if ($this->_sCacheKey) {
+                        $myUtils = oxUtils::getInstance();
                         $sCacheKey = 'fieldnames_' . $this->_sCoreTable . "_" . $this->_sCacheKey;
-                        $aFieldNames = oxUtils::getInstance()->fromFileCache($sCacheKey);
+                        $aFieldNames = $myUtils->fromFileCache($sCacheKey);
                         $aFieldNames[$sFieldName] = $iFieldStatus;
-                        oxUtils::getInstance()->toFileCache($sCacheKey, $aFieldNames);
+                        $myUtils->toFileCache($sCacheKey, $aFieldNames);
                     }
 
                 } catch ( Exception $e ) {
@@ -685,18 +704,17 @@ class oxBase extends oxSuperCfg
             return false;
         }
 
-        $myConfig = $this->getConfig();
         $blRet = false;
 
         // #739A - should be executed here because of date/time formatting feature
-        if ( $this->isAdmin() && !$myConfig->getConfigParam( 'blSkipFormatConversion' ) ) {
+        if ( $this->isAdmin() && !$this->getConfig()->getConfigParam( 'blSkipFormatConversion' ) ) {
             foreach ($this->_aFieldNames as $sName => $sVal) {
                 $sLongName = $this->_getFieldLongName($sName);
-                if ( $this->$sLongName->fldtype == "datetime") {
+                if ( isset($this->$sLongName->fldtype) && $this->$sLongName->fldtype == "datetime" ) {
                     oxDb::getInstance()->convertDBDateTime( $this->$sLongName, true );
-                } elseif ( $this->$sLongName->fldtype == "timestamp") {
+                } elseif ( isset($this->$sLongName->fldtype) && $this->$sLongName->fldtype == "timestamp" ) {
                     oxDb::getInstance()->convertDBTimestamp( $this->$sLongName, true);
-                } elseif ( $this->$sLongName->fldtype == "date") {
+                } elseif ( isset($this->$sLongName->fldtype) && $this->$sLongName->fldtype == "date" ) {
                     oxDb::getInstance()->convertDBDate( $this->$sLongName, true);
                 }
             }
@@ -887,6 +905,26 @@ class oxBase extends oxSuperCfg
         if ( $error = $this->getError($sField) ) {
             return $error;
         }
+    }
+
+    /**
+     * Sets item as list element
+     *
+     * @return null
+     */
+    public function setInList()
+    {
+        $this->_blIsInList = true;
+    }
+
+    /**
+     * Checks if this instance is one of oxList elements.
+     *
+     * @return bool
+     */
+    protected function _isInList()
+    {
+        return $this->_blIsInList;
     }
 
     /**
@@ -1150,7 +1188,7 @@ class oxBase extends oxSuperCfg
             }
         }
         // if we have a double field we replace "," with "." in case somebody enters it in european format
-        if (isset($this->$sLongFieldName) && $this->$sLongFieldName->fldtype == "double") {
+        if (isset($this->$sLongFieldName) && isset($this->$sLongFieldName->fldtype) && $this->$sLongFieldName->fldtype == "double") {
             $sValue = str_replace( ",", ".", $sValue );
         }
 
@@ -1276,18 +1314,19 @@ class oxBase extends oxSuperCfg
 
         $oDB      = oxDb::getDb(true);
         $myConfig = $this->getConfig();
+        $myUtils  = oxUtils::getInstance();
 
         // let's get a new ID
         if ( !$this->getId()) {
             $this->setId();
         }
 
-        $sIDKey = oxUtils::getInstance()->getArrFldName( $this->_sCoreTable.".oxid");
+        $sIDKey = $myUtils->getArrFldName( $this->_sCoreTable.".oxid");
         $this->$sIDKey = new oxField($this->getId(), oxField::T_RAW);
         $sInsert= "Insert into {$this->_sCoreTable} set ";
 
         //setting oxshopid
-        $sShopField = oxUtils::getInstance()->getArrFldName($this->_sCoreTable.".oxshopid");
+        $sShopField = $myUtils->getArrFldName($this->_sCoreTable.".oxshopid");
         if (isset($this->$sShopField) && !$this->$sShopField->value)
             $this->$sShopField = new oxField($myConfig->getShopId(), oxField::T_RAW);
         $sInsert .= $this->_getUpdateFields( false );
@@ -1380,6 +1419,28 @@ class oxBase extends oxSuperCfg
             return true;
         }
         return false;
+    }
+
+    /**
+     * Is object readonly
+     *
+     * @return bool
+     */
+    public function isReadOnly()
+    {
+        return $this->_blReadOnly;
+    }
+
+    /**
+     * Set object readonly
+     *
+     * @param bool $blReadOnly readonly flag
+     *
+     * @return null
+     */
+    public function setReadOnly( $blReadOnly )
+    {
+        $this->_blReadOnly = $blReadOnly;
     }
 
 }

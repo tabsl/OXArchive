@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: article_review.php 14018 2008-11-06 13:33:39Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: article_review.php 17479 2009-03-20 12:32:53Z arvydas $
  */
 
 /**
@@ -52,28 +53,7 @@ class Article_Review extends oxAdminDetails
             $oArticle->load( $soxId);
 
 
-
-            $sSelect  = "select oxreviews.* from oxreviews
-                         where oxreviews.OXOBJECTID = '".$oArticle->oxarticles__oxid->value
-                        ."' and oxreviews.oxtype = 'oxarticle'";
-
-            $this->aVariantList = $oArticle->getVariants();
-            if ( $myConfig->getConfigParam( 'blShowVariantReviews' ) && count( $this->aVariantList )) {
-
-                // verifying rights
-                foreach ( $this->aVariantList as $oVariant ) {
-                    $sSelect .= "or oxreviews.oxparentid = '".$oVariant->oxarticles__oxid->value."' ";
-                }
-            }
-
-            //$sSelect .= "and oxreviews.oxtext".oxLang::getInstance()->getLanguageTag($this->_iEditLang)." != ''";
-            $sSelect .= "and oxreviews.oxlang = '" . $this->_iEditLang . "'";
-            $sSelect .= "and oxreviews.oxtext != '' ";
-
-            // all reviews
-            $oRevs = oxNew( "oxlist" );
-            $oRevs->init( "oxreview" );
-            $oRevs->selectString( $sSelect );
+            $oRevs = $this->_getReviewList($oArticle);
 
             foreach ( $oRevs as $oRev ) {
                 if ( $oRev->oxreviews__oxid->value == $sRevoxId ) {
@@ -102,6 +82,41 @@ class Article_Review extends oxAdminDetails
     }
 
     /**
+     * returns reviews list for article
+     *
+     * @param oxArticle $oArticle
+     * @return oxList
+     */
+    protected function _getReviewList($oArticle)
+    {
+        $sSelect  = "select oxreviews.* from oxreviews
+                     where oxreviews.OXOBJECTID = '".$oArticle->oxarticles__oxid->value
+                    ."' and oxreviews.oxtype = 'oxarticle'";
+
+        $aVariantList = $oArticle->getVariants();
+
+        if ( $this->getConfig()->getConfigParam( 'blShowVariantReviews' ) && count( $aVariantList )) {
+
+            // verifying rights
+            foreach ( $aVariantList as $oVariant ) {
+                $sSelect .= "or oxreviews.oxobjectid = '".$oVariant->oxarticles__oxid->value."' ";
+            }
+
+        }
+
+        //$sSelect .= "and oxreviews.oxtext".oxLang::getInstance()->getLanguageTag($this->_iEditLang)." != ''";
+        $sSelect .= "and oxreviews.oxlang = '" . $this->_iEditLang . "'";
+        $sSelect .= "and oxreviews.oxtext != '' ";
+
+        // all reviews
+        $oRevs = oxNew( "oxlist" );
+        $oRevs->init( "oxreview" );
+        $oRevs->selectString( $sSelect );
+
+        return $oRevs;
+    }
+
+    /**
      * Saves article review information changes.
      *
      * @return mixed
@@ -126,8 +141,6 @@ class Article_Review extends oxAdminDetails
 
         $oReview->assign( $aParams);
         $oReview->save();
-
-        return $this->autosave();
     }
 
     /**

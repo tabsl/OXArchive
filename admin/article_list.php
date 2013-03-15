@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: article_list.php 14018 2008-11-06 13:33:39Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: article_list.php 17958 2009-04-07 14:29:36Z rimvydas.paskevicius $
  */
 
 /**
@@ -45,25 +46,6 @@ class Article_List extends oxAdminList
     protected $_sListType = 'oxarticlelist';
 
     /**
-     * Sets SQL query parameters, executes parent
-     * method parent::Init().
-     *
-     * @return null
-     */
-    public function init()
-    {
-        //loading article
-        $soxId = oxConfig::getParameter( "oxid");
-        if ($soxId && $soxId != -1) {
-            $oArticle = oxNew( "oxarticle");
-            $oArticle->load( $soxId);
-            $oArticle->getAdminVariants();
-        }
-
-        parent::init();
-    }
-
-    /**
      * Collects articles base data and passes them according to filtering rules,
      * returns name of template file "article_list.tpl".
      *
@@ -72,12 +54,14 @@ class Article_List extends oxAdminList
     public function render()
     {
         $myConfig = $this->getConfig();
-        $sPwrSearchFld = oxConfig::getParameter( "pwrsearchfld");
-        if( !isset( $sPwrSearchFld))
+        $sPwrSearchFld = oxConfig::getParameter( "pwrsearchfld" );
+        if ( !isset( $sPwrSearchFld ) ) {
             $sPwrSearchFld  = "oxtitle";
+        }
 
-        foreach ( $this->_oList as $key => $oArticle) {
-            $sFieldName = "oxarticles__".strtolower($sPwrSearchFld);
+        $oArticle = null;
+        foreach ( $this->_oList as $key => $oArticle ) {
+            $sFieldName = "oxarticles__".strtolower( $sPwrSearchFld );
 
             // formatting view
             if ( !$myConfig->getConfigParam( 'blSkipFormatConversion' ) ) {
@@ -97,41 +81,34 @@ class Article_List extends oxAdminList
         parent::render();
 
         // load fields
-        $oArticle = oxNew("oxarticle");
+        if ( !$oArticle ) {
+            $oArticle = $this->_oList->getBaseObject();
+        }
         $this->_aViewData["pwrsearchfields"] = $oArticle->getSearchableFields();
-        $this->_aViewData["pwrsearchfld"] =  strtoupper($sPwrSearchFld);
+        $this->_aViewData["pwrsearchfld"]    = strtoupper( $sPwrSearchFld );
 
-        if ( isset( $this->_aViewData["where"])) {
+        $aWhere = array();
+        if ( isset( $this->_aViewData["where"] ) ) {
             $aWhere = &$this->_aViewData["where"];
-            $sFieldName = "oxarticles__".strtoupper($sPwrSearchFld);
-            if ( isset( $aWhere->$sFieldName))
+            $sFieldName = "oxarticles__".strtoupper( $sPwrSearchFld );
+            if ( isset( $aWhere->$sFieldName ) )
                 $this->_aViewData["pwrsearchinput"] = $aWhere->$sFieldName;
         }
 
         // parent categorie tree
         $oCatTree = oxNew( "oxCategoryList");
-        $oCatTree->buildList($myConfig->getConfigParam( 'bl_perfLoadCatTree' ));
+        $oCatTree->buildList( $myConfig->getConfigParam( 'bl_perfLoadCatTree' ) );
 
-        $sChosenCat  = oxConfig::getParameter( "art_category");
-        if ( isset( $aWhere ) && $aWhere ) {
+        if ( ( $sChosenCat= oxConfig::getParameter( "art_category") ) ) {
             foreach ($oCatTree as $oCategory ) {
                 if ( $oCategory->oxcategories__oxid->value == $sChosenCat ) {
                     $oCategory->selected = 1;
+                    break;
                 }
             }
-
-            /*
-            while (list($key, $val) = each($oCatTree)) {
-                echo " AAAAA ";
-                if ( $val->oxcategories__oxid->value == $sChosenCat) {
-                    $val->selected = 1;
-                    $oCatTree[$key] = $val;
-                }
-            }
-            */
         }
-        $this->_aViewData["cattree"] =  $oCatTree;
 
+        $this->_aViewData["cattree"] = $oCatTree;
         return "article_list.tpl";
     }
 
@@ -145,12 +122,10 @@ class Article_List extends oxAdminList
     protected function _changeselect( $sSql )
     {
         // add category
-        $sChosenCat  = oxConfig::getParameter( "art_category");
-        if ( $sChosenCat ) {
-            $sTable  = getViewName("oxarticles");
-            $sO2CView = getViewName("oxobject2category");
-            $sInsert = "from $sTable left join $sO2CView on $sTable.oxid = $sO2CView.oxobjectid where $sO2CView.oxcatnid = '$sChosenCat' and ";
-            //$sSql = str_replace( "from\s+$sTable\s+where", $sInsert, $sSql);
+        if ( ( $sChosenCat = oxConfig::getParameter( "art_category" ) ) ) {
+            $sTable   = getViewName( "oxarticles" );
+            $sO2CView = getViewName( "oxobject2category" );
+            $sInsert  = "from $sTable left join $sO2CView on $sTable.oxid = $sO2CView.oxobjectid where $sO2CView.oxcatnid = '$sChosenCat' and ";
             $sSql = preg_replace( "/from\s+$sTable\s+where/i", $sInsert, $sSql);
         }
 
@@ -165,33 +140,34 @@ class Article_List extends oxAdminList
     public function buildWhere()
     {
         // we override this to select only parent articles
-        $sViewName = getViewName( 'oxarticles' );
         $this->_aWhere = parent::buildWhere();
-        if ( !is_array($this->_aWhere))
+        if ( !is_array( $this->_aWhere ) ) {
             $this->_aWhere = array();
+        }
+
         // adding folder check
         $sFolder = oxConfig::getParameter( 'folder' );
         if ( $sFolder && $sFolder != '-1' ) {
+            $sViewName = getViewName( 'oxarticles' );
             $this->_aWhere["$sViewName.oxfolder"] = $sFolder;
         }
+
         return $this->_aWhere;
     }
 
     /**
      * Adding empty parent check
      *
-     * @param array  $aWhere  SQL condition array
-     * @param string $sqlFull SQL query string
+     * @param array  $aWhere SQL condition array
+     * @param string $sQ     SQL query string
      *
      * @return $sQ
      */
-    protected function _prepareWhereQuery( $aWhere, $sqlFull )
+    protected function _prepareWhereQuery( $aWhere, $sQ )
     {
-        $sQ = parent::_prepareWhereQuery( $aWhere, $sqlFull );
-        $sViewName = getViewName( 'oxarticles' );
-        //searchong for empty oxfolder fields
-        $sQ .= " and $sViewName.oxparentid = ''";
-        return $sQ;
+        $sQ = parent::_prepareWhereQuery( $aWhere, $sQ );
+        //searching for empty oxfolder fields
+        return $sQ . " and ".getViewName( 'oxarticles' ).".oxparentid = '' ";
     }
 
     /**
@@ -201,8 +177,9 @@ class Article_List extends oxAdminList
      */
     public function deleteEntry()
     {
+        $sOxId = oxConfig::getParameter( "oxid" );
         $oArticle = oxNew( "oxarticle");
-        if ( $oArticle->load( oxConfig::getParameter( "oxid") ) ) {
+        if ( $sOxId && $oArticle->load( $sOxId ) ) {
             parent::deleteEntry();
         }
     }

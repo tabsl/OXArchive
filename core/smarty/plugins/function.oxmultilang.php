@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package smartyPlugins
- * @copyright © OXID eSales AG 2003-2009
- * $Id: function.oxmultilang.php 13723 2008-10-26 22:59:58Z alfonsas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: function.oxmultilang.php 17246 2009-03-16 15:18:58Z arvydas $
  */
 
 /*
@@ -28,55 +29,29 @@
 * add [{ oxmultilang ident="..." }] where you want to display content
 * -------------------------------------------------------------
 */
-function smarty_function_oxmultilang($params, &$smarty)
-{    $myConfig = oxConfig::getInstance();
+function smarty_function_oxmultilang( $params, &$smarty )
+{
+    $sIdent  = isset( $params['ident'] ) ? $params['ident'] : 'IDENT MISSING';
+    $iLang   = null;
+    $blAdmin = isAdmin();
+    $oLang = oxLang::getInstance();
 
-    if ( isAdmin() )
-    {
-        static $aLangCache = array();
-
-        $iLang = oxLang::getInstance()->getTplLanguage();
-
-        if ( !isset( $iLang ) )
+    if ( $blAdmin ) {
+        $iLang = $oLang->getTplLanguage();
+        if ( !isset( $iLang ) ) {
             $iLang = 0;
-
-        if( isset( $params['ident']))
-            $sIdent = $params['ident'];
-        else
-            $sIdent = "IDENT MISSING";
-
-        $sSourceFile  = $myConfig->getLanguagePath('lang.php', true, $iLang);
-		$sSourceFile2 = $myConfig->getLanguagePath('cust_lang.php', true, $iLang);
-		 
-        if (!isset($aLangCache[$iLang])) {   
-        	require( $sSourceFile);
-            $aLangCache[$iLang] = $aLang;
-            require( $sSourceFile2);
-            $aLangCache[$iLang] = array_merge($aLangCache[$iLang], $aLang);
-        }
-
-        $aCurrCache = &$aLangCache[$iLang];
-        if ( isset( $aCurrCache[$sIdent]))
-            return $aCurrCache[$sIdent];
-
-        if ( !isset( $params['noerror'] ) && $params['noerror'] ) {
-            return '<b>ERROR : Translation for '.$sIdent.' not found in '.$sSourceFile.' !</b>';
-        } else {
-            return $sIdent;
         }
     }
-    else
-    {
-        if( isset( $params['ident']))
-            $sIdent = $params['ident'];
-        else
-            $sIdent = "IDENT MISSING";
-        try{
-            return oxLang::getInstance()->translateString($sIdent);
-        }catch(oxLanguageException $oEx){
-            // is thrown in debug mode and has to be caught here, as smarty hangs otherwise!
-            return $sIdent;
-        }
+
+    try {
+        $sTranslation = $oLang->translateString( $sIdent, $iLang, $blAdmin );
+    } catch ( oxLanguageException $oEx ) {
+        // is thrown in debug mode and has to be caught here, as smarty hangs otherwise!
     }
-    return "";
+
+    if ( $blAdmin && $sTranslation == $sIdent && !isset( $params['noerror'] ) ) {
+        $sTranslation = '<b>ERROR : Translation for '.$sIdent.' not found!</b>';
+    }
+
+    return $sTranslation;
 }

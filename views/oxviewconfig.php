@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxviewconfig.php 14225 2008-11-17 08:42:15Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxviewconfig.php 17642 2009-03-27 13:58:14Z arvydas $
  */
 
 /**
@@ -105,6 +106,56 @@ class oxViewConfig extends oxSuperCfg
     public function getActCatId()
     {
         return oxConfig::getParameter( 'cnid' );
+    }
+
+    /**
+     * Returns active manufacturer id
+     *
+     * @return string
+     */
+    public function getActManufacturerId()
+    {
+        return oxConfig::getParameter( 'mnid' );
+    }
+
+    /**
+     * Returns parameters which should be appended to url
+     *
+     * @deprecated use oxViewConfig::getNavUrlParams
+     *
+     * @return string
+     */
+    public function getTypeLinkParams()
+    {
+        $sLink = '';
+        if ( ( $sId = $this->getActCatId() ) ) {
+            $sLink .= "cnid={$sId}";
+        }
+        if ( ( $sId = $this->getActManufacturerId() ) ) {
+            $sLink .= "mnid={$sId}";
+        }
+
+        return $sLink;
+    }
+
+    /**
+     * Returns parameters which should be appended to form
+     *
+     * @deprecated use oxViewConfig::getNavFormParams
+     *
+     * @return string
+     */
+    public function getTypeParams()
+    {
+        $sForm = '';
+        if ( ( $sId = $this->getActCatId() ) ) {
+            $sForm .= "<input type=\"hidden\" name=\"cnid\" value=\"{$sId}\">\n";
+        }
+        if ( ( $sId = $this->getActManufacturerId() ) ) {
+            $sForm .= "<input type=\"hidden\" name=\"mnid\" value=\"{$sId}\">\n";
+        }
+
+        return $sForm;
     }
 
     /**
@@ -645,7 +696,24 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getNavUrlParams()
     {
-        return $this->getViewConfigParam( 'navurlparams' );
+        if ( ( $sParams = $this->getViewConfigParam( 'navurlparams' ) ) === null ) {
+            $sParams = '';
+            $aNavParams = $this->getConfig()->getActiveView()->getNavigationParams();
+            foreach ( $aNavParams as $sName => $sValue ) {
+                if ( isset( $sValue ) ) {
+                    if ( $sParams ) {
+                        $sParams .= '&amp;';
+                    }
+                    $sParams .= "{$sName}=".rawurlencode( $sValue );
+                }
+            }
+            if ( $sParams ) {
+                $sParams = '&amp;'.$sParams;
+            }
+            $this->setViewConfigParam( 'navurlparams', $sParams );
+        }
+
+        return $sParams;
     }
 
     /**
@@ -655,7 +723,19 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getNavFormParams()
     {
-        return $this->getViewConfigParam( 'navformparams' );
+
+        if ( ( $sParams = $this->getViewConfigParam( 'navformparams' ) ) === null ) {
+            $oStr = getStr();
+            $sParams = '';
+            $aNavParams = $this->getConfig()->getActiveView()->getNavigationParams();
+            foreach ( $aNavParams as $sName => $sValue ) {
+                if ( isset( $sValue ) ) {
+                    $sParams .= "<input type=\"hidden\" name=\"{$sName}\" value=\"".$oStr->htmlentities( $sValue )."\">\n";
+                }
+            }
+            $this->setViewConfigParam( 'navformparams', $sParams );
+        }
+        return $sParams;
     }
 
     /**
@@ -707,16 +787,6 @@ class oxViewConfig extends oxSuperCfg
     {
         $oShop = $this->getConfig()->getActiveShop();
         return isset( $oShop->oxshops__oxismultishop ) ? ( (bool) $oShop->oxshops__oxismultishop->value ) : false;
-    }
-
-    /**
-     * Returns autosave config option
-     *
-     * @return bool
-     */
-    public function isAutoSave()
-    {
-        return $this->getConfig()->getConfigParam( 'blAutoSave' );
     }
 
     /**
@@ -884,9 +954,6 @@ class oxViewConfig extends oxSuperCfg
                     break;
                 case 'ismultishop':
                     $sVarValue = $this->isMultiShop();
-                    break;
-                case 'blAutoSave':
-                    $sVarValue = $this->isAutoSave();
                     break;
                 case 'sServiceUrl':
                     $sVarValue = $this->getServiceUrl();

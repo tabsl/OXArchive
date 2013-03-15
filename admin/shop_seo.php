@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: shop_seo.php 14839 2008-12-19 10:22:19Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: shop_seo.php 17700 2009-03-31 13:30:13Z arvydas $
  */
 
 /**
@@ -44,28 +45,12 @@ class Shop_Seo extends Shop_Config
     {
         parent::render();
 
-        //
-        $oShop = $this->_aViewData["edit"];
+        $this->_aViewData['subjlang'] = $this->_iEditLang;
 
-        $oShop->loadInLang( $this->_iEditLang, $oShop->oxshops__oxid->value );
-
-        // load object in other languages
-        $oOtherLang = $oShop->getAvailableInLangs();
-        if (!isset($oOtherLang[$this->_iEditLang])) {
-            // echo "language entry doesn't exist! using: ".key($oOtherLang);
-            $oShop->loadInLang( key($oOtherLang), $oShop->oxshops__oxid->value );
-        }
-
-        $aLang = array_diff ( oxLang::getInstance()->getLanguageNames(), $oOtherLang);
-        if ( count( $aLang))
-            $this->_aViewData["posslang"] = $aLang;
-
-        foreach ( $oOtherLang as $id => $language) {
-            $oLang = new oxStdClass();
-            $oLang->sLangDesc = $language;
-            $oLang->selected = ($id == $this->_iEditLang);
-            $this->_aViewData["otherlang"][$id] = clone $oLang;
-        }
+        // loading shop
+        $oShop = oxNew( 'oxshop' );
+        $oShop->loadInLang( $this->_iEditLang, $this->_aViewData['edit']->getId() );
+        $this->_aViewData['edit'] = $oShop;
 
         // loading static seo urls
         $sQ = "select oxstdurl, oxobjectid from oxseo where oxtype='static' and oxshopid='".$oShop->getId()."' group by oxobjectid order by oxstdurl";
@@ -130,13 +115,6 @@ class Shop_Seo extends Shop_Config
 
         $oEncoder = oxSeoEncoder::getInstance();
 
-        // on default language change all shop SEO urls must be revalidated
-        $iDefLang = $this->getConfig()->getConfigParam( 'iDefSeoLang' );
-        $iUserLang = (int) ( ( isset( $aConfParams['iDefSeoLang'] ) )? $aConfParams['iDefSeoLang'] : 0 );
-        if ( $iDefLang != $iUserLang ) {
-            $this->resetSeoData( $soxId );
-        }
-
         $oShop = oxNew( 'oxshop' );
         $oShop->load( $soxId );
 
@@ -149,10 +127,49 @@ class Shop_Seo extends Shop_Config
 
         // saving static url changes
         if ( is_array( $aStaticUrl = oxConfig::getParameter( 'aStaticUrl' ) ) ) {
-            $this->_sActSeoObject = $oEncoder->encodeStaticUrls( $aStaticUrl, $oShop->getId(), $this->_iEditLang );
+            $this->_sActSeoObject = $oEncoder->encodeStaticUrls( $this->_processUrls( $aStaticUrl ), $oShop->getId(), $this->_iEditLang );
+        }
+    }
+
+    /**
+     * Goes through urls array and prepares them for saving to db
+     *
+     * @param array $aUrls urls to process
+     *
+     * @return array
+     */
+    protected function _processUrls( $aUrls )
+    {
+        if ( isset( $aUrls['oxseo__oxstdurl'] ) && $aUrls['oxseo__oxstdurl'] ) {
+            $aUrls['oxseo__oxstdurl'] = $this->_cleanupUrl( $aUrls['oxseo__oxstdurl'] );
         }
 
-        return $this->autosave();
+        if ( isset( $aUrls['oxseo__oxseourl'] ) && is_array( $aUrls['oxseo__oxseourl'] ) ) {
+            foreach ( $aUrls['oxseo__oxseourl'] as $iPos => $sUrl) {
+                $aUrls['oxseo__oxseourl'][$iPos] = $this->_cleanupUrl( $sUrl );
+            }
+        }
+
+        return $aUrls;
+    }
+
+    /**
+     * processes urls by fixing "&amp;", "&"
+     *
+     * @param string $sUrl processable url
+     *
+     * @return string
+     */
+    protected function _cleanupUrl( $sUrl )
+    {
+        // replacing &amp; to & or removing double &&
+        while ( ( stripos( $sUrl, '&amp;' ) !== false ) || ( stripos( $sUrl, '&&' ) !== false ) ) {
+            $sUrl = str_replace( '&amp;', '&', $sUrl );
+            $sUrl = str_replace( '&&', '&', $sUrl );
+        }
+
+        // converting & to &amp;
+        return str_replace( '&', '&amp;', $sUrl );
     }
 
     /**
@@ -162,7 +179,7 @@ class Shop_Seo extends Shop_Config
      */
     public function dropSeoIds()
     {
-        $sQ = 'delete from oxseo where oxshopid = "'.oxConfig::getInstance()->getShopId().'" and oxtype != "static" and oxfixed != 1';
+        $sQ = 'delete from oxseo where oxshopid = "'.$this->getConfig()->getShopId().'" and oxtype != "static" and oxfixed != 1';
         oxDB::getDb()->execute( $sQ );
     }
 

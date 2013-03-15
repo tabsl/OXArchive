@@ -1,4 +1,4 @@
-[{include file="headitem.tpl" title="TOOLS_LTITLE"|oxmultilangassign}]
+[{include file="headitem.tpl" title="TOOLS_MAIN_TITLE"|oxmultilangassign}]
 [{ if $readonly }]
     [{assign var="readonly" value="readonly disabled"}]
 [{else}]

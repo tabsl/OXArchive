@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxseoencodervendor.php 14368 2008-11-26 07:36:13Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxseoencodervendor.php 17768 2009-04-02 10:52:12Z sarunas $
  */
 
 /**
@@ -78,7 +79,7 @@ class oxSeoEncoderVendor extends oxSeoEncoder
             }
 
             $sSeoUrl .= $this->_prepareTitle( $oVendor->oxvendor__oxtitle->value .'/' );
-            $sSeoUrl  = $this->_getUniqueSeoUrl( $sSeoUrl, '/', $oVendor->getId() );
+            $sSeoUrl  = $this->_getUniqueSeoUrl( $sSeoUrl, '/', $oVendor->getId(), $iLang );
 
             // save to db
             $this->_saveToDb( 'oxvendor', $oVendor->getId(), $oVendor->getStdLink(), $sSeoUrl, $iLang );
@@ -124,5 +125,18 @@ class oxSeoEncoderVendor extends oxSeoEncoder
             $iLang = $oVendor->getLanguage();
         }
         return $this->_getFullUrl( $this->getVendorUri( $oVendor, $iLang ), $iLang );
+    }
+
+    /**
+     * Deletes Vendor seo entry
+     *
+     * @param oxvendor $oVendor Vendor object
+     *
+     * @return null
+     */
+    public function onDeleteVendor($oVendor)
+    {
+        $sId = oxDb::getDb()->quote($oVendor->getId());
+        oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sId and oxtype = 'oxvendor'");
     }
 }

@@ -14,9 +14,9 @@
         <form action="[{ $oViewConf->getSelfActionLink() }]" name="newsletter" method="post">
           <div>
               [{ $oViewConf->getHiddenSid() }]
+              [{ $oViewConf->getNavFormParams() }]
               <input type="hidden" name="fnc" value="subscribe">
               <input type="hidden" name="cl" value="account_newsletter">
-              <input type="hidden" name="cnid" value="[{ $oViewConf->getActCatId() }]">
               <label>[{ oxmultilang ident="ACCOUNT_NEWSLETTER_SUBSCRIPTION" }]&nbsp;&nbsp;</label>
               <select name="status">
                 <option value="1"   [{if $oView->isNewsletter() }]selected[{/if }] >[{ oxmultilang ident="ACCOUNT_NEWSLETTER_YES" }]</option>

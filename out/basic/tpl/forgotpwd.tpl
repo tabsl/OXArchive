@@ -10,23 +10,23 @@
 
 [{if $oView->isExpiredLink() }]
 
-<strong class="boxhead">[{$template_title}]</strong>
-<div class="box info">
-  [{ oxmultilang ident="FORGOTPWD_ERRLINKEXPIRED" }]
-</div>
+  <strong class="boxhead">[{$template_title}]</strong>
+  <div class="box info">
+    [{ oxmultilang ident="FORGOTPWD_ERRLINKEXPIRED" }]
+  </div>
 
 [{elseif $oView->showUpdateScreen() }]
 
-<strong class="boxhead">[{$template_title}]</strong>
-<div class="box info">
-  [{ oxmultilang ident="FORGOTPWD_ENTERNEWPASSWORD" }]<br><br>
+  <strong class="boxhead">[{$template_title}]</strong>
+  <div class="box info">
+    [{ oxmultilang ident="FORGOTPWD_ENTERNEWPASSWORD" }]<br><br>
     <form action="[{ $oViewConf->getSelfActionLink() }]" name="order" method="post">
       <div>
           [{ $oViewConf->getHiddenSid() }]
+          [{ $oViewConf->getNavFormParams() }]
           <input type="hidden" name="fnc" value="updatePassword">
           <input type="hidden" name="uid" value="[{ $oView->getUpdateId() }]">
           <input type="hidden" name="cl" value="forgotpwd">
-          <input type="hidden" name="cnid" value="[{$oViewConf->getActCatId()}]">
       </div>
       <table class="form">
           <tr>
@@ -43,40 +43,56 @@
           </tr>
       </table>
     </form>
-</div>
+  </div>
 
 [{elseif $oView->updateSuccess() }]
 
-<strong class="boxhead">[{$template_title}]</strong>
-<div class="box info">
-  [{ oxmultilang ident="FORGOTPWD_UPDATE_SUCCESS" }]
-</div>
+  <strong class="boxhead">[{$template_title}]</strong>
+  <div class="box info">
+    [{ oxmultilang ident="FORGOTPWD_UPDATE_SUCCESS" }]
+  </div>
 
-<div class="bar prevnext">
-  <form action="[{ $oViewConf->getSelfActionLink() }]" name="order" method="post">
-    <div>
-      [{ $oViewConf->getHiddenSid() }]
-      <input type="hidden" name="cl" value="start">
-      <div class="right">
-        <input id="test_BackToShop" type="submit" value="[{ oxmultilang ident="FORGOTPWD_BACKTOSHOP" }]">
-      </div>
-    </div>
-  </form>
-</div>
-[{else}]
-
-<strong class="boxhead">[{$template_title}]</strong>
-<div class="box info">
-  [{ oxmultilang ident="FORGOTPWD_FORGOTPWD" }] <br>
-  [{ oxmultilang ident="FORGOTPWD_WEWILLSENDITTOYOU" }]<br><br>
+  <div class="bar prevnext">
     <form action="[{ $oViewConf->getSelfActionLink() }]" name="order" method="post">
       <div>
+        [{ $oViewConf->getHiddenSid() }]
+        <input type="hidden" name="cl" value="start">
+        <div class="right">
+          <input id="test_BackToShop" type="submit" value="[{ oxmultilang ident="FORGOTPWD_BACKTOSHOP" }]">
+        </div>
+      </div>
+    </form>
+  </div>
+[{else}]
+
+  <strong class="boxhead">[{$template_title}]</strong>
+  [{ if $oView->getForgotEmail()}]
+    <div class="box info">
+      [{ oxmultilang ident="FORGOTPWD_PWDWASSEND" }] [{$oView->getForgotEmail()}]
+    </div>
+    <div class="bar prevnext">
+      <form action="[{ $oViewConf->getSelfActionLink() }]" name="order" method="post">
+        <div>
           [{ $oViewConf->getHiddenSid() }]
+          <input type="hidden" name="cl" value="start">
+          <div class="right">
+            <input id="test_BackToShop" type="submit" value="[{ oxmultilang ident="FORGOTPWD_BACKTOSHOP" }]">
+          </div>
+        </div>
+      </form>
+    </div>
+  [{else}]
+    <div class="box info">
+      [{ oxmultilang ident="FORGOTPWD_FORGOTPWD" }]<br>
+      [{ oxmultilang ident="FORGOTPWD_WEWILLSENDITTOYOU" }]<br><br>
+      <form action="[{ $oViewConf->getSelfActionLink() }]" name="order" method="post">
+        <div>
+          [{ $oViewConf->getHiddenSid() }]
+          [{ $oViewConf->getNavFormParams() }]
           <input type="hidden" name="fnc" value="forgotpassword">
           <input type="hidden" name="cl" value="forgotpwd">
-          <input type="hidden" name="cnid" value="[{$oViewConf->getActCatId()}]">
-      </div>
-      <table class="form">
+        </div>
+        <table class="form">
           <tr>
             <td><label>[{ oxmultilang ident="FORGOTPWD_YOUREMAIL" }]</label></td>
             <td><input id="test_lgn_usr" type="text" name="lgn_usr" value="[{$lgn_usr}]" size="45" ></td>
@@ -91,12 +107,12 @@
             <td></td>
             <td><span class="btn"><input type="submit" name="save" value="[{ oxmultilang ident="FORGOTPWD_REQUESTPWD" }]" class="btn"></span></td>
           </tr>
-      </table>
-    </form>
-  [{ oxmultilang ident="FORGOTPWD_AFTERCLICK" }]<br>
-  <br>
-  [{ oxcontent ident="oxforgotpwd" }]
-</div>
+        </table>
+      </form>
+      [{ oxmultilang ident="FORGOTPWD_AFTERCLICK" }]<br><br>
+      [{ oxcontent ident="oxforgotpwd" }]
+    </div>
+  [{ /if}]
 
 [{/if}]
 

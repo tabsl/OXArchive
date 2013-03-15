@@ -23,8 +23,12 @@ p {margin:0}
 /* line height containing <sup> fix */
 #body .product .price {margin-bottom:1em;}
 #body .product .price sup.dinfo a{font-size: 16px;}
+
+#body .product .price sup.dinfo{_width: auto;}
+
 #body .product.thinest .price sup.dinfo a{font-size: 11px;}
 #body .product.details .price sup.dinfo{font-size: 12px;}
+#body .product.details .price sup.dinfo a{font-size: 13px;}
 #body .product.details .price sub.only{font-size: 13px;}
 #body .product .flag {overflow: hidden;}
 
@@ -36,7 +40,7 @@ p {margin:0}
 div#body  {margin:0 204px 50px 190px;width:580px;_margin-left:187px;}
 
 /* IE6 double margin fix - http://www.positioniseverything.net/explorer/doubled-margin.html */
-#left, #right, #body .locator, #body .separator, #body .product, #body .box, #body .wellcome, #body strong.head2, #body strong.h2, #body .lochead strong.h4, #body strong.h4, #body .div.bar.prevnext, #body .ordersteps, #body .basket, #body .errorbox, #body .morecats,#body .msg {_display: inline;}
+#left, #right, #body .locator, #body .separator, #body .product, #body .box, #body .boxhead, #body .wellcome, #body strong.head2, #body strong.h2, #body .lochead strong.h4, #body strong.h4, #body .div.bar.prevnext, #body .ordersteps, #body .basket, #body .errorbox, #body .morecats,#body .msg {_display: inline;}
 
 
 /* IE prev/next in basket/accounts fix */
@@ -67,4 +71,21 @@ div.popup.on { _position:absolute;_visibility:visible;display:block;_top:express
 /* IE fixing problem with collspan when <td> has colspan and nonbreakable content doesn't fit in it */
 .showHideShippAddr {width: 543px; overflow: hidden;}
 
+/* IE 6 fixing problems with add to cart button on article details page */
+#body .details .tocart {_display:inline;}
 
+/* IE fixing 1px height gap in right top column near path, where we can see right column background */
+div#path {height: 13px;}
+
+/* IE 6 fixing problem with rss icon position */
+a.rss{ right:13px; top:9px;}
+
+/* IE 6 left column categories menu 3-ird level background problem */
+ul.tree li a.last { _background-image: none; }
+
+/* IE 6 bottom copyright fix */
+div.bar.copy{_overflow: hidden;}
+
+/* IE 6 top popup category menu fix */
+div.bar.categories ul.menue.verticall   li { _width: 1%; }
+div.bar.categories ul.menue.verticall   li a { _width: 100%; _padding-right: 0px; }

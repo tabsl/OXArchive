@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxshopcontrol.php 14119 2008-11-11 12:14:09Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxshopcontrol.php 17321 2009-03-18 07:46:25Z arvydas $
  */
 
 /**
@@ -92,7 +93,7 @@ class oxShopControl extends oxSuperCfg
             oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=start' );
         } catch ( oxAccessRightException $oEx) {
             // R&R handling -> redirect to error msg, also, can call _process again, specifying error handler view class
-            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=info&amp;tpl=err_accessdenied.tpl' );
+            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=content&tpl=err_accessdenied.tpl' );
         }
     }
 
@@ -133,7 +134,7 @@ class oxShopControl extends oxSuperCfg
      */
     protected function _startMonitor()
     {
-        if ( $this->getConfig()->getConfigParam( 'iDebug' ) ) {
+        if ( !$this->isAdmin() && $this->getConfig()->getConfigParam( 'iDebug' ) ) {
             list ( $sUsec, $sSec ) = explode( ' ', microtime() );
             $this->dTimeStart = ( ( float ) $sUsec + ( float ) $sSec );
         }
@@ -152,7 +153,7 @@ class oxShopControl extends oxSuperCfg
     protected function _stopMonitor( $blIsCache = false, $blIsCached = false, $sViewID = null, $aViewData = array() )
     {
         $myConfig = $this->getConfig();
-        if ( $myConfig->getConfigParam( 'iDebug' ) != 0 && !$this->isAdmin() ) {
+        if ( !$this->isAdmin() && $myConfig->getConfigParam( 'iDebug' ) != 0 ) {
             echo '<div align="left">';
 
             // outputting template params

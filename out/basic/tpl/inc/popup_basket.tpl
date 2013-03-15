@@ -6,9 +6,9 @@
         <input type="hidden" name="cl" value="basket">
         <input type="hidden" name="redirected" value="1">
         [{oxhasrights ident="TOBASKET"}]
-        <input type="submit" class="bl disabled" value="[{ oxmultilang ident="BASKET_POPUP_FULL_DISPLAYCART" }]" disabled="disabled">
+        <input id="test_popupCart" type="submit" class="bl" value="[{ oxmultilang ident="BASKET_POPUP_FULL_DISPLAYCART" }]" onclick="if (oxid.popup) {oxid.popup.hide();}">
         [{/oxhasrights}]
-        <input type="button" class="br" value="[{ oxmultilang ident="BASKET_POPUP_FULL_CONTINUESHOPPING" }]" onclick="oxid.popup.hide();return false;">
+        <input id="test_popupContinue" type="button" class="br disabled" value="[{ oxmultilang ident="BASKET_POPUP_FULL_CONTINUESHOPPING" }]" onclick="oxid.popup.hide();return false;" disabled="disabled">
     </div>
     </form>
 </div>

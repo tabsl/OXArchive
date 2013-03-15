@@ -3,7 +3,7 @@
   <xs:element name="gui">
     <xs:complexType>
       <xs:sequence>
-      
+
         <xs:element name="theme" minOccurs="0" maxOccurs="unbounded">
           <xs:complexType>
             <xs:sequence>
@@ -13,7 +13,7 @@
             <xs:attribute name="title" type="xs:string" use="required" />
           </xs:complexType>
         </xs:element>
-        
+
         <xs:element name="gif" minOccurs="0" maxOccurs="unbounded">
           <xs:complexType>
             <xs:sequence>
@@ -24,7 +24,7 @@
             <xs:attribute name="const" type="xs:string" use="required" />
           </xs:complexType>
         </xs:element>
-        
+
         <xs:element name="css" minOccurs="1" maxOccurs="unbounded">
           <xs:complexType>
             <xs:sequence>
@@ -34,11 +34,11 @@
             <xs:attribute name="file" type="xs:string" />
           </xs:complexType>
         </xs:element>
-        
+
       </xs:sequence>
     </xs:complexType>
   </xs:element>
- 
+
   <xs:element name="color">
     <xs:complexType>
       <xs:attribute name="index" type="xs:int"/>
@@ -47,7 +47,7 @@
       <xs:attribute name="title" type="xs:string"/>
     </xs:complexType>
   </xs:element>
-  
+
   <xs:element name="group">
     <xs:complexType>
       <xs:sequence>
@@ -57,5 +57,5 @@
       <xs:attribute name="title" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  
+
 </xs:schema>

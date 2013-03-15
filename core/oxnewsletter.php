@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxnewsletter.php 14507 2008-12-05 12:20:06Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxnewsletter.php 17636 2009-03-27 09:15:44Z arvydas $
  */
 
 /**
@@ -29,13 +30,6 @@
  */
 class oxNewsletter extends oxBase
 {
-    /**
-     * Smarty template engine object (default null).
-     *
-     * @var object
-     */
-    protected $_oSmarty = null;
-
     /**
      * Newsletter HTML format text (default null).
      *
@@ -78,11 +72,7 @@ class oxNewsletter extends oxBase
     public function __construct()
     {
         parent::__construct();
-
         $this->init( 'oxnewsletter' );
-
-        $this->_oSmarty = oxUtilsView::getInstance()->getSmarty();
-        $this->_oSmarty->force_compile = true;
     }
 
     /**
@@ -94,10 +84,10 @@ class oxNewsletter extends oxBase
      */
     public function delete( $sOxId = null )
     {
-        if( !$sOxId) {
+        if ( !$sOxId) {
             $sOxId = $this->getId();
         }
-        if( !$sOxId) {
+        if ( !$sOxId) {
             return false;
         }
 
@@ -169,18 +159,12 @@ class oxNewsletter extends oxBase
         $blAdmin = $this->isAdmin();
         $this->setAdminMode( false );
 
-        $myConfig = $this->getConfig();
-
-        $oShop = oxNew( 'oxshop' );
-        $oShop->load( $myConfig->getShopId() );
-        $oView = $myConfig->getActiveView();
-        $oShop = $oView->addGlobalParams( $oShop );
-
         // add currency
         $this->_setUser( $sUserid );
 
-        $this->_setParams( $oShop, $myConfig->getActShopCurrencyObject(), $blPerfLoadAktion );
+        $this->_setParams( $blPerfLoadAktion );
 
+        // restoring mode ..
         $this->setAdminMode( $blAdmin );
     }
 
@@ -209,29 +193,35 @@ class oxNewsletter extends oxBase
      * adds products which fit to the last order of
      * this user, generates HTML and plaintext format newsletters.
      *
-     * @param object $oShop            Shop object
-     * @param object $oCurrency        Currency object
-     * @param bool   $blPerfLoadAktion perform option load actions
+     * @param bool $blPerfLoadAktion perform option load actions
      *
      * @return null
      */
-    protected function _setParams( $oShop, $oCurrency, $blPerfLoadAktion = false )
+    protected function _setParams( $blPerfLoadAktion = false )
     {
-        $this->_oSmarty->assign( 'myshop', $oShop );
-        $this->_oSmarty->assign( 'shop', $oShop );
-        $this->_oSmarty->assign( 'mycurrency', $oCurrency );
-        $this->_oSmarty->assign( 'myuser', $this->_oUser );
+        $myConfig = $this->getConfig();
 
-        $this->_assignProducts( $blPerfLoadAktion );
+        $oShop = oxNew( 'oxshop' );
+        $oShop->load( $myConfig->getShopId() );
 
-        // set for smarty
-        // actually I think this should solve our problems with newsletter
-        // AFAIK the problem was that I always used the same name for fetching so smarty caches this template then
-        $this->_oSmarty->oxidcache = clone $this->oxnewsletter__oxtemplate;
-        $this->_sHtmlText  = $this->_oSmarty->fetch( 'ox:'.$this->oxnewsletter__oxid->value.'oxnewsletter__oxtemplate' );
+        $oView = oxNew( 'oxubase' );
+        $oShop = $oView->addGlobalParams( $oShop );
 
-        $this->_oSmarty->oxidcache = clone $this->oxnewsletter__oxplaintemplate;
-        $this->_sPlainText = $this->_oSmarty->fetch( 'ox:'.$this->oxnewsletter__oxid->value.'oxnewsletter__oxplaintemplate' );
+        $oView->addTplParam( 'myshop', $oShop );
+        $oView->addTplParam( 'shop', $oShop );
+        $oView->addTplParam( 'oViewConf', $oShop );
+        $oView->addTplParam( 'oView', $oView );
+        $oView->addTplParam( 'mycurrency', $myConfig->getActShopCurrencyObject() );
+        $oView->addTplParam( 'myuser', $this->_oUser );
+
+        $this->_assignProducts( $oView, $blPerfLoadAktion );
+
+        $aInput[] = array( $this->getId().'html', $this->oxnewsletter__oxtemplate->value );
+        $aInput[] = array( $this->getId().'plain', $this->oxnewsletter__oxplaintemplate->value );
+        $aRes = oxUtilsView::getInstance()->parseThroughSmarty( $aInput, null, $oView, true );
+
+        $this->_sHtmlText  = $aRes[0];
+        $this->_sPlainText = $aRes[1];
     }
 
     /**
@@ -257,16 +247,17 @@ class oxNewsletter extends oxBase
      * Add newsletter products (#559 only if we have user we can assign this info),
      * adds products which fit to the last order of assigned user.
      *
-     * @param bool $blPerfLoadAktion perform option load actions
+     * @param oxview $oView            view object to store view data
+     * @param bool   $blPerfLoadAktion perform option load actions
      *
      * @return null
      */
-    protected function _assignProducts( $blPerfLoadAktion = false )
+    protected function _assignProducts( $oView, $blPerfLoadAktion = false )
     {
         if ( $blPerfLoadAktion ) {
             $oArtList = oxNew( 'oxarticlelist' );
             $oArtList->loadAktionArticles( 'OXNEWSLETTER' );
-            $this->_oSmarty->assign( 'articlelist', $oArtList );
+            $oView->addTplParam( 'articlelist', $oArtList );
         }
 
         if ( $this->_oUser->getId() ) {
@@ -279,28 +270,15 @@ class oxNewsletter extends oxBase
             $sSelect .= " where ".$oArticle->getSqlActiveSnippet();
             $sSelect .= " and oxorder.oxuserid = '".$this->_oUser->oxuser__oxid->value."' order by oxorder.oxorderdate desc";
 
-            $oArtList = oxNew( 'oxarticlelist' );
-            $oArtList->selectString( $sSelect );
-
-            $oOneArt   = null;
-            $oOneOrder = null;
-            $aSimList  = array();
-
-            if ( $oArtList->count() ) {
-                $oOneArt = $oArtList->current();
-            }
-
-            if ( $oOneArt ) {
-                $oSimList = $oOneArt->getSimilarProducts();
-            }
-
-            if ( $oSimList && $oSimList->count() ) {
-                $this->_oSmarty->assign( 'simlist', $oSimList );
-                $iCnt = 0;
-                foreach ( $oSimList as $oArt ) {
-                    $sName = "simarticle$iCnt";
-                    $this->_oSmarty->assign( $sName, $oArt );
-                    $iCnt++;
+            if ( $oArticle->assignRecord( $sSelect ) ) {
+                $oSimList = $oArticle->getSimilarProducts();
+                if ( $oSimList && $oSimList->count() ) {
+                    $oView->addTplParam( 'simlist', $oSimList );
+                    $iCnt = 0;
+                    foreach ( $oSimList as $oArt ) {
+                        $oView->addTplParam( "simarticle$iCnt", $oArt );
+                        $iCnt++;
+                    }
                 }
             }
         }

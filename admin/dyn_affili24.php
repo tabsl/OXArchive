@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: dyn_affili24.php 13619 2008-10-24 09:40:23Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: dyn_affili24.php 17209 2009-03-13 16:32:12Z arvydas $
  */
 
 /**
@@ -37,13 +38,7 @@ class dyn_affili24 extends dyn_interface
     public function render()
     {
         parent::render();
-
-        $soxId = oxSession::getVar( "actshop");
-
-        $oShop = oxNew( "oxshop" );
-        $oShop->load( $soxId);
-        $this->_aViewData["edit"] =  $oShop;
-
+        $this->_aViewData["edit"] = $this->_getEditShop( oxSession::getVar( "actshop" ) );
         return "dyn_affili24.tpl";
     }
 

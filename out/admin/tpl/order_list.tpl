@@ -64,8 +64,6 @@ function StornoThisArticle( sID)
 
 function ChangeEditBar( sLocation, sPos)
 {
-    [{include file="autosave.script.tpl"}]
-
     var oSearch = document.getElementById("search");
     oSearch.actedit.value=sPos;
     oSearch.submit();
@@ -117,8 +115,8 @@ window.onLoad = top.reloadEditFrame();
             <option value="-1" style="color: #000000;">[{ oxmultilang ident="ORDER_LIST_PAID" }]</option>
             [{foreach from=$asearch key=table item=desc}]
             [{assign var="ident" value=ORDER_SEARCH_FIELD_$desc}]
-            [{assign var="ident" value=$ident|upper }]
-            <option value="[{ $table }]" [{ if $addsearchfld == $table }]SELECTED[{/if}]>[{ oxmultilang|truncate:20:"..":true ident=$ident }]</option>
+            [{assign var="ident" value=$ident|oxupper }]
+            <option value="[{ $table }]" [{ if $addsearchfld == $table }]SELECTED[{/if}]>[{ oxmultilang|oxtruncate:20:"..":true ident=$ident }]</option>
             [{/foreach}]
         </select>
         <input class="listedit" type="text" size="15" maxlength="128" name="addsearch" value="[{ $addsearch }]">
@@ -190,7 +188,7 @@ window.onLoad = top.reloadEditFrame();
 
 <script type="text/javascript">
 if (parent.parent)
-{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->value}]";
+{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->getRawValue()|oxaddslashes}]";
     parent.parent.sMenuItem    = "[{ oxmultilang ident="ORDER_LIST_MENUITEM" }]";
     parent.parent.sMenuSubItem = "[{ oxmultilang ident="ORDER_LIST_MENUSUBITEM" }]";
     parent.parent.sWorkArea    = "[{$_act}]";

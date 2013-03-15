@@ -49,7 +49,6 @@ function loadLang(obj)
         <input type="hidden" name="editval[oxcategories__oxid]" value="[{ $oxid }]">
         <input type="hidden" name="catlang" value="[{$catlang}]">
         <input type="hidden" name="editval[oxcategories__oxlongdesc]" value="">
-        [{include file="autosave.form.tpl"}]
         <table>
         <tr>
           <td valign="top" class="edittext">

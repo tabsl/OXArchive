@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: selectlist_main.php 14016 2008-11-06 13:31:20Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: selectlist_main.php 17193 2009-03-13 12:21:45Z arvydas $
  */
 
 DEFINE("ERR_SUCCESS", 1);
@@ -139,10 +140,11 @@ class SelectList_Main extends oxAdminDetails
             $aParams['oxselectlist__oxshopid'] = $sShopID;
         $oAttr = oxNew( "oxselectlist" );
 
-        if ( $sOxId != "-1")
+        if ( $sOxId != "-1") {
             $oAttr->loadInLang( $this->_iEditLang, $sOxId );
-        else
+        } else {
             $aParams['oxselectlist__oxid'] = null;
+        }
 
 
         //$aParams = $oAttr->ConvertNameArray2Idx( $aParams);
@@ -150,8 +152,9 @@ class SelectList_Main extends oxAdminDetails
         $oAttr->assign( $aParams);
 
         //#708
-        if ( !is_array( $this->aFieldArray))
-                $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oAttr->oxselectlist__oxvaldesc->value );
+        if ( !is_array( $this->aFieldArray)) {
+            $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oAttr->oxselectlist__oxvaldesc->value );
+        }
         // build value
         $oAttr->oxselectlist__oxvaldesc = new oxField("");
         foreach ( $this->aFieldArray as $oField) {
@@ -169,10 +172,9 @@ class SelectList_Main extends oxAdminDetails
         $this->_aViewData["updatelist"] = "1";
 
         // set oxid if inserted
-        if ( $sOxId == "-1")
+        if ( $sOxId == "-1") {
             oxSession::setVar( "saved_oxid", $oAttr->oxselectlist__oxid->value);
-
-        return $this->autosave();
+        }
     }
 
     /**
@@ -213,7 +215,6 @@ class SelectList_Main extends oxAdminDetails
         if ( $sOxId == "-1")
             oxSession::setVar( "saved_oxid", $oObj->oxselectlist__oxid->value);
     }
-
 
     /**
      * Deletes field from field array and stores object

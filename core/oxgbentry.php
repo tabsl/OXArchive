@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxgbentry.php 13617 2008-10-24 09:38:46Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxgbentry.php 17248 2009-03-16 15:22:07Z arvydas $
  */
 
 /**
@@ -67,7 +68,8 @@ class oxGbEntry extends oxBase
         $blRet = parent::assign( $dbRecord );
 
         if ( isset( $this->oxgbentries__oxuserid ) && $this->oxgbentries__oxuserid->value ) {
-            $this->oxuser__oxfname = new oxField(oxDb::getDb()->getOne( "select oxfname from oxuser where oxid=".oxDb::getDb()->quote( $this->oxgbentries__oxuserid->value ) ));
+            $oDb = oxDb::getDb();
+            $this->oxuser__oxfname = new oxField( $oDb->getOne( "select oxfname from oxuser where oxid=".$oDb->quote( $this->oxgbentries__oxuserid->value ) ));
         }
 
         return $blRet;

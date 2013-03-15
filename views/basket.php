@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: basket.php 13614 2008-10-24 09:36:52Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: basket.php 17315 2009-03-17 16:18:58Z arvydas $
  */
 
 /**
@@ -41,7 +42,7 @@ class Basket extends oxUBase
      *
      * @var string
      */
-    protected $_sThisAltTemplate = 'impressum.tpl';
+    protected $_sThisAltTemplate = 'content.tpl';
 
     /**
      * Order step marker
@@ -80,17 +81,16 @@ class Basket extends oxUBase
     protected $_oFirstBasketProduct = null;
 
     /**
-     * Current view search engine indexing state:
-     *     0 - index without limitations
-     *     1 - no index / no follow
-     *     2 - no index / follow
+     * Current view search engine indexing state
+     *
+     * @var int
      */
-    protected $_iViewIndexState = 1;
+    protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXNOFOLLOW;
 
     /**
      * Executes parent::render(), creates list with basket articles
      * Returns name of template file basket::_sThisTemplate (for Search
-     * engines return "impressum.tpl" template to avoid fake orders etc).
+     * engines return "content.tpl" template to avoid fake orders etc).
      *
      * Template variables:
      * <b>similarlist</b>, <b>basketitemlist</b>
@@ -99,17 +99,18 @@ class Basket extends oxUBase
      */
     public function render()
     {
+        parent::render();
+
         // checks if current http client is SE and skips basket preview on success
         if ( oxUtils::getInstance()->isSearchEngine() ) {
             return $this->_sThisTemplate = $this->_sThisAltTemplate;
         }
 
-        parent::render();
-
         //for older templates
         $this->_aViewData['basketitemlist']    = $this->getBasketArticles();
         $this->_aViewData['basketsimilarlist'] = $this->getBasketSimilarList();
         $this->_aViewData['similarrecommlist'] = $this->getSimilarRecommLists();
+        $this->_aViewData['showbacktoshop']    = $this->showBackToShop();
 
 
         return $this->_sThisTemplate;
@@ -187,6 +188,15 @@ class Basket extends oxUBase
         return $this->_oRecommList;
     }
 
+    /**
+     * return the Link back to shop
+     *
+     * @return bool
+     */
+    public function showBackToShop()
+    {
+        return ( $this->getConfig()->getConfigParam( 'iNewBasketItemMessage' ) == 3 && oxSession::hasVar( '_backtoshop' ) );
+    }
 
     /**
      * Assigns voucher to current basket
@@ -210,4 +220,20 @@ class Basket extends oxUBase
         $oBasket->removeVoucher( oxConfig::getParameter( 'voucherId' ) );
     }
 
+    /**
+     * Redirects user back to previous part of shop (list, details, ...) from basket.
+     * Used with option "Display Message when Product is added to Cart" set to "Open Basket"
+     * ($myConfig->iNewBasketItemMessage == 3)
+     *
+     * @return string   $sBackLink  back link
+     */
+    public function backToShop()
+    {
+        if ( $this->getConfig()->getConfigParam( 'iNewBasketItemMessage' ) == 3 ) {
+            if ( $sBackLink = oxSession::getVar( '_backtoshop' ) ) {
+                oxSession::deleteVar( '_backtoshop' );
+                return $sBackLink;
+            }
+        }
+    }
 }

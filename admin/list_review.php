@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: list_review.php 14022 2008-11-06 13:40:14Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: list_review.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
  */
 
 /**
@@ -46,6 +47,7 @@ class List_Review extends oxAdminList
         $sSql = $this->_prepareWhereQuery( $aWhere, $sSql );
         $sSql = $this->_prepareOrderByQuery( $sSql );
         $sSql = $this->_changeselect( $sSql );
+        //$this->_oList->setAssignCallback( array( oxNew("List_Review"), 'formatArticleTitle'));
         $this->_oList->selectString( $sSql );
 
         parent::render();
@@ -62,26 +64,6 @@ class List_Review extends oxAdminList
         return "list_review.tpl";
     }
 
-    /**
-     * Builds and returns array of SQL WHERE conditions.
-     *
-     * @return array
-     */
-    public function buildWhere()
-    {
-        parent::buildWhere();
-
-        $sLangTag = oxLang::getInstance()->getLanguageTag($this->_iEditLang);
-        $sArtTitleField = 'oxarticles.oxtitle';
-
-        // if searching in article title and in lang id > 0, adding lang tag to article title field name
-        if ( $sLangTag && $this->_aWhere[$sArtTitleField] ) {
-            $this->_aWhere[$sArtTitleField.$sLangTag] = $this->_aWhere[$sArtTitleField];
-            unset( $this->_aWhere[$sArtTitleField] );
-        }
-
-        return $this->_aWhere;
-    }
 
     /**
      * Returns select query string
@@ -93,9 +75,13 @@ class List_Review extends oxAdminList
     protected function _buildSelectString( $oObject = null )
     {
         $sArtTable = getViewName('oxarticles');
-        $sSql  = "select oxreviews.oxid, oxreviews.oxcreate, oxreviews.oxtext, oxreviews.oxobjectid, oxarticles.oxtitle".oxLang::getInstance()->getLanguageTag($this->_iEditLang)." as oxtitle from oxreviews left join $sArtTable as oxarticles on oxarticles.oxid=oxreviews.oxobjectid and 'oxarticle'=oxreviews.oxtype where 1";
-        $sSql .= " and oxreviews.oxlang = '" . $this->_iEditLang . " ' ";
+        $sLangTag = oxLang::getInstance()->getLanguageTag( $this->_iEditLang );
 
+        $sSql = "select oxreviews.oxid, oxreviews.oxcreate, oxreviews.oxtext, oxreviews.oxobjectid, oxarticles.oxparentid, oxarticles.oxtitle{$sLangTag} as oxtitle, oxarticles.oxvarselect{$sLangTag} as oxvarselect, oxparentarticles.oxtitle{$sLangTag} as parenttitle,
+                   concat( oxarticles.oxtitle{$sLangTag}, if(isnull(oxparentarticles.oxtitle{$sLangTag}), '', oxparentarticles.oxtitle{$sLangTag}), oxarticles.oxvarselect_1) as arttitle from oxreviews
+                 left join $sArtTable as oxarticles on oxarticles.oxid=oxreviews.oxobjectid and 'oxarticle' = oxreviews.oxtype
+                 left join $sArtTable as oxparentarticles on oxparentarticles.oxid = oxarticles.oxparentid
+                 where 1 and oxreviews.oxlang = '{$this->_iEditLang}' ";
         return $sSql;
     }
 
@@ -109,7 +95,18 @@ class List_Review extends oxAdminList
      */
     protected function _prepareWhereQuery( $aWhere, $sSql )
     {
+        $sArtTitleField = 'oxarticles.oxtitle';
+        $sSqlForTitle = null;
+        $sLangTag = oxLang::getInstance()->getLanguageTag( $this->_iEditLang );
+
         $sSql = parent::_prepareWhereQuery( $aWhere, $sSql );
+
+        // if searching in article title field, updating sql for this case
+        if ( $this->_aWhere[$sArtTitleField] ) {
+            $sSqlForTitle = " (CONCAT( oxarticles.oxtitle{$sLangTag}, if(isnull(oxparentarticles.oxtitle{$sLangTag}), '', oxparentarticles.oxtitle{$sLangTag}), oxarticles.oxvarselect{$sLangTag})) ";
+            $sSql = preg_replace( "/oxarticles\.oxtitle\s+like/", "$sSqlForTitle like", $sSql );
+        }
+
         return " $sSql and oxarticles.oxid is not null ";
     }
 

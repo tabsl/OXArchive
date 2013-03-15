@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: guestbookentry.php 13917 2008-10-30 11:17:45Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: guestbookentry.php 16306 2009-02-05 10:28:05Z rimvydas.paskevicius $
  */
 
 /**

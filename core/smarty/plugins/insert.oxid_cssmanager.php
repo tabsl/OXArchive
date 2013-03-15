@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package smartyPlugins
- * @copyright © OXID eSales AG 2003-2009
- * $Id: insert.oxid_cssmanager.php 13723 2008-10-26 22:59:58Z alfonsas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: insert.oxid_cssmanager.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
  */
 
 /*

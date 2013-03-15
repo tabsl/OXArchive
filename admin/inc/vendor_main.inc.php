@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package inc
- * @copyright © OXID eSales AG 2003-2009
- * $Id: vendor_main.inc.php 14035 2008-11-06 14:48:53Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: vendor_main.inc.php 17958 2009-04-07 14:29:36Z rimvydas.paskevicius $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,       visible, multilanguage, ident
@@ -99,9 +100,7 @@ class ajaxComponent extends ajaxListComponent
         if ( is_array(  $aRemoveArt ) ) {
             $sSelect = "update oxarticles set oxvendorid = null where oxid in ( '".implode("', '", $aRemoveArt )."') ";
             oxDb::getDb()->Execute( $sSelect);
-
-
-                oxUtilsCount::getInstance()->resetVendorArticleCount( oxConfig::getParameter( 'oxid' ) );
+            $this->resetCounter( "vendorArticle", oxConfig::getParameter( 'oxid' ) );
         }
     }
 
@@ -126,9 +125,7 @@ class ajaxComponent extends ajaxListComponent
             $sSelect = "update oxarticles set oxvendorid = '$soxId' where oxid in ( '".implode("', '", $aAddArticle )."' )";
 
             oxDb::getDb()->Execute( $sSelect);
-
-
-                oxUtilsCount::getInstance()->resetVendorArticleCount( $soxId );
+            $this->resetCounter( "vendorArticle", $soxId );
         }
     }
 
@@ -140,7 +137,9 @@ class ajaxComponent extends ajaxListComponent
      */
     protected function _getQueryCols()
     {
-        $myConfig      = $this->getConfig();
+        $myConfig = $this->getConfig();
+        $sLangTag = oxLang::getInstance()->getLanguageTag();
+
         $sQ = '';
         $blSep = false;
         $aVisiblecols = $this->_getVisibleColNames();
@@ -149,9 +148,9 @@ class ajaxComponent extends ajaxListComponent
                 $sQ .= ', ';
             $sViewTable = getViewName( $aCol[1] );
             // multilanguage
-            $sCol = $aCol[3]?$aCol[0].oxLang::getInstance()->getLanguageTag():$aCol[0];
+            $sCol = $aCol[3]?$aCol[0].$sLangTag:$aCol[0];
             if ( $myConfig->getConfigParam( 'blVariantsSelection' ) && $aCol[0] == 'oxtitle' ) {
-                $sVarSelect = "$sViewTable.oxvarselect".oxLang::getInstance()->getLanguageTag();
+                $sVarSelect = "$sViewTable.oxvarselect".$sLangTag;
                 $sQ .= " IF( $sViewTable.$sCol != '', $sViewTable.$sCol, CONCAT((select oxart.$sCol from $sViewTable as oxart where oxart.oxid = $sViewTable.oxparentid),', ',$sVarSelect)) as _" . $iCnt;
             } else {
                 $sQ  .= $sViewTable . '.' . $sCol . ' as _' . $iCnt;
@@ -165,7 +164,7 @@ class ajaxComponent extends ajaxListComponent
                 $sQ .= ', ';
 
             // multilanguage
-            $sCol = $aCol[3]?$aCol[0].oxLang::getInstance()->getLanguageTag():$aCol[0];
+            $sCol = $aCol[3]?$aCol[0].$sLangTag:$aCol[0];
             $sQ  .= getViewName( $aCol[1] ) . '.' . $sCol . ' as _' . $iCnt;
         }
 

@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oximex.php 14388 2008-11-26 15:43:17Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oximex.php 17694 2009-03-31 12:06:13Z vilma $
  */
 
 /**
@@ -32,6 +33,8 @@ class oxImex extends oxBase
      * @param integer $iStart    Start writing export data from
      * @param integer $iLines    Write number of lines
      * @param string  $sFilepath Path to export file
+     *
+     * @deprecated
      *
      * @return bool
      */
@@ -104,6 +107,8 @@ class oxImex extends oxBase
      * @param integer $iStart    Start writing export data from
      * @param integer $iLines    Write number of lines
      * @param string  $sFilepath Path to export file
+     *
+     * @deprecated
      *
      * @return bool
      */
@@ -189,7 +194,6 @@ class oxImex extends oxBase
             }
 
             fclose( $fp);
-
             return true;
         }
 
@@ -235,7 +239,7 @@ class oxImex extends oxBase
 
                 $sSelect = "select oxtitle from oxarticles where oxid = '".$oArticle->oxarticles__oxparentid->value."'";
                 $oTitle = $oDB->getOne( $sSelect);
-                if($oTitle != false && strlen ($oTitle)) {
+                if ($oTitle != false && strlen ($oTitle)) {
                     $nTitle = $this->interForm($oTitle);
                 } else {
                     $nTitle = $this->interForm($oArticle->oxarticles__oxtitle->value);
@@ -300,8 +304,7 @@ class oxImex extends oxBase
                 $rs->moveNext();
             }
 
-            fclose( $fp);
-
+            fclose( $fp );
             return true;
         }
 
@@ -316,11 +319,11 @@ class oxImex extends oxBase
      *
      * @return string
      */
-    function interFormSimple( $nValue)
+    function interFormSimple( $nValue )
     {
-        $nValue = str_replace( "\r", "", $nValue);
-        $nValue = str_replace( "\n", " ", $nValue);
-        $nValue = str_replace( '"', '""', $nValue);
+        $nValue = str_replace( "\r", "", $nValue );
+        $nValue = str_replace( "\n", " ", $nValue );
+        $nValue = str_replace( '"', '""', $nValue );
         return $nValue;
     }
 
@@ -356,14 +359,10 @@ class oxImex extends oxBase
         //removing simple & (and not  &uuml; chars)
         //(not full just a simple check for existing customers for cases like Johnson&Johnson)
 
-        if (strpos($nValue, "&") !== false && strpos($nValue, ";") == false) {
+        $oStr = getStr();
+        if ( $oStr->strpos( $nValue, "&" ) !== false && $oStr->strpos($nValue, ";" ) == false ) {
             $nValue = str_replace("&", "&amp;", $nValue);
         }
-
-        if ( !$blSkipStripTags) {
-            $nValue = strip_tags( $nValue);
-        }
-
 
         $nValue = str_replace( "&nbsp;", " ", $nValue);
         $nValue = str_replace( "&auml;", "ä", $nValue);
@@ -379,29 +378,6 @@ class oxImex extends oxBase
         // and replace it with special HTML code
         $nValue = str_replace( "& ", "&amp; ", $nValue);
 
-        /*
-        $nValue = str_replace( "&nbsp;", " ", $nValue);
-        $nValue = str_replace( "&auml;", "ae", $nValue);
-        $nValue = str_replace( "&ouml;", "oe", $nValue);
-        $nValue = str_replace( "&uuml;", "ue", $nValue);
-        $nValue = str_replace( "&Auml;", "Ae", $nValue);
-        $nValue = str_replace( "&Ouml;", "Oe", $nValue);
-        $nValue = str_replace( "&Uuml;", "Ue", $nValue);
-        $nValue = str_replace( "&szlig;", "sz", $nValue);
-        $nValue = str_replace( "'", "", $nValue);
-        $nValue = str_replace( "<", "", $nValue);
-        $nValue = str_replace( ";", ",", $nValue);
-        $nValue = str_replace( ">", "", $nValue);
-        $nValue = str_replace( "&", "und", $nValue);
-
-
-        $nValue = str_replace( "ü", "ue", $nValue);
-        $nValue = str_replace( "ä", "ae", $nValue);
-        $nValue = str_replace( "ö", "oe", $nValue);
-        $nValue = str_replace( "Ü", "Ue", $nValue);
-        $nValue = str_replace( "Ä", "Ae", $nValue);
-        $nValue = str_replace( "Ö", "Oe", $nValue);
-        */
         $nValue = str_replace( "\"", "'", $nValue);
         $nValue = str_replace( "(", "'", $nValue);
         $nValue = str_replace( ")", "'", $nValue);
@@ -409,7 +385,7 @@ class oxImex extends oxBase
         $nValue = str_replace( "\n", "", $nValue);
 
         if ( !$blSkipStripTags) {
-            $nValue = strip_tags ( $nValue );
+            $nValue = strip_tags( $nValue );
         }
 
         return $nValue;
@@ -435,6 +411,8 @@ class oxImex extends oxBase
      * @param integer $iStart    Start reading from
      * @param integer $iLines    Read number of lines
      * @param string  $sFilepath Path to file
+     *
+     * @deprecated
      *
      * @return bool
      */
@@ -539,7 +517,7 @@ class oxImex extends oxBase
             return null;
         }
 
-        $sExport  = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>$sNewLine";
+        $sExport  = "<?xml version=\"1.0\" encoding=\"ISO-8859-15\"?>$sNewLine";
         $sExport .= "<Bestellliste>$sNewLine";
         $sRet .= $sExport;
 
@@ -551,11 +529,12 @@ class oxImex extends oxBase
             $oUser->load( $oOrder->oxorder__oxuserid->value);
 
             $sExport  = "<Bestellung zurückgestellt=\"Nein\" bearbeitet=\"Nein\" übertragen=\"Nein\">$sNewLine";
+            $sExport .= "<Bestellnummer>".$oOrder->oxorder__oxordernr->value."</Bestellnummer>$sNewLine";
             $sExport .= "<Standardwaehrung>978</Standardwaehrung>$sNewLine";
             $sExport .= "<Bestelldatum>$sNewLine";
-            $sDBDate = $oOrder->oxorder__oxorderdate->value;
-            $sExport .= "<Datum>".substr($sDBDate, 8, 2).".".substr($sDBDate, 5, 2).".".substr($sDBDate, 0, 4)."</Datum>$sNewLine";
-            $sExport .= "<Zeit>".substr($oOrder->oxorder__oxorderdate->value, 11, 8)."</Zeit>$sNewLine";
+            $sDBDate = oxUtilsDate::getInstance()->formatDBDate($oOrder->oxorder__oxorderdate->value);
+            $sExport .= "<Datum>".substr($sDBDate, 0, 10)."</Datum>$sNewLine";
+            $sExport .= "<Zeit>".substr($sDBDate, 11, 8)."</Zeit>$sNewLine";
             $sExport .= "</Bestelldatum>$sNewLine";
             $sExport .= "<Kunde>$sNewLine";
 
@@ -698,7 +677,7 @@ class oxImex extends oxBase
             $oOrder->save();
 
         }
-        $sExport = "</Bestellliste>\r";
+        $sExport = "</Bestellliste>$sNewLine";
         $sRet .= $sExport;
 
         return $sRet;
@@ -710,6 +689,8 @@ class oxImex extends oxBase
      * @param mixed   $fp      Resource to file
      * @param integer $iMaxLen Max file line length
      * @param string  $sSep    parameter/value separator
+     *
+     * @deprecated
      *
      * @return array
      */
@@ -743,17 +724,18 @@ class oxImex extends oxBase
         }
 
         if ( count( $aRet) > 1) {
+            $oStr = getStr();
             // remove " or '
             foreach ( $aRet as $key => $sField) {
                 $sField = trim($sField);
                 if ( $sField) {
                     if ( $sField[0] == "\"" || $sField[0] == "'") {
-                        $sField = substr( $sField, 1);
+                        $sField = $oStr->substr( $sField, 1);
                     }
 
-                    $iLen = strlen( $sField) - 1;
+                    $iLen = $oStr->strlen( $sField) - 1;
                     if ( $sField[$iLen] == "\"" || $sField[$iLen] == "'") {
-                        $sField = substr( $sField, 0, $iLen);
+                        $sField = $oStr->substr( $sField, 0, $iLen);
                     }
 
                     $aRet[$key] = $sField;
@@ -761,8 +743,7 @@ class oxImex extends oxBase
             }
             // process "" qoutes
             return str_replace('""', '"', $aRet);
-        }
-        else {
+        } else {
             return null;
         }
     }

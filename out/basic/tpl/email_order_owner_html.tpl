@@ -29,14 +29,16 @@
           <b>[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_TOTAL" }]</b>&nbsp;&nbsp;
         </td>
       </tr>
-      [{foreach from=$basket->aBasketContents item=basketitem}]
+      [{assign var="basketitemlist" value=$basket->getBasketArticles() }]
+      [{foreach key=basketindex from=$basket->getContents() item=basketitem}]
+      [{assign var="basketproduct" value=$basketitemlist.$basketindex }]
         <tr>
           <td valign="top" style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px; padding-top: 10px;">
-            <img src="[{$basketitem->oProduct->nossl_dimagedir}]/[{$basketitem->oProduct->oxarticles__oxthumb->value }]" border="0" hspace="0" vspace="0" alt="[{ $basketitem->oProduct->oxarticles__oxtitle->value|strip_tags }]" align="texttop">
+            <img src="[{$basketproduct->getThumbnailUrl() }]" border="0" hspace="0" vspace="0" alt="[{ $basketproduct->oxarticles__oxtitle->value|strip_tags }]" align="texttop">
               <br><b>[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_WRAPPING" }]&nbsp;</b>[{ if !$basketitem->wrapping }][{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_NONE" }][{else}][{$basketitem->oWrap->oxwrapping__oxname->value}][{/if}]
           </td>
           <td valign="top" style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px; padding-top: 10px;">
-            <b>[{ $basketitem->oProduct->oxarticles__oxtitle->value }][{ if $basketitem->oProduct->oxarticles__oxvarselect->value}], [{ $basketitem->oProduct->oxarticles__oxvarselect->value}][{/if}]</b>
+            <b>[{ $basketproduct->oxarticles__oxtitle->value }][{ if $basketproduct->oxarticles__oxvarselect->value}], [{ $basketproduct->oxarticles__oxvarselect->value}][{/if}]</b>
             [{ if $basketitem->chosen_selectlist }],
               [{foreach from=$basketitem->chosen_selectlist item=oList}]
                 [{ $oList->name }] [{ $oList->value }]&nbsp;
@@ -47,13 +49,13 @@
                 ,&nbsp;<em>[{$sVar}] : [{$aParam}]</em>
               [{/foreach}]
             [{/if}]
-            <br>[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_ARTNOMBER" }] [{ $basketitem->oProduct->oxarticles__oxartnum->value }]
+            <br>[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_ARTNOMBER" }] [{ $basketproduct->oxarticles__oxartnum->value }]
           </td>
           <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px; padding-top: 10px;" valign="top" align="right">
             [{$basketitem->dAmount}]
           </td>
           <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px; padding-top: 10px;" valign="top" align="right">
-            <b>[{if $basketitem->oProduct->fprice }][{ $basketitem->oProduct->fprice }] [{ $currency->sign}][{/if}]</b>
+            <b>[{if $basketitem->getFUnitPrice() }][{ $basketitem->getFUnitPrice() }] [{ $currency->sign}][{/if}]</b>
             [{if $basketitem->aDiscounts}]<br><br>
               <em style="font-size: 7pt;font-weight: normal;">[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_DISCOUNT" }]
                 [{foreach from=$basketitem->aDiscounts item=oDiscount}]
@@ -61,12 +63,12 @@
                 [{/foreach}]
               </em>
             [{/if}]
-            [{ if $basketitem->oProduct->oxarticles__oxorderinfo->value }]
-              [{ $basketitem->oProduct->oxarticles__oxorderinfo->value }]
+            [{ if $basketproduct->oxarticles__oxorderinfo->value }]
+              [{ $basketproduct->oxarticles__oxorderinfo->value }]
             [{/if}]
           </td>
           <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px; padding-top: 10px;" valign="top" align="right">
-            <b>[{ $basketitem->ftotalprice }] [{ $currency->sign}]</b>
+            <b>[{ $basketitem->getFTotalPrice() }] [{ $currency->sign}]</b>
           </td>
         </tr>
       [{/foreach}]

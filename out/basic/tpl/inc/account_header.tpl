@@ -1,4 +1,4 @@
-  <strong class="boxhead">[{ oxmultilang ident="INC_ACCOUNT_HEADER_MYACCOUNT" }]“[{ $oxcmp_user->oxuser__oxusername->value }]”</strong>
+  <strong class="boxhead">[{ oxmultilang ident="INC_ACCOUNT_HEADER_MYACCOUNT" }]"[{ $oxcmp_user->oxuser__oxusername->value }]"</strong>
   <div class="box account_header">
 
     <table width="100%">

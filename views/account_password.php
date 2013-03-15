@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: account_password.php 14361 2008-11-25 15:40:16Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: account_password.php 16489 2009-02-12 10:07:15Z arvydas $
  */
 
 
@@ -48,6 +49,13 @@ class Account_Password extends Account
     protected $_blPasswordChanged = false;
 
     /**
+     * If user has password (for openid).
+     *
+     * @var bool
+     */
+    protected $_blHasPassword = true;
+
+    /**
      * If user is not logged in - returns name of template account_user::_sThisLoginTemplate,
      * or if user is allready logged in additionally loads user delivery address
      * info and forms country list. Returns name of template account_user::_sThisTemplate
@@ -65,6 +73,9 @@ class Account_Password extends Account
         $oUser = $this->getUser();
         if ( !$oUser ) {
             return $this->_sThisTemplate = $this->_sThisLoginTemplate;
+        }
+        if ( $oUser->oxuser__oxisopenid->value == 1 && strpos( $oUser->oxuser__oxpassword->value, 'openid_' ) === 0 ) {
+        	$this->_blHasPassword = false;
         }
 
         return $this->_sThisTemplate;
@@ -85,20 +96,17 @@ class Account_Password extends Account
         $sOldPass  = oxConfig::getParameter( 'password_old' );
         $sNewPass  = oxConfig::getParameter( 'password_new' );
         $sConfPass = oxConfig::getParameter( 'password_new_confirm' );
-
-        if ( !$sNewPass || !$sConfPass ) {
-            oxUtilsView::getInstance()->addErrorToDisplay('ACCOUNT_PASSWORD_ERRPASSWORDTOSHORT', false, true);
-            return;
-        }
-
-        if ( $sNewPass != $sConfPass ) {
-            oxUtilsView::getInstance()->addErrorToDisplay('ACCOUNT_PASSWORD_ERRPASSWDONOTMATCH', false, true);
-            return;
-        }
-
-        if ( strlen($sNewPass) < 6 ||  strlen($sConfPass) < 6 ) {
-            oxUtilsView::getInstance()->addErrorToDisplay('ACCOUNT_PASSWORD_ERRPASSWORDTOSHORT', false, true);
-            return;
+        
+        try {
+            $oUser->checkPassword( $sNewPass, $sConfPass, true );
+        } catch ( Exception $oExcp ) {            
+            switch ( $oExcp->getMessage() ) {
+                case 'EXCEPTION_INPUT_EMPTYPASS':
+                case 'EXCEPTION_INPUT_PASSTOOSHORT':
+                    return oxUtilsView::getInstance()->addErrorToDisplay('ACCOUNT_PASSWORD_ERRPASSWORDTOSHORT', false, true);
+                default:
+                    return oxUtilsView::getInstance()->addErrorToDisplay('ACCOUNT_PASSWORD_ERRPASSWDONOTMATCH', false, true);
+            }
         }
 
         if ( !$sOldPass || !$oUser->isSamePassword( $sOldPass ) ) {
@@ -111,7 +119,6 @@ class Account_Password extends Account
         if ( $oUser->save() ) {
             $this->_blPasswordChanged = true;
         }
-
     }
 
     /**
@@ -122,5 +129,15 @@ class Account_Password extends Account
     public function isPasswordChanged()
     {
         return $this->_blPasswordChanged;
+    }
+
+    /**
+     * Template variable getter. Returns true if user has password.
+     *
+     * @return bool
+     */
+    public function hasPassword()
+    {
+        return $this->_blHasPassword;
     }
 }

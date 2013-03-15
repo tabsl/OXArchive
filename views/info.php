@@ -17,8 +17,10 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: info.php 13614 2008-10-24 09:36:52Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * @deprecated
+ * $Id: info.php 17315 2009-03-17 16:18:58Z arvydas $
  */
 
 /**
@@ -40,17 +42,15 @@ class Info extends oxUBase
     protected $_oDelSetList = null;
 
     /**
-     * Current view search engine indexing state:
-     *     0 - index without limitations
-     *     1 - no index / no follow
-     *     2 - no index / follow
+     * Current view search engine indexing state
+     *
+     * @var int
      */
-    protected $_iViewIndexState = 1;
+    protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXNOFOLLOW;
 
     /**
      * Class constructor, assigns template file name passed by URL
-     * or stored in session ("tpl", "infotpl"), or sets default
-     * ("impressum.tpl").
+     * or stored in session ("tpl", "infotpl").
      *
      * Template variables:
      * <b>tpl</b>
@@ -62,14 +62,12 @@ class Info extends oxUBase
     {
         // assign template name
         $sTplName = oxConfig::getParameter( 'tpl');
-        $sTplName = $sTplName?$sTplName:oxSession::getVar( 'infotpl' );
+        $sTplName = $sTplName ? $sTplName : oxSession::getVar( 'infotpl' );
 
         if ( $sTplName ) {
             // security fix so that you cant access files from outside template dir
             $sTplName = basename( $sTplName );
             oxSession::setVar( 'infotpl', $sTplName );
-        } else {
-            $sTplName = 'impressum.tpl';
         }
 
         $this->_sThisTemplate = $sTplName;
@@ -78,7 +76,8 @@ class Info extends oxUBase
 
     /**
      * Loads delivery, deliveryset list info and returns name of template file
-     * to render info::_sThisTemplate.
+     * to render info::_sThisTemplate. If no template name specified - will
+     * load "impressum" content
      *
      * Template variables:
      * <b>deliverylist</b>, <b>deliverysetlist</b>
@@ -89,7 +88,16 @@ class Info extends oxUBase
     {
         parent::render();
 
-        $this->_aViewData['tpl'] = $this->getTemplateName();
+        if ( !$this->getTemplateName() ) {
+            //  get default page
+            $oContent = oxNew( 'oxcontent' );
+            $oContent->loadByIdent( 'oximpressum' );
+            $this->_aViewData['oContent'] = $oContent;
+            $this->_aViewData['tpl'] = $oContent->getId();
+            $this->_sThisTemplate = 'content.tpl';
+        } else {
+            $this->_aViewData['tpl'] = $this->getTemplateName();
+        }
 
         $this->_aViewData['deliverylist']    = $this->getDeliveryList();
         $this->_aViewData['deliverysetlist'] = $this->getDeliverySetList();;

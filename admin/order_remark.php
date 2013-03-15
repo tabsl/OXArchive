@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: order_remark.php 14266 2008-11-19 10:12:51Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: order_remark.php 17190 2009-03-13 12:20:25Z arvydas $
  */
 
 /**
@@ -95,8 +96,6 @@ class Order_Remark extends oxAdminDetails
         $oRemark->oxremark__oxheader->setValue($sNewHeader);
         $oRemark->oxremark__oxparentid->setValue($oOrder->oxorder__oxuserid->value);
         $oRemark->save();
-
-        return $this->autosave();
     }
 
     /**

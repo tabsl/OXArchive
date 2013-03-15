@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxselectlist.php 14368 2008-11-26 07:36:13Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxselectlist.php 17689 2009-03-31 08:36:41Z sarunas $
  */
 
 /**
@@ -55,14 +56,17 @@ class oxSelectlist extends oxI18n
     /**
      * Returns select list value list.
      *
+     * @param double $dVat VAT value
+     *
      * @return array
      */
-    public function getFieldList()
+    public function getFieldList( $dVat = null )
     {
         if ( $this->_aFieldList == null && $this->oxselectlist__oxvaldesc->value ) {
-            $this->_aFieldList = oxUtils::getInstance()->assignValuesFromText( $this->oxselectlist__oxvaldesc->value );
+            $oStr = getStr();
+            $this->_aFieldList = oxUtils::getInstance()->assignValuesFromText( $this->oxselectlist__oxvaldesc->getRawValue(), $dVat );
             foreach ( $this->_aFieldList as $sKey => $oField ) {
-                $this->_aFieldList[$sKey]->name = htmlspecialchars( $this->_aFieldList[$sKey]->name );
+                $this->_aFieldList[$sKey]->name = $oStr->htmlspecialchars( strip_tags( $this->_aFieldList[$sKey]->name ), false );
             }
         }
         return $this->_aFieldList;

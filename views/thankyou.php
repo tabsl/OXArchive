@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: thankyou.php 13614 2008-10-24 09:36:52Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: thankyou.php 17016 2009-03-04 13:05:30Z vilma $
  */
 
 /**
@@ -80,6 +81,18 @@ class Thankyou extends oxUBase
      * @var string
      */
     protected $_sMailError = null;
+
+    /**
+     * Sign if to load and show top5articles action
+     * @var bool
+     */
+    protected $_blTop5Action = true;
+
+    /**
+     * Sign if to load and show bargain action
+     * @var bool
+     */
+    protected $_blBargainAction = true;
 
     /**
      * Current class template name.
@@ -319,6 +332,21 @@ class Thankyou extends oxUBase
             }
         }
         return $this->_oOrder;
+    }
+
+    /**
+     * Template variable getter. Returns country ISO 3
+     *
+     * @return string
+     */
+    public function getCountryISO3()
+    {
+        $oOrder = $this->getOrder();
+        if ( $oOrder ) {
+            $oCountry = oxNew( 'oxcountry' );
+            $oCountry->load( $oOrder->oxorder__oxbillcountryid->value );
+            return $oCountry->oxcountry__oxisoalpha3->value;
+        }
     }
 
 }

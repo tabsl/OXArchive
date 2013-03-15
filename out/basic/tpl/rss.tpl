@@ -1,4 +1,4 @@
-[{$xmldef.start}] version="1.0" encoding="ISO-8859-1"[{$xmldef.end}]
+[{$xmldef.start}] version="1.0" encoding="UTF-8"[{$xmldef.end}]
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
         <title>[{$channel.title}]</title>

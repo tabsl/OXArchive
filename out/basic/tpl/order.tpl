@@ -27,9 +27,9 @@
         <form action="[{ $oViewConf->getSslSelfLink() }]" method="post">
           <div>
               [{ $oViewConf->getHiddenSid() }]
+              [{ $oViewConf->getNavFormParams() }]
               <input type="hidden" name="cl" value="order">
               <input type="hidden" name="fnc" value="[{$oView->getExecuteFnc()}]">
-              <input type="hidden" name="cnid" value="[{$oViewConf->getActCatId()}]">
               <input type="hidden" name="challenge" value="[{$challenge}]">
               <div class="right arrowright">
                   <input id="test_OrderSubmitTop" type="submit" value="[{ oxmultilang ident="ORDER_SUBMITORDER" }]">
@@ -41,8 +41,10 @@
                       <tr>
                         <td><input id="test_OrderConfirmAGBTop" type="checkbox" class="chkbox" name="ord_agb" value="1"></td>
                         <td>
-                            [{ oxmultilang ident="ORDER_IAGREETOTERMS1" }] <a id="test_OrderOpenAGBTop" rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=info&amp;tpl=agb.tpl" }]" onclick="window.open('[{ $oViewConf->getSelfLink() }]cl=info&amp;tpl=agb_popup.tpl', 'agb_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ oxmultilang ident="ORDER_IAGREETOTERMS2" }]</a> [{ oxmultilang ident="ORDER_IAGREETOTERMS3" }],&nbsp;
-                            [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL1" }] <a id="test_OrderOpenWithdrawalTop" rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=info&amp;tpl=rightofwithdrawal.tpl" }]" onclick="window.open('[{ $oViewConf->getSelfLink() }]cl=info&amp;tpl=rightofwithdrawal_popup.tpl', 'rightofwithdrawal_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL2" }]</a> [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL3" }]
+                            [{assign var="oCont" value=$oView->getContentByIdent("oxagb") }]
+                            [{ oxmultilang ident="ORDER_IAGREETOTERMS1" }] <a id="test_OrderOpenAGBTop" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'agb_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ oxmultilang ident="ORDER_IAGREETOTERMS2" }]</a> [{ oxmultilang ident="ORDER_IAGREETOTERMS3" }],&nbsp;
+                            [{assign var="oCont" value=$oView->getContentByIdent("oxrightofwithdrawal") }]
+                            [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL1" }] <a id="test_OrderOpenWithdrawalTop" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'rightofwithdrawal_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ $oCont->oxcontents__oxtitle->value }]</a> [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL3" }]
                         </td>
                       </tr>
                     </table>
@@ -86,8 +88,8 @@
       </thead>
 
       <!-- basket items -->
-      [{foreach key=basketindex from=$oxcmp_basket->getContents() item=basketitem name=testArt}]
       [{assign var="basketitemlist" value=$oView->getBasketArticles() }]
+      [{foreach key=basketindex from=$oxcmp_basket->getContents() item=basketitem name=testArt}]
       [{assign var="basketproduct" value=$basketitemlist.$basketindex }]
         <tr>
           <!-- product image -->
@@ -188,7 +190,7 @@
       [{ if $oCard }]
         <tr class="sumrow">
           <td class="brd"></td>
-          <td id="test_orderCardTitle" colspan="3"><b class="fs10">[{ oxmultilang ident="ORDER_GREETINGCARD" }] “[{ $oCard->oxwrapping__oxname->value }]”</b></td>
+          <td id="test_orderCardTitle" colspan="3"><b class="fs10">[{ oxmultilang ident="ORDER_GREETINGCARD" }] "[{ $oCard->oxwrapping__oxname->value }]"</b></td>
           <td id="test_orderCardPrice" align="right" class="orderprice">[{ $oCard->getFPrice() }]&nbsp;[{ $currency->sign }]</td>
           <td class="font10"></td>
           <td id="test_orderCardTotalPrice" align="right" class="orderprice">[{ $oCard->getFPrice() }]&nbsp;[{ $currency->sign }]</td>
@@ -500,7 +502,8 @@
         </p>
 
         <p>
-          [{ oxmultilang ident="ORDER_RIGHTOFWITHDRAWAL_MOREINFO1" }] <a id="test_OpenWithdrawal" rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=info&amp;tpl=customer_right_of_withdrawal.tpl" }]" class="fontunderline">[{ oxmultilang ident="ORDER_RIGHTOFWITHDRAWAL_MOREINFO2" }]</a>.
+          [{assign var="oCont" value=$oView->getContentByIdent("oxrightofwithdrawal") }]
+          [{ oxmultilang ident="ORDER_RIGHTOFWITHDRAWAL_MOREINFO1" }] <a id="test_OpenWithdrawal" rel="nofollow" href="[{ $oCont->getLink() }]" class="fontunderline">[{ $oCont->oxcontents__oxtitle->value }]</a>.
         </p>
 
     </div>
@@ -515,9 +518,9 @@
             <form action="[{ $oViewConf->getSslSelfLink() }]" method="post">
               <div>
                   [{ $oViewConf->getHiddenSid() }]
+                  [{ $oViewConf->getNavFormParams() }]
                   <input type="hidden" name="cl" value="order">
                   <input type="hidden" name="fnc" value="[{$oView->getExecuteFnc()}]">
-                  <input type="hidden" name="cnid" value="[{$oViewConf->getActCatId()}]">
                   <input type="hidden" name="challenge" value="[{$challenge}]">
 
                   <div class="right arrowright">
@@ -531,8 +534,10 @@
                           <tr>
                             <td><input id="test_OrderConfirmAGBBottom" type="checkbox" class="chkbox" name="ord_agb" value="1"></td>
                             <td>
-                                [{ oxmultilang ident="ORDER_IAGREETOTERMS1" }] <a id="test_OrderOpenAGBBottom" rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=info&amp;tpl=agb.tpl" }]" onclick="window.open('[{ $oViewConf->getSelfLink() }]cl=info&amp;tpl=agb_popup.tpl', 'agb_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;" class="fontunderline">[{ oxmultilang ident="ORDER_IAGREETOTERMS2" }]</a> [{ oxmultilang ident="ORDER_IAGREETOTERMS3" }],&nbsp;
-                                [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL1" }] <a id="test_OrderOpenWithdrawalBottom" rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=info&amp;tpl=rightofwithdrawal.tpl" }]" onclick="window.open('[{ $oViewConf->getSelfLink() }]cl=info&amp;tpl=rightofwithdrawal_popup.tpl', 'rightofwithdrawal_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL2" }]</a> [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL3" }]
+                                [{assign var="oCont" value=$oView->getContentByIdent("oxagb") }]
+                                [{ oxmultilang ident="ORDER_IAGREETOTERMS1" }] <a id="test_OrderOpenAGBBottom" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'agb_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;" class="fontunderline">[{ oxmultilang ident="ORDER_IAGREETOTERMS2" }]</a> [{ oxmultilang ident="ORDER_IAGREETOTERMS3" }],&nbsp;
+                                [{assign var="oCont" value=$oView->getContentByIdent("oxrightofwithdrawal") }]
+                                [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL1" }] <a id="test_OrderOpenWithdrawalBottom" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'rightofwithdrawal_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ $oCont->oxcontents__oxtitle->value }]</a> [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL3" }]
                             </td>
                           </tr>
                         </table>

@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxseoencodercategory.php 14340 2008-11-25 08:59:04Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxseoencodercategory.php 17768 2009-04-02 10:52:12Z sarunas $
  */
 
 /**
@@ -143,7 +144,7 @@ class oxSeoEncoderCategory extends oxSeoEncoder
             }
 
             foreach ( $aCacheMap as $sId => $sUri ) {
-                $this->_aCatCache[$sId.'_'.$iLang] = $this->_getUniqueSeoUrl( $sSeoUrl.$sUri.'/', '/', $sId );
+                $this->_aCatCache[$sId.'_'.$iLang] = $this->_getUniqueSeoUrl( $sSeoUrl.$sUri.'/', '/', $sId, $iLang );
                 $this->_saveToDb( 'oxcategory', $sId, $aStdLinks[$sId], $this->_aCatCache[$sId.'_'.$iLang], $iLang );
             }
 
@@ -226,4 +227,20 @@ class oxSeoEncoderCategory extends oxSeoEncoder
         $sQ = "update oxseo as seo1, (select oxid from oxcategories where oxrootid='$sCatRootId' and oxleft > {$aCatInfo[0][1]} and oxright < {$aCatInfo[0][2]}) as seo2 set seo1.oxexpired = '1' where seo1.oxtype = 'oxcategory' and seo1.oxobjectid = seo2.oxid";
         $oDb->execute( $sQ );
     }
+
+
+    /**
+     * deletes Category seo entries
+     *
+     * @param oxCategory $oCategory Category object
+     *
+     * @return null
+     */
+    public function onDeleteCategory($oCategory)
+    {
+        $sId = oxDb::getDb()->quote($oCategory->getId());
+        oxDb::getDb()->execute("update oxseo, (select oxseourl from oxseo where oxobjectid = $sId and oxtype = 'oxcategory') as test set oxseo.oxexpired=1 where oxseo.oxseourl like concat(test.oxseourl, '%') and (oxtype = 'oxcategory' or oxtype = 'oxarticle')");
+        oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sId and oxtype = 'oxcategory'");
+    }
+
 }

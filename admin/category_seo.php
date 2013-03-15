@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: category_seo.php 14637 2008-12-11 12:17:09Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: category_seo.php 17479 2009-03-20 12:32:53Z arvydas $
  */
 
 /**
@@ -73,20 +74,6 @@ class Category_Seo extends Object_Seo
     }
 
     /**
-     * Returns seo object
-     *
-     * @return mixed
-     */
-    protected function _getObject( $sOxid )
-    {
-        // load object
-        $oCategory = oxNew( 'oxcategory' );
-        if ( $oCategory->loadInLang( $this->_iEditLang, $sOxid ) ) {
-            return $oCategory;
-        }
-    }
-
-    /**
      * Returns url type
      *
      * @return string
@@ -94,18 +81,6 @@ class Category_Seo extends Object_Seo
     protected function _getType()
     {
         return 'oxcategory';
-    }
-
-    /**
-     * Returns objects std url
-     *
-     * @return string
-     */
-    protected function _getStdUrl( $sOxid )
-    {
-        $oCategory = oxNew( 'oxcategory' );
-        $oCategory->loadInLang( $this->_iEditLang, $sOxid );
-        return $oCategory->getLink();
     }
 
     /**
@@ -123,7 +98,7 @@ class Category_Seo extends Object_Seo
                 $oCategory->save();
 
                 // marking page links as expired
-                oxSeoEncoderCategory::getInstance()->markAsExpired( $sOxid, oxConfig::getInstance()->getShopId(), 1, $this->_iEditLang, "oxparams != '' " );
+                oxSeoEncoderCategory::getInstance()->markAsExpired( $sOxid, $this->getconfig()->getShopId(), 1, $this->_iEditLang, "oxparams != '' " );
             }
         }
 

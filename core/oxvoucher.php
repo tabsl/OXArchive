@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxvoucher.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxvoucher.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
  */
 
 /**
@@ -56,41 +57,47 @@ class oxVoucher extends oxBase
     /**
      * Gets voucher from db by given number.
      *
-     * @param string $voucherNr          Voucher number
+     * @param string $sVoucherNr         Voucher number
      * @param array  $aVouchers          Array of available vouchers (default array())
-     * @param bool   $blCheckavalability ()
+     * @param bool   $blCheckavalability check if voucher is still reserver od not
      *
      * @throws oxVoucherException exception
      *
      * @return mixed
      */
-    public function getVoucherByNr( $voucherNr, $aVouchers = array(), $blCheckavalability = false )
+    public function getVoucherByNr( $sVoucherNr, $aVouchers = array(), $blCheckavalability = false )
     {
-        if ( is_null($voucherNr) ) {
-            return;
-        }
+        $oRet = null;
+        if ( !is_null( $sVoucherNr ) ) {
 
+            $sViewName = $this->getViewName();
+            $sSeriesViewName = getViewName( 'oxvoucherseries' );
 
-            $sQ = 'select * from '.$this->getViewName().' where oxvouchernr = "'.$voucherNr.'" and ';
-            foreach( $aVouchers as $sVoucherId => $sVoucherNr ) {
-                $sQ .= 'oxid != "'.$sVoucherId.'" and ';
+            $sQ  = "select {$sViewName}.* from {$sViewName}, {$sSeriesViewName} where
+                        {$sSeriesViewName}.oxid = {$sViewName}.oxvoucherserieid and
+                        {$sViewName}.oxvouchernr = '{$sVoucherNr}' and ";
+
+            if ( is_array( $aVouchers ) ) {
+                foreach ( $aVouchers as $sVoucherId => $sSkipVoucherNr ) {
+                    $sQ .= "{$sViewName}.oxid != '$sVoucherId' and ";
+                }
             }
-            $sQ .= '(oxorderid is NULL || oxorderid = "") ';
+            $sQ .= "( {$sViewName}.oxorderid is NULL || {$sViewName}.oxorderid = '' ) ";
 
-        //voucher timeout for 3 hours
-        if ( $blCheckavalability ) {
-            $iTime = time() - 3600 * 3;
-            $sQ .= ' and oxreserved < "'.$iTime.'" ';
-        }
+            //voucher timeout for 3 hours
+            if ( $blCheckavalability ) {
+                $iTime = time() - 3600 * 3;
+                $sQ .= " and {$sViewName}.oxreserved < '{$iTime}' ";
+            }
 
-        $sQ .= " limit 1";
+            $sQ .= " limit 1";
 
-
-        if ( ! ( $oRet = $this->assignRecord( $sQ ) ) ) {
-            $oEx = oxNew('oxVoucherException' );
-            $oEx->setMessage('EXCEPTION_VOUCHER_NOVOUCHER');
-            $oEx->setVoucherNr($voucherNr);
-            throw $oEx;
+            if ( ! ( $oRet = $this->assignRecord( $sQ ) ) ) {
+                $oEx = oxNew( 'oxVoucherException' );
+                $oEx->setMessage( 'EXCEPTION_VOUCHER_NOVOUCHER' );
+                $oEx->setVoucherNr( $sVoucherNr );
+                throw $oEx;
+            }
         }
 
         return $oRet;
@@ -183,13 +190,12 @@ class oxVoucher extends oxBase
      * @param array  $aVouchers array of vouchers
      * @param double $dPrice    current sum (price)
      *
-     *  @throws oxVoucherException exception
+     * @throws oxVoucherException exception
      *
      * @return array
      */
     public function checkVoucherAvailability( $aVouchers, $dPrice )
     {
-
         $this->_isAvailableWithSameSeries( $aVouchers );
         $this->_isAvailableWithOtherSeries( $aVouchers );
         $this->_isValidDate();
@@ -213,7 +219,6 @@ class oxVoucher extends oxBase
      */
     public function checkBasketVoucherAvailability( $aVouchers, $dPrice )
     {
-
         $this->_isAvailableWithSameSeries( $aVouchers );
         $this->_isAvailableWithOtherSeries( $aVouchers );
         $this->_isValidDate();
@@ -234,7 +239,6 @@ class oxVoucher extends oxBase
      */
     protected function _isAvailablePrice( $dPrice )
     {
-
         if ( $this->getDiscountValue( $dPrice ) < 0 ) {
             $oEx = oxNew( 'oxVoucherException' );
             $oEx->setMessage('EXCEPTION_VOUCHER_TOTALBELOWZERO');

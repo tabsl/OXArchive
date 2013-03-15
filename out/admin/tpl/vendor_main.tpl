@@ -89,7 +89,6 @@ function SetSticker( sStickerId, oObject)
 <input type="hidden" name="oxparentid" value="[{ $oxparentid }]">
 <input type="hidden" name="editval[oxvendor__oxid]" value="[{ $oxid }]">
 <input type="hidden" name="language" value="[{ $actlang }]">
-[{include file="autosave.form.tpl"}]
 
 <table border="0" width="98%">
 <tr>
@@ -144,7 +143,7 @@ function SetSticker( sStickerId, oObject)
             <td class="edittext">
             </td>
             <td class="edittext"><br>
-                [{include file="language.tpl"}]
+                [{include file="language_edit.tpl"}]
             </td>
         </tr>
         [{/if}]

@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxutilsdate.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxutilsdate.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
  */
 
 /**
@@ -60,7 +61,7 @@ class oxUtilsDate extends oxSuperCfg
      * Reformats date to user defined format.
      *
      * @param string $sDBDateIn         Date to reformat
-     * @param bool   $blForceEnglishRet Force to return primaty value(default false)
+     * @param bool   $blForceEnglishRet Force to return primary value(default false)
      *
      * @return string
      */
@@ -105,9 +106,9 @@ class oxUtilsDate extends oxSuperCfg
 
         // choosing format..
         if ( $sTime ) {
-            $sFormat = oxLang::getInstance()->translateString( 'fullDateFormat' );
+            $sFormat = $blForceEnglishRet ? 'Y-m-d H:i:s' : oxLang::getInstance()->translateString( 'fullDateFormat' );
         } else {
-            $sFormat = oxLang::getInstance()->translateString( 'simpleDateFormat' );
+            $sFormat = $blForceEnglishRet ? 'Y-m-d' : oxLang::getInstance()->translateString( 'simpleDateFormat' );
         }
 
         if ( count( $aDate ) != 3 ) {
@@ -170,7 +171,7 @@ class oxUtilsDate extends oxSuperCfg
         $aDate = explode( ".", $sDate);
 
         if ( isset( $aDate ) && count( $aDate) > 1) {
-            if( count( $aDate) == 2) {
+            if ( count( $aDate) == 2) {
                 $sDate = $aDate[1]."-".$aDate[0];
             } else {
                 $sDate = $aDate[2]."-".$aDate[1]."-".$aDate[0];

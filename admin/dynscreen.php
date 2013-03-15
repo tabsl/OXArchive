@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: dynscreen.php 14020 2008-11-06 13:36:42Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: dynscreen.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
  */
 
 /**

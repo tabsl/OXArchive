@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: contact.php 13614 2008-10-24 09:36:52Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: contact.php 17902 2009-04-06 14:22:54Z vilma $
  */
 
 /**
@@ -67,12 +68,11 @@ class Contact extends oxUBase
     protected $_sThisTemplate = 'contact.tpl';
 
     /**
-     * Current view search engine indexing state:
-     *     0 - index without limitations
-     *     1 - no index / no follow
-     *     2 - no index / follow
+     * Current view search engine indexing state
+     *
+     * @var int
      */
-    protected $_iViewIndexState = 1;
+    protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXNOFOLLOW;
 
     /**
      * Executes parent::render(), loads action articles and sets parameters
@@ -130,7 +130,7 @@ class Contact extends oxUBase
             return false;
         }
 
-        $sMessage  = "Message from ".$aParams['oxuser__oxsal']." ".$aParams['oxuser__oxfname']." ".$aParams['oxuser__oxlname']."(".$aParams['oxuser__oxusername'].")\n\n";
+        $sMessage  = oxLang::getInstance()->translateString( 'CONTACT_FROM' )." ".$aParams['oxuser__oxsal']." ".$aParams['oxuser__oxfname']." ".$aParams['oxuser__oxlname']."(".$aParams['oxuser__oxusername'].")\n\n";
         $sMessage .= nl2br( $sBody );
 
         $oEmail = oxNew( 'oxemail' );

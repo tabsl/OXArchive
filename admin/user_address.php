@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: user_address.php 14266 2008-11-19 10:12:51Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: user_address.php 17191 2009-03-13 12:21:00Z arvydas $
  */
 
 /**
@@ -96,10 +97,6 @@ class User_Address extends oxAdminDetails
         if ( !$this->_allowAdminEdit( oxConfig::getParameter( "oxid" ) ) )
             return false;
 
-        if ( $sRedirect = $this->autosave() ) {
-            return $sRedirect;
-        }
-
         $aParams = oxConfig::getParameter( "editval");
 
         $oAdress = oxNew( "oxbase" );
@@ -115,8 +112,6 @@ class User_Address extends oxAdminDetails
         $oAdress->save();
 
         $this->sSavedOxid = $oAdress->getId();
-
-        return $this->autosave();
     }
 
     /**

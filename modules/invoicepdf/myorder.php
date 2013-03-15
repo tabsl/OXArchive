@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package modules
- * @copyright © OXID eSales AG 2003-2009
- * $Id: myorder.php 14511 2008-12-05 12:55:44Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: myorder.php 17924 2009-04-07 07:57:43Z sarunas $
  */
 
 /**
@@ -26,7 +27,6 @@
  */
 class PdfBlock
 {
-
     /**
      * array of data to render
      * @var array
@@ -141,7 +141,6 @@ class PdfBlock
                 case 'Text':
                     $this->_aCache[$key]->aParams[1] += $iDelta;
                     break;
-                default:;
             }
         }
     }
@@ -188,9 +187,11 @@ class PdfArticleSummary extends PdfBlock
      */
     protected function _setTotalCostsWithoutDiscount( &$iStartPos )
     {
+        $oLang = oxLang::getInstance();
+
         // products netto price
         $this->line( 15, $iStartPos + 1, 195, $iStartPos + 1 );
-        $sNetSum = oxLang::getInstance()->formatCurrency( $this->_oData->oxorder__oxtotalnetsum->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+        $sNetSum = $oLang->formatCurrency( $this->_oData->oxorder__oxtotalnetsum->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
         $this->text( 45, $iStartPos + 4, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_ALLPRICENETTO' ) );
         $this->text( 195 - $this->_oPdf->getStringWidth( $sNetSum ), $iStartPos + 4, $sNetSum );
 
@@ -198,14 +199,14 @@ class PdfArticleSummary extends PdfBlock
         $iCtr = 0;
         foreach ( $this->_oData->getVats() as $iVATPercent => $dVATValue ) {
             $iStartPos += 4 * $iCtr;
-            $sVATSum = oxLang::getInstance()->formatCurrency( $dVATValue * $this->_oData->getCurrency()->rate, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+            $sVATSum = $oLang->formatCurrency( $dVATValue * $this->_oData->getCurrency()->rate, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
             $this->text( 45, $iStartPos + 8, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_ZZGLVAT' ).$iVATPercent.$this->_oData->translate( 'ORDER_OVERVIEW_PDF_PERCENTSUM' ) );
             $this->text( 195 - $this->_oPdf->getStringWidth( $sVATSum ), $iStartPos + 8, $sVATSum );
             $iCtr++;
         }
 
         // products brutto price
-        $sBrutPrice = oxLang::getInstance()->formatCurrency( $this->_oData->oxorder__oxtotalbrutsum->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+        $sBrutPrice = $oLang->formatCurrency( $this->_oData->oxorder__oxtotalbrutsum->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
         $this->text( 45, $iStartPos + 12, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_ALLPRICEBRUTTO' ) );
         $this->text( 195 - $this->_oPdf->getStringWidth( $sBrutPrice ), $iStartPos + 12, $sBrutPrice );
         $iStartPos++;
@@ -224,11 +225,13 @@ class PdfArticleSummary extends PdfBlock
      */
     protected function _setTotalCostsWithDiscount( &$iStartPos )
     {
+        $oLang = oxLang::getInstance();
+
         // line separator
         $this->line( 15, $iStartPos + 1, 195, $iStartPos + 1 );
 
         // products brutto price
-        $sBrutPrice = oxLang::getInstance()->formatCurrency( $this->_oData->oxorder__oxtotalbrutsum->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+        $sBrutPrice = $oLang->formatCurrency( $this->_oData->oxorder__oxtotalbrutsum->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
         $this->text( 45, $iStartPos + 4, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_ALLPRICEBRUTTO' ) );
         $this->text( 195 - $this->_oPdf->getStringWidth( $sBrutPrice ), $iStartPos + 4, $sBrutPrice );
 
@@ -240,7 +243,7 @@ class PdfArticleSummary extends PdfBlock
         if ( $dDiscountVal > 0 ) {
             $dDiscountVal *= -1;
         }
-        $sDiscount = oxLang::getInstance()->formatCurrency( $dDiscountVal, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+        $sDiscount = $oLang->formatCurrency( $dDiscountVal, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
         $this->text( 45, $iStartPos + 8, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_DISCOUNT' ) );
         $this->text( 195 - $this->_oPdf->getStringWidth( $sDiscount ), $iStartPos + 8, $sDiscount );
         $iStartPos++;
@@ -250,7 +253,7 @@ class PdfArticleSummary extends PdfBlock
         $iStartPos += 4;
 
         // products netto price
-        $sNetSum = oxLang::getInstance()->formatCurrency( $this->_oData->oxorder__oxtotalnetsum->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+        $sNetSum = $oLang->formatCurrency( $this->_oData->oxorder__oxtotalnetsum->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
         $this->text( 45, $iStartPos + 8, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_ALLPRICENETTO' ) );
         $this->text( 195 - $this->_oPdf->getStringWidth( $sNetSum ), $iStartPos + 8, $sNetSum );
 
@@ -258,7 +261,7 @@ class PdfArticleSummary extends PdfBlock
         $iCtr = 0;
         foreach ( $this->_oData->getVats() as $iVATPercent => $dVATValue ) {
             $iStartPos += 4 * $iCtr;
-            $sVATSum = oxLang::getInstance()->formatCurrency( $dVATValue * $this->_oData->getCurrency()->rate, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+            $sVATSum = $oLang->formatCurrency( $dVATValue * $this->_oData->getCurrency()->rate, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
             $this->text( 45, $iStartPos + 12, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_ZZGLVAT' ).$iVATPercent.$this->_oData->translate('ORDER_OVERVIEW_PDF_PERCENTSUM' ) );
             $this->text( 195 - $this->_oPdf->getStringWidth( $sVATSum ), $iStartPos + 12, $sVATSum );
             $iCtr++;
@@ -299,17 +302,18 @@ class PdfArticleSummary extends PdfBlock
      */
     protected function _setDeliveryInfo( &$iStartPos )
     {
+        $oLang = oxLang::getInstance();
         $sAddString = '';
         if ( $this->_oData->oxorder__oxdelvat->value ) {
 
             // delivery netto
-            $sDelCostNetto = oxLang::getInstance()->formatCurrency( $this->_oData->getOrderDeliveryPrice()->getNettoPrice(), $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+            $sDelCostNetto = $oLang->formatCurrency( $this->_oData->getOrderDeliveryPrice()->getNettoPrice(), $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
             $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_SHIPCOST' ).' '.$this->_oData->translate('ORDER_OVERVIEW_PDF_NETTO' ) );
             $this->text( 195 - $this->_oPdf->getStringWidth( $sDelCostNetto ), $iStartPos, $sDelCostNetto );
             $iStartPos += 4;
 
             // delivery VAT
-            $sDelCostVAT = oxLang::getInstance()->formatCurrency( $this->_oData->getOrderDeliveryPrice()->getVATValue(), $this->_oData->getCurrency()).' '.$this->_oData->getCurrency()->name;
+            $sDelCostVAT = $oLang->formatCurrency( $this->_oData->getOrderDeliveryPrice()->getVATValue(), $this->_oData->getCurrency()).' '.$this->_oData->getCurrency()->name;
             $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_ZZGLVAT' ).$this->_oData->oxorder__oxdelvat->value.$this->_oData->translate( 'ORDER_OVERVIEW_PDF_PERCENTSUM' ) );
             $this->text( 195 - $this->_oPdf->getStringWidth( $sDelCostVAT ), $iStartPos, $sDelCostVAT );
             $iStartPos += 4;
@@ -328,7 +332,7 @@ class PdfArticleSummary extends PdfBlock
             $this->_oData->oxorder__oxdelcost->setValue(0);
         }
 
-        $sDelCost = oxLang::getInstance()->formatCurrency( $this->_oData->oxorder__oxdelcost->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+        $sDelCost = $oLang->formatCurrency( $this->_oData->oxorder__oxdelcost->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
         $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_SHIPCOST' ).$sAddString );
         $this->text( 195 - $this->_oPdf->getStringWidth( $sDelCost ), $iStartPos, $sDelCost );
     }
@@ -344,19 +348,20 @@ class PdfArticleSummary extends PdfBlock
     {
         if ( $this->_oData->oxorder__oxwrapcost->value ) {
             $sAddString = '';
+            $oLang = oxLang::getInstance();
 
             //displaying wrapping VAT info
             if ( $this->_oData->oxorder__oxwrapvat->value ) {
 
                 // wrapping netto
                 $iStartPos += 5;
-                $sWrapCostNetto = oxLang::getInstance()->formatCurrency( $this->_oData->getOrderWrappingPrice()->getNettoPrice(), $this->_oData->getCurrency()).' '.$this->_oData->getCurrency()->name;
+                $sWrapCostNetto = $oLang->formatCurrency( $this->_oData->getOrderWrappingPrice()->getNettoPrice(), $this->_oData->getCurrency()).' '.$this->_oData->getCurrency()->name;
                 $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_WRAPPING' ).' '.$this->_oData->translate( 'ORDER_OVERVIEW_PDF_NETTO' ) );
                 $this->text( 195 - $this->_oPdf->getStringWidth( $sWrapCostNetto ), $iStartPos, $sWrapCostNetto );
 
                 //wrapping VAT
                 $iStartPos += 4;
-                $sWrapCostVAT = oxLang::getInstance()->formatCurrency( $this->_oData->getOrderWrappingPrice()->getVATValue(), $this->_oData->getCurrency()).' '.$this->_oData->getCurrency()->name;
+                $sWrapCostVAT = $oLang->formatCurrency( $this->_oData->getOrderWrappingPrice()->getVATValue(), $this->_oData->getCurrency()).' '.$this->_oData->getCurrency()->name;
                 $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_ZZGLVAT' ).$this->_oData->oxorder__oxwrapvat->value.$this->_oData->translate( 'ORDER_OVERVIEW_PDF_PERCENTSUM' ) );
                 $this->text( 195 - $this->_oPdf->getStringWidth( $sWrapCostVAT ), $iStartPos, $sWrapCostVAT );
 
@@ -369,7 +374,7 @@ class PdfArticleSummary extends PdfBlock
             $iStartPos += 4;
 
             // wrapping cost
-            $sWrapCost = oxLang::getInstance()->formatCurrency( $this->_oData->oxorder__oxwrapcost->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+            $sWrapCost = $oLang->formatCurrency( $this->_oData->oxorder__oxwrapcost->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
             $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_WRAPPING' ).$sAddString );
             $this->text( 195 - $this->_oPdf->getStringWidth( $sWrapCost ), $iStartPos, $sWrapCost );
             $iStartPos++;
@@ -385,17 +390,18 @@ class PdfArticleSummary extends PdfBlock
      */
     protected function _setPaymentInfo( &$iStartPos )
     {
+        $oLang = oxLang::getInstance();
         if ( $this->_oData->oxorder__oxpayvat->value ) {
 
             // payment netto
             $iStartPos += 4;
-            $sPayCostNetto = oxLang::getInstance()->formatCurrency( $this->_oData->getOrderPaymentPrice()->getNettoPrice(), $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+            $sPayCostNetto = $oLang->formatCurrency( $this->_oData->getOrderPaymentPrice()->getNettoPrice(), $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
             $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_PAYMENTIMPACT' ).' '.$this->_oData->translate( 'ORDER_OVERVIEW_PDF_NETTO' ) );
             $this->text( 195 - $this->_oPdf->getStringWidth( $sPayCostNetto ), $iStartPos, $sPayCostNetto );
 
             // payment VAT
             $iStartPos += 4;
-            $sPayCostVAT = oxLang::getInstance()->formatCurrency( $this->_oData->getOrderPaymentPrice()->getVATValue(), $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+            $sPayCostVAT = $oLang->formatCurrency( $this->_oData->getOrderPaymentPrice()->getVATValue(), $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
             $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_ZZGLVAT' ).$this->_oData->oxorder__oxpayvat->value.$this->_oData->translate( 'ORDER_OVERVIEW_PDF_PERCENTSUM' ) );
             $this->text( 195 - $this->_oPdf->getStringWidth( $sPayCostVAT ), $iStartPos, $sPayCostVAT );
 
@@ -408,7 +414,7 @@ class PdfArticleSummary extends PdfBlock
 
         // payment costs
         $iStartPos += 4;
-        $sPayCost = oxLang::getInstance()->formatCurrency( $this->_oData->oxorder__oxpaycost->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+        $sPayCost = $oLang->formatCurrency( $this->_oData->oxorder__oxpaycost->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
         $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_PAYMENTIMPACT' ) );
         $this->text( 195 - $this->_oPdf->getStringWidth( $sPayCost ), $iStartPos, $sPayCost );
 
@@ -424,19 +430,21 @@ class PdfArticleSummary extends PdfBlock
      */
     protected function _setGrandTotalPriceInfo( &$iStartPos )
     {
+        $oLang = oxLang::getInstance();
+
         // total netto price (A. very unprecise, impossible to count because of many factors)
         $this->font( 'Arial', 'B', 10 );
         if ( $this->_oData->oxorder__oxdelvat->value || $this->_oData->oxorder__oxwrapvat->value || $this->_oData->oxorder__oxpayvat->value ) {
 
             // collecting total net price
-            $sTotalNetSum = oxLang::getInstance()->formatCurrency( $this->_oData->getOrderNetSum(), $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+            $sTotalNetSum = $oLang->formatCurrency( $this->_oData->getOrderNetSum(), $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
             $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_ALLSUM_NET' ) );
             $this->text( 195 - $this->_oPdf->getStringWidth( $sTotalNetSum ), $iStartPos, $sTotalNetSum );
             $iStartPos += 4;
         }
 
         // total order sum
-        $sTotalOrderSum = oxLang::getInstance()->formatCurrency( $this->_oData->oxorder__oxtotalordersum->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+        $sTotalOrderSum = $oLang->formatCurrency( $this->_oData->oxorder__oxtotalordersum->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
         $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_ALLSUM' ) );
         $this->text( 195 - $this->_oPdf->getStringWidth( $sTotalOrderSum ), $iStartPos, $sTotalOrderSum );
         $iStartPos += 2;
@@ -696,8 +704,8 @@ class MyOrder extends MyOrder_parent
         $this->_iSelectedLang = $iSelLang;
 
         // setting invoice number
-        if ( !$this->oxorder__oxinvoicenr->value ) {
-            $this->oxorder__oxinvoicenr->setValue($this->getInvoiceNum());
+        if ( !$this->oxorder__oxbillnr->value ) {
+            $this->oxorder__oxbillnr->setValue($this->getNextBillNum());
             $this->save();
         }
 
@@ -806,13 +814,14 @@ class MyOrder extends MyOrder_parent
             $oPdf->text( 45, $iStartPos, substr( strip_tags( $this->_replaceExtendedChars( $oOrderArt->oxorderarticles__oxtitle->value, true ) ), 0, 58 ) );
 
             if ( $blShowPrice ) {
+                $oLang = oxLang::getInstance();
 
                 // product price
-                $sText = oxLang::getInstance()->formatCurrency( $oOrderArt->oxorderarticles__oxbprice->value, $this->_oCur ).' '.$this->_oCur->name;
+                $sText = $oLang->formatCurrency( $oOrderArt->oxorderarticles__oxbprice->value, $this->_oCur ).' '.$this->_oCur->name;
                 $oPdf->text( 163 - $oPdf->getStringWidth( $sText ), $iStartPos, $sText );
 
                 // total product price
-                $sText = oxLang::getInstance()->formatCurrency( $oOrderArt->oxorderarticles__oxbrutprice->value, $this->_oCur ).' '.$this->_oCur->name;
+                $sText = $oLang->formatCurrency( $oOrderArt->oxorderarticles__oxbrutprice->value, $this->_oCur ).' '.$this->_oCur->name;
                 $oPdf->text( 184 - $oPdf->getStringWidth( $sText ), $iStartPos, $sText );
 
                 // product VAT percent
@@ -900,12 +909,12 @@ class MyOrder extends MyOrder_parent
         }
 
         // invoice number
-        $sText = $this->translate( 'ORDER_OVERVIEW_PDF_COUNTNR' ).' '.$this->oxorder__oxinvoicenr->value;
+        $sText = $this->translate( 'ORDER_OVERVIEW_PDF_COUNTNR' ).' '.$this->oxorder__oxbillnr->value;
         $oPdf->text( 195 - $oPdf->getStringWidth( $sText ), $iTop + 8, $sText );
 
         // marking if order is canceled
         if ( $this->oxorder__oxstorno->value == 1 ) {
-            $this->oxorder__oxordernr->value .= '   '.$this->translate( 'ORDER_OVERVIEW_PDF_STORNO' );
+            $this->oxorder__oxordernr->setValue( $this->oxorder__oxordernr->getRawValue() . '   '.$this->translate( 'ORDER_OVERVIEW_PDF_STORNO' ), oxField::T_RAW );
         }
 
         // order number
@@ -915,7 +924,7 @@ class MyOrder extends MyOrder_parent
         // order date
         $oPdf->setFont( 'Arial', '', 10 );
         $aOrderDate = explode( ' ', $this->oxorder__oxorderdate->value );
-        $sOrderDate = $aOrderDate[0];
+        $sOrderDate = oxUtilsDate::getInstance()->formatDBDate( $aOrderDate[0]);
         $oPdf->text( 15, $iTop + 8, $this->translate( 'ORDER_OVERVIEW_PDF_ORDERSFROM' ).$sOrderDate.$this->translate( 'ORDER_OVERVIEW_PDF_ORDERSAT' ).$oShop->oxshops__oxurl->value );
         $iTop += 16;
 
@@ -1021,12 +1030,12 @@ class MyOrder extends MyOrder_parent
         }
 
         // invoice number
-        $sText = $this->translate( 'ORDER_OVERVIEW_PDF_COUNTNR' ).' '.$this->oxorder__oxinvoicenr->value;
+        $sText = $this->translate( 'ORDER_OVERVIEW_PDF_COUNTNR' ).' '.$this->oxorder__oxbillnr->value;
         $oPdf->text( 195 - $oPdf->getStringWidth( $sText ), $iTop, $sText );
 
         // canceled order marker
         if ( $this->oxorder__oxstorno->value == 1 ) {
-            $this->oxorder__oxordernr->value .= '   '.$this->translate( 'ORDER_OVERVIEW_PDF_STORNO' );
+            $this->oxorder__oxordernr->setValue( $this->oxorder__oxordernr->getRawValue() . '   '.$this->translate( 'ORDER_OVERVIEW_PDF_STORNO' ), oxField::T_RAW );
         }
 
         // order number
@@ -1035,7 +1044,7 @@ class MyOrder extends MyOrder_parent
 
         // order date
         $aOrderDate = explode( ' ', $this->oxorder__oxorderdate->value );
-        $sOrderDate = $aOrderDate[0];
+        $sOrderDate = oxUtilsDate::getInstance()->formatDBDate( $aOrderDate[0]);
         $oPdf->setFont( 'Arial', '', 10 );
         $oPdf->text(15, 119, $this->translate( 'ORDER_OVERVIEW_PDF_ORDERSFROM' ).$sOrderDate.$this->translate( 'ORDER_OVERVIEW_PDF_ORDERSAT' ).$oShop->oxshops__oxurl->value );
 

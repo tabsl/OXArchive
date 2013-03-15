@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxutilsview.php 14484 2008-12-05 08:36:16Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxutilsview.php 17677 2009-03-30 15:19:39Z vilma $
  */
 
 /**
@@ -186,39 +187,53 @@ class oxUtilsView extends oxSuperCfg
     }
 
     /**
-     * Runs long description through smarty
+     * Runs long description through smarty. If you pass array of data
+     * to process, array will be returned, if you pass string - string
+     * will be passed as result
      *
-     * @param string $sDesc long description
-     * @param string $sOxid current object id
+     * @param mixed  $sDesc       description or array of descriptions ( array( [] => array( _ident_, _value_to_process_ ) ) )
+     * @param string $sOxid       current object id
+     * @param oxview $oActView    view data to use its view data (optional)
+     * @param bool   $blRecompile force to recompile if found in cache
      *
-     * @return string long description
+     * @return mixed
      */
-    public function parseThroughSmarty( $sDesc, $sOxid )
+    public function parseThroughSmarty( $sDesc, $sOxid = null, $oActView = null, $blRecompile = false )
     {
+        $iLang = oxLang::getInstance()->getTplLanguage();
 
-        $sOxid .= oxLang::getInstance()->getTplLanguage();
         // now parse it through smarty
         $oSmarty = clone $this->getSmarty();
 
-        $oActView = oxNew( 'oxubase' );
-        $oActView->addGlobalParams();
-
         // save old tpl data
         $sTplVars = $oSmarty->_tpl_vars;
+        $blForceRecompile = $oSmarty->force_compile;
 
-        $aViewData = $oActView->getViewData();
-        $aActiveViewData = $this->getConfig()->getActiveView()->getViewData();
-        foreach ( array_keys( $aViewData ) as $sViewName ) {
-            if ( isset( $aActiveViewData[$sViewName] ) ) {
-                $oSmarty->assign_by_ref( $sViewName, $aActiveViewData[$sViewName] );
-            }
+        $oSmarty->force_compile = $blRecompile;
+
+        if ( !$oActView ) {
+            $oActView = oxNew( 'oxubase' );
+            $oActView->addGlobalParams();
         }
 
-        $oSmarty->oxidcache = new oxField($sDesc, oxField::T_RAW);
-        $sRes = $oSmarty->fetch( "ox:$sOxid" );
+        $aViewData = $oActView->getViewData();
+        foreach ( array_keys( $aViewData ) as $sName ) {
+            $oSmarty->assign_by_ref( $sName, $aViewData[$sName] );
+        }
+
+        if ( is_array( $sDesc ) ) {
+            foreach ( $sDesc as $sName => $aData ) {
+                $oSmarty->oxidcache = new oxField( $aData[1], oxField::T_RAW );
+                $sRes[$sName] = $oSmarty->fetch( "ox:".$aData[0].$iLang );
+            }
+        } else {
+            $oSmarty->oxidcache = new oxField($sDesc, oxField::T_RAW);
+            $sRes = $oSmarty->fetch( "ox:{$sOxid}{$iLang}" );
+        }
 
         // restore tpl vars for continuing smarty processing if it is in one
         $oSmarty->_tpl_vars = $sTplVars;
+        $oSmarty->force_compile = $blForceRecompile;
 
         return $sRes;
     }
@@ -245,7 +260,6 @@ class oxUtilsView extends oxSuperCfg
                                                   'ox_get_secure',
                                                   'ox_get_trusted' ) );
 
-        $oSmarty->register_modifier( 'truncate', 'smarty_modifier_oxtruncate' );
 
         // $myConfig->blTemplateCaching; // DODGER #655 : permanently switched off as it doesnt work good enough
         $oSmarty->caching      = false;

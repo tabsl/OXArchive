@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxadminlist.php 14553 2008-12-08 15:31:46Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxadminlist.php 17414 2009-03-19 09:48:33Z arvydas $
  */
 
 /**
@@ -198,6 +199,7 @@ class oxAdminList extends oxAdminView
         $aWhere = oxConfig::getParameter( 'where' );
 
         $myConfig = $this->getConfig();
+        $myUtils  = oxUtils::getInstance();
         $sListTable = $myConfig->getGlobalParameter( 'ListCoreTable' );
 
         $oSearchKeys = new oxStdClass();
@@ -206,11 +208,11 @@ class oxAdminList extends oxAdminView
             while ( list( $sName, $sValue ) = each( $aWhere ) ) {
                 $sWhereParam .= "&amp;where[".$sName."]=".$sValue;
                 $sFieldName = str_replace( array( getViewName( $sListTable ) . '.', $sListTable . '.' ), $sListTable . '.', $sName );
-                $sFieldName = oxUtils::getInstance()->getArrFldName( $sFieldName );
+                $sFieldName = $myUtils->getArrFldName( $sFieldName );
                 $oSearchKeys->$sFieldName = $sValue;
             }
             $this->_aViewData['where'] = $oSearchKeys;
-            //#M430: Pagination in admin list loses category parameter  
+            //#M430: Pagination in admin list loses category parameter
             $sChosenCat  = oxConfig::getParameter( "art_category");
             if ( $sChosenCat ) {
                 $sWhereParam .= "&amp;art_category=".$sChosenCat;
@@ -463,7 +465,7 @@ class oxAdminList extends oxAdminView
     protected function _prepareWhereQuery( $aWhere, $sqlFull )
     {
         if ( count($aWhere) ) {
-
+            $myUtilsString = oxUtilsString::getInstance();
             while ( list($sFieldName, $sFieldValue) = each( $aWhere ) ) {
                 $sFieldValue = trim( $sFieldValue );
 
@@ -490,13 +492,12 @@ class oxAdminList extends oxAdminView
 
                         // trying to search spec chars in search value
                         // if found, add cleaned search value to search sql
-                        $sUml = oxUtilsString::getInstance()->prepareStrForSearch( $sVal );
+                        $sUml = $myUtilsString->prepareStrForSearch( $sVal );
                         if ( $sUml ) {
                             $sqlFull .= " or {$sFieldName} ";
 
                             $sqlFull .= $this->_buildFilter( $sUml, $blIsSearchValue );
                         }
-
                     }
 
                     // end for AND action
@@ -537,7 +538,8 @@ class oxAdminList extends oxAdminView
         if ( !$this->_oList )
             return $this->_aWhere;
 
-        $sTable = $this->_oList->getBaseObject()->getCoreTableName();
+        $oListObject = $this->_oList->getBaseObject();
+        $sTable = $oListObject->getCoreTableName();
         $sViewName = getViewName( $sTable );
 
         if ( $this->_oList && is_array( $aWhere ) ) {
@@ -552,9 +554,9 @@ class oxAdminList extends oxAdminView
 
 
                     // test if field is multilang
-                    if ( ( $oObj = $this->_oList->getBaseObject() ) instanceof oxI18n ) {
+                    if ( $oListObject instanceof oxI18n ) {
                         $sFldName = strtolower( preg_replace('/(.+)\./', '', $sName ) );
-                        if ( $oObj->isMultilingualField( $sFldName ) && $iLanguage ) {
+                        if ( $oListObject->isMultilingualField( $sFldName ) && $iLanguage ) {
                             $sName .=  "_$iLanguage";
                         }
                     }

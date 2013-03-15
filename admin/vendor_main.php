@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: vendor_main.php 14014 2008-11-06 13:26:22Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: vendor_main.php 17191 2009-03-13 12:21:00Z arvydas $
  */
 
 /**
@@ -131,8 +132,6 @@ class Vendor_Main extends oxAdminDetails
         // set oxid if inserted
         if ( $soxId == "-1")
             oxSession::setVar( "saved_oxid", $oVendor->oxvendor__oxid->value);
-
-        return $this->autosave();
     }
 
     /**
@@ -172,65 +171,5 @@ class Vendor_Main extends oxAdminDetails
         // set oxid if inserted
         if ( $soxId == "-1")
             oxSession::setVar( "saved_oxid", $oVendor->oxvendor__oxid->value);
-
-        return $this->autosave();
-    }
-
-    /**
-     * Removes selected vendor from article.
-     *
-     * @return null
-     */
-    public function removearticle()
-    {
-        $aRemoveArt = oxConfig::getParameter( "artinthiscat");
-        $soxId      = oxConfig::getParameter( "oxid");
-
-
-        if ( isset( $aRemoveArt) && $aRemoveArt) {
-            $sSelect =  "update oxarticles set oxvendorid = null where oxid in ( ";
-            $blSep = false;
-            foreach ($aRemoveArt as $sRem) {
-                if ( $blSep)
-                    $sSelect .= ",";
-                $sSelect .= "'$sRem'";
-                $blSep = true;
-            }
-            $sSelect .= ")";
-
-            oxDb::getDb()->Execute( $sSelect);
-
-                // resetting article count
-                oxUtilsCount::getInstance()->resetVendorArticleCount($soxId);
-        }
-    }
-
-    /**
-     * Adds vendor to article.
-     *
-     * @return null
-     */
-    public function addarticle()
-    {
-        $aAddArticle = oxConfig::getParameter( "allartincat");
-        $soxId       = oxConfig::getParameter( "oxid");
-
-
-        if ( isset( $aAddArticle) && $aAddArticle) {
-            $sSelect =  "update oxarticles set oxvendorid = '$soxId' where oxid in ( ";
-            $blSep = false;
-            foreach ($aAddArticle as $sRem) {
-                if ( $blSep)
-                    $sSelect .= ",";
-                $sSelect .= "'$sRem'";
-                $blSep = true;
-            }
-            $sSelect .= ")";
-
-            oxDb::getDb()->Execute( $sSelect);
-
-                // resetting article count
-                oxUtilsCount::getInstance()->resetVendorArticleCount($soxId);
-        }
     }
 }

@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: country_main.php 14019 2008-11-06 13:35:04Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: country_main.php 17188 2009-03-13 12:19:11Z arvydas $
  */
 
 /**
@@ -124,8 +125,6 @@ class Country_Main extends oxAdminDetails
         // set oxid if inserted
         if ( $soxId == "-1")
             oxSession::setVar( "saved_oxid", $oCountry->oxcountry__oxid->value);
-
-        return $this->autosave();
     }
 
     /**
@@ -161,7 +160,5 @@ class Country_Main extends oxAdminDetails
         // set oxid if inserted
         if ( $soxId == "-1")
             oxSession::setVar( "saved_oxid", $oCountry->oxcountry__oxid->value);
-
-        return $this->autosave();
     }
 }

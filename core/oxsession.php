@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxsession.php 14604 2008-12-10 14:45:26Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxsession.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
  */
 
 
@@ -79,6 +80,13 @@ class oxSession extends oxSuperCfg
      * @var string
      */
     protected $_sErrorMsg = null;
+
+    /**
+     * Basket session object
+     *
+     * @var object
+     */
+    protected $_oBasket = null;
 
     /**
      * Array of Classes => methods, which requires forced cookies support. Works together with blSessionEnforceCookies config option.
@@ -185,7 +193,7 @@ class oxSession extends oxSuperCfg
             $sid = $sForceSidParam;
         } elseif ($blUseCookies && $this->_getCookieSid()) {
             $sid = $this->_getCookieSid();
-        } elseif($sSidParam) {
+        } elseif ($sSidParam) {
             $sid = $sSidParam;
         }
 
@@ -565,7 +573,7 @@ class oxSession extends oxSuperCfg
             return true;
         }
 
-        if($sFunction && in_array($sFunction, $this->_aRequireCookiesInFncs)) {
+        if ($sFunction && in_array($sFunction, $this->_aRequireCookiesInFncs)) {
             return false;
         }
 
@@ -792,7 +800,7 @@ class oxSession extends oxSuperCfg
     protected function _getBasketName()
     {
         $myConfig = $this->getConfig();
-        if( $myConfig->getConfigParam( 'blMallSharedBasket' ) == 0) {
+        if ( $myConfig->getConfigParam( 'blMallSharedBasket' ) == 0) {
             return $myConfig->getShopId()."_basket";
         } else {
             return "basket";

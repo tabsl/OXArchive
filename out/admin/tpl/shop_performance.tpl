@@ -39,7 +39,6 @@ function UpdateList( sID)
 <input type="hidden" name="fnc" value="save">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
 <input type="hidden" name="editval[oxshops__oxid]" value="[{ $oxid }]">
-[{include file="autosave.form.tpl"}]
 
 
     <table border=0>
@@ -120,6 +119,15 @@ function UpdateList( sID)
          </td>
         </tr>
 
+        <tr class="conftext[{cycle}]">
+         <td valign="top">
+            <input type=hidden name=confbools[blClearCacheOnLogout] value=false>
+            <input type=checkbox class="confinput" name=confbools[blClearCacheOnLogout] value=true  [{if ($confbools.blClearCacheOnLogout)}]checked[{/if}] [{ $readonly }]>
+         </td>
+         <td valign="top" width="100%" >
+           [{ oxmultilang ident="SHOP_PERF_CLEARCACHEONLOGOUT" }]
+         </td>
+        </tr>
     </table>
     <br>
 
@@ -227,6 +235,16 @@ function UpdateList( sID)
              </td>
              <td valign="top" class="conftext" width="100%" >
                [{ oxmultilang ident="SHOP_PERF_LOADVENDORTREE" }]
+             </td>
+            </tr>
+
+            <tr>
+             <td valign="top" class="conftext">
+                <input type=hidden name=confbools[bl_perfLoadManufacturerTree] value=false>
+                <input type=checkbox class="confinput" name=confbools[bl_perfLoadManufacturerTree] value=true  [{if ($confbools.bl_perfLoadManufacturerTree)}]checked[{/if}] [{ $readonly }]>
+             </td>
+             <td valign="top" class="conftext" width="100%" >
+               [{ oxmultilang ident="SHOP_PERF_LOADMANUFACTURERTREE" }]
              </td>
             </tr>
 

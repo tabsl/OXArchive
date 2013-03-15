@@ -64,8 +64,6 @@ function UnassignThis( sID)
 
 function ChangeEditBar( sLocation, sPos)
 {
-    [{include file="autosave.script.tpl"}]
-
     var oSearch = document.getElementById("search");
     oSearch.actedit.value=sPos;
     oSearch.submit();
@@ -134,14 +132,14 @@ window.onLoad = top.reloadEditFrame();
         <select name="art_category" class="editinput" onChange="Javascript:document.search.lstrt.value=0;document.search.submit();">
         <option value="">[{ oxmultilang ident="ARTICLE_LIST_ALLPRODUCTS" }]</option>
         [{foreach from=$cattree->aList item=pcat}]
-        <option value="[{ $pcat->oxcategories__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value|truncate:20:"..":true }]</option>
+        <option value="[{ $pcat->oxcategories__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value|oxtruncate:20:"..":true }]</option>
         [{/foreach}]
         </select>
         <select name="pwrsearchfld" class="editinput" onChange="Javascript:document.search.lstrt.value=0;document.search.sort.value=this.value;document.forms.search.submit();">
             [{foreach from=$pwrsearchfields key=field item=desc}]
             [{assign var="ident" value=GENERAL_ARTICLE_$desc}]
-            [{assign var="ident" value=$ident|upper }]
-            <option value="[{ $desc }]" [{ if $pwrsearchfld == $desc|upper }]SELECTED[{/if}]>[{ oxmultilang|truncate:20:"..":true ident=$ident }]</option>
+            [{assign var="ident" value=$ident|oxupper }]
+            <option value="[{ $desc }]" [{ if $pwrsearchfld == $desc|oxupper }]SELECTED[{/if}]>[{ oxmultilang|oxtruncate:20:"..":true ident=$ident }]</option>
             [{/foreach}]
         </select>
         <input class="listedit" type="text" size="20" maxlength="128" name="where[[{$listTable}].[{$pwrsearchfld}]]" value="[{ $pwrsearchinput}]" [{include file="help.tpl" helpid=searchfieldoxdynamic}]>
@@ -165,7 +163,7 @@ window.onLoad = top.reloadEditFrame();
 <tr>
     <td class="listheader first" height="15" width="30" align="center"><a href="Javascript:document.search.sort.value='oxactive';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_ACTIVTITLE" }]</a></td>
     <td class="listheader"><a href="Javascript:document.search.sort.value='oxartnum';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_ARTNUM" }]</a></td>
-    <td class="listheader" height="15">&nbsp;<a href="Javascript:document.search.sort.value='[{ $pwrsearchfld|lower }]';document.search.submit();" class="listheader">[{assign var="ident" value=GENERAL_ARTICLE_$pwrsearchfld }][{assign var="ident" value=$ident|upper }][{ oxmultilang ident=$ident }]</a></td>
+    <td class="listheader" height="15">&nbsp;<a href="Javascript:document.search.sort.value='[{ $pwrsearchfld|oxlower }]';document.search.submit();" class="listheader">[{assign var="ident" value=GENERAL_ARTICLE_$pwrsearchfld }][{assign var="ident" value=$ident|oxupper }][{ oxmultilang ident=$ident }]</a></td>
     <td class="listheader" colspan="2"><a href="Javascript:document.search.sort.value='oxshortdesc';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_SHORTDESC" }]</a></td>
 </tr>
 
@@ -185,8 +183,8 @@ window.onLoad = top.reloadEditFrame();
     [{ /if}]
     <td valign="top" class="[{ $listclass}][{ if $listitem->oxarticles__oxactive->value == 1}] active[{/if}]" height="15"><div class="listitemfloating">&nbsp</a></div></td>
     <td valign="top" class="[{ $listclass}]"><div class="listitemfloating"><a href="Javascript:EditThis('[{ $listitem->oxarticles__oxid->value }]');" class="[{ $listclass}]">[{ $listitem->oxarticles__oxartnum->value }]</a></div></td>
-    <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating">&nbsp;<a href="Javascript:EditThis('[{ $listitem->oxarticles__oxid->value }]');" class="[{ $listclass}]">[{ $listitem->pwrsearchval|truncate:200:"..":false }]</a></div></td>
-    <td valign="top" class="[{ $listclass}]"><div class="listitemfloating"><a href="Javascript:EditThis('[{ $listitem->oxarticles__oxid->value }]');" class="[{ $listclass}]">[{ $listitem->oxarticles__oxshortdesc->value|strip_tags|truncate:45:"..":true }]</a></div></td>
+    <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating">&nbsp;<a href="Javascript:EditThis('[{ $listitem->oxarticles__oxid->value }]');" class="[{ $listclass}]">[{ $listitem->pwrsearchval|oxtruncate:200:"..":false }]</a></div></td>
+    <td valign="top" class="[{ $listclass}]"><div class="listitemfloating"><a href="Javascript:EditThis('[{ $listitem->oxarticles__oxid->value }]');" class="[{ $listclass}]">[{ $listitem->oxarticles__oxshortdesc->value|strip_tags|oxtruncate:45:"..":true }]</a></div></td>
     <td class="[{ $listclass}]">
       [{if !$readonly}]
           <a href="Javascript:DeleteThis('[{ $listitem->oxarticles__oxid->value }]');" class="delete" id="del.[{$_cnt}]"title="" [{include file="help.tpl" helpid=item_delete}]></a>
@@ -208,7 +206,7 @@ window.onLoad = top.reloadEditFrame();
 
 <script type="text/javascript">
 if (parent.parent)
-{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->value}]";
+{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->getRawValue()|oxaddslashes}]";
     parent.parent.sMenuItem    = "[{ oxmultilang ident="GENERAL_MENUITEM" }]";
     parent.parent.sMenuSubItem = "[{ oxmultilang ident="ARTICLE_LIST_MENUSUBITEM" }]";
     parent.parent.sWorkArea    = "[{$_act}]";

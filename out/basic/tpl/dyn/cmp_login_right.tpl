@@ -8,13 +8,6 @@
         [{$_login_additional_form_parameters}]
         <input type="hidden" name="fnc" value="login_noredirect">
         <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
-        <input type="hidden" name="cnid" value="[{$oViewConf->getActCatId()}]">
-        <input type="hidden" name="searchrecomm" value="[{$_login_searchrecomm}]">
-        <input type="hidden" name="searchtag" value="[{$_login_searchtag}]">
-        <input type="hidden" name="searchparam" value="[{$_login_searchparam}]">
-        <input type="hidden" name="searchcnid" value="[{$_login_searchcnid}]">
-        <input type="hidden" name="searchvendor" value="[{$_login_searchvendor}]">
-        <input type="hidden" name="listtype" value="[{$_login_listtype}]">
         <input type="hidden" name="pgNr" value="[{$_login_pgnr-1}]">
         <input type="hidden" name="tpl" value="[{$_login_tpl}]">
         <input type="hidden" name="CustomError" value='dyn_cmp_login_right'>
@@ -49,11 +42,11 @@
       </tr>
       <tr>
         <td></td>
-        <td><a id="test_RightLogin_Register" class="link" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=register" params="cnid="|cat:$oViewConf->getActCatId() }]" rel="nofollow">[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_OPENACCOUNT" }]</a></td>
+        <td><a id="test_RightLogin_Register" class="link" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=register" params=$oViewConf->getNavUrlParams() }]" rel="nofollow">[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_OPENACCOUNT" }]</a></td>
       </tr>
       <tr>
         <td></td>
-        <td ><a id="test_RightLogin_LostPwd" class="link" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=forgotpwd" params="cnid="|cat:$oViewConf->getActCatId() }]" rel="nofollow">[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_FORGOTPWD" }]</a></td>
+        <td ><a id="test_RightLogin_LostPwd" class="link" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=forgotpwd" params=$oViewConf->getNavUrlParams() }]" rel="nofollow">[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_FORGOTPWD" }]</a></td>
       </tr>
     </table>
   </form>
@@ -63,8 +56,8 @@
       <td id="test_LoginUser">
         [{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_LOGGEDINAS" }]<br>
         [{assign var="fullname" value=$oxcmp_user->oxuser__oxfname->value|cat:" "|cat:$oxcmp_user->oxuser__oxlname->value }]
-        <b>&quot;[{ $oxcmp_user->oxuser__oxusername->value|truncate:25:"...":true }]&quot;</b> <br>
-        ([{ $fullname|truncate:25:"...":true }])
+        <b>&quot;[{ $oxcmp_user->oxuser__oxusername->value|oxtruncate:25:"...":true }]&quot;</b> <br>
+        ([{ $fullname|oxtruncate:25:"...":true }])
       </td>
     </tr>
     <tr>
@@ -76,14 +69,7 @@
           <input type="hidden" name="fnc" value="logout">
           <input type="hidden" name="redirect" value="1">
           <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
-          <input type="hidden" name="cnid" value="[{ $oViewConf->getActCatId() }]">
           <input type="hidden" name="lang" value="[{ $oViewConf->getActLanguageId() }]">
-          <input type="hidden" name="searchparam" value="[{$_login_searchparam}]">
-          <input type="hidden" name="searchrecomm" value="[{$_login_searchrecomm}]">
-          <input type="hidden" name="searchtag" value="[{$_login_searchtag}]">
-          <input type="hidden" name="searchcnid" value="[{$_login_searchcnid}]">
-          <input type="hidden" name="searchvendor" value="[{$_login_searchvendor}]">
-          <input type="hidden" name="listtype" value="[{$_login_listtype}]">
           <input type="hidden" name="pgNr" value="[{$_login_pgnr-1}]">
           <input type="hidden" name="tpl" value="[{$_login_tpl}]">
           [{if $oView->getProduct()}]

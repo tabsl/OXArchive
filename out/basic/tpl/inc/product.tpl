@@ -87,16 +87,16 @@
     <input id="test_am_[{$testid}]" type="hidden" name="am" value="1">
     [{/if}]
 
-    [{if $size!='small'}]
+    [{*if $size!='small'*}]
 
     [{ if $product->getVariantList() }]
       <label>[{ $product->oxarticles__oxvarname->value }] :</label>
       <select id="test_varSelect_[{$testid}]" name="aid">
         [{ if !$product->isParentNotBuyable()}]
-          <option value="[{$product->sOXID}]">[{ $product->oxarticles__oxvarselect->value }] [{ $product->getFPrice() }] [{ $currency->sign}]*</option>
+          <option value="[{$product->sOXID}]">[{ $product->oxarticles__oxvarselect->value }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $product->getFPrice() }] [{ $currency->sign|strip_tags}]* [{/oxhasrights}]</option>
         [{/if}]
         [{foreach from=$product->getVariantList() item=variant}]
-          <option value="[{$variant->sOXID}]">[{ $variant->oxarticles__oxvarselect->value }] [{ $variant->getFPrice() }] [{ $currency->sign}]*</option>
+          <option value="[{$variant->sOXID}]">[{ $variant->oxarticles__oxvarselect->value }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $variant->getFPrice() }] [{ $currency->sign|strip_tags}]* [{/oxhasrights}]</option>
         [{/foreach}]
       </select>
     [{elseif $product->getDispSelList()}]
@@ -112,7 +112,7 @@
       [{/foreach}]
     [{/if}]
 
-    [{/if}]
+    [{*/if*}]
     </div>
 
     [{if $size!='big'}] [{$smarty.capture.product_price}] [{/if}]
@@ -125,9 +125,7 @@
             <label>[{ oxmultilang ident="DETAILS_PERSPARAM_QUANTITY" }]</label><input id="test_am_[{$testid}]" type="text" name="am" value="1" size="3">
         </div>
         [{/if}]
-        <div class="tocart" >
-          <input id="test_toBasket_[{$testid}]" type="submit" value="[{if $size=='small'}][{oxmultilang ident="INC_PRODUCTITEM_ADDTOCARD3" }][{else}][{oxmultilang ident="INC_PRODUCTITEM_ADDTOCARD2"}][{/if}]" onclick="oxid.popup.load();">
-        </div>
+        <div class="tocart"><input id="test_toBasket_[{$testid}]" type="submit" value="[{if $size=='small'}][{oxmultilang ident="INC_PRODUCTITEM_ADDTOCARD3" }][{else}][{oxmultilang ident="INC_PRODUCTITEM_ADDTOCARD2"}][{/if}]" onclick="oxid.popup.load();"></div>
         [{/if}]
     [{/oxhasrights}]
     </form>

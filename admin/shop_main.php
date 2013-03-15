@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: shop_main.php 14655 2008-12-11 18:17:37Z tomas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: shop_main.php 17243 2009-03-16 15:16:57Z arvydas $
  */
 
 
@@ -103,6 +104,11 @@ class Shop_Main extends oxAdminDetails
         } else {
                 $aParams['oxshops__oxid'] = null;
         }
+
+        if ($aParams['oxshops__oxsmtp']) {
+            $aParams['oxshops__oxsmtp'] = trim($aParams['oxshops__oxsmtp']);
+        }
+
         //$aParams = $oShop->ConvertNameArray2Idx( $aParams);
         $oShop->assign( $aParams);
 
@@ -113,7 +119,6 @@ class Shop_Main extends oxAdminDetails
         //unsetting password
         if ($sNewSMPTPass == '-')
             $oShop->oxshops__oxsmtppwd->setValue("");
-
 
         $isubjlang = oxConfig::getParameter("subjlang");
         if ($isubjlang && $isubjlang > 0) {
@@ -127,8 +132,6 @@ class Shop_Main extends oxAdminDetails
         $this->_aViewData["updatelist"] =  "1";
 
         oxSession::setVar( "actshop", $soxId);
-
-        return $this->autosave();
     }
 
 

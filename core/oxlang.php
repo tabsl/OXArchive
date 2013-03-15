@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxlang.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxlang.php 17643 2009-03-27 13:59:37Z arvydas $
  */
 
 /**
@@ -59,14 +60,14 @@ class oxLang extends oxSuperCfg
      *
      * @var array
      */
-    protected $_aLangCache = null;
+    protected $_aLangCache = array();
 
     /**
      * Admin language translations array
      *
      * @var array
      */
-    protected $_aAdminLangCache = null;
+    protected $_aAdminLangCache = array();
 
     /**
      * resturns a single instance of this class
@@ -204,6 +205,7 @@ class oxLang extends oxSuperCfg
         if ( !$this->isAdmin() ) {
             $this->_iEditLanguageId = $this->getBaseLanguage();
         } else {
+
             $this->_iEditLanguageId = oxConfig::getParameter( 'editlanguage' );
 
             // check if we really need to set the new language
@@ -212,13 +214,12 @@ class oxLang extends oxSuperCfg
             }
 
             if ( isset( $iNewLanguage ) ) {
-                if ( isset( $iNewLanguage ) ) {
-                    $this->_iEditLanguageId = $iNewLanguage;
-                    oxSession::deleteVar( "new_lang" );
-                }
+                $this->_iEditLanguageId = $iNewLanguage;
+                oxSession::deleteVar( "new_lang" );
             }
 
             if ( is_null( $this->_iEditLanguageId ) ) {
+
                 $this->_iEditLanguageId = $this->getBaseLanguage();
             }
         }
@@ -236,9 +237,9 @@ class oxLang extends oxSuperCfg
      *
      * @return array
      */
-    public function getLanguageArray( $iLanguage = null )
+    public function getLanguageArray( $iLanguage = null, $blOnlyActive = false, $blSort = false )
     {
-        $myConfig = oxConfig::getInstance();
+        $myConfig = $this->getConfig();
 
         if ( is_null($iLanguage) ) {
             $iLanguage = $this->_iBaseLanguageId;
@@ -246,31 +247,56 @@ class oxLang extends oxSuperCfg
 
         $aLanguages = array();
         $aConfLanguages = $myConfig->getConfigParam( 'aLanguages' );
-        if ( is_array( $aConfLanguages ) ) {
+        $aLangParams    = $myConfig->getConfigParam( 'aLanguageParams' );
 
+        if ( is_array( $aConfLanguages ) ) {
             $i = 0;
             reset( $aConfLanguages );
             while ( list( $key, $val ) = each( $aConfLanguages ) ) {
+
+                if ( $blOnlyActive && is_array($aLangParams) ) {
+                    //skipping non active languages
+                    if ( !$aLangParams[$key]['active'] ) {
+                        continue;
+                    }
+                }
+
                 if ( $val) {
                     $oLang = new oxStdClass();
-                    $oLang->id   = $i;
-                    $oLang->abbr = $key;
-                    $oLang->name = $val;
+                    if ( isset($aLangParams[$key]['baseId']) ) {
+                        $oLang->id  = $aLangParams[$key]['baseId'];
+                    } else {
+                        $oLang->id  = $i;
+                    }
+                    $oLang->oxid    = $key;
+                    $oLang->abbr    = $key;
+                    $oLang->name    = $val;
+
+                    if ( is_array($aLangParams) ) {
+                        $oLang->active  = $aLangParams[$key]['active'];
+                        $oLang->sort   = $aLangParams[$key]['sort'];
+                    }
+
                     if ( isset( $iLanguage ) && $i == $iLanguage ) {
                         $oLang->selected = 1;
                     } else {
                         $oLang->selected = 0;
                     }
-                    $aLanguages[$i] = $oLang;
+                    $aLanguages[$oLang->id] = $oLang;
                 }
                 ++$i;
             }
         }
+
+        if ( $blSort && is_array($aLangParams) ) {
+            uasort( $aLanguages, array($this, '_sortLanguagesCallback') );
+        }
+
         return $aLanguages;
     }
 
     /**
-     * getLanguageNames returns array of language names e.g. array('Deutch', 'English')
+     * Returns selected language abbervation
      *
      * @param int $iLanguage language number
      *
@@ -279,7 +305,7 @@ class oxLang extends oxSuperCfg
      */
     public function getLanguageAbbr( $iLanguage = null)
     {
-        $myConfig = oxConfig::getInstance();
+        $myConfig = $this->getConfig();
 
         if ( !isset($iLanguage) ) {
             $iLanguage = $this->_iBaseLanguageId;
@@ -302,17 +328,31 @@ class oxLang extends oxSuperCfg
      */
     public function getLanguageNames()
     {
-        return array_values(oxConfig::getInstance()->getConfigParam( 'aLanguages' ));
+        return array_values( $this->getConfig()->getConfigParam( 'aLanguages' ));
     }
 
     /**
-     * Returns available language IDs
+     * Returns available language IDs (abbervations)
      *
      * @return array
      */
     public function getLanguageIds()
     {
-        return array_keys(oxConfig::getInstance()->getConfigParam( 'aLanguages' ));
+        $aLangParams = $this->getConfig()->getConfigParam( 'aLanguageParams' );
+
+        //if exists language parameters array, extract lang id's from there
+        if ( is_array($aLangParams) ) {
+
+            $aIds = array();
+
+            foreach ( $aLangParams as $sAbbr => $aValue ) {
+                $iBaseId = (int)$aValue['baseId'];
+                $aIds[$iBaseId] = $sAbbr;
+            }
+            return $aIds;
+        }
+
+        return array_keys( $this->getConfig()->getConfigParam( 'aLanguages' ));
     }
 
     /**
@@ -330,11 +370,7 @@ class oxLang extends oxSuperCfg
     public function translateString( $sStringToTranslate, $iLang = null, $blAdminMode = null )
     {
         $aLangCache = $this->_getLangTranslationArray( $iLang, $blAdminMode );
-        if ( isset( $aLangCache[$sStringToTranslate] ) ) {
-            $sText = $aLangCache[$sStringToTranslate];
-        } else {
-            $sText = $sStringToTranslate;
-        }
+        $sText = isset( $aLangCache[$sStringToTranslate] ) ? $aLangCache[$sStringToTranslate] : $sStringToTranslate;
 
             $blIsAdmin = isset( $blAdminMode ) ? $blAdminMode : $this->isAdmin();
             if ( !$blIsAdmin && $sText === $sStringToTranslate ) {
@@ -369,15 +405,16 @@ class oxLang extends oxSuperCfg
      * @return string
      */
     public function formatVat( $dValue, $oActCur = null )
-    {   
+    {
         $iDecPos = 0;
         $sValue  = ( string ) $dValue;
-        if ( ( $iDotPos = strpos( $sValue, '.' ) ) !== false ) {
-            $iDecPos = strlen( substr( $sValue, $iDotPos + 1 ) );
+        $oStr = getStr();
+        if ( ( $iDotPos = $oStr->strpos( $sValue, '.' ) ) !== false ) {
+            $iDecPos = $oStr->strlen( $oStr->substr( $sValue, $iDotPos + 1 ) );
         }
 
         $oActCur = $oActCur ? $oActCur : $this->getConfig()->getActShopCurrencyObject();
-        $iDecPos = ( $iDecPos < $oActCur->decimal ) ? $iDecPos : $oActCur->decimal;          
+        $iDecPos = ( $iDecPos < $oActCur->decimal ) ? $iDecPos : $oActCur->decimal;
         return number_format( $dValue, $iDecPos, $oActCur->dec, $oActCur->thousand );
     }
 
@@ -400,23 +437,82 @@ class oxLang extends oxSuperCfg
     }
 
     /**
-     * get language array from lang translation file
+     * Goes through language array and recodes its values. Returns recoded data
      *
-     * @param int  $iLang       optional language
-     * @param bool $blAdminMode admin mode switch
+     * @param array  $aLangArray language data
+     * @param string $sCharset   charset which was used while making file
+     *
+     * @return
+     */
+    protected function _recodeLangArray( $aLangArray, $sCharset )
+    {
+        foreach ( $aLangArray as $sKey => $sValue ) {
+            $aLangArray[$sKey] = iconv( $sCharset, 'UTF-8', $sValue );
+        }
+
+        return $aLangArray;
+    }
+
+    /**
+     * Returns language cache array
+     *
+     * @param bool $blAdmin admin or not [optional]
+     * @param int  $iLang   current language id [optional]
      *
      * @return array
      */
-    protected function _getLangTranslationArray( $iLang = null, $blAdminMode = null )
+    protected function _getLanguageFileData( $blAdmin = false, $iLang = 0 )
     {
-        startProfile("_getLangTranslationArray");
         $myConfig = $this->getConfig();
-        $sFileName = '';
-        $sCustFileName = '';
+        $myUtils  = oxUtils::getInstance();
 
-        $blAdminMode = isset( $blAdminMode ) ? $blAdminMode : $this->isAdmin();
+        $sCacheName = "langcache_".( (int) $blAdmin )."_{$iLang}_".$myConfig->getShopId();
+        $aLangCache = $myUtils->getLangCache( $sCacheName );
+        if ( !$aLangCache ) {
+            $sDir = dirname( $myConfig->getLanguagePath( 'lang.php', $blAdmin, $iLang ) );
 
-        $iLang  = ( $iLang === null )?oxSession::getVar( 'blAdminTemplateLanguage' ):$iLang;
+            //get all lang files
+            //#M681: content of cust_lang.php should be prefered to lang.php
+            $aLangFiles = glob( $sDir."/*_lang.php" );
+            array_unshift($aLangFiles, $sDir."/lang.php");
+
+            $aLangCache[$iLang] = array();
+            foreach ( $aLangFiles as $sLangFile ) {
+                require $sLangFile;
+
+                // inclyding only (!) thoose, which has charset defined
+                if ( isset( $aLang['charset'] ) ) {
+
+                    // recoding only in utf
+                    if ( $myConfig->isUtf() ) {
+                        $aLang = $this->_recodeLangArray( $aLang, $aLang['charset'] );
+
+                        // overriding charset
+                        $aLang['charset'] = 'UTF-8';
+                    }
+
+                    $aLangCache[$iLang] = array_merge( $aLangCache[$iLang], $aLang );
+                }
+            }
+
+            //save to cache
+            $myUtils->setLangCache( $sCacheName, $aLangCache );
+        }
+
+        return $aLangCache;
+    }
+
+    /**
+     * Returns current language cache language id
+     *
+     * @param bool $blAdmin admin mode
+     * @param int  $iLang   language id [optional]
+     *
+     * @return int
+     */
+    protected function _getCacheLanguageId( $blAdmin, $iLang = null )
+    {
+        $iLang = ( $iLang === null && $blAdmin ) ? $this->getTplLanguage() : $iLang;
         if ( !isset( $iLang ) ) {
             $iLang = $this->getBaseLanguage();
             if ( !isset( $iLang ) ) {
@@ -424,67 +520,41 @@ class oxLang extends oxSuperCfg
             }
         }
 
-        if ( $blAdminMode ) {
-            $aLangCache = $this->_aAdminLangCache;
-        } else {
-            $aLangCache = $this->_aLangCache;
-        }
+        return (int) $iLang;
+    }
 
-        // casting for security reasons
-        $iLang = (int) $iLang;
-        if ( !$aLangCache[$iLang] ) {
+    /**
+     * get language array from lang translation file
+     *
+     * @param int  $iLang   optional language
+     * @param bool $blAdmin admin mode switch
+     *
+     * @return array
+     */
+    protected function _getLangTranslationArray( $iLang = null, $blAdmin = null )
+    {
+        startProfile("<b>_getLangTranslationArray</b>");
 
-            /*
-            $sFileName     = $myConfig->getLanguagePath('lang.php', $blAdminMode,$iLang);
-            $sCustFileName = $myConfig->getLanguagePath('cust_lang.php', $blAdminMode,$iLang);
-            */
-            $sCacheName = "languagefiles_".$blAdminMode."_".$iLang."_".$this->getConfig()->getShopId();
-            $aLangFiles = oxUtils::getInstance()->fromFileCache($sCacheName);
-            if (!$aLangFiles) {
-                $sDir = dirname($myConfig->getLanguagePath('lang.php', $blAdminMode, $iLang));
+        $blAdmin = isset( $blAdmin ) ? $blAdmin : $this->isAdmin();
+        $iLang = $this->_getCacheLanguageId( $blAdmin, $iLang );
 
-                //get all lang files
-                $aLangFiles = glob($sDir."/*lang.php");
+        $aLangCache = $blAdmin ? $this->_aAdminLangCache : $this->_aLangCache;
 
-                //save to cache
-                oxUtils::getInstance()->toFileCache($sCacheName, $aLangFiles);
-            }
+        if ( !isset( $aLangCache[$iLang] ) ) {
 
-            $aLangCache[$iLang] = array();
-            foreach ($aLangFiles as $sLangFile) {
-                require $sLangFile;
-                $aLangCache[$iLang] = array_merge( $aLangCache[$iLang], $aLang);
-            }
-
-
-            //build lang array
-            /*
-            if ( is_file( $sFileName ) ) {
-                require $sFileName;
-                $aLangCache[$iLang] = $aLang;
-            }
-
-            if ( is_file( $sCustFileName ) ) {
-                require $sCustFileName;
-                $aLangCache[$iLang] = array_merge( $aLangCache[$iLang], $aLang);
-            }*/
-
-            if ( $blAdminMode ) {
+            // loading lang file data
+            $aLangCache = $this->_getLanguageFileData( $blAdmin, $iLang );
+            if ( $blAdmin ) {
                 $this->_aAdminLangCache = $aLangCache;
             } else {
                 $this->_aLangCache = $aLangCache;
             }
         }
 
-
-        stopProfile("_getLangTranslationArray");
+        stopProfile("<b>_getLangTranslationArray</b>");
 
         // if language array exists ..
-        if ( isset( $aLangCache[$iLang] ) ) {
-            return $aLangCache[$iLang];
-        } else {
-            return array();
-        }
+        return ( isset( $aLangCache[$iLang] ) ? $aLangCache[$iLang] : array() );
     }
 
     /**
@@ -498,7 +568,8 @@ class oxLang extends oxSuperCfg
      */
     protected function _readTranslateStrFromTextFile( $sStringToTranslate, $iLang = null, $blIsAdmin = null )
     {
-        $iLang  = ( $iLang === null )?oxSession::getVar( 'blAdminTemplateLanguage' ):$iLang;
+        $blIsAdmin = isset( $blIsAdmin ) ? $blIsAdmin : $this->isAdmin();
+        $iLang  = ( $iLang === null && $blIsAdmin)?$this->getTplLanguage():$iLang;
         if ( !isset( $iLang ) ) {
             $iLang = $this->getBaseLanguage();
             if ( !isset( $iLang ) ) {
@@ -506,7 +577,6 @@ class oxLang extends oxSuperCfg
             }
         }
 
-        $blIsAdmin = isset( $blIsAdmin ) ? $blIsAdmin : $this->isAdmin();
         $sFileName = $this->getConfig()->getLanguagePath('lang.txt', $blIsAdmin, $iLang);
 
         if ( is_file ( $sFileName ) ) {
@@ -524,12 +594,13 @@ class oxLang extends oxSuperCfg
                 $fileArray = explode( "\n", $contents );
                 $aUserLangCache[$sFileName] = array();
                 $aLang = &$aUserLangCache[$sFileName];
+                $oStr = getStr();
 
                 while ( list( $nr,$line ) = each( $fileArray ) ) {
                     $line = ltrim( $line );
-                    if ( $line[0]!="#" and strpos( $line, "=" ) > 0 ) {
-                        $index = trim( substr( $line, 0, strpos($line, "=" ) ) );
-                        $value = trim( substr( $line, strpos( $line, "=" ) + 1, strlen( $line ) ) );
+                    if ( $line[0]!="#" && $oStr->strpos( $line, "=" ) > 0 ) {
+                        $index = trim( $oStr->substr( $line, 0, $oStr->strpos($line, "=" ) ) );
+                        $value = trim( $oStr->substr( $line, $oStr->strpos( $line, "=" ) + 1, $oStr->strlen( $line ) ) );
                         $aLang[trim($index)] = trim($value);
                     }
                 }
@@ -611,6 +682,11 @@ class oxLang extends oxSuperCfg
         }
 
         oxSession::setVar( 'tpllanguage', $iLang );
+    }
+
+    protected function _sortLanguagesCallback( $a1, $a2 )
+    {
+        return ($a1->sort > $a2->sort);
     }
 
 }

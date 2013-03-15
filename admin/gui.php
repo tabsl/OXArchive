@@ -17,7 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
  * $Id: gui.php 11861 2008-09-05 10:41:58Z arvydas $
  */
 
@@ -164,7 +165,8 @@ class Gui extends oxAdminView
 
             $this->_aViewData["colors"] = $aColors;
 
-            $this->_aViewData["styles"] = $this->getStyleTree();
+            $this->_aViewData["styles"]      = $this->getStyleTree();
+            $this->_aViewData["colorstyles"] = $this->getColors($sTheme,'const','index');
 
             return $this->sTplName;
 
@@ -405,11 +407,15 @@ class Gui extends oxAdminView
     public function getUserStyles(){
         $myConfig = $this->getConfig();
 
+        $sThemeId = $myConfig->getParameter('t');
+
         $aThemeStyles = $this->getStyles();
+
+        $aColorStyles = $this->getColors($sThemeId,'const','index');
 
         $aUserStyles  = (array) $myConfig->getParameter('s');
 
-        return array_merge($aThemeStyles,$aUserStyles);
+        return array_merge($aThemeStyles,$aColorStyles,$aUserStyles);
     }
 
 
@@ -462,13 +468,15 @@ class Gui extends oxAdminView
      *
      * @return array
      */
-    public function getColors($sThemeId) {
+    public function getColors($sThemeId,$sKey = 'index',$sValue = 'color') {
         $oXPath = new DomXPath( $this->_oThemesDom );
 
         $oColorList = $oXPath->query( "/themes/theme[@id='{$sThemeId}']/color" );
         $aColors = array();
         foreach ( $oColorList as $oColor ) {
-            $aColors[$oColor->getAttribute('index')] = $oColor->getAttribute('color');
+            if($oColor->hasAttribute($sKey)&&$oColor->hasAttribute($sValue)){
+                $aColors[$oColor->getAttribute($sKey)] = $oColor->getAttribute($sValue);
+            }
         }
 
         return $aColors;

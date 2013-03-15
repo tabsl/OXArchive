@@ -65,23 +65,20 @@
         [{assign var="isFirst" value=false}]
       [{/if}]
       <td align="center">
-        <br>
-        <div class="actions">
-            [{ if $oxcmp_user }]
+        [{ if $oxcmp_user }]
+            <div class="actions">
               <a id="test_tonotice_cmp_[{ $product->oxarticles__oxid->value }]_[{$smarty.foreach.testArt.iteration}]" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl="|cat:$oViewConf->getActiveClassName() params="aid=`$product->oxarticles__oxnid->value`&amp;anid=`$product->oxarticles__oxnid->value`&amp;fnc=tonoticelist&amp;am=1"|cat:$oViewConf->getNavUrlParams() }]" rel="nofollow">[{ oxmultilang ident="COMPARE_NOTICELIST" }]</a>
-            [{/if}]
-            [{ if $oxcmp_user }]
               <a id="test_towish_cmp_[{ $product->oxarticles__oxid->value }]_[{$smarty.foreach.testArt.iteration}]" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl="|cat:$oViewConf->getActiveClassName() params="aid=`$product->oxarticles__oxnid->value`&anid=`$product->oxarticles__oxnid->value`&amp;fnc=towishlist&amp;am=1"|cat:$oViewConf->getNavUrlParams() }]" rel="nofollow">[{ oxmultilang ident="COMPARE_WISHLIST" }]</a>
-            [{/if}]
-        </div>
+            </div>
+        [{/if}]
         <form action="[{ $oViewConf->getSelfActionLink() }]" method="post">
           <div>
               [{ $oViewConf->getHiddenSid() }]
+              [{ $oViewConf->getNavFormParams() }]
               <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
               <input type="hidden" name="fnc" value="tocomparelist">
               <input type="hidden" name="aid" value="[{ $product->oxarticles__oxid->value }]">
               <input type="hidden" name="anid" value="[{ $product->oxarticles__oxnid->value }]">
-              <input type="hidden" name="cnid" value="[{ $oViewConf->getActCatId() }]">
               <input type="hidden" name="pgNr" value="0">
               <input type="hidden" name="am" value="1">
               <input type="hidden" name="removecompare" value="1">

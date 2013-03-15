@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxreview.php 14171 2008-11-12 14:45:59Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxreview.php 17248 2009-03-16 15:22:07Z arvydas $
  */
 
 /**
@@ -63,7 +64,8 @@ class oxReview extends oxBase
         $blRet = parent::assign( $dbRecord );
 
         if ( isset( $this->oxreviews__oxuserid ) && $this->oxreviews__oxuserid->value ) {
-            $this->oxuser__oxfname = new oxField(oxDb::getDb()->getOne( "select oxfname from oxuser where oxid=".oxDb::getDb()->quote( $this->oxreviews__oxuserid->value ) ));
+            $oDb = oxDb::getDb();
+            $this->oxuser__oxfname = new oxField( $oDb->getOne( "select oxfname from oxuser where oxid=".$oDb->quote( $this->oxreviews__oxuserid->value ) ));
         }
 
         return $blRet;

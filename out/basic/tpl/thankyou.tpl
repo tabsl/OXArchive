@@ -38,19 +38,14 @@
   <strong class="boxhead">[{ oxmultilang ident="THANKYOU_PARTNERFROM" }] [{ $oxcmp_shop->oxshops__oxname->value }]</strong>
   <div class="box info">
       <div>
-
         [{if $oView->getTrustedShopId()}]
           <br>
           <div>
             <div class="etrustlogocol">
-                <form method="post" name="formSiegel" action="https://www.trustedshops.com/shop/certificate.php" target="_blank">
-                  <div>
-                      <input type="image" src="[{$oViewConf->getImageUrl()}]/trusted_shops.jpg" alt="[{ oxmultilang ident="THANKYOU_SEALOFAPPROVAL" }]">
-                      <input name="shop_id" type="hidden"  value="[{$oView->getTrustedShopId()}]">
-                  </div>
-                </form>
+            <a href="https://www.trustedshops.com/shop/certificate.php?shop_id=[{$oView->getTrustedShopId()}]" target="_blank">
+                <img style="border:0px none;" src="[{$oViewConf->getImageUrl()}]/trustedshops_m.gif" title="[{ oxmultilang ident="INC_TRUSTEDSHOPS_ITEM_IMGTITLE" }]">
+            </a>
             </div>
-
             <div class="etrustdescocol">
                 <form id="formTShops" name="formTShops" method="post" action="https://www.trustedshops.com/shop/protection.php" target="_blank">
                   <div>
@@ -63,7 +58,7 @@
                       <input name="street" type=hidden value="[{ $order->oxorder__oxbillstreet->value }]">
                       <input name="zip" type=hidden value="[{ $order->oxorder__oxbillzip->value }]">
                       <input name="city" type=hidden value="[{ $order->oxorder__oxillcity->value }]">
-                      <input name="country" type=hidden value="[{ $order->oxorder__oxbillcountry->value }]">
+                      <input name="country" type=hidden value="[{ $oView->getCountryISO3() }]">
                       <input name="phone" type=hidden value="[{ $order->oxorder__oxbillfon->value }]">
                       <input name="fax" type=hidden value="[{ $order->oxorder__oxbillfax->value }]">
                       <input name="delivery" type=hidden value="">
@@ -79,7 +74,6 @@
             </div>
           </div>
         [{/if}]
-
         <!-- Anfang Tracking-Code fuer Partnerprogramme -->
 
         [{ if $oxcmp_shop->oxshops__oxadbutlerid->value }]

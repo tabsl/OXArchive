@@ -8,6 +8,18 @@
   <div class="msg">[{ oxmultilang ident="BASKET_EMPTYSHIPPINGCART" }]</div>
 [{else }]
   <div class="bar prevnext order">
+    [{if $oView->showBackToShop()}]
+    <form action="[{ $oViewConf->getSslSelfLink() }]" method="post">
+      <div>
+          [{ $oViewConf->getHiddenSid() }]
+          <input type="hidden" name="cl" value="basket">
+          <input type="hidden" name="fnc" value="backtoshop">
+          <div class="left arrowdown">
+              <input type="submit" value="[{ oxmultilang ident="BASKET_CONTINUESHOPPING" }]">
+          </div>
+      </div>
+    </form>
+    [{/if}]
 
     [{if $oView->isLowOrderPrice() }]
       <div class="minorderprice">[{ oxmultilang ident="BASKET_MINORDERPRICE" }] [{ $oView->getMinOrderPrice() }] [{ $currency->sign }]</div>
@@ -62,8 +74,8 @@
 
     <!-- basket items -->
     <tbody>
-    [{foreach key=basketindex from=$oxcmp_basket->getContents() item=basketitem name=test_Contents}]
     [{assign var="basketitemlist" value=$oView->getBasketArticles() }]
+    [{foreach key=basketindex from=$oxcmp_basket->getContents() item=basketitem name=test_Contents}]    
     [{assign var="basketproduct" value=$basketitemlist.$basketindex }]
     <tr valign="top">
       <!-- product image -->
@@ -399,6 +411,18 @@
 
 
   <div class="bar prevnext bottom">
+    [{if $oView->showBackToShop()}]
+    <form action="[{ $oViewConf->getSslSelfLink() }]" method="post">
+      <div>
+          [{ $oViewConf->getHiddenSid() }]
+          <input type="hidden" name="cl" value="basket">
+          <input type="hidden" name="fnc" value="backtoshop">
+          <div class="left arrowdown">
+              <input type="submit" value="[{ oxmultilang ident="BASKET_CONTINUESHOPPING" }]">
+          </div>
+      </div>
+    </form>
+    [{/if}]
 
     [{if $oView->isLowOrderPrice() }]
       <div class="minorderprice">[{ oxmultilang ident="BASKET_MINORDERPRICE" }] [{ $oView->getMinOrderPrice() }] [{ $currency->sign }]</div>

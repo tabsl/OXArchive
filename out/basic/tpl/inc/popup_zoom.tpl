@@ -7,8 +7,9 @@
         [{/if}]
         <li class="close"><a href="[{ $product->getLink() }]" class="close" [{if $popup}]onclick="oxid.popup.hide('zoom');return false;"[{/if}]>X</a></li>
     </ul>
-    <img src="[{if !$popup}][{$aZoomPics[$iZoomPic].file}][{/if}]" alt="[{ $product->oxarticles__oxtitle->value|strip_tags }] [{ $product->oxarticles__oxvarselect->value|default:'' }]" id="zoom_img"  [{if $popup}]onload="oxid.popup.resize( 'zoom', this.width+4, this.height+32);" onclick="oxid.popup.hide('zoom');"[{/if}]>
+    <img src="[{if !$popup}][{$aZoomPics[$iZoomPic].file}][{else}][{$oViewConf->getImageUrl()}]leer.gif[{/if}]" alt="[{ $product->oxarticles__oxtitle->value|strip_tags }] [{ $product->oxarticles__oxvarselect->value|default:'' }]" id="zoom_img"  [{if $popup}]onclick="oxid.popup.hide('zoom');"[{/if}]>
     [{if $popup}]
+        [{oxscript add="oxid.popup.addResizer('zoom_img','zoom',4,32);"}]
         [{oxscript add="oxid.image('zoom_img','`$aZoomPics[$iZoomPic].file`');"}]
     [{/if}]
 </div>

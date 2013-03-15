@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-15"?>
 <OX>
     <OXMENU id="NAVIGATION_ESHOPADMIN">
         <MAINMENU id="mxmainmenu">
@@ -21,7 +21,17 @@
                 <BTN id="vendor_new" />
                 <BTN id="vendor_resetnrofarticles" />
             </SUBMENU>
+            <SUBMENU id="mxmanufacturer" cl="manufacturer" list="manufacturer_list">
+                <TAB id="tbclmanufacturer_main" cl="manufacturer_main" />
+                <TAB id="tbclmanufacturer_seo" cl="manufacturer_seo" />
+                <BTN id="manufacturer_new" />
+                <BTN id="manufacturer_resetnrofarticles" />
+            </SUBMENU>
             <SUBMENU id="mxlooknfeel" cl="gui" />
+            <SUBMENU id="mxlanguages" cl="language" list="language_list">
+                <TAB id="tbcllanguage_main" cl="language_main" />
+                <BTN id="language_new" />
+            </SUBMENU>
         </MAINMENU>
         <MAINMENU id="mxshopsett">
             <SUBMENU id="mxpaymeth" cl="admin_payment" list="payment_list">
@@ -169,7 +179,11 @@
             <SUBMENU id="mxtools" cl="tools" list="tools_list" rights="malladmin">
                 <TAB id="tbcltools_main" cl="tools_main" />
             </SUBMENU>
+            <SUBMENU id="mxsysreq" cl="sysreq" list="sysreq_list">
+                <TAB id="tbclsysreq_main" cl="sysreq_main" />
+            </SUBMENU>
             <SUBMENU id="mxgenexp" cl="genexport" />
+            <SUBMENU id="mxgenimp" cl="genimport"></SUBMENU>
         </MAINMENU>
     </OXMENU>
 </OX>

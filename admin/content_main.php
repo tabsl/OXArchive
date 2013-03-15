@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: content_main.php 14410 2008-11-28 16:02:31Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: content_main.php 17655 2009-03-30 08:49:50Z arvydas $
  */
 
 /**
@@ -89,7 +90,7 @@ class Content_Main extends oxAdminDetails
         }
 
         $this->_aViewData["edit"] = $oContent;
-        $this->_aViewData["link"] = "[{ oxgetseourl oxid=&quot;".$oContent->getId()."&quot; type=&quot;oxcontent&quot; }]";
+        $this->_aViewData["link"] = "[{ oxgetseourl ident=&quot;".$oContent->oxcontents__oxloadid->value."&quot; type=&quot;oxcontent&quot; }]";
         $this->_aViewData["cattree"] = $oCatTree;
 
         // generate editor
@@ -117,17 +118,22 @@ class Content_Main extends oxAdminDetails
         $soxId      = oxConfig::getParameter( "oxid");
         $aParams    = oxConfig::getParameter( "editval");
 
+        if ( isset( $aParams['oxcontents__oxloadid'] ) ) {
+            $aParams['oxcontents__oxloadid'] = $this->_prepareIdent( $aParams['oxcontents__oxloadid'] );
+        }
+
         // check if loadid is unique
-        if ( $soxId == "-1") {
-            if ( $this->_checkIdent( $aParams['oxcontents__oxloadid'] )) {
-                // loadid already used, display error message
-                $this->_aViewData["blLoadError"] =  true;
-                $oContent = oxNew( "oxcontent" );
-                //$aParams = $oContent->ConvertNameArray2Idx( $aParams);
-                $oContent->assign( $aParams);
-                $this->_aViewData["edit"] =  $oContent;
-                return;
+        if ( $this->_checkIdent( $aParams['oxcontents__oxloadid'], $soxId ) ) {
+            // loadid already used, display error message
+            $this->_aViewData["blLoadError"] = true;
+
+            $oContent = oxNew( "oxcontent" );
+            if ( $soxId != '-1') {
+                $oContent->load( $soxId );
             }
+            $oContent->assign( $aParams );
+            $this->_aViewData["edit"] = $oContent;
+            return;
         }
 
         // checkbox handling
@@ -166,8 +172,6 @@ class Content_Main extends oxAdminDetails
         // set oxid if inserted
         if( $soxId == "-1")
             oxSession::setVar( "saved_oxid", $oContent->oxcontents__oxid->value);
-
-        return $this->autosave();
     }
 
     /**
@@ -182,6 +186,11 @@ class Content_Main extends oxAdminDetails
 
         $soxId      = oxConfig::getParameter( "oxid");
         $aParams    = oxConfig::getParameter( "editval");
+
+        if ( isset( $aParams['oxcontents__oxloadid'] ) ) {
+            $aParams['oxcontents__oxloadid'] = $this->_prepareIdent( $aParams['oxcontents__oxloadid'] );
+        }
+
         // checkbox handling
         if ( !isset( $aParams['oxcontents__oxactive']))
             $aParams['oxcontents__oxactive'] = 0;
@@ -215,23 +224,35 @@ class Content_Main extends oxAdminDetails
     }
 
     /**
+     * Prepares ident (removes bad chars, leaves only thoose that fits in a-zA-Z0-9_ range)
+     *
+     * @param string $sIdent ident to filter
+     *
+     * @return string
+     */
+    protected function _prepareIdent( $sIdent )
+    {
+        if ( $sIdent ) {
+            return getStr()->preg_replace( "/[^a-zA-Z0-9_]*/", "", $sIdent );
+        }
+    }
+
+    /**
     * Check if ident is unique
     *
     * @param string $sIdent ident
     *
     * @return null
     */
-    protected function _checkIdent( $sIdent )
+    protected function _checkIdent( $sIdent, $sOxId )
     {
+        $blAllow = false;
         // null not allowed
-        if ( !strlen( $sIdent ) )
-            return true;
-
-        $sID = oxDb::getDb()->GetOne( "select oxid from oxcontents where oxloadid = '$sIdent'" );
-
-        if ( $sID )
-            return true;
-        else
-            return false;
+        if ( !strlen( $sIdent ) ) {
+            $blAllow = true;
+        } elseif ( oxDb::getDb()->GetOne( "select oxid from oxcontents where oxloadid = '{$sIdent}' and oxid != '{$sOxId}' and oxshopid = '".$this->getConfig()->getShopId()."'" ) ) {
+            $blAllow = true;
+        }
+        return $blAllow;
     }
 }

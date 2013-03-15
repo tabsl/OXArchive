@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: newsletter_send.php 14025 2008-11-06 13:42:31Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: newsletter_send.php 17627 2009-03-26 15:08:34Z arvydas $
  */
 
 /**
@@ -62,6 +63,7 @@ class Newsletter_Send extends oxAdminList
             }
         } else {
             // setting initial values
+            $oCachedNewsletter = new oxStdClass();
             $oCachedNewsletter->iStart = $iStart;
             $oCachedNewsletter->iUser  = $iUser;
             $oCachedNewsletter->sID    = $sID;

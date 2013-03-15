@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package lang
- * @copyright © OXID eSales AG 2003-2009
- * $Id: cust_lang.php 13616 2008-10-24 09:38:15Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: cust_lang.php 17042 2009-03-05 11:52:04Z sarunas $
  */
 
 $sLangName  = "Deutsch";
@@ -53,10 +54,6 @@ $aLang = array(
 'EMAIL_SENDEDNOW_HTML_RATE'                 => 'bewerten'
 );
 
-
 /*
-
 [{ oxmultilang ident="GENERAL_YOUWANTTODELETE" }]
-
-
 */

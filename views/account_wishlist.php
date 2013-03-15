@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: account_wishlist.php 14012 2008-11-06 13:23:45Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: account_wishlist.php 17315 2009-03-17 16:18:58Z arvydas $
  */
 
 /**
@@ -103,12 +104,11 @@ class Account_Wishlist extends Account
     protected $_aEditValues = false;
 
     /**
-     * Current view search engine indexing state:
-     *     0 - index without limitations
-     *     1 - no index / no follow
-     *     2 - no index / follow
+     * Current view search engine indexing state
+     *
+     * @var int
      */
-    protected $_iViewIndexState = 1;
+    protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXNOFOLLOW;
 
     /**
      * If user is logged in loads his wishlist articles (articles may be accessed by

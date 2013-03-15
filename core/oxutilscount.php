@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxutilscount.php 14368 2008-11-26 07:36:13Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxutilscount.php 17248 2009-03-16 15:22:07Z arvydas $
  */
 
 /**
@@ -135,6 +136,29 @@ class oxUtilsCount extends oxSuperCfg
     }
 
     /**
+     * Returns Manufacturer article count
+     *
+     * @param string $sManufacturerId Manufacturer category Id
+     *
+     * @return int
+     */
+    public function getManufacturerArticleCount( $sManufacturerId )
+    {
+        // current category unique ident
+        $sActIdent = $this->_getUserViewId();
+
+        // loading from cache
+        $aManufacturerData = $this->_getManufacturerCache();
+
+        if ( !$aManufacturerData || !isset( $aManufacturerData[$sManufacturerId][$sActIdent] ) ) {
+            $iCnt = $this->setManufacturerArticleCount( $aManufacturerData, $sManufacturerId, $sActIdent );
+        } else {
+            $iCnt = $aManufacturerData[$sManufacturerId][$sActIdent];
+        }
+        return $iCnt;
+    }
+
+    /**
      * Saves and returns category article count into cache
      *
      * @param array  $aCache    Category cache data
@@ -149,10 +173,12 @@ class oxUtilsCount extends oxSuperCfg
         $sTable   = $oArticle->getViewName();
         $sO2CView = getViewName( 'oxobject2category' );
 
-        $sQ  = "select count( * ) from $sO2CView as oxobject2category WHERE oxobject2category.oxcatnid = '".$sCatId."' ";
-        $sQ .= "and oxobject2category.oxobjectid in ( SELECT oxid FROM $sTable where ".$oArticle->getSqlActiveSnippet().")";
+        // we use distinct if article is assigned to category twice
+        $sQ  = "select count(*) from (select distinct oxobject2category.oxcatnid, oxobject2category.oxobjectid from $sO2CView as oxobject2category WHERE oxobject2category.oxcatnid = '".$sCatId."' ";
+        $sQ .= "and oxobject2category.oxobjectid in ( SELECT oxid FROM $sTable where ".$oArticle->getSqlActiveSnippet().") ) as ox2cat";
 
         $aCache[$sCatId][$sActIdent] = oxDb::getDb()->getOne( $sQ );
+
         $this->_setCatCache( $aCache );
         return $aCache[$sCatId][$sActIdent];
     }
@@ -221,9 +247,41 @@ class oxUtilsCount extends oxSuperCfg
     }
 
     /**
+     * Saves and returns Manufacturers category article count into cache
+     *
+     * @param array  $aCache    Category cache data
+     * @param string $sCatId    Unique Manufacturer category ident
+     * @param string $sActIdent Manufacturer category ID
+     *
+     * @return int
+     */
+    public function setManufacturerArticleCount( $aCache, $sCatId, $sActIdent )
+    {
+        // if Manufacturer/category name is 'root', skip counting
+        if ( $sCatId == 'root' ) {
+            return 0;
+        }
+
+        $oArticle = oxNew( 'oxarticle' );
+        $sTable   = $oArticle->getViewName();
+
+        // select each Manufacturer articles count
+        $sQ  = "select $sTable.oxmanufacturerid AS manufacturerId, count(*) from $sTable where ";
+        $sQ .= "$sTable.oxmanufacturerid <> '' and ".$oArticle->getSqlActiveSnippet()." group by $sTable.oxmanufacturerid ";
+        $aDbResult = oxDb::getDb()->getAssoc( $sQ );
+
+        foreach ( $aDbResult as $sKey => $sValue ) {
+            $aCache[$sKey][$sActIdent] = $sValue;
+        }
+
+        $this->_setManufacturerCache( $aCache );
+        return $aCache[$sCatId][$sActIdent];
+    }
+
+    /**
      * Resets category (all categories) article count
      *
-     * @param string $sCatId Category/vendor ID
+     * @param string $sCatId Category/vendor/manufacturer ID
      *
      * @return null
      */
@@ -283,6 +341,7 @@ class oxUtilsCount extends oxSuperCfg
     public function getTagArticleCount( $sTag, $iLang )
     {
         $sLangExt = oxLang::getInstance()->getLanguageTag( $iLang );
+        $oDb = oxDb::getDb();
 
         $oArticle = oxNew("oxarticle");
         $sArticleTable  = $oArticle->getViewName();
@@ -291,9 +350,9 @@ class oxUtilsCount extends oxSuperCfg
         $sQ = "select count(*) from oxartextends inner join $sArticleTable
                on $sArticleTable.oxid = oxartextends.oxid where $sActiveSnippet
                and match(oxartextends.oxtags$sLangExt)
-               against ( ".oxDb::getDb()->Quote( $sTag )." ) ";
+               against ( ".$oDb->Quote( $sTag )." ) ";
 
-        return oxDb::getDb()->getOne( $sQ );
+        return $oDb->getOne( $sQ );
     }
 
     /**
@@ -313,6 +372,28 @@ class oxUtilsCount extends oxSuperCfg
             if ( isset( $aVendorData[$sVendorId] ) ) {
                 unset( $aVendorData[$sVendorId] );
                 $this->_setVendorCache( $aVendorData );
+            }
+        }
+
+    }
+
+    /**
+     * Resets Manufacturer (all Manufacturers) article count
+     *
+     * @param string $sManufacturerId Category/Manufacturer ID
+     *
+     * @return null
+     */
+    public function resetManufacturerArticleCount( $sManufacturerId = null )
+    {
+        if ( !$sManufacturerId ) {
+            $this->getConfig()->setGlobalParameter( 'aLocalManufacturerCache', null );
+            oxUtils::getInstance()->toFileCache( 'aLocalManufacturerCache', '' );
+        } else { // loading from cache
+            $aManufacturerData = $this->_getManufacturerCache();
+            if ( isset( $aManufacturerData[$sManufacturerId] ) ) {
+                unset( $aManufacturerData[$sManufacturerId] );
+                $this->_setManufacturerCache( $aManufacturerData );
             }
         }
 
@@ -370,6 +451,19 @@ class oxUtilsCount extends oxSuperCfg
     }
 
     /**
+     * Writes Manufacturer data into cache
+     *
+     * @param array $aCache A cacheable data
+     *
+     * @return null
+     */
+    protected function _setManufacturerCache( $aCache )
+    {
+        $this->getConfig()->setGlobalParameter( 'aLocalManufacturerCache', $aCache );
+        oxUtils::getInstance()->toFileCache( 'aLocalManufacturerCache', serialize( $aCache ) );
+    }
+
+    /**
      * Loads and returns category/vendor cache data array
      *
      * @return array
@@ -391,6 +485,30 @@ class oxUtilsCount extends oxSuperCfg
             $myConfig->setGlobalParameter( 'aLocalVendorCache', $aLocalVendorCache );
         }
         return $aLocalVendorCache;
+    }
+
+    /**
+     * Loads and returns category/Manufacturer cache data array
+     *
+     * @return array
+     */
+    protected function _getManufacturerCache()
+    {
+        $myConfig = $this->getConfig();
+
+        // first look at the local cache
+        $aLocalManufacturerCache = $myConfig->getGlobalParameter('aLocalManufacturerCache');
+        // if local cache is not set - loading from file cache
+        if ( !$aLocalManufacturerCache ) {
+            $sLocalManufacturerCache = oxUtils::getInstance()->fromFileCache( 'aLocalManufacturerCache' );
+            if ( $sLocalManufacturerCache ) {
+                $aLocalManufacturerCache = unserialize( $sLocalManufacturerCache );
+            } else {
+                $aLocalManufacturerCache = null;
+            }
+            $myConfig->setGlobalParameter( 'aLocalManufacturerCache', $aLocalManufacturerCache );
+        }
+        return $aLocalManufacturerCache;
     }
 
     /**

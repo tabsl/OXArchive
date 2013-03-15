@@ -17,16 +17,17 @@
  *
  * @link http://www.oxid-esales.com
  * @package lang
- * @copyright © OXID eSales AG 2003-2009
- * $Id: lang.php 14900 2008-12-29 15:36:27Z ralf $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: lang.php 17881 2009-04-06 09:13:17Z alfonsas $
  */
 
 $aLang = array(
 
-'charset'                                         => 'iso-8859-1',
+'charset'                                         => 'ISO-8859-15',
 'HEADER_META_MAIN_TITLE'                          => "OXID eShop installation wizard",
 'HEADER_TEXT_SETUP_NOT_RUNS_AUTOMATICLY'          => "If setup does not continue in a few seconds, please click ",
-'FOOTER_OXID_ESALES'                              => "&copy; OXID eSales AG 2008",
+'FOOTER_OXID_ESALES'                              => "&copy; OXID eSales AG 2003 - ".@date("Y"),
 
 'TAB_0_TITLE'                                     => "System Requirements",
 'TAB_1_TITLE'                                     => "Welcome",
@@ -67,7 +68,7 @@ $aLang = array(
 
 'MOD_MOD_REWRITE'                                 => 'apache mod_rewrite module',
 'MOD_ALLOW_URL_FOPEN'                             => 'allow_url_fopen or fsockopen to port 80',
-'MOD_PHP4_COMPAT'                                 => 'Zend compatibility mode off',
+'MOD_PHP4_COMPAT'                                 => 'Zend compatibility mode must be off',
 'MOD_PHPVERSION'                                  => 'PHP version at least 5.2.0',
 'MOD_REQUEST_URI'                                 => 'REQUEST_URI set',
 'MOD_LIBXML2'                                     => 'LIB XML2',
@@ -79,9 +80,10 @@ $aLang = array(
 'MOD_MYSQL_CONNECT'                               => 'MySQL module for MySQL 5',
 'MOD_GD_INFO'                                     => 'GDlib v2 [v1] incl. JPEG support',
 'MOD_INI_SET'                                     => 'ini_set allowed',
-'MOD_REGISTER_GLOBALS'                            => 'register_globals off',
+'MOD_REGISTER_GLOBALS'                            => 'register_globals must be off',
 'MOD_ZEND_OPTIMIZER'                              => 'Zend Optimizer installed',
 'MOD_ZEND_PLATFORM'                               => 'Zend Platform installed',
+'MOD_MB_STRING'                                   => 'mbstring',
 
 'STEP_0_ERROR_TEXT'                               => 'Your system does not fit system requirements',
 'STEP_0_TEXT'                                     => '<ul class="req">'.
@@ -116,6 +118,9 @@ $aLang = array(
 'STEP_3_DB_PASSWORD'                              => "Database password",
 'STEP_3_DB_DATABSE_NAME'                          => "Database name",
 'STEP_3_DB_DEMODATA'                              => "Demodata",
+'STEP_3_UTFMODE'                                  => "Use UTF-8 character encoding",
+'STEP_3_UTFNOTSUPPORTED'                          => "Due to missing mbstring PHP module the OXID eShop cannot operate in UTF-8 mode",
+'STEP_3_UTFINFO'                                  => "UTF-8 character encoding provides better support for special chars than other character encodings. This is particulary important for multilingual eShops. However, UTF-8 is slightly slower than the standard encoding (ISO 8859-15). <br /> If you plan to provide your eShop in many different languages, you should use UTF-8. If you just want to provide a few languages using related symbol sets (e. g. English, German, French), you don't need UTF-8.",
 'STEP_3_CREATE_DB_WHEN_NO_DB_FOUND'               => "If database does not exist, it's going to be created",
 'BUTTON_RADIO_INSTALL_DB_DEMO'                    => "Install demodata",
 'BUTTON_RADIO_NOT_INSTALL_DB_DEMO'                => "Do <strong>not</strong> install demodata",

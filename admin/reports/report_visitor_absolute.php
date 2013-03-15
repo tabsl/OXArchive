@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: report_visitor_absolute.php 13618 2008-10-24 09:39:32Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: report_visitor_absolute.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
  */
 
 if ( !class_exists( "report_visitor_absolute") ) {

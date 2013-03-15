@@ -1,4 +1,4 @@
-[{include file="headitem.tpl" title="TOOLS_LTITLE"|oxmultilangassign box="list"}]
+[{include file="headitem.tpl" title="TOOLS_LIST_TITLE"|oxmultilangassign box="list"}]
 
 <script type="text/javascript">
 <!--
@@ -47,7 +47,7 @@ window.onLoad = top.reloadEditFrame();
     [{ assign var="sErrorMsg"     value=$aErrorMessages.$key}]
     [{ assign var="iErrorNum"     value=$aErrorNumbers.$key}]    
     [{ if $sQuery }]
-    <tr valign="top"><td>[{ oxmultilang ident="TOOLS_LIST_SQLQUERY" }] ([{$key+1}]) : </td><td>[{ $sQuery|wordwrap:100:"<br>":true }]</td></tr>
+    <tr valign="top"><td>[{ oxmultilang ident="TOOLS_LIST_SQLQUERY" }] ([{$key+1}]) : </td><td>[{ $sQuery|oxwordwrap:100:"<br>":true }]</td></tr>
     [{/if}]
     [{ if $sAffectedRows }]
     <tr><td colspan="2"><br></td></tr>
@@ -73,7 +73,7 @@ window.onLoad = top.reloadEditFrame();
 	
 <script type="text/javascript">
 if (parent.parent) 
-{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->value}]";
+{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->getRawValue()|oxaddslashes}]";
     parent.parent.sMenuItem    = "[{ oxmultilang ident="TOOLS_LIST_MENUITEM" }]";
     parent.parent.sMenuSubItem = "[{ oxmultilang ident="TOOLS_LIST_MENUSUBITEM" }]";
     parent.parent.sWorkArea    = "[{$_act}]";

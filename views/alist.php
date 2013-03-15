@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: alist.php 14276 2008-11-19 13:57:45Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: alist.php 17902 2009-04-06 14:22:54Z vilma $
  */
 
 /**
@@ -102,12 +103,6 @@ class aList extends oxUBase
     protected $_oPageNavigation = null;
 
     /**
-     * Active category object.
-     * @var object
-     */
-    protected $_oCategory = null;
-
-    /**
      * Active object is category.
      * @var bool
      */
@@ -139,17 +134,18 @@ class aList extends oxUBase
      */
     public function getViewId()
     {
-        if ( isset( $this->_sViewId ) ) {
-            return $this->_sViewId;
+        if ( !isset( $this->_sViewId ) ) {
+            $sCatId   = oxConfig::getParameter( 'cnid' );
+            $iActPage = $this->getActPage();
+            $iArtPerPage = oxConfig::getParameter( '_artperpage' );
+            $sParentViewId = parent::getViewId();
+
+            // shorten it
+                $this->_sViewId = md5( $sParentViewId.'|'.$sCatId.'|'.$iActPage.'|'.$iArtPerPage );
+
         }
 
-        $iActPage = $this->getActPage();
-
-        // shorten it
-            $_sViewId = md5( parent::getViewId().'|'.oxConfig::getParameter( 'cnid' ).'|'.$iActPage.'|'.oxConfig::getParameter( '_artperpage' ) );
-
-
-        return $this->_sViewId = $_sViewId;
+        return $this->_sViewId;
     }
 
     /**
@@ -158,7 +154,7 @@ class aList extends oxUBase
      * articles - regular (oxarticlelist::LoadCategoryArticles()) or price
      * dependent (oxarticlelist::LoadPriceArticles()). Generates page navigation data
      * such as previous/next window URL, number of available pages, generates
-     * metatags info (oxview::_convertForMetaTags()) and returns name of
+     * metatags info (oxubase::_convertForMetaTags()) and returns name of
      * template to render.
      *
      * Template variables:
@@ -171,7 +167,7 @@ class aList extends oxUBase
     {
         $myConfig = $this->getConfig();
 
-        $this->_oCategory  = null;
+        $oCategory  = null;
         $blContinue = true;
         $this->_blIsCat = false;
 
@@ -180,19 +176,17 @@ class aList extends oxUBase
 
             // overriding some standard value and parameters
             $this->_sThisTemplate = $this->_sThisMoreTemplate;
-            $this->_oCategory = oxNew( 'oxcategory' );
-            $this->_oCategory->oxcategories__oxactive = new oxField(1, oxField::T_RAW);
-        } else {
-            if( ( $this->_oActCategory = $this->getActCategory() ) ) {
-                $this->_oCategory  = $this->_oActCategory;
-                $blContinue = $this->_oCategory->oxcategories__oxactive->value;
-                $this->_blIsCat = true;
-            }
+            $oCategory = oxNew( 'oxcategory' );
+            $oCategory->oxcategories__oxactive = new oxField( 1, oxField::T_RAW );
+            $this->setActCategory( $oCategory );
+        } elseif ( ( $oCategory = $this->getActCategory() ) ) {
+            $blContinue = ( bool ) $oCategory->oxcategories__oxactive->value;
+            $this->_blIsCat = true;
         }
 
 
         // category is inactive ?
-        if ( !$blContinue || !$this->_oCategory ) {
+        if ( !$blContinue || !$oCategory ) {
             oxUtils::getInstance()->redirect( $myConfig->getShopURL().'index.php' );
         }
 
@@ -210,12 +204,8 @@ class aList extends oxUBase
         $this->_aViewData['actCatpath']        = $this->getCatTreePath();
         $this->_aViewData['template_location'] = $this->getTemplateLocation();
 
-        // generating meta info
-        $this->setMetaDescription( null );
-        $this->setMetaKeywords( null );
-
         // add to the parent view
-        $this->_aViewData['actCategory'] = $this->getActiveCategory();
+        $this->_aViewData['actCategory'] = $this->getActCategory();
 
         $oCat = $this->getActCategory();
         if ($oCat && is_array($myConfig->getConfigParam( 'aRssSelected' )) && in_array('oxrss_categories', $myConfig->getConfigParam( 'aRssSelected' ))) {
@@ -269,10 +259,7 @@ class aList extends oxUBase
         // load only articles which we show on screen
         $oArtList = oxNew( 'oxarticlelist' );
         $oArtList->setSqlLimit( $iNrofCatArticles * $this->getActPage(), $iNrofCatArticles );
-
-        if ( $this->_oActCategory ) {
-            $oArtList->setCustomSorting( $this->getSortingSql( $this->_oActCategory->getId() ) );
-        }
+        $oArtList->setCustomSorting( $this->getSortingSql( $oCategory->getId() ) );
 
         if ( $oCategory->oxcategories__oxpricefrom->value || $oCategory->oxcategories__oxpriceto->value ) {
             $dPriceFrom = $oCategory->oxcategories__oxpricefrom->value;
@@ -280,8 +267,6 @@ class aList extends oxUBase
 
             $this->_iAllArtCnt = $oArtList->loadPriceArticles( $dPriceFrom, $dPriceTo, $oCategory );
         } else {
-
-            $aSessionFilter = null;
             $aSessionFilter = oxSession::getVar( 'session_attrfilter' );
 
             $sActCat = oxConfig::getParameter( 'cnid' );
@@ -320,12 +305,13 @@ class aList extends oxUBase
             //fetching category path
             if ( is_array( $aPath = $this->getCatTreePath() ) ) {
 
+                $oStr = getStr();
                 $this->_sCatPathString = '';
                 foreach ( $aPath as $oCat ) {
                     if ( $this->_sCatPathString ) {
                         $this->_sCatPathString .= ', ';
                     }
-                    $this->_sCatPathString .= strtolower( $oCat->oxcategories__oxtitle->value );
+                    $this->_sCatPathString .= $oStr->strtolower( $oCat->oxcategories__oxtitle->value );
                 }
             }
         }
@@ -333,28 +319,28 @@ class aList extends oxUBase
     }
 
     /**
-     * Creates list view meta description which looks like:
+     * Returns current view meta description data
      *
-     * You are here: {Parent category title} - {Current category title}. {Shops start title}
-     *
-     * @param mixed $aCatPath  category path (not used)
-     * @param int   $iLength   max length of result, -1 for no truncation (not used)
-     * @param bool  $blDescTag if true - performs additional dublicate cleaning (not used)
+     * @param string $sMeta     category path
+     * @param int    $iLength   max length of result, -1 for no truncation
+     * @param bool   $blDescTag if true - performs additional dublicate cleaning
      *
      * @return  string  $sString    converted string
      */
-    protected function _prepareMetaDescription( $aCatPath, $iLength = 1024, $blDescTag = false )
+    protected function _prepareMetaDescription( $sMeta, $iLength = 1024, $blDescTag = false )
     {
         // using language constant ..
         $sDescription = oxLang::getInstance()->translateString( 'INC_HEADER_YOUAREHERE' );
 
         // appending parent title
-        if ( ( $oParent = $this->_oCategory->getParentCategory() ) ) {
-            $sDescription .= " {$oParent->oxcategories__oxtitle->value} -";
-        }
+        if ( $oCategory = $this->_getCategory() ) {
+            if ( ( $oParent = $oCategory->getParentCategory() ) ) {
+                $sDescription .= " {$oParent->oxcategories__oxtitle->value} -";
+            }
 
-        // adding cateogry title
-        $sDescription .= " {$this->_oCategory->oxcategories__oxtitle->value}.";
+            // adding cateogry title
+            $sDescription .= " {$oCategory->oxcategories__oxtitle->value}.";
+        }
 
         // and final component ..
         if ( ( $sSuffix = $this->getConfig()->getActiveShop()->oxshops__oxstarttitle->value ) ) {
@@ -362,10 +348,8 @@ class aList extends oxUBase
         }
 
         // making safe for output
-        $aRemoveChars = array( "\"", "'", "\n", "\r", "\t", "\x95", "\xA0" );
-        $sDescription = str_replace( $aRemoveChars, ' ', $sDescription );
-
-        return strip_tags( html_entity_decode( $sDescription ) );
+        $sDescription = getStr()->cleanStr($sDescription);
+        return trim( strip_tags( getStr()->html_entity_decode( $sDescription ) ) );
     }
 
     /**
@@ -374,18 +358,19 @@ class aList extends oxUBase
      * string dublicates, special chars. Also removes strings defined
      * in $myConfig->aSkipTags (Admin area).
      *
-     * @param mixed $aCatPath  category path
-     * @param int   $iLength   max length of result, -1 for no truncation
-     * @param bool  $blDescTag if true - performs additional dublicate cleaning
+     * @param string $sMeta     category path
+     * @param int    $iLength   max length of result, -1 for no truncation
+     * @param bool   $blDescTag if true - performs additional dublicate cleaning
      *
      * @return  string  $sString    converted string
      */
-    protected function _collectMetaDescription( $aCatPath, $iLength = 1024, $blDescTag = false )
+    protected function _collectMetaDescription( $sMeta, $iLength = 1024, $blDescTag = false )
     {
         //formatting description tag
-        $sAddText = $this->_oActCategory?trim( $this->_oActCategory->oxcategories__oxlongdesc->value ):'';
-        if ( !$sAddText && count($this->_aArticleList)) {
-            foreach ( $this->_aArticleList as $oArticle ) {
+        $sAddText = ( $oCategory = $this->getActCategory() ) ? trim( $oCategory->oxcategories__oxlongdesc->value ):'';
+        $aArticleList = $this->getArticleList();
+        if ( !$sAddText && count($aArticleList)) {
+            foreach ( $aArticleList as $oArticle ) {
                 if ( $sAddText ) {
                     $sAddText .= ', ';
                 }
@@ -393,28 +378,40 @@ class aList extends oxUBase
             }
         }
 
-        return parent::_prepareMetaDescription( $this->_getCatPathString().' - '.$sAddText, $iLength, $blDescTag );
+        if ( !$sMeta ) {
+            $sMeta = trim( $this->_getCatPathString() );
+        }
+
+        if ( $sMeta ) {
+            $sMeta = "{$sMeta} - {$sAddText}";
+        } else {
+            $sMeta = $sAddText;
+        }
+
+        return parent::_prepareMetaDescription( $sMeta, $iLength, $blDescTag );
     }
 
     /**
-     * Creates string of keywords (category titles) seperated by comma
+     * Returns current view keywords seperated by comma
      *
-     * @param mixed $aCatPath category path (not used)
+     * @param string $sKeywords data to use as keywords
      *
      * @return string
      */
-    protected function _prepareMetaKeyword( $aCatPath )
+    protected function _prepareMetaKeyword( $sKeywords )
     {
         $sKeywords = '';
-        if ( ( $oParent = $this->_oCategory->getParentCategory() ) ) {
-            $sKeywords = $oParent->oxcategories__oxtitle->value;
-        }
+        if ( ( $oCategory = $this->getActCategory() ) ) {
+            if ( ( $oParent = $oCategory->getParentCategory() ) ) {
+                $sKeywords = $oParent->oxcategories__oxtitle->value;
+            }
 
-        $sKeywords = ( $sKeywords ? $sKeywords . ', ' : '' ) . $this->_oCategory->oxcategories__oxtitle->value;
-        $aSubCats  = $this->_oCategory->getSubCats();
-        if ( is_array( $aSubCats ) ) {
-            foreach ( $aSubCats as $oSubCat ) {
-                $sKeywords .= ', '.$oSubCat->oxcategories__oxtitle->value;
+            $sKeywords = ( $sKeywords ? $sKeywords . ', ' : '' ) . $oCategory->oxcategories__oxtitle->value;
+            $aSubCats  = $oCategory->getSubCats();
+            if ( is_array( $aSubCats ) ) {
+                foreach ( $aSubCats as $oSubCat ) {
+                    $sKeywords .= ', '.$oSubCat->oxcategories__oxtitle->value;
+                }
             }
         }
 
@@ -430,32 +427,46 @@ class aList extends oxUBase
             }
         }
 
-        return $sKeywords;
+        return trim( $sKeywords );
     }
 
     /**
-     * creates a string of keyword filtered by the function prepareMetaDescription and without any duplicates
+     * Creates a string of keyword filtered by the function prepareMetaDescription and without any duplicates
      * additional the admin defined strings are removed
      *
-     * @param mixed $aCatPath category path
+     * @param string $sKeywords category path
      *
-     * @return string of keywords seperated by comma
+     * @return string
      */
-    protected function _collectMetaKeyword( $aCatPath )
+    protected function _collectMetaKeyword( $sKeywords )
     {
         $iMaxTextLenght = 60;
         $sText = '';
 
-        if (count($this->_aArticleList)) {
-            foreach ( $this->_aArticleList as $oProduct ) {
-                $sDesc = strip_tags( trim( strtolower( $oProduct->oxarticles__oxlongdesc->value ) ) );
-                if ( strlen( $sDesc ) > $iMaxTextLenght ) {
-                    $sMidText = substr( $sDesc, 0, $iMaxTextLenght );
-                    $sText   .= substr( $sMidText, 0, ( strlen( $sMidText ) - strpos( strrev( $sMidText ), ' ' ) ) );
+        if ( count( $aArticleList = $this->getArticleList() ) ) {
+            $oStr = getStr();
+            foreach ( $aArticleList as $oProduct ) {
+                $sDesc = strip_tags( trim( $oStr->strtolower( $oProduct->getArticleLongDesc()->value ) ) );
+                if ( $oStr->strlen( $sDesc ) > $iMaxTextLenght ) {
+                    $sMidText = $oStr->substr( $sDesc, 0, $iMaxTextLenght );
+                    $sDesc   .= $oStr->substr( $sMidText, 0, ( $oStr->strlen( $sMidText ) - $oStr->strpos( strrev( $sMidText ), ' ' ) ) );
                 }
+                if ( $sText ) {
+                    $sText .= ', ';
+                }
+                $sText .= $sDesc;
             }
         }
-        return parent::_prepareMetaKeyword( $this->_getCatPathString() . ', ' . $sText );
+
+        if ( !$sKeywords ) {
+            $sKeywords = $this->_getCatPathString();
+        }
+
+        if ( $sKeywords ) {
+            $sText = "{$sKeywords}, {$sText}";
+        }
+
+        return parent::_prepareMetaKeyword( $sText );
     }
 
     /**
@@ -470,8 +481,8 @@ class aList extends oxUBase
         // assign template name
         if ( ( $sTplName = basename( oxConfig::getParameter( 'tpl' ) ) ) ) {
             $this->_sThisTemplate = $sTplName;
-        } elseif ( $this->_oActCategory && $this->_oActCategory->oxcategories__oxtemplate->value ) {
-            $this->_sThisTemplate = $this->_oActCategory->oxcategories__oxtemplate->value;
+        } elseif ( ( $oCategory = $this->getActCategory() ) && $oCategory->oxcategories__oxtemplate->value ) {
+            $this->_sThisTemplate = $oCategory->oxcategories__oxtemplate->value;
         }
 
         return $this->_sThisTemplate;
@@ -508,7 +519,7 @@ class aList extends oxUBase
         if ( $this->_blFixedUrl == null ) {
             $sId = $oCategory->getId();
             $iLang = $oCategory->getLanguage();
-            $sShopId = oxConfig::getInstance()->getShopId();
+            $sShopId = $this->getConfig()->getShopId();
             $this->_blFixedUrl = oxDb::getDb()->getOne( "select oxfixed from oxseo where oxobjectid = '{$sId}' and oxshopid = '{$sShopId}' and oxlang = '{$iLang}' and oxparams = '' " );
         }
         return $this->_blFixedUrl;
@@ -527,11 +538,13 @@ class aList extends oxUBase
     /**
      * Template variable getter. Returns active category
      *
+     * @deprecated
+     *
      * @return bool
      */
     protected function _getCategory()
     {
-        return $this->_oCategory;
+        return $this->getActCategory();
     }
 
     /**
@@ -559,12 +572,10 @@ class aList extends oxUBase
     {
         // category has own sorting
         $aSorting = parent::getSorting( $sCnid );
-        if ( !$aSorting && $this->_oActCategory && $this->_oActCategory->oxcategories__oxdefsort->value ) {
-            $sSortBy  = getViewName( 'oxarticles' ).'.'.$this->_oActCategory->oxcategories__oxdefsort->value;
-            if ( $sSortBy) {
-                $sSortDir = $this->_oActCategory->oxcategories__oxdefsortmode->value ? " desc " : null;
-            }
-            $sSortDir = $sSortDir?$sSortDir:null;
+        $oActCat = $this->getActCategory();
+        if ( !$aSorting && $oActCat && $oActCat->oxcategories__oxdefsort->value ) {
+            $sSortBy  = getViewName( 'oxarticles' ).".{$oActCat->oxcategories__oxdefsort->value}";
+            $sSortDir = ( $oActCat->oxcategories__oxdefsortmode->value ) ? " desc " : null;
 
             $this->setItemSorting( $sCnid, $sSortBy, $sSortDir );
             $aSorting = array ( 'sortby' => $sSortBy, 'sortdir' => $sSortDir );
@@ -590,7 +601,7 @@ class aList extends oxUBase
      *
      * @return object
      */
-    protected function getSubject()
+    protected function _getSubject()
     {
         return $this->getActCategory();
     }
@@ -605,8 +616,8 @@ class aList extends oxUBase
     {
         // #657 gather all attribute values we do have here in this category
         $this->_aAttributes = false;
-        if ( $this->_getCategory() ) {
-            $aAttributes = $this->_getCategory()->getAttributes();
+        if ( ( $oCategory = $this->getActCategory() ) ) {
+            $aAttributes = $oCategory->getAttributes();
             if ( count( $aAttributes ) ) {
                 $this->_aAttributes = $aAttributes;
             }
@@ -622,7 +633,7 @@ class aList extends oxUBase
     public function getArticleList()
     {
         if ( $this->_aArticleList === null ) {
-            if ( ( $oCategory = $this->_getCategory() ) && $this->_isActCategory() ) {
+            if ( $this->_isActCategory() && ( $oCategory = $this->getActCategory() ) ) {
                 $aArticleList = $this->_loadArticles( $oCategory );
                 if ( count( $aArticleList ) ) {
                     $this->_aArticleList = $aArticleList;
@@ -739,7 +750,7 @@ class aList extends oxUBase
     {
         if ( $this->_sCatTitle === null ) {
             $this->_sCatTitle = false;
-            if ( $oCategory = $this->_getCategory() ) {
+            if ( ( $oCategory = $this->getActCategory() ) ) {
                 $this->_sCatTitle = $oCategory->oxcategories__oxtitle->value;
             }
         }

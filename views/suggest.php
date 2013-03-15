@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: suggest.php 13614 2008-10-24 09:36:52Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: suggest.php 17481 2009-03-20 12:35:53Z arvydas $
  */
 
 /**
@@ -63,17 +64,6 @@ class Suggest extends oxUBase
      * @var object
      */
     protected $_aSuggestData = null;
-
-    /**
-     * Executes parent::init() and loads product object.
-     *
-     * @return null
-     */
-    public function init()
-    {
-        parent::init();
-        $this->_oProduct = $this->getProduct();
-    }
 
     /**
      * Loads and passes article and related info to template engine
@@ -125,10 +115,11 @@ class Suggest extends oxUBase
         }
         $this->_aSuggestData = $oParams;
 
+        $oUtilsView = oxUtilsView::getInstance();
         // filled not all fields ?
         foreach ( $this->_aReqFields as $sFieldName ) {
             if ( !isset( $aParams[$sFieldName] ) || !$aParams[$sFieldName] ) {
-                oxUtilsView::getInstance()->addErrorToDisplay('SUGGEST_COMLETECORRECTLYFIELDS');
+                $oUtilsView->addErrorToDisplay('SUGGEST_COMLETECORRECTLYFIELDS');
                 return;
             }
         }
@@ -150,6 +141,10 @@ class Suggest extends oxUBase
             $sReturn .= "&searchvendor=$sSearchVendor";
         }
 
+        if ( ( $sSearchManufacturer = oxConfig::getParameter( 'searchmanufacturer' ) ) ) {
+            $sReturn .= "&searchmanufacturer=$sSearchManufacturer";
+        }
+
         $sListType = oxConfig::getParameter( 'listtype' );
         if ( $sListType ) {
             $sReturn .= "&listtype=$sListType";
@@ -157,8 +152,9 @@ class Suggest extends oxUBase
 
         // sending suggest email
         $oEmail = oxNew( 'oxemail' );
-        if ( $oEmail->sendSuggestMail( $oParams, $this->_oProduct ) ) {
-            return 'details?anid='.$this->_oProduct->getId().$sReturn;
+        $oProduct = $this->getProduct();
+        if ( $oProduct && $oEmail->sendSuggestMail( $oParams, $oProduct ) ) {
+            return 'details?anid='.$oProduct->getId().$sReturn;
         } else {
             oxUtilsView::getInstance()->addErrorToDisplay('SUGGEST_INVALIDMAIL');
         }
@@ -173,7 +169,7 @@ class Suggest extends oxUBase
     {
         if ( $this->_oProduct === null ) {
             $this->_oProduct = false;
-            
+
             if ( $sAnid = oxConfig::getParameter( 'anid' ) ) {
                 $this->_oProduct = oxNewArticle( $sAnid );
             }
@@ -190,8 +186,8 @@ class Suggest extends oxUBase
     {
         if ( $this->_oCrossSelling === null ) {
             $this->_oCrossSelling = false;
-            if ( $this->_oProduct ) {
-                $this->_oCrossSelling = $this->_oProduct->getCrossSelling();
+            if ( $oProduct = $this->getProduct() ) {
+                $this->_oCrossSelling = $oProduct->getCrossSelling();
             }
         }
         return $this->_oCrossSelling;
@@ -206,8 +202,8 @@ class Suggest extends oxUBase
     {
         if ( $this->_oSimilarProducts === null ) {
             $this->_oSimilarProducts = false;
-            if ( $this->_oProduct ) {
-                $this->_oSimilarProducts = $this->_oProduct->getSimilarProducts();
+            if ( $oProduct = $this->getProduct() ) {
+                $this->_oSimilarProducts = $oProduct->getSimilarProducts();
             }
         }
         return $this->_oSimilarProducts;
@@ -222,9 +218,9 @@ class Suggest extends oxUBase
     {
         if ( $this->_oRecommList === null ) {
             $this->_oRecommList = false;
-            if ( $this->_oProduct ) {
+            if ( $oProduct = $this->getProduct() ) {
                 $oRecommList = oxNew('oxrecommlist');
-                $this->_oRecommList = $oRecommList->getRecommListsByIds( array($this->_oProduct->getId()));
+                $this->_oRecommList = $oRecommList->getRecommListsByIds( array( $oProduct->getId() ) );
             }
         }
         return $this->_oRecommList;

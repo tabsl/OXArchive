@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package lang
- * @copyright © OXID eSales AG 2003-2009
- * $Id: cust_lang.php 13615 2008-10-24 09:37:42Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: cust_lang.php 16305 2009-02-05 10:27:04Z rimvydas.paskevicius $
  */
 
 $sLangName  = "Deutsch";
@@ -30,13 +31,6 @@ $aLang = array(
 
 );
 
-
 /*
-
 [{ oxmultilang ident="GENERAL_YOUWANTTODELETE" }]
-
-
 */
-
-
-?>

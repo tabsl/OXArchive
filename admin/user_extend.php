@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: user_extend.php 14015 2008-11-06 13:30:18Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: user_extend.php 17191 2009-03-13 12:21:00Z arvydas $
  */
 
 /**
@@ -97,7 +98,5 @@ class User_Extend extends oxAdminDetails
         // set oxid if inserted
         if ( $soxId == "-1")
             oxSession::setVar( "saved_oxid", $oUser->oxuser__oxid->value);
-
-        return $this->autosave();
     }
 }

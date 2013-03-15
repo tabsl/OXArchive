@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package inc
- * @copyright © OXID eSales AG 2003-2009
- * $Id: attribute_category.inc.php 14035 2008-11-06 14:48:53Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: attribute_category.inc.php 17958 2009-04-07 14:29:36Z rimvydas.paskevicius $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -51,6 +52,7 @@ class ajaxComponent extends ajaxListComponent
     protected function _getQuery()
     {
         $myConfig = $this->getConfig();
+        $sLangTag = oxLang::getInstance()->getLanguageTag();
 
         $sCatTable = getViewName('oxcategories');
         $sDiscountId      = oxConfig::getParameter( 'oxid' );
@@ -59,17 +61,17 @@ class ajaxComponent extends ajaxListComponent
         // category selected or not ?
         if ( !$sDiscountId) {
             $sQAdd  = " from $sCatTable where $sCatTable.oxshopid = '".$myConfig->getShopId()."' ";
-            $sQAdd .= " and $sCatTable.oxactive".oxLang::getInstance()->getLanguageTag()." = '1' ";
+            $sQAdd .= " and $sCatTable.oxactive{$sLangTag} = '1' ";
         } else {
             $sQAdd  = " from $sCatTable left join oxcategory2attribute on $sCatTable.oxid=oxcategory2attribute.oxobjectid ";
             $sQAdd .= " where oxcategory2attribute.oxattrid = '$sDiscountId' and $sCatTable.oxshopid = '".$myConfig->getShopId()."' ";
-            $sQAdd .= " and $sCatTable.oxactive".oxLang::getInstance()->getLanguageTag()." = '1' ";
+            $sQAdd .= " and $sCatTable.oxactive{$sLangTag} = '1' ";
         }
 
         if ( $sSynchDiscountId && $sSynchDiscountId != $sDiscountId) {
             $sQAdd .= " and $sCatTable.oxid not in ( select $sCatTable.oxid from $sCatTable left join oxcategory2attribute on $sCatTable.oxid=oxcategory2attribute.oxobjectid ";
             $sQAdd .= " where oxcategory2attribute.oxattrid = '$sSynchDiscountId' and $sCatTable.oxshopid = '".$myConfig->getShopId()."' ";
-            $sQAdd .= " and $sCatTable.oxactive".oxLang::getInstance()->getLanguageTag()." = '1' ) ";
+            $sQAdd .= " and $sCatTable.oxactive{$sLangTag} = '1' ) ";
         }
 
         return $sQAdd;
@@ -92,6 +94,8 @@ class ajaxComponent extends ajaxListComponent
             $sQ = "delete from oxcategory2attribute where oxcategory2attribute.oxid in ('" . implode( "', '", $aChosenCat ) . "') ";
             oxDb::getDb()->Execute( $sQ );
         }
+
+        $this->resetContentCache();
     }
 
     /**
@@ -112,15 +116,18 @@ class ajaxComponent extends ajaxListComponent
         }
 
         if ( $oAttribute->load( $soxId ) && is_array( $aAddCategory ) ) {
+            $oDb = oxDb::getDb();
             foreach ($aAddCategory as $sAdd) {
                 $oNewGroup = oxNew( "oxbase" );
                 $oNewGroup->init( "oxcategory2attribute" );
                 $oNewGroup->oxcategory2attribute__oxobjectid = new oxField($sAdd);
                 $oNewGroup->oxcategory2attribute__oxattrid = new oxField($oAttribute->oxattribute__oxid->value);
-                $oNewGroup->oxcategory2attribute__oxsort   = new oxField( ( int ) oxDb::getDb()->getOne( "select max(oxsort) + 1 from oxcategory2attribute where oxobjectid = '$sAdd' " ) );
+                $oNewGroup->oxcategory2attribute__oxsort   = new oxField( ( int ) $oDb->getOne( "select max(oxsort) + 1 from oxcategory2attribute where oxobjectid = '$sAdd' " ) );
                 $oNewGroup->save();
             }
         }
+
+        $this->resetContentCache();
     }
 
 }

@@ -11,7 +11,6 @@
             [{ $oViewConf->getNavFormParams() }]
             <input type="hidden" name="fnc" value="addToRecomm">
             <input type="hidden" name="cl" value="details">
-            <input type="hidden" name="cnid" value="[{$oViewConf->getActCatId()}]">
             <input type="hidden" name="anid" value="[{ $product->oxarticles__oxid->value }]">
               [{ oxmultilang ident="ADD_RECOMM_SELECTLIST" }]: <br>
               <select id="test_recomListAddSelect" class="recomm_input" name="recomm">

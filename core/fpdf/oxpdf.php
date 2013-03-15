@@ -1,15 +1,27 @@
 <?php
-// // © oxid e:sales GmbH 2003
-//
-// Diese Software ist urheberrechtlich geschuetzt - sie ist
-// KEINE Freeware.
-//
-// Die unerlaubte Verwendung dieser Software ohne gueltigen
-// Lizenzschluessel ist ein ein Verstoss gegen die Lizenz-
-// bedingungen und wird straf- bzw. auch zivilrechtlich verfolgt.
-//
-// http://www.oxid-esales.de
-//
+/**
+ *    This file is part of OXID eShop Community Edition.
+ *
+ *    OXID eShop Community Edition is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    OXID eShop Community Edition is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @link http://www.oxid-esales.com
+ * @package core
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxpdf.php 17468 2009-03-20 09:14:04Z arvydas $
+ */
+
 // Diese Datei basiert auf den arbeiten von http://www.fpdf.org
 // Vielen Dank fuer die Unterstuetzung !
 
@@ -109,7 +121,7 @@ class oxPDF extends FPDF
         $this->SetStyle('U',false);
         $this->SetTextColor(0);
     }
-    
+
     function Text($x,$y,$txt)
     {
         // replaces some special code to chars
@@ -124,7 +136,7 @@ class oxPDF extends FPDF
 
         // replacing html specific codes
 
-        // if this doesn't help, we should create own entity table 
+        // if this doesn't help, we should create own entity table
         // and replace codes to symbols
         $txt = html_entity_decode($txt);
 

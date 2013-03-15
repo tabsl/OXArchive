@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: order_article.php 14024 2008-11-06 13:41:48Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: order_article.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
  */
 
 /**
@@ -40,11 +41,11 @@ class Order_Article extends oxAdminDetails
     {
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid");
-        if ( $soxId != "-1" && isset( $soxId)) {
+        $soxId = oxConfig::getParameter( "oxid" );
+        if ( $soxId != "-1" && isset( $soxId ) ) {
             // load object
             $oOrder = oxNew( "oxorder" );
-            $oOrder->load( $soxId);
+            $oOrder->load( $soxId );
 
             $this->_aViewData["edit"] =  $oOrder;
         }
@@ -59,29 +60,25 @@ class Order_Article extends oxAdminDetails
      */
     public function addThisArticle()
     {
-        $sArtNum    = oxConfig::getParameter( "sArtNum");
-        $dAmount    = oxConfig::getParameter( "am");
-        $sOrderId   = oxConfig::getParameter( "oxid");
+        if ( ( $sArtNum = oxConfig::getParameter( 'sArtNum' ) ) ) {
+            $dAmount  = oxConfig::getParameter( 'am' );
+            $sOrderId = oxConfig::getParameter( 'oxid' );
 
-        if (!$sArtNum)
-            return;
+            //get article id
+            $sQ = "select oxid from oxarticles where oxarticles.oxartnum = '$sArtNum'";
+            if ( ( $sArtId = oxDb::getDb()->getOne( $sQ ) ) ) {
+                $oOrderArticle = oxNew( 'oxorderArticle' );
+                $oOrderArticle->oxorderarticles__oxartid  = new oxField( $sArtId );
+                $oOrderArticle->oxorderarticles__oxartnum = new oxField( $sArtNum );
+                $oOrderArticle->oxorderarticles__oxamount = new oxField( $dAmount );
+                $aOrderArticles[] = $oOrderArticle;
 
-        //get article id
-        $sSql = "select oxid from oxarticles where oxarticles.oxartnum = '$sArtNum'";
-        $sArtId = oxDb::getDb()->getOne( $sSql);
-
-        if (!$sArtId)
-            return;
-
-        $oOrderArticle = oxNew( 'oxOrderArticle' );
-        $oOrderArticle->oxorderarticles__oxartid  = new oxField($sArtId);
-        $oOrderArticle->oxorderarticles__oxartnum = new oxField($sArtNum);
-        $oOrderArticle->oxorderarticles__oxamount = new oxField($dAmount);
-        $aOrderArticles[] = $oOrderArticle;
-
-        $oOrder = oxNew( "oxOrder" );
-        $oOrder->load( $sOrderId );
-        $oOrder->recalculateOrder( $aOrderArticles );
+                $oOrder = oxNew( 'oxorder' );
+                if ( $oOrder->load( $sOrderId ) ) {
+                    $oOrder->recalculateOrder( $aOrderArticles );
+                }
+            }
+        }
     }
 
     /**
@@ -91,30 +88,27 @@ class Order_Article extends oxAdminDetails
      */
     public function deleteThisArticle()
     {
-        $sOrderArtId = oxConfig::getParameter( "sArtID");
-        $sOrderId    = oxConfig::getParameter( "oxid");
+        // get article id
+        $sOrderArtId = oxConfig::getParameter( 'sArtID' );
+        $sQ = "select oxartid from oxorderarticles where oxid = '$sOrderArtId'";
+        if ( ( $sArtId = oxDb::getDb()->getOne( $sQ ) ) ) {
 
-        //get article id
-        $sSql = "select oxartid from oxorderarticles where oxid = '$sOrderArtId'";
-        $sArtId = oxDb::getDb()->getOne( $sSql);
+            $oOrderArticle = oxNew( 'oxorderarticle' );
+            $oOrderArticle->oxorderarticles__oxartid  = new oxField( $sArtId );
+            $oOrderArticle->oxorderarticles__oxartnum = new oxField( $sOrderArtId );
+            $oOrderArticle->oxorderarticles__oxamount = new oxField( 0 );
+            $aOrderArticles[] = $oOrderArticle;
 
-        if (!$sArtId)
-            return;
-
-        $oOrderArticle = oxNew( 'oxOrderArticle' );
-        $oOrderArticle->oxorderarticles__oxartid  = new oxField($sArtId);
-        $oOrderArticle->oxorderarticles__oxartnum = new oxField($sOrderArtId);
-        $oOrderArticle->oxorderarticles__oxamount = new oxField(0);
-        $aOrderArticles[] = $oOrderArticle;
-
-        $oOrder = oxNew( "oxOrder" );
-        $oOrder->load( $sOrderId );
-
-        $oOrder->recalculateOrder( $aOrderArticles );
-
+            $oOrder = oxNew( 'oxorder' );
+            $sOrderId = oxConfig::getParameter( 'oxid' );
+            if ( $oOrder->load( $sOrderId ) ) {
+                $oOrder->recalculateOrder( $aOrderArticles );
+            }
+        }
     }
 
     /**
+     * Cancels order item
      *
      * @return null
      */
@@ -122,37 +116,33 @@ class Order_Article extends oxAdminDetails
     {
         $myConfig = $this->getConfig();
 
-        $sOrderArtId = oxConfig::getParameter( "sArtID" );
-        $oArticle = oxNew( "oxorderarticle" );
+        $sOrderArtId = oxConfig::getParameter( 'sArtID' );
+        $oArticle = oxNew( 'oxorderarticle' );
         $oArticle->load( $sOrderArtId );
 
-        if ( $oArticle->oxorderarticles__oxstorno->value == 1) {
-            $oArticle->oxorderarticles__oxstorno->setValue(0);
+        if ( $oArticle->oxorderarticles__oxstorno->value == 1 ) {
+            $oArticle->oxorderarticles__oxstorno->setValue( 0 );
             $sStockSign = -1;
         } else {
-            $oArticle->oxorderarticles__oxstorno->setValue(1);
+            $oArticle->oxorderarticles__oxstorno->setValue( 1 );
             $sStockSign = 1;
         }
 
         // stock information
-        if ( $myConfig->getConfigParam( 'blUseStock' ) )
+        if ( $myConfig->getConfigParam( 'blUseStock' ) ) {
             $oArticle->updateArticleStock($oArticle->oxorderarticles__oxamount->value * $sStockSign, $myConfig->getConfigParam('blAllowNegativeStock'));
+        }
 
-        $sOxStorNo = $oArticle->oxorderarticles__oxstorno->value;
-        $sSql = "update oxorderarticles set oxstorno = '$sOxStorNo' where oxid = '$sOrderArtId'";
-        oxDb::getDb()->execute( $sSql );
+        $sQ = "update oxorderarticles set oxstorno = '{$oArticle->oxorderarticles__oxstorno->value}' where oxid = '$sOrderArtId'";
+        oxDb::getDb()->execute( $sQ );
 
         //get article id
-        $sSql = "select oxartid from oxorderarticles where oxid = '$sOrderArtId'";
-        $sArtId = oxDb::getDb()->getOne( $sSql);
-
-        if (!$sArtId)
-            return;
-
-        $soxId  = oxConfig::getParameter( "oxid");
-        $oOrder = oxNew( "oxorder" );
-        $oOrder->load( $soxId);
-
-        $oOrder->recalculateOrder( array() );
+        $sQ = "select oxartid from oxorderarticles where oxid = '$sOrderArtId'";
+        if ( ( $sArtId = oxDb::getDb()->getOne( $sQ ) ) ) {
+            $oOrder = oxNew( 'oxorder' );
+            if ( $oOrder->load( oxConfig::getParameter( 'oxid' ) ) ) {
+                $oOrder->recalculateOrder( array() );
+            }
+        }
     }
 }

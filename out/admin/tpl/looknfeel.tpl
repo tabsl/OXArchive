@@ -29,8 +29,6 @@
     <input type="hidden" name="fnc" value="">
     <input type="hidden" name="istab" value="[{ $istab }]">
 
-    [{include file="autosave.form.tpl"}]
-
       [{* ---===  Look&feel ===--- *}]
 
       [{if $istab==1 }]

@@ -7,7 +7,7 @@
                                                     [ [{ foreach from=$oxajax.container1 item=aItem key=iKey }]
                                                        [{$sSep}][{strip}]{ key:'_[{ $iKey }]', ident: [{if $aItem.4 }]true[{else}]false[{/if}]
                                                        [{if !$aItem.4 }],
-                                                       label: '[{ oxmultilang ident="GENERAL_AJAX_SORT_"|cat:$aItem.0|upper }]',
+                                                       label: '[{ oxmultilang ident="GENERAL_AJAX_SORT_"|cat:$aItem.0|oxupper }]',
                                                        visible: [{if $aItem.2 }]true[{else}]false[{/if}]
                                                        [{/if}]}
                                                       [{/strip}]
@@ -21,7 +21,7 @@
                                                     [ [{ foreach from=$oxajax.container2 item=aItem key=iKey }]
                                                        [{$sSep}][{strip}]{ key:'_[{ $iKey }]', ident: [{if $aItem.4 }]true[{else}]false[{/if}]
                                                        [{if !$aItem.4 }],
-                                                       label: '[{ oxmultilang ident="GENERAL_AJAX_SORT_"|cat:$aItem.0|upper }]',
+                                                       label: '[{ oxmultilang ident="GENERAL_AJAX_SORT_"|cat:$aItem.0|oxupper }]',
                                                        visible: [{if $aItem.2 }]true[{else}]false[{/if}]
                                                        [{/if}]}
                                                       [{/strip}]

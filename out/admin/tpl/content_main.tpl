@@ -88,10 +88,18 @@ function ShowMenueFields( iVal)
           <input type="hidden" name="editval[oxcontents__oxid]" value="[{ $oxid }]">
           <input type="hidden" name="folderclass" value="oxcontent">
           <input type="hidden" name="editval[oxcontents__oxcontent]" value="">
-          [{include file="autosave.form.tpl"}]
           <tr>
-            <td valign="top" class="edittext" >
-              <table cellspacing="0" cellpadding="0" border="0" width="200">
+            <td valign="top" class="edittext" width="200">
+              <table cellspacing="0" cellpadding="0" border="0">
+
+                [{ if $blLoadError }]
+                <tr>
+                  <td colspan="2">
+                    <div class="errorbox">[{ oxmultilang ident="CONTENT_MAIN_ERROR" }] [{ oxmultilang ident="CONTENT_MAIN_USEDIDENTCODE" }]</div>
+                  </td>
+                </tr>
+                [{ /if}]
+
                 <tr>
                   <td class="edittext" width="70">
                   [{ oxmultilang ident="GENERAL_ACTIVE" }]
@@ -116,7 +124,6 @@ function ShowMenueFields( iVal)
                   <input type="text" class="editinput" size="28" maxlength="[{$edit->oxcontents__oxloadid->fldmax_length}]" name="editval[oxcontents__oxloadid]" value="[{$edit->oxcontents__oxloadid->value}]" [{ $readonly }]>
                   </td>
                 </tr>
-
                 <tr>
                   <td class="edittext">
                     [{ oxmultilang ident="GENERAL_INFOLDER" }]
@@ -129,20 +136,9 @@ function ShowMenueFields( iVal)
                     </select>
                   </td>
                 </tr>
-
-                [{ if $blLoadError }]
-                <tr>
-                  <td class="edittext">
-                  <br><br><br><b>[{ oxmultilang ident="CONTENT_MAIN_ERROR" }]</b>
-                  </td>
-                  <td class="edittext">
-                  <br><br><br>&nbsp;&nbsp;<b>[{ oxmultilang ident="CONTENT_MAIN_USEDIDENTCODE" }]</b>
-                  </td>
-                </tr>
-                [{/if }]
                 <tr>
                   <td class="edittext" colspan="2"><br>
-                  [{include file="language.tpl"}]<br>
+                  [{include file="language_edit.tpl"}]<br>
                   </td>
                 </tr>
                 <tr>
@@ -189,7 +185,7 @@ function ShowMenueFields( iVal)
                   <td class="edittext">
                     <select name="editval[oxcontents__oxcatid]" class="editinput" [{ $readonly }]>
                     [{foreach from=$cattree item=pcat}]
-                    <option value="[{ $pcat->oxcategories__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value|truncate:33:"..":true }]</option>
+                    <option value="[{ $pcat->oxcategories__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value|oxtruncate:33:"..":true }]</option>
                     [{/foreach}]
                     </select>
                   </td>
@@ -211,7 +207,7 @@ function ShowMenueFields( iVal)
                 </tr>
               </table>
             </td>
-            <td>&nbsp;&nbsp;&nbsp;</td>
+            <td>&nbsp;</td>
             <!-- Anfang rechte Seite -->
             <td valign="top" class="edittext" align="left">
                 [{ $editor }]

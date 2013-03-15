@@ -42,7 +42,7 @@ function ChangeExternal( sLocation, sPos)
 
 <script type="text/javascript">
 if (parent.parent)
-{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->value}]";
+{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->getRawValue()|oxaddslashes}]";
     parent.parent.sMenuItem    = "[{ oxmultilang ident="DYNSCREEN_LIST_SERVICE" }]";
     parent.parent.sMenuSubItem = "";
     parent.parent.sWorkArea    = "[{$_act}]";

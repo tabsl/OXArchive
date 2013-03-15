@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: user_list.php 14641 2008-12-11 14:11:43Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: user_list.php 17243 2009-03-16 15:16:57Z arvydas $
  */
 
 /**
@@ -123,6 +124,7 @@ class User_List extends oxAdminList
             $aVal = explode( ' ', $sName );
             $sQ .= ' and (';
             $sSqlBoolAction = '';
+            $myUtilsString = oxUtilsString::getInstance();
 
             foreach ( $aNameWhere as $sFieldName => $sValue ) {
 
@@ -138,7 +140,7 @@ class User_List extends oxAdminList
 
                     // trying to search spec chars in search value
                     // if found, add cleaned search value to search sql
-                    $sUml = oxUtilsString::getInstance()->prepareStrForSearch( $sVal );
+                    $sUml = $myUtilsString->prepareStrForSearch( $sVal );
                     if ( $sUml ) {
                         $sQ .= " or {$sFieldName} ";
                         $sQ .= $this->_buildFilter( $sUml, $blIsSearchValue );

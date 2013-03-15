@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: vendorlist.php 14141 2008-11-11 14:09:46Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: vendorlist.php 17315 2009-03-17 16:18:58Z arvydas $
  */
 
 /**
@@ -46,12 +47,6 @@ class VendorList extends aList
      * @var string
      */
     protected $_oSubCatList = null;
-
-    /**
-     * List type
-     * @var string
-     */
-    protected $_iArticleCnt = null;
 
     /**
      * Recommlist
@@ -86,19 +81,18 @@ class VendorList extends aList
     protected $_blShowSorting = true;
 
     /**
-     * Current view search engine indexing state:
-     *     0 - index without limitations
-     *     1 - no index / no follow
-     *     2 - no index / follow
+     * Current view search engine indexing state
+     *
+     * @var int
      */
-    protected $_iViewIndexState = 2;
+    protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXFOLLOW;
 
     /**
      * Executes parent::render(), loads active vendor, prepares article
      * list sorting rules. Loads list of articles which belong to this vendor
      * Generates page navigation data
      * such as previous/next window URL, number of available pages, generates
-     * metatags info (oxview::_convertForMetaTags()) and returns name of
+     * metatags info (oxubase::_convertForMetaTags()) and returns name of
      * template to render.
      *
      * Template variables:
@@ -122,7 +116,7 @@ class VendorList extends aList
                     $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 1;
 
                     // load the articles
-                    $this->_iAllArtCnt = $this->getArticleCnt();
+                    $this->getArticleList();
                     $this->_iCntPages  = round( $this->_iAllArtCnt / $iNrofCatArticles + 0.49 );
 
                 }
@@ -131,7 +125,7 @@ class VendorList extends aList
         $this->_aViewData['hasVisibleSubCats'] = $this->hasVisibleSubCats();
         $this->_aViewData['subcatlist']        = $this->getSubCatList();
         $this->_aViewData['articlelist']       = $this->getArticleList();
-        $this->_aViewData['similarrecommlist'] = $this->getRecommList();
+        $this->_aViewData['similarrecommlist'] = $this->getSimilarRecommLists();
 
         $this->_aViewData['title']             = $this->getTitle();
         $this->_aViewData['template_location'] = $this->getTemplateLocation();
@@ -142,10 +136,6 @@ class VendorList extends aList
 
         // processing list articles
         $this->_processListArticles();
-
-        // generating meta info
-        $this->setMetaDescription( null );
-        $this->setMetaKeywords( null );
 
         return $this->_sThisTemplate;
     }
@@ -162,7 +152,7 @@ class VendorList extends aList
         if ( $aArtList = $this->getArticleList() ) {
             foreach ( $aArtList as $oArticle ) {
                 // forcing to generate vendor URLs by getLink
-                $oArticle->setLinkType( 1 );
+                $oArticle->setLinkType( OXARTICLE_LINKTYPE_VENDOR );
             }
         }
     }
@@ -314,50 +304,15 @@ class VendorList extends aList
              $this->_aArticleList = array();
              if ( ( $oVendorTree = $this->getVendorTree() ) ) {
                 if ( ( $oVendor = $this->getActVendor() ) && ( $oVendor->getId() != 'root' ) ) {
-                    list( $aArticleList, $iArticleCnt ) = $this->_loadArticles( $oVendor );
-                    if ( $iArticleCnt ) {
+                    list( $aArticleList, $this->_iAllArtCnt ) = $this->_loadArticles( $oVendor );
+                    if ( $this->_iAllArtCnt ) {
                         $this->_aArticleList = $aArticleList;
-                        $this->_iArticleCnt  = $iArticleCnt;
                     }
                 }
 
             }
         }
         return $this->_aArticleList;
-    }
-
-    /**
-     * Template variable getter. Returns active object's reviews
-     *
-     * @return array
-     */
-    public function getArticleCnt()
-    {
-         if ( $this->_iArticleCnt === null ) {
-             $this->_iArticleCnt = 0;
-             if ( $this->getArticleList() ) {
-                return $this->_iArticleCnt;
-            }
-        }
-        return $this->_iArticleCnt;
-    }
-
-    /**
-     * Template variable getter. Returns recommlist's reviews
-     *
-     * @return array
-     */
-    public function getRecommList()
-    {
-        if ( $this->_oRecommList === null ) {
-            $this->_oRecommList = false;
-            if ( $this->getArticleCnt() ) {
-                // loading recommlists
-                $oRecommList = oxNew('oxrecommlist');
-                $this->_oRecommList = $oRecommList->getRecommListsByIds( $this->_aArticleList->arrayKeys());
-            }
-        }
-        return $this->_oRecommList;
     }
 
     /**
@@ -429,20 +384,6 @@ class VendorList extends aList
     }
 
     /**
-     * Template variable getter. Returns page navigation
-     *
-     * @return object
-     */
-    public function getPageNavigation()
-    {
-        if ( $this->_oPageNavigation === null ) {
-            $this->_oPageNavigation = false;
-            $this->_oPageNavigation = $this->generatePageNavigation();
-        }
-        return $this->_oPageNavigation;
-    }
-
-    /**
      * Returns title suffix used in template
      *
      * @return string
@@ -455,31 +396,30 @@ class VendorList extends aList
     }
 
     /**
-     * Calls and returns result of parent:: _collectMetaKeyword();
+     * Returns current view keywords seperated by comma
+     * (calls parent::_collectMetaKeyword())
      *
-     * @param mixed $aCatPath category path
+     * @param string $sKeywords data to use as keywords
      *
      * @return string
      */
-    protected function _prepareMetaKeyword( $aCatPath )
+    protected function _prepareMetaKeyword( $sKeywords )
     {
-        return parent::_collectMetaKeyword( $aCatPath );
+        return parent::_collectMetaKeyword( $sKeywords );
     }
 
     /**
-     * Metatags - description and keywords - generator for search
-     * engines. Uses string passed by parameters, cleans HTML tags,
-     * string dublicates, special chars. Also removes strings defined
-     * in $myConfig->aSkipTags (Admin area).
+     * Returns current view meta description data
+     * (calls parent::_collectMetaDescription())
      *
-     * @param mixed $aCatPath  category path
-     * @param int   $iLength   max length of result, -1 for no truncation
-     * @param bool  $blDescTag if true - performs additional dublicate cleaning
+     * @param string $sMeta     category path
+     * @param int    $iLength   max length of result, -1 for no truncation
+     * @param bool   $blDescTag if true - performs additional dublicate cleaning
      *
-     * @return  string  $sString    converted string
+     * @return string
      */
-    protected function _prepareMetaDescription( $aCatPath, $iLength = 1024, $blDescTag = false )
+    protected function _prepareMetaDescription( $sMeta, $iLength = 1024, $blDescTag = false )
     {
-        return parent::_collectMetaDescription( $aCatPath, $iLength, $blDescTag );
+        return parent::_collectMetaDescription( $sMeta, $iLength, $blDescTag );
     }
 }

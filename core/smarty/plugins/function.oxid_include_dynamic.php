@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package smartyPlugins
- * @copyright © OXID eSales AG 2003-2009
- * $Id: function.oxid_include_dynamic.php 13615 2008-10-24 09:37:42Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: function.oxid_include_dynamic.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
  */
 
 

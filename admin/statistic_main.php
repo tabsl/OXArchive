@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: statistic_main.php 14015 2008-11-06 13:30:18Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: statistic_main.php 17243 2009-03-16 15:16:57Z arvydas $
  */
 
 /**
@@ -39,6 +40,7 @@ class Statistic_Main extends oxAdminDetails
     public function render()
     {
         $myConfig  = $this->getConfig();
+        $oLang = oxLang::getInstance();
 
         parent::render();
 
@@ -85,7 +87,7 @@ class Statistic_Main extends oxAdminDetails
                     continue;
                 }
 
-                $sName = oxLang::getInstance()->translateString( $sConst, $iLanguage );
+                $sName = $oLang->translateString( $sConst, $iLanguage );
 
                 $oItem = new stdClass();
                 $oItem->filename = $file.$i;
@@ -144,8 +146,6 @@ class Statistic_Main extends oxAdminDetails
         // set oxid if inserted
         if ( $soxId == "-1")
             oxSession::setVar( "saved_oxid", $oStat->oxstatistics__oxid->value);
-
-        return $this->autosave();
     }
 
     /**
@@ -166,7 +166,8 @@ class Statistic_Main extends oxAdminDetails
         $oShop->load( $myConfig->getShopId());
         $oShop = $this->addGlobalParams( $oShop);
 
-        oxUtilsView::getInstance()->getSmarty()->assign( "shop", $oShop );
+        $myUtilsView = oxUtilsView::getInstance();
+        $myUtilsView->getSmarty()->assign( "shop", $oShop );
 
         $sTime_from = oxConfig::getParameter( "time_from");
         $sTime_to   = oxConfig::getParameter( "time_to");
@@ -182,7 +183,7 @@ class Statistic_Main extends oxAdminDetails
             $sTime_to       = date( "Y-m-d", time());
         }
 
-        $oSmarty = oxUtilsView::getInstance()->getSmarty();
+        $oSmarty = $myUtilsView->getSmarty();
         $oSmarty->assign( "time_from", $sTime_from." 23:59:59" );
         $oSmarty->assign( "time_to", $sTime_to." 23:59:59" );
 

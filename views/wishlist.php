@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: wishlist.php 14012 2008-11-06 13:23:45Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: wishlist.php 17016 2009-03-04 13:05:30Z vilma $
  */
 
 /**
@@ -60,6 +61,18 @@ class Wishlist extends oxUBase
      * @var oxlist
      */
     protected $_oWishListUsers = false;
+
+    /**
+     * Sign if to load and show top5articles action
+     * @var bool
+     */
+    protected $_blTop5Action = true;
+
+    /**
+     * Sign if to load and show bargain action
+     * @var bool
+     */
+    protected $_blBargainAction = true;
 
     /**
      * If passed wishlist ID - loads wishlist owner object, then it's

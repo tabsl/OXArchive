@@ -18,7 +18,6 @@
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
 <input type="hidden" name="editval[oxuser__oxid]" value="[{ $oxid }]">
-[{include file="autosave.form.tpl"}]
 
 <table cellspacing="0" cellpadding="0" border="0" height="100%" width="100%">
 <tr>

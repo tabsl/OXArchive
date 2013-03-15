@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package inc
- * @copyright © OXID eSales AG 2003-2009
- * $Id: category_main.inc.php 14035 2008-11-06 14:48:53Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: category_main.inc.php 17958 2009-04-07 14:29:36Z rimvydas.paskevicius $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -114,25 +115,30 @@ class ajaxComponent extends ajaxListComponent
 
         if ( is_array($aArticles)) {
 
+            $oDb = oxDb::getDb();
 
             $sO2CView = getViewName('oxobject2category');
 
             $oNew = oxNew( 'oxbase' );
             $oNew->init( 'oxobject2category' );
+            $myUtilsObject = oxUtilsObject::getInstance();
+            $oActShop = $myConfig->getActiveShop();
 
             foreach ( $aArticles as $sAdd) {
 
                 // check, if it's already in, then don't add it again
                 $sSelect = "select 1 from $sO2CView as oxobject2category where oxobject2category.oxcatnid='$sCategoryID' and oxobject2category.oxobjectid ='$sAdd'";
-                if ( oxDb::getDb()->getOne( $sSelect ) )
+                if ( $oDb->getOne( $sSelect ) )
                     continue;
 
-                $oNew->oxobject2category__oxid       = new oxField($oNew->setId( oxUtilsObject::getInstance()->generateUID() ));
+                $oNew->oxobject2category__oxid       = new oxField($oNew->setId( $myUtilsObject->generateUID() ));
                 $oNew->oxobject2category__oxobjectid = new oxField($sAdd);
                 $oNew->oxobject2category__oxcatnid   = new oxField($sCategoryID);
                 $oNew->oxobject2category__oxtime     = new oxField(time());
                 $oNew->save();
             }
+
+            $this->resetCounter( "catArticle", $sCategoryID );
         }
     }
 
@@ -146,20 +152,23 @@ class ajaxComponent extends ajaxListComponent
         $aArticles = $this->_getActionIds( 'oxobject2category.oxid' );
         $sCategoryID = oxConfig::getParameter( 'oxajax_fid');
         $sShopID     = $this->getConfig()->getShopId();
+        $oDb = oxDb::getDb();
 
         // adding
         if ( oxConfig::getParameter( 'all' ) ) {
 
             $sO2CView = getViewName('oxobject2category');
             $sQ = $this->_addFilter( "delete $sO2CView.* ".$this->_getQuery() );
-            oxDb::getDb()->Execute( $sQ );
+            $oDb->Execute( $sQ );
 
         } elseif ( is_array( $aArticles ) && count( $aArticles ) ) {
 
             $sQ = 'delete from oxobject2category where oxid in ("' . implode( '", "', $aArticles ) . '")';
-            oxDb::getDb()->Execute( $sQ );
+            $oDb->Execute( $sQ );
 
         }
+
+        $this->resetCounter( "catArticle", $sCategoryID );
     }
 
     /**
@@ -170,7 +179,9 @@ class ajaxComponent extends ajaxListComponent
      */
     protected function _getQueryCols()
     {
-        $myConfig      = $this->getConfig();
+        $myConfig = $this->getConfig();
+        $sLangTag = oxLang::getInstance()->getLanguageTag();
+
         $sQ = '';
         $blSep = false;
         $aVisiblecols = $this->_getVisibleColNames();
@@ -179,9 +190,9 @@ class ajaxComponent extends ajaxListComponent
                 $sQ .= ', ';
             $sViewTable = getViewName( $aCol[1] );
             // multilanguage
-            $sCol = $aCol[3]?$aCol[0].oxLang::getInstance()->getLanguageTag():$aCol[0];
+            $sCol = $aCol[3]?$aCol[0].$sLangTag:$aCol[0];
             if ( $myConfig->getConfigParam( 'blVariantsSelection' ) && $aCol[0] == 'oxtitle' ) {
-                $sVarSelect = "$sViewTable.oxvarselect".oxLang::getInstance()->getLanguageTag();
+                $sVarSelect = "$sViewTable.oxvarselect".$sLangTag;
                 $sQ .= " IF( $sViewTable.$sCol != '', $sViewTable.$sCol, CONCAT((select oxart.$sCol from $sViewTable as oxart where oxart.oxid = $sViewTable.oxparentid),', ',$sVarSelect)) as _" . $iCnt;
             } else {
                 $sQ  .= $sViewTable . '.' . $sCol . ' as _' . $iCnt;
@@ -195,7 +206,7 @@ class ajaxComponent extends ajaxListComponent
                 $sQ .= ', ';
 
             // multilanguage
-            $sCol = $aCol[3]?$aCol[0].oxLang::getInstance()->getLanguageTag():$aCol[0];
+            $sCol = $aCol[3]?$aCol[0].$sLangTag:$aCol[0];
             $sQ  .= getViewName( $aCol[1] ) . '.' . $sCol . ' as _' . $iCnt;
         }
 

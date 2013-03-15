@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: dyn_trusted.php 14020 2008-11-06 13:36:42Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: dyn_trusted.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
  */
 
 
@@ -39,9 +40,12 @@ class dyn_trusted extends Shop_Config
     {
         parent::render();
         $this->_aViewData['oxid'] = $this->getConfig()->getShopId();
-
         $aIds = $this->_aViewData["confaarrs"]['iShopID_TrustedShops'];
-
+        // compability to old data
+        if ( $aConfStrs = $this->_aViewData["str"]['iShopID_TrustedShops'] ) {
+        	$aIds = array( 0 => $aConfStrs );
+        }
+        
         $this->_aViewData["aShopID_TrustedShops"] = $aIds;
         $this->_aViewData["alllang"] = oxLang::getInstance()->getLanguageNames();
 
@@ -58,14 +62,23 @@ class dyn_trusted extends Shop_Config
         $myConfig = $this->getConfig();
         $aConfStrs  = oxConfig::getParameter( "aShopID_TrustedShops");
         $blSave = true;
+        $blNotEmpty = false;
         foreach ( $aConfStrs as $sConfStrs) {
             if ( $sConfStrs ) {
+                $blNotEmpty = true;
                 if ( strlen( $sConfStrs ) != 33 || substr( $sConfStrs, 0, 1 ) != 'X' ) {
                     $this->_aViewData["errorsaving"] = 1;
                     $blSave = false;
+                    $this->_aViewData["aShopID_TrustedShops"] = null;
                 }
             }
         }
+        if ( $blNotEmpty && ( count( array_unique( $aConfStrs ) ) < count( $aConfStrs ) ) ) {
+            $this->_aViewData["errorsaving"] = 1;
+            $blSave = false;
+            $this->_aViewData["aShopID_TrustedShops"] = null;
+        }
+        
         if ( $blSave ) {
             $myConfig->saveShopConfVar( "aarr", 'iShopID_TrustedShops', serialize($aConfStrs), $myConfig->getShopId() );
         }

@@ -77,7 +77,6 @@ function UnlockSave(obj)
         <input type="hidden" name="oxparentid" value="[{ $oxparentid }]">
         <input type="hidden" name="editval[oxarticles__oxid]" value="[{ $oxid }]">
         <input type="hidden" name="editval[oxarticles__oxlongdesc]" value="">
-        [{include file="autosave.form.tpl"}]
         <tr>
           <td valign="top" class="edittext" style="padding-top:10px;padding-left:10px;">
             <table cellspacing="0" cellpadding="0" border="0">
@@ -190,8 +189,22 @@ function UnlockSave(obj)
                 <td class="edittext">
                     <select class="editinput" name="editval[oxarticles__oxvendorid]" [{ $readonly }]>
                     <option value="" selected>---</option>
-                    [{foreach from=$aVendorlist item=oVendor}]
+                    [{foreach from=$oView->getVendorList() item=oVendor}]
                     <option value="[{$oVendor->oxvendor__oxid->value}]"[{if $edit->oxarticles__oxvendorid->value == $oVendor->oxvendor__oxid->value}] selected[{/if}]>[{ $oVendor->oxvendor__oxtitle->value }]</option>
+                    [{/foreach}]
+                    </select>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="edittext">
+                    [{ oxmultilang ident="ARTICLE_MAIN_MANUFACTURERID" }]
+                </td>
+                <td class="edittext">
+                    <select class="editinput" name="editval[oxarticles__oxmanufacturerid]" [{ $readonly }]>
+                    <option value="" selected>---</option>
+                    [{foreach from=$oView->getManufacturerList() item=oManufacturer }]
+                    <option value="[{$oManufacturer->oxmanufacturers__oxid->value}]"[{if $edit->oxarticles__oxmanufacturerid->value == $oManufacturer->oxmanufacturers__oxid->value}] selected[{/if}]>[{ $oManufacturer->oxmanufacturers__oxtitle->value }]</option>
                     [{/foreach}]
                     </select>
                 </td>
@@ -246,8 +259,8 @@ function UnlockSave(obj)
                 <td class="edittext">
                 <select name="art_category" class="editinput" onChange="Javascript:ChangeLstrt()" [{ $readonly }]>
                 <option value="-1">[{ oxmultilang ident="ARTICLE_MAIN_NONE" }]</option>
-                [{foreach from=$cattree->aList item=pcat}]
-                <option value="[{ $pcat->oxcategories__oxid->value }]">[{ $pcat->oxcategories__oxtitle->value|truncate:40:"..":true }]</option>
+                [{foreach from=$oView->getCategoryList() item=pcat}]
+                <option value="[{ $pcat->oxcategories__oxid->value }]">[{ $pcat->oxcategories__oxtitle->value|oxtruncate:40:"..":true }]</option>
                 [{/foreach}]
                 </select>
                 </td>
@@ -255,7 +268,7 @@ function UnlockSave(obj)
               [{/if}]
               <tr>
                 <td class="edittext" colspan="2"><br>
-                [{include file="language.tpl"}]<br>
+                [{include file="language_edit.tpl"}]<br>
                 </td>
               </tr>
               [{if $oxid!=-1 && $thisvariantlist}]

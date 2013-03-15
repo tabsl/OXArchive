@@ -54,7 +54,6 @@ function EditThis( sID, sListType)
         <input type="hidden" name="oxid" value="[{ $oxid }]">
         <input type="hidden" name="editval[oxpricealarm__oxid]" value="[{ $oxid }]">
         <input type="hidden" name="editval[oxpricealarm__oxlongdesc]" value="">
-        [{include file="autosave.form.tpl"}]
 
         <table cellspacing="0" cellpadding="0" border="0" width="98%">
         [{if $edit}]

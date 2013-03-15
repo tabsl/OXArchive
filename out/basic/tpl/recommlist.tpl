@@ -65,25 +65,25 @@
                 <input type="hidden" name="recommlistrating" value="0">
                 <ul id="star_rate" class="rating">
                     <li id="current_rate" class="current_rate" style="width: 0px;"><a title="[{$star_title}]"><b>1</b></a></li>
-                    <li class="one"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params="anid=`$product->oxarticles__oxnid->value`&amp;cnid="|cat:$oViewConf->getActCatId() }]" onclick="showReview(1);return false;" title="1 [{ oxmultilang ident="RECOMMLIST_STAR" }]"><b>1</b></a></li>
-                    <li class="two"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params="anid=`$product->oxarticles__oxnid->value`&amp;cnid="|cat:$oViewConf->getActCatId() }]" onclick="showReview(2);return false;" title="2 [{ oxmultilang ident="RECOMMLIST_STARS" }]"><b>2</b></a></li>
-                    <li class="three"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params="anid=`$product->oxarticles__oxnid->value`&amp;cnid="|cat:$oViewConf->getActCatId() }]" onclick="showReview(3);return false;" title="3 [{ oxmultilang ident="RECOMMLIST_STARS" }]"><b>3</b></a></li>
-                    <li class="four"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params="anid=`$product->oxarticles__oxnid->value`&amp;cnid="|cat:$oViewConf->getActCatId() }]" onclick="showReview(4);return false;" title="4 [{ oxmultilang ident="RECOMMLIST_STARS" }]"><b>4</b></a></li>
-                    <li class="five"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params="anid=`$product->oxarticles__oxnid->value`&amp;cnid="|cat:$oViewConf->getActCatId() }]" onclick="showReview(5);return false;" title="5 [{ oxmultilang ident="RECOMMLIST_STARS" }]"><b>5</b></a></li>
+                    [{ assign var="__params" value="anid=`$product->oxarticles__oxnid->value`&amp;"|cat:$oViewConf->getNavUrlParams() }]
+                    <li class="one"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params=$__params }]" onclick="showReview(1);return false;" title="1 [{ oxmultilang ident="RECOMMLIST_STAR" }]"><b>1</b></a></li>
+                    <li class="two"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params=$__params }]" onclick="showReview(2);return false;" title="2 [{ oxmultilang ident="RECOMMLIST_STARS" }]"><b>2</b></a></li>
+                    <li class="three"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params=$__params }]" onclick="showReview(3);return false;" title="3 [{ oxmultilang ident="RECOMMLIST_STARS" }]"><b>3</b></a></li>
+                    <li class="four"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params=$__params }]" onclick="showReview(4);return false;" title="4 [{ oxmultilang ident="RECOMMLIST_STARS" }]"><b>4</b></a></li>
+                    <li class="five"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params=__params }]" onclick="showReview(5);return false;" title="5 [{ oxmultilang ident="RECOMMLIST_STARS" }]"><b>5</b></a></li>
                 </ul>
                 [{/if}]
                 [{ $oViewConf->getHiddenSid() }]
                 [{ $oViewConf->getNavFormParams() }]
                 <input type="hidden" name="fnc" value="savereview">
                 <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
-                <input type="hidden" name="cnid" value="[{$oViewConf->getActCatId()}]">
                 <input type="hidden" name="recommid" value="[{$_actvrecommlist->oxrecommlists__oxid->value}]">
                 <input type="hidden" name="reviewuserid" value="[{$oView->getReviewUserId()}]">
                 <textarea cols="102" rows="15" name="rvw_txt" class="fullsize"></textarea><br>
                 <span class="btn"><input id="test_reviewSave" type="submit" value="[{ oxmultilang ident="RECOMMLIST_SAVEREVIEW" }]" class="btn"></span>
             </div>
         </form>
-        <a id="write_new_review" rel="nofollow" class="fs10" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params="recommid=`$_actvrecommlist->oxrecommlists__oxid->value`&amp;cnid="|cat:$oViewConf->getActCatId() }]" onclick="showReview();return false;"><b>[{ oxmultilang ident="RECOMMLIST_WRITEREVIEW" }]</b></a>
+        <a id="write_new_review" rel="nofollow" class="fs10" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params="recommid=`$_actvrecommlist->oxrecommlists__oxid->value`&amp;"|cat:$oViewConf->getNavUrlParams() }]" onclick="showReview();return false;"><b>[{ oxmultilang ident="RECOMMLIST_WRITEREVIEW" }]</b></a>
       [{else}]
         <a id="test_Reviews_login" rel="nofollow" href="[{ $_actvrecommlist->getLink()|oxaddparams:"fnc=showLogin"}]" class="fs10"><b>[{ oxmultilang ident="RECOMMLIST_LOGGINTOWRITEREVIEW" }]</b></a>
       [{/if}]

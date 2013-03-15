@@ -45,7 +45,6 @@ function loadLang(obj)
         <input type="hidden" name="voxid" value="[{ $oxid }]">
         <input type="hidden" name="editval[oxnews__oxid]" value="[{ $oxid }]">
         <input type="hidden" name="editval[oxnews__oxlongdesc]" value="">
-        [{include file="autosave.form.tpl"}]
 
         [{ $editor }]
 

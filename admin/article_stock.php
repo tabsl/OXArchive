@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: article_stock.php 14018 2008-11-06 13:33:39Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: article_stock.php 17188 2009-03-13 12:19:11Z arvydas $
  */
 
 /**
@@ -97,8 +98,8 @@ class Article_Stock extends oxAdminDetails
         $aParams    = oxConfig::getParameter( "editval");
 
         // checkbox handling
-        if ( !isset( $aParams['oxarticles__oxremindactiv']))
-            $aParams['oxarticles__oxremindactiv'] = 0;
+        if ( !isset( $aParams['oxarticles__oxremindactive']))
+            $aParams['oxarticles__oxremindactive'] = 0;
 
         /*
         */
@@ -118,13 +119,11 @@ class Article_Stock extends oxAdminDetails
         $oArticle->setLanguage($this->_iEditLang);
         $oArticle = oxUtilsFile::getInstance()->processFiles( $oArticle );
 
-        if ( $oArticle->oxarticles__oxremindactiv->value &&
+        if ( $oArticle->oxarticles__oxremindactive->value &&
              $oArticle->oxarticles__oxremindamount->value <= $oArticle->oxarticles__oxstock->value )
-            $oArticle->oxarticles__oxremindactiv->value = 1;
+            $oArticle->oxarticles__oxremindactive->value = 1;
 
         $oArticle->save();
-
-        return $this->autosave();
     }
 
 

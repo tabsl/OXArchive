@@ -48,10 +48,13 @@
   <strong id="test_CategoriesHeader" class="head2">[{ oxmultilang ident="START_CATEGORIES"}]</strong>
   [{if ($oView->getCatOfferArticleList()|@count) is not even  }][{assign var="actionproduct_size" value="big"}][{/if}]
   [{foreach from=$oView->getCatOfferArticleList() item=actionproduct name=CatArt}]
-      [{assign var="actionproduct_title" value=$actionproduct->oCategory->oxcategories__oxtitle->value}]
-      [{if $actionproduct->oCategory->getNrOfArticles() > 0}][{assign var="actionproduct_title" value=$actionproduct_title|cat:" ("|cat:$actionproduct->oCategory->getNrOfArticles()|cat:")"}][{/if}]
-      [{include file="inc/product.tpl" product=$actionproduct size=$actionproduct_size head=$actionproduct_title head_link=$actionproduct->oCategory->getLink() testid="CatArticle_"|cat:$actionproduct->oxarticles__oxid->value  testHeader="Category_`$smarty.foreach.CatArt.iteration`"}]
-      [{assign var="actionproduct_size" value=""}]
+      [{if $actionproduct->getCategory() }]
+          [{assign var="oCategory" value=$actionproduct->getCategory()}]
+          [{assign var="actionproduct_title" value=$oCategory->oxcategories__oxtitle->value}]
+          [{if $oCategory->getNrOfArticles() > 0}][{assign var="actionproduct_title" value=$actionproduct_title|cat:" ("|cat:$oCategory->getNrOfArticles()|cat:")"}][{/if}]
+          [{include file="inc/product.tpl" product=$actionproduct size=$actionproduct_size head=$actionproduct_title head_link=$oCategory->getLink() testid="CatArticle_"|cat:$actionproduct->oxarticles__oxid->value  testHeader="Category_`$smarty.foreach.CatArt.iteration`"}]
+          [{assign var="actionproduct_size" value=""}]
+      [{/if}]
   [{/foreach}]
 [{/if}]
 

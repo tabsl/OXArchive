@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxcmp_user.php 14641 2008-12-11 14:11:43Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxcmp_user.php 17678 2009-03-30 15:22:11Z vilma $
  */
 
 /**
@@ -138,7 +139,7 @@ class oxcmp_user extends oxView
 
         // this user is blocked, deny him
         if ( $oUser->inGroup( 'oxidblocked' ) ) {
-            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() . 'cl=info&tpl=user_blocked.tpl' );
+            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() . 'cl=content&tpl=user_blocked.tpl' );
         }
 
         // TODO: we need todo something with this !!!
@@ -173,11 +174,20 @@ class oxcmp_user extends oxView
         $sUser     = oxConfig::getParameter( 'lgn_usr' );
         $sPassword = oxConfig::getParameter( 'lgn_pwd' );
         $sCookie   = oxConfig::getParameter( 'lgn_cook' );
+        $sOpenId   = oxConfig::getParameter( 'lgn_openid' );
 
         // trying to login user
         try {
             $oUser = oxNew( 'oxuser' );
-            $oUser->login( $sUser, $sPassword, $sCookie );
+            if ( $sOpenId ) {
+                $iOldErrorReproting = error_reporting();
+                error_reporting($iOldErrorReproting & ~E_STRICT);
+                $oOpenId = oxNew( "oxOpenID" );
+                $oOpenId->authenticateOid( $sOpenId, $this->_getReturnUrl() );
+                error_reporting($iOldErrorReproting);
+            } else {
+                $oUser->login( $sUser, $sPassword, $sCookie );
+            }
         } catch ( oxUserException $oEx ) {
             // for login component send excpetion text to a custom component (if defined)
             oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true );
@@ -191,7 +201,6 @@ class oxcmp_user extends oxView
             oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true );
             return 'user';
         }
-
         // finalizing ..
         $this->_afterLogin( $oUser );
     }
@@ -199,7 +208,7 @@ class oxcmp_user extends oxView
     /**
      * Special functionality which is performed after user logs in (or user is created without pass).
      * Performes additional checking if user is not BLOCKED (oxuser::InGroup("oxidblocked")) - if
-     * yes - redirects to blocked user page ("cl=info&tpl=user_blocked.tpl"). If user status
+     * yes - redirects to blocked user page ("cl=content&tpl=user_blocked.tpl"). If user status
      * is OK - sets user ID to session, automatically assigns him to dynamic
      * group (oxuser::addDynGroup(); if this directive is set (usually
      * by URL)). Stores cookie info if user confirmed in login screen.
@@ -219,7 +228,7 @@ class oxcmp_user extends oxView
 
         // this user is blocked, deny him
         if ( $oUser->inGroup( 'oxidblocked' ) ) {
-            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL().'cl=info&tpl=user_blocked.tpl' );
+            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL().'cl=content&tpl=user_blocked.tpl' );
         }
 
         // adding to dyn group
@@ -293,11 +302,8 @@ class oxcmp_user extends oxView
 
             // redirecting if user logs out in SSL mode
             if ( oxConfig::getParameter('redirect') && $myConfig->getConfigParam( 'sSSLShopURL' ) ) {
-                $sLogoutLink = $myConfig->getShopSecureHomeURL();
-                if ( $myConfig->isSsl() ) {
-                    $sLogoutLink = $myConfig->getShopHomeURL();
-                }
-                oxUtils::getInstance()->redirect( $sLogoutLink.'cl='.oxConfig::getParameter('cl').'&amp;cnid='.oxConfig::getParameter('cnid').'&amp;fnc=logout&amp;tpl='.oxConfig::getParameter('tpl') );
+
+                oxUtils::getInstance()->redirect( $this->_getLoggoutLink());
             }
         }
     }
@@ -421,7 +427,7 @@ class oxcmp_user extends oxView
         }
 
         // order remark
-        //V #427: order remark for new users 
+        //V #427: order remark for new users
         $sOrd_Remark = oxConfig::getParameter( 'order_remark' );
         if ( $sOrd_Remark ) {
             oxSession::setVar( 'ordrem', $sOrd_Remark );
@@ -503,7 +509,7 @@ class oxcmp_user extends oxView
             if (($blOptin = oxConfig::getParameter( 'blnewssubscribed' )) === null) {
                 $blOptin = $oUser->getNewsSubscription()->getOptInStatus();
             }
-            $this->_blNewsSubscriptionStatus = $oUser->setNewsSubscription( $blOptin, oxConfig::getInstance()->getConfigParam( 'blOrderOptInEmail' ) );
+            $this->_blNewsSubscriptionStatus = $oUser->setNewsSubscription( $blOptin, $this->getConfig()->getConfigParam( 'blOrderOptInEmail' ) );
 
         } catch ( oxUserException $oEx ) { // errors in input
             // marking error code
@@ -558,6 +564,34 @@ class oxcmp_user extends oxView
     }
 
     /**
+     * Returns logoutlink with additional params
+     *
+     * @return string $sLogoutLink
+     */
+    protected function _getLoggoutLink()
+    {
+        $myConfig = $this->getConfig();
+        $sLogoutLink = $myConfig->getShopSecureHomeURL();
+        if ( $myConfig->isSsl() ) {
+            $sLogoutLink = $myConfig->getShopHomeURL();
+        }
+        $sLogoutLink .= 'cl='.oxConfig::getParameter('cl').$this->getDynUrlParams();
+        if ( $sParam = oxConfig::getParameter('anid') ) {
+            $sLogoutLink .= '&amp;anid='.$sParam;
+        }
+        if ( $sParam = oxConfig::getParameter('cnid') ) {
+            $sLogoutLink .= '&amp;cnid='.$sParam;
+        }
+        if ( $sParam = oxConfig::getParameter('mnid') ) {
+            $sLogoutLink .= '&amp;mnid='.$sParam;
+        }
+        if ( $sParam = oxConfig::getParameter('tpl') ) {
+            $sLogoutLink .= '&amp;tpl='.$sParam;
+        }
+        return $sLogoutLink.'&amp;fnc=logout';
+    }
+
+    /**
      * Checks if shipping address fields must be displayed and
      * sets into session.
      *
@@ -593,4 +627,116 @@ class oxcmp_user extends oxView
 
         return $blSetup;
     }
+
+    /**
+     * Collects user information posted from openid server. If user do not exists creates
+     * new user and executes oxuser::openIdLogin().
+     *
+     * @return null
+     */
+    public function loginOid()
+    {
+        $iOldErrorReproting = error_reporting();
+        error_reporting($iOldErrorReproting & ~E_STRICT);
+        try {
+            $oOpenId = oxNew( "oxOpenID" );
+            $aData = $oOpenId->getOidResponse( $this->_getReturnUrl() );
+        } catch ( oxUserException $oEx ) {
+                // for login component send excpetion text to a custom component (if defined)
+                oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true );
+        }
+        error_reporting($iOldErrorReproting);
+        if ( count( $aData ) < 1 ) {
+        	oxUtils::getInstance()->redirect($this->getConfig()->getShopHomeURL().'cl=register');
+        }
+        if ( $aData['email'] ) {
+            $oUser = oxNew( 'oxuser' );
+            $oUser->oxuser__oxusername = new oxField($aData['email'], oxField::T_RAW);
+
+            // if such user does not exist - creating it
+            if ( !$oUser->exists() ) {
+                $oUser->oxuser__oxpassword = new oxField($oUser->getOpenIdPassword(), oxField::T_RAW);
+                $oUser->oxuser__oxactive   = new oxField(1, oxField::T_RAW);
+                $oUser->oxuser__oxrights   = new oxField('user', oxField::T_RAW);
+                $oUser->oxuser__oxshopid   = new oxField($this->getConfig()->getShopId(), oxField::T_RAW);
+                list ($sFName, $sLName)    = split(' ', $aData['fullname']);
+                $oUser->oxuser__oxfname    = new oxField($sFName, oxField::T_RAW);
+                $oUser->oxuser__oxlname    = new oxField($sLName, oxField::T_RAW);
+
+                $oUser->oxuser__oxsal      = new oxField($this->_getUserTitle($aData['gender']), oxField::T_RAW);
+                $oUser->oxuser__oxisopenid = new oxField(1, oxField::T_RAW);
+                if ( $sCountryId = $oUser->getUserCountryId( $aData['country'] ) ) {
+                    $oUser->oxuser__oxcountryid = new oxField( $sCountryId, oxField::T_RAW );
+                }
+                if ( $aData['postcode'] ) {
+                    $oUser->oxuser__oxzip = new oxField( $aData['postcode'], oxField::T_RAW );
+                }
+                $oUser->save();
+            } else {
+                $oUser->load( $oUser->getId() );
+                //if existing user loggins first time with openid
+                if ( $oUser->oxuser__oxisopenid->value == 0 ) {
+                    if ( !$oUser->oxuser__oxpassword->value ) {
+                        $oUser->oxuser__oxisopenid = new oxField(1, oxField::T_RAW);
+                        $oUser->oxuser__oxpassword = new oxField($oUser->getOpenIdPassword(), oxField::T_RAW);
+                    } else {
+                        $oUser->oxuser__oxisopenid = new oxField(2, oxField::T_RAW);
+                    }
+                    $oUser->save();
+                }
+            }
+
+            try {
+                $oUser->openIdLogin( $oUser->oxuser__oxusername->value );
+            } catch ( oxUserException $oEx ) {
+                // for login component send excpetion text to a custom component (if defined)
+                oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true );
+            } catch( oxConnectionException $oEx ) {
+                //connection to external resource broken, change message and pass to the view
+                $oEx->setMessage( 'EXCEPTION_ACTIONNOTPOSSIBLEATTHEMOMENT' );
+                oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true );
+            }
+
+            // finalizing ..
+            $this->_afterLogin( $oUser );
+            $this->getParent()->setFncName( null );
+            oxUtils::getInstance()->redirect($this->getParent()->getLink());
+        }
+    }
+
+    /**
+     * Returns gender for database
+     *
+     * @param string $sGender F(femail) or M(mail)
+     *
+     * @return string
+     */
+    protected function _getUserTitle( $sGender )
+    {
+        if ( $sGender == "F" ) {
+            return oxLang::getInstance()->translateString( "ACCOUNT_USER_MRS" );
+        } else {
+            return oxLang::getInstance()->translateString( "ACCOUNT_USER_MR" );
+        }
+    }
+
+    /**
+     * Returns return url for openid.
+     *
+     * @return string $sReturnUrl
+     */
+    protected function _getReturnUrl()
+    {
+        $this->getParent()->setFncName( 'loginOid' );
+        $sReturnUrl = str_replace( '&amp;', '&', $this->getParent()->getLink() );
+        if ( !strpos( $sReturnUrl, 'loginOid' ) ) {
+            if ( !strpos( $sReturnUrl, 'loginOid' ) ) {
+                $sReturnUrl = $sReturnUrl . "&fnc=loginOid";
+            } else {
+                $sReturnUrl = $sReturnUrl . "?fnc=loginOid";
+            }
+        }
+        return $sReturnUrl;
+    }
+
 }

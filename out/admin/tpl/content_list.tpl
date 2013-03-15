@@ -43,8 +43,6 @@ function DeleteThis( sID)
 
 function ChangeEditBar( sLocation, sPos)
 {
-    [{include file="autosave.script.tpl"}]
-
     var oSearch = document.getElementById("search");
     oSearch.actedit.value=sPos;
     oSearch.submit();
@@ -95,7 +93,7 @@ window.onLoad = top.reloadEditFrame();
     <td valign="top" class="listfilter first" height="20">
         <div class="r1"><div class="b1">
         <select name="folder" class="folderselect" onChange="document.search.submit();" style="width: 75px;">
-            <option value="-1" style="color: #000000;">[{ oxmultilang ident="CMSFOLDER_ALL" }]</option>
+            <option value="-1" style="color: #000000;">[{ oxmultilang ident="CONTENT_LIST_ALL" }]</option>
             [{foreach from=$afolder key=field item=color}]
             <option value="[{ $field }]" [{ if $folder == $field }]SELECTED[{/if}] style="color: [{ $color }];">[{ oxmultilang ident=$field }]</option>
             [{/foreach}]
@@ -161,7 +159,7 @@ window.onLoad = top.reloadEditFrame();
 
 <script type="text/javascript">
 if (parent.parent)
-{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->value}]";
+{   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->getRawValue()|oxaddslashes}]";
     parent.parent.sMenuItem    = "[{ oxmultilang ident="CONTENT_LIST_MENUITEM" }]";
     parent.parent.sMenuSubItem = "[{ oxmultilang ident="CONTENT_LIST_MENUSUBITEM" }]";
     parent.parent.sWorkArea    = "[{$_act}]";

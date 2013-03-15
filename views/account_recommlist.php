@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: account_recommlist.php 14012 2008-11-06 13:23:45Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: account_recommlist.php 16603 2009-02-19 09:36:42Z arvydas $
  */
 
 /**
@@ -111,16 +112,26 @@ class Account_Recommlist extends Account
                 $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 10;
                 $this->_iCntPages  = round( $this->_iAllArtCnt / $iNrofCatArticles + 0.49 );
             }
-        } else {
-            // adding recommendation list id to list product urls
-            $oViewConf = $this->getViewConfig();
-            $sNavurlparams = $oViewConf->getNavUrlParams();
-            $sNavurlparams = ( $sNavurlparams ? $sNavurlparams : '' ) . "&amp;recommid=".$this->getActiveRecommlist()->getId();
-
-            $oViewConf->setViewConfigParam( 'navurlparams', $sNavurlparams );
         }
 
         return $this->_sThisTemplate;
+    }
+
+    /**
+     * Returns array of params => values which are used in hidden forms and as additional url params
+     *
+     * @return array
+     */
+    public function getNavigationParams()
+    {
+        $aParams = parent::getNavigationParams();
+
+        // adding recommendation list id to list product urls
+        if ( ( $oList = $this->getActiveRecommList() ) ) {
+            $aParams['recommid'] = $oList->getId();
+        }
+
+        return $aParams;
     }
 
     /**

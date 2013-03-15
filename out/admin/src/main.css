@@ -39,7 +39,7 @@ dl dd ul {padding:3px 0 0 0;}
 dl dd ul a {color:#535353}
 
 /* Lists */
-#liste {padding:5px 0 0;}
+#liste {padding: 5px 0 32px;}
 #liste td.listfilter {background: #f0f0f0 url(bg/filter_bg.gif) -1px 0 no-repeat;padding:0 0 0 5px;}
 #liste td.listfilter input, #liste td.listfilter  select{font-size: 11px;}
 #liste td.listfilter .r1{background: #f0f0f0 url(bg/filter_bg.gif) top right no-repeat;padding:0 5px 0 0;}
@@ -88,9 +88,11 @@ tr.conftext  td {background-color:#fafafa;}
 tr.conftext2 td {background-color:#f0f0f0;}
 
 .messagebox {color: #000;padding: 3px;background: #ffe;border: solid gray 1px;margin:1px 0;}
+.messagebox p.message {color: #000;}
+.messagebox p.warning {color:#F00000;font-weight: bold;}
 
 /* Tabs */
-.tabs {position:absolute;bottom:0px;border-collapse: collapse;}
+.tabs {position:fixed;bottom:0px;border-collapse: collapse;}
 .tabs .tab {border-bottom:1px solid #7a7a7a;position:relative;background-color: #f0f0f0;}
 .tabs .tab .b1 {color:#787878;border-left:1px solid #7a7a7a;border-top:1px solid #7a7a7a;padding:5px 15px;}
 .tabs .tab .b1 a{color:#787878;}
@@ -104,13 +106,14 @@ tr.conftext2 td {background-color:#f0f0f0;}
 .tabs .disabled .b1 a {color:#fff;}
 
 .error {color:#F00000;font-weight: bold;}
-.errorbox {color:#F00000;font-weight: bold;padding: 3px;background: #ffe;border: solid gray 1px;margin:1px 0;}
+.errorbox {color:#F00000;font-weight: bold;padding: 3px 9px;background: #ffe;border: solid gray 1px;margin:1px 0 15px 0;}
 
 a.pagenavigation {padding-left:0.5em;padding-right:0.2em;}
 a.pagenavigationactive {font-weight: bold;}
 
 /* Admin options grouping */
 .groupExp {background: #f0f0f0; padding: 3px 7px 1px 5px; margin-bottom: 7px;}
+.groupExp {_background: none;}
 .groupExp dl {margin: 5px 5px 5px 0; padding: 0; display:none; clear: both; border-top: 1px solid #bbb; height: auto;}
 .groupExp dl dt {float: left; padding: 5px 5px 0 0; margin: 0; border: none; color: #000;}
 .groupExp dl dd {padding: 0; margin: 0; margin-top: 8px; padding-left: 0px; color: #000;}
@@ -124,5 +127,32 @@ a.pagenavigationactive {font-weight: bold;}
 .groupExp div.spacer {clear: both; height: 1px; overflow: hidden;}
 
 .groupExp dt .txt {width: 70px;}
-.groupExp dt .txtfield {width: 250px; height: 75px; margin: 0;};
-.groupExp dt .select {width: 130px;};
+.groupExp dt .txtfield {width: 250px; height: 75px; margin: 0;}
+.groupExp dt .select {width: 130px;}
+
+ul.genimportnav {margin: 0; padding: 0; left: 28px; position: absolute; z-index: 10;}
+ul.genimportnav li { width: 99px; background: none; margin: 9px 0; padding: 0; list-style-position: outside;list-style: none; background: none; display: block; padding: 15px 7px; margin-left: 7px; border: 1px solid #999; border-right: 1px solid #ddd; background: #EEE; color: #666;}
+ul.genimportnav li.active { width: 100px; background: #fff; font-weight: bold; border-right: 1px solid #fff; color: #000;}
+ul.genimportnav li.link {padding: 0 0; width: 113px;}
+ul.genimportnav li a {display: block; padding: 15px 7px; color: #666;}
+ul.genimportnav li a:hover {background: #ddd; text-decoration: none;}
+#genimportnav_vline {left: 31px; margin:0; padding: 0; width: 119px; position: absolute; height: 79%; border-right: 1px solid #999;}
+
+#genimportpage {padding: 20px 25px; margin-left: 119px; border-left: 0px solid #999; z-index: 9; min-height: 90%;}
+#genimportpage h3 {margin: 0 0 20px 0; padding-bottom: 7px; border-bottom: 1px solid #ddd;}
+
+table.genImportFieldsAssign {border: 1px solid #ccc; width: 1%;}
+table.genImportFieldsAssign td {padding: 3px; border-bottom: 1px solid #eee;}
+table.genImportFieldsAssign thead td {background: #eee; color: #666; font-weight: bold; border-bottom: 1px solid #ddd;}
+
+ul li {list-style-position: inside;list-style: none;padding:2px 2px 2px 11px;margin:0;}
+ul.req {padding:0 5px;border:1px solid #888;margin:5px 0;clear:both;display:block;}
+ul.req li{list-style:none;margin:5px 0;border-left:14px solid gray;padding-left:.5em; background:none;padding:0 5px;}
+ul.req li.pass{border-color:green;}
+ul.req li.pmin{border-color:orange;}
+ul.req li.fail{border-color:red;}
+ul.req li.null{border-color:gray;}
+ul.req ul{padding:0;margin:0;}
+ul.req li.group {border:none;float:left;font-weight:bold;width:32%;}
+ul.req li.coll {border:none;float:left;font-weight:bold;width:32%;}
+ul.req li.clear{clear:left;diplay:none;border:none;visibility:collapse;height:0px;padding:0;margin:0;display:block;line-height: 0;}

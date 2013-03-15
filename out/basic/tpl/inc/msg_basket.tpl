@@ -7,7 +7,7 @@
     [{/foreach}]
 
     <div class="msg">
-        [{ oxmultilang ident="INC_NEWBASKETITEM_ADDEDTOBASKET1" }] [{$_newitem->sTitle}] [{ oxmultilang ident="INC_NEWBASKETITEM_ADDEDTOBASKET2" }] <a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getBasketLink() }]">[{ oxmultilang ident="INC_NEWBASKETITEM_ADDEDTOBASKET3" }]</a> [{ oxmultilang ident="INC_NEWBASKETITEM_ADDEDTOBASKET4" }]
+        [{ oxmultilang ident="INC_NEWBASKETITEM_ADDEDTOBASKET1" }] [{$_newitem->sTitle}] [{ oxmultilang ident="INC_NEWBASKETITEM_ADDEDTOBASKET2" }] <a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getBasketLink() }]">[{ oxmultilang ident="INC_NEWBASKETITEM_ADDEDTOBASKET3" }]</a>[{ oxmultilang ident="INC_NEWBASKETITEM_ADDEDTOBASKET4" }]
     </div>
 [{/oxhasrights}]
 [{/if }]

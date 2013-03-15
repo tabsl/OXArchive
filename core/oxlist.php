@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxlist.php 14506 2008-12-05 12:19:39Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxlist.php 17845 2009-04-03 15:47:03Z tomas $
  */
 
 /**
@@ -69,7 +70,7 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
      */
     public function offsetExists( $offset )
     {
-        if( isset( $this->_aArray[$offset] ) ) {
+        if ( isset( $this->_aArray[$offset] ) ) {
             return true;
         } else {
             return false;
@@ -85,7 +86,7 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
      */
     public function offsetGet( $offset )
     {
-        if( $this->offsetExists( $offset ) ) {
+        if ( $this->offsetExists( $offset ) ) {
             return $this->_aArray[$offset];
         } else {
             return false;
@@ -309,7 +310,7 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
         //echo( "Access to ".$sName.PHP_EOL);
 
         // TMP
-        if( $sName == 'aList') {
+        if ( $sName == 'aList') {
             return $this->_aArray;
         }
     }
@@ -373,6 +374,7 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
     {
         if ( !$this->_oBaseObject ) {
             $this->_oBaseObject = oxNew( $this->_sObjectsInListName );
+            $this->_oBaseObject->setInList();
             $this->_oBaseObject->init( $this->_sCoreTable );
         }
 
@@ -399,12 +401,13 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
         }
 
         //$blFirstLoop = true;
+        $oListObject = $this->getBaseObject();
         $oSaved = oxNew( $this->_sObjectsInListName);
-
-        $oSaved->init($this->getBaseObject()->getCoreTableName());
+        $oSaved->setInList();
+        $oSaved->init( $oListObject->getCoreTableName() );
 
         if ( $oSaved->isMultilang() ) {
-            $oSaved->setLanguage( $this->getBaseObject()->getLanguage() );
+            $oSaved->setLanguage( $oListObject->getLanguage() );
         }
 
         if ( $this->_aAssignCallbackPrepend && is_callable($this->_aAssignCallbackPrepend)) {
@@ -468,18 +471,21 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
     }
 
     /**
-     * Generic function for getting the list
+     * Generic function for laoding the list
      *
      * @return null;
      */
     public function getList()
     {
-        $sFieldList = $this->getBaseObject()->getSelectFields();
-        $sQ = "select $sFieldList from " . $this->getBaseObject()->getViewName();
-        if ($sActiveSnippet = $this->getBaseObject()->getSqlActiveSnippet()) {
+        $oListObject =$this->getBaseObject();
+        $sFieldList = $oListObject->getSelectFields();
+        $sQ = "select $sFieldList from " . $oListObject->getViewName();
+        if ( $sActiveSnippet = $oListObject->getSqlActiveSnippet() ) {
             $sQ .= " where $sActiveSnippet ";
         }
         $this->selectString($sQ);
+
+        return $this;
     }
 
     /**

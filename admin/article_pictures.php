@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2009
- * $Id: article_pictures.php 14018 2008-11-06 13:33:39Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: article_pictures.php 17243 2009-03-16 15:16:57Z arvydas $
  */
 
 /**
@@ -79,21 +80,20 @@ class Article_Pictures extends oxAdminDetails
             // shopid
             $sShopID = oxSession::getVar( "actshop");
             $aParams['oxarticles__oxshopid'] = $sShopID;
+            $myUtilsPic = oxUtilsPic::getInstance();
 
             // #1173M - not all pic are deleted
-            if (oxUtilsPic::getInstance()->overwritePic( $oArticle, 'oxarticles', 'oxthumb', 'TH', '0', $aParams, $myConfig->getAbsDynImageDir() ))
-                oxUtilsPic::getInstance()->overwritePic( $oArticle, 'oxarticles', 'oxicon', 'ICO', 'icon', $aParams, $myConfig->getAbsDynImageDir() );
+            if ( $myUtilsPic->overwritePic( $oArticle, 'oxarticles', 'oxthumb', 'TH', '0', $aParams, $myConfig->getAbsDynImageDir() ))
+                $myUtilsPic->overwritePic( $oArticle, 'oxarticles', 'oxicon', 'ICO', 'icon', $aParams, $myConfig->getAbsDynImageDir() );
 
             for ($i=1; $i<=$myConfig->getConfigParam( 'iPicCount' ); $i++)
-                oxUtilsPic::getInstance()->overwritePic( $oArticle, 'oxarticles', 'oxpic'.$i, 'P'.$i, $i, $aParams, $myConfig->getAbsDynImageDir());
+                $myUtilsPic->overwritePic( $oArticle, 'oxarticles', 'oxpic'.$i, 'P'.$i, $i, $aParams, $myConfig->getAbsDynImageDir());
             for ($i=1; $i<=$myConfig->getConfigParam( 'iZoomPicCount' ); $i++)
-                oxUtilsPic::getInstance()->overwritePic( $oArticle, 'oxarticles', 'oxzoom'.$i, 'Z'.$i, 'z'.$i, $aParams, $myConfig->getAbsDynImageDir());
+                $myUtilsPic->overwritePic( $oArticle, 'oxarticles', 'oxzoom'.$i, 'Z'.$i, 'z'.$i, $aParams, $myConfig->getAbsDynImageDir());
 
         //$aParams = $oArticle->ConvertNameArray2Idx( $aParams);
         $oArticle->assign( $aParams);
         $oArticle = oxUtilsFile::getInstance()->processFiles( $oArticle );
         $oArticle->save();
-
-        return $this->autosave();
     }
 }

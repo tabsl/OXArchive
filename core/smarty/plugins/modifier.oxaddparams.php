@@ -17,15 +17,16 @@
  *
  * @link http://www.oxid-esales.com
  * @package smartyPlugins
- * @copyright © OXID eSales AG 2003-2009
- * $Id: modifier.oxaddparams.php 13615 2008-10-24 09:37:42Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: modifier.oxaddparams.php 17696 2009-03-31 12:38:49Z vilma $
  */
 
 /*
 * Smarty function
 * -------------------------------------------------------------
-* Purpose: output SEO style url
-* add [{ oxgetseourl ident="..." }] where you want to display content
+* Purpose: add additional parameters to SEO url
+* add |oxaddparams:"...." to link
 * -------------------------------------------------------------
 */
 function smarty_modifier_oxaddparams( $sUrl, $sDynParams )

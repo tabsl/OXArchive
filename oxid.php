@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package main
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxid.php 13620 2008-10-24 09:42:16Z sarunas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxid.php 16548 2009-02-13 18:27:50Z tomas $
  */
 /**
  * Search engine URL parser
@@ -44,7 +45,7 @@ function getRequestUrl( $sParams = '', $blReturnUrl = false )
 
     $sScriptFile = basename(__FILE__);
     $iPos = strpos( $sParams, $sScriptFile);
-    $sParams = substr( $sParams, $iPos + strlen($sScriptFile));
+    $sParams = getStr()->substr( $sParams, $iPos + strlen($sScriptFile));
     $sParams = str_replace("_&2f", "%2f", $sParams);  // #1123A
 
     //searchengine url safe replace

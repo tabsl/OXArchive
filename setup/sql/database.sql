@@ -1,16 +1,15 @@
 SET @@session.sql_mode = '';
-# ALTER SCHEMA CHARACTER SET latin1 COLLATE latin1_general_ci;
 
 #
-# Tabellenstruktur für Tabelle `oxaccessoire2article`
+# Table structure for table `oxaccessoire2article`
 #
 
 DROP TABLE IF EXISTS `oxaccessoire2article`;
 
 CREATE TABLE `oxaccessoire2article` (
-  `OXID` char(32) NOT NULL default '',
-  `OXOBJECTID` char(32) NOT NULL default '',
-  `OXARTICLENID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXARTICLENID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXSORT` int(5) NOT NULL default '0',
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
@@ -18,15 +17,15 @@ CREATE TABLE `oxaccessoire2article` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxaddress`
+# Table structure for table `oxaddress`
 #
 
 DROP TABLE IF EXISTS `oxaddress`;
 
 CREATE TABLE `oxaddress` (
-  `OXID` char(32) NOT NULL default '',
-  `OXUSERID` char(32) NOT NULL default '',
-  `OXADDRESSUSERID` VARCHAR(32) NOT NULL,
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXADDRESSUSERID` varchar(32) character set latin1 collate latin1_general_ci NOT NULL,
   `OXCOMPANY` varchar(255) NOT NULL default '',
   `OXFNAME` varchar(255) NOT NULL default '',
   `OXLNAME` varchar(255) NOT NULL default '',
@@ -35,7 +34,7 @@ CREATE TABLE `oxaddress` (
   `OXADDINFO` varchar(255) NOT NULL default '',
   `OXCITY` varchar(255) NOT NULL default '',
   `OXCOUNTRY` varchar(255) NOT NULL default '',
-  `OXCOUNTRYID` VARCHAR( 32 ) NOT NULL,
+  `OXCOUNTRYID` varchar( 32 ) character set latin1 collate latin1_general_ci NOT NULL,
   `OXZIP` varchar(50) NOT NULL default '',
   `OXFON` varchar(128) NOT NULL default '',
   `OXFAX` varchar(128) NOT NULL default '',
@@ -45,27 +44,27 @@ CREATE TABLE `oxaddress` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxadminlog`
+# Table structure for table `oxadminlog`
 #
 
 DROP TABLE IF EXISTS `oxadminlog`;
 
 CREATE TABLE `oxadminlog` (
   `OXDATE` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-  `OXUSERID` char(32) NOT NULL default '',
+  `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXSQL` text NOT NULL
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxarticles`
+# Table structure for table `oxarticles`
 #
 
 DROP TABLE IF EXISTS `oxarticles`;
 
 CREATE TABLE `oxarticles` (
-  `OXID` varchar(32) NOT NULL default '',
-  `OXSHOPID` varchar(32) NOT NULL default '',
-  `OXPARENTID` char(32) NOT NULL  default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` varchar(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXPARENTID` char(32) character set latin1 collate latin1_general_ci NOT NULL  default '',
   `OXACTIVE` tinyint(1) NOT NULL DEFAULT '1',
   `OXACTIVEFROM` datetime NOT NULL default '0000-00-00 00:00:00',
   `OXACTIVETO` datetime NOT NULL default '0000-00-00 00:00:00',
@@ -121,17 +120,17 @@ CREATE TABLE `oxarticles` (
   `OXTEMPLATE` varchar(128) NOT NULL default '',
   `OXQUESTIONEMAIL` varchar(255) NOT NULL default '',
   `OXISSEARCH` tinyint(1) NOT NULL default '1',
-  `OXVARNAME` varchar(32) NOT NULL default '',
+  `OXVARNAME` varchar(255) NOT NULL default '',
   `OXVARSTOCK` int(5) NOT NULL default '0',
   `OXVARCOUNT` int(1) NOT NULL default '0',
-  `OXVARSELECT` varchar(32) NOT NULL default '',
+  `OXVARSELECT` varchar(255) NOT NULL default '',
   `OXVARMINPRICE` double NOT NULL default '0',
-  `OXVARNAME_1` varchar(32) NOT NULL default '',
-  `OXVARSELECT_1` varchar(32) NOT NULL default '',
-  `OXVARNAME_2` varchar(32) NOT NULL default '',
-  `OXVARSELECT_2` varchar(32) NOT NULL default '',
-  `OXVARNAME_3` varchar(32) NOT NULL default '',
-  `OXVARSELECT_3` varchar(32) NOT NULL default '',
+  `OXVARNAME_1` varchar(255) NOT NULL default '',
+  `OXVARSELECT_1` varchar(255) NOT NULL default '',
+  `OXVARNAME_2` varchar(255) NOT NULL default '',
+  `OXVARSELECT_2` varchar(255) NOT NULL default '',
+  `OXVARNAME_3` varchar(255) NOT NULL default '',
+  `OXVARSELECT_3` varchar(255) NOT NULL default '',
   `OXTITLE_1` varchar(255) NOT NULL default '',
   `OXSHORTDESC_1` varchar(255) NOT NULL default '',
   `OXURLDESC_1` varchar(255) NOT NULL default '',
@@ -144,7 +143,7 @@ CREATE TABLE `oxarticles` (
   `OXSHORTDESC_3` varchar(255) NOT NULL default '',
   `OXURLDESC_3` varchar(255) NOT NULL default '',
   `OXSEARCHKEYS_3` varchar(255) NOT NULL default '',
-  `OXBUNDLEID` varchar(32) NOT NULL default '',
+  `OXBUNDLEID` varchar(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXFOLDER` varchar(32) NOT NULL default '',
   `OXSUBCLASS` varchar(32) NOT NULL default '',
   `OXSTOCKTEXT_1` varchar(255) NOT NULL default '',
@@ -157,11 +156,12 @@ CREATE TABLE `oxarticles` (
   `OXSOLDAMOUNT` double NOT NULL default '0',
   `OXNONMATERIAL` int(1) NOT NULL default '0',
   `OXFREESHIPPING` int(1) NOT NULL default '0',
-  `OXREMINDACTIV` int(1) NOT NULL default '0',
+  `OXREMINDACTIVE` int(1) NOT NULL default '0',
   `OXREMINDAMOUNT` double NOT NULL default '0',
-  `OXAMITEMID` varchar(32) NOT NULL default '',
-  `OXAMTASKID` varchar(16) NOT NULL default '0',
-  `OXVENDORID` varchar(32) NOT NULL default '',
+  `OXAMITEMID` varchar(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXAMTASKID` varchar(16) character set latin1 collate latin1_general_ci NOT NULL default '0',
+  `OXVENDORID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXMANUFACTURERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXSKIPDISCOUNTS` tinyint(1) NOT NULL default '0',
   `OXRATING` double NOT NULL default '0',
   `OXRATINGCNT` int(11) NOT NULL default '0',
@@ -171,24 +171,26 @@ CREATE TABLE `oxarticles` (
   KEY `OXSHOPID` (`OXSHOPID`),
   KEY `OXISSEARCH` (`OXISSEARCH`),
   KEY `OXARTNUM` (`OXARTNUM`),
-  KEY `OXPARENTID` (`OXPARENTID`),
   KEY `OXSTOCK` (`OXSTOCK`),
   KEY `OXSTOCKFLAG` (`OXSTOCKFLAG`),
   KEY `OXINSERT` (`OXINSERT`),
   KEY `OXVARNAME` (`OXVARNAME`),
   KEY `OXACTIVE` (`OXACTIVE`),
   KEY `OXACTIVEFROM` (`OXACTIVEFROM`),
-  KEY `OXACTIVETO` (`OXACTIVETO`)
+  KEY `OXACTIVETO` (`OXACTIVETO`),
+  KEY `OXVENDORID` (`OXVENDORID`),
+  KEY `OXMANUFACTURERID` (`OXMANUFACTURERID`)
 )TYPE=InnoDB;
 
-
-# extend article information
+#
+# Table structure for table `oxartextends`
 # created on 2008-05-23
+#
 
 DROP TABLE IF EXISTS `oxartextends`;
 
 CREATE TABLE `oxartextends` (
-  `OXID` char(32) NOT NULL,
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
   `OXLONGDESC` text NOT NULL,
   `OXLONGDESC_1` text NOT NULL,
   `OXLONGDESC_2` text NOT NULL,
@@ -206,14 +208,14 @@ CREATE TABLE `oxartextends` (
 
 
 #
-# Tabellenstruktur für Tabelle `oxattribute`
+# Table structure for table `oxattribute`
 #
 
 DROP TABLE IF EXISTS `oxattribute`;
 
 CREATE TABLE `oxattribute` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXTITLE` char(128) NOT NULL default '',
   `OXTITLE_1` char(128) NOT NULL default '',
   `OXTITLE_2` char(128) NOT NULL default '',
@@ -223,14 +225,14 @@ CREATE TABLE `oxattribute` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxuserbaskets`
+# Table structure for table `oxuserbaskets`
 #
 
 DROP TABLE IF EXISTS `oxuserbaskets`;
 
 CREATE TABLE `oxuserbaskets` (
-  `OXID` char(32) NOT NULL default '',
-  `OXUSERID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXTITLE` varchar(255) NOT NULL default '',
   `OXCREATE` timestamp(14) NOT NULL,
   `OXPUBLIC` tinyint(1) DEFAULT '1' NOT NULL,
@@ -238,15 +240,15 @@ CREATE TABLE `oxuserbaskets` (
 ) TYPE=InnoDB;
 
 #
-# Tabellenstruktur für Tabelle `oxuserbasketitems`
+# Table structure for table `oxuserbasketitems`
 #
 
 DROP TABLE IF EXISTS `oxuserbasketitems`;
 
 CREATE TABLE `oxuserbasketitems` (
-  `OXID` char(32) NOT NULL default '',
-  `OXBASKETID` char(32) NOT NULL default '',
-  `OXARTID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXBASKETID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXARTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXAMOUNT` char(32) NOT NULL default '',
   `OXSELLIST` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`OXID`),
@@ -255,21 +257,21 @@ CREATE TABLE `oxuserbasketitems` (
 ) TYPE=InnoDB;
 
 #
-# Tabellenstruktur für Tabelle `oxcategories`
+# Table structure for table `oxcategories`
 #
 
 DROP TABLE IF EXISTS `oxcategories`;
 
 CREATE TABLE `oxcategories` (
-  `OXID` varchar(32) NOT NULL default '',
-  `OXPARENTID` varchar(32) NOT NULL default 'oxrootid',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXPARENTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default 'oxrootid',
   `OXLEFT` int(11) NOT NULL default '0',
   `OXRIGHT` int(11) NOT NULL default '0',
-  `OXROOTID` varchar(32) NOT NULL default '',
+  `OXROOTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXSORT` int(11) NOT NULL default '9999',
   `OXACTIVE` tinyint(1) NOT NULL default '1',
   `OXHIDDEN` tinyint(1) NOT NULL default '0',
-  `OXSHOPID` varchar(32) NOT NULL default '',
+  `OXSHOPID` varchar(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXTITLE` varchar(254) NOT NULL default '',
   `OXDESC` varchar(255) NOT NULL default '',
   `OXLONGDESC` text NOT NULL,
@@ -308,14 +310,14 @@ CREATE TABLE `oxcategories` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxconfig`
+# Table structure for table `oxconfig`
 #
 
 DROP TABLE IF EXISTS `oxconfig`;
 
 CREATE TABLE `oxconfig` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXVARNAME` char(32) NOT NULL default '',
   `OXVARTYPE` varchar(4) NOT NULL default '',
   `OXVARVALUE` blob NOT NULL,
@@ -325,7 +327,7 @@ CREATE TABLE `oxconfig` (
 ) TYPE=MyISAM;
 
 #
-# Daten für Tabelle `oxconfig`
+# Data for table `oxconfig`
 #
 
 INSERT INTO `oxconfig` VALUES ('8563fba1965a11df3.34244997', 'oxbaseshop', 'blEnterNetPrice', 'bool', 0x7900fdf51e);
@@ -341,7 +343,10 @@ INSERT INTO `oxconfig` VALUES ('7fc4007ffb2639208.44268873', 'oxbaseshop', 'sGZS
 INSERT INTO `oxconfig` VALUES ('8563fba1965a2eee6.68137602', 'oxbaseshop', 'sPaymentUser', 'str', '');
 INSERT INTO `oxconfig` VALUES ('8563fba1965a30cf7.41846088', 'oxbaseshop', 'sPaymentPwd', 'str', '');
 INSERT INTO `oxconfig` VALUES ('8563fba1965a389e2.11728478', 'oxbaseshop', 'aLanguages', 'aarr', 0x4dba832f744c5786a371d9df3377ea87f0e2773dbaf685493e0b949a1c149111959424345b628f640a0d92ea6047ec118252e992);
-INSERT INTO `oxconfig` VALUES ('60542e90eff80a4e9.05492701', 'oxbaseshop', 'aCurrencies', 'arr', 0x4dba852e75e64cf5ccd4aea3e152054127ec2d8c1077b7849319dbb81b0ebffb281b2c97d8453d71628a022e1c6e78187dc2f901f386bdb37c107a301958ec2c08ec03528ef5cf06aa7f512665f93f5d82b6164eda08b259d8d1f0698b19eabf5d456ffc081f9fd422938e986f5a0b2b9283bbf8221c1cbe6c60);
+INSERT INTO `oxconfig` VALUES ('39893a0ef6a6e11645d4beee4fd0cd51', 'oxbaseshop', 'aLanguageParams', 'aarr', 0x4dba832f744c5786a371d9df33778f9525f408b6efbc82de7c3c5ae3396caa6f8afb6864afa833b43597cad1fb8f9b8970c8e9098d10aae1be4637faa40a012a04e45a8a1cdd1b2ac3da558638600e58acf70fe8c192b668995bb533dac95be7af7d343b3a9c9b8daeaf4d637f065895346773476d667de331fe40d18765d4b98faf7375e1090587d8dd4bf98ad5005eb30666410920);
+INSERT INTO `oxconfig` VALUES ('3985a8ab4dc5d26549d23856b5d84371', 'oxbaseshop', 'aLanguageSSLURLs', 'arr', 0x4dba832f74e74df4cdd5afca153f15e216aea908af01b8);
+INSERT INTO `oxconfig` VALUES ('398609402285b0f3e629be51bce4d124', 'oxbaseshop', 'aLanguageURLs', 'arr', 0x4dba832f74e74df4cdd5afca153f15e216aea908af01b8);
+INSERT INTO `oxconfig` VALUES ('60542e90eff80a4e9.05492701', 'oxbaseshop', 'aCurrencies', 'arr', 0x4dba852e75e64cf5ccd4aea3e152054127ec2d8c1077b7849319dbb81b0ebffb7d3f08b3fc61195546ae260a384a5c3c59e6dd25d7a2999758345e143d7cc8082cc82776aad1eb228e5b750241dd1b79a692326afe2c967dfcf5d44daf3dce9b79614bd82c3bbbf006b7aabc4b7e2f0fb6a79fdc0638389a4844);
 INSERT INTO `oxconfig` VALUES ('8563fba1965a43873.40898997', 'oxbaseshop', 'aLexwareVAT', 'aarr', 0x4dba682873e04a2acbd3a9a4113b832e198a7e75fb770da528d4e916d042856bcaa4b6795b839a7c836f43faae6ef75d3e6f91e3a0384990c0b7fae81c46aeca010521bb89b5);
 INSERT INTO `oxconfig` VALUES ('545423fe8ce213a06.20230295', 'oxbaseshop', 'aNrofCatArticles', 'arr', 0x4dbace2972e14bf2cbd3a9a4113b83ad1c8f7b704f710ba39fd1ecd29b438b41809712e316c6f4fdc92741f7876cc6fca127d78994e604dcc99519);
 INSERT INTO `oxconfig` VALUES ('8563fba1baec4d3b7.61553539', 'oxbaseshop', 'iNrofSimilarArticles', 'str', 0x5d);
@@ -367,7 +372,6 @@ INSERT INTO `oxconfig` VALUES ('8563fba1c39381962.39392958', 'oxbaseshop', 'aCac
 INSERT INTO `oxconfig` VALUES ('8563fba1c39386cf4.18302736', 'oxbaseshop', 'aSkipTags', 'arr', 0x4dba85c975d460d7927733e9525403bc01ae3616da4e6cdf0a9b83cf8359894abce65f2103ad7e83270c4eb019ecf2fc0a3dcde5325b2bb08143bb43ec2c868c29d48dc7bea7f3abf16f6ebd6b97c50114bb53f0f23f59568f0fe9da452cfab264b8aa17ba9e978e892fc6cdef47b7f495e487027dcd08f12ce35d7d997b031d80044d60ba090f1d82a01b62d201d77ef25ce01e68a94948b3d48c2f6c5d612c2dcd6e8af2f00dd435f5e4a4884431560fe092e46de90ebdea5199915de557220607bfc0f7c9c945192e7640e2fda7d7f36ff1215b22ea4b3569cb47763d13e81f0a2dcf9398a5ccdd093ffa578c3c505b13a91d85f0d839543b340a4407ff6ec7d0948b0e7794bc05b993636dd6ac010b7c315f671a5c9b734402efbe207473995291e3122d474f0a86d07d643df2910af62397b4dbfb27c2bc2485498d0ff6bd0eaadc6e63a0fbb596fb50f7dc04a26f6ea8fc1b36f3ea274de76375b6dc82b3924a048a7f8a6ea741e8325b280a8d8c8c33c9d044fae750ad46b80dccfd8ae0c8471bf20c4236ecc4f3220011f7318b51e8c4276141f29a88c248a7563e89decc6561ac568f444fc75b5721947e980a280cde376532a0c7af16d6ad3a7decf89a8c3f1fd923fb11f8dd3bdea9319c71ba0be02c7f1fa10c276240727b56aafa61cc48f5b4f4852d184b3cf12e879a7d96b3b3134de64d0a9f8582632d1d18e1e7c007e2fc5dc95fd460e9d02db3fd2958ca5600d1b66f0853a6cd1488133f0299e1f20f);
 INSERT INTO `oxconfig` VALUES ('8563fba1c3938c994.40718405', 'oxbaseshop', 'aModules', 'aarr', 0x4dba322c774f5444a5777125d61918a96e9e65e1b8fba2e9f6f8ff4e240b745241e4b01edd9224c81f3020f58a2d);
 INSERT INTO `oxconfig` VALUES ('8563fba1c3938ebe7.95075058', 'oxbaseshop', 'aLogSkipTags', 'arr', 0x4dbaeb2d768d);
-INSERT INTO `oxconfig` VALUES ('a193fbb7085f21150.58370641', 'oxbaseshop', 'iShopID_TrustedShops', 'str', 0x53203d);
 INSERT INTO `oxconfig` VALUES ('79c3fbc9897c0d159.27469500', 'oxbaseshop', 'blLoadVariants', 'bool', 0x93ea1218);
 INSERT INTO `oxconfig` VALUES ('b2b400dd011bf6273.08965005', 'oxbaseshop', 'blVariantsSelection', 'bool', 0x7900fdf51e);
 INSERT INTO `oxconfig` VALUES ('b883fc1dd260a1494.25373720', 'oxbaseshop', 'iShopID_iPayment_Account', 'str', '');
@@ -403,7 +407,7 @@ INSERT INTO `oxconfig` VALUES ('36d42513de8cab671.54909813', 'oxbaseshop', 'bl_p
 INSERT INTO `oxconfig` VALUES ('7044252b61dc89982.15135968', 'oxbaseshop', 'bl_perfLoadCompare', 'bool', 0x93ea1218);
 INSERT INTO `oxconfig` VALUES ('7044252b61dcb8ac9.31672388', 'oxbaseshop', 'bl_perfLoadPriceForAddList', 'bool', 0x93ea1218);
 INSERT INTO `oxconfig` VALUES ('7044252b61dd44324.24181665', 'oxbaseshop', 'bl_perfParseLongDescinSmarty', 'bool', 0x93ea1218);
-INSERT INTO `oxconfig` VALUES ('77c425a29db68f0d9.00182375', 'oxbaseshop', 'bl_perfLoadVendorTree', 'bool', 0x93ea1218);
+INSERT INTO `oxconfig` VALUES ('77c425a29db68f0d9.00182375', 'oxbaseshop', 'bl_perfLoadManufacturerTree', 'bool', 0x93ea1218);
 INSERT INTO `oxconfig` VALUES ('669425a324684b6c0.57696393', 'oxbaseshop', 'bl_perfShowLeftBasket', 'bool', 0x7900fdf51e);
 INSERT INTO `oxconfig` VALUES ('669425a3246855199.09823559', 'oxbaseshop', 'bl_perfShowRightBasket', 'bool', 0x93ea1218);
 INSERT INTO `oxconfig` VALUES ('79e417a4eaad1a593.54850808', 'oxbaseshop', 'blStoreIPs', 'bool', 0x7900fdf51e);
@@ -446,18 +450,19 @@ INSERT INTO `oxconfig` VALUES ('46473ac9c01a70e0485f6e529a9d924b', 'oxbaseshop',
 INSERT INTO `oxconfig` VALUES ('b1296159b7641d31b93423972af6150b', 'oxbaseshop', 'blTopNaviLayout', 'bool', 0x93ea1218);
 INSERT INTO `oxconfig` VALUES ('fd770460540c32422b415a65fefb8f90', 'oxbaseshop', 'blLoadDynContents', 'bool', 0x7900fdf51e);
 INSERT INTO `oxconfig` VALUES ('fd7a064bbb64466f8e6ba847902b2005', 'oxbaseshop', 'sShopCountry', 'str', '');
+INSERT INTO `oxconfig` VALUES ('44bcd90bd1d059.053753111', 'oxbaseshop', 'sTagList', 'str', 0x071d33336bce8dbe0606);
 
 
 #
-# Tabellenstruktur für Tabelle `oxcontents`
+# Table structure for table `oxcontents`
 #
 
 DROP TABLE IF EXISTS `oxcontents`;
 
 CREATE TABLE `oxcontents` (
-  `OXID` varchar(32) NOT NULL default '',
-  `OXLOADID` varchar(32) NOT NULL default '',
-  `OXSHOPID` varchar(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXLOADID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXSHOPID` varchar(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXSNIPPET` tinyint(1) NOT NULL default '1',
   `OXTYPE` tinyint(1) NOT NULL default '0',
   `OXACTIVE` tinyint(1) NOT NULL default '1',
@@ -473,7 +478,7 @@ CREATE TABLE `oxcontents` (
   `OXACTIVE_3` tinyint(1) NOT NULL default '1',
   `OXTITLE_3` varchar(255) NOT NULL default '',
   `OXCONTENT_3` text NOT NULL,
-  `OXCATID` varchar(32) default NULL,
+  `OXCATID` varchar(32) character set latin1 collate latin1_general_ci default NULL,
   `OXFOLDER` varchar(32) NOT NULL DEFAULT '',
   PRIMARY KEY  (`OXID`),
   UNIQUE KEY `OXLOADID` (`OXLOADID`),
@@ -481,22 +486,22 @@ CREATE TABLE `oxcontents` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxcontents`
+# Table structure for table `oxcontents`
 #
 
 INSERT INTO `oxcontents` VALUES ('c4241316b2e5c1966.96997015', 'oxstartwelcome', 'oxbaseshop', '1', '0', '1', '1', '', 'start.tpl Begrüßungstext', '<h1><strong>Willkommen</strong> [{ if $oxcmp_user }]<strong>[{ $oxcmp_user->oxuser__oxfname->value }] [{ $oxcmp_user->oxuser__oxlname->value }] </strong>[{else}] [{/if}][{ if !$oxcmp_user }]<strong>im OXID <span style="color: #ff3301;">e</span>Shop 4</strong>[{/if}]\r\n</h1>\r\nDies ist eine Demo-Installation des <strong>OXID eShop 4</strong>. Also keine Sorge, wenn Sie bestellen: Die Ware wird weder ausgeliefert, noch in Rechnung gestellt. Die gezeigten Produkte (und Preise) dienen nur zur Veranschaulichung der umfangreichen Funktionalität des Systems.\r\n<div><strong>&nbsp;</strong></div>\r\n<div><strong>Wir wünschen viel Spa&szlig; beim Testen!</strong></div>\r\n<div><strong>Ihr OXID eSales Team</strong></div>', 'start.tpl welcome text', '<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> start.tpl welcome text</div>\r\n<div>&nbsp;</div>', '1', '', '', '1', '', '', '', 'CMSFOLDER_USERINFO');
 INSERT INTO `oxcontents` VALUES ('1544167b4666ccdc1.28484600', 'oxblocked', 'oxbaseshop', '1', '0', '1', '1', '', 'Benutzer geblockt', '<div><span style="color: #ff0000;"><strong>\r\n<img title="" height="200" alt="" src="[{$oViewConf->getPictureDir()}]wysiwigpro/stopsign.jpg" width="200"></strong></span></div>\r\n<div><span style="color: #ff0000;"><strong>Der Zugang wurde Ihnen verweigert !</strong></span></div>\r\n<div>&nbsp;</div>\r\n<div>&nbsp;</div>', 'user blocked', '<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> user blocked</div>\r\n<div>&nbsp;</div>', '1', '', '', '1', '', '', '', 'CMSFOLDER_USERINFO');
-INSERT INTO `oxcontents` VALUES ('c4241316c6e7b9503.93160420', 'oxbargain', 'oxbaseshop', '1', '0', '1', '1', '', 'Schnäppchen', '<table>[{foreach from=$oView->getBargainArticleList() item=articlebargain_item}] <tbody><tr><td>\r\n<div class="product_image_s_container"><a href="[{$articlebargain_item->getLink()}]"><img border="0" alt="[{ $articlebargain_item->oxarticles__oxtitle->value }][{if $articlebargain_item->oxarticles__oxvarselect->value }] [{ $articlebargain_item->oxarticles__oxvarselect->value }][{/if}] [{$oxcmp_shop->oxshops__oxtitlesuffix->value}]" src="[{ $articlebargain_item->getDynImageDir()}]/[{$articlebargain_item->oxarticles__oxicon->value}]"></a></div> </td><td class="boxrightproduct-td"> <a href="[{$articlebargain_item->getLink()}]" class="boxrightproduct-td"><strong>[{\r\n$articlebargain_item->oxarticles__oxtitle->value|cat:"\r\n"|cat:$articlebargain_item->oxarticles__oxvarselect->value|strip_tags|smartwordwrap:15:"<br>\r\n":2:1:"..."\r\n}]</strong></a><br>\r\n [{ if $articlebargain_item->isBuyable() }] <a href="[{$articlebargain_item->getToBasketLink()}]&am=1" class="details" onclick="showBasketWnd();" rel="nofollow"><img border="0" src="[{$oViewConf->getImageUrl()}]/arrow_details.gif" alt=""> Jetzt bestellen! </a> [{/if}] </td></tr>[{/foreach}]\r\n</tbody></table>', 'Bargain', '<table>[{foreach from=$oView->getBargainArticleList() item=articlebargain_item}] <tbody><tr><td>\r\n<div class="product_image_s_container"><a href="[{$articlebargain_item->getLink()}]"><img border="0" src="[{ $articlebargain_item->getDynImageDir()}]/[{$articlebargain_item->oxarticles__oxicon->value}]" alt="[{ $articlebargain_item->oxarticles__oxtitle->value }][{if $articlebargain_item->oxarticles__oxvarselect->value }] [{ $articlebargain_item->oxarticles__oxvarselect->value }][{/if}] [{$oxcmp_shop->oxshops__oxtitlesuffix->value}]"></a></div> </td><td class="boxrightproduct-td"> <a class="boxrightproduct-td" href="[{$articlebargain_item->getLink()}]"><strong>[{\r\n$articlebargain_item->oxarticles__oxtitle->value|cat:"\r\n"|cat:$articlebargain_item->oxarticles__oxvarselect->value|strip_tags|smartwordwrap:15:"<br>\r\n ":2:1:"..."\r\n}]</strong></a><br>\r\n [{ if $articlebargain_item->isBuyable()}] <a onclick="showBasketWnd();" class="details" href="[{$articlebargain_item->getToBasketLink()}]&am=1" rel="nofollow"><img border="0" alt="" src="[{$oViewConf->getImageUrl()}]/arrow_details.gif"> Order now! </a> [{/if}] </td></tr>[{/foreach}] </tbody></table>', '1', '', '', '1', '', '', 'oxrootid', 'CMSFOLDER_PRODUCTINFO');
+INSERT INTO `oxcontents` VALUES ('c4241316c6e7b9503.93160420', 'oxbargain', 'oxbaseshop', '1', '0', '1', '1', '', 'Schnäppchen', '<table>[{foreach from=$oView->getBargainArticleList() item=articlebargain_item}] <tbody><tr><td>\r\n<div class="product_image_s_container"><a href="[{$articlebargain_item->getLink()}]"><img border="0" alt="[{ $articlebargain_item->oxarticles__oxtitle->value }][{if $articlebargain_item->oxarticles__oxvarselect->value }] [{ $articlebargain_item->oxarticles__oxvarselect->value }][{/if}] [{$oxcmp_shop->oxshops__oxtitlesuffix->value}]" src="[{ $articlebargain_item->getDynImageDir()}]/[{$articlebargain_item->oxarticles__oxicon->value}]"></a></div> </td><td class="boxrightproduct-td"> <a href="[{$articlebargain_item->getLink()}]" class="boxrightproduct-td"><strong>[{ $articlebargain_item->oxarticles__oxtitle->value|cat:"\r\n"|cat:$articlebargain_item->oxarticles__oxvarselect->value|strip_tags|smartwordwrap:15:"<br>\r\n":2:1:"..." }]</strong></a><br>\r\n [{ if $articlebargain_item->isBuyable() }] <a href="[{$articlebargain_item->getToBasketLink()}]&am=1" class="details" onclick="showBasketWnd();" rel="nofollow"><img border="0" src="[{$oViewConf->getImageUrl()}]/arrow_details.gif" alt=""> Jetzt bestellen! </a> [{/if}] </td></tr>[{/foreach}]\r\n</tbody></table>', 'Bargain', '<table>[{foreach from=$oView->getBargainArticleList() item=articlebargain_item}] <tbody><tr><td>\r\n<div class="product_image_s_container"><a href="[{$articlebargain_item->getLink()}]"><img border="0" src="[{ $articlebargain_item->getDynImageDir()}]/[{$articlebargain_item->oxarticles__oxicon->value}]" alt="[{ $articlebargain_item->oxarticles__oxtitle->value }][{if $articlebargain_item->oxarticles__oxvarselect->value }] [{ $articlebargain_item->oxarticles__oxvarselect->value }][{/if}] [{$oxcmp_shop->oxshops__oxtitlesuffix->value}]"></a></div> </td><td class="boxrightproduct-td"> <a class="boxrightproduct-td" href="[{$articlebargain_item->getLink()}]"><strong>[{ $articlebargain_item->oxarticles__oxtitle->value|cat:"\r\n"|cat:$articlebargain_item->oxarticles__oxvarselect->value|strip_tags|smartwordwrap:15:"<br>\r\n ":2:1:"..." }]</strong></a><br>\r\n [{ if $articlebargain_item->isBuyable()}] <a onclick="showBasketWnd();" class="details" href="[{$articlebargain_item->getToBasketLink()}]&am=1" rel="nofollow"><img border="0" alt="" src="[{$oViewConf->getImageUrl()}]/arrow_details.gif"> Order now! </a> [{/if}] </td></tr>[{/foreach}] </tbody></table>', '1', '', '', '1', '', '', 'oxrootid', 'CMSFOLDER_PRODUCTINFO');
 INSERT INTO `oxcontents` VALUES ('2eb46767947d21851.22681675', 'oximpressum', 'oxbaseshop', '1', '0', '1', '1', '', 'Impressum', '<p>Fügen Sie hier Ihre Anbieterkennzeichnung ein.</p>', 'About Us', '<p>Add provider identification here.</p>', '0', '', '', '0', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_USERINFO');
-INSERT INTO `oxcontents` VALUES ('1074279e67a85f5b1.96907412', 'oxorderinfo', 'oxbaseshop', '1', '0', '1', '1', '', 'Wie bestellen?', '<div>Beispieltext:</div>\r\n<div>&nbsp;</div>\r\n<div>OXID eShop, Ihr Online-Shop für ... <br>\r\n<br>\r\nBei uns haben Sie die Wahl aus mehr als ... Artikeln von bester Qualität und namhaften Herstellern. Schauen Sie sich um, stöbern Sie in unseren Angeboten! <br>\r\nOXID eShop steht Ihnen im Internet rund um die Uhr und 7 Tage die Woche offen.<br>\r\n<br>\r\nUnd wenn Sie eine Bestellung aufgeben möchten, können Sie das: \r\n<ul>\r\n<li class="font11">direkt im Internet über unseren Shop </li>\r\n<li class="font11">per Fax unter&nbsp;+49(0)761-36889-29 </li>\r\n<li class="font11">per Telefon unter +49(0)761-36889-0 </li>\r\n<li class="font11">oder per e-Mail unter <a href="mailto:demo@oxid-esales.com?subject=Bestellung"><strong>demo@oxid-esales.com</strong></a> </li></ul>Telefonisch sind wir für Sie <br>\r\nMontag bis Freitag von 10 bis 18 Uhr erreichbar. <br>\r\nWenn Sie auf der Suche nach einem Artikel sind, der zum Sortiment von OXID eShop passen könnte, ihn aber nirgends finden, lassen Sie''s uns wissen. Gern bemühen wir uns um eine Lösung für Sie. <br>\r\n<br>\r\nSchreiben Sie an <a href="mailto:demo@oxid-esales.com?subject=Produktidee"><strong>demo@oxid-esales.com</strong></a>.</div>', 'how to order', '<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> how to order</div></div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_USERINFO');
-INSERT INTO `oxcontents` VALUES ('f41427a07519469f1.34718981', 'oxdeliveryinfo', 'oxbaseshop', '1', '0', '1', '1', '', 'Versand', '<p>Fügen Sie hier Ihre Versandinformationen- und kosten ein.</p>', 'shipping', '<p>Add your shipping information and costs here.</p>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_USERINFO');
-INSERT INTO `oxcontents` VALUES ('f41427a099a603773.44301043', 'oxsecurityinfo', 'oxbaseshop', '1', '0', '1', '1', '', 'Sicherheitsinformationen', 'Fügen Sie hier Ihre Datenschutzbestimmungen ein.', 'security information', '<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> security information</div></div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_USERINFO');
-INSERT INTO `oxcontents` VALUES ('f41427a10afab8641.52768563', 'oxnewstlerinfo', 'oxbaseshop', '1', '0', '1', '1', '', 'Neuigkeiten bei uns', '<div>Mit dem [{ $oxcmp_shop->oxshops__oxname->value }]-Newsletter alle paar Wochen. <br>\r\nMit Tipps, Infos, Aktionen ... <br>\r\n<br>\r\nDas Abo kann jederzeit durch Austragen der e-Mail-Adresse beendet werden. <br>\r\nEine <span class="newsletter_title">Weitergabe Ihrer Daten an Dritte lehnen wir ab</span>. <br>\r\n<br>\r\nSie bekommen zur Bestätigung nach dem Abonnement eine e-Mail - so stellen wir sicher, dass kein Unbefugter Sie in unseren Newsletter eintragen kann (sog. "Double Opt-In").<br>\r\n<br>\r\n</div>', 'newsletter info', '<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> newsletter info</div></div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_USERINFO');
-INSERT INTO `oxcontents` VALUES ('ad542e49975709a72.52261121', 'oxnewsletteremail', 'oxbaseshop', '1', '0', '1', '1', '', 'Newsletter eShop', 'Hallo, [{ $user->oxuser__oxsal->value }] [{ $user->oxuser__oxfname->value }] [{ $user->oxuser__oxlname->value }],<br>\r\nvielen Dank fuer Ihre Anmeldung zu unserem Newsletter.<br>\r\n<br>\r\nUm den Newsletter freizuschalten klicken Sie bitte auf folgenden Link:<br>\r\n<br>\r\n<a href="[{$shop->selflink}]cl=newsletter&fnc=addme&uid=[{ $user->oxuser__oxid->value}]">[{$shop->selflink}]cl=newsletter&fnc=addme&uid=[{ $user->oxuser__oxid->value}]</a><br>\r\n<br>\r\nIhr [{ $shop->oxshops__oxname->value }] Team<br>', 'newsletter confirmation', '<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> newsletter confirmation</div></div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
-INSERT INTO `oxcontents` VALUES ('ad542e4999ec01dd3.07214049', 'oxnewsletterplainemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Newsletter eShop Plain', '[{ $shop->oxshops__oxname->value }] Newsletter Hallo, [{ $user->oxuser__oxsal->value }] [{ $user->oxuser__oxfname->value }] [{ $user->oxuser__oxlname->value }], vielen Dank fuer Ihre Anmeldung zu unserem Newsletter. Um den Newsletter freizuschalten klicken Sie bitte auf folgenden Link: [{$shop->selflink}]cl=newsletter&fnc=addme&uid=[{ $user->oxuser__oxid->value}] Ihr [{ $shop->oxshops__oxname->value }] Team', 'newsletter confirmation plain', 'Notice for Shop Administrator:\r\n \r\nUpdate this text easily and comfortable in the Admin with a WYSYWYG-Editor. \r\n \r\nAdmin Menu: Customer Info -> CMS Pages -> newsletter confirmation plain\r\n', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
+INSERT INTO `oxcontents` VALUES ('1074279e67a85f5b1.96907412', 'oxorderinfo', 'oxbaseshop', '1', '0', '1', '1', '', 'Wie bestellen?', '<div>Beispieltext:</div>\r\n<div>&nbsp;</div>\r\n<div>OXID eShop, Ihr Online-Shop für ... <br>\r\n<br>\r\nBei uns haben Sie die Wahl aus mehr als ... Artikeln von bester Qualität und namhaften Herstellern. Schauen Sie sich um, stöbern Sie in unseren Angeboten! <br>\r\nOXID eShop steht Ihnen im Internet rund um die Uhr und 7 Tage die Woche offen.<br>\r\n<br>\r\nUnd wenn Sie eine Bestellung aufgeben möchten, können Sie das: \r\n<ul>\r\n<li class="font11">direkt im Internet über unseren Shop </li>\r\n<li class="font11">per Fax unter&nbsp;+49(0)761-36889-29 </li>\r\n<li class="font11">per Telefon unter +49(0)761-36889-0 </li>\r\n<li class="font11">oder per E-Mail unter <a href="mailto:demo@oxid-esales.com?subject=Bestellung"><strong>demo@oxid-esales.com</strong></a> </li></ul>Telefonisch sind wir für Sie <br>\r\nMontag bis Freitag von 10 bis 18 Uhr erreichbar. <br>\r\nWenn Sie auf der Suche nach einem Artikel sind, der zum Sortiment von OXID eShop passen könnte, ihn aber nirgends finden, lassen Sie''s uns wissen. Gern bemühen wir uns um eine Lösung für Sie. <br>\r\n<br>\r\nSchreiben Sie an <a href="mailto:demo@oxid-esales.com?subject=Produktidee"><strong>demo@oxid-esales.com</strong></a>.</div>', 'How to order ?', '<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> how to order</div></div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_USERINFO');
+INSERT INTO `oxcontents` VALUES ('f41427a07519469f1.34718981', 'oxdeliveryinfo', 'oxbaseshop', '1', '0', '1', '1', '', 'Versand und Kosten', '<p>Fügen Sie hier Ihre Versandinformationen- und kosten ein.</p>', 'Shipping and Charges', '<p>Add your shipping information and costs here.</p>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_USERINFO');
+INSERT INTO `oxcontents` VALUES ('f41427a099a603773.44301043', 'oxsecurityinfo', 'oxbaseshop', '1', '0', '1', '1', '', 'Datenschutz', 'Fügen Sie hier Ihre Datenschutzbestimmungen ein.', 'Data Protection', '<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> security information</div></div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_USERINFO');
+INSERT INTO `oxcontents` VALUES ('f41427a10afab8641.52768563', 'oxnewstlerinfo', 'oxbaseshop', '1', '0', '1', '1', '', 'Neuigkeiten bei uns', '<div>Mit dem [{ $oxcmp_shop->oxshops__oxname->value }]-Newsletter alle paar Wochen. <br>\r\nMit Tipps, Infos, Aktionen ... <br>\r\n<br>\r\nDas Abo kann jederzeit durch Austragen der E-Mail-Adresse beendet werden. <br>\r\nEine <span class="newsletter_title">Weitergabe Ihrer Daten an Dritte lehnen wir ab</span>. <br>\r\n<br>\r\nSie bekommen zur Bestätigung nach dem Abonnement eine E-Mail - so stellen wir sicher, dass kein Unbefugter Sie in unseren Newsletter eintragen kann (sog. "Double Opt-In").<br>\r\n<br>\r\n</div>', 'newsletter info', '<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> newsletter info</div></div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_USERINFO');
+INSERT INTO `oxcontents` VALUES ('ad542e49975709a72.52261121', 'oxnewsletteremail', 'oxbaseshop', '1', '0', '1', '1', '', 'Newsletter eShop', 'Hallo, [{ $user->oxuser__oxsal->value }] [{ $user->oxuser__oxfname->value }] [{ $user->oxuser__oxlname->value }],<br>\r\nvielen Dank für Ihre Anmeldung zu unserem Newsletter.<br>\r\n<br>\r\nUm den Newsletter freizuschalten klicken Sie bitte auf folgenden Link:<br>\r\n<br>\r\n<a href="[{$oViewConf->getSelfLink()}]cl=newsletter&fnc=addme&uid=[{ $user->oxuser__oxid->value}]">[{$oViewConf->getSelfLink()}]cl=newsletter&fnc=addme&uid=[{ $user->oxuser__oxid->value}]</a><br>\r\n<br>\r\nIhr [{ $shop->oxshops__oxname->value }] Team<br>', 'newsletter confirmation', '<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> newsletter confirmation</div></div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
+INSERT INTO `oxcontents` VALUES ('ad542e4999ec01dd3.07214049', 'oxnewsletterplainemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Newsletter eShop Plain', '[{ $shop->oxshops__oxname->value }] Newsletter Hallo, [{ $user->oxuser__oxsal->value }] [{ $user->oxuser__oxfname->value }] [{ $user->oxuser__oxlname->value }], vielen Dank für Ihre Anmeldung zu unserem Newsletter. Um den Newsletter freizuschalten klicken Sie bitte auf folgenden Link: [{$oViewConf->getSelfLink()}]cl=newsletter&fnc=addme&uid=[{ $user->oxuser__oxid->value}] Ihr [{ $shop->oxshops__oxname->value }] Team', 'newsletter confirmation plain', 'Notice for Shop Administrator:\r\n \r\nUpdate this text easily and comfortable in the Admin with a WYSYWYG-Editor. \r\n \r\nAdmin Menu: Customer Info -> CMS Pages -> newsletter confirmation plain\r\n', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
 INSERT INTO `oxcontents` VALUES ('ad542e49ae50c60f0.64307543', 'oxuserorderemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Ihre Bestellung', 'Vielen Dank für Ihre Bestellung!<br>\r\n<br>\r\nNachfolgend haben wir zur Kontrolle Ihre Bestellung noch einmal aufgelistet.<br>\r\nBei Fragen sind wir jederzeit für Sie da: Schreiben Sie einfach an [{ $shop->oxshops__oxorderemail->value }]!<br>\r\n<br>', 'your order', '<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> your order</div></div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
 INSERT INTO `oxcontents` VALUES ('ad542e49bff479009.64538090', 'oxadminorderemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Ihre Bestellung Admin', 'Folgende Artikel wurden soeben unter [{ $shop->oxshops__oxname->value }] bestellt:<br>\r\n<br>', 'your order admin', '<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> your order admin</div></div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
-INSERT INTO `oxcontents` VALUES ('ad542e49b08c65017.19848749', 'oxuserorderplainemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Ihre Bestellung Plain', 'Vielen Dank fuer Ihre Bestellung!\r\n\r\nNachfolgend haben wir zur Kontrolle Ihre Bestellung noch einmal aufgelistet.\r\nBei Fragen sind wir jederzeit fuer Sie da: Schreiben Sie einfach an [{ $shop->oxshops__oxorderemail->value }] !', 'your order plain', 'Notice for Shop Administrator:\r\n \r\nUpdate this text easily and comfortable in the Admin with a WYSYWYG-Editor. \r\n \r\nAdmin Menu: Customer Info -> CMS Pages -> your order plain\r\n\r\n', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
+INSERT INTO `oxcontents` VALUES ('ad542e49b08c65017.19848749', 'oxuserorderplainemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Ihre Bestellung Plain', 'Vielen Dank für Ihre Bestellung!\r\n\r\nNachfolgend haben wir zur Kontrolle Ihre Bestellung noch einmal aufgelistet.\r\nBei Fragen sind wir jederzeit für Sie da: Schreiben Sie einfach an [{ $shop->oxshops__oxorderemail->value }] !', 'your order plain', 'Notice for Shop Administrator:\r\n \r\nUpdate this text easily and comfortable in the Admin with a WYSYWYG-Editor. \r\n \r\nAdmin Menu: Customer Info -> CMS Pages -> your order plain\r\n\r\n', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
 INSERT INTO `oxcontents` VALUES ('ad542e49c19109ad6.04198712', 'oxadminorderplainemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Ihre Bestellung Admin Plain', 'Folgende Artikel wurden soeben unter [{ $shop->oxshops__oxname->value }] bestellt :', 'your order admin plain', 'Notice for Shop Administrator:\r\n \r\nUpdate this text easily and comfortable in the Admin with a WYSYWYG-Editor. \r\n \r\nAdmin Menu: Customer Info -> CMS Pages -> your order admin plain\r\n', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
 INSERT INTO `oxcontents` VALUES ('c8d45408c08bbaf79.09887022', 'oxuserordernpemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Ihre Bestellung (Fremdländer)', '<div>Vielen Dank für Ihre Bestellung!</div>\r\n<p><strong><span style="color: #ff0000">Hinweis:</span></strong> Derzeit ist uns keine Versandmethode für dieses Land bekannt. Wir werden versuchen, Versandmethoden zu finden und Sie über das Ergebnis unter Angabe der Versandkosten informieren. </p>Bei Fragen sind wir jederzeit für Sie da: Schreiben Sie einfach an [{ $shop->oxshops__oxorderemail->value }]! <br />\r\n<br />', 'your order (other country)', '<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> your order</div></div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
 INSERT INTO `oxcontents` VALUES ('c8d45408c4998f421.15746968', 'oxadminordernpemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Ihre Bestellung Admin (Fremdländer)', '<div>\r\n<p> <span style="color: #ff0000;"><strong>Hinweis:</strong></span> Derzeit ist keine Liefermethode für dieses Land bekannt. Bitte Liefermöglichkeiten suchen und den Besteller unter Angabe der <strong>Lieferkosten</strong> informieren!\r\n&nbsp;</p> </div>\r\n<div>Folgende Artikel wurden soeben unter [{ $shop->oxshops__oxname->value }] bestellt:<br>\r\n<br>\r\n</div>', 'your order admin (other country)', '<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> your order admin</div></div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
@@ -504,14 +509,14 @@ INSERT INTO `oxcontents` VALUES ('c8d45408c5c39ea22.75925645', 'oxuserordernppla
 INSERT INTO `oxcontents` VALUES ('c8d45408c718782f3.21298666', 'oxadminordernpplainemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Ihre Bestellung Admin (Fremdländer) Plain', 'Hinweis: Derzeit ist keine Liefermethode für dieses Land bekannt. Bitte Liefermöglichkeiten suchen und den Besteller informieren!\r\n\r\nFolgende Artikel wurden soeben unter [{ $shop->oxshops__oxname->value }] bestellt:', 'your order admin plain (other country)', 'Notice for Shop Administrator:\r\n \r\nUpdate this text easily and comfortable in the Admin with a WYSYWYG-Editor. \r\n \r\nAdmin Menu: Customer Info -> CMS Pages -> your order admin plain\r\n', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
 INSERT INTO `oxcontents` VALUES ('ad542e49c585394e4.36951640', 'oxpricealarmemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Preisalarm', 'Preisalarm im [{ $shop->oxshops__oxname->value }]!<br>\r\n<br>\r\n[{ $email }] bietet für Artikel [{ $product->oxarticles__oxtitle->value }], Artnum. [{ $product->oxarticles__oxartnum->value }]<br>\r\n<br>\r\nOriginalpreis: [{ $product->fprice }] [{ $currency->name}]<br>\r\nGEBOTEN: [{ $bidprice }] [{ $currency->name}]<br>\r\n<br>\r\n<br>\r\nIhr Shop.<br>', 'price alert', '<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> price alert</div></div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
 INSERT INTO `oxcontents` VALUES ('ad542e49c8ec04201.39247735', 'oxregisteremail', 'oxbaseshop', '1', '0', '1', '1', '', 'Vielen Dank für Ihre Registrierung', 'Hallo, [{ $user->oxuser__oxsal->value }] [{ $user->oxuser__oxfname->value }] [{ $user->oxuser__oxlname->value }], vielen Dank für Ihre Registrierung bei [{ $shop->oxshops__oxname->value }] !<br>\r\n<br>\r\nSie können sich ab sofort auch mit Ihrer Kundennummer <strong>[{ $user->oxuser__oxcustnr->value }]</strong> einloggen.<br>\r\n<br>\r\nIhr [{ $shop->oxshops__oxname->value }] Team<br>', 'thanks for your registration', '<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> thanks for your registration</div></div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
-INSERT INTO `oxcontents` VALUES ('ad542e49ca4750015.09588134', 'oxregisterplainemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Vielen Dank für Ihre Registrierung Plain', '[{ $shop->oxshops__oxregistersubject->value }] Hallo, [{ $user->oxuser__oxsal->value }] [{ $user->oxuser__oxfname->value }] [{ $user->oxuser__oxlname->value }], vielen Dank fuer Ihre Registrierung bei [{ $shop->oxshops__oxname->value }] ! Sie koennnen sich ab sofort auch mit Ihrer Kundennummer ([{ $user->oxuser__oxcustnr->value }]) einloggen. Ihr [{ $shop->oxshops__oxname->value }] Team', 'thanks for your registration plain', 'Notice for Shop Administrator:\r\n \r\nUpdate this text easily and comfortable in the Admin with a WYSYWYG-Editor. \r\n \r\nAdmin Menu: Customer Info -> CMS Pages -> thanks for your registration plain', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
+INSERT INTO `oxcontents` VALUES ('ad542e49ca4750015.09588134', 'oxregisterplainemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Vielen Dank für Ihre Registrierung Plain', '[{ $shop->oxshops__oxregistersubject->value }] Hallo, [{ $user->oxuser__oxsal->value }] [{ $user->oxuser__oxfname->value }] [{ $user->oxuser__oxlname->value }], vielen Dank für Ihre Registrierung bei [{ $shop->oxshops__oxname->value }] ! Sie koennnen sich ab sofort auch mit Ihrer Kundennummer ([{ $user->oxuser__oxcustnr->value }]) einloggen. Ihr [{ $shop->oxshops__oxname->value }] Team', 'thanks for your registration plain', 'Notice for Shop Administrator:\r\n \r\nUpdate this text easily and comfortable in the Admin with a WYSYWYG-Editor. \r\n \r\nAdmin Menu: Customer Info -> CMS Pages -> thanks for your registration plain', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
 INSERT INTO `oxcontents` VALUES ('ad542e49d6de4a4f4.88594616', 'oxordersendemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Ihre Bestellung wurde versandt', 'Guten Tag, [{ $order->oxorder__oxbillsal->value }] [{ $order->oxorder__oxbillfname->value }] [{ $order->oxorder__oxbilllname->value }],<br>\r\n<br>\r\nunser Vertriebszentrum hat soeben folgende Artikel versandt.<br>\r\n<br>', 'your order has been shipped', '<div>\r\n<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> your order has been shipped</div></div></div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
-INSERT INTO `oxcontents` VALUES ('ad542e49d856b5b68.98220446', 'oxordersendplainemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Ihre Bestellung wurde versandt Plain', 'Guten Tag [{ $order->oxorder__oxbillsal->value }] [{\r\n$order->oxorder__oxbillfname->value }] [{\r\n$order->oxorder__oxbilllname->value }],\r\n\r\nunser Vertriebszentrum hat soeben folgende Artikel versandt.', 'your order has been shipped plain', 'Notice for Shop Administrator:\r\n \r\nUpdate this text easily and comfortable in the Admin with a WYSYWYG-Editor. \r\n \r\nAdmin Menu: Customer Info -> CMS Pages -> your order has been shipped plain', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
+INSERT INTO `oxcontents` VALUES ('ad542e49d856b5b68.98220446', 'oxordersendplainemail', 'oxbaseshop', '1', '0', '1', '1', '', 'Ihre Bestellung wurde versandt Plain', 'Guten Tag [{ $order->oxorder__oxbillsal->value }] [{ $order->oxorder__oxbillfname->value }] [{ $order->oxorder__oxbilllname->value }],\r\n\r\nunser Vertriebszentrum hat soeben folgende Artikel versandt.', 'your order has been shipped plain', 'Notice for Shop Administrator:\r\n \r\nUpdate this text easily and comfortable in the Admin with a WYSYWYG-Editor. \r\n \r\nAdmin Menu: Customer Info -> CMS Pages -> your order has been shipped plain', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
 INSERT INTO `oxcontents` VALUES ('84a42e66105998a86.14045828', 'oxuserorderemailend', 'oxbaseshop', '1', '0', '1', '1', '', 'Ihre Bestellung Abschluss', '<div align="left">Fügen Sie hier Ihre Widerrufsbelehrung ein.</div>', 'your order terms', '<div>\r\n<div><strong>Notice for Shop Administrator:</strong></div>\r\n<div><strong>&nbsp;</strong></div>\r\n<div>Update this text easily and comfortable in the Admin with a WYSYWYG-Editor.<strong>&nbsp;</strong></div>\r\n<div>&nbsp;</div>\r\n<div>Admin Menu: Customer Info -> CMS Pages -> your order terms</div></div>', '1', '', '', '1', '', '', '', 'CMSFOLDER_EMAILS');
 INSERT INTO `oxcontents` VALUES ('84a42e66123887821.29772527', 'oxuserorderemailendplain', 'oxbaseshop', '1', '0', '1', '1', '', 'Ihre Bestellung Abschluss Plain', 'Fügen Sie hier Ihre Widerrufsbelehrung ein.', 'your order terms plain', 'Notice for Shop Administrator:\r\n \r\nUpdate this text easily and comfortable in the Admin with a WYSYWYG-Editor. \r\n \r\nAdmin Menu: Customer Info -> CMS Pages -> your order terms plain', '1', '', '', '1', '', '', '', 'CMSFOLDER_EMAILS');
-INSERT INTO `oxcontents` VALUES ('29142e76dd32dd477.41262508', 'oxforgotpwd', 'oxbaseshop', '1', '0', '1', '1', '', 'Passwort vergessen', 'Sollten Sie innerhalb der nächsten Minuten KEINE e-Mail mit Ihren Zugangsdaten erhalten, so überprüfen Sie bitte: Haben Sie sich in unserem Shop bereits registriert? Wenn nicht, so tun Sie dies bitte einmalig im Rahmen des Bestellprozesses. Sie können dann selbst ein Passwort festlegen. Sobald Sie registriert sind, können Sie sich in Zukunft mit Ihrer e-Mail-Adresse und Ihrem Passwort einloggen.\r\n<ul>\r\n<li class="font11">Wenn Sie sich sicher sind, dass Sie sich in unserem Shop bereits registriert haben, dann überprüfen Sie bitte, ob Sie sich bei der Eingabe Ihrer e-Mail-Adresse evtl. vertippt haben.</li></ul>\r\n<p>Sollten Sie trotz korrekter e-Mail-Adresse und bereits bestehender Registrierung weiterhin Probleme mit dem Login haben und auch keine "Passwort vergessen"-e-Mail erhalten, so wenden Sie sich bitte per e-Mail an: <a href="mailto:demo@oxid-esales.com?subject=Passwort"><strong>demo@oxid-esales.com</strong></a></p>', '', '', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
+INSERT INTO `oxcontents` VALUES ('29142e76dd32dd477.41262508', 'oxforgotpwd', 'oxbaseshop', '1', '0', '1', '1', '', 'Passwort vergessen', 'Sollten Sie innerhalb der nächsten Minuten KEINE E-Mail mit Ihren Zugangsdaten erhalten, so überprüfen Sie bitte: Haben Sie sich in unserem Shop bereits registriert? Wenn nicht, so tun Sie dies bitte einmalig im Rahmen des Bestellprozesses. Sie können dann selbst ein Passwort festlegen. Sobald Sie registriert sind, können Sie sich in Zukunft mit Ihrer E-Mail-Adresse und Ihrem Passwort einloggen.\r\n<ul>\r\n<li class="font11">Wenn Sie sich sicher sind, dass Sie sich in unserem Shop bereits registriert haben, dann überprüfen Sie bitte, ob Sie sich bei der Eingabe Ihrer E-Mail-Adresse evtl. vertippt haben.</li></ul>\r\n<p>Sollten Sie trotz korrekter E-Mail-Adresse und bereits bestehender Registrierung weiterhin Probleme mit dem Login haben und auch keine "Passwort vergessen"-E-Mail erhalten, so wenden Sie sich bitte per E-Mail an: <a href="mailto:demo@oxid-esales.com?subject=Passwort"><strong>demo@oxid-esales.com</strong></a></p>', '', '', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
 INSERT INTO `oxcontents` VALUES ('e7a4518ce1e2c36a9.60268505', 'oxfirststart', 'oxbaseshop', '1', '0', '1', '1', '', 'UNSER SCHNÄPPCHEN!', '<div> Gültig solange Vorrat reicht. </div>', 'Our Bargain!', '<div>As long as supply lasts&nbsp;</div>', '1', '', '', '1', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_PRODUCTINFO');
-INSERT INTO `oxcontents` VALUES ('1ea45574543b21636.29288751', 'oxrightofwithdrawal', 'oxbaseshop', '1', '0', '1', '1', '', 'Widerrufsrecht', 'Fügen Sie hier Ihre Widerrufsbelehrung ein.', 'Rights of Withdrawal', '<div>English version of rights of withdrawal&nbsp;</div>', '0', '', '', '0', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_USERINFO');
+INSERT INTO `oxcontents` VALUES ('1ea45574543b21636.29288751', 'oxrightofwithdrawal', 'oxbaseshop', '1', '0', '1', '1', '', 'Widerrufsrecht', 'Fügen Sie hier Ihre Widerrufsbelehrung ein.', 'Right of withdrawal', '<div>English version of rights of withdrawal&nbsp;</div>', '0', '', '', '0', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_USERINFO');
 INSERT INTO `oxcontents` VALUES ('42e4667ffcf844be0.22563656', 'oxemailfooter', 'oxbaseshop', '1', '0', '1', '1', '', 'E-Mail Fußtext', '<p align="left">--</p align="left">\r\n<p>Bitte fügen Sie hier Ihre vollständige Anbieterkennzeichnung ein.</p>', '', '', '0', '', '', '0', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
 INSERT INTO `oxcontents` VALUES ('3194668fde854d711.73798992', 'oxemailfooterplain', 'oxbaseshop', '1', '0', '1', '1', '', 'E-Mail Fußtext Plain', '-- Bitte fügen Sie hier Ihre vollständige Anbieterkennzeichnung ein.', 'Email footer', '', '0', '', '', '0', '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
 INSERT INTO `oxcontents` VALUES ('ce79015b6f6f07612270975889', 'oxstartmetadescription', 'oxbaseshop', '1', '0', '1', '1', '', 'META Description Startseite', 'Witzige und originelle Geschenke. Online Versand für Trend-Produkte, Lifestyle-Artikel und Accessoires. Geschenkideen für alle Anlässe günstig online kaufen.', 'META Description Startseite', 'Funny and original presents. Online store for trendy products, lifestyle articles and accessories. Gift ideas for all occasions.', '1', '', '', '1', '', '', '', '');
@@ -522,14 +527,14 @@ INSERT INTO `oxcontents` VALUES ('ad542e49541c1add', 'oxupdatepassinfoemail', 'o
 INSERT INTO `oxcontents` VALUES ('ad542e495c392c6e', 'oxupdatepassinfoplainemail', 'oxbaseshop', 1, 0, 1, 1, '', 'Ihr Passwort im eShop Plain', 'Hallo [{ $user->oxuser__oxsal->value }] [{ $user->oxuser__oxfname->value }] [{ $user->oxuser__oxlname->value }],\r\n\r\nöffnen Sie den folgenden Link, um ein neues Passwort für [{ $shop->oxshops__oxname->value }] einzurichten:\r\n\r\n[{ $oViewConf->getBaseDir() }]index.php?cl=forgotpwd&uid=[{ $user->getUpdateId()}]&lang=[{ $oViewConf->getActLanguageId() }]&shp=[{ $shop->oxshops__oxid->value }]\r\n\r\nDiesen Link können Sie innerhalb der nächsten [{ $user->getUpdateLinkTerm()/3600 }] Stunden aufrufen.\r\n\r\nIhr [{ $shop->oxshops__oxname->value }] Team', 'password update info plain', 'Notice for Shop Administrator:\r\n \r\nUpdate this text easily and comfortable in the Admin with a WYSYWYG-Editor. \r\n \r\nAdmin Menu: Customer Info -> CMS Pages -> password update info plain\r\n', 1, '', '', 1, '', '', '8a142c3e4143562a5.46426637', 'CMSFOLDER_EMAILS');
 
 #
-# Tabellenstruktur für Tabelle `oxcountry`
+# Table structure for table `oxcountry`
 #
 
 DROP TABLE IF EXISTS `oxcountry`;
 
 CREATE TABLE `oxcountry` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXACTIVE` tinyint(1) NOT NULL default '0',
   `OXTITLE` char(128) NOT NULL default '',
   `OXISOALPHA2` char(2) NOT NULL default '',
@@ -537,7 +542,7 @@ CREATE TABLE `oxcountry` (
   `OXUNNUM3` char(3) NOT NULL default '',
   `OXORDER` int(11) NOT NULL default '9999',
   `OXSHORTDESC` char(128) NOT NULL default '',
-  `OXLONGDESC` char(255) NOT NULL,
+  `OXLONGDESC` char(255) NOT NULL default '',
   `OXTITLE_1` char(128) NOT NULL default '',
   `OXTITLE_2` char(128) NOT NULL default '',
   `OXTITLE_3` char(128) NOT NULL default '',
@@ -552,6 +557,9 @@ CREATE TABLE `oxcountry` (
   KEY `OXSHOPID` (`OXSHOPID`,`OXACTIVE`)
 ) TYPE=MyISAM;
 
+#
+# Data for table `oxcountry`
+#
 
 INSERT INTO `oxcountry` VALUES ('2db455824e4a19cc7.14731328', 'oxbaseshop', '0', 'Anderes Land', '', '', '', 10000, '', 'Select this if you can not find your country.', 'Other country', '', '', '', '', '', 'Select this if you can not find your country.', '', '', 0);
 INSERT INTO `oxcountry` VALUES ('a7c40f631fc920687.20179984', 'oxbaseshop', '1', 'Deutschland', 'DE', 'DEU', '276', 9999, 'EU1', '', 'Germany', '', '', 'EU1', '', '', '', '', '', 1);
@@ -795,18 +803,18 @@ INSERT INTO `oxcountry` VALUES ('8f241f110969da699.04185888', 'oxbaseshop', '0',
 INSERT INTO `oxcountry` VALUES ('8f241f110969db489.04448851', 'oxbaseshop', '0', 'Serbien und Montenegro', 'CS', 'SCG', '891', 9999, 'Rest Europa', '', 'Serbia and Montenegro', '', '', 'Rest Europe', '', '', '', '', '', 0);
 
 #
-# Tabellenstruktur für Tabelle `oxdelivery`
+# Table structure for table `oxdelivery`
 #
 
 DROP TABLE IF EXISTS `oxdelivery`;
 
 CREATE TABLE `oxdelivery` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXACTIVE` tinyint(1) NOT NULL default '0',
   `OXACTIVEFROM` datetime NOT NULL default '0000-00-00 00:00:00',
   `OXACTIVETO` datetime NOT NULL default '0000-00-00 00:00:00',
-  `OXTITLE` varchar(128) NOT NULL default '',
+  `OXTITLE` varchar(255) NOT NULL default '',
   `OXTITLE_1` varchar(255) NOT NULL default '',
   `OXTITLE_2` varchar(255) NOT NULL default '',
   `OXTITLE_3` varchar(255) NOT NULL default '',
@@ -823,28 +831,28 @@ CREATE TABLE `oxdelivery` (
 )  TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxdiscount`
+# Table structure for table `oxdiscount`
 #
 
 DROP TABLE IF EXISTS `oxdiscount`;
 
 CREATE TABLE `oxdiscount` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXACTIVE` tinyint(1) NOT NULL default '0',
   `OXACTIVEFROM` datetime NOT NULL default '0000-00-00 00:00:00',
   `OXACTIVETO` datetime NOT NULL default '0000-00-00 00:00:00',
   `OXTITLE` varchar(128) NOT NULL default '',
-  `OXTITLE_1` VARCHAR( 128 ) NOT NULL,
-  `OXTITLE_2` VARCHAR( 128 ) NOT NULL,
-  `OXTITLE_3` VARCHAR( 128 ) NOT NULL,
+  `OXTITLE_1` varchar( 128 ) NOT NULL,
+  `OXTITLE_2` varchar( 128 ) NOT NULL,
+  `OXTITLE_3` varchar( 128 ) NOT NULL,
   `OXAMOUNT` double NOT NULL default '0',
   `OXAMOUNTTO` double NOT NULL default '999999',
   `OXPRICETO` double NOT NULL default '999999',
   `OXPRICE` double NOT NULL default '0',
   `OXADDSUMTYPE` enum('%','abs','itm') NOT NULL default '%',
   `OXADDSUM` double NOT NULL default '0',
-  `OXITMARTID` char(32) NOT NULL default '',
+  `OXITMARTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXITMAMOUNT` double NOT NULL default '1',
   `OXITMMULTIPLE` int(1) NOT NULL default '0',
   PRIMARY KEY  (`OXID`),
@@ -855,15 +863,15 @@ CREATE TABLE `oxdiscount` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxgbentries`
+# Table structure for table `oxgbentries`
 #
 
 DROP TABLE IF EXISTS `oxgbentries`;
 
 CREATE TABLE `oxgbentries` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
-  `OXUSERID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXCONTENT` text NOT NULL,
   `OXCREATE` datetime NOT NULL default '0000-00-00 00:00:00',
   `OXACTIVE` tinyint(1) NOT NULL default '0' ,
@@ -872,13 +880,13 @@ CREATE TABLE `oxgbentries` (
 ) TYPE=MyISAM COMMENT='Guestbook`s entries';
 
 #
-# Tabellenstruktur für Tabelle `oxgroups`
+# Table structure for table `oxgroups`
 #
 
 DROP TABLE IF EXISTS `oxgroups`;
 
 CREATE TABLE `oxgroups` (
-  `OXID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
   `OXACTIVE` tinyint(1) NOT NULL default '1',
   `OXTITLE` char(128) NOT NULL default '',
   PRIMARY KEY  (`OXID`),
@@ -886,7 +894,7 @@ CREATE TABLE `oxgroups` (
 ) TYPE=MyISAM;
 
 #
-# Daten für Tabelle `oxgroups`
+# Table structure for table `oxgroups`
 #
 
 INSERT INTO `oxgroups` VALUES ('oxidblacklist', '1', 'Blacklist');
@@ -907,19 +915,20 @@ INSERT INTO `oxgroups` VALUES ('oxidcustomer', '1', 'Kunde');
 INSERT INTO `oxgroups` VALUES ('oxidnotyetordered', '1', 'Noch nicht bestellt');
 
 #
-# Tabellenstruktur für Tabelle `oxlinks`
+# Table structure for table `oxlinks`
 #
 
 DROP TABLE IF EXISTS `oxlinks`;
 
 CREATE TABLE `oxlinks` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXACTIVE` tinyint(1) NOT NULL default '0',
   `OXURL` varchar(255) NOT NULL default '',
   `OXURLDESC` text NOT NULL,
   `OXURLDESC_1` text NOT NULL,
   `OXURLDESC_2` text NOT NULL,
+  `OXURLDESC_3` text NOT NULL,
   `OXINSERT` datetime default NULL,
   PRIMARY KEY  (`OXID`),
   KEY `OXSHOPID` (`OXSHOPID`),
@@ -928,38 +937,38 @@ CREATE TABLE `oxlinks` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxlogs`
+# Table structure for table `oxlogs`
 #
 
 DROP TABLE IF EXISTS `oxlogs`;
 
 CREATE TABLE `oxlogs` (
   `OXTIME` datetime NOT NULL default '0000-00-00 00:00:00',
-  `OXSHOPID` char(32) NOT NULL default '',
-  `OXUSERID` char(32) NOT NULL default '',
-  `OXSESSID` char(32) NOT NULL default '',
-  `OXCLASS` char(32) NOT NULL default '',
-  `OXFNC` char(32) NOT NULL default '',
-  `OXCNID` char(32) NOT NULL default '',
-  `OXANID` char(32) NOT NULL default '',
-  `OXPARAMETER` char(64) NOT NULL default ''
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXSESSID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXCLASS` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXFNC` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXCNID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXANID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXPARAMETER` varchar(64) NOT NULL default ''
 ) TYPE=InnoDB;
 
 #
-# Tabellenstruktur für Tabelle `oxvouchers`
+# Table structure for table `oxvouchers`
 #
 
 DROP TABLE IF EXISTS `oxvouchers` ;
 
 CREATE  TABLE IF NOT EXISTS `oxvouchers` (
   `OXDATEUSED` DATE NULL DEFAULT NULL ,
-  `OXORDERID` CHAR(32) NOT NULL DEFAULT '' ,
-  `OXUSERID` CHAR(32) NOT NULL DEFAULT '' ,
+  `OXORDERID` char(32) character set latin1 collate latin1_general_ci NOT NULL DEFAULT '' ,
+  `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL DEFAULT '' ,
   `OXRESERVED` INT(11) NOT NULL DEFAULT 0 ,
-  `OXVOUCHERNR` CHAR(255) NOT NULL DEFAULT '' ,
-  `OXVOUCHERSERIEID` CHAR(32) NOT NULL DEFAULT '' ,
+  `OXVOUCHERNR` varchar(255) NOT NULL DEFAULT '',
+  `OXVOUCHERSERIEID` char(32) character set latin1 collate latin1_general_ci NOT NULL DEFAULT '' ,
   `OXDISCOUNT` FLOAT(9,2) NULL DEFAULT NULL ,
-  `OXID` CHAR(32) NOT NULL DEFAULT '' ,
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL DEFAULT '' ,
   PRIMARY KEY  (`OXID`),
   INDEX OXVOUCHERSERIEID (`OXVOUCHERSERIEID` ASC) ,
   INDEX OXORDERID (`OXORDERID` ASC) ,
@@ -968,24 +977,16 @@ CREATE  TABLE IF NOT EXISTS `oxvouchers` (
 ) ENGINE = InnoDB;
 
 #
-# Daten für Tabelle `oxvouchers`
+# Table structure for table `oxvoucherseries`
 #
-
-
-# --------------------------------------------------------
-
-#
-# Tabellenstruktur für Tabelle `oxvoucherseries`
-#
-
 
 DROP TABLE IF EXISTS `oxvoucherseries` ;
 
 CREATE  TABLE IF NOT EXISTS `oxvoucherseries` (
-  `OXID` CHAR(32) NOT NULL DEFAULT '' ,
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL DEFAULT '' ,
   `OXSHOPID` CHAR(32) NOT NULL DEFAULT '' ,
-  `OXSERIENR` VARCHAR(255) NOT NULL DEFAULT '' ,
-  `OXSERIEDESCRIPTION` VARCHAR(255) NOT NULL DEFAULT '' ,
+  `OXSERIENR` varchar(255) NOT NULL DEFAULT '' ,
+  `OXSERIEDESCRIPTION` varchar(255) NOT NULL DEFAULT '' ,
   `OXDISCOUNT` FLOAT(9,2) NOT NULL DEFAULT '0' ,
   `OXDISCOUNTTYPE` ENUM('percent','absolute') NOT NULL DEFAULT 'absolute' ,
   `OXSTARTDATE` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' ,
@@ -1002,14 +1003,14 @@ CREATE  TABLE IF NOT EXISTS `oxvoucherseries` (
 ) ENGINE = InnoDB;
 
 #
-# Tabellenstruktur für Tabelle `oxnews`
+# Table structure for table `oxnews`
 #
 
 DROP TABLE IF EXISTS `oxnews`;
 
 CREATE TABLE `oxnews` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXACTIVE` tinyint(1) NOT NULL default '1',
   `OXACTIVEFROM` datetime NOT NULL default '0000-00-00 00:00:00',
   `OXACTIVETO` datetime NOT NULL default '0000-00-00 00:00:00',
@@ -1033,14 +1034,14 @@ CREATE TABLE `oxnews` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxnewsletter`
+# Table structure for table `oxnewsletter`
 #
 
 DROP TABLE IF EXISTS `oxnewsletter`;
 
 CREATE TABLE `oxnewsletter` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXTITLE` varchar(255) NOT NULL default '',
   `OXTEMPLATE` mediumtext NOT NULL,
   `OXPLAINTEMPLATE` mediumtext NOT NULL,
@@ -1048,31 +1049,31 @@ CREATE TABLE `oxnewsletter` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxobject2article`
+# Table structure for table `oxobject2article`
 #
 
 DROP TABLE IF EXISTS `oxobject2article`;
 
 CREATE TABLE `oxobject2article` (
-  `OXID` char(32) NOT NULL default '',
-  `OXOBJECTID` char(32) NOT NULL default '',
-  `OXARTICLENID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXARTICLENID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXSORT` int(5) NOT NULL default '0',
   PRIMARY KEY  (`OXID`),
   KEY `OXARTICLENID` (`OXARTICLENID`)
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxobject2attribute`
+# Table structure for table `oxobject2attribute`
 #
 
 DROP TABLE IF EXISTS `oxobject2attribute`;
 
 CREATE TABLE `oxobject2attribute` (
-  `OXID` char(32) NOT NULL default '',
-  `OXOBJECTID` char(32) NOT NULL default '',
-  `OXATTRID` char(32) NOT NULL default '',
-  `OXVALUE` char(255) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXATTRID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXVALUE` varchar(255) NOT NULL default '',
   `OXPOS` int(11) NOT NULL default '9999',
   `OXVALUE_1` char(255) NOT NULL default '',
   `OXVALUE_2` char(255) NOT NULL default '',
@@ -1083,15 +1084,15 @@ CREATE TABLE `oxobject2attribute` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxobject2category`
+# Table structure for table `oxobject2category`
 #
 
 DROP TABLE IF EXISTS `oxobject2category`;
 
 CREATE TABLE `oxobject2category` (
-  `OXID` char(32) NOT NULL default '',
-  `OXOBJECTID` char(32) NOT NULL default '',
-  `OXCATNID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXCATNID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXPOS` int(11) NOT NULL default '0',
   `OXTIME` INT( 11 ) DEFAULT 0 NOT NULL,
   PRIMARY KEY  (`OXID`),
@@ -1101,48 +1102,48 @@ CREATE TABLE `oxobject2category` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxobject2delivery`
+# Table structure for table `oxobject2delivery`
 #
 
 DROP TABLE IF EXISTS `oxobject2delivery`;
 
 CREATE TABLE `oxobject2delivery` (
-  `OXID` char(32) NOT NULL default '',
-  `OXDELIVERYID` char(32) NOT NULL default '',
-  `OXOBJECTID` char(32) NOT NULL default '',
-  `OXTYPE` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXDELIVERYID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXTYPE` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
   KEY `OXDELIVERYID` ( `OXDELIVERYID` , `OXTYPE` )
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxobject2discount`
+# Table structure for table `oxobject2discount`
 #
 
 DROP TABLE IF EXISTS `oxobject2discount`;
 
 CREATE TABLE `oxobject2discount` (
-   `OXID` char(32) NOT NULL default '',
-   `OXDISCOUNTID` char(32) NOT NULL default '',
-   `OXOBJECTID` char(32) NOT NULL default '',
-   `OXTYPE` char(32) NOT NULL default '',
+   `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+   `OXDISCOUNTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+   `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+   `OXTYPE` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
    PRIMARY KEY  (`OXID`),
    KEY `oxobjectid` (`OXOBJECTID`),
    KEY `oxdiscidx` (`OXDISCOUNTID`,`OXTYPE`)
    ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxobject2group`
+# Table structure for table `oxobject2group`
 #
 
 DROP TABLE IF EXISTS `oxobject2group`;
 
 CREATE TABLE `oxobject2group` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
-  `OXOBJECTID` char(32) NOT NULL default '',
-  `OXGROUPSID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXGROUPSID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
   KEY `OXGROUPSID` (`OXGROUPSID`)
@@ -1151,29 +1152,29 @@ CREATE TABLE `oxobject2group` (
 INSERT INTO `oxobject2group` VALUES ('e913fdd8443ed43e1.51222316', 'oxbaseshop', 'oxdefaultadmin', 'oxidadmin');
 
 #
-# Tabellenstruktur für Tabelle `oxobject2payment`
+# Table structure for table `oxobject2payment`
 #
 
 DROP TABLE IF EXISTS `oxobject2payment`;
 
 CREATE TABLE `oxobject2payment` (
-  `OXID` char(32) NOT NULL default '',
-  `OXPAYMENTID` char(32) NOT NULL default '',
-  `OXOBJECTID` char(32) NOT NULL default '',
-  `OXTYPE` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXPAYMENTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXTYPE` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   PRIMARY KEY  (`OXID`)
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxobject2selectlist`
+# Table structure for table `oxobject2selectlist`
 #
 
 DROP TABLE IF EXISTS `oxobject2selectlist`;
 
 CREATE TABLE `oxobject2selectlist` (
-  `OXID` char(32) NOT NULL default '',
-  `OXOBJECTID` char(32) NOT NULL default '',
-  `OXSELNID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXSELNID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXSORT` int(5) NOT NULL default '0',
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
@@ -1181,15 +1182,15 @@ CREATE TABLE `oxobject2selectlist` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxorder`
+# Table structure for table `oxorder`
 #
 
 DROP TABLE IF EXISTS `oxorder`;
 
 CREATE TABLE `oxorder` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
-  `OXUSERID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXORDERDATE` datetime NOT NULL default '0000-00-00 00:00:00',
   `OXORDERNR` int(11) NOT NULL default '0',
   `OXBILLCOMPANY` varchar(255) NOT NULL default '',
@@ -1201,7 +1202,7 @@ CREATE TABLE `oxorder` (
   `OXBILLADDINFO` varchar(255) NOT NULL default '',
   `OXBILLUSTID` varchar(255) NOT NULL default '',
   `OXBILLCITY` varchar(255) NOT NULL default '',
-  `OXBILLCOUNTRYID` varchar(32) NOT NULL default '',
+  `OXBILLCOUNTRYID` varchar(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXBILLZIP` varchar(16) NOT NULL default '',
   `OXBILLFON` varchar(128) NOT NULL default '',
   `OXBILLFAX` varchar(128) NOT NULL default '',
@@ -1213,13 +1214,13 @@ CREATE TABLE `oxorder` (
   `OXDELSTREETNR` varchar(16) NOT NULL default '',
   `OXDELADDINFO` varchar(255) NOT NULL default '',
   `OXDELCITY` varchar(255) NOT NULL default '',
-  `OXDELCOUNTRYID` varchar(32) NOT NULL default '',
+  `OXDELCOUNTRYID` varchar(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXDELZIP` varchar(16) NOT NULL default '',
   `OXDELFON` varchar(128) NOT NULL default '',
   `OXDELFAX` varchar(128) NOT NULL default '',
   `OXDELSAL` varchar(128) NOT NULL default '',
-  `OXPAYMENTID` char(32) NOT NULL default '',
-  `OXPAYMENTTYPE` char(32) NOT NULL default '',
+  `OXPAYMENTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXPAYMENTTYPE` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXTOTALNETSUM` double NOT NULL default '0',
   `OXTOTALBRUTSUM` double NOT NULL default '0',
   `OXTOTALORDERSUM` double NOT NULL default '0',
@@ -1229,7 +1230,7 @@ CREATE TABLE `oxorder` (
   `OXPAYVAT` double NOT NULL default '0',
   `OXWRAPCOST` DOUBLE NOT NULL default '0',
   `OXWRAPVAT` double NOT NULL default '0',
-  `OXCARDID` VARCHAR( 32 ) NOT NULL default '',
+  `OXCARDID` varchar( 32 ) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXCARDTEXT` text NOT NULL,
   `OXDISCOUNT` double NOT NULL default '0',
   `OXEXPORT` tinyint(4) NOT NULL default '0',
@@ -1243,7 +1244,7 @@ CREATE TABLE `oxorder` (
   `OXFOLDER` char(32) NOT NULL default '',
   `OXPIDENT` varchar(128) NOT NULL default '',
   `OXTRANSID` varchar(64) NOT NULL default '',
-  `OXPAYID` varchar(64) NOT NULL default '',
+  `OXPAYID` varchar(64) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXXID` varchar(64) NOT NULL default '',
   `OXPAID` datetime NOT NULL default '0000-00-00 00:00:00',
   `OXSTORNO` tinyint(1) NOT NULL default '0',
@@ -1251,22 +1252,22 @@ CREATE TABLE `oxorder` (
   `OXTRANSSTATUS` varchar(30) NOT NULL default '',
   `OXLANG` int(2) NOT NULL default '0',
   `OXINVOICENR` int(11) NOT NULL default '0',
-  `OXDELTYPE` char(32) NOT NULL default '',
+  `OXDELTYPE` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   PRIMARY KEY  (`OXID`),
   KEY `MAINIDX` (`OXSHOPID`,`OXSTORNO`,`OXORDERDATE`)
 ) TYPE=InnoDB;
 
 #
-# Tabellenstruktur für Tabelle `oxorderarticles`
+# Table structure for table `oxorderarticles`
 #
 
 DROP TABLE IF EXISTS `oxorderarticles`;
 
 CREATE TABLE `oxorderarticles` (
-  `OXID` char(32) NOT NULL default '',
-  `OXORDERID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXORDERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXAMOUNT` double NOT NULL default '0',
-  `OXARTID` char(32) NOT NULL default '',
+  `OXARTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXARTNUM` varchar(255) NOT NULL default '',
   `OXTITLE` varchar(255) NOT NULL default '',
   `OXSHORTDESC` varchar(255) NOT NULL default '',
@@ -1279,7 +1280,7 @@ CREATE TABLE `oxorderarticles` (
   `OXPRICE` double NOT NULL default '0',
   `OXBPRICE` double NOT NULL default '0',
   `OXNPRICE` double NOT NULL default '0',
-  `OXWRAPID` VARCHAR( 32 ) NOT NULL default '',
+  `OXWRAPID` varchar( 32 ) NOT NULL default '',
   `OXEXTURL` varchar(255) NOT NULL default '',
   `OXURLDESC` varchar(255) NOT NULL default '',
   `OXURLIMG` varchar(128) NOT NULL default '',
@@ -1305,7 +1306,7 @@ CREATE TABLE `oxorderarticles` (
   `OXFOLDER` char(32) NOT NULL default '',
   `OXSUBCLASS` char(32) NOT NULL default '',
   `OXSTORNO` tinyint(1) NOT NULL default '0',
-  `OXORDERSHOPID` varchar(32) NOT NULL default '',
+  `OXORDERSHOPID` varchar(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   PRIMARY KEY  (`OXID`),
   KEY `OXORDERID` (`OXORDERID`),
   KEY `OXARTID` (`OXARTID`),
@@ -1313,13 +1314,13 @@ CREATE TABLE `oxorderarticles` (
 ) TYPE=InnoDB;
 
 #
-# Tabellenstruktur für Tabelle `oxpayments`
+# Table structure for table `oxpayments`
 #
 
 DROP TABLE IF EXISTS `oxpayments`;
 
 CREATE TABLE `oxpayments` (
-  `OXID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
   `OXACTIVE` tinyint(1) NOT NULL default '1',
   `OXDESC` varchar(128) NOT NULL default '',
   `OXADDSUM` double NOT NULL default '0',
@@ -1345,25 +1346,25 @@ CREATE TABLE `oxpayments` (
 ) TYPE=MyISAM;
 
 #
-# Daten für Tabelle `oxpayments`
+# Data for table `oxpayments`
 #
 INSERT INTO `oxpayments` VALUES('oxidcashondel', 1, 'Nachnahme', 7.5, 'abs', 0, 0, 1000000, '', '1', 'COD cash on delivery', '', '', '', '', '', '', '', '', '', 0);
 INSERT INTO `oxpayments` VALUES('oxidcreditcard', 1, 'Kreditkarte', 20.9, 'abs', 500, 0, 1000000, 'kktype__@@kknumber__@@kkmonth__@@kkyear__@@kkname__@@kkpruef__@@', '1', 'Credit Card', 'kktype__@@kknumber__@@kkmonth__@@kkyear__@@kkname__@@kkpruef__@@', '', '', '', '', 'Die Belastung Ihrer Kreditkarte erfolgt mit dem Abschluss der Bestellung.', 'Your Credit Card is charged when you submit the order.', '', '', 0);
-INSERT INTO `oxpayments` VALUES('oxiddebitnote', 1, 'Bankeinzug/Lastschrift', 0, 'abs', 0, 0, 1000000, 'lsbankname__@@lsblz__@@lsktonr__@@lsktoinhaber__@@', '0', 'Wire Transfer', 'lsbankname__@@lsblz__@@lsktonr__@@lsktoinhaber__@@', '', '', '', '', 'Die Belastung Ihres Kontos erfolgt mit dem Versand der Ware.', 'Your account is charged when the order is shipped.', '', '', 0);
+INSERT INTO `oxpayments` VALUES('oxiddebitnote', 1, 'Bankeinzug/Lastschrift', 0, 'abs', 0, 0, 1000000, 'lsbankname__@@lsblz__@@lsktonr__@@lsktoinhaber__@@', '0', 'Direct Debit', 'lsbankname__@@lsblz__@@lsktonr__@@lsktoinhaber__@@', '', '', '', '', 'Die Belastung Ihres Kontos erfolgt mit dem Versand der Ware.', 'Your account is charged when the order is shipped.', '', '', 0);
 INSERT INTO `oxpayments` VALUES('oxidpayadvance', 1, 'Vorauskasse 2% Skonto', -2, '%', 0, 0, 1000000, '', '1', 'Payment in advance 2% Skonto', '', '', '', '', '', '', '', '', '', 0);
 INSERT INTO `oxpayments` VALUES('oxidinvoice', 1, 'Rechnung', 0, 'abs', 800, 0, 1000000, '', '0', 'Invoice', '', '', '', '', '', '', '', '', '', 0);
 INSERT INTO `oxpayments` VALUES('oxempty', 1, 'Empty', 0, 'abs', 0, 0, 0, '', '0', 'Empty', '', '', '', '', '', 'for other countries', 'for other countries', '', '', 0);
 
 #
-# Tabellenstruktur für Tabelle `oxprice2article`
+# Table structure for table `oxprice2article`
 #
 
 DROP TABLE IF EXISTS `oxprice2article`;
 
 CREATE TABLE `oxprice2article` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
-  `OXARTID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXARTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXADDABS` double NOT NULL default '0',
   `OXADDPERC` double NOT NULL default '0',
   `OXAMOUNT` double NOT NULL default '0',
@@ -1374,17 +1375,17 @@ CREATE TABLE `oxprice2article` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxpricealarm`
+# Table structure for table `oxpricealarm`
 #
 
 DROP TABLE IF EXISTS `oxpricealarm`;
 
 CREATE TABLE `oxpricealarm` (
-`OXID` varchar(32) NOT NULL default '',
-`OXSHOPID` VARCHAR( 32 ) NOT NULL default '',
-`OXUSERID` varchar(32) NOT NULL default '',
+`OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+`OXSHOPID` char( 32 ) character set latin1 collate latin1_general_ci NOT NULL default '',
+`OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
 `OXEMAIL` varchar(128) NOT NULL default '',
-`OXARTID` varchar(32) NOT NULL default '',
+`OXARTID` varchar(32) character set latin1 collate latin1_general_ci NOT NULL default '',
 `OXPRICE` double NOT NULL default '0',
 `OXCURRENCY` varchar(32) NOT NULL default '',
 `OXLANG` INT(2) NOT NULL default 0,
@@ -1394,15 +1395,15 @@ PRIMARY KEY (`OXID`)
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxrecommlists`
+# Table structure for table `oxrecommlists`
 #
 
 DROP TABLE IF EXISTS `oxrecommlists`;
 
 CREATE TABLE `oxrecommlists` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
-  `OXUSERID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXAUTHOR` varchar(255) NOT NULL default '',
   `OXTITLE` varchar(255) NOT NULL default '',
   `OXDESC` text NOT NULL,
@@ -1416,15 +1417,15 @@ CREATE TABLE `oxrecommlists` (
 # --------------------------------------------------------
 
 #
-# Tabellenstruktur für Tabelle `oxobject2list`
+# Table structure for table `oxobject2list`
 #
 
 DROP TABLE IF EXISTS `oxobject2list`;
 
 CREATE TABLE `oxobject2list` (
-  `OXID` char(32) NOT NULL default '',
-  `OXOBJECTID` char(32) NOT NULL default '',
-  `OXLISTID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXLISTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXDESC` text NOT NULL default '',
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`OXID`),
@@ -1433,14 +1434,14 @@ CREATE TABLE `oxobject2list` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxremark`
+# Table structure for table `oxremark`
 #
 
 DROP TABLE IF EXISTS `oxremark`;
 
 CREATE TABLE `oxremark` (
-  `OXID` char(32) NOT NULL default '',
-  `OXPARENTID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXPARENTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXTYPE` enum('o','r','n','c') NOT NULL default 'r',
   `OXHEADER` varchar(255) NOT NULL default '',
   `OXTEXT` text NOT NULL,
@@ -1451,17 +1452,17 @@ CREATE TABLE `oxremark` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxratings`
+# Table structure for table `oxratings`
 #
 
 DROP TABLE IF EXISTS `oxratings`;
 
 CREATE TABLE `oxratings` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
-  `OXUSERID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXTYPE` enum('oxarticle','oxrecommlist') NOT NULL,
-  `OXOBJECTID` char(32) NOT NULL default '',
+  `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXRATING` int(1) NOT NULL default '0',
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`OXID`),
@@ -1469,19 +1470,19 @@ CREATE TABLE `oxratings` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxreviews`
+# Table structure for table `oxreviews`
 #
 
 DROP TABLE IF EXISTS `oxreviews`;
 
 CREATE TABLE `oxreviews` (
-  `OXID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
   `OXACTIVE` tinyint(1) NOT NULL default '0',
-  `OXOBJECTID` char(32) NOT NULL,
+  `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
   `OXTYPE` enum('oxarticle','oxrecommlist') NOT NULL,
-  `OXSHOPID` char(32) NOT NULL default '',
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXTEXT` text NOT NULL,
-  `OXUSERID` char(32) NOT NULL default '',
+  `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXCREATE` datetime NOT NULL default '0000-00-00 00:00:00',
   `OXLANG` tinyint( 3 ) NOT NULL DEFAULT '0',
   `OXRATING` int(1) NOT NULL default '0',
@@ -1490,16 +1491,16 @@ CREATE TABLE `oxreviews` (
 ) ENGINE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxselectlist`
+# Table structure for table `oxselectlist`
 #
 
 DROP TABLE IF EXISTS `oxselectlist`;
 
 CREATE TABLE `oxselectlist` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXTITLE` varchar(254) NOT NULL default '',
-  `OXIDENT` VARCHAR( 255 ) NOT NULL default '',
+  `OXIDENT` varchar(255) NOT NULL default '',
   `OXVALDESC` text NOT NULL,
   `OXTITLE_1` varchar(255) NOT NULL default '',
   `OXVALDESC_1` text NOT NULL,
@@ -1511,13 +1512,13 @@ CREATE TABLE `oxselectlist` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxshops`
+# Table structure for table `oxshops`
 #
 
 DROP TABLE IF EXISTS `oxshops`;
 
 CREATE TABLE `oxshops` (
-  `OXID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
   `OXACTIVE` tinyint(1) NOT NULL default '1',
   `OXACTIVE_1` tinyint(1) NOT NULL default '1',
   `OXACTIVE_2` tinyint(1) NOT NULL default '1',
@@ -1576,7 +1577,7 @@ CREATE TABLE `oxshops` (
   `OXTELEFON` varchar(255) NOT NULL default '',
   `OXTELEFAX` varchar(255) NOT NULL default '',
   `OXURL` varchar(255) NOT NULL default '',
-  `OXDEFCAT` char(32) NOT NULL default '',
+  `OXDEFCAT` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXHRBNR` varchar(64) NOT NULL default '',
   `OXCOURT` varchar(128) NOT NULL default '',
   `OXADBUTLERID` varchar(64) NOT NULL default '',
@@ -1595,20 +1596,20 @@ CREATE TABLE `oxshops` (
 ) TYPE=MyISAM;
 
 #
-# Daten für Tabelle `oxshops`
+# Data for table `oxshops`
 #
 
-INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 1, 1, 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Shop', '', '', 'online kaufen', 'buy online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'Ihre Info e-Mail Adresse', 'Ihre Bestell Reply e-Mail Adresse', 'Ihre Bestell e-Mail Adresse', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order from OXID eShop', 'Thank you for your registration in OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', 'Tragen Sie bitte hier Ihren SMTP Server ein', '', '', 'Ihr Firmenname', 'Musterstr. 10', '79098', 'Musterstadt', 'Deutschland', 'Volksbank Musterstadt', '1234567890', '900 1234567', 'DE651234567', '', '', 'Hans', 'Mustermann', '0800 1234567', '0800 1234567', 'www.meineshopurl.com', '8a142c3e60a535f16.78077188', '', '', '', '', '', '', '', 'CE', '4.0.0.2', 1, 1, 0, 0);
+INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 1, 1, 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Shop', '', '', 'online kaufen', 'buy online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'Ihre Info E-Mail Adresse', 'Ihre Bestell Reply E-Mail Adresse', 'Ihre Bestell E-Mail Adresse', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order from OXID eShop', 'Thank you for your registration in OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', 'Tragen Sie bitte hier Ihren SMTP Server ein', '', '', 'Ihr Firmenname', 'Musterstr. 10', '79098', 'Musterstadt', 'Deutschland', 'Volksbank Musterstadt', '1234567890', '900 1234567', 'DE651234567', '', '', 'Hans', 'Mustermann', '0800 1234567', '0800 1234567', 'www.meineshopurl.com', '8a142c3e60a535f16.78077188', '', '', '', '', '', '', '', 'CE', '4.1.0', 1, 1, 0, 0);
 
 #
-# Tabellenstruktur für Tabelle `oxstatistics`
+# Table structure for table `oxstatistics`
 #
 
 DROP TABLE IF EXISTS `oxstatistics`;
 
 CREATE TABLE `oxstatistics` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXTITLE` char(32) NOT NULL default '',
   `OXVALUE` text NOT NULL,
   PRIMARY KEY  (`OXID`)
@@ -1616,21 +1617,21 @@ CREATE TABLE `oxstatistics` (
 
 
 #
-# Tabellenstruktur für Tabelle `oxuser`
+# Table structure for table `oxuser`
 #
 
 DROP TABLE IF EXISTS `oxuser`;
 
 CREATE TABLE `oxuser` (
-  `OXID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
   `OXACTIVE` tinyint(1) NOT NULL default '1',
-  `OXRIGHTS` char(32) NOT NULL default '',
+  `OXRIGHTS` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXSHOPID` char( 32 ) NOT NULL default '',
   `OXUSERNAME` varchar(255) NOT NULL default '',
   `OXPASSWORD` varchar(128) NOT NULL default '',
-  `OXPASSSALT` char(128) NOT NULL,
+  `OXPASSSALT` char(128) character set latin1 collate latin1_general_ci NOT NULL,
   `OXCUSTNR` int(11) NOT NULL default '0',
-  `OXUSTID` VARCHAR( 255 ) NOT NULL default '',
+  `OXUSTID` varchar(255) NOT NULL default '',
   `OXCOMPANY` varchar(255) NOT NULL default '',
   `OXFNAME` varchar(255) NOT NULL default '',
   `OXLNAME` varchar(255) NOT NULL default '',
@@ -1638,7 +1639,7 @@ CREATE TABLE `oxuser` (
   `OXSTREETNR` varchar(16) NOT NULL default '',
   `OXADDINFO` varchar(255) NOT NULL default '',
   `OXCITY` varchar(255) NOT NULL default '',
-  `OXCOUNTRYID` char(32) NOT NULL default '',
+  `OXCOUNTRYID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXZIP` varchar(16) NOT NULL default '',
   `OXFON` varchar(128) NOT NULL default '',
   `OXFAX` varchar(128) NOT NULL default '',
@@ -1651,8 +1652,9 @@ CREATE TABLE `oxuser` (
   `OXBIRTHDATE` date NOT NULL default '0000-00-00',
   `OXURL` varchar(255) NOT NULL default '',
   `OXDISABLEAUTOGRP` tinyint(1) NOT NULL default '0',
-  `OXUPDATEKEY` CHAR( 32 ) NOT NULL default '',
-  `OXUPDATEEXP` int(11) NOT NULL default '0',  
+  `OXUPDATEKEY` char( 32 ) NOT NULL default '',
+  `OXUPDATEEXP` int(11) NOT NULL default '0',
+  `OXISOPENID` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`OXID`),
   UNIQUE `OXUSERNAME` (`OXUSERNAME`, `OXSHOPID`),
   KEY `OXPASSWORD` (`OXPASSWORD`),
@@ -1660,40 +1662,44 @@ CREATE TABLE `oxuser` (
 ) TYPE=MyISAM;
 
 #
-# Daten für Tabelle `oxuser`
+# Data for table `oxuser`
 #
 
-INSERT INTO `oxuser` VALUES ('oxdefaultadmin', '1', 'malladmin', 'oxbaseshop', 'admin', 'f6fdffe48c908deb0f4c3bd36c032e72', '61646D696E', 1, '', 'Ihr Firmenname', 'Hans', 'Mustermann', 'Musterstr.', '10', '', 'Musterstadt', 'a7c40f631fc920687.20179984', '79098', '0800 1234567', '0800 1234567', 'Herr', 1000, '2003-01-01 00:00:00', '2003-01-01 00:00:00', '', '', '0000-00-00', '', '0', '', '0');
+INSERT INTO `oxuser` VALUES ('oxdefaultadmin', '1', 'malladmin', 'oxbaseshop', 'admin', 'f6fdffe48c908deb0f4c3bd36c032e72', '61646D696E', 1, '', 'Ihr Firmenname', 'Hans', 'Mustermann', 'Musterstr.', '10', '', 'Musterstadt', 'a7c40f631fc920687.20179984', '79098', '0800 1234567', '0800 1234567', 'Herr', 1000, '2003-01-01 00:00:00', '2003-01-01 00:00:00', '', '', '0000-00-00', '', '0', '', '0', '0');
 
 #
-# Tabellenstruktur für Tabelle `oxuserpayments`
+# Table structure for table `oxuserpayments`
 #
 
 DROP TABLE IF EXISTS `oxuserpayments`;
 
 CREATE TABLE `oxuserpayments` (
-  `OXID` char(32) NOT NULL default '',
-  `OXUSERID` char(32) NOT NULL default '',
-  `OXPAYMENTSID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXPAYMENTSID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXVALUE` blob NOT NULL,
   PRIMARY KEY  (`OXID`),
   KEY `OXUSERID` (`OXUSERID`)
 ) TYPE=InnoDB;
 
 #
-# Tabellenstruktur für Tabelle `oxactions`
+# Table structure for table `oxactions`
 #
 
 DROP TABLE IF EXISTS `oxactions`;
 
 CREATE TABLE `oxactions` (
-  `OXID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
   `OXTITLE` char(128) NOT NULL default '',
   `OXACTIVE` tinyint(1) NOT NULL default '1',
   `OXACTIVEFROM` datetime NOT NULL default '0000-00-00 00:00:00',
   `OXACTIVETO` datetime NOT NULL default '0000-00-00 00:00:00',
   PRIMARY KEY  (`OXID`)
 ) TYPE=MyISAM;
+
+#
+# Data for table `oxactions`
+#
 
 INSERT INTO `oxactions` VALUES ('oxstart', 'Startseite unten', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
 INSERT INTO `oxactions` VALUES ('oxtopstart', 'Topangebot Startseite', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
@@ -1705,30 +1711,30 @@ INSERT INTO `oxactions` VALUES ('oxnewest', 'Frisch eingetroffen', '1', '0000-00
 INSERT INTO `oxactions` VALUES ('oxnewsletter', 'Newsletter', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
 
 #
-# Tabellenstruktur für Tabelle `oxactions2article`
+# Table structure for table `oxactions2article`
 #
 
 DROP TABLE IF EXISTS `oxactions2article`;
 
 CREATE TABLE `oxactions2article` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
-  `OXACTIONID` char(32) NOT NULL default '',
-  `OXARTID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXACTIONID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXARTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXSORT` int(11) NOT NULL default '0',
   PRIMARY KEY  (`OXID`),
   KEY `OXMAINIDX` (`OXSHOPID`,`OXACTIONID`,`OXSORT`)
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxwrapping`
+# Table structure for table `oxwrapping`
 #
 
 DROP TABLE IF EXISTS `oxwrapping`;
 
 CREATE TABLE `oxwrapping` (
-  `OXID` varchar(32) NOT NULL default '',
-  `OXSHOPID` varchar(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` varchar(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXACTIVE` tinyint(1) NOT NULL default '1',
   `OXACTIVE_1` tinyint(1) NOT NULL default '1',
   `OXACTIVE_2` tinyint(1) NOT NULL default '1',
@@ -1744,32 +1750,32 @@ CREATE TABLE `oxwrapping` (
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxdel2delset`
+# Table structure for table `oxdel2delset`
 #
 
 DROP TABLE IF EXISTS `oxdel2delset`;
 
 CREATE TABLE `oxdel2delset` (
-  `OXID` char(32) NOT NULL default '',
-  `OXDELID` char(32) NOT NULL default '',
-  `OXDELSETID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXDELID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXDELSETID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   PRIMARY KEY  (`OXID`),
   KEY `OXDELID` (`OXDELID`)
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxdeliveryset`
+# Table structure for table `oxdeliveryset`
 #
 
 DROP TABLE IF EXISTS `oxdeliveryset`;
 
 CREATE TABLE `oxdeliveryset` (
-  `OXID` varchar(32) NOT NULL default '',
-  `OXSHOPID` varchar(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` varchar(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXACTIVE` tinyint(1) NOT NULL default '0',
   `OXACTIVEFROM` datetime NOT NULL default '0000-00-00 00:00:00',
   `OXACTIVETO` datetime NOT NULL default '0000-00-00 00:00:00',
-  `OXTITLE` varchar(128) NOT NULL default '',
+  `OXTITLE` varchar(255) NOT NULL default '',
   `OXTITLE_1` varchar(255) NOT NULL default '',
   `OXTITLE_2` varchar(255) NOT NULL default '',
   `OXTITLE_3` varchar(255) NOT NULL default '',
@@ -1778,32 +1784,36 @@ CREATE TABLE `oxdeliveryset` (
   KEY `OXSHOPID` (`OXSHOPID`)
 ) TYPE=MyISAM;
 
+#
+# Data for table `oxdeliveryset`
+#
+
 INSERT INTO `oxdeliveryset` VALUES ('oxidstandard', 'oxbaseshop', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'Standard', 'Standard', '', '', 10);
 
 #
-# Tabellenstruktur für Tabelle `oxcategory2attribute`
+# Table structure for table `oxcategory2attribute`
 #
 
 DROP TABLE IF EXISTS `oxcategory2attribute`;
 
 CREATE TABLE `oxcategory2attribute` (
-  `OXID` char(32) NOT NULL default '',
-  `OXOBJECTID` char(32) NOT NULL default '',
-  `OXATTRID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXATTRID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXSORT` INT( 11 ) NOT NULL DEFAULT '9999',
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`)
 ) TYPE=MyISAM;
 
 #
-# Tabellenstruktur für Tabelle `oxnewssubscribed`
+# Table structure for table `oxnewssubscribed`
 #
 
 DROP TABLE IF EXISTS `oxnewssubscribed`;
 
 CREATE TABLE `oxnewssubscribed` (
-  `OXID` char(32) NOT NULL default '',
-  `OXUSERID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXSAL` char(64) NOT NULL default '',
   `OXFNAME` char(128) NOT NULL default '',
   `OXLNAME` char(128) NOT NULL default '',
@@ -1813,20 +1823,24 @@ CREATE TABLE `oxnewssubscribed` (
   `OXSUBSCRIBED` datetime NOT NULL default '0000-00-00 00:00:00',
   `OXUNSUBSCRIBED` datetime NOT NULL default '0000-00-00 00:00:00',
   UNIQUE KEY `OXEMAIL` (`OXEMAIL`),
-  UNIQUE KEY `OXUSERID` (`OXUSERID`)
+  KEY `OXUSERID` (`OXUSERID`)
 ) TYPE=MyISAM;
+
+#
+# Data for table `oxnewssubscribed`
+#
 
 INSERT INTO `oxnewssubscribed` VALUES ('0b742e66fd94c88b8.61001136', 'oxdefaultadmin', 'Herr', 'Shop', 'Administrator', 'admin', 1, '0', '2005-07-26 19:16:09', '0000-00-00 00:00:00');
 
 #
-# Tabellenstruktur für Tabelle `oxvendor`
+# Table structure for table `oxvendor`
 #
 
 DROP TABLE IF EXISTS `oxvendor`;
 
 CREATE TABLE `oxvendor` (
-  `OXID` char(32) NOT NULL default '',
-  `OXSHOPID` char(32) NOT NULL default '',
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXACTIVE` tinyint(1) NOT NULL default '1',
   `OXICON` char(128) NOT NULL default '',
   `OXTITLE` char(255) NOT NULL default '',
@@ -1840,153 +1854,164 @@ CREATE TABLE `oxvendor` (
   `OXSHOWSUFFIX` tinyint(1) NOT NULL default '1',
   PRIMARY KEY  (`OXID`)
 ) TYPE=MyISAM;
-# table oxseo for SEO
-# created 2008.04.16
+
+#
+# Table structure for table `oxmanufacturers`
+#
+
+DROP TABLE IF EXISTS `oxmanufacturers`;
+
+CREATE TABLE `oxmanufacturers` (
+  `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXACTIVE` tinyint(1) NOT NULL default '1',
+  `OXICON` char(128) NOT NULL default '',
+  `OXTITLE` char(255) NOT NULL default '',
+  `OXSHORTDESC` char(255) NOT NULL default '',
+  `OXTITLE_1` char(255) NOT NULL default '',
+  `OXSHORTDESC_1` char(255) NOT NULL default '',
+  `OXTITLE_2` char(255) NOT NULL default '',
+  `OXSHORTDESC_2` char(255) NOT NULL default '',
+  `OXTITLE_3` char(255) NOT NULL default '',
+  `OXSHORTDESC_3` char(255) NOT NULL default '',
+  `OXSHOWSUFFIX` tinyint(1) NOT NULL default '1',
+  PRIMARY KEY  (`OXID`)
+) TYPE=MyISAM;
+
+#
+# Table structure for table `oxseo`# created 2008.04.16
+#
 
 DROP TABLE IF EXISTS `oxseo`;
 
 CREATE TABLE `oxseo` (
-`OXOBJECTID` char(32) NOT NULL default '',
-`OXIDENT`    char(32) NOT NULL default '',
-`OXSHOPID` char(32) NOT NULL default '',
+`OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+`OXIDENT`    char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+`OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
 `OXLANG`     int(2) NOT NULL default 0,
 `OXSTDURL`   TEXT NOT NULL,
 `OXSEOURL`   TEXT NOT NULL,
-`OXTYPE`     enum('static', 'oxarticle', 'oxcategory', 'oxvendor', 'oxcontent', 'dynamic') NOT NULL,
+`OXTYPE`     enum('static', 'oxarticle', 'oxcategory', 'oxvendor', 'oxcontent', 'dynamic', 'oxmanufacturer') NOT NULL,
 `OXFIXED`    TINYINT(1) NOT NULL default 0,
 `OXKEYWORDS` TEXT NOT NULL,
 `OXDESCRIPTION` TEXT NOT NULL,
 `OXEXPIRED` tinyint(1) NOT NULL default '0',
 `OXPARAMS` char(32) NOT NULL default '',
 PRIMARY KEY (`OXIDENT`, `OXSHOPID`, `OXLANG`),
-UNIQUE KEY search (`OXTYPE`, `OXOBJECTID`, `OXSHOPID`, `OXLANG`,`OXPARAMS`)
+UNIQUE KEY search (`OXTYPE`, `OXOBJECTID`, `OXSHOPID`, `OXLANG`,`OXPARAMS`),
+KEY `OXOBJECTID` (`OXLANG`,`OXOBJECTID`,`OXSHOPID`)
 ) TYPE=InnoDB;
 
-INSERT INTO `oxseo` VALUES ('c855234180a3b4056b496120d229ea68', '023abc17c853f9bccc201c5afd549a92', 'oxbaseshop', 1, 'index.php?cl=account_wishlist', 'my-gift-registry/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('340d4f29f63cc0efc504915c0b94a44a', '0361774676321abf3204a44e167ffe40', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=info&amp;tpl=security_info.tpl', 'help/data-protection/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('2e17757c0aaf8ed9ef2ba30317fa1faf', '0469752d03d80da379a679aaef4c0546', 'oxbaseshop', 1, 'index.php?cl=suggest', 'recommend/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('057ef382f23bdbb84991d049af2baba9', '063c82502d9dd528ce2cc40ceb76ade7', 'oxbaseshop', 1, 'index.php?cl=compare', 'my-product-comparison/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('23e2b46bdc9cd26023fd8020c5dff9a2', '21806222bd140d89bee0618b715c2c27', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=review', 'hilfe/bewertungen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('41e797927a0b4318bc7fbc6c6702e194', '0f454924e8a9e54d99df911b3c8202ce', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_order', 'help/order-history/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('41e797927a0b4318bc7fbc6c6702e194', '7b29f08cc652fe0a3733657892c11eca', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_order', 'hilfe/bestellhistorie/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('7bc8a506bbca225a2f95b6eac66020bf', '1368f5e45468ca1e1c7c84f174785c35', 'oxbaseshop', 1, 'index.php?cl=account_noticelist', 'my-wish-list/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('dda3486f1349724e085c363ae7d50785', '13fa69b27f1eb104d5664b68af4b2b13', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=info&amp;tpl=impressum.tpl', 'help/about-us/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('dd1a86d489a8b312737f59ab2cac0eb4', '1701ec08c0928b603e5290078f8ab724', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=details', 'help/product-details/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('1a583d63681ba48d989bdfd0bea8ade7', '24abae6113f500216f90cb0bd45a6efe', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_wishlist', 'hilfe/mein-wunschzettel/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('c855234180a3b4056b496120d229ea68', '227eee0ce73ae96a3baf55cb15ed4aa1', 'oxbaseshop', 0, 'index.php?cl=account_wishlist', 'mein-wunschzettel/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('9ba8be21e759c0fb18ed36d2d12b34ad', '6b8e23145c8f5070adadaae23d204527', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=help', 'hilfe/hilfe/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('39e6808919a5c2cfea2c2733d9de60f8', 'ef7926974a07be9272498ffc2edd0b64', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=compare', 'hilfe/mein-produktvergleich/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('1f28bd0d08f97dea49898ba2f5de8cb2', '34191c32cedbe8832d6aebb58b4555b3', 'oxbaseshop', 1, 'index.php?cl=info&amp;tpl=delivery_info.tpl', 'shipping-and-charges/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('4e0a1c1634b39b25dc36fd17e72046f0', 'ce0e46c8ed9d681acfddf3be6cb40a63', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=vendorlist', 'hilfe/nach-hersteller/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('5b8e55f5ac0e8e720498dc4dab16c04a', '94ff198356f06184ea13d024e808b0c4', 'oxbaseshop', 0, 'index.php?cl=info&amp;tpl=security_info.tpl', 'datenschutz/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('23e2b46bdc9cd26023fd8020c5dff9a2', '367a5b40fadd01331bb3a12e5cb0bef9', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=review', 'help/product-review/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('e56acdd347b0516f68a0afdd811e2382', '3a41965fb36fb45df7f4f9a4377f6364', 'oxbaseshop', 1, 'index.php?cl=newsletter', 'newsletter/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('ab459c0dc911137e9cc024d9fba5a68b', '3bdd64bd8073d044d8fd60334ed9b725', 'oxbaseshop', 1, 'index.php?cl=start', 'home/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('be0df35ba37af88c6c09527f1e2d7180', '7041a08f003afa8277bc8e6a31a5bb7c', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_noticelist', 'hilfe/mein-merkzettel/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('b88b7ae13f9b7d571f9f4893a8d17c3f', '3ce579b1eb8d9b7387e93de042f0630e', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=info&amp;tpl=customer_right_of_withdrawal.tpl', 'help/right-of-withdrawal/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('af8dad40e0bfb012be008efc3826fb54', '3e2a46c6550d9f8ec5a7f3216d023db2', 'oxbaseshop', 1, 'index.php?cl=info&amp;tpl=impressum.tpl', 'about-us/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('ab459c0dc911137e9cc024d9fba5a68b', '3370c42c70f328adb7046c6677cbb0c6', 'oxbaseshop', 0, 'index.php?cl=start', 'home/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('b88b7ae13f9b7d571f9f4893a8d17c3f', '13fcab89715b955a73e0ee1f06011259', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=customer_right_of_withdrawal.tpl', 'hilfe/widerrufsrecht/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('d35db2901a428b971c0d7d53d64c4f77', '44fec8ed8396c63e0d958ae78996d1e4', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account', 'help/my-account/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('efaf9266cf7de3a8c84cea167285eb83', '4a70a4cd11d63fdce96fbe4ba8e714e6', 'oxbaseshop', 1, 'index.php?cnid=oxmore&amp;cl=alist', 'more/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('9ba8be21e759c0fb18ed36d2d12b34ad', '4ac8d6f8819076dd8fac958a264e04ff', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=help', 'help/help/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('7ae7ab3bc27e81b92a56a54a7e02fdec', '4baf9bd95ca982018c1ec6527669aef7', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=basket', 'help/cart/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('0a4d2f80aea0951a6ceef92a50b846cd', '4e22468cd0f70f11708f213dec548639', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=order_info.tpl', 'hilfe/wie-bestellen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('efaf9266cf7de3a8c84cea167285eb83', '0f39b1d9a5ed613883e969188723f319', 'oxbaseshop', 0, 'index.php?cnid=oxmore&amp;cl=alist', 'mehr/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('18f64cbbc296a32fb84b3bbe31dfed09', '510fef34e5d9b86f6a77af949d15950e', 'oxbaseshop', 1, 'index.php?cl=account', 'my-account/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('ace1e168a1e8183a2aa79c2243171a29', '5668048844927ca2767140c219e04efc', 'oxbaseshop', 1, 'index.php?cl=account_user', 'my-address/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('63914909be6a4f61f7744b87876c20ee', '3745ade3beda811ea4269bbf3f233a75', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=contact', 'hilfe/kontakt/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('0f8b225c4476bfb9f9f06072591caf0c', '5a0b0a570076f900c44f160a797832ef', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_newsletter', 'help/newsletter-settings/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('0563ce7f6a400737ce0e1c2b2c733e49', '5cc081514a72b0ce3d7eec4fb1e6f1dd', 'oxbaseshop', 1, 'index.php?cl=forgotpwd', 'forgot-password/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('002a90a450bc0eba234f80b0b27636ff', '5e82443daf55ddc38b24aefe8ec0daa5', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=newsletter', 'help/newsletter/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('6d9b5b3ee58bca1bd7be188f71e80ef2', '5eb126725ba500e6bbf1aecaa876dc48', 'oxbaseshop', 1, 'index.php?cl=review', 'product-review/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('8f44d31988a8962c87e3a0b7dda28ea2', '30e8baa521d867c0943f2c17891e7649', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_user', 'hilfe/rechnungs-und-liefereinstellungen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('7189adecf13cac2a3e0a085aa8c276d6', '6203915d115d00aacaa2a9ea3bc67cda', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=register', 'help/open-account/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('6c3129355426de70051cc3c08a675bcd', '23080fb15eeafe59c79ff6e2ab8ea621', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=start', 'hilfe/home/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('8f44d31988a8962c87e3a0b7dda28ea2', '670524bc5a2b2334c83839396da5b10b', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_user', 'help/billings-and-shipping-settings/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('be0df35ba37af88c6c09527f1e2d7180', '6a1a92c6e19cb0923edc299fd7d0c19b', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_noticelist', 'help/my-wish-list/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('f560b18b547bca23752a154b45120980', '20a645ec8834b8f17e25d98e6eba955f', 'oxbaseshop', 0, 'index.php?cl=account_password', 'mein-passwort/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('bde12a1bdd3b9c77bdc694a7de4c0dea', '504f74cb03df1d9e7c0aaa4f0eb8b5eb', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=alist', 'hilfe/kategorien/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('3819af3b86a45723369d4a926e62b910', '0571f3d5743683d8bc072eba3c326f97', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=delivery_info.tpl', 'hilfe/versand-und-kosten/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('f560b18b547bca23752a154b45120980', '6c890ac1255a99f8d1eb46f1193843d6', 'oxbaseshop', 1, 'index.php?cl=account_password', 'my-password/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('4e0a1c1634b39b25dc36fd17e72046f0', '6d01ef2701d240d4b80250d176cc6ffa', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=vendorlist', 'help/by-manufacturer/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('730781c5e392155012ef2f055eedce00', '74a7a5557c373f3a9b8268714abfd89c', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_password', 'help/my-password/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('5b8e55f5ac0e8e720498dc4dab16c04a', '74e1551c34749343e6d17d302cea3f73', 'oxbaseshop', 1, 'index.php?cl=info&amp;tpl=security_info.tpl', 'data-protection/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('04abcb465a8d3a4441df4c480838d23d', '7685924d3f3fb7e9bda421c57f665af4', 'oxbaseshop', 1, 'index.php?cl=contact', 'contact/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('d12b7badee1037e7c1a5a7a245a14e11', 'de2061c4d303d4809887e79c2bdc6e2d', 'oxbaseshop', 0, 'index.php?cl=guestbook', 'gaestebuch/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('0f8b225c4476bfb9f9f06072591caf0c', '4593a66b9c543e4a7e377fe2f729e68d', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_newsletter', 'hilfe/newslettereinstellungen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('2e17757c0aaf8ed9ef2ba30317fa1faf', '971a7c8eb524102bef9c53df3f447f01', 'oxbaseshop', 0, 'index.php?cl=suggest', 'empfehlen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('6c3129355426de70051cc3c08a675bcd', '8480daf667f0c1fe8dd5c4dd66955e10', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=start', 'help/home/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('d35db2901a428b971c0d7d53d64c4f77', 'd0beca6b07e62caa9a3d1b6644b103b8', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account', 'hilfe/mein-konto/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('dd1a86d489a8b312737f59ab2cac0eb4', '700c180f8feeae8bab7ce12a649a87af', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=details', 'hilfe/produktdetails/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('18f64cbbc296a32fb84b3bbe31dfed09', 'f26665f77cbbec90083d5e8868e55900', 'oxbaseshop', 0, 'index.php?cl=account', 'mein-konto/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('7ae7ab3bc27e81b92a56a54a7e02fdec', 'adf8e6c86b7c874fa3918bcb09a483b7', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=basket', 'hilfe/warenkorb/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('dda3486f1349724e085c363ae7d50785', 'ceb487c3b9a88b6eb579f39cfff5044f', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=impressum.tpl', 'hilfe/impressum/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('343c043546b3d653647e75d2e246ce94', '90b7d798b6d75b9daa43e657b8ea9909', 'oxbaseshop', 0, 'index.php?cl=links', 'links/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('1f28bd0d08f97dea49898ba2f5de8cb2', '6bb7b5fd9a74f88b704e0016b148b4cc', 'oxbaseshop', 0, 'index.php?cl=info&amp;tpl=delivery_info.tpl', 'versand-und-kosten/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('39e6808919a5c2cfea2c2733d9de60f8', '9fc9811fd88eaf807b1036e07dbfa85c', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=compare', 'help/my-product-comparison/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('610f7fc243c7409cb5448b30029431fe', '9ff5c21cbc84dbfe815013236e132baf', 'oxbaseshop', 1, 'index.php?cl=account_order', 'order-history/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('7189adecf13cac2a3e0a085aa8c276d6', '268d14282abf6078cf33be20b0a4e93e', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=register', 'hilfe/konto-eroeffnen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('98964bf04c7edae2d658c5f3b3233ca1', 'a1b330b85c6f51fd9b50b1eb19707d84', 'oxbaseshop', 1, 'index.php?cl=register', 'open-account/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('7bc8a506bbca225a2f95b6eac66020bf', '996c970b92476dfa910c57967445ef0a', 'oxbaseshop', 0, 'index.php?cl=account_noticelist', 'mein-merkzettel/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('71db5a32d74e4095f390ce401f158a14', '4cea770b083e7d9d2fdd1de5775df087', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=guestbook', 'hilfe/gaestebuch/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('ace1e168a1e8183a2aa79c2243171a29', 'c886c2d8c327562c73057a905685566f', 'oxbaseshop', 0, 'index.php?cl=account_user', 'meine-adressen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('0563ce7f6a400737ce0e1c2b2c733e49', '3e7b670420ebd96b913f631d9f628df6', 'oxbaseshop', 0, 'index.php?cl=forgotpwd', 'passwort-vergessen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('98964bf04c7edae2d658c5f3b3233ca1', 'fb85a91f316934306639f53e4bb470e8', 'oxbaseshop', 0, 'index.php?cl=register', 'konto-eroeffnen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('6ba1f9c600305c7c92573cb6d1555797', 'e379faf8b085c953ef88533e0b86d2ff', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=links', 'hilfe/links/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('002a90a450bc0eba234f80b0b27636ff', 'c4540acfb4595542d9d18330ae1e4cda', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=newsletter', 'hilfe/newsletter/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('9c5ba516eb1e3313ed2eb2e4bb7759e3', '4976d430aaaaa06f8ac857603d6fae83', 'oxbaseshop', 0, 'index.php?cl=info&amp;tpl=customer_right_of_withdrawal.tpl', 'widerrufsrecht/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('4e58f0c5e7a51ae60f857cc53734ef6e', 'b0f4345db0ca78975119af0fc89cfcc9', 'oxbaseshop', 0, 'index.php?cl=info&amp;tpl=agb.tpl', 'agb/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('c69fce7ee6fe530a7afb651a296b3507', 'c1298d664559e5c887e3e18c7cda5133', 'oxbaseshop', 1, 'index.php?cl=info&amp;tpl=order_info.tpl', 'how-to-order/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('4e58f0c5e7a51ae60f857cc53734ef6e', 'c7f0defa518f67f01b85b8474f1a43ea', 'oxbaseshop', 1, 'index.php?cl=info&amp;tpl=agb.tpl', 'terms/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('6d9b5b3ee58bca1bd7be188f71e80ef2', 'e2520d9f64e72c42a4d19731370bd8cd', 'oxbaseshop', 0, 'index.php?cl=review', 'bewertungen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('af8dad40e0bfb012be008efc3826fb54', '266052f24e302ece95e23616a7eb479e', 'oxbaseshop', 0, 'index.php?cl=info&amp;tpl=impressum.tpl', 'impressum/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('12a669e9545e42567814a598de816691', 'd41f984132c321d4e06ad1f2a72d5882', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=info&amp;tpl=agb.tpl', 'help/terms/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('bde12a1bdd3b9c77bdc694a7de4c0dea', 'd7abe1fb6fb1e9e6003b45844b0c0f09', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=alist', 'help/categories/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('c4345f215c2f7b50549ca896b5c17f13', '19be6a4ba5077441a1c643e9edaf3f67', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=forgotpwd', 'hilfe/passwort-vergessen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('57cb6b2fafc870810cd48b8e1d28cf91', 'da6c5523f7c91d108cadb0be7757c27f', 'oxbaseshop', 1, 'index.php?cl=tags', 'tags/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('d12b7badee1037e7c1a5a7a245a14e11', 'ded4f3786c6f4d6d14e3034834ebdcaf', 'oxbaseshop', 1, 'index.php?cl=guestbook', 'guestbook/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('bc8df5696a42291e47f47478442ce2a8', 'e098f2c231bce2c60473c04f4cded5dd', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=suggest', 'help/recommend/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('057ef382f23bdbb84991d049af2baba9', '18c71da9d3b5ac6ccd74ca049c037412', 'oxbaseshop', 0, 'index.php?cl=compare', 'mein-produktvergleich/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('12a669e9545e42567814a598de816691', 'b759b3e94d8c98a063a1514c0f06182a', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=agb.tpl', 'hilfe/agb/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('e56acdd347b0516f68a0afdd811e2382', 'f9dcd2596025daac36d6e339312ef610', 'oxbaseshop', 0, 'index.php?cl=newsletter', 'newsletter/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('38efc02f0f6b6a6d54cfef1fcdb99d70', '55af7ecae92b23e9ddf2c21c4fbeda06', 'oxbaseshop', 0, 'index.php?cl=basket', 'warenkorb/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('730781c5e392155012ef2f055eedce00', 'a8776f0f4d02c0e6a42c453c62d6f654', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_password', 'hilfe/mein-passwort/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('c4345f215c2f7b50549ca896b5c17f13', 'e7d3640dc365932ea39a5845017451f1', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=forgotpwd', 'help/forgot-password/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('3819af3b86a45723369d4a926e62b910', 'e8cccc9bd869610593e416da1a066e19', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=info&amp;tpl=delivery_info.tpl', 'help/shipping-and-charges/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('9c5ba516eb1e3313ed2eb2e4bb7759e3', 'e91d3f4809b713664045f30d900b789a', 'oxbaseshop', 1, 'index.php?cl=info&amp;tpl=customer_right_of_withdrawal.tpl', 'right-of-withdrawal/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('1a583d63681ba48d989bdfd0bea8ade7', 'e9c2c9ccc91911acd7e4e399c2c8838d', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_wishlist', 'help/my-gift-registry/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('610f7fc243c7409cb5448b30029431fe', 'ba779c79ae16cd11f415addf3e16fc86', 'oxbaseshop', 0, 'index.php?cl=account_order', 'bestellhistorie/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('38efc02f0f6b6a6d54cfef1fcdb99d70', 'ecaf0240f9f46bbee5ffc6dd73d0b7f0', 'oxbaseshop', 1, 'index.php?cl=basket', 'cart/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('bc8df5696a42291e47f47478442ce2a8', 'aba3afe14ff943be455a39fff259fd9c', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=suggest', 'hilfe/empfehlen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('63914909be6a4f61f7744b87876c20ee', 'efbdcce791ae8fecc0a45ff7e1c92ca6', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=contact', 'help/contact/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('57cb6b2fafc870810cd48b8e1d28cf91', 'aaed1f510a4a24565da51d002f31f78e', 'oxbaseshop', 0, 'index.php?cl=tags', 'tags/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('0a4d2f80aea0951a6ceef92a50b846cd', 'f460d530b15e5dfba1194eb4a32b87c5', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=info&amp;tpl=order_info.tpl', 'help/how-to-order/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('343c043546b3d653647e75d2e246ce94', 'f80ace8f87e1d7f446ab1fa58f275f4c', 'oxbaseshop', 1, 'index.php?cl=links', 'links/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('71db5a32d74e4095f390ce401f158a14', 'f8e48035979bf62e5bbc15504f9d81fa', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=guestbook', 'help/guestbook/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('04abcb465a8d3a4441df4c480838d23d', 'c90694370996cdb1f98ba0b0f660913d', 'oxbaseshop', 0, 'index.php?cl=contact', 'kontakt/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('340d4f29f63cc0efc504915c0b94a44a', '40d12bb84dfa8695926d07bba448cd38', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=security_info.tpl', 'hilfe/datenschutz/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('6ba1f9c600305c7c92573cb6d1555797', 'ffd0f3c469cdb59bb32a4e647152dca7', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=links', 'help/links/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('61c5d6965b480012aabb3a6701254b75', '40d2121e58d09f118c87686e5e8d3293', 'oxbaseshop', 0, 'index.php?cl=recommlist', 'Empfehlungslisten/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('61c5d6965b480012aabb3a6701254b75', '347333f119c147545287d02ff8954b8e', 'oxbaseshop', 1, 'index.php?cl=recommlist', 'Recomendation-Lists/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('f6bd7f77caae70afad276584caa6450a', '89ee021abccf9643eabd57cc366acbcd', 'oxbaseshop', 0, 'index.php?cl=wishlist', 'wunschzettel/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('f6bd7f77caae70afad276584caa6450a', 'b93b703d313e89662773cffaab750f1d', 'oxbaseshop', 1, 'index.php?cl=wishlist', 'gift-registry/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('9a545b8f4ebd5c1458b5aae08812b60f', 'b39e68bb68079920047a347b52b305ce', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=wishlist', 'hilfe/wunschzettel-oxid/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('9a545b8f4ebd5c1458b5aae08812b60f', 'c2d486a828d484a863b69e53078de31f', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=wishlist', 'help/gift-registry/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('05c0f9a36dc4eaf3df528f0da18664d8', '568d7ba71d88d6286f5735db4038f023', 'oxbaseshop', 0, 'index.php?cl=account_recommlist', 'meine-lieblingslisten/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('05c0f9a36dc4eaf3df528f0da18664d8', '8e7ebaebb0a810576453082e1f8f2fa3', 'oxbaseshop', 1, 'index.php?cl=account_recommlist', 'my-listmania-list/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('a0ee4fb33f618ef2bef24e20d12d572f', 'b2101f25345a55d7154f8c85f7ed5081', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_recommlist', 'hilfe/meine-lieblingslisten/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('a0ee4fb33f618ef2bef24e20d12d572f', 'dd78cb9b34d9cd30f8a848005c402ba6', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_recommlist', 'help/my-listmania-list/', 'static', 0, '', '', 0, '');
 
-# table oxseohistory for tracking old SEO urls
+#
+# Data for table `oxseo`
+#
+
+INSERT INTO `oxseo` VALUES ('7189adecf13cac2a3e0a085aa8c276d6', '0748e5b155cb1cf31c1b6c73bb7b7c02', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=register', 'help/open-account/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('bde12a1bdd3b9c77bdc694a7de4c0dea', '0882ab917a7faa67f4430b1822ac6662', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=alist', 'help/categories/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('efaf9266cf7de3a8c84cea167285eb83', '09e54e564da275dbe1a3c6fdbf4d605c', 'oxbaseshop', 1, 'index.php?cnid=oxmore&amp;cl=alist', 'more/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('23e2b46bdc9cd26023fd8020c5dff9a2', '0aaaa47d75da6581736b76eb4b4e62a3', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=review', 'hilfe/bewertungen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('6ba1f9c600305c7c92573cb6d1555797', '0bd0a4f10334ba18fbf66e03f009248d', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=links', 'help/links_en/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('c4345f215c2f7b50549ca896b5c17f13', '0d4619a8fcfab79a868939c330ec1d18', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=forgotpwd', 'help/forgot-password/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('41e797927a0b4318bc7fbc6c6702e194', '116b37d6d0aa3bc10d40c0972e46dc17', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_order', 'hilfe/bestellhistorie/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('e56acdd347b0516f68a0afdd811e2382', '154b35460a72033e3737447dda1b194e', 'oxbaseshop', 1, 'index.php?cl=newsletter', 'newsletter_en/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('1a583d63681ba48d989bdfd0bea8ade7', '192ce04536d8c1ea3d530825bc06bff9', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_wishlist', 'hilfe/mein-wunschzettel/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('dd1a86d489a8b312737f59ab2cac0eb4', '1c54bc1b362150a59832e45cfffce7d4', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=details', 'help/product-details/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('0563ce7f6a400737ce0e1c2b2c733e49', '1e55927a6328413c328772262fd884e2', 'oxbaseshop', 1, 'index.php?cl=forgotpwd', 'forgot-password/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('c855234180a3b4056b496120d229ea68', '1f30ae9b1c78b7dc89d3e5fe9eb0de59', 'oxbaseshop', 0, 'index.php?cl=account_wishlist', 'mein-wunschzettel/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('d12b7badee1037e7c1a5a7a245a14e11', '20c9a4d6d7f0fa97dca6cad16b7333b9', 'oxbaseshop', 1, 'index.php?cl=guestbook', 'guestbook/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('6c3129355426de70051cc3c08a675bcd', '249ee5ebc00b1fe439072f87a103b99d', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=start', 'hilfe/startseite/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('63914909be6a4f61f7744b87876c20ee', '258c2667719329e3f22585313961cf70', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=contact', 'help/contact/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('9ba8be21e759c0fb18ed36d2d12b34ad', '281a927fd36ff57e9d5cd21a6ad83145', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=help', 'hilfe/hilfe/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('057ef382f23bdbb84991d049af2baba9', '29a17f5e4b5afb1fa609417a44ab12cd', 'oxbaseshop', 1, 'index.php?cl=compare', 'my-product-comparison/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('610f7fc243c7409cb5448b30029431fe', '2aa2251072f86614360cd2efa79092fd', 'oxbaseshop', 1, 'index.php?cl=account_order', 'order-history/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('1a583d63681ba48d989bdfd0bea8ade7', '2e8ee8367b647fabcdd4bf00fdd2c751', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_wishlist', 'help/my-gift-registry/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('f6bd7f77caae70afad276584caa6450a', '2f6523e0178d426431e1e7987b9ad280', 'oxbaseshop', 1, 'index.php?cl=wishlist', 'gift-registry/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('39e6808919a5c2cfea2c2733d9de60f8', '310a5b38352aecfde5a28d30ecaf2cb2', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=compare', 'hilfe/mein-produktvergleich/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('002a90a450bc0eba234f80b0b27636ff', '341b6132b8a0cfdaa3b411bba21dc466', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=newsletter', 'help/newsletter_en/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('4e0a1c1634b39b25dc36fd17e72046f0', '352dd404dd24e284e60006ce1da9a3ae', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=vendorlist', 'hilfe/nach-hersteller/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('be0df35ba37af88c6c09527f1e2d7180', '3c8229b33f16cfe0fc5db6c8177c18bb', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_noticelist', 'hilfe/mein-merkzettel/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('6c3129355426de70051cc3c08a675bcd', '3ff5fd22f246691126023c54783355a9', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=start', 'help/home/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('ab459c0dc911137e9cc024d9fba5a68b', '43e0a1f539e00dcfa1a6bc4d4fee4fc2', 'oxbaseshop', 1, 'index.php?cl=start', 'home/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('efaf9266cf7de3a8c84cea167285eb83', '4d3d4d70b09b5d2bd992991361374c67', 'oxbaseshop', 0, 'index.php?cnid=oxmore&amp;cl=alist', 'mehr/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('38efc02f0f6b6a6d54cfef1fcdb99d70', '56f17cacd786fa0973cb1d543021c7bb', 'oxbaseshop', 1, 'index.php?cl=basket', 'cart/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('63914909be6a4f61f7744b87876c20ee', '585f263995b6a8216d1d49c10bdea22f', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=contact', 'hilfe/kontakt/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('41e797927a0b4318bc7fbc6c6702e194', '5a021c7bf75d960ddd35a4dc3fc921d9', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_order', 'help/order-history/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('f6bd7f77caae70afad276584caa6450a', '5d752e9e8302eeb21df24d1aee573234', 'oxbaseshop', 0, 'index.php?cl=wishlist', 'wunschzettel/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('d35db2901a428b971c0d7d53d64c4f77', '5e57eafae029933e3a36d5eeed402a7e', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account', 'help/my-account/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('8f44d31988a8962c87e3a0b7dda28ea2', '5f58b1965cb91c573ecd3d34c784c2e4', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_user', 'hilfe/rechnungs-und-liefereinstellungen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('05c0f9a36dc4eaf3df528f0da18664d8', '62b0fba380f2e9cf2ee81a62d4a69014', 'oxbaseshop', 1, 'index.php?cl=account_recommlist', 'my-listmania-list/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('57cb6b2fafc870810cd48b8e1d28cf91', '63794023f46c56d329e2ee6a1462e8c2', 'oxbaseshop', 0, 'index.php?cl=tags', 'stichworte/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('4e0a1c1634b39b25dc36fd17e72046f0', '656340c4e31d069b5b03ba0659e3b2c8', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=vendorlist', 'help/by-manufacturer/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('39e6808919a5c2cfea2c2733d9de60f8', '69d29e9c010bba1f06c28e2da4b3d562', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=compare', 'help/my-product-comparison/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('f560b18b547bca23752a154b45120980', '6b30b01fe01b80894efc0f29610e5215', 'oxbaseshop', 0, 'index.php?cl=account_password', 'mein-passwort/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('bde12a1bdd3b9c77bdc694a7de4c0dea', '6c3658516be12443e6778f253d9a6945', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=alist', 'hilfe/kategorien/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('f560b18b547bca23752a154b45120980', '6f2e4da3d0686c0afd1b469eb7206fe0', 'oxbaseshop', 1, 'index.php?cl=account_password', 'my-password/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('c855234180a3b4056b496120d229ea68', '771a5811316cc0ed094425375f3734fe', 'oxbaseshop', 1, 'index.php?cl=account_wishlist', 'my-gift-registry/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('d12b7badee1037e7c1a5a7a245a14e11', '7c8aa72aa16b7d4a859b22d8b8328412', 'oxbaseshop', 0, 'index.php?cl=guestbook', 'gaestebuch/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('0f8b225c4476bfb9f9f06072591caf0c', '7ea6f0334b42ae9efcf7272cc6c5d8bd', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_newsletter', 'hilfe/newslettereinstellungen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('9a545b8f4ebd5c1458b5aae08812b60f', '823efff9d02f738d14833db1aea9c59d', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=wishlist', 'help/gift-registry/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('2e17757c0aaf8ed9ef2ba30317fa1faf', '82dd672d68d8f6c943f98ccdaecda691', 'oxbaseshop', 0, 'index.php?cl=suggest', 'empfehlen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('d35db2901a428b971c0d7d53d64c4f77', '878b29f193adb05133109d82eb4d9a88', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account', 'hilfe/mein-konto/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('dd1a86d489a8b312737f59ab2cac0eb4', '878fb0ccc48bca3194436cc19c3200e1', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=details', 'hilfe/produktdetails/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('2e17757c0aaf8ed9ef2ba30317fa1faf', '87d5020920bfb92d71b1484cb280d938', 'oxbaseshop', 1, 'index.php?cl=suggest', 'recommend/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('18f64cbbc296a32fb84b3bbe31dfed09', '89c5e6bf1b5441599c4815281debe8df', 'oxbaseshop', 0, 'index.php?cl=account', 'mein-konto/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('343c043546b3d653647e75d2e246ce94', '8c18c38a61be14599981cdf449a6154b', 'oxbaseshop', 1, 'index.php?cl=links', 'links_en/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('7ae7ab3bc27e81b92a56a54a7e02fdec', '8db8366788784126550dfc537f794190', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=basket', 'hilfe/warenkorb/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('6d9b5b3ee58bca1bd7be188f71e80ef2', '8eb12c447a6b1cc4ec76e9c22752d9e9', 'oxbaseshop', 1, 'index.php?cl=review', 'product-review/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('343c043546b3d653647e75d2e246ce94', '9508bb0d70121d49e4d4554c5b1af81d', 'oxbaseshop', 0, 'index.php?cl=links', 'links/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('730781c5e392155012ef2f055eedce00', '953c96d281f6b06a88f7d2afab84132b', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_password', 'help/my-password/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('a0ee4fb33f618ef2bef24e20d12d572f', '968c80a5b47daa4a4c7e5f1ac7c1925a', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_recommlist', 'hilfe/meine-lieblingslisten/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('a0ee4fb33f618ef2bef24e20d12d572f', '96c2cf148ffe07b6b3ace3b200541737', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_recommlist', 'help/my-listmania-list/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('71db5a32d74e4095f390ce401f158a14', '98802b1b09306862550b0bef7d774853', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=guestbook', 'help/guestbook/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('7189adecf13cac2a3e0a085aa8c276d6', 'a1322f6c88d2e16960433bbeb1c6c3da', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=register', 'hilfe/konto-eroeffnen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('7bc8a506bbca225a2f95b6eac66020bf', 'a24b03f1a3f73c325a7647e6039e2359', 'oxbaseshop', 0, 'index.php?cl=account_noticelist', 'mein-merkzettel/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('61c5d6965b480012aabb3a6701254b75', 'a4e5995182ade3cf039800c0ec2d512d', 'oxbaseshop', 0, 'index.php?cl=recommlist', 'Empfehlungslisten/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('71db5a32d74e4095f390ce401f158a14', 'a626f6f9942488da7ab0939c3585e58b', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=guestbook', 'hilfe/gaestebuch/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('ace1e168a1e8183a2aa79c2243171a29', 'a7d5ab5a4e87693998c5aec066dda6e6', 'oxbaseshop', 0, 'index.php?cl=account_user', 'meine-adressen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('7bc8a506bbca225a2f95b6eac66020bf', 'a95b7939d80dd844efc9d7a6d02d15cc', 'oxbaseshop', 1, 'index.php?cl=account_noticelist', 'my-wish-list/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('0563ce7f6a400737ce0e1c2b2c733e49', 'a9afb500184c584fb5ab2ad9b4162e96', 'oxbaseshop', 0, 'index.php?cl=forgotpwd', 'passwort-vergessen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('61c5d6965b480012aabb3a6701254b75', 'a9f5770242bc63a644a642217a2975c7', 'oxbaseshop', 1, 'index.php?cl=recommlist', 'Recomendation-Lists/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('98964bf04c7edae2d658c5f3b3233ca1', 'acddcfef9c25bcae3b96eb00669541ff', 'oxbaseshop', 0, 'index.php?cl=register', 'konto-eroeffnen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('6ba1f9c600305c7c92573cb6d1555797', 'af3d70b061ae02da3d6ce248c497dc32', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=links', 'hilfe/links/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('002a90a450bc0eba234f80b0b27636ff', 'b61bd555494657d24f309799e30827ec', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=newsletter', 'hilfe/newsletter/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('ace1e168a1e8183a2aa79c2243171a29', 'b6bd2da141efdd602f08bed53173d4fe', 'oxbaseshop', 1, 'index.php?cl=account_user', 'my-address/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('05c0f9a36dc4eaf3df528f0da18664d8', 'baa3b653a618696b06c70a6dda95ebde', 'oxbaseshop', 0, 'index.php?cl=account_recommlist', 'meine-lieblingslisten/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('9ba8be21e759c0fb18ed36d2d12b34ad', 'c8e1b81b4b48e7a9cffee95cfb8302bd', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=help', 'help/help/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('04abcb465a8d3a4441df4c480838d23d', 'c99b046f6a8d3f36fae42dc3ac4f1052', 'oxbaseshop', 1, 'index.php?cl=contact', 'contact/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('6d9b5b3ee58bca1bd7be188f71e80ef2', 'cc28156a4f728c1b33e7e02fd846628e', 'oxbaseshop', 0, 'index.php?cl=review', 'bewertungen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('ab459c0dc911137e9cc024d9fba5a68b', 'ccca27059506a916fb64d673a5dd676b', 'oxbaseshop', 0, 'index.php?cl=start', 'startseite/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('7ae7ab3bc27e81b92a56a54a7e02fdec', 'ce15bc2633c72c2d19a149933835f573', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=basket', 'help/cart/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('c4345f215c2f7b50549ca896b5c17f13', 'da3c1a52ac30056f0e020469a5d35d99', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=forgotpwd', 'hilfe/passwort-vergessen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('057ef382f23bdbb84991d049af2baba9', 'e0dd29a75947539da6b1924d31c9849f', 'oxbaseshop', 0, 'index.php?cl=compare', 'mein-produktvergleich/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('bc8df5696a42291e47f47478442ce2a8', 'e14a1b727702744e10190ff9a68608a0', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=suggest', 'help/recommend/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('e56acdd347b0516f68a0afdd811e2382', 'e604233c5a2804d21ec0252a445e93d3', 'oxbaseshop', 0, 'index.php?cl=newsletter', 'newsletter/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('38efc02f0f6b6a6d54cfef1fcdb99d70', 'e6331d115f5323610c639ef2f0369f8a', 'oxbaseshop', 0, 'index.php?cl=basket', 'warenkorb/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('730781c5e392155012ef2f055eedce00', 'e6c20bf0d1d929f570f919f35a25bff1', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_password', 'hilfe/mein-passwort/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('610f7fc243c7409cb5448b30029431fe', 'eb692d07ec8608d943db0a3bca29c4ce', 'oxbaseshop', 0, 'index.php?cl=account_order', 'bestellhistorie/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('98964bf04c7edae2d658c5f3b3233ca1', 'eb8ab9769e38b7c20ee3c52961d141a2', 'oxbaseshop', 1, 'index.php?cl=register', 'open-account/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('bc8df5696a42291e47f47478442ce2a8', 'ed33aefc08d7a8b31ad3dcb61ba5d1b5', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=suggest', 'hilfe/empfehlen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('8f44d31988a8962c87e3a0b7dda28ea2', 'ee2a5de42f342f7e4511facca565c5bd', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_user', 'help/billings-and-shipping-settings/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('be0df35ba37af88c6c09527f1e2d7180', 'f148b37071045343615adb862d15ca58', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_noticelist', 'help/my-wish-list/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('9a545b8f4ebd5c1458b5aae08812b60f', 'f156d24d4a67d1a00e3423d7381ebfe8', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=wishlist', 'hilfe/wunschzettel-oxid/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('57cb6b2fafc870810cd48b8e1d28cf91', 'f409502ee6998d6b48588958fde3cd6f', 'oxbaseshop', 1, 'index.php?cl=tags', 'tags/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('0f8b225c4476bfb9f9f06072591caf0c', 'f855c20ac0c448e855393f1c085732c3', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_newsletter', 'help/newsletter-settings/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('04abcb465a8d3a4441df4c480838d23d', 'f9d1a02ab749dc360c4e21f21de1beaf', 'oxbaseshop', 0, 'index.php?cl=contact', 'kontakt/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('23e2b46bdc9cd26023fd8020c5dff9a2', 'fe7cddc431f38a4571e9ee800647a97e', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=review', 'help/product-review/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('18f64cbbc296a32fb84b3bbe31dfed09', 'ff58d87c620d06bf14d17c4f9addf62b', 'oxbaseshop', 1, 'index.php?cl=account', 'my-account/', 'static', 0, '', '', 0, '');
+
+#
+# Table structure for table `oxseohistory`
+# for tracking old SEO urls
 # created 2008-05-21
+#
 
 DROP TABLE IF EXISTS `oxseohistory`;
 
 CREATE TABLE `oxseohistory` (
-  `OXOBJECTID` char(32) NOT NULL,
-  `OXIDENT` char(32) NOT NULL,
-  `OXSHOPID` char(32) NOT NULL default '',
+  `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXIDENT` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXLANG` int(2) NOT NULL default '0',
   `OXHITS` bigint(20) NOT NULL default '0',
   `OXINSERT` timestamp NULL default NULL,
@@ -1995,33 +2020,39 @@ CREATE TABLE `oxseohistory` (
   KEY `search` (`OXOBJECTID`,`OXSHOPID`,`OXLANG`)
 ) ENGINE=InnoDB;
 
-# table oxseolog for tracking untranslatable to SEO format non SEO urls
-# created 2008-10-21
+#
+# Table structure for table `oxseologs`
+# for tracking untranslatable to SEO format non SEO urls
+# created 2008-05-21
+#
 
 DROP TABLE IF EXISTS `oxseologs`;
 
 CREATE TABLE IF NOT EXISTS `oxseologs` (
   `OXSTDURL` text NOT NULL,
-  `OXIDENT` char(32) NOT NULL,
-  `OXSHOPID` char(32) NOT NULL default '',
+  `OXIDENT` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+  `OXSHOPID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXLANG` int(11) NOT NULL,
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`OXIDENT`,`OXSHOPID`,`OXLANG`)
 ) ENGINE=InnoDB;
 
-# table oxmediaurls for storing extended file urls
+#
+# Table structure for table `oxmediaurls`
+# for storing extended file urls
 # created 2008-06-25
+#
 
 DROP TABLE IF EXISTS `oxmediaurls`;
 
 CREATE TABLE `oxmediaurls` (
- `OXID` CHAR( 32 ) NOT NULL ,
- `OXOBJECTID` CHAR( 32 ) NOT NULL ,
- `OXURL` VARCHAR( 255 ) NOT NULL ,
- `OXDESC` VARCHAR( 255 ) NOT NULL ,
- `OXDESC_1` VARCHAR( 255 ) NOT NULL ,
- `OXDESC_2` VARCHAR( 255 ) NOT NULL ,
- `OXDESC_3` VARCHAR( 255 ) NOT NULL ,
+ `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+ `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
+ `OXURL` varchar(255) NOT NULL,
+ `OXDESC` varchar(255) NOT NULL,
+ `OXDESC_1` varchar(255) NOT NULL,
+ `OXDESC_2` varchar(255) NOT NULL,
+ `OXDESC_3` varchar(255) NOT NULL,
  `OXISUPLOADED` int(1) NOT NULL default '0',
  PRIMARY KEY ( `OXID` ) ,
  INDEX ( `OXOBJECTID` )

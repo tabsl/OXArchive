@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: forgotpwd.php 14516 2008-12-05 14:31:07Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: forgotpwd.php 17315 2009-03-17 16:18:58Z arvydas $
  */
 
 /**
@@ -43,12 +44,11 @@ class ForgotPwd extends oxUBase
     protected $_sForgotEmail = null;
 
     /**
-     * Current view search engine indexing state:
-     *     0 - index without limitations
-     *     1 - no index / no follow
-     *     2 - no index / follow
+     * Current view search engine indexing state
+     *
+     * @var int
      */
-    protected $_iViewIndexState = 1;
+    protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXNOFOLLOW;
 
     /**
      * Update link expiration status
@@ -56,6 +56,18 @@ class ForgotPwd extends oxUBase
      * @var bool
      */
     protected $_blUpdateLinkStatus = null;
+
+    /**
+     * Sign if to load and show top5articles action
+     * @var bool
+     */
+    protected $_blTop5Action = true;
+
+    /**
+     * Sign if to load and show bargain action
+     * @var bool
+     */
+    protected $_blBargainAction = true;
 
     /**
      * Executes oxemail::SendForgotPwdEmail() and sends login
@@ -75,7 +87,7 @@ class ForgotPwd extends oxUBase
         // problems sending passwd reminder ?
         if ( !$sEmail || !$oEmail->sendForgotPwdEmail( $sEmail ) ) {
             oxUtilsView::getInstance()->addErrorToDisplay('FORGOTPWD_ERRUNABLETOSEND', false, true);
-            $this->_sForgotEmail = ' - ';
+            $this->_sForgotEmail = false;
         }
     }
 
@@ -90,20 +102,20 @@ class ForgotPwd extends oxUBase
         $sNewPass  = oxConfig::getParameter( 'password_new', true );
         $sConfPass = oxConfig::getParameter( 'password_new_confirm', true );
 
-        if ( !$sNewPass || !$sConfPass ) {
-            return oxUtilsView::getInstance()->addErrorToDisplay('FORGOTPWD_ERRPASSWORDTOSHORT', false, true);
-        }
-
-        if ( $sNewPass != $sConfPass ) {
-            return oxUtilsView::getInstance()->addErrorToDisplay('FORGOTPWD_ERRPASSWDONOTMATCH', false, true);
-        }
-
-        if ( strlen($sNewPass) < 6 ||  strlen($sConfPass) < 6 ) {
-            return oxUtilsView::getInstance()->addErrorToDisplay('FORGOTPWD_ERRPASSWORDTOSHORT', false, true);
+        try {
+            $oUser = oxNew( 'oxuser' );
+            $oUser->checkPassword( $sNewPass, $sConfPass, true );
+        } catch ( Exception $oExcp ) {
+            switch ( $oExcp->getMessage() ) {
+                case 'EXCEPTION_INPUT_EMPTYPASS':
+                case 'EXCEPTION_INPUT_PASSTOOSHORT':
+                    return oxUtilsView::getInstance()->addErrorToDisplay('FORGOTPWD_ERRPASSWORDTOSHORT', false, true);
+                default:
+                    return oxUtilsView::getInstance()->addErrorToDisplay('FORGOTPWD_ERRPASSWDONOTMATCH', false, true);
+            }
         }
 
         // passwords are fine - updating and loggin user in
-        $oUser = oxNew( 'oxuser' );
         if ( $oUser->loadUserByUpdateId( $this->getUpdateId() ) ) {
 
             // setting new pass ..

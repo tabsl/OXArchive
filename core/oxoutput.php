@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxoutput.php 14502 2008-12-05 12:03:14Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxoutput.php 17880 2009-04-06 09:08:44Z alfonsas $
  */
 
 /**
@@ -67,9 +68,11 @@ class oxOutput extends oxSuperCfg
      */
     public function process( $sValue, $sClassName )
     {
+        $myConfig = $this->getConfig();
+
         //fix for euro currency problem (it's invisible in some older browsers)
-        if ( !$this->getConfig()->getConfigParam( 'blSkipEuroReplace' ) ) {
-            $sValue = str_replace( chr(128), '&euro;', $sValue );
+        if ( !$myConfig->getConfigParam( 'blSkipEuroReplace' ) && !$myConfig->isUtf() ) {
+            $sValue = str_replace( '¤', '&euro;', $sValue );
         }
 
         return $sValue;
@@ -85,11 +88,11 @@ class oxOutput extends oxSuperCfg
     final public function addVersionTags( $sOutput )
     {
         // DISPLAY IT
-        $sVersion = $this->getConfig()->getActiveShop()->oxshops__oxversion->value;
+        $sVersion = $this->getConfig()->getVersion();
+        $sEdition = $this->getConfig()->getFullEdition();
+        $sCurYear = date("Y");
 
-
-            $sOutput = preg_replace("/<\/head>/i", "</head>\n  <!-- OXID eShop Community Edition, Version $sVersion, Shopsystem \251 OXID eSales AG 2003-2008 - http://www.oxid-esales.com -->", $sOutput);
-
+        $sOutput = preg_replace("/<\/head>/i", "</head>\n  <!-- OXID eShop {$sEdition}, Version {$sVersion}, Shopsystem (c) OXID eSales AG 2003 - {$sCurYear} - http://www.oxid-esales.com -->", $sOutput);
 
         return $sOutput;
     }

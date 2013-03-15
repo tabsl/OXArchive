@@ -54,7 +54,6 @@
             [{ $oViewConf->getNavFormParams() }]
             <input type="hidden" name="fnc" value="savereview">
             <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
-            <input type="hidden" name="cnid" value="[{$oViewConf->getActCatId()}]">
             <input type="hidden" name="anid" value="[{ $product->oxarticles__oxid->value }]">
             <input type="hidden" name="reviewuserid" value="[{$oView->getReviewUserId()}]">
             <textarea cols="102" rows="15" name="rvw_txt" class="fullsize"></textarea><br>

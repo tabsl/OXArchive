@@ -51,7 +51,6 @@ function loadLang(obj)
         <input type="hidden" name="voxid" value="[{ $oxid }]">
         <input type="hidden" name="editval[oxshops__oxid]" value="[{ $oxid }]">
         <input type="hidden" name="agblang" value="[{$agblang}]">
-        [{include file="autosave.form.tpl"}]
         <tr>
           <td valign="top" class="edittext">
             <table cellspacing="0" cellpadding="0" border="0" style="width:100%;height:100%;">

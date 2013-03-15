@@ -125,7 +125,7 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
         if ( me._aFilters ) {
             for ( var i=0; i < me._aFilters.length; i++ ) {
                 if ( me._aFilters[i].name && me._aFilters[i].value ) {
-                    sRequest += '&aFilter[' + me._aFilters[i].name + ']=' + me._aFilters[i].value;
+                    sRequest += '&aFilter[' + me._aFilters[i].name + ']=' + encodeURIComponent( me._aFilters[i].value );
                 }
             }
         }
@@ -886,7 +886,7 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
         if ( me._aFilters ) {
             for ( var i=0; i < me._aFilters.length; i++ ) {
                 if ( me._aFilters[i].name && me._aFilters[i].value ) {
-                    sRequest += '&aFilter['+me._aFilters[i].name+']='+ me._aFilters[i].value;
+                    sRequest += '&aFilter['+me._aFilters[i].name+']='+ encodeURIComponent( me._aFilters[i].value );
                 }
             }
         }

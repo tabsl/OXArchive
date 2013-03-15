@@ -1,7 +1,7 @@
 [{include file="_header.tpl" location=$oView->getTemplateLocation() }]
 [{assign var="pageNavigation" value=$oView->getPageNavigation()}]
 
-    <strong class="head">
+    <div class="boxhead">
         <h1 id="test_catTitle">[{$oView->getTitle()}]</h1>
         [{if $pageNavigation->iArtCnt }]<em id="test_catArtCnt">([{ $pageNavigation->iArtCnt }])</em>[{/if}]
         [{assign var="actCategory" value=$oView->getActiveCategory()}]
@@ -10,30 +10,40 @@
             <a class="rss" id="rss.activeCategory" href="[{$rsslinks.activeCategory.link}]" title="[{$rsslinks.activeCategory.title}]"></a>
             [{oxscript add="oxid.blank('rss.activeCategory');"}]
         [{/if}]
-    </strong>
+    </div>
 
     [{capture name=list_details}]
         [{if $actCategory->oxcategories__oxthumb->value }]
-          <img src="[{$actCategory->getPictureUrl()}]/0/[{ $actCategory->oxcategories__oxthumb->value }]" alt="[{ $actCategory->oxcategories__oxtitle->value }]"><br>
+          <img src="[{$actCategory->getPictureUrl()}]0/[{ $actCategory->oxcategories__oxthumb->value }]" alt="[{ $actCategory->oxcategories__oxtitle->value }]"><br>
         [{/if}]
 
         [{if $oView->getAttributes() }]
             <form method="post" action="[{ $oViewConf->getSelfActionLink() }]" name="_filterlist" id="_filterlist">
             <div class="catfilter">
                 [{ $oViewConf->getHiddenSid() }]
+                [{ $oViewConf->getNavFormParams() }]
                 <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
-                <input type="hidden" name="cnid" value="[{$oViewConf->getActCatId()}]">
                 <input type="hidden" name="tpl" value="[{$tpl}]">
                 <input type="hidden" name="fnc" value="executefilter">
+
+                <table cellpadding="0" cellspacing="0">
                 [{foreach from=$oView->getAttributes() item=oFilterAttr key=sAttrID name=testAttr}]
-                    <label id="test_attrfilterTitle_[{$sAttrID}]_[{$smarty.foreach.testAttr.iteration}]">[{ $oFilterAttr->title }]:</label>
-                    <select name="attrfilter[[{ $sAttrID }]]" onchange="oxid.form.send('_filterlist');">
-                        <option value="" selected>[{ oxmultilang ident="LIST_PLEASECHOOSE" }]</option>
-                        [{foreach from=$oFilterAttr->aValues item=oValue}]
-                        <option value="[{ $oValue->id }]" [{ if $oValue->blSelected }]selected[{/if}]>[{ $oValue->value }]</option>
-                        [{/foreach}]
-                    </select>
+                    <tr>
+                        <td>
+                            <label id="test_attrfilterTitle_[{$sAttrID}]_[{$smarty.foreach.testAttr.iteration}]">[{ $oFilterAttr->title }]:</label>
+                        </td>
+                        <td>
+                           <select name="attrfilter[[{ $sAttrID }]]" onchange="oxid.form.send('_filterlist');">
+                               <option value="" selected>[{ oxmultilang ident="LIST_PLEASECHOOSE" }]</option>
+                               [{foreach from=$oFilterAttr->aValues item=oValue}]
+                               <option value="[{ $oValue->id }]" [{ if $oValue->blSelected }]selected[{/if}]>[{ $oValue->value }]</option>
+                               [{/foreach}]
+                           </select>
+                        </td>
+                    </tr>
                 [{/foreach}]
+                </table>
+
                 <noscript>
                     <input type="submit" value="[{ oxmultilang ident="LIST_APPLYFILTER" }]">
                 </noscript>
@@ -43,9 +53,14 @@
 
         [{if $oView->hasVisibleSubCats()}]
             [{ oxmultilang ident="LIST_SELECTOTHERCATS1" }]<b>[{$actCategory->oxcategories__oxtitle->value}]</b> [{ oxmultilang ident="LIST_SELECTOTHERCATS2" }]
-            <hr size="1">
+            <hr>
             <ul class="list">
             [{foreach from=$oView->getSubCatList() item=category name=MoreSubCat}]
+                [{if $category->getContentCats() }]
+                    [{foreach from=$category->getContentCats() item=ocont name=MoreCms}]
+                    <li><a id="test_MoreSubCms_[{$smarty.foreach.MoreSubCat.iteration}]_[{$smarty.foreach.MoreCms.iteration}]" href="[{$ocont->getLink()}]">[{ $ocont->oxcontents__oxtitle->value }]</a></li>
+                    [{/foreach}]
+                [{/if}]
                 [{if $category->getIsVisible()}]
                     [{if $category->oxcategories__oxicon->value }]
                         <a id="test_MoreSubCatIco_[{$smarty.foreach.MoreSubCat.iteration}]" href="[{ $category->getLink() }]">
@@ -60,7 +75,7 @@
         [{/if}]
 
         [{if $actCategory->oxcategories__oxlongdesc->value }]
-            <hr size="1">
+            <hr>
             <span id="test_catLongDesc">[{ $actCategory->oxcategories__oxlongdesc->value }]</span>
         [{/if}]
     [{/capture}]

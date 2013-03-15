@@ -56,11 +56,11 @@ function SetSticker( sStickerId, oObject)
 //-->
 </script>
 
-[{ if $readonly }]
+[{* if $readonly }]
     [{assign var="readonly" value="readonly disabled"}]
 [{else}]
     [{assign var="readonly" value=""}]
-[{/if}]
+[{/if*}]
 
 <form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
     [{ $shop->hiddensid }]
@@ -77,7 +77,6 @@ function SetSticker( sStickerId, oObject)
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
 <input type="hidden" name="language" value="[{ $actlang }]">
-[{include file="autosave.form.tpl"}]
 
         <table border="0" width="98%">
 
@@ -87,13 +86,13 @@ function SetSticker( sStickerId, oObject)
             [{ oxmultilang ident="GENERAL_SEO_ACTCAT" }]
             </td>
             <td class="edittext">
-            <select [{ $readonly }] [{ if $oCategories && $oCategories->count() }]onChange="document.myedit.submit();"[{/if}] name="aSeoData[oxparams]">
+            <select [{ $readonly }] onChange="document.myedit.submit();" name="aSeoData[oxparams]">
 
               [{ if $oCategories && $oCategories->count() }]
                 [{assign var="blCat" value="1"}]
                 <optgroup label="[{ oxmultilang ident="GENERAL_SEO_CAT" }]">
                 [{ foreach from=$oCategories item=oCategory }]
-                <option value="[{$oCategory->oxcategories__oxrootid->value}]" [{if $sCatId == $oCategory->oxcategories__oxrootid->value}]selected[{/if}]>[{$oCategory->oxcategories__oxtitle->value}]</option>
+                <option value="oxcategory#[{$oCategory->oxcategories__oxrootid->value}]" [{if $sCatId == $oCategory->oxcategories__oxrootid->value}]selected[{/if}]>[{$oCategory->oxcategories__oxtitle->value}]</option>
                 [{ /foreach }]
                 </optgroup>
               [{/if}]
@@ -102,7 +101,16 @@ function SetSticker( sStickerId, oObject)
                 [{assign var="blCat" value="1"}]
                 <optgroup label="[{ oxmultilang ident="GENERAL_SEO_VND" }]">
                 [{ foreach from=$oVendors item=oVendor }]
-                <option value="[{$oVendor->oxvendor__oxid->value}]" [{if $sCatId == $oVendor->oxvendor__oxid->value}]selected[{/if}]>[{$oVendor->oxvendor__oxtitle->value}]</option>
+                <option value="oxvendor#[{$oVendor->oxvendor__oxid->value}]" [{if $sCatType && $sCatType == 'oxvendor' && $sCatId == $oVendor->oxvendor__oxid->value}]selected[{/if}]>[{$oVendor->oxvendor__oxtitle->value}]</option>
+                [{ /foreach }]
+                </optgroup>
+              [{/if}]
+
+              [{ if $oManufacturers && $oManufacturers->count() }]
+                [{assign var="blCat" value="1"}]
+                <optgroup label="[{ oxmultilang ident="GENERAL_SEO_MANUFACTURER" }]">
+                [{ foreach from=$oManufacturers item=oManufacturer }]
+                <option value="oxmanufacturer#[{$oManufacturer->oxmanufacturers__oxid->value}]" [{if $sCatType && $sCatType == 'oxmanufacturer' && $sCatId == $oManufacturer->oxmanufacturers__oxid->value}]selected[{/if}]>[{$oManufacturer->oxmanufacturers__oxtitle->value}]</option>
                 [{ /foreach }]
                 </optgroup>
               [{/if}]
@@ -172,7 +180,7 @@ function SetSticker( sStickerId, oObject)
             <td class="edittext">
             </td>
             <td class="edittext"><br>
-                [{include file="language.tpl"}]
+                [{include file="language_edit.tpl"}]
             </td>
         </tr>
         [{/if}]

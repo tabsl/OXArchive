@@ -24,10 +24,10 @@ function EditThis( sID)
     var oTransfer = parent.edit.document.getElementById("transfer");
     oTransfer.oxid.value=sID;
     oTransfer.cl.value='article_main';
-    
+
     //forcing edit frame to reload after submit
     top.forceReloadingEditFrame();
-            
+
     var oSearch = parent.list.document.getElementById("search");
     oSearch.actedit.value = 0;
     oSearch.oxid.value=sID;
@@ -55,7 +55,6 @@ window.onLoad = top.reloadEditFrame();
 <input type="hidden" name="voxid" value="[{ $oxid }]">
 <input type="hidden" name="oxparentid" value="[{ $oxparentid }]">
 <input type="hidden" name="editval[article__oxid]" value="[{ $oxid }]">
-[{include file="autosave.form.tpl"}]
 
 
 
@@ -72,7 +71,7 @@ window.onLoad = top.reloadEditFrame();
             <tr>
               <td colspan="2">
                 [{ if $errorsavingtprice eq 1 }]
-                <div class="errorbox">[{ oxmultilang ident="ARTICLE_MAIN_ERRORSAVINGTPRICE" }]</div>
+                <div class="errorbox">[{ oxmultilang ident="ARTICLE_EXTEND_ERRORSAVINGTPRICE" }]</div>
                 [{/if}]
               </td>
             </tr>
@@ -129,14 +128,6 @@ window.onLoad = top.reloadEditFrame();
             </td>
             <td class="edittext">
               <input type="text" class="editinput" size="40" maxlength="[{$edit->oxarticles__oxurldesc->fldmax_length}]" name="editval[oxarticles__oxurldesc]" value="[{$edit->oxarticles__oxurldesc->value}]" [{ $readonly }]>
-            </td>
-          </tr>
-          <tr>
-            <td class="edittext">
-              [{ oxmultilang ident="ARTICLE_EXTEND_URLIMG" }]
-            </td>
-            <td class="edittext">
-              <input type="text" class="editinput" size="40" maxlength="[{$edit->oxarticles__oxurlimg->fldmax_length}]" name="editval[oxarticles__oxurlimg]" value="[{$edit->oxarticles__oxurlimg->value}]" [{ $readonly }]>
             </td>
           </tr>
           <tr>
@@ -243,7 +234,7 @@ window.onLoad = top.reloadEditFrame();
           </tr>
           <tr>
             <td class="edittext" colspan="2"><br>
-              [{include file="language.tpl"}]<br>
+              [{include file="language_edit.tpl"}]<br>
             </td>
           </tr>
         </table>

@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: start.php 14784 2008-12-16 16:44:30Z rimvydas.paskevicius $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: start.php 17276 2009-03-17 10:28:21Z arvydas $
  */
 
 /**
@@ -97,6 +98,18 @@ class Start extends oxUBase
     protected $_sTagCloud = null;
 
     /**
+     * Sign if to load and show top5articles action
+     * @var bool
+     */
+    protected $_blTop5Action = true;
+
+    /**
+     * Sign if to load and show bargain action
+     * @var bool
+     */
+    protected $_blBargainAction = true;
+
+    /**
      * Unsets SEO category and call parent::init();
      *
      * @return null
@@ -134,31 +147,15 @@ class Start extends oxUBase
         if ( $myConfig->getConfigParam( 'bl_perfLoadAktion' ) ) {
             // loading actions
             $this->_loadActions();
-            
-            $sMetaDescription = '';
-            $sMetaKeywords = '';
-            $blDescTag = false;
+            $myUtilsCount = oxUtilsCount::getInstance();
 
-            //setting meta keywords and meta description for top article
-            //T2008-02-26
-            //get long description directly from the db in order not to trigger longdescr field lazy load
-            //$sLongDescr = $oArtList->current()->oxarticles__oxlongdesc->value;
-            if ( $oArt = $this->getFirstArticle() ) {
-                $sMetaKeywords = $oArt->oxarticles__oxlongdesc->value;
-                $sMetaDescription = $oArt->oxarticles__oxtitle->value . ' - ' . $sMetaKeywords;
-                $blDescTag = true;
-            }
-            
-            $this->setMetaKeywords( $sMetaKeywords );
-            $this->setMetaDescription( $sMetaDescription, 200, $blDescTag );
-            
             if ( $oArtList = $this->getCatOfferArticleList() ) {
                 foreach ( $oArtList as $oCatArticle ) {
                     $oCatArticle->oCategory = $oCatArticle->getCategory();
                     if ( $oCatArticle->oCategory && $myConfig->getConfigParam( 'bl_perfShowActionCatArticleCnt' ) ) {
                         $oCatArticle->oCategory->iArtCnt = $oCatArticle->oCategory->getNrOfArticles();
                         if ( $oCatArticle->oCategory->iArtCnt == -1 ) {
-                            $oCatArticle->oCategory->iArtCnt = oxUtilsCount::getInstance()->getCatArticleCount( $oCatArticle->oCategory->oxcategories__oxid->value );
+                            $oCatArticle->oCategory->iArtCnt = $myUtilsCount->getCatArticleCount( $oCatArticle->oCategory->oxcategories__oxid->value );
                         }
                     }
                 }
@@ -200,43 +197,45 @@ class Start extends oxUBase
     }
 
     /**
-     * Sets the view parameter "meta_description". First tries to fetch data from content
-     * by ident (start::_sMetaContentIdent) and if data is not found - prepares keywords
-     * from given input params
+     * Returns current view meta data
+     * If $sMeta parameter comes empty, sets to it article title and description.
+     * It happens if current view has no meta data defined in oxcontent table
      *
-     * @param mixed $sInput    meta description
-     * @param int   $iLength   max length of result, -1 for no truncation
-     * @param bool  $blDescTag if true - performs additional dublicate cleaning
+     * @param string $sMeta     category path
+     * @param int    $iLength   max length of result, -1 for no truncation
+     * @param bool   $blDescTag if true - performs additional dublicate cleaning
      *
-     * @return null
+     * @return string
      */
-    public function setMetaDescription ( $sInput, $iLength = 1024, $blDescTag = false )
+    public function _prepareMetaDescription( $sMeta, $iLength = 1024, $blDescTag = false )
     {
-        $oContent = oxNew( 'oxcontent' );
-        if ( $oContent->loadByIdent( $this->_sMetaDescriptionIdent ) && $oContent->oxcontents__oxactive->value ) {
-            $sInput = $oContent->oxcontents__oxcontent->value;
+        if ( !$sMeta &&
+            $this->getConfig()->getConfigParam( 'bl_perfLoadAktion' ) &&
+            $oArt = $this->getFirstArticle() ) {
+            $oDescField = $oArt->getArticleLongDesc();
+            $sMeta = $oArt->oxarticles__oxtitle->value . ' - ' . $oDescField->value;
         }
-
-        return parent::setMetaDescription ( $sInput, $iLength, $blDescTag );
+        return parent::_prepareMetaDescription( $sMeta, $iLength, $blDescTag );
     }
 
     /**
-     * Sets the view parameter 'meta_keywords'. First tries to fetch data from content
-     * by ident (start::_sMetaContentIdent) and if data is not found - prepares keywords
-     * from given input params
+     * Returns current view keywords seperated by comma
+     * If $sKeywords parameter comes empty, sets to it article title and description.
+     * It happens if current view has no meta data defined in oxcontent table
      *
-     * @param mixed $sInput keywords
+     * @param string $sKeywords data to use as keywords
      *
-     * @return null
+     * @return string
      */
-    public function setMetaKeywords( $sInput )
+    public function _prepareMetaKeyword( $sKeywords )
     {
-        $oContent = oxNew( 'oxcontent' );
-        if ( $oContent->loadByIdent( $this->_sMetaKeywordsIdent ) && $oContent->oxcontents__oxactive->value ) {
-            $sInput = $oContent->oxcontents__oxcontent->value;
+        if ( !$sKeywords &&
+            $this->getConfig()->getConfigParam( 'bl_perfLoadAktion' ) &&
+            $oArt = $this->getFirstArticle() ) {
+            $oDescField = $oArt->getArticleLongDesc();
+            $sKeywords = $oDescField->value;
         }
-
-        return parent::setMetaKeywords( $sInput );
+        return parent::_prepareMetaKeyword( $sKeywords );
     }
 
     /**

@@ -73,7 +73,6 @@ function DeletePic( sField )
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
 <input type="hidden" name="editval[oxcategories__oxid]" value="[{ $oxid }]">
-[{include file="autosave.form.tpl"}]
 
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
 <tr>
@@ -113,7 +112,7 @@ function DeletePic( sField )
             <td class="edittext" colspan="2">
                 <select name="editval[oxcategories__oxparentid]" class="editinput" [{$readonly}]>
                 [{foreach from=$cattree->aList item=pcat}]
-                <option value="[{if $pcat->oxcategories__oxid->value}][{$pcat->oxcategories__oxid->value}][{else}]oxrootid[{/if}]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value|truncate:33:"..":true }]</option>
+                <option value="[{if $pcat->oxcategories__oxid->value}][{$pcat->oxcategories__oxid->value}][{else}]oxrootid[{/if}]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value|oxtruncate:33:"..":true }]</option>
                 [{/foreach}]
                 </select>
             </td>
@@ -194,8 +193,8 @@ function DeletePic( sField )
             <option value="">[{ oxmultilang ident="CATEGORY_MAIN_NONE" }]</option>
             [{foreach from=$pwrsearchfields key=field item=desc}]
             [{assign var="ident" value=GENERAL_ARTICLE_$desc}]
-            [{assign var="ident" value=$ident|upper }]
-            <option value="[{ $desc }]" [{ if $defsort == $desc }]SELECTED[{/if}]>[{ oxmultilang|truncate:20:"..":true ident=$ident }]</option>
+            [{assign var="ident" value=$ident|oxupper }]
+            <option value="[{ $desc }]" [{ if $defsort == $desc }]SELECTED[{/if}]>[{ oxmultilang|oxtruncate:20:"..":true ident=$ident }]</option>
             [{/foreach}]
             </select>
             <input type="radio" class="editinput" name="editval[oxcategories__oxdefsortmode]" [{if !$defsort}]disabled[{/if}] value="0" [{if $edit->oxcategories__oxdefsortmode->value=="0"}]checked[{/if}]>[{ oxmultilang ident="CATEGORY_MAIN_ASC" }]
@@ -239,7 +238,7 @@ function DeletePic( sField )
             <td class="edittext">
             </td>
             <td class="edittext" colspan="2"><br>
-                [{include file="language.tpl"}]
+                [{include file="language_edit.tpl"}]
             </td>
         </tr>
 

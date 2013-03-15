@@ -56,7 +56,7 @@
 <body>
 
 <div id="page">
-    <a href="index.php?istep=<?php echo STEP_WELCOME; ?>&sid=<?php echo( getSID()); ?>"><img src="<?php echo $sImagDir; ?>/setup_logo.gif" alt="OXID eSales" hspace="5" vspace="5" border="0"></a>
+    <a href="index.php?istep=<?php echo $aSetupSteps['STEP_SYSTEMREQ']; ?>&sid=<?php echo( getSID()); ?>"><img src="<?php echo $sImagDir; ?>/setup_logo.gif" alt="OXID eSales" hspace="5" vspace="5" border="0"></a>
     <div id="header">
         <?php
         $iCntr = 0;

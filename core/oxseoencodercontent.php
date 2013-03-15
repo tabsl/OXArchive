@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxseoencodercontent.php 14392 2008-11-26 16:50:36Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxseoencodercontent.php 17768 2009-04-02 10:52:12Z sarunas $
  */
 
 /**
@@ -81,7 +82,7 @@ class oxSeoEncoderContent extends oxSeoEncoder
             }
 
             $sSeoUrl .= $this->_prepareTitle( $oCont->oxcontents__oxtitle->value . '/' );
-            $sSeoUrl  = $this->_getUniqueSeoUrl( $sSeoUrl, '/', $oCont->getId() );
+            $sSeoUrl  = $this->_getUniqueSeoUrl( $sSeoUrl, '/', $oCont->getId(), $iLang );
 
             $this->_saveToDb( 'oxcontent', $oCont->getId(), $oCont->getStdLink(), $sSeoUrl, $iLang );
         }
@@ -106,4 +107,16 @@ class oxSeoEncoderContent extends oxSeoEncoder
         return $this->_getFullUrl( $this->_getContentUri( $oCont, $iLang ), $iLang );
     }
 
+    /**
+     * deletes content seo entries
+     *
+     * @param oxContent $oCont category object
+     *
+     * @return null
+     */
+    public function onDeleteContent($oCont)
+    {
+        $sId = oxDb::getDb()->quote($oCont->getId());
+        oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sId and oxtype = 'oxcontent'");
+    }
 }

@@ -17,7 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
  * $Id: oxdiscount.php 12855 2008-10-06 06:49:07Z vilma $
  */
 
@@ -73,6 +74,11 @@ class oxEfiDownloader extends oxSuperCfg
             throw new oxException();
         }
         fclose($fOut);
+
+        //remove possible old connector from the main shop dir
+        if (file_exists(getShopBasePath() . "/oxefi.php")) {
+            unlink(getShopBasePath() . "/oxefi.php");
+        }
 
         return $sFileName;
     }

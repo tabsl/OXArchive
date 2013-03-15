@@ -54,7 +54,6 @@ function SetSticker( sStickerId, oObject)
 <input type="hidden" name="sorting" value="">
 <input type="hidden" name="stable" value="">
 <input type="hidden" name="starget" value="">
-[{include file="autosave.form.tpl"}]
 
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
 

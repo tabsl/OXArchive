@@ -4,7 +4,7 @@
      [{if $actCategory && $actCategory->iProductPos }]
        <div class="lochead">
            <strong class="h4" id="test_prodXofY_[{$where}]">[{ oxmultilang ident="INC_DETAILS_LOCATOR_PRODUCT" }] [{ $actCategory->iProductPos }] / [{ $actCategory->iCntOfProd }]</strong>
-           <div class="right"><a id="test_BackOverview[{$where}]" href="[{$actCategory->toListLink }]">[{ oxmultilang ident="INC_DETAILS_LOCATOR_BACKTOOVERVIEW" }][{if ($sListType == "list" || $sListType == "vendor") && $actCategory}] [{ $actCategory->oxcategories__oxtitle->value }][{/if}]</a></div>
+           <div class="right"><a id="test_BackOverview[{$where}]" href="[{$actCategory->toListLink }]">[{ oxmultilang ident="INC_DETAILS_LOCATOR_BACKTOOVERVIEW" }][{if ($sListType == "list" || $sListType == "vendor" || $sListType == "manufacturer") && $actCategory}] [{ $actCategory->oxcategories__oxtitle->value }][{/if}]</a></div>
        </div>
      [{/if }]
      <div class="locbody">

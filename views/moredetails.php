@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2009
- * $Id: moredetails.php 14012 2008-11-06 13:23:45Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: moredetails.php 17315 2009-03-17 16:18:58Z arvydas $
  */
 
 /**
@@ -53,29 +54,11 @@ class MoreDetails extends oxUBase
     protected $_aArtZoomPics = null;
 
     /**
-     * Current view search engine indexing state:
-     *     0 - index without limitations
-     *     1 - no index / no follow
-     *     2 - no index / follow
-     */
-    protected $_iViewIndexState = 1;
-
-    /**
-     * Executes parent method parent::init() and loads article object.
+     * Current view search engine indexing state
      *
-     * Template variables:
-     * <b>anid</b>
-     *
-     * @return null
+     * @var int
      */
-    public function init()
-    {
-        parent::init();
-
-        // set anid for other pictures
-        $this->_oProduct = oxNewArticle( oxConfig::getParameter( 'anid' ) );
-        $this->_sProductId = $this->_oProduct->getId();
-    }
+    protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXNOFOLLOW;
 
     /**
      * Fetches article object info, collects image gallery data,
@@ -89,12 +72,10 @@ class MoreDetails extends oxUBase
      */
     public function render()
     {
-        $this->_aViewData['anid'] = $this->getProductId();
-
+        $this->_aViewData['anid']     = $this->getProductId();
         $this->_aViewData['actpicid'] = $this->getActPictureId();
         $this->_aViewData['ArtPics']  = $this->getArtZoomPics();
-
-        $this->_aViewData['product'] = $this->getProduct();
+        $this->_aViewData['product']  = $this->getProduct();
 
         parent::render();
 
@@ -108,6 +89,9 @@ class MoreDetails extends oxUBase
      */
     public function getProductId()
     {
+        if ( $this->_sProductId === null ) {
+            $this->_sProductId = $this->getProduct()->getId();
+        }
         return $this->_sProductId;
     }
 
@@ -120,7 +104,7 @@ class MoreDetails extends oxUBase
     {
         if ( $this->_sActPicId === null ) {
             $this->_sActPicId = false;
-            $aPicGallery = $this->_oProduct->getPictureGallery();
+            $aPicGallery = $this->getProduct()->getPictureGallery();
 
             if ( $aPicGallery['ZoomPic'] ) {
                 $sActPicId = oxConfig::getParameter( 'actpicid' );
@@ -140,7 +124,7 @@ class MoreDetails extends oxUBase
         if ( $this->_aArtZoomPics === null ) {
             $this->_aArtZoomPics = false;
             //Get picture gallery
-            $aPicGallery = $this->_oProduct->getPictureGallery();
+            $aPicGallery = $this->getProduct()->getPictureGallery();
             $blArtPic = $aPicGallery['ZoomPic'];
             $aArtPics = $aPicGallery['ZoomPics'];
 
@@ -154,10 +138,13 @@ class MoreDetails extends oxUBase
     /**
      * Template variable getter. Returns active product
      *
-     * @return object
+     * @return oxarticle
      */
     public function getProduct()
     {
+        if ( $this->_oProduct === null ) {
+            $this->_oProduct = oxNewArticle( oxConfig::getParameter( 'anid' ) );
+        }
         return $this->_oProduct;
     }
 }

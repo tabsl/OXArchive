@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxcategory.php 14388 2008-11-26 15:43:17Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxcategory.php 17854 2009-04-03 17:48:55Z tomas $
  */
 
 /**
@@ -105,6 +106,20 @@ class oxCategory extends oxI18n
     protected $_sDynImageDir = null;
 
     /**
+     * Top category marker
+     *
+     * @var bool
+     */
+    protected $_blTopCategory = null;
+
+    /**
+     * Category id's for sorting
+     *
+     * @var array
+     */
+    protected $_aIds = array();
+
+    /**
      * Class constructor, initiates parent constructor (parent::oxI18n()).
      */
     public function __construct()
@@ -168,9 +183,10 @@ class oxCategory extends oxI18n
 
         parent::assign( $dbRecord );
 
+        startProfile("parseThroughSmarty");
         // #1030C run through smarty
         $myConfig = $this->getConfig();
-        if ( !$this->isAdmin() && $myConfig->getConfigParam( 'bl_perfParseLongDescinSmarty' ) ) {
+        if (!$this->_isInList() && !$this->isAdmin() && $myConfig->getConfigParam( 'bl_perfParseLongDescinSmarty' ) ) {
             $this->oxcategories__oxlongdesc = new oxField( oxUtilsView::getInstance()->parseThroughSmarty( $this->oxcategories__oxlongdesc->value, $this->getId() ), oxField::T_RAW );
         }
 
@@ -181,6 +197,8 @@ class oxCategory extends oxI18n
                 $this->_iNrOfArticles = oxUtilsCount::getInstance()->getCatArticleCount( $this->getId() );
             }
         }
+
+        stopProfile("parseThroughSmarty");
     }
 
     /**
@@ -202,11 +220,13 @@ class oxCategory extends oxI18n
         $blRet    = false;
 
         if ( $this->oxcategories__oxright->value == ($this->oxcategories__oxleft->value+1) ) {
+            $myUtilsPic = oxUtilsPic::getInstance();
+
             // only delete empty categories
             // #1173M - not all pic are deleted, after article is removed
-            oxUtilsPic::getInstance()->safePictureDelete($this->oxcategories__oxthumb->value, $myConfig->getAbsDynImageDir().'/0', 'oxcategories', 'oxthumb' );
+            $myUtilsPic->safePictureDelete($this->oxcategories__oxthumb->value, $myConfig->getAbsDynImageDir().'/0', 'oxcategories', 'oxthumb' );
 
-            oxUtilsPic::getInstance()->safePictureDelete($this->oxcategories__oxicon->value, $myConfig->getAbsDynImageDir().'/icon', 'oxcategories', 'oxicon' );
+            $myUtilsPic->safePictureDelete($this->oxcategories__oxicon->value, $myConfig->getAbsDynImageDir().'/icon', 'oxcategories', 'oxicon' );
 
             $sAdd = " and oxshopid = '" . $this->getShopId() . "' ";
 
@@ -232,6 +252,8 @@ class oxCategory extends oxI18n
             $oDB->execute( "delete from oxobject2delivery where oxobject2delivery.oxobjectid='".$this->oxcategories__oxid->value."' ");
             // - discounts
             $oDB->execute( "delete from oxobject2discount where oxobject2discount.oxobjectid='".$this->oxcategories__oxid->value."' ");
+
+            oxSeoEncoderCategory::getInstance()->onDeleteCategory($this);
         }
         return $blRet;
     }
@@ -311,7 +333,47 @@ class oxCategory extends oxI18n
      */
     public function sortSubCats()
     {
-        uasort( $this->_aSubCats, array( $this, "cmpCat" ) );
+        if ( count( $this->_aIds ) > 0 ) {
+            uasort($this->_aSubCats, array( $this, 'cmpCat' ) );
+        }
+    }
+
+    /**
+     * categry sorting callback function, $_aIds array will be set with function
+     * oxcategory::setSortingIds() and generated in oxcategorylist::sortCats()
+     *
+     * @param oxcategory $a first  category
+     * @param oxcategory $b second category
+     *
+     * @return integer
+     */
+    public function cmpCat( $a,$b )
+    {
+        if ( count( $this->_aIds ) == 0 ) {
+            return;
+        }
+
+        $sNumA = $this->_aIds[$a->oxcategories__oxid->value];
+        $sNumB = $this->_aIds[$b->oxcategories__oxid->value];
+
+        if ($sNumA  < $sNumB ) {
+            return -1;
+        } if ( $sNumA == $sNumB) {
+            return 0;
+        }
+        return 1;
+    }
+
+    /**
+     * categry sorted array
+     *
+     * @param array $aSorIds sorted category array
+     *
+     * @return null
+     */
+    public function setSortingIds( $aSorIds )
+    {
+        $this->_aIds = $aSorIds;
     }
 
     /**
@@ -351,23 +413,6 @@ class oxCategory extends oxI18n
         } else {
             $this->_aContentCats[] = $oContent;
         }
-    }
-
-    /**
-     * categry sorting callback function
-     *
-     * @param oxcategory $a first  category
-     * @param oxcategory $b second category
-     *
-     * @return integer
-     */
-    public function cmpCat( $a,$b )
-    {
-        if ( $a->oxcategories__oxsort->value == $b->oxcategories__oxsort->value ) {
-            return strcasecmp( $a->oxcategories__oxtitle->value, $b->oxcategories__oxtitle->value );
-        }
-
-        return $a->oxcategories__oxsort->value - $b->oxcategories__oxsort->value;
     }
 
     /**
@@ -630,6 +675,7 @@ class oxCategory extends oxI18n
 
             $rs = oxDb::getDb()->Execute( $sSelect);
             if ($rs != false && $rs->recordCount() > 0) {
+                $oStr = getStr();
                 while ( !$rs->EOF && list($sAttId,$sAttTitle,$sAttVid,$sAttValue) = $rs->fields ) {
                     if ( !isset( $aAttributes[$sAttId])) {
                         $oAttribute           = new stdClass();
@@ -638,8 +684,8 @@ class oxCategory extends oxI18n
                         $aAttributes[$sAttId] = $oAttribute;
                     }
                     $oValue             = new stdClass();
-                    $oValue->id         = htmlspecialchars($sAttValue);
-                    $oValue->value      = htmlspecialchars($sAttValue);
+                    $oValue->id         = $oStr->htmlspecialchars( $sAttValue );
+                    $oValue->value      = $oStr->htmlspecialchars( $sAttValue );
                     $oValue->blSelected = isset($aSessionFilter[$sActCat][$sAttId]) && $aSessionFilter[$sActCat][$sAttId] == $sAttValue;
 
                     $blActiveFilter = $blActiveFilter || $oValue->blSelected;
@@ -938,4 +984,16 @@ class oxCategory extends oxI18n
         return $this->getConfig()->getPictureUrl( 'icon/'.$this->oxcategories__oxicon->value );
     }
 
+    /**
+     * Returns true is category parent id is 'oxrootid'
+     *
+     * @return bool
+     */
+    public function isTopCategory()
+    {
+        if ( $this->_blTopCategory == null ) {
+            $this->_blTopCategory = $this->oxcategories__oxparentid->value == 'oxrootid';
+        }
+        return $this->_blTopCategory;
+    }
 }

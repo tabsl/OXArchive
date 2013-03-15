@@ -12,9 +12,9 @@
         <form action="[{ $oViewConf->getSslSelfLink() }]" name="shipping" id="shipping" method="post">
           <div>
               [{ $oViewConf->getHiddenSid() }]
+              [{ $oViewConf->getNavFormParams() }]
               <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
               <input type="hidden" name="fnc" value="changeshipping">
-              <input type="hidden" name="cnid" value="[{$oViewConf->getActCatId()}]">
 
               <div class="left">
                 <select name="sShipSet" onChange="JavaScript:document.forms.shipping.submit();">
@@ -60,10 +60,10 @@
 
         <form action="[{ $oViewConf->getSslSelfLink() }]" name="order" method="post">
           <div>
-            [{ $oViewConf->getHiddenSid() }]
+              [{ $oViewConf->getHiddenSid() }]
+              [{ $oViewConf->getNavFormParams() }]
               <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
               <input type="hidden" name="fnc" value="validatepayment">
-              <input type="hidden" name="cnid" value="[{$oViewConf->getActCatId()}]">
           </div>
 
             [{if $oView->getPaymentList()}]

@@ -40,7 +40,6 @@ function UpdateList( sID)
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
 <input type="hidden" name="editval[oxshops__oxid]" value="[{ $oxid }]">
-[{include file="autosave.form.tpl"}]
 
 
    [{ oxmultilang ident="SHOP_SEO_NEWINSTALL" }]<br>
@@ -54,8 +53,8 @@ function UpdateList( sID)
             <FIELDSET id=fldLayout>
               <LEGEND id=lgdLayout>
                 <select name="editlanguage" id="test_editlanguage" class="saveinnewlanginput" onChange="Javascript:document.myedit.submit();" [{$readonly}]>
-                [{foreach from=$otherlang key=lang item=olang}]
-                <option value="[{ $lang }]"[{ if $olang->selected}]SELECTED[{/if}]>[{ $olang->sLangDesc }]</option>
+                [{foreach from=$languages key=lang item=olang}]
+                <option value="[{ $lang }]"[{ if $subjlang == $lang}]SELECTED[{/if}]>[{ $olang->name }]</option>
                 [{/foreach}]
                 </select>
               </LEGEND>
@@ -133,23 +132,10 @@ function UpdateList( sID)
 
         <tr class="conftext[{cycle}]">
          <td valign="top">
-            <select class="saveinnewlanginput" name=confstrs[iDefSeoLang]>
-              [{foreach from=$otherlang key=lang item=olang}]
-              <option value="[{ $lang }]"[{ if $lang == $confstrs.iDefSeoLang }]SELECTED[{/if}]>[{ $olang->sLangDesc }]</option>
-              [{/foreach}]
-            </select>
-         </td>
-         <td valign="top" width="100%">
-           [{ oxmultilang ident="SHOP_SEO_MAINLANGUAGE" }]
-         </td>
-        </tr>
-
-        <tr class="conftext[{cycle}]">
-         <td valign="top">
             <textarea class="confinput" style="width: 270; height: 42" name=confarrs[aSkipTags] [{ $readonly }]>[{$confarrs.aSkipTags}]</textarea><BR>
          </td>
          <td valign="top" width="100%">
-           [{ oxmultilang ident="SHOP_SYSTEM_SKIPTAGS" }]
+           [{ oxmultilang ident="SHOP_SEO_SKIPTAGS" }]
          </td>
         </tr>
 
@@ -169,7 +155,7 @@ function UpdateList( sID)
                  [{ assign var="oActItem" value=$oItem }]
                [{/if}]
 
-             <option value="[{$oItem->oxseo__oxobjectid->value}]" [{ if $oItem->oxseo__oxobjectid->value == $sActSeoObject }]selected[{/if}]>[{$oItem->oxseo__oxstdurl->value}]</option>
+             <option value="[{$oItem->oxseo__oxobjectid->value}]" [{ if $oItem->oxseo__oxobjectid->value == $sActSeoObject }]selected[{/if}]>[{$oItem->oxseo__oxstdurl->getRawValue()}]</option>
              [{/foreach}]
            </select>
          </td>
@@ -182,20 +168,20 @@ function UpdateList( sID)
 
         <tr class="conftext[{cycle}]">
          <td>
-          <input type=text class="confinput" style="width:270" name="aStaticUrl[oxseo__oxstdurl]" id="oxseo__oxstdurl" value="[{$oActItem->oxseo__oxstdurl->value}]" [{ $readonly }]>
+          <input type=text class="confinput" style="width:270" name="aStaticUrl[oxseo__oxstdurl]" id="oxseo__oxstdurl" value="[{if $oActItem->oxseo__oxstdurl}][{$oActItem->oxseo__oxstdurl->getRawValue()}][{/if}]" [{ $readonly }]>
          </td>
          <td>
            [{ oxmultilang ident="SHOP_SEO_STDURL" }]
          </td>
         </tr>
 
-        [{foreach from=$otherlang key=lang item=olang}]
+        [{foreach from=$languages key=lang item=olang}]
         <tr class="conftext[{cycle}]">
          <td>
           <input type=text class="confinput" style="width:270" name="aStaticUrl[oxseo__oxseourl][[{ $lang }]]" value="[{$aSeoUrls.$lang.1}]" [{ $readonly }]>
          </td>
          <td>
-          [{ $olang->sLangDesc }]
+          [{ $olang->name }]
          </td>
         </tr>
         [{/foreach}]

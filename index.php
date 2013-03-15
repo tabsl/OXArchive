@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package main
- * @copyright © OXID eSales AG 2003-2009
- * $Id: index.php 14787 2008-12-16 17:22:35Z tomas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: index.php 16605 2009-02-19 11:26:11Z sarunas $
  */
 
 // Setting error reporting mode
@@ -27,9 +28,9 @@
 //Know exactly where in the code the event occurred.
 //Zend platform only.
 if (function_exists('monitor_set_aggregation_hint') && isset($_REQUEST['cl'])) {
-    $sAgregationHint = htmlentities($_REQUEST['cl']) . '/';
+    $sAgregationHint = htmlentities($_REQUEST['cl'], ENT_QUOTES, 'UTF-8') . '/';
     if (isset($_REQUEST['fnc']))
-        $sAgregationHint .= htmlentities($_REQUEST['fnc']);
+        $sAgregationHint .= htmlentities($_REQUEST['fnc'], ENT_QUOTES, 'UTF-8');
     monitor_set_aggregation_hint($sAgregationHint);
 }
 
@@ -144,7 +145,7 @@ if (!isAdmin() && ($iDebug == 7))
     $_iNr = 1;
     foreach ($aWarnings as $w)
     {
-        echo "{$w['check']}: {$w['time']} - <span style='color:#900000;margin:5px'>".htmlentities($w['sql'])."</span>";
+        echo "{$w['check']}: {$w['time']} - <span style='color:#900000;margin:5px'>".htmlentities($w['sql'], ENT_QUOTES, 'UTF-8')."</span>";
         echo "<div id='dbgdb_trace_$_iNr' style='display:none'>".nl2br($w['trace'])."</div>";
         echo "<a style='color:#00AA00;margin:5px;cursor:pointer' onclick='var el=document.getElementById(\"dbgdb_trace_$_iNr\"); if (el.style.display==\"block\")el.style.display=\"none\"; else el.style.display = \"block\";'>TRACE (show/hide)</a><br><br>";
         ++$_iNr;

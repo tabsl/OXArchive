@@ -9,9 +9,9 @@
     <form action="[{ $oViewConf->getSelfActionLink() }]" method="post">
       <div>
           [{ $oViewConf->getHiddenSid() }]
+          [{ $oViewConf->getNavFormParams() }]
           <input type="hidden" name="fnc" value="saveEntry">
           <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
-          <input type="hidden" name="cnid" value="[{$oViewConf->getActCatId()}]">
           <label>[{ oxmultilang ident="GUESTBOOKENTRY_YOURMESSAGE" }]&nbsp;</label><br>
           <textarea cols="66" rows="15" name="rvw_txt" ></textarea><br>
           <span class="btn"><input type="submit" value="[{ oxmultilang ident="GUESTBOOKENTRY_SEND" }]" class="btn"></span>

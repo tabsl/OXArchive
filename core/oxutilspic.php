@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxutilspic.php 14058 2008-11-07 14:44:25Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxutilspic.php 17431 2009-03-19 12:35:54Z rimvydas.paskevicius $
  */
 
 /**
@@ -220,9 +221,7 @@ class oxUtilsPic extends oxSuperCfg
      */
     public function iconName( $sFilename )
     {
-        $sIconName = str_replace(".jpg", "_ico.jpg", $sFilename );
-        $sIconName = str_replace(".gif", "_ico.gif", $sIconName );
-        $sIconName = str_replace(".png", "_ico.png", $sIconName );
+        $sIconName = eregi_replace( '(\.jpg|\.gif|\.png)$', '_ico\\1', $sFilename );
 
         return $sIconName;
     }

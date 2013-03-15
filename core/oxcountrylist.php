@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxcountrylist.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxcountrylist.php 16365 2009-02-09 10:01:52Z vilma $
  */
 
 /**
@@ -41,20 +42,6 @@ class oxCountryList extends oxList
     }
 
     /**
-     * Selects and SQL, creates objects, assign them and
-     * preforms sorting that handles umlauts
-     *
-     * @param string $sSQL SQL select statement
-     *
-     * @return null;
-     */
-    public function selectString( $sSQL )
-    {
-        parent::selectString( $sSQL );
-        uasort( $this->_aArray, array( $this, '_localCompare' ) );
-    }
-
-    /**
      * Selects and loads all active countries
      *
      * @param integer $iLang language
@@ -65,43 +52,8 @@ class oxCountryList extends oxList
     {
         $sSufix = oxLang::getInstance()->getLanguageTag( $iLang );
 
-        $sSelect = "SELECT oxid, oxtitle$sSufix as oxtitle FROM oxcountry WHERE oxactive = '1' ORDER BY oxtitle$sSufix ";
+        $sSelect = "SELECT oxid, oxtitle$sSufix as oxtitle FROM oxcountry WHERE oxactive = '1' ORDER BY oxorder, oxtitle$sSufix ";
         $this->selectString( $sSelect );
     }
 
-    /**
-     * Improved country sorting that handles umlauts.
-     * Replaces umlauts and compares country titles.
-     *
-     * @param oxCountry $oA oxCountry object
-     * @param oxCountry $oB oxCountry oxCountry object
-     *
-     * @return bool
-     */
-    protected function _localCompare( $oA, $oB )
-    {
-        if ( $oA->oxcountry__oxorder->value != $oB->oxcountry__oxorder->value ) {
-            if ( $oA->oxcountry__oxorder->value < $oB->oxcountry__oxorder->value ) {
-                return -1;
-            } else {
-                return 1;
-            }
-        }
-
-        $aReplaceWhat = array( '/ä/', '/ö/', '/ü/', '/Ü/', '/Ä/', '/Ö/', '/ß/',
-                               '/&auml;/', '/&ouml;/', '/&uuml;/', '/&Auml;/', '/&Ouml;/', '/&Uuml;/', '/&szlig;/' );
-        $aReplaceTo   = array( 'az', 'oz', 'uz', 'Uz', 'Az', 'Oz', 'sz', 'az', 'oz', 'uz', 'Az', 'Oz', 'Uz', 'sz' );
-
-        $sACodedTitle = preg_replace( $aReplaceWhat, $aReplaceTo, $oA->oxcountry__oxtitle->value );
-        $sBCodedTitle = preg_replace( $aReplaceWhat, $aReplaceTo, $oB->oxcountry__oxtitle->value );
-        
-        $iRes = strcasecmp( $sACodedTitle, $sBCodedTitle );
-        
-        // if equal, using case sensitive compare
-        if ( $iRes === 0 ) {
-            $iRes = strcmp( $sACodedTitle, $sBCodedTitle ) ;
-        }
-        
-        return $iRes;
-    }
 }

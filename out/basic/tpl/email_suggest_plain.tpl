@@ -1,4 +1,4 @@
-[{ oxmultilang ident="EMAIL_SUGGEST_HTML_PRODUCTPOSTCARDFROM" }] [{ $shop->oxshops__oxname->value }]
+[{ oxmultilang ident="EMAIL_SUGGEST_HTML_PRODUCTPOSTCARDFROM" }] [{ $shop->oxshops__oxname->getRawValue() }]
 
 [{ oxmultilang ident="EMAIL_SUGGEST_HTML_FROM" }] [{$userinfo->send_name}]
 [{ oxmultilang ident="EMAIL_SUGGEST_HTML_EMAIL" }] [{$userinfo->send_email}]

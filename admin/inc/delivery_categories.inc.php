@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package inc
- * @copyright © OXID eSales AG 2003-2009
- * $Id: delivery_categories.inc.php 14035 2008-11-06 14:48:53Z arvydas $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: delivery_categories.inc.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -45,8 +46,6 @@ class ajaxComponent extends ajaxListComponent
      */
     protected function _getQuery()
     {
-        $myConfig = $this->getConfig();
-
         // looking for table/view
         $sCatTable = getViewName('oxcategories');
 
@@ -55,15 +54,21 @@ class ajaxComponent extends ajaxListComponent
 
         // category selected or not ?
         if ( !$sDelId) {
-            $sQAdd  = " from $sCatTable where $sCatTable.oxshopid = '".$myConfig->getShopId()."' ";
+            $sQAdd  = " from $sCatTable ";
         } else {
             $sQAdd  = " from oxobject2delivery left join $sCatTable on $sCatTable.oxid=oxobject2delivery.oxobjectid ";
             $sQAdd .= " where oxobject2delivery.oxdeliveryid = '$sDelId' and oxobject2delivery.oxtype = 'oxcategories' ";
         }
 
         if ( $sSynchDelId && $sSynchDelId != $sDelId) {
-            $sQAdd .= " and $sCatTable.oxid not in ( select $sCatTable.oxid from oxobject2delivery left join $sCatTable on $sCatTable.oxid=oxobject2delivery.oxobjectid ";
-            $sQAdd .= " where oxobject2delivery.oxdeliveryid = '$sSynchDelId' and oxobject2delivery.oxtype = 'oxcategories' ) ";
+            // dodger performance
+            $sSubSelect  = " select $sCatTable.oxid from oxobject2delivery left join $sCatTable on $sCatTable.oxid=oxobject2delivery.oxobjectid ";
+            $sSubSelect .= " where oxobject2delivery.oxdeliveryid = '$sSynchDelId' and oxobject2delivery.oxtype = 'oxcategories' ";
+            if ( stristr( $sQAdd, 'where' ) === false )
+                $sQAdd .= ' where ';
+            else
+                $sQAdd .= ' and ';
+            $sQAdd .= " $sCatTable.oxid not in ( $sSubSelect ) ";
         }
 
         return $sQAdd;

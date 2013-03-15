@@ -17,8 +17,9 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2009
- * $Id: oxseoencoderarticle.php 14388 2008-11-26 15:43:17Z vilma $
+ * @copyright (C) OXID eSales AG 2003-2009
+ * @version OXID eShop CE
+ * $Id: oxseoencoderarticle.php 17768 2009-04-02 10:52:12Z sarunas $
  */
 
 /**
@@ -74,7 +75,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
         }
 
         //load details link from DB
-        if ( !( $sSeoUrl = $this->_loadFromDb( 'oxarticle', $oArticle->getId(), $iLang, $iShopId, $sActCatId, false ) ) ) {
+        if ( !( $sSeoUrl = $this->_loadFromDb( 'oxarticle', $oArticle->getId(), $iLang, null, $sActCatId, false ) ) ) {
 
             if ($iLang != $oArticle->getLanguage()) {
                 $sId = $oArticle->getId();
@@ -88,15 +89,17 @@ class oxSeoEncoderArticle extends oxSeoEncoder
             // create uri for all categories
             $oCategorys = $this->getSeoCategories( $oArticle, $iLang );
             if (!$oCategorys->count()) {
-                $sSeoUrl = $this->_getUniqueSeoUrl( $sTitle, '.html', $oArticle->getId() );
+                $sSeoUrl = $this->_getUniqueSeoUrl( $sTitle, '.html', $oArticle->getId(), $iLang );
                 $this->_saveToDb( 'oxarticle', $oArticle->getId(), $oArticle->getStdLink(), $sSeoUrl, $iLang );
             } else {
                 $sTmpSeoUrl = '';
+                $oEncoder = oxSeoEncoderCategory::getInstance();
                 foreach ($oCategorys as $oCategory) {
                     // writing category path
-                    $sTmpSeoUrl = oxSeoEncoderCategory::getInstance()->getCategoryUri( $oCategory );
+                    $sTmpSeoUrl = $oEncoder->getCategoryUri( $oCategory );
                     $sTmpSeoUrl .= $sTitle;
-                    $sTmpSeoUrl  = $this->_getUniqueSeoUrl( $sTmpSeoUrl, '.html', $oArticle->getId() );
+                    $sTmpSeoUrl  = $this->_getUniqueSeoUrl( $sTmpSeoUrl, '.html', $oArticle->getId(), $iLang );
+
                     $this->_saveToDb( 'oxarticle', $oArticle->getId(), $oArticle->getStdLink(), $sTmpSeoUrl, $iLang, null, 0, '', '', $oCategory->oxcategories__oxrootid->value);
                     if ($oCategory->oxcategories__oxrootid->value == $sActCatId) {
                         $sSeoUrl = $sTmpSeoUrl;
@@ -158,7 +161,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
         }
 
         //load details link from DB
-        if ( !( $sSeoUrl = $this->_loadFromDb( 'oxarticle', $oArticle->getId(), $iLang, $iShopId, $sActVendorId, true ) ) ) {
+        if ( !( $sSeoUrl = $this->_loadFromDb( 'oxarticle', $oArticle->getId(), $iLang, null, $sActVendorId, true ) ) ) {
 
             if ( $iLang != $oArticle->getLanguage() ) {
                 $sId = $oArticle->getId();
@@ -171,11 +174,11 @@ class oxSeoEncoderArticle extends oxSeoEncoder
 
             // create uri for all categories
             if ( !$sActVendorId || !$oVendor ) {
-                $sSeoUrl = $this->_getUniqueSeoUrl( $sTitle, '.html', $oArticle->getId() );
+                $sSeoUrl = $this->_getUniqueSeoUrl( $sTitle, '.html', $oArticle->getId(), $iLang );
                 $this->_saveToDb( 'oxarticle', $oArticle->getId(), $oArticle->getStdLink(), $sSeoUrl, $iLang );
             } else {
                 $sSeoUrl = oxSeoEncoderVendor::getInstance()->getVendorUri( $oVendor, $iLang );
-                $sSeoUrl = $this->_getUniqueSeoUrl( $sSeoUrl . $sTitle, '.html', $oArticle->getId() );
+                $sSeoUrl = $this->_getUniqueSeoUrl( $sSeoUrl . $sTitle, '.html', $oArticle->getId(), $iLang );
 
                 $this->_saveToDb( 'oxarticle', $oArticle->getId(), $oArticle->getStdLink(), $sSeoUrl, $iLang, null, 0, '', '', $sActVendorId );
             }
@@ -186,6 +189,55 @@ class oxSeoEncoderArticle extends oxSeoEncoder
         return $sSeoUrl;
     }
 
+    /**
+     * Returns manufacturer seo uri for current article
+     *
+     * @param oxarticle $oArticle article object
+     * @param int       $iLang    language id (optional)
+     *
+     * @return string
+     */
+    protected function _getArticleManufacturerUri( $oArticle, $iLang = null )
+    {
+        startProfile(__FUNCTION__);
+        if ( !isset( $iLang ) ) {
+            $iLang = $oArticle->getLanguage();
+        }
+
+        $sActManufacturerId = $oArticle->oxarticles__oxmanufacturerid->value;
+        $oManufacturer = oxNew( 'oxmanufacturer' );
+        if ( !$sActManufacturerId || !$oManufacturer->load( $sActManufacturerId ) ) {
+            $oManufacturer = null;
+        }
+
+        //load details link from DB
+        if ( !( $sSeoUrl = $this->_loadFromDb( 'oxarticle', $oArticle->getId(), $iLang, null, $sActManufacturerId, true ) ) ) {
+
+            if ( $iLang != $oArticle->getLanguage() ) {
+                $sId = $oArticle->getId();
+                $oArticle = oxNew('oxarticle');
+                $oArticle->loadInLang( $iLang, $sId );
+            }
+
+            // create title part for uri
+            $sTitle = $this->_prepareArticleTitle( $oArticle );
+
+            // create uri for all categories
+            if ( !$sActManufacturerId || !$oManufacturer ) {
+                $sSeoUrl = $this->_getUniqueSeoUrl( $sTitle, '.html', $oArticle->getId(), $iLang );
+                $this->_saveToDb( 'oxarticle', $oArticle->getId(), $oArticle->getStdLink(), $sSeoUrl, $iLang );
+            } else {
+                $sSeoUrl = oxSeoEncoderManufacturer::getInstance()->getManufacturerUri( $oManufacturer, $iLang );
+                $sSeoUrl = $this->_getUniqueSeoUrl( $sSeoUrl . $sTitle, '.html', $oArticle->getId(), $iLang );
+
+                $this->_saveToDb( 'oxarticle', $oArticle->getId(), $oArticle->getStdLink(), $sSeoUrl, $iLang, null, 0, '', '', $sActManufacturerId );
+            }
+        }
+
+        stopProfile(__FUNCTION__);
+
+        return $sSeoUrl;
+    }
     /**
      * Encodes article URLs into SEO format
      *
@@ -201,13 +253,17 @@ class oxSeoEncoderArticle extends oxSeoEncoder
             $iLang = $oArticle->getLanguage();
         }
 
+        $sUri = '';
         switch ( $iType ) {
             case 1 :
                 $sUri = $this->_getArticleVendorUri( $oArticle, $iLang );
                 break;
+            case 2 :
+                $sUri = $this->_getArticleManufacturerUri( $oArticle, $iLang );
+                break;
             default:
                 $sUri = $this->_getArticleUri( $oArticle, $iLang );
-            }
+        }
 
         return $this->_getFullUrl( $sUri, $iLang );
 
@@ -264,5 +320,18 @@ class oxSeoEncoderArticle extends oxSeoEncoder
             }
         }
         return $oList;
+    }
+
+    /**
+     * deletes article seo entries
+     *
+     * @param oxarticle $oArticle article to remove
+     *
+     * @return null
+     */
+    public function onDeleteArticle($oArticle)
+    {
+        $sId = oxDb::getDb()->quote($oArticle->getId());
+        oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sId and oxtype = 'oxarticle'");
     }
 }

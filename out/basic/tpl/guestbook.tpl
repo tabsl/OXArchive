@@ -10,13 +10,13 @@
         <form name="guestbook" action="[{ $oViewConf->getSelfLink() }]" method="post">
           <div>
               [{ $oViewConf->getHiddenSid() }]
+              [{ $oViewConf->getNavFormParams() }]
               <input type="hidden" name="cl" value="guestbookentry">
-              <input type="hidden" name="cnid" value="[{$oViewConf->getActCatId()}]">
               <span class="btn"><input type="submit" value="[{ oxmultilang ident="GUESTBOOK_CLICKHERETOWRITEENTRY" }]" class="btn"></span>
           </div>
         </form>
       [{else}]
-        <a href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=guestbook" params="fnc=showLogin&amp;cnid="|cat:$oViewConf->getActCatId() }]" rel="nofollow"><b>[{ oxmultilang ident="GUESTBOOK_YOUHAVETOBELOGGED" }]</b></a>
+        <a href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=guestbook" params="fnc=showLogin&amp;"|cat:$oViewConf->getNavUrlParams() }]" rel="nofollow"><b>[{ oxmultilang ident="GUESTBOOK_YOUHAVETOBELOGGED" }]</b></a>
       [{/if}]
     </div>
   [{/if}]

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html [{foreach from = $oxcmp_lang item = _language}][{if $_language->selected}]lang="[{ $_language->abbr }]"[{/if}][{/foreach}]>
+<html[{if $oView->getActiveLangAbbr()}] lang="[{ $oView->getActiveLangAbbr() }]"[{/if}]>
 <head>
     [{assign var="_titlesuffix" value=$_titlesuffix|default:$oView->getTitleSuffix()}]
     [{assign var="title" value=$title|default:$oView->getTitle() }]
@@ -12,7 +12,7 @@
     [{/if}]
     [{if $oView->getMetaDescription()}]<meta name="description" content="[{$oView->getMetaDescription()}]">[{/if}]
     [{if $oView->getMetaKeywords()}]<meta name="keywords" content="[{$oView->getMetaKeywords()}]">[{/if}]
-
+    <link rel="shortcut icon" href="[{ $oViewConf->getBaseDir() }]favicon.ico">
     <link rel="stylesheet" type="text/css" href="[{ $oViewConf->getResourceUrl() }]oxid.css">
     <!--[if lt IE 8]><link rel="stylesheet" type="text/css" href="[{ $oViewConf->getResourceUrl() }]oxidbc.css"><![endif]-->
 
@@ -29,7 +29,7 @@
     <div id="header">
         <div class="bar oxid">
             <a class="logo" href="[{ $oViewConf->getBaseDir() }]">
-                <img src="[{$oViewConf->getImageUrl()}]/logo.png" alt="[{$oxcmp_shop->oxshops__oxtitleprefix->value}]">
+                <img src="[{$oViewConf->getImageUrl()}]logo.png" alt="[{$oxcmp_shop->oxshops__oxtitleprefix->value}]">
             </a>
 
             [{if $oView->showTopBasket()}]
@@ -57,7 +57,7 @@
             <div class="fixed">
                 [{if $oView->isLanguageLoaded() }]
                     [{foreach from = $oxcmp_lang item = _language}]
-                        <a id="test_Lang_[{$_language->name}]" class="language[{if $_language->selected}] act[{/if}]" href="[{ oxgetseourl ident=$_language->link params=$oView->getDynUrlParams() }]" hreflang="[{ $_language->abbr }]" title="[{ $_language->name }]"><img src="[{$oViewConf->getImageUrl()}]/lang/[{ $_language->abbr }].gif" alt="[{$_language->name}]"></a>
+                        <a id="test_Lang_[{$_language->name}]" class="language[{if $_language->selected}] act[{/if}]" href="[{ oxgetseourl ident=$_language->link params=$oView->getDynUrlParams() }]" hreflang="[{ $_language->abbr }]" title="[{ $_language->name }]"><img src="[{$oViewConf->getImageUrl()}]lang/[{ $_language->abbr }].gif" alt="[{$_language->name}]"></a>
                     [{/foreach}]
                 [{/if}]
                 [{if $oView->loadCurrency()}]
@@ -77,11 +77,13 @@
             </div>
 
             <div class="right">
-                <a id="test_HeaderTerms" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=info&amp;tpl=agb.tpl" }]" rel="nofollow">[{ oxmultilang ident="INC_HEADER_TERMS" }]</a>
-                <a id="test_HeaderImpressum" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=info&amp;tpl=impressum.tpl" }]" rel="nofollow">[{ oxmultilang ident="INC_HEADER_IMPRESSUM" }]</a>
+                [{assign var="oCont" value=$oView->getContentByIdent("oxagb") }]
+                <a id="test_HeaderTerms" href="[{ $oCont->getLink() }]" rel="nofollow">[{ $oCont->oxcontents__oxtitle->value }]</a>
+                [{assign var="oCont" value=$oView->getContentByIdent("oximpressum") }]
+                <a id="test_HeaderImpressum" href="[{ $oCont->getLink() }]" rel="nofollow">[{ $oCont->oxcontents__oxtitle->value }]</a>
                 [{if $oView->getMenueList()}]
                   [{ foreach from=$oView->getMenueList() item=oMenueContent }]
-                    <a href="[{ $oViewConf->getSelfLink() }]cl=content&amp;tpl=[{$oMenueContent->oxcontents__oxid->value}]">[{$oMenueContent->oxcontents__oxtitle->value}]</a>
+                    <a href="[{ $oViewConf->getSelfLink() }]cl=content&amp;oxcid=[{$oMenueContent->oxcontents__oxid->value}]">[{$oMenueContent->oxcontents__oxtitle->value}]</a>
                   [{/foreach}]
                 [{/if}]
             </div>
@@ -115,7 +117,7 @@
                     [{foreach from=$ocat->getSubCats() item=osubcat key=subcatkey name=SubCat}]
                         [{if $osubcat->getContentCats()}]
                             [{foreach from=$osubcat->getContentCats() item=osubcont key=subcontkey name=subcont}]
-                            <li><a href="[{$osubcont->getLink()}]">[{$osubcont->oxcontents__oxtitle->value}] </a></li>
+                            <li><a id="test_Top_root[{ $iCatCnt }]_Cms_[{$smarty.foreach.SubCat.iteration}]_[{$smarty.foreach.subcont.iteration}]" href="[{$osubcont->getLink()}]">[{$osubcont->oxcontents__oxtitle->value}] </a></li>
                             [{/foreach}]
                         [{/if}]
                         [{if $osubcat->getIsVisible() }]
@@ -166,9 +168,12 @@
         <div id="left">[{ include file="_left.tpl" }]</div>
         <div id="path">
             [{ oxmultilang ident="INC_HEADER_YOUAREHERE" }] / [{ $location }]
-            [{if $isStart}]<a rel="nofollow" class="dinfo" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=info&amp;tpl=delivery_info.tpl" }]">[{ oxmultilang ident="INC_HEADER_INCLTAXPLUSSHIPPING" }]</a>[{/if}]
+            [{if $isStart}]
+                [{assign var="oCont" value=$oView->getContentByIdent("oxdeliveryinfo") }]
+                <a rel="nofollow" class="dinfo" href="[{ $oCont->getLink() }]">[{ oxmultilang ident="INC_HEADER_INCLTAXPLUSSHIPPING" }]</a>
+            [{/if}]
         </div>
         <div id="right">[{include file="_right.tpl" }]</div>
         <div id="body">
-        [{ insert name="oxid_newbasketitem" tpl="inc/msg_basket.tpl" type="message"}]
+        [{oxid_include_dynamic file="dyn/newbasketitem_message.tpl"}]
         [{include file="inc/error.tpl" Errorlist=$Errors.default}]
