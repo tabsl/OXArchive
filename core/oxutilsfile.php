@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsfile.php 37880 2011-08-01 14:37:59Z vilma $
+ * @version   SVN: $Id: oxutilsfile.php 38540 2011-09-05 09:05:46Z linas.kukulskis $
  */
 
 /**
@@ -545,6 +545,8 @@ class oxUtilsFile extends oxSuperCfg
      * @throws oxException if file is not valid
      *
      * @return string
+     *
+     * deprecated since 2011-08-29 4.5.2 insted use processFile() function
      */
     public function handleUploadedFile($aFileInfo, $sUploadPath)
     {
@@ -586,6 +588,58 @@ class oxUtilsFile extends oxSuperCfg
         $sUrl = str_replace(array('http:/', 'https:/'), array('http://', 'https://'), $sUrl);
 
         return $sUrl;
+    }
+
+     /**
+     * Process uploaded files. Returns unique file name, on fail false
+     *
+     * @param string $sFileName   form file item name
+     * @param string $sUploadPath RELATIVE (to config sShopDir parameter) path for uploaded file to be copied
+     *
+     * @throws oxException if file is not valid
+     *
+     * @return string
+     */
+    public function processFile( $sFileName, $sUploadPath )
+    {
+        $aFileInfo = $_FILES[$sFileName];
+
+        $sBasePath = $this->getConfig()->getConfigParam('sShopDir');
+
+        //checking params
+        if ( !isset( $aFileInfo['name'] ) || !isset( $aFileInfo['tmp_name'] ) ) {
+            throw new oxException( 'EXCEPTION_NOFILE' );
+        }
+
+        //wrong chars in file name?
+        if ( !getStr()->preg_match('/^[\-_a-z0-9\.]+$/i', $aFileInfo['name'] ) ) {
+            throw new oxException( 'EXCEPTION_FILENAMEINVALIDCHARS' );
+        }
+
+        // error uploading file ?
+        if ( isset( $aFileInfo['error'] ) && $aFileInfo['error'] ) {
+            throw new oxException( 'EXCEPTION_FILEUPLOADERROR_'.( (int) $aFileInfo['error'] ) );
+        }
+
+        $aPathInfo = pathinfo($aFileInfo['name']);
+
+        $sExt = $aPathInfo['extension'];
+        $sFileName = $aPathInfo['filename'];
+
+        $aAllowedUploadTypes = (array) $this->getConfig()->getConfigParam( 'aAllowedUploadTypes' );
+        $aAllowedUploadTypes = array_map( "strtolower", $aAllowedUploadTypes );
+
+        if ( !in_array( strtolower( $sExt ), $aAllowedUploadTypes ) ) {
+            throw new oxException( 'EXCEPTION_NOTALLOWEDTYPE' );
+        }
+
+        $sFileName = $this->_getUniqueFileName( $sBasePath . $sUploadPath, $sFileName, $sExt );
+
+        if ( $this->_moveImage( $aFileInfo['tmp_name'], $sBasePath . $sUploadPath . "/" . $sFileName ) ) {
+            return $sFileName ;
+        } else {
+            return false;
+        }
     }
 
     /**

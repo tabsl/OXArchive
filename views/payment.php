@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: payment.php 36076 2011-06-08 12:24:48Z arvydas.vapsva $
+ * @version   SVN: $Id: payment.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
  */
 
 /**
@@ -155,7 +155,7 @@ class Payment extends oxUBase
             $sPayError = oxConfig::getParameter( 'payerror' )?'payerror='.oxConfig::getParameter( 'payerror' ):'';
             $sPayErrorText = oxConfig::getParameter('payerrortext')?'payerrortext='.oxConfig::getParameter( 'payerrortext' ):'';
             $sRedirectURL = $myConfig->getShopSecureHomeURL().'sslredirect=forced&cl=payment&'.$sPayError."&".$sPayErrorText;
-            oxUtils::getInstance()->redirect( $sRedirectURL );
+            oxUtils::getInstance()->redirect( $sRedirectURL, true, 302 );
         }
 
         if ( $this->getIsOrderStep() ) {
@@ -164,12 +164,12 @@ class Payment extends oxUBase
             //and the basket is not empty
             $oBasket = $this->getSession()->getBasket();
             if ( $myConfig->getConfigParam( 'blPsBasketReservationEnabled' ) && (!$oBasket || ( $oBasket && !$oBasket->getProductsCount() )) ) {
-                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket' );
+                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket', true, 302 );
             }
 
             $oUser = $this->getUser();
             if ( !$oBasket || !$oUser || ( $oBasket && !$oBasket->getProductsCount() ) ) {
-                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=start' );
+                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=start', true, 302 );
             }
         }
 

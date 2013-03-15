@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxmediaurl.php 27916 2010-05-26 06:49:19Z arvydas $
+ * @version   SVN: $Id: oxmediaurl.php 38536 2011-09-05 09:02:38Z linas.kukulskis $
  */
 
 /**
@@ -71,13 +71,31 @@ class oxMediaUrl extends oxI18n
      */
     public function getHtmlLink( $blNewPage = true )
     {
-        $sUrl = $this->oxmediaurls__oxurl->value;
+        $sForceBlank = $blNewPage ? ' target="_blank"' : '';
         $sDesc = $this->oxmediaurls__oxdesc->value;
-
-        $sForceBlank = $blNewPage?' target="_blank"':'';
+        $sUrl = $this->getLink();
 
         $sHtmlLink = "<a href=\"$sUrl\"{$sForceBlank}>$sDesc</a>";
+
         return $sHtmlLink;
+    }
+
+    /**
+     * Returns  link
+     *
+     * @return string
+     */
+    public function getLink()
+    {
+        if ( $this->oxmediaurls__oxisuploaded->value ) {
+            $sUrl = $this->getConfig()->isSsl() ? $this->getConfig()->getSslShopUrl() : $this->getConfig()->getShopUrl();
+            $sUrl .= 'out/media/';
+            $sUrl .= $this->oxmediaurls__oxurl->value;
+        } else {
+            $sUrl = $this->oxmediaurls__oxurl->value;
+        }
+
+        return $sUrl;
     }
 
     /**
@@ -91,6 +109,7 @@ class oxMediaUrl extends oxI18n
     {
         $sFilePath = $this->getConfig()->getConfigParam('sShopDir') . "/out/media/" .
                      $this->oxmediaurls__oxurl->value;
+
         if ($this->oxmediaurls__oxisuploaded->value && file_exists($sFilePath)) {
             unlink($sFilePath);
         }

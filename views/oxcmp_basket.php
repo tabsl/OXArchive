@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_basket.php 35207 2011-05-09 07:58:47Z linas.kukulskis $
+ * @version   SVN: $Id: oxcmp_basket.php 38682 2011-09-08 11:07:55Z vilma $
  */
 
 /**
@@ -71,7 +71,8 @@ class oxcmp_basket extends oxView
         if ($oConfig->getConfigParam( 'blPsBasketReservationEnabled' )) {
             if ($oReservations = $this->getSession()->getBasketReservations()) {
                 if (!$oReservations->getTimeLeft()) {
-                    if ( $oBasket = $this->getSession()->getBasket() ) {
+                    $oBasket = $this->getSession()->getBasket();
+                    if ( $oBasket && $oBasket->getProductsCount() ) {
                         $oBasket->deleteBasket();
                     }
                 }
@@ -151,9 +152,7 @@ class oxcmp_basket extends oxView
                 // passing article
                 oxSession::setVar( '_newitem', $oNewItem );
             }
-        }
 
-        if ( $this->getConfig()->getConfigParam( 'iNewBasketItemMessage' ) == 3 ) {
             // redirect to basket
             return $this->_getRedirectUrl();
         }
@@ -253,9 +252,8 @@ class oxcmp_basket extends oxView
                 $oUser->addUserAddress( $oWishUser );
                 $oBasketItem->setWishId( $sUserId );
             }
+            return $this->_getRedirectUrl();
         }
-
-        return $this->_getRedirectUrl();
     }
 
     /**

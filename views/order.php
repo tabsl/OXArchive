@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: order.php 35529 2011-05-23 07:31:20Z arunas.paskevicius $
+ * @version   SVN: $Id: order.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
  */
 
 /**
@@ -160,20 +160,20 @@ class order extends oxUBase
             if ( $myConfig->getConfigParam( 'blPsBasketReservationEnabled' )) {
                 $this->getSession()->getBasketReservations()->renewExpiration();
                 if ( !$oBasket || ( $oBasket && !$oBasket->getProductsCount() )) {
-                    oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket' );
+                    oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket', true, 302 );
                 }
             }
 
             // can we proceed with ordering ?
             $oUser = $this->getUser();
             if ( !$oBasket || !$oUser || ( $oBasket && !$oBasket->getProductsCount() ) ) {
-                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() );
+                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL(), true, 302 );
             }
 
             // payment is set ?
             if ( !$this->getPayment() ) {
                 // redirecting to payment step on error ..
-                oxUtils::getInstance()->redirect( $myConfig->getShopCurrentURL().'&cl=payment' );
+                oxUtils::getInstance()->redirect( $myConfig->getShopCurrentURL().'&cl=payment', true, 302 );
             }
         }
 
@@ -511,7 +511,7 @@ class order extends oxUBase
 
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_CHECKOUT_ORDER', oxLang::getInstance()->getBaseLanguage(), false );
         $aPath['link']  = $this->getLink();
-        
+
         $aPaths[] = $aPath;
 
         return $aPaths;

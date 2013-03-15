@@ -19,11 +19,18 @@
  * @package   setup
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: index.php 30135 2010-10-07 14:10:36Z sarunas $
+ * @version   SVN: $Id: index.php 38620 2011-09-05 14:51:47Z tomas $
  */
 
 
 error_reporting( ( E_ALL ^ E_NOTICE ) | E_STRICT );
+
+//setting basic configuration parameters
+ini_set('session.name', 'sid' );
+ini_set('session.use_cookies', 0 );
+ini_set('session.use_trans_sid', 0);
+ini_set('url_rewriter.tags', '');
+ini_set('magic_quotes_runtime', 0);
 
 /**
  * Includes core setup file

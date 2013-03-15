@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbase.php 38345 2011-08-23 12:27:28Z arvydas.vapsva $
+ * @version   SVN: $Id: oxbase.php 38562 2011-09-05 11:20:59Z arvydas.vapsva $
  */
 
 /**
@@ -1492,4 +1492,13 @@ class oxBase extends oxSuperCfg
         $this->_blReadOnly = $blReadOnly;
     }
 
+    /**
+     * Returns array with object field names
+     *
+     * @return array
+     */
+    public function getFieldNames()
+    {
+        return array_keys( $this->_aFieldNames );
+    }
 }

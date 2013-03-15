@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_main.php 38097 2011-08-10 08:14:35Z arvydas.vapsva $
+ * @version   SVN: $Id: article_main.php 38527 2011-09-05 07:05:36Z vilma $
  */
 
 /**
@@ -176,7 +176,7 @@ class Article_Main extends oxAdminDetails
             $myConfig->getConfigParam( 'blWarnOnSameArtNums' ) &&
             $oArticle->oxarticles__oxartnum->value !=  $aParams['oxarticles__oxartnum']
             ) {
-            $sSelect  = "select oxid from ".$oArticle->getCoreTableName();
+            $sSelect  = "select oxid from ".getViewName( 'oxarticles' );
             $sSelect .= " where oxartnum = '".$aParams['oxarticles__oxartnum']."'";
             $sSelect .= " and oxid != '".$aParams['oxarticles__oxid']."'";
             if ($oArticle->assignRecord( $sSelect ))

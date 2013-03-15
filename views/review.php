@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: review.php 32957 2011-02-07 10:29:20Z vilma $
+ * @version   SVN: $Id: review.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
  */
 
 /**
@@ -131,7 +131,7 @@ class Review extends Details
     public function init()
     {
         if ( oxConfig::getParameter( 'recommid' ) && !$this->getActiveRecommList() ) {
-            oxUtils::getInstance()->redirect( $this->getConfig()->getShopHomeURL() );
+            oxUtils::getInstance()->redirect( $this->getConfig()->getShopHomeURL(), true, 302 );
         }
 
         oxUBase::init();

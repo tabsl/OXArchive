@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdelivery.php 34908 2011-04-22 13:30:17Z linas.kukulskis $
+ * @version   SVN: $Id: oxdelivery.php 38762 2011-09-14 13:40:14Z vilma $
  */
 
 /**
@@ -395,7 +395,8 @@ class oxDelivery extends oxI18n
                         if ( $this->_isForArticle( $oContent, $iArtAmount ) ) {
                             $blForBasket = true;
                         }
-                    } else {
+                    }
+                    if (!$blForBasket) {
                         $iAmount += $iArtAmount;
                     }
 
@@ -425,12 +426,13 @@ class oxDelivery extends oxI18n
                                 if ( $this->_isForArticle( $oContent, $iArtAmount ) ) {
                                     $blForBasket = true;
                                 }
-                            } else {
-                                $iAmount += $iArtAmount;
                             }
 
                             break;
                         }
+                    }
+                    if (!$blForBasket) {
+                        $iAmount += $iArtAmount;
                     }
                 }
             }
@@ -443,7 +445,8 @@ class oxDelivery extends oxI18n
                     if ( $this->_isForArticle( $oContent, $iArtAmount ) ) {
                         $blForBasket = true;
                     }
-                } else {
+                }
+                if (!$blForBasket) {
                     $iAmount += $iArtAmount;
                 }
             }

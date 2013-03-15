@@ -55,6 +55,7 @@ $aLang = array(
 'SHOP_THEME_sCatPromotionsize'                  => 'Category picture size for promotion on startpage (width*height)',
 'HELP_SHOP_THEME_sCatPromotionsize'             => 'Category promotion on start page needs special size for category pictures. Define size of those pictures here.',
 
+'SHOP_THEME_bl_showOpenId'                      => 'Use Open ID',         //SHOP_CONFIG_SHOWOPENID
 'SHOP_THEME_bl_showGiftWrapping'                => 'Use gift wrapping',   //SHOP_CONFIG_SHOWGIFTWRAPPING
 'SHOP_THEME_bl_showVouchers'                    => 'Use vouchers',        //SHOP_CONFIG_SHOWVOUCHERS
 'SHOP_THEME_bl_showWishlist'                    => 'Use gift registry',   //SHOP_CONFIG_SHOWWISHLIST

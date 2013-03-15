@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 38391 2011-08-24 15:09:50Z vilma $
+ * @version   SVN: $Id: lang.php 38937 2011-09-26 09:05:37Z juergen.busch $
  */
 
 /*
@@ -99,7 +99,7 @@ $aLang = array(
 'GENERAL_ARTICLE_OXURLIMG'                                 => 'External URL image',
 'GENERAL_ARTICLE_OXVAT'                                    => 'Product VAT',
 'GENERAL_ARTICLE_OXTHUMB'                                  => 'Preview Picture',
-'GENERAL_ARTICLE_OXICON'                                   => 'oxicon',
+'GENERAL_ARTICLE_OXICON'                                   => 'Icon',
 'GENERAL_ARTICLE_OXPICSGENERATED'                          => 'Pictures generated',
 'GENERAL_ARTICLE_PICTURES'                                 => 'Article pictures',
 'GENERAL_ARTICLE_OXPIC1'                                   => 'Picture1',
@@ -1137,8 +1137,8 @@ $aLang = array(
 'SHOP_CONFIG_BASKETRESERVATION'                            => 'Basket expiration',
 'SHOP_CONFIG_BASKETRESERVATIONTIMEOUT'                     => 'Seconds basket expiration timeout',
 'SHOP_CONFIG_INVITATION'                                   => 'Invitation',
-'SHOP_CONFIG_POINTSFORINVITATION'                          => 'Credit points for user registering after invitation',
-'SHOP_CONFIG_POINTSFORREGISTRATION'                        => 'Credit points for inviting user',
+'SHOP_CONFIG_POINTSFORINVITATION'                          => 'Credit points for inviting user',
+'SHOP_CONFIG_POINTSFORREGISTRATION'                        => 'Credit points for user registering after invitation',
 'SHOP_CONFIG_FACEBOOKAPPID'                                => 'Application ID',
 'SHOP_CONFIG_FACEBOOKCONFIRM'                              => 'Customer must enable Facebook social plugins',
 'SHOP_CONFIG_FBSECRETKEY'                                  => 'Application Secret Key',

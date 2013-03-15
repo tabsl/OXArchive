@@ -100,7 +100,7 @@
             <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
             </tr>
             [{/foreach}]
-            [{if $edit->totalvouchers}]
+            [{if $edit->oxorder__oxvoucherdiscount->value}]
             <tr>
             <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_VOUCHERS" }]</td>
             <td class="edittext" align="right"><b>- [{$edit->getFormattedTotalVouchers()}]</b></td>

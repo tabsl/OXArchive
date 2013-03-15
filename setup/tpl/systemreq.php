@@ -52,7 +52,7 @@ require "_header.php"; ?>
         ?><li class="group"><?php echo $sGroupName; ?><ul><?php
         foreach ( $aGroupInfo as $aModuleInfo ) {
             ?><li id="<?php echo $aModuleInfo['module']; ?>" class="<?php echo $aModuleInfo['class']; ?>"><?php
-            if ( $aModuleInfo['class'] == "fail" || $aModuleInfo['class'] == "pmin" ) {
+            if ( $aModuleInfo['class'] == "fail" || $aModuleInfo['class'] == "pmin" || $aModuleInfo['class'] == "null" ) {
                 ?><a href="<?php $this->getReqInfoUrl( $aModuleInfo['module'] ); ?>" target="_blank"><?php
             }
             echo $aModuleInfo['modulename'];

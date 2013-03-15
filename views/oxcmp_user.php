@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_user.php 38156 2011-08-12 10:44:57Z vilma $
+ * @version   SVN: $Id: oxcmp_user.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
  */
 
 // defining login/logout states
@@ -178,13 +178,13 @@ class oxcmp_user extends oxView
 
             // no session user
             if ( !$oUser && !in_array( $sClass, $this->_aAllowedClasses ) ) {
-                oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() . 'cl=account', false );
+                oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() . 'cl=account', false, 302 );
             }
 
             if ( $oUser && !$oUser->isTermsAccepted() &&
                  $oConfig->getConfigParam( 'blConfirmAGB' ) &&
                  !in_array( $sClass, $this->_aAllowedClasses ) ) {
-                oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() . 'cl=account&term=1', false );
+                oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() . 'cl=account&term=1', false, 302 );
             }
         }
     }
@@ -206,7 +206,7 @@ class oxcmp_user extends oxView
 
         // this user is blocked, deny him
         if ( $oUser->inGroup( 'oxidblocked' ) ) {
-            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() . 'cl=content&tpl=user_blocked.tpl' );
+            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() . 'cl=content&tpl=user_blocked.tpl', true, 302  );
         }
 
         // TODO: move this to a proper place
@@ -218,6 +218,7 @@ class oxcmp_user extends oxView
             }
 
             if ( $oBasket = $this->getSession()->getBasket() ) {
+                $oBasket->load();
                 $oBasket->onUpdate();
             }
         }
@@ -292,7 +293,7 @@ class oxcmp_user extends oxView
 
         // this user is blocked, deny him
         if ( $oUser->inGroup( 'oxidblocked' ) ) {
-            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL().'cl=content&tpl=user_blocked.tpl' );
+            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL().'cl=content&tpl=user_blocked.tpl', true, 302 );
         }
 
         // adding to dyn group

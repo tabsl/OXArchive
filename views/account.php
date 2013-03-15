@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account.php 36686 2011-07-01 13:52:51Z arunas.paskevicius $
+ * @version   SVN: $Id: account.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
  */
 
 /**
@@ -218,15 +218,15 @@ class Account extends oxUBase
         if ( ( $sSource = oxConfig::getParameter( "sourcecl" ) ) &&
             $this->_oaComponents['oxcmp_user']->getLoginStatus() === USER_LOGIN_SUCCESS ) {
 
-            $sRedirectUrl = $this->getConfig()->getShopUrl().'index.php?cl='.rawurlencode( $sSource );        
+            $sRedirectUrl = $this->getConfig()->getShopUrl().'index.php?cl='.rawurlencode( $sSource );
             // building redirect link
-            
+
             foreach ( $this->getNavigationParams() as $sName => $sValue ) {
                 if ( $sValue && $sName != "sourcecl" ) {
                     $sRedirectUrl .= '&'.rawurlencode( $sName ) . "=" . rawurlencode( $sValue );
                 }
             }
-            return oxUtils::getInstance()->redirect( oxUtilsUrl::getInstance()->processUrl( $sRedirectUrl ));
+            return oxUtils::getInstance()->redirect( oxUtilsUrl::getInstance()->processUrl( $sRedirectUrl ), true, 302 );
         }
     }
 
@@ -371,9 +371,9 @@ class Account extends oxUBase
         $aPaths = array();
         $aPath  = array();
         if ( $oUser = $this->getUser() ) {
-            $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_DASHBOARD_MYACCOUNT', oxLang::getInstance()->getBaseLanguage(), false ) . $oUser->oxuser__oxusername->value;            
-        } else {            
-            $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_INC_LOGIN_LOGIN', oxLang::getInstance()->getBaseLanguage(), false );            
+            $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_DASHBOARD_MYACCOUNT', oxLang::getInstance()->getBaseLanguage(), false ) . $oUser->oxuser__oxusername->value;
+        } else {
+            $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_INC_LOGIN_LOGIN', oxLang::getInstance()->getBaseLanguage(), false );
         }
         $aPath['link'] = $this->getLink();
         $aPaths[] = $aPath;

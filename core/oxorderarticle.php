@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorderarticle.php 33402 2011-02-21 12:25:32Z linas.kukulskis $
+ * @version   SVN: $Id: oxorderarticle.php 38546 2011-09-05 09:48:19Z arunas.paskevicius $
  */
 
 /**
@@ -29,6 +29,12 @@
  */
 class oxOrderArticle extends oxBase implements oxIArticle
 {
+    
+    /**
+     * Order cache
+     */
+    protected static $_aOrderCache = array();    
+    
     /**
      * Current class name
      *
@@ -677,7 +683,9 @@ class oxOrderArticle extends oxBase implements oxIArticle
     public function getTotalBrutPriceFormated()
     {
         $oLang = oxLang::getInstance();
-        return $oLang->formatCurrency( $this->oxorderarticles__oxbrutprice->value );
+        $oOrder = $this->getOrder();
+        $oCurrency = $this->getConfig()->getCurrencyObject( $oOrder->oxorder__oxcurrency->value );        
+        return $oLang->formatCurrency( $this->oxorderarticles__oxbrutprice->value, $oCurrency );
     }
 
     /**
@@ -688,7 +696,9 @@ class oxOrderArticle extends oxBase implements oxIArticle
     public function getBrutPriceFormated()
     {
         $oLang = oxLang::getInstance();
-        return $oLang->formatCurrency(  $this->oxorderarticles__oxbprice->value );
+        $oOrder = $this->getOrder();
+        $oCurrency = $this->getConfig()->getCurrencyObject( $oOrder->oxorder__oxcurrency->value );    
+        return $oLang->formatCurrency(  $this->oxorderarticles__oxbprice->value, $oCurrency );
     }
 
     /**
@@ -699,7 +709,31 @@ class oxOrderArticle extends oxBase implements oxIArticle
     public function getNetPriceFormated()
     {
         $oLang = oxLang::getInstance();
-        return $oLang->formatCurrency(  $this->oxorderarticles__oxnprice->value );
+        $oOrder = $this->getOrder();
+        $oCurrency = $this->getConfig()->getCurrencyObject( $oOrder->oxorder__oxcurrency->value );
+        return $oLang->formatCurrency(  $this->oxorderarticles__oxnprice->value, $oCurrency );
     }
 
+    /**
+     * Returns oxOrder object that the article belongs to
+     * 
+     * @return mixed - on success returns oxOrder object, else returns null
+     */
+    public function getOrder()
+    {
+        if ( $this->oxorderarticles__oxorderid->value ) {
+            // checking if the object already exists in the cache
+            if ( isset( $this->_aOrderCache[ $this->oxorderarticles__oxorderid->value ] )) {
+                // returning the cached object
+                return $this->_aOrderCache[ $this->oxorderarticles__oxorderid->value ];
+            }
+            // creatina new order object and trying to load it
+            $oOrder = oxNew( 'oxOrder' );
+            if ( $oOrder->load( $this->oxorderarticles__oxorderid->value )) {
+                return $this->_aOrderCache[$this->oxorderarticles__oxorderid->value] = $oOrder;
+            }
+        }
+        
+        return null;
+    }
 }

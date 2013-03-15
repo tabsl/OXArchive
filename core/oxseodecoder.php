@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseodecoder.php 32009 2010-12-17 15:10:45Z sarunas $
+ * @version   SVN: $Id: oxseodecoder.php 38552 2011-09-05 11:04:05Z arvydas.vapsva $
  */
 
 /**
@@ -125,8 +125,30 @@ class oxSeoDecoder extends oxSuperCfg
 
             // fetching new url
             $sUrl = $this->_getSeoUrl($oRs->fields['oxobjectid'], $oRs->fields['oxlang'], $iShopId);
+
+            // appending with $_SERVER["QUERY_STRING"]
+            $sUrl = $this->_addQueryString( $sUrl );
         }
 
+        return $sUrl;
+    }
+
+    /**
+     * Appends and returns given url with $_SERVER["QUERY_STRING"] value
+     *
+     * @param string $sUrl url to append
+     *
+     * @return string
+     */
+    protected function _addQueryString( $sUrl )
+    {
+        if ( ( $sQ = $_SERVER["QUERY_STRING"] ) ) {
+            $sUrl = rtrim( $sUrl, "&?" );
+            $sQ   = ltrim( $sQ, "&?" );
+
+            $sUrl .= ( strpos( $sUrl, '?') === false ) ? "?" : "&";
+            $sUrl .= $sQ;
+        }
         return $sUrl;
     }
 

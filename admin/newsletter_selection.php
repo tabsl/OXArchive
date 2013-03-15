@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: newsletter_selection.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: newsletter_selection.php 38561 2011-09-05 11:18:42Z arvydas.vapsva $
  */
 
 /**
@@ -31,6 +31,12 @@
 class Newsletter_Selection extends oxAdminDetails
 {
     /**
+     * Amount of users assigned to active newsletter receiver group
+     * @var int
+     */
+    protected $_iUserCount = null;
+
+    /**
      * Executes parent method parent::render(), creates oxlist object and
      * collects user groups information, passes it's data to Smarty engine
      * and returns name of template file "newsletter_selection.tpl".
@@ -41,74 +47,71 @@ class Newsletter_Selection extends oxAdminDetails
     {
         parent::render();
 
-        // all newslettergroups
-        $oGroups = oxNew( "oxlist" );
-        $oGroups->init( "oxgroups" );
-        $oGroups->selectString( "select * from ".getViewName( "oxgroups", $this->_iEditLang ) );
-
-
         $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
-        if ( $soxId != "-1" && isset( $soxId)) {
+        if ( $soxId != "-1" && isset( $soxId ) ) {
             // load object
             $oNewsletter = oxNew( "oxnewsletter" );
-            $oNewsletter->load( $soxId );
-            $oNewsletterGroups = $oNewsletter->getGroups();
-            $this->_aViewData["edit"] =  $oNewsletter;
+            if ( $oNewsletter->load( $soxId ) ) {
+                $this->_aViewData["edit"] = $oNewsletter;
 
-            // remove already added groups
-            foreach ( $oNewsletterGroups as $oInGroup ) {
-                foreach ( $oGroups as $sKey => $oGroup ) {
-                    if ( $oGroup->oxgroups__oxid->value == $oInGroup->oxgroups__oxid->value ) {
-                        // already in, so lets remove it
-                        $oGroups->offsetUnset( $sKey );
-                        break;
-                    }
+                if ( oxConfig::getParameter("aoc") ) {
+                    $aColumns = array();
+                    include_once 'inc/'.strtolower(__CLASS__).'.inc.php';
+                    $this->_aViewData['oxajax'] = $aColumns;
+                    return "popups/newsletter_selection.tpl";
                 }
-            }
-
-            // get nr. of users in these groups
-            // we do not use lists here as we dont need this overhead right now
-            $oDB = oxDb::getDb();
-            $sSelectGroups =  "  ( oxobject2group.oxgroupsid in ( ";
-            $blSep = false;
-            foreach ( $oNewsletterGroups as $sInGroup) {
-                $sSearchKey = $sInGroup->oxgroups__oxid->value;
-                if ( $blSep)
-                    $sSelectGroups .= ",";
-                $sSelectGroups .= $oDB->quote( $sSearchKey );
-                $blSep = true;
-            }
-            $sSelectGroups .= ") ) ";
-            // no group selected
-            if ( !$blSep)
-                $sSelectGroups = " oxobject2group.oxobjectid is null ";
-
-            $sSelect = "select oxnewssubscribed.oxemail from oxnewssubscribed left join oxobject2group on oxobject2group.oxobjectid = oxnewssubscribed.oxuserid where ( oxobject2group.oxshopid = '".$this->getConfig()->getShopID()."' or oxobject2group.oxshopid is null ) and $sSelectGroups and oxnewssubscribed.oxdboptin = 1 and (not (oxnewssubscribed.oxemailfailed = '1')) and (not(oxnewssubscribed.oxemailfailed = \"1\")) group by oxnewssubscribed.oxemail";
-
-            $rs = $oDB->execute( $sSelect);
-            $iCnt = 0;
-            if ($rs != false && $rs->recordCount() > 0) {
-                while (!$rs->EOF) {
-                    $iCnt++;
-                    $rs->moveNext();
-                }
-            }
-            $this->_aViewData["user"] =  $iCnt;
-
-
-            if ( oxConfig::getParameter("aoc") ) {
-
-                $aColumns = array();
-                include_once 'inc/'.strtolower(__CLASS__).'.inc.php';
-                $this->_aViewData['oxajax'] = $aColumns;
-
-                return "popups/newsletter_selection.tpl";
             }
         }
 
-        $this->_aViewData["allgroups"] =  $oGroups;
-
         return "newsletter_selection.tpl";
+    }
+
+    /**
+     * Returns count of users assigned to active newsletter receiver group
+     *
+     * @return int
+     */
+    public function getUserCount()
+    {
+        if ( $this->_iUserCount === null ) {
+            $this->_iUserCount = 0;
+
+            // load object
+            $oNewsletter = oxNew( "oxnewsletter" );
+            if ( $oNewsletter->load( $this->getEditObjectId() ) ) {
+                // get nr. of users in these groups
+                // we do not use lists here as we dont need this overhead right now
+                $oDB = oxDb::getDb();
+                $blSep = false;
+                $sSelectGroups = " ( oxobject2group.oxgroupsid in ( ";
+
+                // remove already added groups
+                foreach ( $oNewsletter->getGroups() as $oInGroup ) {
+                    if ( $blSep ) {
+                        $sSelectGroups .= ",";
+                    }
+                    $sSelectGroups .= $oDB->quote( $oInGroup->oxgroups__oxid->value );
+                    $blSep = true;
+                }
+
+                $sSelectGroups .= " ) ) ";
+
+                // no group selected
+                if ( !$blSep ) {
+                    $sSelectGroups = " oxobject2group.oxobjectid is null ";
+                }
+
+                $sQ = "select count(*) from ( select oxnewssubscribed.oxemail as _icnt from oxnewssubscribed left join
+                       oxobject2group on oxobject2group.oxobjectid = oxnewssubscribed.oxuserid
+                       where ( oxobject2group.oxshopid = '".$this->getConfig()->getShopID()."'
+                       or oxobject2group.oxshopid is null ) and {$sSelectGroups} and
+                       oxnewssubscribed.oxdboptin = 1 and ( not ( oxnewssubscribed.oxemailfailed = '1') )
+                       and (not(oxnewssubscribed.oxemailfailed = '1')) group by oxnewssubscribed.oxemail ) as _tmp";
+
+                $this->_iUserCount = $oDB->getOne( $sQ );
+            }
+        }
+        return $this->_iUserCount;
     }
 
     /**
@@ -119,18 +122,16 @@ class Newsletter_Selection extends oxAdminDetails
     public function save()
     {
         $soxId = $this->getEditObjectId();
-        $aParams    = oxConfig::getParameter( "editval");
-
-        // shopid
-        $sShopID = oxSession::getVar( "actshop");
-        $aParams['oxnewsletter__oxshopid'] = $sShopID;
+        $aParams = oxConfig::getParameter( "editval");
+        $aParams['oxnewsletter__oxshopid'] = $this->getConfig()->getShopId();
 
         $oNewsletter = oxNew( "oxNewsLetter" );
-        if( $soxId != "-1")
+        if ( $soxId != "-1" ) {
             $oNewsletter->load( $soxId );
-        else
+        } else {
             $aParams['oxnewsletter__oxid'] = null;
-        //$aParams = $oNewsletter->ConvertNameArray2Idx( $aParams);
+        }
+
         $oNewsletter->assign( $aParams );
         $oNewsletter->save();
 

@@ -36,7 +36,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: emos.php 38350 2011-08-23 13:54:20Z tomas $
+ * $Id: emos.php 38883 2011-09-23 13:03:06Z tomas $
  */
 
 /**
@@ -616,7 +616,7 @@ class Emos
         $this->_sPostscript .= $this->_addJsFormat( "siteid", $this->_siteid);
         $this->_sPostscript .= $this->_addJsFormat( "langid", $this->_langid);
         $this->_sPostscript .= $this->_addJsFormat( "countryid", $this->_countryid);
-        $this->_sPostscript .= $this->_addJsFormat( "pageid", $this->_pageid);
+        $this->_sPostscript .= $this->_addJsFormat( "pageId", $this->_pageid);
         $this->_sPostscript .= $this->_addJsFormat( "scontact", $this->_scontact);
         $this->_sPostscript .= $this->_addJsFormat( "download", $this->_download);
         $this->_sPostscript .= $this->_addJsFormat( "billing", array($this->_billing));

@@ -45,7 +45,7 @@ $aLang = array(
 'SHOP_THEME_sZoomImageSize'                  => 'Größe der Zoom-Bilder (Zoom 1-4) in Pixeln (Breite*Höhe)',//SHOP_CONFIG_ZOOMIMAGESIZE
 'SHOP_THEME_sCatThumbnailsize'               => 'Größe des Kategoriebildes in Pixeln (Breite*Höhe)',//SHOP_CONFIG_CATEGORYTHUMBNAILSIZE
 'SHOP_THEME_aDetailImageSizes'               => 'Größe der Artikelbilder  (Bild 1-12) in Pixeln (Breite*Höhe)',//SHOP_CONFIG_DETAILIMAGESIZE
-
+'SHOP_THEME_bl_showOpenId'                        => 'Open ID Login aktivieren',//SHOP_CONFIG_SHOWOPENID
 'SHOP_THEME_bl_showGiftWrapping'             => 'Geschenkverpackungen aktivieren',//SHOP_CONFIG_SHOWGIFTWRAPPING
 'SHOP_THEME_bl_showVouchers'                 => 'Gutscheine aktivieren',//SHOP_CONFIG_SHOWVOUCHERS
 'SHOP_THEME_bl_showWishlist'                 => 'Wunschzettel aktivieren',//SHOP_CONFIG_SHOWWISHLIST

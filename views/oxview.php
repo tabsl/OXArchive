@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxview.php 37947 2011-08-04 10:32:55Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxview.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
  */
 
 /**
@@ -562,7 +562,7 @@ class oxView extends oxSuperCfg
             $sUrl = oxUtilsUrl::getInstance()->processUrl($sUrl);
 
             //#M341 do not add redirect parameter
-            oxUtils::getInstance()->redirect( $sUrl, (bool) oxConfig::getParameter( 'redirected' ) );
+            oxUtils::getInstance()->redirect( $sUrl, (bool) oxConfig::getParameter( 'redirected' ), 302 );
         }
     }
 

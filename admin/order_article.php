@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: order_article.php 37923 2011-08-03 12:47:57Z vilma $
+ * @version   SVN: $Id: order_article.php 38545 2011-09-05 09:45:22Z arunas.paskevicius $
  */
 
 /**
@@ -73,7 +73,7 @@ class Order_Article extends oxAdminDetails
 
         if ( $oOrder = $this->getEditObject() ) {
             $this->_aViewData["edit"] = $oOrder;
-            $this->_aViewData["aProductVats"] = $oOrder->getProductVats();
+            $this->_aViewData["aProductVats"] = $oOrder->getProductVats(true);
         }
 
         return "order_article.tpl";

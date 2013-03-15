@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutils.php 36319 2011-06-14 11:47:54Z linas.kukulskis $
+ * @version   SVN: $Id: oxutils.php 38777 2011-09-15 12:23:51Z arvydas.vapsva $
  */
 
 /**
@@ -1050,6 +1050,10 @@ class oxUtils extends oxSuperCfg
      * @param string $sUrl               URL to be redirected
      * @param bool   $blAddRedirectParam add "redirect" param
      * @param int    $iHeaderCode        header code, default 301
+     *
+     * @TODO change $iHeaderCode default value to 302, because
+     * ONLY if page was removed permanently 301 header must be
+     * send. On most redirects we only transfer to different page
      *
      * @return null or exit
      */

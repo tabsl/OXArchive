@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_config.php 36447 2011-06-17 15:06:32Z arunas.paskevicius $
+ * @version   SVN: $Id: shop_config.php 38528 2011-09-05 07:21:15Z vilma $
  */
 
 /**
@@ -99,10 +99,9 @@ class Shop_Config extends oxAdminDetails
         // #251A passing country list
         $oCountryList = oxNew( "oxCountryList" );
         $oCountryList->loadActiveCountries( oxLang::getInstance()->getObjectTplLanguage() );
-
-        if ( isset($aConfVars['aarr']["aHomeCountry"]) && count($$aConfVars['aarr']["aHomeCountry"]) && count($oCountryList)) {
+        if ( isset($aConfVars['arr']["aHomeCountry"]) && count($aConfVars['arr']["aHomeCountry"]) && count($oCountryList)) {
             foreach ( $oCountryList as $sCountryId => $oCountry) {
-                if ( in_array($oCountry->oxcountry__oxid->value, $aConfVars['aarr']["aHomeCountry"]))
+                if ( in_array($oCountry->oxcountry__oxid->value, $aConfVars['arr']["aHomeCountry"]))
                     $oCountryList[$sCountryId]->selected = "1";
             }
         }
@@ -443,7 +442,7 @@ class Shop_Config extends oxAdminDetails
 
         return $aArr;
     }
-    
+
     /**
      * Returns active/editable object id
      *
@@ -451,7 +450,7 @@ class Shop_Config extends oxAdminDetails
      */
     public function getEditObjectId()
     {
-        $sEditId = parent::getEditObjectId(); 
+        $sEditId = parent::getEditObjectId();
         if ( !$sEditId ) {
             return $this->getConfig()->getShopId();
         } else {

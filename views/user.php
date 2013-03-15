@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: user.php 38198 2011-08-17 14:02:47Z arunas.paskevicius $
+ * @version   SVN: $Id: user.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
  */
 
 /**
@@ -97,7 +97,7 @@ class User extends oxUBase
 
             $oBasket = $this->getSession()->getBasket();
             if ( $this->_blIsOrderStep && $myConfig->getConfigParam( 'blPsBasketReservationEnabled' ) && (!$oBasket || ( $oBasket && !$oBasket->getProductsCount() )) ) {
-                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket' );
+                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket', true, 302 );
             }
         }
 
@@ -172,14 +172,14 @@ class User extends oxUBase
     {
         if ( $this->_sOrderRemark === null ) {
             $sOrderRemark = false;
-            // if already connected, we can use the session            
+            // if already connected, we can use the session
             if ( $this->getUser() ) {
-                $sOrderRemark = oxSession::getVar( 'ordrem' );                
+                $sOrderRemark = oxSession::getVar( 'ordrem' );
             } else {
                 // not connected so nowhere to save, we're gonna use what we get from post
                 $sOrderRemark = oxConfig::getParameter( 'order_remark', true );
             }
-            
+
             $this->_sOrderRemark = $sOrderRemark ? oxConfig::checkSpecialChars( $sOrderRemark ) : false;
         }
         return $this->_sOrderRemark;
@@ -272,7 +272,7 @@ class User extends oxUBase
 
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_CHECKOUT_USER', oxLang::getInstance()->getBaseLanguage(), false );
         $aPath['link']  = $this->getLink();
-        
+
         $aPaths[] = $aPath;
 
         return $aPaths;

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 38354 2011-08-23 15:06:26Z arvydas.vapsva $
+ * @version   SVN: $Id: oxorder.php 38847 2011-09-22 07:42:12Z arvydas.vapsva $
  */
 
 /**
@@ -1963,10 +1963,10 @@ class oxOrder extends oxBase
         $sPaymentId = $oBasket->getPaymentId();
         $oTsProtection = oxNew('oxtsprotection');
         $blRes = $oTsProtection->requestForTsProtection( $aValues, $sPaymentId );
-        if ( !$blRes ) {
+        /*if ( !$blRes ) {
             $this->delete();
             return self::ORDER_STATE_INVALIDTSPROTECTION;
-        }
+        }*/
         return true; // everything fine
     }
 

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasket.php 37278 2011-07-22 12:49:48Z arunas.paskevicius $
+ * @version   SVN: $Id: oxbasket.php 38550 2011-09-05 11:00:51Z arvydas.vapsva $
  */
 
 /**
@@ -1502,7 +1502,10 @@ class oxBasket extends oxSuperCfg
 
                 //then save
                 foreach ( $this->_aBasketContents as $oBasketItem ) {
-                    $oSavedBasket->addItemToBasket( $oBasketItem->getProductId(), $oBasketItem->getAmount(), $oBasketItem->getSelList(), true, $oBasketItem->getPersParams() );
+                    // discount or bundled products will be added automatically if available
+                    if ( !$oBasketItem->isBundle() && !$oBasketItem->isDiscountArticle() ) {
+                       $oSavedBasket->addItemToBasket( $oBasketItem->getProductId(), $oBasketItem->getAmount(), $oBasketItem->getSelList(), true, $oBasketItem->getPersParams() );
+                    }
                 }
             }
         }

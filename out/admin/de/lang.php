@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 38391 2011-08-24 15:09:50Z vilma $
+ * @version   SVN: $Id: lang.php 38936 2011-09-26 09:05:05Z juergen.busch $
  */
 
 $sLangName  = 'Deutsch';
@@ -94,7 +94,7 @@ $aLang = array(
 'GENERAL_ARTICLE_OXURLIMG'                                 => 'Bild für externe URL',
 'GENERAL_ARTICLE_OXVAT'                                    => 'Artikel Mwst.',
 'GENERAL_ARTICLE_OXTHUMB'                                  => 'Vorschaubild',
-'GENERAL_ARTICLE_OXICON'                                   => 'oxicon',
+'GENERAL_ARTICLE_OXICON'                                   => 'Icon',
 'GENERAL_ARTICLE_OXPICSGENERATED'                          => 'Bilder erzeugt',
 'GENERAL_ARTICLE_PICTURES'                                 => 'Artikelbilder',
 'GENERAL_ARTICLE_OXPIC1'                                   => 'Bild1',

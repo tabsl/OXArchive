@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: tag.php 36595 2011-06-28 12:22:20Z arvydas.vapsva $
+ * @version   SVN: $Id: tag.php 38568 2011-09-05 12:25:37Z arvydas.vapsva $
  */
 
 /**
@@ -135,7 +135,7 @@ class Tag extends aList
         $oArtList = oxNew( 'oxarticlelist' );
         $oArtList->setSqlLimit( $iNrofCatArticles * $this->_getRequestPageNr(), $iNrofCatArticles );
         $oArtList->setCustomSorting( $this->getSortingSql( 'oxtags' ) );
-
+;
         // load the articles
         $this->_iAllArtCnt = $oArtList->loadTagArticles( $this->getTag(), oxLang::getInstance()->getBaseLanguage());
         $this->_iCntPages  = round( $this->_iAllArtCnt / $iNrofCatArticles + 0.49 );

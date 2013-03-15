@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_extend.php 36127 2011-06-09 13:48:00Z vilma $
+ * @version   SVN: $Id: article_extend.php 38539 2011-09-05 09:04:22Z linas.kukulskis $
  */
 
 /**
@@ -171,24 +171,24 @@ class Article_Extend extends oxAdminDetails
         $sMediaDesc = oxConfig::getParameter( "mediaDesc");
         $aMediaFile = $this->getConfig()->getUploadedFile( "mediaFile");
 
-        if ($sMediaUrl || $aMediaFile['name'] || $sMediaDesc) {
+        if ( ( $sMediaUrl && $sMediaUrl != 'http://' ) || $aMediaFile['name'] || $sMediaDesc ) {
 
             if ( !$sMediaDesc ) {
                 return oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_NODESCRIPTIONADDED' );
             }
 
-            if ( !$sMediaUrl && !$aMediaFile['name'] ) {
+            if ( ( !$sMediaUrl || $sMediaUrl == 'http://' ) && !$aMediaFile['name'] ) {
                 return oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_NOMEDIAADDED' );
             }
 
-            $oMediaUrl = oxNew("oxMediaUrl");
+            $oMediaUrl = oxNew( "oxMediaUrl" );
             $oMediaUrl->setLanguage( $this->_iEditLang );
-            $oMediaUrl->oxmediaurls__oxisuploaded = new oxField( 0, oxField::T_RAW);
+            $oMediaUrl->oxmediaurls__oxisuploaded = new oxField( 0, oxField::T_RAW );
 
             //handle uploaded file
             if ($aMediaFile['name']) {
                 try {
-                    $sMediaUrl = oxUtilsFile::getInstance()->handleUploadedFile($aMediaFile, 'out/media/');
+                    $sMediaUrl = oxUtilsFile::getInstance()->processFile( 'mediaFile', 'out/media/' );
                     $oMediaUrl->oxmediaurls__oxisuploaded = new oxField(1, oxField::T_RAW);
                 } catch (Exception $e) {
                     return oxUtilsView::getInstance()->addErrorToDisplay( $e->getMessage() );
@@ -197,10 +197,9 @@ class Article_Extend extends oxAdminDetails
 
             //save media url
             $oMediaUrl->oxmediaurls__oxobjectid = new oxField($soxId, oxField::T_RAW);
-            $oMediaUrl->oxmediaurls__oxurl = new oxField($sMediaUrl, oxField::T_RAW);
-            $oMediaUrl->oxmediaurls__oxdesc = new oxField(oxConfig::getParameter( "mediaDesc"), oxField::T_RAW);
+            $oMediaUrl->oxmediaurls__oxurl      = new oxField($sMediaUrl, oxField::T_RAW);
+            $oMediaUrl->oxmediaurls__oxdesc     = new oxField($sMediaDesc, oxField::T_RAW);
             $oMediaUrl->save();
-
         }
     }
 

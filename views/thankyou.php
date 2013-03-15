@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: thankyou.php 37908 2011-08-03 06:54:43Z arvydas.vapsva $
+ * @version   SVN: $Id: thankyou.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
  */
 
 /**
@@ -134,7 +134,7 @@ class Thankyou extends oxUBase
     public function render()
     {
         if ( !$this->_oBasket || !$this->_oBasket->getProductsCount() ) {
-            oxUtils::getInstance()->redirect( $this->getConfig()->getShopHomeURL().'&cl=start' );
+            oxUtils::getInstance()->redirect( $this->getConfig()->getShopHomeURL().'&cl=start', true, 302 );
         }
 
         parent::render();

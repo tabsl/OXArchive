@@ -409,9 +409,9 @@ DROP TABLE IF EXISTS `oxconfig`;
 CREATE TABLE `oxconfig` (
   `OXID`            char(32) character set latin1 collate latin1_general_ci NOT NULL,
   `OXSHOPID`        char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
-  `OXMODULE`        varchar(32) NOT NULL default '',
-  `OXVARNAME`       char(32) NOT NULL default '',
-  `OXVARTYPE`       varchar(16) NOT NULL default '',
+  `OXMODULE`        varchar(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXVARNAME`       char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXVARTYPE`       varchar(16) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXVARVALUE`      blob NOT NULL,
   PRIMARY KEY  (`OXID`),
   KEY `OXVARNAME` (`OXVARNAME`),
@@ -603,9 +603,8 @@ DROP TABLE IF EXISTS `oxconfigdisplay`;
 
 CREATE TABLE `oxconfigdisplay` (
   `OXID`            char(32) character set latin1 collate latin1_general_ci NOT NULL,
-  `OXCFGMODULE`     varchar(32) NOT NULL default '',
-  `OXCFGVARNAME`    char(32) NOT NULL default '',
-
+  `OXCFGMODULE`     varchar(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+  `OXCFGVARNAME`    char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXGROUPING`      varchar(255) NOT NULL default '',
   `OXVARCONSTRAINT` varchar(255) NOT NULL default '',
   `OXPOS`           int NOT NULL default 0,
@@ -1835,7 +1834,7 @@ CREATE TABLE `oxshops` (
 # Data for table `oxshops`
 #
 
-INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 0, '', 0, 'OXID eShop 4', 'OXID eShop 4', 'OXID eShop 4', '', '', 'online kaufen', 'purchase online', '', '', 'Der Onlineshop', 'Online Shop', '', '', 'info@myoxideshop.com', 'reply@myoxideshop.com', 'order@myoxideshop.com', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order at OXID eShop', 'Thank you for your registration at OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', '', '', '', 'Your Company Name', '2425 Maple Street', '9041', 'Any City, CA', 'United States', 'Bank of America', '1234567890', '900 1234567', '', '', '', 'John', 'Doe', '217-8918712', '217-8918713', 'www.myoxideshop.com', '', '', '', '', '', '', '', '', 'CE', '4.5.2', 1, 1, 0, 0);
+INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 0, '', 0, 'OXID eShop 4', 'OXID eShop 4', 'OXID eShop 4', '', '', 'online kaufen', 'purchase online', '', '', 'Der Onlineshop', 'Online Shop', '', '', 'info@myoxideshop.com', 'reply@myoxideshop.com', 'order@myoxideshop.com', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order at OXID eShop', 'Thank you for your registration at OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', '', '', '', 'Your Company Name', '2425 Maple Street', '9041', 'Any City, CA', 'United States', 'Bank of America', '1234567890', '900 1234567', '', '', '', 'John', 'Doe', '217-8918712', '217-8918713', 'www.myoxideshop.com', '', '', '', '', '', '', '', '', 'CE', '4.5.3', 1, 1, 0, 0);
 
 #
 # Table structure for table `oxstatistics`

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxshopcontrol.php 37947 2011-08-04 10:32:55Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxshopcontrol.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
  */
 
 /**
@@ -121,14 +121,14 @@ class oxShopControl extends oxSuperCfg
             $oEx->debugOut();
 
             if ( !$myConfig->getConfigParam( 'iDebug' ) ) {
-                oxUtils::getInstance()->redirect( $myConfig->getShopHomeUrl() .'cl=start' );
+                oxUtils::getInstance()->redirect( $myConfig->getShopHomeUrl() .'cl=start', true, 302 );
             }
         } catch ( oxCookieException $oEx ) {
             // redirect to start page and display the error
             if ( $this->_isDebugMode() ) {
                 oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
             }
-            oxUtils::getInstance()->redirect( $myConfig->getShopHomeUrl() .'cl=start' );
+            oxUtils::getInstance()->redirect( $myConfig->getShopHomeUrl() .'cl=start', true, 302 );
         }
 
         catch ( oxException $oEx) {

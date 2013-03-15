@@ -22,7 +22,7 @@
  * @version   SVN: $Id: lang.php 25584 2010-02-03 12:11:40Z arvydas $
  */
 require "_header.php"; ?>
-<textarea cols="180" rows="20" class="edittext" style="width: 98%; padding: 7px;"><?php echo $this->getViewParam( "aLicenseText" ); ?></textarea>
+<textarea readonly="readonly" cols="180" rows="20" class="edittext" style="width: 98%; padding: 7px;"><?php echo $this->getViewParam( "aLicenseText" ); ?></textarea>
 <form action="index.php" method="post">
   <input type="hidden" name="istep" value="<?php $this->getSetupStep( 'STEP_DB_INFO' ); ?>">
   <input type="radio" name="iEula" value="1"><?php $this->getText('BUTTON_RADIO_LICENCE_ACCEPT'); ?><br>

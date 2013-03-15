@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoderarticle.php 38137 2011-08-11 13:31:10Z arvydas.vapsva $
+ * @version   SVN: $Id: oxseoencoderarticle.php 38553 2011-09-05 11:04:56Z arvydas.vapsva $
  */
 
 /**
@@ -478,12 +478,10 @@ class oxSeoEncoderArticle extends oxSeoEncoder
 
         // variant has varselect value
         if ( $oArticle->oxarticles__oxvarselect->value ) {
-            $sTitle .= ( $sTitle ? ' ' : '' ).$oArticle->oxarticles__oxvarselect->value . ' ';
-        }
-
-        // in case nothing was found - looking for number
-        if ( !$sTitle ) {
-            $sTitle .= $oArticle->oxarticles__oxartnum->value;
+            $sTitle .= ( $sTitle ? ' ' : '' ) . $oArticle->oxarticles__oxvarselect->value . ' ';
+        } elseif ( !$sTitle || ( $oArticle->oxarticles__oxparentid->value ) ) {
+            // in case nothing was found - looking for number
+            $sTitle .= ( $sTitle ? ' ' : '' ) . $oArticle->oxarticles__oxartnum->value;
         }
 
         return $this->_prepareTitle( $sTitle ) . '.html';

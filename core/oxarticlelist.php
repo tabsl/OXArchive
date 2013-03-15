@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxarticlelist.php 37868 2011-08-01 11:57:18Z linas.kukulskis $
+ * @version   SVN: SVN: $Id: oxarticlelist.php 38784 2011-09-16 07:00:36Z arvydas.vapsva $
  */
 
 /**
@@ -124,32 +124,32 @@ class oxArticleList extends oxList
      * Returns article id array.
      *
      * @param string $sArtId Article ID
+     * @param int    $iCnt   product count
      *
      * @return array
      */
-    public function loadHistoryArticles($sArtId)
+    public function loadHistoryArticles( $sArtId, $iCnt = 4 )
     {
         $aHistoryArticles = $this->getHistoryArticles();
         $aHistoryArticles[] = $sArtId;
 
         // removing dublicates
-        $aHistoryArticles = array_unique( $aHistoryArticles);
-
-        if (count($aHistoryArticles) > 5) {
-            array_shift($aHistoryArticles);
+        $aHistoryArticles = array_unique( $aHistoryArticles );
+        if ( count( $aHistoryArticles ) > ( $iCnt + 1 ) ) {
+            array_shift( $aHistoryArticles );
         }
 
-        $this->setHistoryArticles($aHistoryArticles);
+        $this->setHistoryArticles( $aHistoryArticles );
 
         //remove current article and return array
         //asignment =, not ==
-        if (($iCurrentArt = array_search($sArtId, $aHistoryArticles)) !== false) {
-            unset ($aHistoryArticles[$iCurrentArt]);
+        if ( ( $iCurrentArt = array_search( $sArtId, $aHistoryArticles ) ) !== false ) {
+            unset( $aHistoryArticles[$iCurrentArt] );
         }
 
-        $aHistoryArticles = array_values($aHistoryArticles);
-        $this->loadIds($aHistoryArticles);
-        $this->_sortByIds($aHistoryArticles);
+        $aHistoryArticles = array_values( $aHistoryArticles );
+        $this->loadIds( $aHistoryArticles );
+        $this->_sortByIds( $aHistoryArticles );
     }
 
     /**
@@ -716,7 +716,7 @@ class oxArticleList extends oxList
         $sQ = "select {$sViewName}.oxid from {$sViewName} inner join {$sArticleTable} on ".
               "{$sArticleTable}.oxid = {$sViewName}.oxid where {$sArticleTable}.oxissearch = 1 and ".
               "match ( {$sViewName}.oxtags ) ".
-              "against( ".oxDb::getDb()->quote( $sTag )." IN BOOLEAN MODE )";
+              "against( ".oxDb::getDb()->quote( "\"".$sTag."\"" )." IN BOOLEAN MODE )";
 
         // checking stock etc
         if ( ( $sActiveSnippet = $oListObject->getSqlActiveSnippet() ) ) {

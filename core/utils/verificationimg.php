@@ -19,7 +19,7 @@
  * @package   utils
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: verificationimg.php 30266 2010-10-12 08:13:30Z sarunas $
+ * @version   SVN: $Id: verificationimg.php 38534 2011-09-05 08:59:08Z linas.kukulskis $
  */
 
 /**
@@ -38,12 +38,60 @@ function getShopBasePath()
 /**
  * Includes utils class
  */
-require_once getShopBasePath().'core/oxfunctions.php' ;
+require_once getShopBasePath() . 'modules/functions.php';
+
+require_once getShopBasePath() . 'core/oxfunctions.php' ;
 
 // Including main ADODB include
 require_once getShopBasePath() . 'core/adodblite/adodb.inc.php';
 
+if ( !function_exists('generateVerificationImg')) {
 
+    /**
+     * Genrates image
+     *
+     * @param string $sMac verification code
+     *
+     * @return null
+     */
+    function generateVerificationImg( $sMac )
+    {
+        $iWidth = 80;
+        $iHeight = 18;
+        $iFontSize = 14;
+
+        if ( function_exists( 'imagecreatetruecolor' ) ) {
+            // GD2
+            $oImage = imagecreatetruecolor( $iWidth, $iHeight );
+        } elseif ( function_exists( 'imagecreate' ) ) {
+            // GD1
+            $oImage = imagecreate( $iWidth, $iHeight );
+        } else {
+            // GD not found
+            return;
+        }
+
+        $iTextX = ( $iWidth - strlen($sMac)*imagefontwidth($iFontSize))/2;
+        $iTextY = ( $iHeight - imagefontheight($iFontSize) )/2;
+
+        $aColors = array();
+        $aColors["text"] = imagecolorallocate($oImage, 0, 0, 0);
+        $aColors["shadow1"] = imagecolorallocate($oImage, 200, 200, 200);
+        $aColors["shadow2"] = imagecolorallocate($oImage, 100, 100, 100);
+        $aColors["blacground"] = imagecolorallocate($oImage, 255, 255, 255);
+        $aColors["border"] = imagecolorallocate($oImage, 0, 0, 0);
+
+        imagefill($oImage, 0, 0, $aColors["blacground"]);
+        imagerectangle ( $oImage, 0, 0, $iWidth-1, $iHeight-1, $aColors["border"] );
+        imagestring( $oImage, $iFontSize, $iTextX + 1, $iTextY + 0, $sMac, $aColors["shadow2"] );
+        imagestring( $oImage, $iFontSize, $iTextX + 0, $iTextY + 1, $sMac, $aColors["shadow1"] );
+        imagestring( $oImage, $iFontSize, $iTextX, $iTextY, $sMac, $aColors["text"] );
+
+        header( 'Content-type: image/png' );
+        imagepng( $oImage );
+        imagedestroy($oImage );
+    }
+}
 // #1428C - spam spider prevension
 if (isset($_GET['e_mac'])) {
     $sEMac = $_GET['e_mac'];
@@ -53,37 +101,4 @@ if (isset($_GET['e_mac'])) {
 
 $sMac = oxUtils::getInstance()->strRem($sEMac);
 
-$iWidth = 80;
-$iHeight = 18;
-$iFontSize = 14;
-
-if ( function_exists('imagecreatetruecolor')) {
-    // GD2
-    $oImage = imagecreatetruecolor($iWidth, $iHeight);
-} elseif ( function_exists('imagecreate')) {
-    // GD1
-    $oImage = imagecreate($iWidth, $iHeight);
-} else {
-    // GD not found
-    return;
-}
-
-$iTextX = ($iWidth - strlen($sMac)*imagefontwidth($iFontSize))/2;
-$iTextY = ($iHeight - imagefontheight($iFontSize))/2;
-
-$aColors = array();
-$aColors["text"] = imagecolorallocate($oImage, 0, 0, 0);
-$aColors["shadow1"] = imagecolorallocate($oImage, 200, 200, 200);
-$aColors["shadow2"] = imagecolorallocate($oImage, 100, 100, 100);
-$aColors["blacground"] = imagecolorallocate($oImage, 255, 255, 255);
-$aColors["border"] = imagecolorallocate($oImage, 0, 0, 0);
-
-imagefill($oImage, 0, 0, $aColors["blacground"]);
-imagerectangle ( $oImage, 0, 0, $iWidth-1, $iHeight-1, $aColors["border"] );
-imagestring( $oImage, $iFontSize, $iTextX + 1, $iTextY + 0, $sMac, $aColors["shadow2"] );
-imagestring( $oImage, $iFontSize, $iTextX + 0, $iTextY + 1, $sMac, $aColors["shadow1"] );
-imagestring( $oImage, $iFontSize, $iTextX, $iTextY, $sMac, $aColors["text"] );
-
-header( 'Content-type: image/png' );
-imagepng( $oImage );
-imagedestroy($oImage );
+generateVerificationImg($sMac);

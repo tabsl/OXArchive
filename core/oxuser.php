@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 38346 2011-08-23 12:39:01Z vilma $
+ * @version   SVN: $Id: oxuser.php 38695 2011-09-09 13:14:53Z arvydas.vapsva $
  */
 
 /**
@@ -837,12 +837,16 @@ class oxUser extends oxBase
     public function addToGroup( $sGroupID )
     {
         if ( !$this->inGroup( $sGroupID ) ) {
-            $oNewGroup = oxNew( 'oxobject2group' );
-            $oNewGroup->oxobject2group__oxobjectid = new oxField($this->getId(), oxField::T_RAW);
-            $oNewGroup->oxobject2group__oxgroupsid = new oxField($sGroupID, oxField::T_RAW);
-            if ( $oNewGroup->save() ) {
-                $this->_oGroups[$sGroupID] = $oNewGroup;
-                return true;
+            $oDb = oxDb::getDb();
+            $sQ = "select 1 from oxgroups where oxid=" . $oDb->quote( $sGroupID );
+            if ( $oDb->getOne( $sQ ) ) {
+                $oNewGroup = oxNew( 'oxobject2group' );
+                $oNewGroup->oxobject2group__oxobjectid = new oxField( $this->getId(), oxField::T_RAW );
+                $oNewGroup->oxobject2group__oxgroupsid = new oxField( $sGroupID, oxField::T_RAW );
+                if ( $oNewGroup->save() ) {
+                    $this->_oGroups[$sGroupID] = $oNewGroup;
+                    return true;
+                }
             }
         }
         return false;
@@ -1244,6 +1248,68 @@ class oxUser extends oxBase
     }
 
     /**
+     * Builds and returns user login query
+     *
+     * @param string $sUser     login name
+     * @param string $sPassword login password
+     * @param string $sShopID   shopid
+     * @param bool   $blAdmin   admin/non admin mode
+     *
+     * @return string
+     */
+    protected function _getLoginQuery( $sUser, $sPassword, $sShopID, $blAdmin )
+    {
+        $myConfig = $this->getConfig();
+        $oDb = oxDb::getDb();
+
+        $sUserSelect = is_numeric( $sUser ) ? "oxuser.oxcustnr = {$sUser} " : "oxuser.oxusername = " . $oDb->quote( $sUser );
+        $sPassSelect = " oxuser.oxpassword = MD5( CONCAT( ".$oDb->quote( $sPassword ).", UNHEX( oxuser.oxpasssalt ) ) ) ";
+        $sShopSelect = "";
+
+
+        // admin view: can only login with higher than 'user' rights
+        if ( $blAdmin ) {
+            $sShopSelect = " and ( oxrights != 'user' ) ";
+        }
+
+        $sWhat = "oxid";
+
+        $sSelect = "select $sWhat from oxuser where oxuser.oxactive = 1 and {$sPassSelect} and {$sUserSelect} {$sShopSelect} ";
+        if ( $myConfig->isDemoShop() && $blAdmin ) {
+            if ( $sPassword == "admin" && $sUser == "admin" ) {
+                $sSelect = "select $sWhat from oxuser where oxrights = 'malladmin' {$sShopSelect} ";
+            } else {
+                $oEx = oxNew( 'oxUserException' );
+                $oEx->setMessage( 'EXCEPTION_USER_NOVALIDLOGIN' );
+                throw $oEx;
+            }
+        }
+
+        return $sSelect;
+    }
+
+    /**
+     * Load saved user basket from the database after he logs in
+     *
+     * @deprecated move this functionality in MAJOR version to function which calls login method (e.g. component or so)
+     *
+     * @return null
+     */
+    protected function _loadSavedUserBasketAfterLogin()
+    {
+        if ( !$this->isAdmin() ) {
+            //load basket from the database
+            try {
+                if ( $oBasket = $this->getSession()->getBasket() ) {
+                    $oBasket->load();
+                }
+            } catch ( Exception $oE ) {
+                //just ignore it
+            }
+        }
+    }
+
+    /**
      * Performs user login by username and password. Fetches user data from DB.
      * Registers in session. Returns true on success, FALSE otherwise.
      *
@@ -1267,33 +1333,10 @@ class oxUser extends oxBase
         if ( $sPassword ) {
 
             $sShopID = $myConfig->getShopId();
-            $oDb = oxDb::getDb();
-
-            $sUserSelect = is_numeric( $sUser ) ? "oxuser.oxcustnr = {$sUser} " : "oxuser.oxusername = " . $oDb->quote( $sUser );
-            $sPassSelect = " oxuser.oxpassword = MD5( CONCAT( ".$oDb->quote( $sPassword ).", UNHEX( oxuser.oxpasssalt ) ) ) ";
-            $sShopSelect = "";
-
-
-            // admin view: can only login with higher than 'user' rights
-            if ( $this->isAdmin() ) {
-                $sShopSelect = " and ( oxrights != 'user' ) ";
-            }
-
-            $sWhat = "oxid";
-
-            $sSelect =  "select $sWhat from oxuser where oxuser.oxactive = 1 and {$sPassSelect} and {$sUserSelect} {$sShopSelect} ";
-            if ( $myConfig->isDemoShop() && $this->isAdmin() ) {
-                if ( $sPassword == "admin" && $sUser == "admin" ) {
-                    $sSelect = "select $sWhat from oxuser where oxrights = 'malladmin' {$sShopSelect} ";
-                } else {
-                    $oEx = oxNew( 'oxUserException' );
-                    $oEx->setMessage( 'EXCEPTION_USER_NOVALIDLOGIN' );
-                    throw $oEx;
-                }
-            }
+            $sSelect = $this->_getLoginQuery( $sUser, $sPassword, $sShopID, $this->isAdmin() );
 
             // load from DB
-            $aData = $oDb->getAll( $sSelect );
+            $aData = oxDb::getDb()->getAll( $sSelect );
             $sOXID = @$aData[0][0];
             if ( isset( $sOXID ) && $sOXID && !@$aData[0][1] ) {
 
@@ -1325,14 +1368,7 @@ class oxUser extends oxBase
             }
 
             //load basket from the database
-            try {
-                if ($oBasket = $this->getSession()->getBasket()) {
-                    $oBasket->load();
-                }
-
-            } catch (Exception $oE) {
-                //just ignore it
-            }
+            $this->_loadSavedUserBasketAfterLogin();
 
             return true;
         } else {

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: vendorlist.php 33397 2011-02-21 09:47:15Z arvydas.vapsva $
+ * @version   SVN: $Id: vendorlist.php 38568 2011-09-05 12:25:37Z arvydas.vapsva $
  */
 
 /**
@@ -101,14 +101,15 @@ class VendorList extends aList
     {
         oxUBase::render();
 
-        $myConfig = $this->getConfig();
-
         // load vendor
-        if ( ( $oVendorTree = $this->getVendorTree() ) ) {
+        if ( ( $this->getVendorTree() ) ) {
             if ( ( $oVendor = $this->getActVendor() ) ) {
                 if ( $oVendor->getId() != 'root' ) {
                     // load the articles
                     $this->getArticleList();
+
+                    // checking if requested page is correct
+                    $this->_checkRequestedPage();
 
                     // processing list articles
                     $this->_processListArticles();

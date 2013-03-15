@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: alist.php 37363 2011-07-26 11:20:02Z linas.kukulskis $
+ * @version   SVN: $Id: alist.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
  */
 
 /**
@@ -193,7 +193,7 @@ class aList extends oxUBase
 
         // category is inactive ?
         if ( !$blContinue || !$oCategory ) {
-            oxUtils::getInstance()->redirect( $myConfig->getShopURL().'index.php' );
+            oxUtils::getInstance()->redirect( $myConfig->getShopURL().'index.php', true, 302 );
         }
 
         $oCat = $this->getActCategory();
@@ -205,8 +205,8 @@ class aList extends oxUBase
         //checking if actual pages count does not exceed real articles page count
         $this->getArticleList();
 
-        if ( $this->getPageCount() < $this->getActPage() ) {
-            error_404_handler();
+        if ( $this->_blIsCat ) {
+            $this->_checkRequestedPage();
         }
 
         parent::render();
@@ -215,6 +215,23 @@ class aList extends oxUBase
         $this->_processListArticles();
 
         return $this->getTemplateName();
+    }
+
+    /**
+     * Checks if requested page is valid and:
+     * - redirecting to first page in case requested page does not exist
+     * or
+     * - displays 404 error if category has no products
+     *
+     * @return null
+     */
+    protected function _checkRequestedPage()
+    {
+        $iPageCnt = $this->getPageCount();
+        // redirecting to first page in case requested page does not exist
+        if ( $iPageCnt && ( ( $iPageCnt - 1 ) < $this->getActPage() ) ) {
+            oxUtils::getInstance()->redirect( $this->getActiveCategory()->getLink(), false );
+        }
     }
 
     /**

@@ -3,8 +3,6 @@ ALTER TABLE `oxattribute` MODIFY `OXTITLE_1` varchar(128) NOT NULL default '';
 ALTER TABLE `oxattribute` MODIFY `OXTITLE_2` varchar(128) NOT NULL default '';
 ALTER TABLE `oxattribute` MODIFY `OXTITLE_3` varchar(128) NOT NULL default '';
 
-ALTER TABLE `oxconfig` MODIFY `OXVARNAME` varchar(32) NOT NULL default '';
-
 ALTER TABLE `oxcountry` MODIFY `OXTITLE` varchar(128) NOT NULL default '';
 ALTER TABLE `oxcountry` MODIFY `OXSHORTDESC` varchar(128) NOT NULL default '';
 ALTER TABLE `oxcountry` MODIFY `OXLONGDESC` varchar(255) NOT NULL default '';

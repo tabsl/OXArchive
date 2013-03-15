@@ -18,7 +18,7 @@ window.onload = function ()
 
 <div id="liste">
 [{foreach from=$oView->getMailErrors() item=sError}]
-  [{ $sError }]
+  [{ $sError }]<br>
 [{/foreach}]
 <center>
 <h1>[{ oxmultilang ident="NEWSLETTER_DONE_NEWSSEND" }]</h1>

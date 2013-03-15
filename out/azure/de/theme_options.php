@@ -55,6 +55,7 @@ $aLang = array(
 'SHOP_THEME_sCatPromotionsize'                  => 'Größe des Kategoriebildes für die Startseite in Pixeln (Breite*Höhe)',
 'HELP_SHOP_THEME_sCatPromotionsize'             => 'Kategorien, die auf der Startseite beworben werden, benötigen eine eigens dafür vorgesehene Größgenangabe. Stellen Sie diese hier ein.',
 
+'SHOP_THEME_bl_showOpenId'                        => 'Open ID Login aktivieren',//SHOP_CONFIG_SHOWOPENID
 'SHOP_THEME_bl_showGiftWrapping'                => 'Geschenkverpackungen aktivieren',//SHOP_CONFIG_SHOWGIFTWRAPPING
 'SHOP_THEME_bl_showVouchers'                    => 'Gutscheine aktivieren',//SHOP_CONFIG_SHOWVOUCHERS
 'SHOP_THEME_bl_showWishlist'                    => 'Wunschzettel aktivieren',//SHOP_CONFIG_SHOWWISHLIST

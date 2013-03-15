@@ -93,12 +93,15 @@
                         'spider',
                         'fireball',
                         'robot',
-                        'spider',
-                        'robot',
                         'slurp',
                         'fast',
                         'altavista',
                         'teoma',
+                        'msnbot',
+                        'bingbot',
+                        'yandex',
+                        'gigabot',
+                        'scrubby'
                         );
 
     // Deactivate Static URL's for these Robots

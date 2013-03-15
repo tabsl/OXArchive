@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: manufacturerlist.php 38301 2011-08-19 14:03:25Z linas.kukulskis $
+ * @version   SVN: $Id: manufacturerlist.php 38568 2011-09-05 12:25:37Z arvydas.vapsva $
  */
 
 /**
@@ -101,8 +101,6 @@ class ManufacturerList extends aList
     {
         oxUBase::render();
 
-        $myConfig = $this->getConfig();
-
         // load Manufacturer
         if ( $this->getManufacturerTree() ) {
             if ( ( $oManufacturer = $this->getActManufacturer() ) ) {
@@ -110,15 +108,14 @@ class ManufacturerList extends aList
                     // load the articles
                     $this->getArticleList();
 
+                    // checking if requested page is correct
+                    $this->_checkRequestedPage();
+
                     // processing list articles
                     $this->_processListArticles();
                 }
             }
         }
-
-        // generating meta info
-        $this->setMetaDescription( null );
-        $this->setMetaKeywords( null );
 
         return $this->_sThisTemplate;
     }

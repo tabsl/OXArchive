@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: newsletter_send.php 27773 2010-05-17 12:26:37Z vilma $
+ * @version   SVN: $Id: newsletter_send.php 38557 2011-09-05 11:15:35Z arvydas.vapsva $
  */
 
 /**
@@ -27,7 +27,7 @@
  * Performs sending of newsletter to selected user groups.
  * @package admin
  */
-class Newsletter_Send extends oxAdminList
+class Newsletter_Send extends Newsletter_Selection
 {
     /**
      * Mail sending errors array
@@ -45,127 +45,135 @@ class Newsletter_Send extends oxAdminList
      */
     public function render()
     {
-        $myConfig  = $this->getConfig();
-        parent::render();
+        oxAdminDetails::render();
+
+        // calculating
+        $iUserCount = $this->getUserCount();
 
         $iStart = (int) oxConfig::getParameter( "iStart" );
-        $iUser  = oxConfig::getParameter( "user" );
-        $sID    = oxConfig::getParameter( "id" );
 
         $oNewsletter = oxNew( "oxNewsLetter" );
-        $oNewsletter->load( $sID );
+        $oNewsletter->load( $this->getEditObjectId() );
         $oNewsletterGroups = $oNewsletter->getGroups();
 
-        // #493A - fetching cached newsletter info
-        $oCachedNewsletter = oxSession::getVar( "_oNewsletter" );
-        if ( isset( $oCachedNewsletter ) ) {
-            //checking if cached session id is the same as current user session id
-            if ( $oCachedNewsletter->sID != $sID ) {
-                oxSession::deleteVar( "_oNewsletter" );
-            } else {
-                // setting cached values
-                $iStart = $oCachedNewsletter->iStart;
-                $iUser  = $oCachedNewsletter->iUser;
-                $sID    = $oCachedNewsletter->sID;
-            }
-        } else {
-            // setting initial values
-            $oCachedNewsletter = new oxStdClass();
-            $oCachedNewsletter->iStart = $iStart;
-            $oCachedNewsletter->iUser  = $iUser;
-            $oCachedNewsletter->sID    = $sID;
-        }
-
         // send emails....
-        $oDB = oxDb::getDb();
-        $sSelectGroups =  " ( oxobject2group.oxgroupsid in ( ";
+        $oDB = oxDb::getDb(true);
+        $sQGroups = " ( oxobject2group.oxgroupsid in ( ";
         $blSep = false;
         foreach ( $oNewsletterGroups as $sInGroup ) {
             $sSearchKey = $sInGroup->oxgroups__oxid->value;
             if ( $blSep ) {
-                $sSelectGroups .= ",";
+                $sQGroups .= ",";
             }
-            $sSelectGroups .= $oDB->quote( $sSearchKey );
+            $sQGroups .= $oDB->quote( $sSearchKey );
             $blSep = true;
         }
-        $sSelectGroups .= ") )";
+        $sQGroups .= ") )";
 
         // no group selected
         if ( !$blSep ) {
-            $sSelectGroups = " oxobject2group.oxobjectid is null ";
+            $sQGroups = " oxobject2group.oxobjectid is null ";
         }
 
-        $sSelect = "select oxnewssubscribed.oxuserid, oxnewssubscribed.oxemail, oxnewssubscribed.oxsal, oxnewssubscribed.oxfname, oxnewssubscribed.oxlname from oxnewssubscribed left join oxobject2group on oxobject2group.oxobjectid = oxnewssubscribed.oxuserid where ( oxobject2group.oxshopid = '".$myConfig->getShopId()."' or oxobject2group.oxshopid is null ) and $sSelectGroups and oxnewssubscribed.oxdboptin = 1 and (not (oxnewssubscribed.oxemailfailed = '1')) group by oxnewssubscribed.oxemail";
-        $rs = $oDB->selectLimit( $sSelect, $myConfig->getConfigParam( 'iCntofMails' ), $iStart );
-        ini_set( "session.gc_maxlifetime", 36000 );
+        $myConfig  = $this->getConfig();
 
-        if ( $rs != false && $rs->recordCount() > 0 ) {
+        $iSendCnt = 0;
+        $iMaxCnt  = (int) $myConfig->getConfigParam( 'iCntofMails' );
+        $sShopId  = $myConfig->getShopId();
 
-            $sShopID = oxSession::getVar( "actshop");
+        $sQ = "select oxnewssubscribed.oxuserid, oxnewssubscribed.oxemail, oxnewssubscribed.oxsal,
+               oxnewssubscribed.oxfname, oxnewssubscribed.oxlname, oxnewssubscribed.oxemailfailed
+               from oxnewssubscribed left join oxobject2group on
+               oxobject2group.oxobjectid = oxnewssubscribed.oxuserid where
+               ( oxobject2group.oxshopid = '{$sShopId}' or oxobject2group.oxshopid is null ) and
+               $sQGroups and oxnewssubscribed.oxdboptin = 1 group by oxnewssubscribed.oxemail";
+
+        $oRs = $oDB->selectLimit( $sQ, 100, $iStart );
+        $blContinue = ( $oRs != false && $oRs->recordCount() > 0 );
+
+        if ( $blContinue ) {
             $blLoadAction = $myConfig->getConfigParam( 'bl_perfLoadAktion' );
+            while ( !$oRs->EOF && $iSendCnt < $iMaxCnt ) {
 
-            while ( !$rs->EOF ) {
-                $sUserID = $rs->fields[0];
+                if ( $oRs->fields['oxemailfailed'] != "1" ) {
+                    $sUserId = $oRs->fields['oxuserid'];
+                    $iSendCnt++;
 
-                // must check if such user is in DB
-                if ( !$oDB->getOne( "select oxid from oxuser where oxid = '$sUserID'" ) ) {
-                    $sUserID = null;
+                    // must check if such user is in DB
+                    if ( !$oDB->getOne( "select oxid from oxuser where oxid = '$sUserId'" ) ) {
+                        $sUserId = null;
+                    }
+
+                    // #559
+                    if ( !isset( $sUserId ) || !$sUserId ) {
+                         // there is no user object so we fake one
+                        $oUser = oxNew( "oxuser" );
+                        $oUser->oxuser__oxusername = new oxField( $oRs->fields['oxemail'] );
+                        $oUser->oxuser__oxsal      = new oxField( $oRs->fields['oxsal'] );
+                        $oUser->oxuser__oxfname    = new oxField( $oRs->fields['oxfname'] );
+                        $oUser->oxuser__oxlname    = new oxField( $oRs->fields['oxlname'] );
+                        $oNewsletter->prepare( $oUser, $blLoadAction );
+                    } else {
+                        $oNewsletter->prepare( $sUserId, $blLoadAction );
+                    }
+
+                    if ( $oNewsletter->send( $iSendCnt ) ) {
+                         // add user history
+                        $oRemark = oxNew( "oxremark" );
+                        $oRemark->oxremark__oxtext     = new oxField( $oNewsletter->getPlainText() );
+                        $oRemark->oxremark__oxparentid = new oxField( $sUserId );
+                        $oRemark->oxremark__oxshopid   = new oxField( $sShopId );
+                        $oRemark->oxremark__oxtype     = new oxField( "n" );
+                        $oRemark->save();
+                    } else {
+                        $this->_aMailErrors[] = "problem sending to : ".$oRs->fields['oxemail'];
+                    }
                 }
 
-                // #559
-                if ( !isset( $sUserID ) || !$sUserID ) {
-                     // there is no user object so we fake one
-                    $oUser = oxNew( "oxuser" );
-                    $oUser->oxuser__oxusername = new oxField( $rs->fields[1] );
-                    $oUser->oxuser__oxsal      = new oxField( $rs->fields[2] );
-                    $oUser->oxuser__oxfname    = new oxField( $rs->fields[3] );
-                    $oUser->oxuser__oxlname    = new oxField( $rs->fields[4] );
-                    $oNewsletter->prepare( $oUser, $blLoadAction );
-                } else {
-                    $oNewsletter->prepare( $sUserID, $blLoadAction );
-                }
-
-                if ( $oNewsletter->send() ) {
-                     // add user history
-                    $oRemark = oxNew( "oxremark" );
-                    $oRemark->oxremark__oxtext     = new oxField( $oNewsletter->getPlainText() );
-                    $oRemark->oxremark__oxparentid = new oxField( $sUserID );
-                    $oRemark->oxremark__oxshopid   = new oxField( $sShopID );
-                    $oRemark->oxremark__oxtype     = new oxField( "n" );
-                    $oRemark->save();
-                    oxSession::setVar( "keepalive", "yes");
-                } else {
-                    $this->_aMailErrors[] = "problem sending to : ".$rs->fields[1]."<br>";
-                }
-
-               $rs->moveNext();
+                $oRs->moveNext();
+                $iStart++;
             }
         }
 
-        // adavance mail pointer and set parameter
-        $iStart += $myConfig->getConfigParam( 'iCntofMails' );
+        $iSend = $iSendCnt + ( ceil( $iStart / $iMaxCnt ) - 1 ) * $iMaxCnt;
+        $iSend = $iSend > $iUserCount ? $iUserCount : $iSend;
 
-        // #493A - setting new values
-        $oCachedNewsletter->iStart = $iStart;
-        $oCachedNewsletter->iUser  = $iUser;
-        $oCachedNewsletter->sID    = $sID;
-
-        $this->_aViewData["iStart"] =  $iStart;
-        $this->_aViewData["user"]   =  $iUser;
-        $this->_aViewData["id"]     =  $sID;
+        $this->_aViewData["iStart"] = $iStart;
+        $this->_aViewData["iSend"]  = $iSend;
 
         // end ?
-        if ( $iStart < $iUser) {
-            $sPage = "newsletter_send.tpl";
-            // #493A - saving changes
-            oxSession::setVar( "_oNewsletter", $oCachedNewsletter );
+        if ( $blContinue ) {
+            return "newsletter_send.tpl";
         } else {
-            $sPage = "newsletter_done.tpl";
-            // #493A - deleting cache variable
-            oxSession::deleteVar( "_oNewsletter" );
+            $this->resetUserCount();
+            return "newsletter_done.tpl";
         }
+    }
 
-        return $sPage;
+    /**
+     * Returns count of users assigned to active newsletter receiver group
+     *
+     * @return int
+     */
+    public function getUserCount()
+    {
+        $iCnt = oxSession::getVar( "iUserCount" );
+        if ( $iCnt === null ) {
+            $iCnt = parent::getUserCount();
+            oxSession::setVar( "iUserCount", $iCnt );
+        }
+        return $iCnt;
+    }
+
+    /**
+     * Resets users count
+     *
+     * @return null
+     */
+    public function resetUserCount()
+    {
+        oxSession::deleteVar( "iUserCount" );
+        $this->_iUserCount = null;
     }
 
     /**
@@ -181,12 +189,38 @@ class Newsletter_Send extends oxAdminList
     /**
      * Overrides parent method to pass referred id
      *
-     * @param string $sId referred id
+     * @param string $sNode referred id
      *
      * @return null
      */
-    protected function _setupNavigation( $sId )
+    protected function _setupNavigation( $sNode )
     {
-        parent::_setupNavigation( 'newsletter_list' );
+        $sNode = 'newsletter_list';
+
+        $myAdminNavig = $this->getNavigation();
+
+        // active tab
+        $iActTab = 3;
+
+        // tabs
+        $this->_aViewData['editnavi'] = $myAdminNavig->getTabs( $sNode, $iActTab );
+
+        // active tab
+        $this->_aViewData['actlocation'] = $myAdminNavig->getActiveTab( $sNode, $iActTab );
+
+        // default tab
+        $this->_aViewData['default_edit'] = $myAdminNavig->getActiveTab( $sNode, $this->_iDefEdit );
+
+        // passign active tab number
+        $this->_aViewData['actedit'] = $iActTab;
+    }
+
+    /**
+     * Does nothing, called in derived template
+     *
+     * @return null
+     */
+    public function getListSorting()
+    {
     }
 }

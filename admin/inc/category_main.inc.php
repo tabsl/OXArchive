@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: category_main.inc.php 38298 2011-08-19 13:07:29Z vilma $
+ * @version   SVN: $Id: category_main.inc.php 38555 2011-09-05 11:12:26Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -217,12 +217,12 @@ class ajaxComponent extends ajaxListComponent
 
         // adding
         if ( oxConfig::getParameter( 'all' ) ) {
+            $sArticleTable = $this->_getViewName( 'oxarticles' );
+            $aArticles = $this->_getAll( $this->_addFilter( "select $sArticleTable.oxid ".$this->_getQuery() ) );
+        }
 
-            $sO2CView = $this->_getViewName('oxobject2category');
-            $sQ = $this->_addFilter( "delete $sO2CView.* ".$this->_getQuery() );
-            $oDb->Execute( $sQ );
-
-        } elseif ( is_array( $aArticles ) && count( $aArticles ) ) {
+        // adding
+        if ( is_array( $aArticles ) && count( $aArticles ) ) {
             $sProdIds = implode( ", ", oxDb::getInstance()->quoteArray( $aArticles ) );
 
             $sDelete = "delete from oxobject2category where";
@@ -239,7 +239,7 @@ class ajaxComponent extends ajaxListComponent
             $this->_updateOxTime( $sProdIds );
         }
 
-        $this->resetArtSeoUrl( $sAdd );
+        $this->resetArtSeoUrl( $aArticles, $sCategoryID );
         $this->resetCounter( "catArticle", $sCategoryID );
     }
 }

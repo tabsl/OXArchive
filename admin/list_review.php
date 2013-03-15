@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: list_review.php 31980 2010-12-17 14:02:48Z sarunas $
+ * @version   SVN: $Id: list_review.php 38782 2011-09-15 15:11:05Z arvydas.vapsva $
  */
 
 /**
@@ -85,7 +85,12 @@ class List_Review extends Article_List
         $sQ .= "left join $sArtTable as oxparentarticles on oxparentarticles.oxid = {$sArtTable}.oxparentid ";
         $sQ .= "where 1 and oxreviews.oxlang = '{$this->_iEditLang}' ";
 
-        return $sQ;
+
+        //removing parent id checking from sql
+        $sStr = "/\s+and\s+".$sArtTable."\.oxparentid\s*=\s*''/";
+        $sQ = getStr()->preg_replace( $sStr, " ", $sQ );
+
+        return " $sQ and {$sArtTable}.oxid is not null ";
     }
 
     /**
@@ -98,23 +103,17 @@ class List_Review extends Article_List
      */
     protected function _prepareWhereQuery( $aWhere, $sSql )
     {
-        $oStr = getStr();
-        $sArtTable = getViewName('oxarticles');
-        $sArtTitleField = "{$sArtTable}.oxtitle";
-        $sSqlForTitle = null;
-
         $sSql = parent::_prepareWhereQuery( $aWhere, $sSql );
 
-        //removing parent id checking from sql
-        $sStr = "/\s+and\s+".getViewName( 'oxarticles' )."\.oxparentid\s*=\s*''/";
-        $sSql = $oStr->preg_replace( $sStr, " ", $sSql );
+        $sArtTable = getViewName( 'oxarticles', $this->_iEditLang );
+        $sArtTitleField = "{$sArtTable}.oxtitle";
 
         // if searching in article title field, updating sql for this case
         if ( $this->_aWhere[$sArtTitleField] ) {
             $sSqlForTitle = " (CONCAT( {$sArtTable}.oxtitle, if(isnull(oxparentarticles.oxtitle), '', oxparentarticles.oxtitle), {$sArtTable}.oxvarselect)) ";
-            $sSql = $oStr->preg_replace( "/{$sArtTable}\.oxtitle\s+like/", "$sSqlForTitle like", $sSql );
+            $sSql = getStr()->preg_replace( "/{$sArtTable}\.oxtitle\s+like/", "$sSqlForTitle like", $sSql );
         }
 
-        return " $sSql and {$sArtTable}.oxid is not null ";
+        return $sSql;
     }
 }
