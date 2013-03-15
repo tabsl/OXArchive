@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 43742 2012-04-11 07:51:40Z linas.kukulskis $
+ * @version   SVN: $Id: oxorder.php 45715 2012-05-29 14:41:51Z vaidas.matulevicius $
  */
 
 /**
@@ -520,6 +520,11 @@ class oxOrder extends oxBase
         // deleting remark info only when order is finished
         oxSession::deleteVar( 'ordrem' );
         oxSession::deleteVar( 'stsprotection' );
+        
+        //#4005: Order creation time is not updated when order processing is complete
+        if ( !$blRecalculatingOrder ) {
+           $this-> _updateOrderDate();
+        }
 
         // updating order trans status (success status)
         $this->_setOrderStatus( 'OK' );
@@ -1058,6 +1063,20 @@ class oxOrder extends oxBase
                 $oUserBasket->addItemToBasket( $sProdId, $dNewAmount, $oContent->getSelList(), true, $oContent->getPersParams() );
             }
         }
+    }
+    
+    /**
+     * Updates order date to current date
+     *  
+     * @return null
+     */
+    protected function _updateOrderDate()
+    {
+        $oDb = oxDb::getDb();    
+        $sDate = date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() );        
+        $sQ = 'update oxorder set oxorderdate=\''.$sDate.'\' where oxid='.$oDb->quote( $this->getId() );
+        $this->oxorder__oxorderdate = new oxField( $sDate, oxField::T_RAW );
+        $oDb->execute( $sQ );
     }
 
     /**

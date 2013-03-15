@@ -42,8 +42,6 @@ function editThis( sID )
 </form>
 
 
-
-        <table cellspacing="0" cellpadding="0" border="0" style="width:100%;">
         <form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post">
         [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="cl" value="article_stock">
@@ -52,6 +50,7 @@ function editThis( sID )
         <input type="hidden" name="voxid" value="[{ $oxid }]">
         <input type="hidden" name="oxparentid" value="[{ $oxparentid }]">
         <input type="hidden" name="editval[article__oxid]" value="[{ $oxid }]">
+        <table cellspacing="0" cellpadding="0" border="0" style="width:100%;">
         <tr>
           <td valign="top" class="edittext" style="padding-left:10px;width:50%">
             <table cellspacing="0" cellpadding="0" border="0">
@@ -176,7 +175,7 @@ function editThis( sID )
               </tr>
             </table>
           </td>
-    <!-- Anfang rechte Seite -->
+            <!-- Start right column -->
           <td valign="top" class="edittext" style="padding-top:10px;padding-left:10px;width:50%">
             <fieldset title="[{ oxmultilang ident="ARTICLE_STOCK_AMOUNTPRICE_TITLE" }]" style="padding-left: 5px; padding-right: 5px;">
             <legend>[{ oxmultilang ident="ARTICLE_STOCK_AMOUNTPRICE_TITLE" }]</legend><br>
@@ -190,22 +189,40 @@ function editThis( sID )
                 [{assign var=oddclass value="2"}]
               [{/if}]
                 <td class="listitem[{$oddclass}]" nowrap>
-                  [{ oxmultilang ident="ARTICLE_STOCK_AMOUNT" }] [{$amountprice->oxprice2article__oxamount->value}]-[{$amountprice->oxprice2article__oxamountto->value}]
+                    [{ oxmultilang ident="ARTICLE_STOCK_AMOUNTPRICE_AMOUNTFROM" }]
+                    <input type="text" size="6" name="updateval[[{$amountprice->oxprice2article__oxid->value}]][oxprice2article__oxamount]" value="[{$amountprice->oxprice2article__oxamount->value}]" />
+                    [{ oxmultilang ident="ARTICLE_STOCK_AMOUNTPRICE_AMOUNTTO" }]
+                    <input type="text" size="6" name="updateval[[{$amountprice->oxprice2article__oxid->value}]][oxprice2article__oxamountto]" value="[{$amountprice->oxprice2article__oxamountto->value}]" />
                 </td>
                 <td class="listitem[{$oddclass}]" nowrap>
-                  &nbsp;&nbsp;[{ oxmultilang ident="ARTICLE_STOCK_AMOUNTPRICE_PRICE" }]
-                  [{if $amountprice->oxprice2article__oxaddabs->value}]
-                    [{$amountprice->oxprice2article__oxaddabs->value}]
-                  [{elseif $amountprice->oxprice2article__oxaddperc->value }]
-                    [{$amountprice->oxprice2article__oxaddperc->value}] [{ oxmultilang ident="ARTICLE_STOCK_AMOUNTPRICE_DISCOUNT" }]
-                  [{/if}]
+                    [{ oxmultilang ident="ARTICLE_STOCK_PRICE" }]
+                    <select class="edittext" name="updateval[[{$amountprice->oxprice2article__oxid->value}]][pricetype]">
+                    <option value="oxprice2article__oxaddabs" [{if $amountprice->oxprice2article__oxaddabs->value}] selected="selected" [{/if}]>[{ oxmultilang ident="ARTICLE_STOCK_AMOUNTPRICE_ABS" }]
+                    <option value="oxprice2article__oxaddperc" [{if $amountprice->oxprice2article__oxaddperc->value}] selected="selected" [{/if}]>[{ oxmultilang ident="ARTICLE_STOCK_AMOUNTPRICE_DISCOUNT" }]
+                    </select>
+                    [{if $amountprice->oxprice2article__oxaddabs->value}]
+                    <input class="edittext" size="6" type="text" name="updateval[[{$amountprice->oxprice2article__oxid->value}]][price]" value="[{$amountprice->oxprice2article__oxaddabs->value}]" />
+                    [{elseif $amountprice->oxprice2article__oxaddperc->value }]
+                    <input class="edittext" size="6" type="text" name="updateval[[{$amountprice->oxprice2article__oxid->value}]][price]" value="[{$amountprice->oxprice2article__oxaddperc->value}]" />
+                    [{/if}]
                 </td>
                 <td class=listitem[{$oddclass}]>
                   <a href="[{ $oViewConf->getSelfLink() }]&cl=article_stock&priceid=[{$amountprice->oxprice2article__oxid->value}]&fnc=deleteprice&oxid=[{$oxid}]" onClick='return confirm("[{ oxmultilang ident="GENERAL_YOUWANTTODELETE" }]")' class="delete"></a>
                 </td>
               </tr>
             [{/foreach}]
-              <tr><td colspan=3><hr></td></tr>
+            [{ if count( $amountprices ) > 0 }]
+            <tr>
+                <td colspan=3><br>
+                    <input type="submit" class="edittext" name="saveAll" value="[{ oxmultilang ident="ARTICLE_STOCK_SAVE" }]" onClick="Javascript:document.myedit.fnc.value='updateprices'"><br><br>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=3>
+                    <hr />
+                </td>
+            </tr>
+            [{ /if }]
               <tr>
                 <td class="edittext" colspan=3>
                   <table>
@@ -250,11 +267,12 @@ function editThis( sID )
                 </td>
               </tr>
             </table>
+            </fieldset>
           </td>
         </tr>
-        </form>
-        </table>
 
+        </table>
+        </form>
 [{include file="bottomnaviitem.tpl"}]
 
 [{include file="bottomitem.tpl"}]

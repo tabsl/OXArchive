@@ -2263,7 +2263,7 @@ class oxSetupController extends oxSetupCore
         }
 
         //swap database to english
-        if ( $oSession->getSessionParam('sShopLang') != "de" ) {
+        if ( $oSession->getSessionParam('location_lang') != "de" ) {
             try {
                 $oDb->queryFile( "$sqlDir/en.sql" );
             } catch ( Exception $oExcp ) {

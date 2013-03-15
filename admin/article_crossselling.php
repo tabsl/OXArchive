@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_crossselling.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: article_crossselling.php 45813 2012-06-04 07:45:24Z vaidas.matulevicius $
  */
 
 /**
@@ -59,18 +59,15 @@ class Article_Crossselling extends oxAdminDetails
                 $this->_aViewData['readonly'] = true;
         }
 
-        $aColumns = array();
         $iAoc = oxConfig::getParameter("aoc");
-        if ( $iAoc == 1 ) {
-
-            include_once 'inc/article_crossselling.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+        if ( $iAoc == 1 ) {            
+            $oArticleCrossellingAjax = oxNew( 'article_crossselling_ajax' );
+            $this->_aViewData['oxajax'] = $oArticleCrossellingAjax->getColumns();
 
             return "popups/article_crossselling.tpl";
         } elseif ( $iAoc == 2 ) {
-
-            include_once 'inc/article_accessories.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+            $oArticleAccessoriesAjax = oxNew( 'article_accessories_ajax' );
+            $this->_aViewData['oxajax'] = $oArticleAccessoriesAjax->getColumns();
 
             return "popups/article_accessories.tpl";
         }

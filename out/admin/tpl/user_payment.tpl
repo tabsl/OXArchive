@@ -41,7 +41,7 @@
                     <option value="[{ $payment->oxuserpayments__oxid->value }]" [{ if $payment->selected}]SELECTED[{/if}]>[{ $payment->oxpayments__oxdesc->value }]</option>
                     [{/foreach}]
                 </select>
-                [{ oxinputhelp ident="HELP_USER_PAYMENT_PAYMENT" }]
+                [{ oxinputhelp ident="HELP_USER_PAYMENT_METHODS" }]
             </td>
 
         </tr>

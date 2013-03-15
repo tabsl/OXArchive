@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: deliveryset_main.php 40195 2011-11-23 15:45:18Z linas.kukulskis $
+ * @version   SVN: $Id: deliveryset_main.php 45813 2012-06-04 07:45:24Z vaidas.matulevicius $
  */
 
 /**
@@ -72,10 +72,8 @@ class DeliverySet_Main extends oxAdminDetails
         }
 
         if ( oxConfig::getParameter("aoc") ) {
-
-            $aColumns = array();
-            include_once 'inc/'.strtolower(__CLASS__).'.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+            $oDeliverysetMainAjax = oxNew( 'deliveryset_main_ajax' );
+            $this->_aViewData['oxajax'] = $oDeliverysetMainAjax->getColumns();
 
             return "popups/deliveryset_main.tpl";
         }

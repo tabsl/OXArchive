@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxajax.php 44135 2012-04-20 15:06:35Z linas.kukulskis $
+ * @version   SVN: $Id: oxajax.php 46314 2012-06-19 13:36:37Z vaidas.matulevicius $
  */
 
 // shop path for includes
@@ -92,13 +92,39 @@ class ajaxListComponent extends oxSuperCfg
     protected $_blAllowExtColumns = false;
 
     /**
-     * Initializes AJAX columns
-     *
-     * @param array $aColumns Array of DB table columns which are loaded from DB
+     * Initializes AJAX columns.
+     * 
+     * @param array $aColumns Array of DB table columns which are loaded from DB.
+     * 
+     * @deprecated must be replaced with setColumns if needed
      *
      * @return null
      */
-    public function init( $aColumns )
+    public function init( $aColumns = null )
+    {
+        if ( !is_null( $aColumns ) ) {
+            $this->setColumns( $aColumns );
+        }
+    }
+    
+    /**
+     * Gets columns array.
+     * 
+     * @return array
+     */
+    public function getColumns()
+    {
+        return $this->_aColumns;        
+    }
+    
+    /**
+     * Sets columns array.
+     * 
+     * @param array $aColumns columns array 
+     * 
+     * @return null 
+     */
+    public function setColumns( $aColumns )
     {
         $this->_aColumns = $aColumns;
     }
@@ -633,7 +659,7 @@ class ajaxListComponent extends oxSuperCfg
             }
             $sShopId = $this->getConfig()->getShopId();
             $sQ = "delete from oxseo where oxtype='oxarticle' and oxobjectid='%s' and
-                   oxshopid='{$sShopId}' and oxparams in ('" . implode( ",", oxDb::getInstance()->quoteArray( $aCatIds ) ) . "')";
+                   oxshopid='{$sShopId}' and oxparams in (" . implode( ",", oxDb::getInstance()->quoteArray( $aCatIds ) ) . ")";
             $oDb = oxDb::getDb();
             $blCleanCats = true;
         }
@@ -741,13 +767,25 @@ if ( $blAjaxCall ) {
     if ( $sContainer = oxConfig::getParameter( 'container' ) ) {
 
         $sContainer = trim(strtolower( basename( $sContainer ) ));
-        $aColumns = array();
-
-        include_once 'inc/'.$sContainer.'.inc.php';
-
-        //$oAjaxComponent = new ajaxcomponent( $aColumns );
-        $oAjaxComponent = oxNew("ajaxcomponent");
-        $oAjaxComponent->init($aColumns);
+        
+        try{
+            $oAjaxComponent = oxNew($sContainer.'_ajax');
+        }
+        catch (oxSystemComponentException $oCe ){
+            $sFile = 'inc/'.$sContainer.'.inc.php';
+            if ( file_exists( $sFile ) ) {
+                $aColumns = array();
+                include_once $sFile;
+                $oAjaxComponent = new ajaxcomponent( $aColumns );
+                $oAjaxComponent->init( $aColumns );
+            } else {
+                $oEx = oxNew ( 'oxFileException' );
+                $oEx->setMessage( 'EXCEPTION_FILENOTFOUND' );
+                $oEx->setFileName( $sFile );
+                $oEx->debugOut();
+                throw $oEx;
+            }
+        }        
 
         $oAjaxComponent->setName( $sContainer );
         $oAjaxComponent->processRequest( oxConfig::getParameter( 'fnc' ) );

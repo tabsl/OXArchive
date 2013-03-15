@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: discount_users.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: discount_users.php 45813 2012-06-04 07:45:24Z vaidas.matulevicius $
  */
 
 /**
@@ -72,18 +72,15 @@ class Discount_Users extends oxAdminDetails
                 $this->_aViewData["readonly"] =  true;
         }
 
-        $aColumns = array();
         $iAoc = oxConfig::getParameter("aoc");
         if ( $iAoc == 1 ) {
-
-            include_once 'inc/discount_groups.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+            $oDiscountGroupsAjax = oxNew( 'discount_groups_ajax' );
+            $this->_aViewData['oxajax'] = $oDiscountGroupsAjax->getColumns();
 
             return "popups/discount_groups.tpl";
         } elseif ( $iAoc == 2 ) {
-
-            include_once 'inc/discount_users.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+            $oDiscountUsersAjax = oxNew( 'discount_users_ajax' );
+            $this->_aViewData['oxajax'] = $oDiscountUsersAjax->getColumns();
 
             return "popups/discount_users.tpl";
         }

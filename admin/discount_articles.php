@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: discount_articles.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: discount_articles.php 45813 2012-06-04 07:45:24Z vaidas.matulevicius $
  */
 
 /**
@@ -56,18 +56,15 @@ class Discount_Articles extends oxAdminDetails
             $this->_getCategoryTree( "artcattree", null );
         }
 
-        $aColumns = array();
         $iAoc = oxConfig::getParameter("aoc");
         if ( $iAoc == 1 ) {
-
-            include_once 'inc/discount_articles.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+            $oDiscountArticlesAjax = oxNew( 'discount_articles_ajax' );
+            $this->_aViewData['oxajax'] = $oDiscountArticlesAjax->getColumns();
 
             return "popups/discount_articles.tpl";
         } elseif ( $iAoc == 2 ) {
-
-            include_once 'inc/discount_categories.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+            $oDiscountCategoriesAjax = oxNew( 'discount_categories_ajax' );
+            $this->_aViewData['oxajax'] = $oDiscountCategoriesAjax->getColumns();
 
             return "popups/discount_categories.tpl";
         }

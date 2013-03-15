@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 44395 2012-04-25 14:33:12Z linas.kukulskis $
+ * @version   SVN: $Id: oxarticle.php 45766 2012-05-31 08:54:04Z alfonsas $
  */
 
 // defining supported link types
@@ -2324,7 +2324,9 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             if ( $sDbValue != false ) {
                 $this->_oLongDesc->setValue( $sDbValue, oxField::T_RAW );
             } elseif ( $this->oxarticles__oxparentid->value ) {
-                $this->_oLongDesc->setValue( $this->getParentArticle()->getLongDescription()->getRawValue(), oxField::T_RAW );
+                if ( !$this->isAdmin() || $this->_blLoadParentData ) {
+                    $this->_oLongDesc->setValue( $this->getParentArticle()->getLongDescription()->getRawValue(), oxField::T_RAW );
+                }
             }
         }
         return $this->_oLongDesc;

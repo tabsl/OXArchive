@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_extend.php 41700 2012-01-24 09:21:42Z linas.kukulskis $
+ * @version   SVN: $Id: article_extend.php 46249 2012-06-18 07:54:39Z edvardas.gineika $
  */
 
 /**
@@ -110,18 +110,15 @@ class Article_Extend extends oxAdminDetails
             $this->_aViewData['bundle_title'] = $sArtTitle;
 
 
-        $aColumns = array();
         $iAoc = oxConfig::getParameter("aoc");
         if ( $iAoc == 1 ) {
-
-            include_once 'inc/'.strtolower(__CLASS__).'.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+            $oArticleExtendAjax = oxNew( 'article_extend_ajax' );
+            $this->_aViewData['oxajax'] = $oArticleExtendAjax->getColumns();
 
             return "popups/article_extend.tpl";
-        } elseif ( $iAoc == 2 ) {
-
-            include_once 'inc/article_bundle.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+        } elseif ( $iAoc == 2 ) {            
+            $oArticleBundleAjax = oxNew( 'article_bundle_ajax' );
+            $this->_aViewData['oxajax'] = $oArticleBundleAjax->getColumns();
 
             return "popups/article_bundle.tpl";
         }
@@ -140,6 +137,19 @@ class Article_Extend extends oxAdminDetails
     public function save()
     {
         parent::save();
+        
+        $aMyFile = $this->getConfig()->getUploadedFile( "myfile" );
+        $aMediaFile = $this->getConfig()->getUploadedFile( "mediaFile" );
+        if ( is_array( $aMyFile['name'] ) && reset( $aMyFile['name'] ) || $aMediaFile['name'] ) {
+            $myConfig = $this->getConfig();
+            if ( $myConfig->isDemoShop() ) {
+                $oEx = oxNew( "oxExceptionToDisplay" );
+                $oEx->setMessage( 'ARTICLE_EXTEND_UPLOADISDISABLED' );
+                oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false );
+
+                return;
+            }
+        }
 
         $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");
@@ -176,7 +186,6 @@ class Article_Extend extends oxAdminDetails
         //saving media file
         $sMediaUrl  = oxConfig::getParameter( "mediaUrl");
         $sMediaDesc = oxConfig::getParameter( "mediaDesc");
-        $aMediaFile = $this->getConfig()->getUploadedFile( "mediaFile");
 
         if ( ( $sMediaUrl && $sMediaUrl != 'http://' ) || $aMediaFile['name'] || $sMediaDesc ) {
 

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: newsletter_selection.php 44135 2012-04-20 15:06:35Z linas.kukulskis $
+ * @version   SVN: $Id: newsletter_selection.php 45813 2012-06-04 07:45:24Z vaidas.matulevicius $
  */
 
 /**
@@ -55,9 +55,8 @@ class Newsletter_Selection extends oxAdminDetails
                 $this->_aViewData["edit"] = $oNewsletter;
 
                 if ( oxConfig::getParameter("aoc") ) {
-                    $aColumns = array();
-                    include_once 'inc/'.strtolower(__CLASS__).'.inc.php';
-                    $this->_aViewData['oxajax'] = $aColumns;
+                    $oNewsletterSelectionAjax = oxNew( 'newsletter_selection_ajax' );
+                    $this->_aViewData['oxajax'] = $oNewsletterSelectionAjax->getColumns();
                     return "popups/newsletter_selection.tpl";
                 }
             }

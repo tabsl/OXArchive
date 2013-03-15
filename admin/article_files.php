@@ -121,6 +121,16 @@ class Article_Files extends oxAdminDetails
      */
     public function upload()
     {
+        $myConfig = $this->getConfig();
+
+        if ( $myConfig->isDemoShop() ) {
+            $oEx = oxNew( "oxExceptionToDisplay" );
+            $oEx->setMessage( 'ARTICLE_EXTEND_UPLOADISDISABLED' );
+            oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false );
+
+            return;
+        }
+        
         $soxId = $this->getEditObjectId();
 
         $aParams  = oxConfig::getParameter( "newfile");
@@ -158,6 +168,16 @@ class Article_Files extends oxAdminDetails
      */
     public function deletefile()
     {
+        $myConfig = $this->getConfig();
+
+        if ( $myConfig->isDemoShop() ) {
+            $oEx = oxNew( "oxExceptionToDisplay" );
+            $oEx->setMessage( 'ARTICLE_EXTEND_UPLOADISDISABLED' );
+            oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false );
+
+            return;
+        }
+        
         $sArticleId = $this->getEditObjectId();
         $sArticleFileId = oxConfig::getParameter('fileid');
         $oArticleFile = oxNew('oxFile');

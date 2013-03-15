@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_stock.php 42120 2012-02-09 15:14:09Z linas.kukulskis $
+ * @version   SVN: $Id: article_stock.php 45746 2012-05-30 13:38:39Z edvardas.gineika $
  */
 
 /**
@@ -132,19 +132,31 @@ class Article_Stock extends oxAdminDetails
         $oArticle->save();
     }
 
-    /**
-     * Adds amount price to article
-     *
+     /**
+     * Adds or updates amount price to article
+      * 
+     * @param string $sOXID         Object ID
+     * @param array  $aUpdateParams Parameters
+      * 
      * @return null
      */
-    public function addprice()
+    public function addprice( $sOXID = null, $aUpdateParams = null )
     {
         $myConfig = $this->getConfig();
 
 
-        $soxId = $this->getEditObjectId();
+        $sOxArtId = $this->getEditObjectId();
+        
         $aParams = oxConfig::getParameter( "editval" );
 
+        if ( !is_array($aParams) ) {
+            return;
+        }
+        
+        if ( isset( $aUpdateParams ) && is_array( $aUpdateParams ) ) {
+            $aParams = array_merge( $aParams, $aUpdateParams );
+        }
+        
         //replacing commas
         foreach ( $aParams as $key => $sParam ) {
             $aParams[$key] = str_replace( ",", ".", $sParam );
@@ -153,7 +165,11 @@ class Article_Stock extends oxAdminDetails
             $sShopID = $myConfig->getShopID();
             $aParams['oxprice2article__oxshopid'] = $sShopID;
 
-        $aParams['oxprice2article__oxartid'] = $soxId;
+        if ( isset( $sOXID ) ) {
+            $aParams['oxprice2article__oxid'] = $sOXID;
+        }
+        
+        $aParams['oxprice2article__oxartid'] = $sOxArtId;
         if ( !isset( $aParams['oxprice2article__oxamount'] ) || !$aParams['oxprice2article__oxamount'] ) {
             $aParams['oxprice2article__oxamount'] = "1";
         }
@@ -165,7 +181,7 @@ class Article_Stock extends oxAdminDetails
 
         $dPrice = $aParams['price'];
         $sType = $aParams['pricetype'];
-
+        
         $oArticlePrice = oxNew( "oxbase" );
         $oArticlePrice->init( "oxprice2article" );
         $oArticlePrice->assign( $aParams );
@@ -186,7 +202,24 @@ class Article_Stock extends oxAdminDetails
         }
 
     }
-
+    
+    /**
+     * Updates all amount prices for article at once
+     *
+     * @return null
+     */
+    public function updateprices() 
+    {
+        $aParams = oxConfig::getParameter( "updateval" );
+        if ( is_array( $aParams ) ) {
+            foreach ( $aParams as $soxId => $aStockParams ) {
+                $this->addprice( $soxId, $aStockParams );
+            }
+        }
+    }
+    
+   
+    
     /**
      * Adds amount price to article
      *

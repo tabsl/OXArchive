@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 44757 2012-05-09 14:04:15Z saulius.stasiukaitis $
+ * @version   SVN: $Id: lang.php 46601 2012-06-22 13:58:02Z juergen.busch $
  */
 
 /*
@@ -418,6 +418,7 @@ $aLang = array(
 'ARTICLE_EXTEND_UPDATEPRICEC'                              => 'C:',
 'ARTICLE_EXTEND_UPDATEPRICETIME'                           => 'Start time:',
 'ARTICLE_EXTEND_UPDATEPRICES'                              => 'Update price on defined time',
+'ARTICLE_EXTEND_UPLOADISDISABLED'                          => 'This is a demoshop. Uploading files has been switched off due to security reasons.',
 'ARTICLE_LIST_ALLPRODUCTS'                                 => 'all Products',
 'ARTICLE_LIST_MENUSUBITEM'                                 => 'Product',
 'ARTICLE_MAIN_ERRORSAVINGARTICLE'                          => 'Attention: Product already exists!',
@@ -864,7 +865,7 @@ $aLang = array(
 'EXCEPTION_THEME_NOT_LOADED'                               => 'Theme could not be loaded',
 'EXCEPTION_MODULE_NOT_LOADED'                              => 'Module could not be loaded',
 'EXCEPTION_PARENT_VERSION_UNSPECIFIED'                     => 'Parent theme did not specify version',
-'EXCEPTION_UNSPECIFIED_PARENT_VERSIONS'                    => 'Compatible parent theme versions not specified',
+'EXCEPTION_UNSPECIFIED_PARENT_VERSIONS'                    => 'Compatible parent theme version not specified',
 'EXCEPTION_PARENT_VERSION_MISMATCH'                        => 'Parent theme version is not compatible',
 'EXCEPTION_PARENT_THEME_NOT_FOUND'                         => 'Cannot find parent theme',
 'NO_PICTURES_CHANGES'                                      => 'No pictures changes',
@@ -1278,7 +1279,7 @@ $aLang = array(
 'SHOP_CONFIG_DEFAULTVAT'                                   => 'Default VAT for all Products',
 'SHOP_CONFIG_DEFAULTLANGUAGE'                              => 'Default Language (0, 1, 2 ...) - 0 for German, 1 for English',
 'SHOP_CONFIG_EXCLUDENONMATERIALPRODUCTS'                   => "Don't consider intangible Products (e.g. Gift Certificates) in Shipping Costs Calculation",
-'SHOP_CONFIG_ENTERNETPRICE'                                => 'Product and Gift Wrapping prices entered/displayed in Admin are Net Prices',
+'SHOP_CONFIG_ENTERNETPRICE'                                => 'Enter Product Prices as Net Prices (plus VAT)',
 'SHOP_CONFIG_INLANDCUSTOMERS'                              => 'Domestic Customers - Customers living in the <b>selected</b> Countries are assigned to the User Group "Domestic Customers". For multiple selections use CTRL key.',
 'SHOP_CONFIG_LARGECUSTOMERPRICE'                           => 'Purchase Price Threshold from which Users are assigned to User Group "Huge Turnover"',
 'SHOP_CONFIG_MAXGBENTRIESPERDAY'                           => 'Number of Guestbook Entries each User is allowed to enter per Day',
@@ -1645,7 +1646,8 @@ $aLang = array(
 'WRAPPING_MAIN_PRESENTPACKUNG'                             => 'Gift Wrapping',
 'WRAPPING_MAIN_PICUPLOAD'                                  => 'Upload Picture',
 'WRAPPING_MAIN_TITLE'                                      => '[OXID Wrapping]',
-'SHOP_PERF_CALCVATONLYFORBASKETORDER'                      => 'Calculate specific VAT for countries only in Shopping Cart and Checkout',
+'SHOP_PERF_CALCVATONLYFORBASKETORDER'                      => 'Calculate VAT only in Shopping Cart and Checkout',
+'HELP_SHOP_PERF_CALCVATONLYFORBASKETORDER'                 => 'If product prices are entered as net prices, the VAT is exclusively calculated and displayed in shopping cart and checkout.',
 'MANUFACTURER_MAIN_ICONUPLOAD'                             => 'Upload Icon',
 'MANUFACTURER_MAIN_ITEMSWITHMANUFACTURER'                  => 'Products from this Manufacturer',
 'MANUFACTURER_MAIN_ALLITEMS'                               => 'All Products',
@@ -2087,7 +2089,7 @@ $aLang = array(
 
 'SHOP_PERF_SEO_CACHE'                                      => 'Enable SEO cache',
 'INFO_MODULES_MOVED_TO_EXTENSIONS'                         => 'Themes and modules handling moved to new menu "Extensions"',
-'EXCEPTION_THEME_SHOULD_BE_ONLY_IN_DATABASE'               => '[TR]Theme config should not be in config file',
+'EXCEPTION_THEME_SHOULD_BE_ONLY_IN_DATABASE'               => 'Theme should not be defined in config.inc.php',
 
 );
 

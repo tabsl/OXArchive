@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: deliveryset_payment.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: deliveryset_payment.php 45813 2012-06-04 07:45:24Z vaidas.matulevicius $
  */
 
 /**
@@ -63,18 +63,15 @@ class DeliverySet_Payment extends oxAdminDetails
                 $this->_aViewData['readonly'] = true;
         }
 
-        $aColumns = array();
         $iAoc = oxConfig::getParameter("aoc");
-        if ( $iAoc == 1 ) {
-
-            include_once 'inc/deliveryset_payment.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+        if ( $iAoc == 1 ) {            
+            $oDeliverysetPaymentAjax = oxNew( 'deliveryset_payment_ajax' );
+            $this->_aViewData['oxajax'] = $oDeliverysetPaymentAjax->getColumns();
 
             return "popups/deliveryset_payment.tpl";
         } elseif ( $iAoc == 2 ) {
-
-            include_once 'inc/deliveryset_country.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+            $oDeliverysetCountryAjax = oxNew( 'deliveryset_country_ajax' );
+            $this->_aViewData['oxajax'] = $oDeliverysetCountryAjax->getColumns();
 
             return "popups/deliveryset_country.tpl";
         }

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: manufacturer_main.php 40193 2011-11-23 15:44:57Z linas.kukulskis $
+ * @version   SVN: $Id: manufacturer_main.php 45813 2012-06-04 07:45:24Z vaidas.matulevicius $
  */
 
 /**
@@ -74,10 +74,8 @@ class Manufacturer_Main extends oxAdminDetails
         }
 
         if ( oxConfig::getParameter("aoc") ) {
-
-            $aColumns = array();
-            include_once 'inc/'.strtolower(__CLASS__).'.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+            $oManufacturerMainAjax = oxNew( 'manufacturer_main_ajax' );
+            $this->_aViewData['oxajax'] = $oManufacturerMainAjax->getColumns();
 
             return "popups/manufacturer_main.tpl";
         }

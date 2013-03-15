@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: actions_main.php 40599 2011-12-14 13:02:40Z vilma $
+ * @version   SVN: $Id: actions_main.php 45996 2012-06-07 14:53:22Z vaidas.matulevicius $
  */
 
 /**
@@ -69,15 +69,14 @@ class Actions_Main extends oxAdminDetails
                 $this->_aViewData["otherlang"][$id] = clone $oLang;
             }
         }
-        $aColumns = array();
 
         if ( oxConfig::getParameter("aoc") ) {
             // generating category tree for select list
             $sChosenArtCat = oxConfig::getParameter( "artcat");
             $sChosenArtCat = $this->_getCategoryTree( "artcattree", $sChosenArtCat, $soxId);
-
-            include_once 'inc/'.strtolower(__CLASS__).'.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+            
+            $oActionsMainAjax = oxNew( 'actions_main_ajax' );
+            $this->_aViewData['oxajax'] = $oActionsMainAjax->getColumns();
 
             return "popups/actions_main.tpl";
         }
@@ -107,8 +106,8 @@ class Actions_Main extends oxAdminDetails
 
                     if ( $sPopup ) {
                         $aColumns = array();
-                        include_once "inc/{$sPopup}.inc.php";
-                        $this->_aViewData['oxajax'] = $aColumns;
+                        $oActionsArticleAjax = oxNew( $sPopup.'_ajax' );
+                        $this->_aViewData['oxajax'] = $oActionsArticleAjax->getColumns();
                         return "popups/{$sPopup}.tpl";
                     }
                 } else {

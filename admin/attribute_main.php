@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: attribute_main.php 40201 2011-11-23 15:46:18Z linas.kukulskis $
+ * @version   SVN: $Id: attribute_main.php 45813 2012-06-04 07:45:24Z vaidas.matulevicius $
  */
 
 /**
@@ -76,11 +76,9 @@ class Attribute_Main extends oxAdminDetails
         $this->_aViewData["edit"] =  $oAttr;
 
         if ( oxConfig::getParameter("aoc") ) {
-
-            $aColumns = array();
-            include_once 'inc/'.strtolower(__CLASS__).'.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
-
+            $oAttributeMainAjax = oxNew( 'attribute_main_ajax' );
+            $this->_aViewData['oxajax'] = $oAttributeMainAjax->getColumns();
+            
             return "popups/attribute_main.tpl";
         }
         return "attribute_main.tpl";

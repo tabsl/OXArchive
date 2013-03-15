@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 44757 2012-05-09 14:04:15Z saulius.stasiukaitis $
+ * @version   SVN: $Id: lang.php 46600 2012-06-22 13:57:37Z juergen.busch $
  */
 
 $sLangName  = 'Deutsch';
@@ -421,6 +421,7 @@ $aLang = array(
 'ARTICLE_EXTEND_UPDATEPRICEC'                              => 'C:',
 'ARTICLE_EXTEND_UPDATEPRICETIME'                           => 'Startzeit:',
 'ARTICLE_EXTEND_UPDATEPRICES'                              => 'Preis zur festgesetzten Zeit aktualisieren',
+'ARTICLE_EXTEND_UPLOADISDISABLED'                          => 'Dies ist ein Demoshop. Das Hochladen von Dateien wurde aus Sicherheitsgründen abgeschaltet.',
 'ARTICLE_LIST_ALLPRODUCTS'                                 => 'alle Artikel',
 'ARTICLE_LIST_MENUSUBITEM'                                 => 'Artikel',
 'ARTICLE_MAIN_ERRORSAVINGARTICLE'                          => 'Warnung: Artikelnummer bereits vorhanden!',
@@ -867,7 +868,7 @@ $aLang = array(
 'EXCEPTION_THEME_NOT_LOADED'                               => 'Theme kann nicht geladen werden',
 'EXCEPTION_MODULE_NOT_LOADED'                              => 'Module kann nicht geladen werden',
 'EXCEPTION_PARENT_VERSION_UNSPECIFIED'                     => 'Eltern-Theme stellt keine Version(ierung) zur Verfügung',
-'EXCEPTION_UNSPECIFIED_PARENT_VERSIONS'                    => 'Kompabitble Versionsnummer des Eltern-Themes konnte nicht gefunden werden',
+'EXCEPTION_UNSPECIFIED_PARENT_VERSIONS'                    => 'Kompatible Versionsnummer des Eltern-Themes konnte nicht gefunden werden',
 'EXCEPTION_PARENT_VERSION_MISMATCH'                        => 'Eltern-Theme Version ist nicht kompatibel',
 'EXCEPTION_PARENT_THEME_NOT_FOUND'                         => 'Eltern-Theme kann wurde nicht gefunden',
 'NO_PICTURES_CHANGES'                                      => 'Keine Änderungen bei den Bildern',
@@ -1654,7 +1655,8 @@ $aLang = array(
 'MANUFACTURER_LIST_TITLE'                                  => 'Herstellerliste',
 'MANUFACTURER_LIST_MENUITEM'                               => 'Stammdaten',
 'MANUFACTURER_LIST_MENUSUBITEM'                            => 'Hersteller',
-'SHOP_PERF_CALCVATONLYFORBASKETORDER'                      => 'Länderspezifische Mehrwertsteuer nur im Warenkorb und im Bestellprozess berechnen',
+'SHOP_PERF_CALCVATONLYFORBASKETORDER'                      => 'MwSt. nur im Warenkorb und Bestellprozess berechnen',
+'HELP_SHOP_PERF_CALCVATONLYFORBASKETORDER'                 => 'Wenn Artikelpreise netto eingepflegt werden, wird die Mehrwertsteuer ausschließlich im Warenkorb und Bestellprozess berechnet und angezeigt.',
 'SHOP_PERF_CHECKIFTPLCOMPILE'                              => 'Überprüfen ob Templates neu kompiliert werden müssen. Schalten Sie diese Einstellung aus, wenn der eShop in den Live-Betrieb geht.',
 'SHOP_PERF_COMPARE'                                        => 'Artikelvergleiche einschalten',
 'SHOP_PERF_DONTSHOWEMTYCATEGORIES'                         => 'Leere Kategorien (keine Unterkategorien, keine Artikel) <strong>nicht</strong> anzeigen',
@@ -2093,7 +2095,7 @@ $aLang = array(
 
 'SHOP_PERF_SEO_CACHE'                                      => 'SEO Cache aktivieren',
 'INFO_MODULES_MOVED_TO_EXTENSIONS'                         => 'Die Einstellungen für Themes und Module finden Sie im neuen Menü "Erweiterungen"',
-'EXCEPTION_THEME_SHOULD_BE_ONLY_IN_DATABASE'               => '[TR]Theme config should not be in config file',
+'EXCEPTION_THEME_SHOULD_BE_ONLY_IN_DATABASE'               => 'Theme darf nicht in config.inc.php definiert sein',
     
 );
 

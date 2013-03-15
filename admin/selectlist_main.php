@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: selectlist_main.php 40217 2011-11-23 15:49:37Z linas.kukulskis $
+ * @version   SVN: $Id: selectlist_main.php 45813 2012-06-04 07:45:24Z vaidas.matulevicius $
  */
 
 DEFINE("ERR_SUCCESS", 1);
@@ -103,11 +103,9 @@ class SelectList_Main extends oxAdminDetails
             oxSession::setVar("iErrorCode", ERR_SUCCESS);
 
         }
-        if ( oxConfig::getParameter("aoc") ) {
-
-            $aColumns = array();
-            include_once 'inc/'.strtolower(__CLASS__).'.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+        if ( oxConfig::getParameter("aoc") ) {            
+            $oSelectlistMainAjax = oxNew( 'selectlist_main_ajax' );
+            $this->_aViewData['oxajax'] = $oSelectlistMainAjax->getColumns();
 
             return "popups/selectlist_main.tpl";
         }

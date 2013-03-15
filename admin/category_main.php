@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: category_main.php 45246 2012-05-16 14:07:27Z linas.kukulskis $
+ * @version   SVN: $Id: category_main.php 45813 2012-06-04 07:45:24Z vaidas.matulevicius $
  */
 
 /**
@@ -84,11 +84,9 @@ class Category_Main extends oxAdminDetails
 
         $this->_aViewData["sortableFields"] = $this->getSortableFields();
 
-        if ( oxConfig::getParameter("aoc") ) {
-
-            $aColumns = array();
-            include_once 'inc/'.strtolower(__CLASS__).'.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+        if ( oxConfig::getParameter("aoc") ) {            
+            $oCategoryMainAjax = oxNew( 'category_main_ajax' );
+            $this->_aViewData['oxajax'] = $oCategoryMainAjax->getColumns();
 
             return "popups/category_main.tpl";
         }

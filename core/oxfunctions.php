@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxfunctions.php 44132 2012-04-20 14:42:39Z alfonsas $
+ * @version   SVN: $Id: oxfunctions.php 46478 2012-06-20 13:45:36Z rimvydas.paskevicius $
  */
 
 /**
@@ -120,16 +120,14 @@ function oxAutoload( $sClass )
     $sClass = preg_replace( '/_parent$/i', '', $sClass );
 
     // special case
-    if ( !in_array( $sClass, $aTriedClasses ) ) {
-        $aModules = oxConfig::getInstance()->getConfigParam( 'aModules' );
-        if ( is_array( $aModules ) ) {
-            $myUtilsObject = oxUtilsObject::getInstance();
-            foreach ( $aModules as $sParentName => $sModuleName ) {
-                // looking for module parent class
-                if ( stripos( $sModuleName, $sClass ) !== false ) {
-                    $myUtilsObject->getClassName( $sParentName );
-                    break;
-                }
+    if ( !in_array( $sClass, $aTriedClasses ) && is_array( $aModules = oxConfig::getInstance()->getConfigParam( 'aModules' ) ) ) {
+
+        $myUtilsObject = oxUtilsObject::getInstance();
+        foreach ( $aModules as $sParentName => $sModuleName ) {
+            // looking for module parent class
+            if (  preg_match('/\b'.$sClass.'($|\&)/i', $sModuleName )  ) {  
+                $myUtilsObject->getClassName( $sParentName );
+                break;
             }
             $aTriedClasses[] = $sClass;
         }

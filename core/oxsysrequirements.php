@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsysrequirements.php 43973 2012-04-16 15:50:26Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxsysrequirements.php 46329 2012-06-19 13:55:01Z alfonsas $
  */
 
 /**
@@ -143,6 +143,16 @@ class oxSysRequirements
                                       );
 
     /**
+     * Returns PHP consntant PHP_INT_SIZE
+     * 
+     * @return integer
+     */
+    protected function _getPhpIntSize()
+    {
+        return PHP_INT_SIZE;
+    }
+
+    /**
      * Class constructor. The constructor is defined in order to be possible to call parent::__construct() in modules.
      *
      * @return null;
@@ -249,6 +259,10 @@ class oxSysRequirements
      */
     public function checkBug53632()
     {
+        if ( $this->_getPhpIntSize() > 4 ) {
+            return 2;
+        }
+  
         $iState = 1;
         if ( version_compare( PHP_VERSION, "5.3", ">=" ) ) {
             if ( version_compare( PHP_VERSION, "5.3.5", ">=" ) && version_compare( PHP_VERSION, "5.3.7", "!=" ) ) {

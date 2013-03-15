@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: delivery_articles.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: delivery_articles.php 45813 2012-06-04 07:45:24Z vaidas.matulevicius $
  */
 
 
@@ -60,18 +60,15 @@ class Delivery_Articles extends oxAdminDetails
                $this->_aViewData['readonly'] = true;
         }
 
-        $aColumns = array();
         $iAoc = oxConfig::getParameter("aoc");
         if ( $iAoc == 1 ) {
-
-            include_once 'inc/delivery_articles.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+            $oDeliveryArticlesAjax = oxNew( 'delivery_articles_ajax' );
+            $this->_aViewData['oxajax'] = $oDeliveryArticlesAjax->getColumns();
 
             return "popups/delivery_articles.tpl";
         } elseif ( $iAoc == 2 ) {
-
-            include_once 'inc/delivery_categories.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
+            $oDeliveryCategoriesAjax = oxNew( 'delivery_categories_ajax' );
+            $this->_aViewData['oxajax'] = $oDeliveryCategoriesAjax->getColumns();
 
             return "popups/delivery_categories.tpl";
         }

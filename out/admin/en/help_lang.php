@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 44175 2012-04-23 09:40:37Z juergen.busch $
+ * @version   SVN: $Id: help_lang.php 46597 2012-06-22 13:44:03Z juergen.busch $
  */
 
 /**
@@ -481,6 +481,7 @@ $aLang =  array(
                                                  '<ul>' .
                                                  '<li><span class="userinput_or_code">abs</span>: The discount is an absolute discount, e.g. EUR 5.</li>' .
                                                  '<li><span class="userinput_or_code">%</span>: The discount is a percentage discount, e.g. 10 percent of the purchase price.</li>' .
+                                                 '<li><span class="userinput_or_code">itm</span>: Discount in the form of a free product. Set the amount of this product. Choose "Multiply" if the amount of discounted product in shopping cart should be multiplied with the amount of the free product.</li>'.
                                                  '</ul>',
 
 
@@ -524,13 +525,13 @@ $aLang =  array(
 
 'HELP_SELECTLIST_MAIN_FIELDS'                 => 'All available options are displayed in the <span class="navipath_or_inputname">Fields</span> list. You can use the entry fields to the right to set up new options. Further information is available in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/implementing-simple-variants-selection-lists" target="_blank">eShop manual</a> on the OXID eSales website.',
 
-
-
 'HELP_USER_MAIN_HASPASSWORD'                  => 'Here you can distinguish if users registered when ordering:' .
                                                  '<ul><li>If a password is set, the user registered.</li>' .
                                                  '<li>If no password is set, the user ordered without registering.</li></ul>',
 
-
+'HELP_USER_PAYMENT_METHODS'                   => 'On this tab you can:'.
+                                                 '<ul><li>Browse and manage existing user payment methods.'.
+                                                 '<li>Create new payment methods and set default values, for example direct debit.</li></ul>',
 
 'HELP_USER_EXTEND_NEWSLETTER'                 => 'This setting shows if the user subscribed to the newsletter.',
 

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_config.php 38578 2011-09-05 13:26:48Z linas.kukulskis $
+ * @version   SVN: $Id: shop_config.php 45813 2012-06-04 07:45:24Z vaidas.matulevicius $
  */
 
 /**
@@ -77,8 +77,8 @@ class Shop_Config extends oxAdminDetails
 
             $iAoc = oxConfig::getParameter("aoc");
             if ( $iAoc == 1 ) {
-                include_once 'inc/shop_default_category.inc.php';
-                $this->_aViewData['oxajax'] = $aColumns;
+                $oShopDefaultCategoryAjax = oxNew( 'shop_default_category_ajax' );
+                $this->_aViewData['oxajax'] = $oShopDefaultCategoryAjax->getColumns();
 
                 return "popups/shop_default_category.tpl";
             }
