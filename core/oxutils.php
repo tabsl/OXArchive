@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutils.php 28566 2010-06-22 16:57:35Z tomas $
+ * @version   SVN: $Id: oxutils.php 29167 2010-07-29 13:04:46Z arvydas $
  */
 
 /**
@@ -1312,5 +1312,26 @@ class oxUtils extends oxSuperCfg
         } catch (Exception $e) {
         }
         $this->showMessageAndExit( $sReturn );
+    }
+
+    /**
+     * Extracts domain name from given host
+     *
+     * @param string $sHost host name
+     *
+     * @return string
+     */
+    public function extractDomain( $sHost )
+    {
+        $oStr = getStr();
+        if ( !$oStr->preg_match( '/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/', $sHost ) &&
+             ( $iLastDot = strrpos( $sHost, '.' ) ) !== false ) {
+            $iLen = $oStr->strlen( $sHost );
+            if ( ( $iNextDot = strrpos( $sHost, '.', ( $iLen - $iLastDot + 1 ) * - 1 ) ) !== false ) {
+                $sHost = trim( $oStr->substr( $sHost, $iNextDot ), '.' );
+            }
+        }
+
+        return $sHost;
     }
 }

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: order.php 28585 2010-06-23 09:23:38Z sarunas $
+ * @version   SVN: $Id: order.php 29252 2010-08-06 13:40:48Z arvydas $
  */
 
 /**
@@ -158,27 +158,28 @@ class order extends oxUBase
      */
     public function render()
     {
-        $myConfig = $this->getConfig();
-        $oBasket = $this->getBasket();
-        if ($myConfig->getConfigParam( 'blPsBasketReservationEnabled' )) {
-            
-            $this->getSession()->getBasketReservations()->renewExpiration();
+        if ( $this->getIsOrderStep() ) {
+            $oBasket = $this->getBasket();
+            $myConfig = $this->getConfig();
 
-            if ( !$oBasket || ( $oBasket && !$oBasket->getProductsCount() )) {
-                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket' );
+            if ( $myConfig->getConfigParam( 'blPsBasketReservationEnabled' )) {
+                $this->getSession()->getBasketReservations()->renewExpiration();
+                if ( !$oBasket || ( $oBasket && !$oBasket->getProductsCount() )) {
+                    oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket' );
+                }
             }
-        }
 
-        // can we proceed with ordering ?
-        $oUser = $this->getUser();
-        if ( !$oBasket || !$oUser || ( $oBasket && !$oBasket->getProductsCount() ) ) {
-            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() );
-        }
+            // can we proceed with ordering ?
+            $oUser = $this->getUser();
+            if ( !$oBasket || !$oUser || ( $oBasket && !$oBasket->getProductsCount() ) ) {
+                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() );
+            }
 
-        // payment is set ?
-        if ( !$this->getPayment() ) {
-            // redirecting to payment step on error ..
-            oxUtils::getInstance()->redirect( $myConfig->getShopCurrentURL().'&cl=payment' );
+            // payment is set ?
+            if ( !$this->getPayment() ) {
+                // redirecting to payment step on error ..
+                oxUtils::getInstance()->redirect( $myConfig->getShopCurrentURL().'&cl=payment' );
+            }
         }
 
         parent::render();

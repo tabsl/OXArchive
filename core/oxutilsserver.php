@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsserver.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxutilsserver.php 29251 2010-08-06 12:41:44Z arvydas $
  */
 
 /**
@@ -40,6 +40,20 @@ class oxUtilsServer extends oxSuperCfg
      * @var array
      */
     protected $_aUserCookie = array();
+
+    /**
+     * Session cookie parameter name
+     *
+     * @var string
+     */
+    protected $_sSessionCookiesName = 'aSessionCookies';
+
+    /**
+     * Session stored cookies
+     *
+     * @var array
+     */
+    protected $_sSessionCookies = array();
 
     /**
      * Returns server utils instance
@@ -65,20 +79,25 @@ class oxUtilsServer extends oxSuperCfg
     /**
      * sets cookie
      *
-     * @param string $sName   cookie name
-     * @param string $sValue  value
-     * @param int    $iExpire expire time
-     * @param string $sPath   The path on the server in which the cookie will be available on
-     * @param string $sDomain The domain that the cookie is available.
+     * @param string $sName       cookie name
+     * @param string $sValue      value
+     * @param int    $iExpire     expire time
+     * @param string $sPath       The path on the server in which the cookie will be available on
+     * @param string $sDomain     The domain that the cookie is available.
+     * @param bool   $blToSession is true, records cookie information to session
      *
      * @return bool
      */
-    public function setOxCookie( $sName, $sValue = "", $iExpire = 0, $sPath = '/', $sDomain = null )
+    public function setOxCookie( $sName, $sValue = "", $iExpire = 0, $sPath = '/', $sDomain = null, $blToSession = true )
     {
         //TODO: since setcookie takes more than just 4 params..
         // would be nice to have it sending through https only, if in https mode
         // or allowing only http access to cookie [no JS access - reduces XSS attack possibility]
         // ref: http://lt.php.net/manual/en/function.setcookie.php
+
+        if ( $blToSession ) {
+           $this->_saveSessionCookie( $sName, $sValue, $iExpire, $sPath, $sDomain );
+        }
 
         if ( defined('OXID_PHP_UNIT')) {
             // do NOT set cookies in php unit.
@@ -86,6 +105,101 @@ class oxUtilsServer extends oxSuperCfg
         }
 
         return setcookie( $sName, $sValue, $iExpire, $this->_getCookiePath( $sPath ), $this->_getCookieDomain( $sDomain ) );
+    }
+
+    protected $_blSaveToSession = null;
+
+    /**
+     * Checks if cookie must be saved to session in order to transfer it to different domain
+     *
+     * @return bool
+     */
+    protected function _mustSaveToSession()
+    {
+        if ( $this->_blSaveToSession === null ) {
+            $this->_blSaveToSession = false;
+
+            $myConfig = $this->getConfig();
+            if ( $sSslUrl = $myConfig->getSslShopUrl() ) {
+                $sUrl  = $myConfig->getShopUrl();
+
+                $sHost    = parse_url( $sUrl, PHP_URL_HOST );
+                $sSslHost = parse_url( $sSslUrl, PHP_URL_HOST );
+
+                // testing if domains matches..
+                if ( $sHost != $sSslHost ) {
+                    $oUtils = oxUtils::getInstance();
+                    $this->_blSaveToSession = $oUtils->extractDomain( $sHost ) != $oUtils->extractDomain( $sSslHost );
+                }
+            }
+        }
+
+        return $this->_blSaveToSession;
+    }
+
+    /**
+     * Returns session cookie key
+     *
+     * @param bool $blGet mode - true - get, false - set cookie
+     *
+     * @return string
+     */
+    protected function _getSessionCookieKey( $blGet )
+    {
+        $blSsl = $this->getConfig()->isSsl();
+        $sKey  = $blSsl ? 'nossl' : 'ssl';
+
+        if ( $blGet ) {
+            $sKey = $blSsl ? 'ssl' : 'nossl';
+        }
+
+        return $sKey;
+    }
+
+    /**
+     * Copies cookie info to session
+     *
+     * @param string $sName   cookie name
+     * @param string $sValue  cookie value
+     * @param int    $iExpire expiration time
+     * @param string $sPath   cookie path
+     * @param string $sDomain cookie domain
+     *
+     * @return null
+     */
+    protected function _saveSessionCookie( $sName, $sValue, $iExpire, $sPath, $sDomain )
+    {
+        if ( $this->_mustSaveToSession() ) {
+            $aCookieData = array( 'value' => $sValue, 'expire' => $iExpire, 'path' => $sPath, 'domain' => $sDomain );
+
+            $aSessionCookies = ( array ) oxSession::getVar( $this->_sSessionCookiesName );
+            $aSessionCookies[$this->_getSessionCookieKey( false )][$sName] = $aCookieData;
+
+            oxSession::setVar( $this->_sSessionCookiesName, $aSessionCookies );
+        }
+    }
+
+    /**
+     * Stored all session cookie info to cookies
+     *
+     * @return mixed
+     */
+    public function loadSessionCookies()
+    {
+        if ( ( $aSessionCookies = oxSession::getVar( $this->_sSessionCookiesName ) ) ) {
+            $sKey = $this->_getSessionCookieKey( true );
+            if ( isset( $aSessionCookies[$sKey] ) ) {
+                // writing session data to cookies
+                foreach ( $aSessionCookies[$sKey] as $sName => $aCookieData ) {
+                    $this->setOxCookie( $sName, $aCookieData['value'], $aCookieData['expire'], $aCookieData['path'], $aCookieData['domain'], false );
+                    $this->_sSessionCookies[$sName] = $aCookieData['value'];
+                }
+
+                // cleanup
+                unset( $aSessionCookies[$sKey] );
+                oxSession::setVar( $this->_sSessionCookiesName, $aSessionCookies );
+            }
+        }
     }
 
     /**
@@ -157,7 +271,7 @@ class oxUtilsServer extends oxSuperCfg
         if ( $sName && isset( $_COOKIE[$sName] ) ) {
             $sValue = oxConfig::checkSpecialChars($_COOKIE[$sName]);
         } elseif ( $sName && !isset( $_COOKIE[$sName] ) ) {
-            $sValue = null;
+            $sValue = isset( $this->_sSessionCookies[$sName] ) ? $this->_sSessionCookies[$sName] : null;
         } elseif ( !$sName && isset( $_COOKIE ) ) {
             $sValue = $_COOKIE;
         }
@@ -269,5 +383,20 @@ class oxUtilsServer extends oxSuperCfg
         }
 
         return $blTrusted;
+    }
+
+    /**
+     * Removes MSIE(\s)?(\S)*(\s) from browser agent information
+     *
+     * @param string $sAgent browser user agent idenfitier
+     *
+     * @return string
+     */
+    public function processUserAgentInfo( $sAgent )
+    {
+        if ( $sAgent ) {
+            $sAgent = getStr()->preg_replace( "/MSIE(\s)?(\S)*(\s)/", "", (string) $sAgent );
+        }
+        return $sAgent;
     }
 }

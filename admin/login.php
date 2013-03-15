@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: login.php 27084 2010-04-07 13:47:56Z arvydas $
+ * @version   SVN: $Id: login.php 29435 2010-08-19 11:48:02Z sarunas $
  */
 
 /**
@@ -102,15 +102,17 @@ class Login extends oxAdminView
             $oUser->login( $sUser, $sPass );
         } catch ( oxUserException $oEx ) {
             $myUtilsView->addErrorToDisplay('LOGIN_ERROR');
-            $this->addTplParam( 'user', $sUser );
-            $this->addTplParam( 'pwd', $sPass );
-            $this->addTplParam( 'profile', $sProfile );
+            $oStr = getStr();
+            $this->addTplParam( 'user', $oStr->htmlspecialchars( $sUser ) );
+            $this->addTplParam( 'pwd', $oStr->htmlspecialchars( $sPass ) );
+            $this->addTplParam( 'profile', $oStr->htmlspecialchars( $sProfile ) );
             return;
         } catch ( oxCookieException $oEx ) {
             $myUtilsView->addErrorToDisplay('LOGIN_NO_COOKIE_SUPPORT');
-            $this->addTplParam( 'user', $sUser );
-            $this->addTplParam( 'pwd', $sPass );
-            $this->addTplParam( 'profile', $sProfile );
+            $oStr = getStr();
+            $this->addTplParam( 'user', $oStr->htmlspecialchars( $sUser ) );
+            $this->addTplParam( 'pwd', $oStr->htmlspecialchars( $sPass ) );
+            $this->addTplParam( 'profile', $oStr->htmlspecialchars( $sProfile ) );
             return;
         } catch ( oxConnectionException $oEx ) {
             $myUtilsView->addErrorToDisplay($oEx);

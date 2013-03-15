@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: payment.php 28585 2010-06-23 09:23:38Z sarunas $
+ * @version   SVN: $Id: payment.php 29252 2010-08-06 13:40:48Z arvydas $
  */
 
 /**
@@ -163,15 +163,19 @@ class Payment extends oxUBase
             oxUtils::getInstance()->redirect( $sRedirectURL );
         }
 
-        //additional check if we really really have a user now
-        //and the basket is not empty
-        $oBasket = $this->getSession()->getBasket();
-        if ( $myConfig->getConfigParam( 'blPsBasketReservationEnabled' ) && (!$oBasket || ( $oBasket && !$oBasket->getProductsCount() )) ) {
-            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket' );
-        }
-        $oUser = $this->getUser();
-        if ( !$oBasket || !$oUser || ( $oBasket && !$oBasket->getProductsCount() ) ) {
-            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=start' );
+        if ( $this->getIsOrderStep() ) {
+
+            //additional check if we really really have a user now
+            //and the basket is not empty
+            $oBasket = $this->getSession()->getBasket();
+            if ( $myConfig->getConfigParam( 'blPsBasketReservationEnabled' ) && (!$oBasket || ( $oBasket && !$oBasket->getProductsCount() )) ) {
+                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket' );
+            }
+
+            $oUser = $this->getUser();
+            if ( !$oBasket || !$oUser || ( $oBasket && !$oBasket->getProductsCount() ) ) {
+                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=start' );
+            }
         }
 
         // passing payments to view

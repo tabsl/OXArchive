@@ -24,16 +24,17 @@ function changeFnc( fncName )
 </form>
 
 
+
+<table cellspacing="0" cellpadding="0" border="0" width="98%">
+<tr>
+    <td valign="top" class="edittext" width="355">
+
 <form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
 [{ $shop->hiddensid }]
 <input type="hidden" name="cl" value="voucherserie_main">
 <input type="hidden" name="fnc" value="save">
 <input type="hidden" name="oxid" value="[{$oxid}]">
 <input type="hidden" name="editval[oxvoucherseries__oxid]" value="[{$oxid}]">
-
-<table cellspacing="0" cellpadding="0" border="0" width="98%">
-<tr>
-    <td valign="top" class="edittext" width="355">
 
         <table cellspacing="2" cellpadding="0" border="0">
         <!--tr>
@@ -143,49 +144,36 @@ function changeFnc( fncName )
             <input type="checkbox" name="editval[oxvoucherseries__oxcalculateonce]" value="1" [{if $edit->oxvoucherseries__oxcalculateonce->value}]checked[{/if}] [{ $readonly }]>
             </td>
         </tr>
+        <tr>
+            <td class="edittext">
+            </td>
+            <td class="edittext"><br>
+            <input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="GENERAL_SAVE" }]" [{ $readonly }] onClick="Javascript:changeFnc('save');">
+            </td>
+        </tr>
         </table>
+
+</form>
+
     </td>
     <td width="355" valign="top">
-       [{if $status.total > 0 }]
-            <fieldset title="[{ oxmultilang ident="VOUCHERSERIE_MAIN_VOUCHERSTATISTICS" }]" style="padding-left: 5px; padding-right: 5px;">
-            <legend>[{ oxmultilang ident="VOUCHERSERIE_MAIN_VOUCHERSTATISTICS" }]</legend><br>
+
+        [{if $oxid != "-1" }]
+
+        <form name="myexport" id="myexport" action="[{ $shop->selflink }]" target="dynexport_do" method="post">
+        [{ $shop->hiddensid }]
+        <input type="hidden" name="cl" value="">
+        <input type="hidden" name="fnc" value="start">
+        <input type="hidden" name="voucherid" value="[{$oxid}]">
+
+        <fieldset title="[{ oxmultilang ident="VOUCHERSERIE_MAIN_VOUCHERSTATISTICS" }]" style="padding-left: 5px; padding-right: 5px;">
+            <legend>[{ oxmultilang ident="VOUCHERSERIE_MAIN_VOUCHERSTATISTICS" }]</legend>
+            <iframe src="[{$shop->selflink}]&cl=[{$sClassDo}]&voucherid=[{$oxid}]" width="100%" height="80" frameborder="0" name="dynexport_do" align="left"></iframe>
+        </fieldset>
+        <br>
+
         <table cellspacing="2" cellpadding="0" width="">
             <tr>
-                <td class="edittext">
-                    [{ oxmultilang ident="GENERAL_SUM" }]
-                </td>
-                <td class="edittext">
-                    <b>[{ $status.total }]</b>
-                </td>
-            </tr>
-            <tr>
-                <td class="edittext">
-                    [{ oxmultilang ident="VOUCHERSERIE_MAIN_AVAILABLE" }]
-                </td>
-                <td class="edittext">
-                    <b>[{$status.available}]</b>
-                </td>
-            </tr>
-            <tr>
-                <td class="edittext">
-                    [{ oxmultilang ident="VOUCHERSERIE_MAIN_USED" }]
-                </td>
-                <td class="edittext">
-                    <b>[{$status.used}]</b>
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td>
-                <input type="submit" class="edittext" name="export" value="[{ oxmultilang ident="VOUCHERSERIE_EXPORT_EXPORT" }]" [{ $readonly }] onClick="Javascript:changeFnc('export');">
-                </td>
-            </tr>
-            </table>
-            </fieldset>
-            <br><br>
-            [{/if}]
-            <table cellspacing="2" cellpadding="0" width="">
                 <td class="edittext" colspan="2">
                     <b>[{ oxmultilang ident="VOUCHERSERIE_MAIN_NEWVOUCHER" }]</b> (optional)<br><br>
                 </td>
@@ -195,7 +183,7 @@ function changeFnc( fncName )
                     [{ oxmultilang ident="VOUCHERSERIE_MAIN_RANDOMNUM" }]
                 </td>
                 <td>
-                    <input type="checkbox" name="randomVoucherNr" value="true" [{ $readonly }]>
+                    <input type="radio" name="randomVoucherNr" value="1" checked [{ $readonly }]>
                     [{ oxinputhelp ident="HELP_VOUCHERSERIE_MAIN_RANDOMNUM" }]
                 </td>
             </tr>
@@ -204,30 +192,34 @@ function changeFnc( fncName )
                     [{ oxmultilang ident="VOUCHERSERIE_MAIN_VOUCHERNUM" }]
                 </td>
                 <td>
-                    <input class="editinput" size="29" type="text" name="voucherNr" [{ $readonly }]>
+                    <input type="radio" name="randomVoucherNr" id="randomVoucherNr" value="0" [{ $readonly }]>
+                    <input class="editinput" size="29" type="text" name="voucherNr" [{ $readonly }] onfocus="document.getElementById('randomVoucherNr').checked='true';">
                     [{ oxinputhelp ident="HELP_VOUCHERSERIE_MAIN_VOUCHERNUM" }]
                 </td>
             </tr>
             <tr>
-                <td class="edittext" width="40%">
+                <td class="edittext">
                     [{ oxmultilang ident="GENERAL_SUM" }]
                 </td>
-                <td width="60%" class="edittext">
-                    <input type="text" size="15" class="editinput" name="voucherAmount" value="0" [{ $readonly }]>
+                <td>
+                    <input type="text" size="29" class="editinput" name="voucherAmount" value="0" [{ $readonly }]>
                     [{ oxinputhelp ident="HELP_GENERAL_SUM" }]
                 </td>
             </tr>
+            <tr>
+                <td></td>
+                <td><br>
+                    <input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="VOUCHERSERIE_MAIN_GENERATE" }]" [{ $readonly }] onClick="Javascript:document.myexport.cl.value='voucherserie_generate';">
+                    <input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="VOUCHERSERIE_MAIN_EXPORT" }]" [{ $readonly }] onClick="Javascript:document.myexport.cl.value='voucherserie_export';">
+                </td>
+            </tr>
         </table>
+
+        </form>
+        [{/if}]
+
     </td>
     </tr>
-            <tr>
-            <td class="edittext">
-            </td>
-            <td class="edittext"><br>
-            <input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="GENERAL_SAVE" }]" [{ $readonly }] onClick="Javascript:changeFnc('save');">
-            </td>
-        </tr>
 </table>
-</form>
 [{include file="bottomnaviitem.tpl"}]
 [{include file="bottomitem.tpl"}]

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 28749 2010-07-01 12:36:41Z vilma $
+ * @version   SVN: $Id: oxorder.php 29487 2010-08-23 07:55:25Z tomas $
  */
 
 /**

@@ -19,15 +19,14 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuserbasket.php 28304 2010-06-11 12:20:28Z sarunas $
+ * @version   SVN: $Id: oxuserbasket.php 29487 2010-08-23 07:55:25Z tomas $
  */
 
 /**
- * Virtual basket manager class. Virtual baskets are user article lists which are stored in database (noticelists, wishlists).
- * The name of the class is left like this because of historic reasons.
- * It is more relevant to wishlist and noticelist than to shoping basket.
- * Collects shopping basket information, updates it (DB level), removes or adds
- * articles to it.
+ * Virtual basket manager class.
+ * Virtual baskets are user product lists which are stored in database (stored basket, noticelists, wishlists).
+ * Collects shopping basket information, updates it, removes or adds products to the database.
+ *
  * @package core
  */
 class oxUserBasket extends oxBase
@@ -274,7 +273,7 @@ class oxUserBasket extends oxBase
     }
 
     /**
-     * Method adds/removes user chosen article to/from his noticelist or wishlist. Returns total amount
+     * Method adds/removes user chosen article to/from the basket. Returns total amount
      * of articles in list.
      *
      * @param string $sProductId Article ID

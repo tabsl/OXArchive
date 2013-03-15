@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsession.php 28448 2010-06-18 12:52:09Z sarunas $
+ * @version   SVN: $Id: oxsession.php 29342 2010-08-13 10:55:22Z arvydas $
  */
 
 DEFINE('_DB_SESSION_HANDLER', getShopBasePath() . 'core/adodblite/session/adodb-session.php');
@@ -269,13 +269,17 @@ class oxSession extends oxSuperCfg
             }
 
             //checking for swapped client
-            if ( !self::$_blIsNewSession && $this->_isSwappedClient() ) {
+            $blSwapped = $this->_isSwappedClient();
+            if ( !self::$_blIsNewSession && $blSwapped ) {
                 $this->initNewSession();
 
                 // passing notification about session problems
                 if ( $this->_sErrorMsg && $myConfig->getConfigParam( 'iDebug' ) ) {
                     oxUtilsView::getInstance()->addErrorToDisplay( new oxException( $this->_sErrorMsg ) );
                 }
+            } elseif ( !$blSwapped ) {
+                // transferring cookies between hosts
+                oxUtilsServer::getInstance()->loadSessionCookies();
             }
         }
     }
@@ -344,12 +348,12 @@ class oxSession extends oxSuperCfg
             header("Cache-Control: no-store, private, must-revalidate, proxy-revalidate, post-check=0, pre-check=0, max-age=0, s-maxage=0");
         }
 
-        $ret = @session_start();
-        if (!$this->getSessionChallengeToken()) {
+        $blStarted = @session_start();
+        if ( !$this->getSessionChallengeToken() ) {
             $this->_initNewSessionChallenge();
         }
 
-        return $ret;
+        return $blStarted;
     }
 
     /**
@@ -366,26 +370,36 @@ class oxSession extends oxSuperCfg
 
         //saving persistent params if old session exists
         $aPersistent = array();
-        foreach ($this->_aPersistentParams as $sParam) {
-            if ( self::getVar($sParam)) {
-                $aPersistent[$sParam] = self::getVar($sParam);
+        foreach ( $this->_aPersistentParams as $sParam ) {
+            if ( ( $sValue = self::getVar( $sParam ) ) ) {
+                $aPersistent[$sParam] = $sValue;
             }
         }
 
-        $sid = md5(oxUtilsObject::getInstance()->generateUID());
-
-        $this->_setSessionId($sid);
-        session_unset();
+        $this->_setSessionId( $this->_getNewSessionId() );
 
         //restoring persistent params to session
-        foreach ($aPersistent as $key => $sParam) {
-            self::setVar($key, $aPersistent[$key]);
+        foreach ( $aPersistent as $sKey => $sParam ) {
+            self::setVar( $sKey, $aPersistent[$sKey] );
         }
 
         $this->_initNewSessionChallenge();
 
         // (re)setting actual user agent when initiating new session
         self::setVar( "sessionagent", oxUtilsServer::getInstance()->getServerVar( 'HTTP_USER_AGENT' ) );
+    }
+
+    /**
+     * Update the current session id with a newly generated one, deletes the
+     * old associated session file, frees all session variables and
+     *
+     * @return string
+     */
+    protected function _getNewSessionId()
+    {
+        session_regenerate_id( true );
+        session_unset();
+        return session_id();
     }
 
     /**
@@ -613,11 +627,8 @@ class oxSession extends oxSuperCfg
             //#1746
             oxNew('oxbasketitem');
 
-            if ( $sBasket && $oBasket = unserialize( $sBasket ) ) {
-                $this->setBasket( $oBasket );
-            } else {
-                $this->setBasket( oxNew( 'oxbasket' ) );
-            }
+            $oBasket = ( $sBasket && ( $oBasket = unserialize( $sBasket ) ) ) ? $oBasket : oxNew( 'oxbasket' );
+            $this->setBasket( $oBasket );
         }
 
         return $this->_oBasket;
@@ -847,6 +858,12 @@ class oxSession extends oxSuperCfg
     protected function _checkUserAgent( $sAgent, $sExistingAgent )
     {
         $blCheck = false;
+
+        // processing
+        $oUtils = oxUtilsServer::getInstance();
+        $sAgent = $oUtils->processUserAgentInfo( $sAgent );
+        $sExistingAgent = $oUtils->processUserAgentInfo( $sExistingAgent );
+
         if ( $sAgent && $sAgent !== $sExistingAgent ) {
             if ( $sExistingAgent ) {
                 $this->_sErrorMsg = "Different browser ({$sExistingAgent}, {$sAgent}), creating new SID...<br>";
@@ -1058,7 +1075,7 @@ class oxSession extends oxSuperCfg
 
     /**
      * return basket reservations handler object
-     * 
+     *
      * @return oxBasketReservation
      */
     public function getBasketReservations()

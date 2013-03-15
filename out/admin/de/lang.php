@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 28788 2010-07-07 14:19:36Z vilma $
+ * @version   SVN: $Id: lang.php 29391 2010-08-17 15:53:26Z ralf.trapp $
  */
 
 $sLangName  = 'Deutsch';
@@ -1027,8 +1027,8 @@ $aLang = array(
 'NAVIGATION_FAVORITES_EDIT'                     => '[ändern]',
 'FAVORITES_DESC'                                => '',
 'NAVIGATION_HISTORY'                            => 'History',
-'NAVIGATION_SYSREQ_MESSAGE'                     => "Ihr System erfüllt die Systemvoraussetzungen nicht. Weitere Informationen finden Sie im ",
-'NAVIGATION_SYSREQ_MESSAGE2'                    => "Systemvoraussetzungs-Check.",
+'NAVIGATION_SYSREQ_MESSAGE'                     => "Die Systemgesundheit dieses Shops ist gefährdet. Möglicherweise verhält sich Ihr OXID eShop in einigen Bereichen unerwartet. Bitte stellen Sie sicher, dass die Servereinstellungen korrekt vorgenommen werden. Unterstützng finden Sie in der ",
+'NAVIGATION_SYSREQ_MESSAGE2'                    => "Systemgesundheitsprüfung.",
 
 'NEWSLETTER_DONE_NEWSSEND'                      => 'Ihr Newsletter wurde versendet.',
 'NEWSLETTER_DONE_GOTONEWSLETTER'                => 'gehen Sie zu Newsletter',
@@ -1440,7 +1440,7 @@ $aLang = array(
 'STASTISTIC_SERVICE_OLDER'                      => 'älter als',
 'STASTISTIC_SERVICE_DELETE'                     => 'Einträge löschen',
 'SYSREQ_LIST_MENUITEM'                          => 'Service',
-'SYSREQ_LIST_MENUSUBITEM'                       => 'Systemvoraussetzungen',
+'SYSREQ_LIST_MENUSUBITEM'                       => 'Systemgesundheit',
 'SYSREQ_PHP_EXTENNSIONS'                        => 'PHP Erweiterungen',
 'SYSREQ_PHP_CONFIG'                             => 'PHP Konfiguration',
 'SYSREQ_SERVER_CONFIG'                          => 'Server-Konfiguration',
@@ -1467,12 +1467,12 @@ $aLang = array(
 'SYSREQ_CURL'                                   => 'cURL',
 'SYSREQ_UNICODE_SUPPORT'                        => 'UTF-8 Unterstützung',
 'SYSREQ_MEMORY_LIMIT'                           => 'PHP Memory limit (min. 14MB, 30MB empfohlen)',
-'SYSREQ_DESCRIPTION_PASS'                       => 'Die Voraussetzung ist erfüllt.',
-'SYSREQ_DESCRIPTION_PMIN'                       => 'Die Voraussetzung ist nicht oder nur teilweise erfüllt. Der OXID eShop funktioniert trotzdem und kann installiert werden.',
-'SYSREQ_DESCRIPTION_FAIL'                       => 'Die Voraussetzung ist nicht erfüllt. Der OXID eShop funktioniert nicht ohne diese Voraussetzung und kann nicht installiert werden.',
-'SYSREQ_DESCRIPTION_NULL'                       => 'Die Voraussetzung konnte nicht überprüft werden.',
+'SYSREQ_DESCRIPTION_PASS'                       => 'Erfüllt.',
+'SYSREQ_DESCRIPTION_PMIN'                       => 'Nicht oder nur teilweise erfüllt. Dieser OXID eShop kann sich in Bereichen unerwartet verhalten.',
+'SYSREQ_DESCRIPTION_FAIL'                       => 'Nicht erfüllt. Dieser OXID eShop wird sich in einzelnen Bereichen unerwartet verhalten.',
+'SYSREQ_DESCRIPTION_NULL'                       => 'Konnte nicht überprüft werden.',
 'SYSREQ_DESCRIPTION_COLL'                       => 'Es werden unterschiedliche Kollationen für die ID-Felder verwendet',
-'SYSREQ_DESCRIPTION_REQ'                        => 'Überprüfung, ob Ihr System die Voraussetzungen erfüllt',
+'SYSREQ_DESCRIPTION_REQ'                        => 'Systemgesundheit',
 'TOOLS_LIST_TITLE'                              => '[OXID Tools]',
 'TOOLS_LIST_SECCESS'                            => 'Backup data erfolgreich gemailt.',
 'TOOLS_LIST_ACTIONEND'                          => 'Aktion beendet',
@@ -1592,7 +1592,6 @@ $aLang = array(
 'VENDOR_MAIN_ALLITEMS'                          => 'Alle verfügbaren Artikel',
 'VENDOR_MAIN_ITEMSWITHVENDOR'                   => 'Artikel von diesem Lieferanten',
 'VENDOR_MAIN_ICONUPLOAD'                        => 'Icon hochladen',
-'VOUCHERSERIE_EXPORT_EXPORT'                    => 'Exportieren',
 'VOUCHERSERIE_GROUPS_INGROUP'                   => 'Verfügbar für Benutzergruppen',
 'VOUCHERSERIE_LIST_SERIALNUM'                   => 'Name',
 'VOUCHERSERIE_LIST_MINVALUE'                    => 'Ab Einkaufswert',
@@ -1611,6 +1610,17 @@ $aLang = array(
 'VOUCHERSERIE_MAIN_USED'                        => 'Benutzt',
 'VOUCHERSERIE_MAIN_DISCOUNT'                    => 'Rabatt',
 'VOUCHERSERIE_MAIN_CALCULATEONCE'               => 'Nur einmalig berechnen (gültig nur bei zugewiesenen Gutscheinen)',
+
+'VOUCHERSERIE_MAIN_GENERATE'                    => 'Generieren',
+'VOUCHERSERIE_MAIN_EXPORT'                      => 'Export',
+'VOUCHERSERIE_GENERATING'                       => 'Generiere Gutscheine ...',
+'VOUCHERSERIE_GENERATED'                        => 'Anzahl Gutscheine generiert: ',
+'VOUCHERSERIE_GENERATEDONE'                     => 'Gutscheingenerierung abgeschlossen.',
+'VOUCHERSERIE_EXPORTING'                        => 'Exportiere Gutscheine ...',
+'VOUCHERSERIE_EXPORTED'                         => 'Gutscheine exportiert: ',
+'VOUCHERSERIE_EXPORTDONE'                       => 'Gutscheinexport abgeschlossen.',
+'VOUCHERSERIE_EXPORTDOWNLOAD'                   => 'Download',
+
 'WRAPPING_LIST_PICTURE'                         => 'Bild',
 'WRAPPING_LIST_PRESENTPACKUNG'                  => 'Geschenkverpackung',
 'WRAPPING_LIST_MENUITEM'                        => 'Shopeinstellungen',
@@ -1667,7 +1677,7 @@ $aLang = array(
 'SHOP_PERF_SHOWTOPBASKET'                       => 'Warenkorb oben anzeigen',
 'SHOP_PERF_DISBASKETSAVING'                     => 'Warenkörbe von angemeldeten Benutzern <strong>nicht</strong> speichern',
 'DYNSCREEN_LOCAL_TITLE'                         => 'eCommerce Services',
-'DYNSCREEN_LOCAL_TEXT'                          => 'Some general info about eCommerce services...',
+'DYNSCREEN_LOCAL_TEXT'                          => 'Some general info about eCommerce services ...',
 
 'GENIMPORT_MENUITEM'                            => 'Service',
 'GENIMPORT_MENUSUBITEM'                         => 'Gener. Import',
@@ -1732,7 +1742,7 @@ $aLang = array(
 'mxshippingset'                                 => 'Versandarten',
 'mxshopsett'                                    => 'Shopeinstellungen',
 'mxsysinfo'                                     => 'Systeminfo',
-'mxsysreq'                                      => 'Systemvoraussetzungen',
+'mxsysreq'                                      => 'Systemgesundheit',
 'mxtools'                                       => 'Tools',
 'mxuadmin'                                      => 'Benutzer verwalten',
 'mxurls'                                        => 'Links',

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsfile.php 27797 2010-05-18 15:34:13Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxutilsfile.php 29306 2010-08-11 13:59:55Z arvydas $
  */
 
 /**
@@ -261,10 +261,11 @@ class oxUtilsFile extends oxSuperCfg
      * @param string $sType      image type
      * @param object $blDemo     if true = whecks if file type is defined in oxutilsfile::_aAllowedFiles
      * @param string $sImagePath final image file location
+     * @param bool   $blUnique   if TRUE - generates unique file name
      *
      * @return string
      */
-    protected function _prepareImageName( $sValue, $sType, $blDemo, $sImagePath )
+    protected function _prepareImageName( $sValue, $sType, $blDemo, $sImagePath, $blUnique = true )
     {
         if ( $sValue ) {
             // add type to name
@@ -292,9 +293,9 @@ class oxUtilsFile extends oxSuperCfg
 
                 // removing sufix from main pictures, only zoom pictures, thumbnails
                 // and icons will have it.
-                $sSufix = ( $oStr->preg_match( "/P\d+/", $sType ) ) ? "" : "_".strtolower( $sType );
+                $sSufix = ( $oStr->preg_match( "/(P|M)\d+/", $sType ) ) ? "" : "_".strtolower( $sType );
 
-                $sValue = $this->_getUniqueFileName( $sImagePath, "{$sFName}", $sFileType, $sSufix );
+                $sValue = $this->_getUniqueFileName( $sImagePath, "{$sFName}", $sFileType, $sSufix, $blUnique );
             }
         }
         return $sValue;
@@ -482,10 +483,11 @@ class oxUtilsFile extends oxSuperCfg
      * @param object $oObject          object, that parameters are modified according to passed files
      * @param array  $aFiles           name of files to process
      * @param bool   $blUseMasterImage use master image as source for processing
+     * @param bool   $blUnique         TRUE - forces new file creation with unique name
      *
      * @return object
      */
-    public function processFiles( $oObject = null, $aFiles = array(), $blUseMasterImage = false )
+    public function processFiles( $oObject = null, $aFiles = array(), $blUseMasterImage = false, $blUnique = true )
     {
         $aFiles = $aFiles ? $aFiles : $_FILES;
         if ( isset( $aFiles['myfile']['name'] ) ) {
@@ -502,27 +504,23 @@ class oxUtilsFile extends oxSuperCfg
             // process all files
             while ( list( $sKey, $sValue ) = each( $aFiles['myfile']['name'] ) ) {
 
-                $aSource    = $aFiles['myfile']['tmp_name'];
-                $sSource    = $aSource[$sKey];
-                $aFiletype  = explode( "@", $sKey );
-                $sKey       = $aFiletype[1];
-                $sType      = $aFiletype[0];
-
-
-                //if uplading master image, master image name will be with
-                //sufics "p" (eg. image_p1.jpg). This is because of compatibility
-                //with previous versions
-                if ( $oStr->preg_match("/(M)(\d+)/", $sType, $aMatches ) ) {
-                    $sMasterImageType = "P" . $aMatches[2];
-                }
+                $aSource   = $aFiles['myfile']['tmp_name'];
+                $sSource   = $aSource[$sKey];
+                $aFiletype = explode( "@", $sKey );
+                $sKey      = $aFiletype[1];
+                $sType     = $aFiletype[0];
 
                 $sValue  = strtolower( $sValue );
                 $sImagePath = $this->_getImagePath( $sType );
 
-                $sImageNameType = ( $sMasterImageType ) ? $sMasterImageType : $sType;
-
                 // checking file type and building final file name
-                if ( $sSource && ( $sValue = $this->_prepareImageName( $sValue, $sImageNameType, $blDemo, $sImagePath ) ) ) {
+                if ( $sSource && ( $sValue = $this->_prepareImageName( $sValue, $sType, $blDemo, $sImagePath, $blUnique ) ) ) {
+
+                    // such file exists?
+                    if ( !$blUnique && file_exists( $sImagePath . $sValue ) ) {
+                        continue;
+                    }
+
                     // moving to tmp folder for processing as safe mode or spec. open_basedir setup
                     // usually does not allow file modification in php's temp folder
                     $sProcessPath = $sTmpFolder . basename( $sSource );
@@ -684,10 +682,11 @@ class oxUtilsFile extends oxSuperCfg
      * @param string $sFileName name of file (e.g. picture1)
      * @param string $sFileExt  file extension (e.g. gif)
      * @param string $sSufix    file name sufix (e.g. _ico)
+     * @param bool   $blUnique  TRUE - generates unique file name, FALSE - just glues given parts of file name
      *
      * @return string
      */
-    protected function _getUniqueFileName( $sFilePath, $sFileName, $sFileExt, $sSufix = "" )
+    protected function _getUniqueFileName( $sFilePath, $sFileName, $sFileExt, $sSufix = "", $blUnique = true )
     {
         $sFilePath     = $this->normalizeDir( $sFilePath );
         $iFileCounter  = 0;
@@ -695,7 +694,7 @@ class oxUtilsFile extends oxSuperCfg
         $oStr = getStr();
 
         //file exists ?
-        while ( file_exists( $sFilePath . "/" . $sFileName . $sSufix . "." . $sFileExt ) ) {
+        while ( $blUnique && file_exists( $sFilePath . "/" . $sFileName . $sSufix . "." . $sFileExt ) ) {
             $iFileCounter++;
 
             //removing "(any digit)" from file name end

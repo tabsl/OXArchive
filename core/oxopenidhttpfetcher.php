@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxopenidhttpfetcher.php 25471 2010-02-01 14:35:11Z alfonsas $
+ * @version   SVN: $Id: oxopenidhttpfetcher.php 29114 2010-07-27 13:45:03Z vilma $
  */
 
 require_once "Auth/Yadis/HTTPFetcher.php";
@@ -177,6 +177,8 @@ class oxOpenIdHTTPFetcher extends Auth_Yadis_ParanoidHTTPFetcher
 
         if (!$code) {
             Auth_OpenID::log("Got no response code when fetching %s", $url);
+            Auth_OpenID::log("CURL error (%s): %s",
+                             curl_errno($c), curl_error($c));
             return null;
         }
 

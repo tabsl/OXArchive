@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: content.php 28315 2010-06-11 15:34:43Z arvydas $
+ * @version   SVN: $Id: content.php 29274 2010-08-10 08:54:58Z arvydas $
  */
 
 /**
@@ -57,6 +57,12 @@ class Content extends oxUBase
      */
      protected $_oContentCat = null;
 
+     /**
+      * Ids of contents which can be accessed without any restrictions when private sales is ON
+      * @var array
+      */
+     protected $_aPsAllowedContents = array( "oxagb", "oxrightofwithdrawal", "oximpressum" );
+
     /**
      * Returns prefix ID used by template engine.
      *
@@ -84,14 +90,21 @@ class Content extends oxUBase
     {
         parent::render();
 
+        $oContent = $this->getContent();
+        if ( $oContent && !$this->_canShowContent( $oContent->oxcontents__oxloadid->value ) ) {
+            oxUtils::getInstance()->redirect( $this->getConfig()->getShopHomeURL() . 'cl=account' );
+        }
+
+        $sTpl = false;
         if ( $sTplName = $this->_getTplName() ) {
             $this->_sThisTemplate = $sTpl = $sTplName;
-        } else {
-            $this->_aViewData['oxcid'] = $sTpl = $this->getContentId();
-            if ( !$sTpl ) {
-                error_404_handler( );
-            }
-            $this->_aViewData['oContent'] = $this->getContent();
+        } elseif ( $oContent ) {
+            $this->_aViewData['oxcid'] = $sTpl = $oContent->getId();
+            $this->_aViewData['oContent'] = $oContent;
+        }
+
+        if ( !$sTpl ) {
+            error_404_handler();
         }
 
         // sometimes you need to display plain templates (e.g. when showing popups)
@@ -102,6 +115,23 @@ class Content extends oxUBase
         $this->_aViewData['tpl'] = $sTpl;
         $this->getViewConfig()->setViewConfigParam( 'tpl', $sTpl );
         return $this->_sThisTemplate;
+    }
+
+    /**
+     * Checks if content can be shown
+     *
+     * @param string $sContentIdent ident of content to display
+     *
+     * @return bool
+     */
+    protected function _canShowContent( $sContentIdent )
+    {
+        $blCan = true;
+        if ( $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) &&
+             !$this->getUser() && !in_array( $sContentIdent, $this->_aPsAllowedContents ) ) {
+            $blCan = false;
+        }
+        return $blCan;
     }
 
     /**
@@ -157,13 +187,23 @@ class Content extends oxUBase
     }
 
     /**
-     * Returns true if user forces to display plain template
+     * Returns true if user forces to display plain template or
+     * if private sales switched ON and user is not logged in
      *
      * @return bool
      */
     public function showPlainTemplate()
     {
-        return (bool) oxConfig::getParameter( 'plain' );
+        $blPlain = (bool) oxConfig::getParameter( 'plain' );
+        if ( $blPlain === false ) {
+            $oUser = $this->getUser();
+            if ( $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) &&
+                 ( !$oUser || ( $oUser && !$oUser->isTermsAccepted() ) ) ) {
+                $blPlain = true;
+            }
+        }
+
+        return (bool) $blPlain;
     }
 
     /**
@@ -202,11 +242,6 @@ class Content extends oxUBase
             $this->_sContentId = false;
             $oContent = oxNew( 'oxcontent' );
             if ( $oContent->load( $sContentId ) && $oContent->oxcontents__oxactive->value ) {
-                if ( $oConfig->getConfigParam( 'blPsLoginEnabled' ) && !$this->getUser() &&
-                     $oContent->oxcontents__oxloadid->value != "oxagb" &&
-                     $oContent->oxcontents__oxloadid->value != "oxrightofwithdrawal" ) {
-                    oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() . 'cl=account' );
-                }
                 $this->_sContentId = $sContentId;
                 $this->_oContent = $oContent;
             }

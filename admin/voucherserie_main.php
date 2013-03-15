@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: voucherserie_main.php 26641 2010-03-18 09:10:17Z arvydas $
+ * @version   SVN: $Id: voucherserie_main.php 29410 2010-08-18 14:08:28Z arvydas $
  */
 
 /**
@@ -29,8 +29,29 @@
  * Admin Menu: Shop Settings -> Vouchers -> Main.
  * @package admin
  */
-class VoucherSerie_Main extends oxAdminDetails
+class VoucherSerie_Main extends DynExportBase
 {
+    /**
+     * Export class name
+     *
+     * @var string
+     */
+    public $sClassDo = "voucherSerie_generate";
+
+    /**
+     * Voucher serie object
+     *
+     * @var oxvoucherserie
+     */
+    protected $_oVoucherSerie = null;
+
+    /**
+     * Current class template name
+     *
+     * @var string
+     */
+    protected $_sThisTemplate = "voucherserie_main.tpl";
+
     /**
      * Executes parent method parent::render(), creates oxvoucherserie object,
      * passes data to Smarty engine and returns name of template file
@@ -42,27 +63,27 @@ class VoucherSerie_Main extends oxAdminDetails
     {
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid");
+        $soxId = oxConfig::getParameter( "oxid" );
 
         // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($soxId == "-1" || !isset( $soxId)) && isset( $sSavedID) ) {
+        $sSavedID = oxConfig::getParameter( "saved_oxid" );
+        if ( ( $soxId == "-1" || !isset( $soxId ) ) && isset( $sSavedID ) ) {
             $soxId = $sSavedID;
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $soxId;
+            oxSession::deleteVar( "saved_oxid" );
+            $this->_aViewData["oxid"] = $soxId;
             // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
+            $this->_aViewData["updatelist"] = "1";
         }
 
-        if ( $soxId != "-1" && isset( $soxId)) {
+        if ( $soxId != "-1" && isset( $soxId ) ) {
             // load object
             $oVoucherSerie = oxNew( "oxvoucherserie" );
-            $oVoucherSerie->load( $soxId);
-            $this->_aViewData["edit"] =  $oVoucherSerie;
-            $this->_aViewData["status"] = $oVoucherSerie->countVouchers();
+            $oVoucherSerie->load( $soxId );
+            $this->_aViewData["edit"]   = $oVoucherSerie;
+
         }
 
-        return "voucherserie_main.tpl";
+        return $this->_sThisTemplate;
     }
 
     /**
@@ -74,12 +95,10 @@ class VoucherSerie_Main extends oxAdminDetails
     {
 
         // Parameter Processing
-        $soxId          = oxConfig::getParameter("oxid");
+        $soxId          = oxConfig::getParameter( "oxid" );
         $aSerieParams   = oxConfig::getParameter("editval");
-        $dVoucherAmount = abs( (int) oxConfig::getParameter( "voucherAmount" ) );
 
         // Voucher Serie Processing
-
         $oVoucherSerie = oxNew( "oxvoucherserie" );
         // if serie already exist use it
         if ( $soxId != "-1" ) {
@@ -89,82 +108,68 @@ class VoucherSerie_Main extends oxAdminDetails
         }
 
 
-        // select random nr if chosen
-        //if(oxConfig::getParameter("randomNr"))
-           // $aSerieParams["oxvoucherseries__oxserienr"] = uniqid($aSerieParams["oxvoucherseries__oxserienr"]);
-
-        // update serie object
-        //$aSerieParams = $oVoucherSerie->ConvertNameArray2Idx($aSerieParams);
-        $oVoucherSerie->assign($aSerieParams);
-        $oVoucherSerie->save();
-
-        // Voucher processing
-
-        $oNewVoucher = oxNew( "oxvoucher" );
-        //$aVoucherParams = $oNewVoucher->ConvertNameArray2Idx($aVoucherParams);
-
-        // first we update already existing and not used vouchers
-
-        $oExistingVoucherList = $oVoucherSerie->getVoucherList();
-        // prepare voucher params
-        foreach ($oExistingVoucherList as $oVoucher) {
-            $oVoucher->assign($aVoucherParams);
-            $oVoucher->save();
-        }
-
-        // second we create new vouchers that are defined in the entry
-
-        for ($i = 0; $i < $dVoucherAmount; $i++) {
-            $oNewVoucher->assign($aVoucherParams);
-            $oNewVoucher->oxvouchers__oxvoucherserieid = new oxField($oVoucherSerie->oxvoucherseries__oxid->value);
-            $oNewVoucher->oxvouchers__oxvouchernr = new oxField(oxConfig::getParameter("voucherNr"));
-            if (oxConfig::getParameter("randomVoucherNr"))
-                $oNewVoucher->oxvouchers__oxvouchernr = new oxField(uniqid($oNewVoucher->oxvouchers__oxvouchernr->value));
-            $oNewVoucher->save();
-            $oNewVoucher = oxNew( "oxvoucher" );
-        }
-
-        // release all chekbox states
-        oxSession::deleteVar("randomVoucherNr");
-        oxSession::deleteVar("randomNr");
         $this->_aViewData["updatelist"] = "1";
 
+        $oVoucherSerie->assign( $aSerieParams );
+        $oVoucherSerie->save();
+
         // set oxid if inserted
-        if ($soxId == "-1")
-            oxSession::setVar("saved_oxid", $oVoucherSerie->oxvoucherseries__oxid->value);
+        if ( $soxId == "-1" ) {
+            oxSession::setVar("saved_oxid", $oVoucherSerie->getId() );
+        }
     }
 
     /**
-     * Performs Voucherserie export to export file.
+     * Returns voucher status information array
+     *
+     * @return array
+     */
+    public function getStatus()
+    {
+        if ( $oSerie = $this->_getVoucherSerie() ) {
+           return $oSerie->countVouchers();
+        }
+    }
+
+    /**
+     * Overriding parent function, doing nothing..
      *
      * @return null
      */
-    public function export()
+    public function prepareExport()
     {
-        $oSerie = oxNew( "oxvoucherserie" );
-        $oSerie->load(oxConfig::getParameter("oxid"));
+    }
 
-        $oDb = oxDb::getDb();
 
-        $sSelect = "select oxvouchernr from oxvouchers where oxvoucherserieid = ".$oDb->quote( $oSerie->oxvoucherseries__oxid->value );
-        $rs = $oDb->execute($sSelect);
-
-        $sLine = "Gutschein\n";
-        while (!$rs->EOF) {
-            foreach ( $rs->fields as $field) {
-                $sLine .= $field/*.$myConfig->sCSVSign*/;
+    /**
+     * Returns voucher serie object
+     *
+     * @return oxvoucherserie
+     */
+    protected function _getVoucherSerie()
+    {
+        if ( $this->_oVoucherSerie == null ) {
+            $oVoucherSerie = oxNew( "oxvoucherserie" );
+            if ( $oVoucherSerie->load( oxConfig::getParameter( "voucherid" ) ) ) {
+                $this->_oVoucherSerie = $oVoucherSerie;
             }
-            $sLine .= "\n";
-            $rs->moveNext();
         }
-        $this->_aViewData["exportCompleted"] = true;
+        return $this->_oVoucherSerie;
+    }
 
-        $oUtils = oxUtils::getInstance();
-        $oUtils->setHeader( "Pragma: public" );
-        $oUtils->setHeader( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
-        $oUtils->setHeader( "Expires: 0" );
-        $oUtils->setHeader( "Content-Disposition: attachment; filename=vouchers.csv");
-        $oUtils->setHeader( "Content-Type: application/csv" );
-        $oUtils->showMessageAndExit( $sLine );
+    /**
+     * Prepares Export
+     *
+     * @return null
+     */
+    public function start()
+    {
+        parent::start();
+
+        // saving export info
+        oxSession::setVar( "voucherid", oxConfig::getParameter( "voucherid" ) );
+        oxSession::setVar( "voucherAmount", abs( (int) oxConfig::getParameter( "voucherAmount" ) ) );
+        oxSession::setVar( "randomVoucherNr", oxConfig::getParameter( "randomVoucherNr" ) );
+        oxSession::setVar( "voucherNr", oxConfig::getParameter( "voucherNr" ) );
     }
 }

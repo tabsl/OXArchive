@@ -1169,7 +1169,7 @@ class OxSetupUtils extends oxSetupCore
         $aParams['sShopURL'] = "";
 
         // try path translated
-        if ( isset( $_SERVER['PATH_TRANSLATED'])) {
+        if ( isset( $_SERVER['PATH_TRANSLATED']) && ($_SERVER['PATH_TRANSLATED'] != '')) {
             $sFilepath = $_SERVER['PATH_TRANSLATED'];
         } else {
             $sFilepath = $_SERVER['SCRIPT_FILENAME'];

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 28659 2010-06-28 13:32:01Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxuser.php 29456 2010-08-20 11:08:34Z rimvydas.paskevicius $
  */
 
 /**
@@ -1031,6 +1031,7 @@ class oxUser extends oxBase
         // assigning to newsletter
         $blSuccess = false;
         $myConfig  = $this->getConfig();
+        $mySession = $this->getSession();
 
         // user wants to get newsletter messages or no ?
         $oNewsSubscription = $this->getNewsSubscription();
@@ -1044,12 +1045,23 @@ class oxUser extends oxBase
                 $blSuccess = true;
             } else {
 
-                // double-opt-in check enabled - sending confirmation email and setting waiting status
                 $oNewsSubscription->setOptInStatus( 2 );
 
-                // sending double-opt-in mail
-                $oEmail = oxNew( 'oxemail' );
-                $blSuccess = $oEmail->sendNewsletterDBOptInMail( $this );
+                // double-opt-in check enabled - sending confirmation email and setting waiting status
+                if ( !$mySession->getVar( "blDBOptInMailAlreadyDone" ) ) {
+
+                    // sending double-opt-in mail
+                    $oEmail = oxNew( 'oxemail' );
+                    $blSuccess = $oEmail->sendNewsletterDBOptInMail( $this );
+
+                    if ( $blSuccess ) {
+                        //setting in seesion parameter to force sending email only once (#2033)
+                        $mySession->setVar( "blDBOptInMailAlreadyDone", true );
+                    }
+                } else {
+                    // mail already was sent, so just confirming that
+                    $blSuccess = true;
+                }
             }
         } elseif ( !$blSubscribe ) {
             // removing user from newsletter subscribers

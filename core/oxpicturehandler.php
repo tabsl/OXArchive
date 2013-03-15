@@ -83,46 +83,41 @@ class oxPictureHandler extends oxSuperCfg
 
                 if ( $oObject->$sField->value ) {
 
-                    $sMasterPictureSource = $oConfig->getMasterPictureDir() . $iIndex . "/" . basename($oObject->$sField->value);
+                    $sMasterPictureSource = $oConfig->getMasterPictureDir() . $iNr . "/" . basename($oObject->$sField->value);
 
                     if ( file_exists( $sMasterPictureSource ) ) {
                         $sNewName = $this->_getArticleMasterPictureName( $oObject, $iNr );
 
-                        // generating main product picture
-                        $sType = "P" . $iNr . "@oxarticles__oxpic" . $iNr;
-                        $aFiles['myfile']['name']     = array( $sType => $sNewName );
-                        $aFiles['myfile']['tmp_name'] = array( $sType => $sMasterPictureSource );
-                        $oUtilsFile->processFiles( $oObject, $aFiles, true );
-                        //$oObject->$sField->value = $oUtilsFile->getImageDirByType( "P".$iIndex ) . $oObject->$sField->value;
+                        $aFiles = array();
 
-                        // generating zoom picture
+                        // main product picture
+                        $sType = "P" . $iNr . "@oxarticles__oxpic" . $iNr;
+                        $aFiles['myfile']['name'][$sType] = $oObject->{"oxarticles__oxpic".$iNr}->value;;
+                        $aFiles['myfile']['tmp_name'][$sType] = $sMasterPictureSource;
+
+                        // zoom picture
                         $sType = "Z" . $iNr . "@oxarticles__oxzoom" . $iNr;
-                        $sField = "oxarticles__oxzoom" . $iNr;
-                        $aFiles['myfile']['name']     = array( $sType => $sNewName );
-                        $aFiles['myfile']['tmp_name'] = array( $sType => $sMasterPictureSource );
-                        $oObject->$sField = new oxField();
-                        $oUtilsFile->processFiles( $oObject, $aFiles, true );
-                        //$oObject->$sField->value = $oUtilsFile->getImageDirByType( "Z".$iIndex ) . $oObject->$sField->value;
+                        $oObject->{"oxarticles__oxzoom" . $iNr} =  new oxField();
+                        $aFiles['myfile']['name'][$sType] = $sNewName;
+                        $aFiles['myfile']['tmp_name'][$sType] = $sMasterPictureSource ;
+
+                        $oUtilsFile->processFiles( $oObject, $aFiles, true, false );
 
                         // if this is picture with number #1, also generating
                         // thumbnail and icon
                         if ( $iNr == 1 ) {
+                            $aFiles = array();
                             // Thumbnail
                             $sType = "TH@oxarticles__oxthumb";
-                            $aFiles['myfile']['name']     = array( $sType => $sNewName );
-                            $aFiles['myfile']['tmp_name'] = array( $sType => $sMasterPictureSource );
-                            $oUtilsFile->processFiles( $oObject, $aFiles, true );
-                            $oObject->oxarticles__oxthumb = new oxField();
-
-                            //$oObject->oxarticles__oxthumb = new oxField();
-                            $oObject->oxarticles__oxthumb = null;
+                            $aFiles['myfile']['name'][$sType] = $sNewName;
+                            $aFiles['myfile']['tmp_name'][$sType] = $sMasterPictureSource;
 
                             // Icon
                             $sType = "ICO@oxarticles__oxicon";
-                            $aFiles['myfile']['name']     = array( $sType => $sNewName );
-                            $aFiles['myfile']['tmp_name'] = array( $sType => $sMasterPictureSource );
-                            $oUtilsFile->processFiles( $oObject, $aFiles, true );
-                            $oObject->oxarticles__oxicon = new oxField();
+                            $aFiles['myfile']['name'][$sType] = $sNewName;
+                            $aFiles['myfile']['tmp_name'][$sType] = $sMasterPictureSource;
+
+                            $oUtilsFile->processFiles( null, $aFiles, true, false );
                         }
 
                         $iTotalGenerated++;

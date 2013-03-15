@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxopenid.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxopenid.php 29103 2010-07-27 12:44:06Z vilma $
  */
 
 $iOldErrorReproting = error_reporting();
@@ -82,7 +82,7 @@ class oxOpenId extends oxBase
         $oAuth->addExtension( Auth_OpenID_SRegRequest::build( array( 'email', 'fullname', 'gender', 'country' ), array( 'postcode' ) ) );
 
         // redirect to OpenID provider for authentication
-        $sUrl = $oAuth->redirectURL( $myConfig->getShopUrl(), $sReturnUrl);
+        $sUrl = $oAuth->redirectURL( $myConfig->getSslShopUrl(), $sReturnUrl);
         oxUtils::getInstance()->redirect( $sUrl, false );
 
     }

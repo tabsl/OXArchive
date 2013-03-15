@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxshopcontrol.php 26910 2010-03-26 17:29:06Z tomas $
+ * @version   SVN: $Id: oxshopcontrol.php 29482 2010-08-20 15:48:35Z alfonsas $
  */
 
 /**
@@ -371,28 +371,29 @@ class oxShopControl extends oxSuperCfg
     protected function _runOnce()
     {
         $myConfig = $this->getConfig();
-        $blRunOnceExecuted = oxSession::getVar( 'blRunOnceExecuted' );
         $blProductive = true;
+        $blRunOnceExecuted = oxSession::getVar( 'blRunOnceExecuted' );
 
-
+            $iErrorReporting = error_reporting();
+            if ( version_compare(PHP_VERSION, '5.3.0', '>=') ) {
+                // some 3rd party libraries still use deprecated functions
+                $iErrorReporting = E_ALL ^ E_NOTICE ^ E_DEPRECATED;
+            } else {
+                $iErrorReporting = E_ALL ^ E_NOTICE;
+            }
             // A. is it the right place for this code ?
             // productive mode ?
             if ( ! ( $blProductive = $myConfig->isProductiveMode() ) ) {
                 if ( is_null($myConfig->getConfigParam( 'iDebug' )) ) {
                     $myConfig->setConfigParam( 'iDebug', -1 );
                 }
-
-                    error_reporting( E_ALL ^ E_NOTICE );
             } else {
-
                 // disable error logging if server is misconfigured
                 if ( !ini_get( 'log_errors' ) ) {
-                    error_reporting( E_NONE );
-                } else {
-                        error_reporting( E_ALL ^ E_NOTICE );
+                    $iErrorReporting = E_NONE;
                 }
             }
-
+            error_reporting($iErrorReporting);
 
 
         if ( !$blRunOnceExecuted && !$this->isAdmin() && $blProductive ) {

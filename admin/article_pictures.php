@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: article_pictures.php 28928 2010-07-22 14:19:41Z arvydas $
+ * @version   SVN: $Id: article_pictures.php 29411 2010-08-18 14:23:09Z sarunas $
  */
 
 /**
@@ -84,23 +84,19 @@ class Article_Pictures extends oxAdminDetails
 
         $soxId   = oxConfig::getParameter( "oxid");
         $aParams = oxConfig::getParameter( "editval");
-        $aParams['oxarticles__oxshopid'] = oxSession::getVar( "actshop" );
 
         $oArticle = oxNew( "oxarticle");
         $oArticle->load( $soxId );
 
         // deleting master and all related images
         $aIndexes = $this->_getUploadedMasterPicIndexes();
-        $iMin = min( $aIndexes );
-        $iMin = $iMin < 1 ? 1 : $iMin;
-
-        for ( $i = $iMin; $i <= $this->getConfig()->getConfigParam( 'iPicCount' ); $i++ ) {
-            $this->_resetMasterPicture( $oArticle, $iIndex, in_array( $i, $aIndexes ) );
+        foreach ( $aIndexes as $iIndex ) {
+            $this->_resetMasterPicture( $oArticle, $iIndex, true );
         }
 
         $oArticle->assign( $aParams );
         $oArticle = oxUtilsFile::getInstance()->processFiles( $oArticle );
-        $oArticle->updateAmountOfGeneratedPictures( $iMin - 1 );
+        $oArticle->oxarticles__oxpicsgenerated = new oxField( 0 );
         $oArticle->save();
     }
 
@@ -141,13 +137,7 @@ class Article_Pictures extends oxAdminDetails
             if ( $iIndex > 0 ) {
                 // deleting master picture
                 $this->_resetMasterPicture( $oArticle, $iIndex, true );
-
-                // reseting others following master image
-                for ( $i = $iIndex + 1; $i <= $this->getConfig()->getConfigParam( 'iPicCount' ); $i++ ) {
-                    $this->_resetMasterPicture( $oArticle, $iIndex );
-                }
-
-                $oArticle->updateAmountOfGeneratedPictures( $iIndex - 1 );
+                $oArticle->oxarticles__oxpicsgenerated = new oxField( 0 );
             }
         }
 
@@ -168,8 +158,10 @@ class Article_Pictures extends oxAdminDetails
     {
         if ( $oArticle->{"oxarticles__oxpic".$iIndex}->value ) {
 
-            $oPicHandler = oxPictureHandler::getInstance();
-            $oPicHandler->deleteArticleMasterPicture( $oArticle, $iIndex, $blDeleteMaster );
+            if ( !$oArticle->isDerived() ) {
+                $oPicHandler = oxPictureHandler::getInstance();
+                $oPicHandler->deleteArticleMasterPicture( $oArticle, $iIndex, $blDeleteMaster );
+            }
 
             if ( $blDeleteMaster ) {
                 //reseting master picture field
@@ -198,8 +190,10 @@ class Article_Pictures extends oxAdminDetails
     {
         if ( $oArticle->oxarticles__oxicon->value ) {
 
-            $oPicHandler = oxPictureHandler::getInstance();
-            $oPicHandler->deleteMainIcon( $oArticle );
+            if ( !$oArticle->isDerived() ) {
+                $oPicHandler = oxPictureHandler::getInstance();
+                $oPicHandler->deleteMainIcon( $oArticle );
+            }
 
             //reseting field
             $oArticle->oxarticles__oxicon = new oxField();
@@ -217,8 +211,10 @@ class Article_Pictures extends oxAdminDetails
     {
         if ( $oArticle->oxarticles__oxthumb->value ) {
 
-            $oPicHandler = oxPictureHandler::getInstance();
-            $oPicHandler->deleteThumbnail( $oArticle );
+            if ( !$oArticle->isDerived() ) {
+                $oPicHandler = oxPictureHandler::getInstance();
+                $oPicHandler->deleteThumbnail( $oArticle );
+            }
 
             //reseting field
             $oArticle->oxarticles__oxthumb = new oxField();
@@ -234,16 +230,13 @@ class Article_Pictures extends oxAdminDetails
     {
         $aIndexes = array();
         if ( isset( $_FILES['myfile']['name'] ) ) {
-            $iIndex = $this->getConfig()->getConfigParam( 'iPicCount' );
             $oStr = getStr();
 
             while ( list( $sKey, $sValue ) = each( $_FILES['myfile']['name'] ) ) {
                 if ( $sValue ) {
                     $oStr->preg_match( "/^M(\d+)/", $sKey, $aMatches );
-                    $iPicIndex = isset( $aMatches[1] ) ? (int) $aMatches[1] : 1;
-                    $iPicIndex = ( $iPicIndex > $iIndex  ) ? $iIndex : $iPicIndex;
-                    if ( !in_array( $iPicIndex, $aIndexes ) ) {
-                        $aIndexes[] = $iPicIndex;
+                    if ( isset( $aMatches[1] ) && !in_array( $aMatches[1], $aIndexes ) ) {
+                        $aIndexes[] = $aMatches[1];
                     }
                 }
             }

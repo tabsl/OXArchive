@@ -34,7 +34,7 @@ class oxtsprotection extends oxSuperCfg
      * @var array
      */
     protected $_aProducts = null;
-    
+
     /**
      * TS protection product Ids
      *
@@ -224,23 +224,40 @@ class oxtsprotection extends oxSuperCfg
     public function checkCertificate( $iTrustedShopId, $blTsTestMode )
     {
         if ( $iTrustedShopId ) {
-            try {
-                if ( $blTsTestMode ) {
-                    $sSoapUrl = 'https://qa.trustedshops.de/ts/services/TsProtection?wsdl';
-                } else {
-                    $sSoapUrl = 'https://www.trustedshops.de/ts/services/TsProtection?wsdl';
-                }
-                $sFunction = 'checkCertificate';
-                $aValues['tsId']    = $iTrustedShopId;
-                $oSoap = new SoapClient($sSoapUrl);
-                $aResults = $oSoap->{$sFunction}($aValues['tsId']);
-                if ( isset($aResults) ) {
-                    return $aResults;
-                }
-            } catch( Exception $eException ) {
-                oxUtils::getInstance()->logger( "Soap-Error: " . $eException->faultstring );
-                return false;
+            if ( $blTsTestMode == "true" ) {
+                $sSoapUrl = 'https://qa.trustedshops.de/ts/services/TsProtection?wsdl';
+            } else {
+                $sSoapUrl = 'https://www.trustedshops.de/ts/services/TsProtection?wsdl';
             }
+            $sFunction = 'checkCertificate';
+            $aValues['tsId'] = $iTrustedShopId;
+            $aResults = $this->executeSoap( $sSoapUrl, $sFunction, $aValues['tsId']);
+            return $aResults;
+        }
+        return null;
+
+    }
+
+    /**
+     * Executes SOAP call
+     *
+     * @param string $sSoapUrl  soap url
+     * @param string $sFunction soap funkction
+     * @param string $sValues   values sent per soap
+     *
+     * @return object
+     */
+    public function executeSoap( $sSoapUrl, $sFunction, $sValues )
+    {
+        try {
+            $oSoap = new SoapClient($sSoapUrl);
+            $aResults = $oSoap->{$sFunction}($sValues);
+            if ( isset($aResults) ) {
+                return $aResults;
+            }
+        } catch( Exception $eException ) {
+            oxUtils::getInstance()->logger( "Soap-Error: " . $eException->faultstring );
+            return false;
         }
         return null;
 

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: user.php 28585 2010-06-23 09:23:38Z sarunas $
+ * @version   SVN: $Id: user.php 29455 2010-08-20 10:44:48Z rimvydas.paskevicius $
  */
 
 /**
@@ -88,14 +88,17 @@ class User extends oxUBase
      */
     public function render()
     {
-        $myConfig  = $this->getConfig();
-        if ($myConfig->getConfigParam( 'blPsBasketReservationEnabled' )) {
-            $this->getSession()->getBasketReservations()->renewExpiration();
-        }
+        $myConfig = $this->getConfig();
 
-        $oBasket = $this->getSession()->getBasket();
-        if ( $myConfig->getConfigParam( 'blPsBasketReservationEnabled' ) && (!$oBasket || ( $oBasket && !$oBasket->getProductsCount() )) ) {
-            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket' );
+        if ( $this->getIsOrderStep() ) {
+            if ($myConfig->getConfigParam( 'blPsBasketReservationEnabled' )) {
+                $this->getSession()->getBasketReservations()->renewExpiration();
+            }
+
+            $oBasket = $this->getSession()->getBasket();
+            if ( $this->_blIsOrderStep && $myConfig->getConfigParam( 'blPsBasketReservationEnabled' ) && (!$oBasket || ( $oBasket && !$oBasket->getProductsCount() )) ) {
+                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket' );
+            }
         }
 
         parent::render();
@@ -395,13 +398,17 @@ class User extends oxUBase
             $aMe  = $oFacebook->api('/me');
 
             $aInvAdr = $this->_aViewData['invadr'];
+            $sCharset = oxLang::getInstance()->translateString( "charset" );
+
+            // do not stop converting on error - just try to translit unknown symbols
+            $sCharset .= '//TRANSLIT';
 
             if ( !$aInvAdr["oxuser__oxfname"] ) {
-                $aInvAdr["oxuser__oxfname"] = $aMe["first_name"];
+                $aInvAdr["oxuser__oxfname"] = iconv( 'UTF-8', $sCharset, $aMe["first_name"] );
             }
 
             if ( !$aInvAdr["oxuser__oxlname"] ) {
-                $aInvAdr["oxuser__oxlname"] = $aMe["last_name"];
+                $aInvAdr["oxuser__oxlname"] = iconv( 'UTF-8', $sCharset, $aMe["last_name"] );
             }
 
             $this->_aViewData['invadr'] = $aInvAdr;

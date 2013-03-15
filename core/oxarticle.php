@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 28590 2010-06-23 11:03:50Z alfonsas $
+ * @version   SVN: $Id: oxarticle.php 29400 2010-08-18 08:00:02Z sarunas $
  */
 
 // defining supported link types
@@ -4501,10 +4501,8 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      */
     public function updateAmountOfGeneratedPictures( $iTotalGenerated )
     {
-        $sQ = "UPDATE oxarticles SET oxpicsgenerated = '$iTotalGenerated' WHERE oxid = '".$this->getId()."'";
-        oxDb::getDb()->execute($sQ);
-
         $this->oxarticles__oxpicsgenerated = new oxField( $iTotalGenerated );
+        $this->save();
     }
 
     /**
