@@ -1,0 +1,103 @@
+<?php
+/**
+ *    This file is part of OXID eShop Community Edition.
+ *
+ *    OXID eShop Community Edition is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    OXID eShop Community Edition is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @link http://www.oxid-esales.com
+ * @package core
+ * @copyright © OXID eSales AG 2003-2008
+ * $Id: oxcountrylist.php 13617 2008-10-24 09:38:46Z sarunas $
+ */
+
+/**
+ * Article list manager.
+ * Collects list of article according to collection rules (categories, etc.).
+ * @package core
+ */
+class oxCountryList extends oxList
+{
+    /**
+     * Call parent class constructor
+     *
+     * @return null
+     */
+    public function __construct( $sObjectsInListName = 'oxcountry' )
+    {
+        parent::__construct( 'oxcountry' );
+    }
+
+    /**
+     * Selects and SQL, creates objects, assign them and
+     * preforms sorting that handles umlauts
+     *
+     * @param string $sSQL SQL select statement
+     *
+     * @return null;
+     */
+    public function selectString( $sSQL )
+    {
+        parent::selectString( $sSQL );
+        uasort( $this->_aArray, array( $this, '_localCompare' ) );
+    }
+
+    /**
+     * Selects and loads all active countries
+     *
+     * @return null;
+     */
+    public function loadActiveCountries( $iLang = null )
+    {
+        $sSufix = oxLang::getInstance()->getLanguageTag( $iLang );
+
+        $sSelect = "SELECT oxid, oxtitle$sSufix as oxtitle FROM oxcountry WHERE oxactive = '1' ORDER BY oxtitle$sSufix ";
+        $this->selectString( $sSelect );
+    }
+
+    /**
+     * Improved country sorting that handles umlauts.
+     * Replaces umlauts and compares country titles.
+     *
+     * @param oxCountry $oA oxCountry object
+     * @param oxCountry $oB oxCountry oxCountry object
+     *
+     * @return bool
+     */
+    protected function _localCompare( $oA, $oB )
+    {
+        if ( $oA->oxcountry__oxorder->value != $oB->oxcountry__oxorder->value ) {
+            if ( $oA->oxcountry__oxorder->value < $oB->oxcountry__oxorder->value ) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+
+        $aReplaceWhat = array( '/ä/', '/ö/', '/ü/', '/Ü/', '/Ä/', '/Ö/', '/ß/',
+                               '/&auml;/', '/&ouml;/', '/&uuml;/', '/&Auml;/', '/&Ouml;/', '/&Uuml;/', '/&szlig;/' );
+        $aReplaceTo   = array( 'az', 'oz', 'uz', 'Uz', 'Az', 'Oz', 'sz', 'az', 'oz', 'uz', 'Az', 'Oz', 'Uz', 'sz' );
+
+        $sACodedTitle = preg_replace( $aReplaceWhat, $aReplaceTo, $oA->oxcountry__oxtitle->value );
+        $sBCodedTitle = preg_replace( $aReplaceWhat, $aReplaceTo, $oB->oxcountry__oxtitle->value );
+        
+        $iRes = strcasecmp( $sACodedTitle, $sBCodedTitle );
+        
+        // if equal, using case sensitive compare
+        if ( $iRes === 0 ) {
+            $iRes = strcmp( $sACodedTitle, $sBCodedTitle ) ;
+        }
+        
+        return $iRes;
+    }
+}

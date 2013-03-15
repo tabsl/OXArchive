@@ -1,0 +1,129 @@
+Eine ausführliche und ständig aktualisierte Installationsanleitung finden Sie unter
+http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/ueberblick-ueber-die-installation
+
+Die Installation des OXID eShop besteht aus mehreren Schritten:
+
+    1) Sie benötigen einen Server, der die Systemvoraussetzungen erfüllt. Die Systemvoraussetzungen finden Sie weiter unten.
+    2) Sie müssen auf dem Server eine Datenbank für den OXID eShop anlegen.
+    3) Sie müssen die Dateien des OXID eShops auf den Server kopieren.
+    4) Als letztes müssen Sie das Setup aufrufen. 
+
+
+*****************************
+1) Systemvoraussetzungen
+*****************************
+
+Webserver
+
+    * Apache Version 1.3 oder höher
+    * Mindestens 100 MB freier Webspace
+    * Installierte mod_rewrite Erweiterung
+
+MySQL
+
+    * MySQL 5.0.33 oder höher
+
+PHP
+
+    * PHP 5.2.0 oder höher. Aus Performancegründen empfehlen wir, PHP 5.2.6 oder höher zu verwenden.
+    * Das memory_limit muss mindestens 14 MB hoch sein. Wir empfehlen eine memory_limit Einstellung von 30MB.
+    * Aktiviertes allow_url_fopen oder  fsockopen auf Port 80 möglich
+    * Apache Server Variablen REQUEST_URI oder SCRIPT_URI müssen vorhanden sein
+    * Der PHP 4 Kompatibilitätsmodus muss ausgeschaltet sein. (zend.ze1_compatibility_mode = Off)
+    * PHP-Erweiterungen, die installiert sein müssen:
+          o GD LIB Version 2.x
+          o MySQL-Modul für MySQL 5
+          o bcmath
+          o php-xml
+          o libxml2
+          o iconv-extension
+
+
+
+*****************************
+2) Datenbank anlegen
+*****************************
+
+Der OXID eShop benötigt eine Datenbank. In dieser Datenbank werden alle Daten des OXID eShops gespeichert.
+
+Legen Sie eine neue Datenbank an. Nennen Sie die Datenbank z. B. "oxid_eshop". Wenn Sie dabei Hilfe benötigen, wenden Sie sich bitte an Ihren Webhoster.
+Wenn bereits eine leere Datenbank eingerichtet ist, können Sie auch diese verwenden. Dann müssen Sie keine neue anlegen.
+
+Merken Sie sich die Zugangsdaten zur Datenbank (Benutzername und Passwort) und den Namen der Datenbank. Diese Daten müssen Sie eingeben, wenn Sie das Setup ausführen.
+
+
+*****************************
+3) Dateien auf den Server kopieren
+*****************************
+
+Die Dateien für den OXID eShop sind in einem ZIP-Archiv. Dieses Archiv müssen Sie entpacken. Aktuelle Betriebssysteme können Zip-Archive ohne zusätzliche Programme entpacken.
+
+    * Legen Sie auf Ihrem Computer einen Ordner an, den Sie z. B. "OXID eShop" nennen. Wo sie den Ordner anlegen, ist egal.
+    * Entpacken Sie das Archiv in den diesen Ordner.
+
+Als nächstes müssen die Dateien auf den Server kopieren. Das wird mit einem FTP-Programm gemacht.
+
+    * Öffnen Sie Ihr FTP-Programm.
+    * Stellen Sie eine Verbindung zum Server her, auf den Sie den OXID eShop installieren wollen. Die Zugangsdaten zu Ihrem Server erhalten Sie von Ihrem Webhoster.
+    * Kopieren Sie alle Ordner und Dateien aus dem Ordner "OXID eShop" auf den Server. Dieser Vorgang kann je nach Verbindungsgeschwindigkeit einige Minuten dauern.
+
+
+
+*****************************
+4) Setup aufrufen
+*****************************
+
+    * Öffnen Sie Ihren Browser.
+    * Rufen Sie www.ihreshopurl.de/setup auf. Ersetzen Sie dabei www.ihreshopurl.de durch URL, unter der ihr OXID eShop erreichbar sein wird.
+
+Das Setup erscheint. Das Setup besteht aus 5 Schritten.
+
+
+1) Willkommen
+
+ In diesem Schritt können Sie folgende Eingaben machen:
+
+    * Mit "Sprache für die Installation" können Sie auswählen, in welcher Sprache das Setup angezeigt wird.
+    * Wählen Sie bei "Ihr Standort" den Standort aus, der auf Sie zutrifft.
+    * Klicken Sie auf "Shopinstallation beginnen", wenn Sie ihre Einstellungen vorgenommen haben. Dadurch wird die nächste Seite des Setups geöffnet.
+
+
+2) Lizenzbedingungen
+
+ Auf dieser Seite stehen die Lizenzbedingungen. Lesen Sie sich die Lizenzbedingungen durch.
+
+    * Wenn Sie mit den Bedingungen einverstanden sind, dann wählen Sie "Ich akzeptiere die Lizenzbedingungen" aus. Sie müssen die Lizenzbedingungen akzeptieren, wenn Sie den OXID eShop installieren wollen.
+    * Klicken Sie auf "Lizenzbedingungen annehmen". Dadurch wird die nächste Seite geöffnet.
+
+
+3) Datenbank
+
+Auf dieser Seite stellen Sie ein, in welcher Datenbank der OXID eShop die Daten speichern soll. Hierzu benötigen Sie den Datenbanknamen, den Sie in Schritt 2 eingegeben haben.
+
+    * Geben Sie bei "Datenbank Hostname oder IP Adresse" ein, unter welchem Hostnamen/IP-Adresse die Datenbank erreichbar ist. Diese Einstellung ist fast immer localhost.
+    * Geben Sie bei "Datenbank Name" den Namen der Datenbank ein.
+    * Geben Sie bei "Datenbank Benutzername" und "Datenbank Passwort" die Zugangsdaten zur Datenbank ein. Die Zugangsdaten haben Sie bereits in Schritt 2 verwendet.
+    * Wählen Sie bei "Demodaten installieren"/"Demodaten nicht installieren" aus, ob Sie Demodaten installieren möchten. Wir empfehlen Ihnen, die Demodaten zu installieren. Anhand dieser Daten können Sie viele Funktionen des OXID eShops einfach nachvollziehen. Sie können die Demodaten jederzeit löschen, wenn Sie ihre eigenen Artikel und so weiter anlegen.
+      Verzichten Sie auf die Demodaten nur, wenn Sie sich bereits gut mit dem OXID eShop auskennen.
+    * Klicken Sie auf" Datenbank jetzt erstellen". Dadurch wird nach wenigen Sekunden die nächste Seite des Setups geöffnet.
+
+
+4) Verzeichnisse
+
+Auf dieser Seite können Sie die Verzeichnis-Einstellungen anpassen. Der OXID eShop erkennt die richtigen Verzeichnisse automatisch. Passen Sie die Daten nur dann an, wenn Sie besondere Verzeichnis-Einstellungen vornehmen möchten.
+
+    * Bei "Shop-URL" wird die URL angezeigt, unter der Ihr eShop erreichbar sein wird.
+    * Bei "Verzeichnis auf dem Server zum Shop" wird der Pfad zu den eShop-Dateien auf dem Server angezeigt.
+    * Bei "Verzeichnis auf dem Server zum TMP Verzeichnis" wird das Verzeichnis angezeigt, in dem die temporären Dateien gespeichert werden. 
+    * Mit "Den Setup Ordner automatisch entfernen" können Sie einstellen, dass der Setup-Ordner nach erfolgreichem Setup gelöscht wird. Die Setup-Daten werden nach einem erfolgreichen Setup nicht mehr benötigt.
+    * Klicken Sie auf "Daten jetzt speichern". Dadurch wird die nächste Seite des Setups geöffnet.
+    
+
+5) Fertigstellen
+
+Das Setup ist erfolgreich abgeschlossen. Jetzt können Sie sich Ihren eShop anschauen:
+
+    * Mit "Zum Shop" gelangen Sie zur Startseite des eShops.
+    * Mit "Zur Shop Administration" gelangen Sie zum Administrationsbereich des eShops. Dort können Sie alle Einstellungen vornehmen: Sie können Artikel anlegen, die Versandkosten einstellen, Zahlungsarten einrichten und vieles mehr. Wenn Sie auf Zur Shop Administration klicken, müssen Sie sich in den Administrationsbereich einloggen.
+
+

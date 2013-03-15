@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<themes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="theme.xsd">
+
+    <theme id="ce" title="Default">
+		<color index="0" color="#fff" />
+		<color index="1" color="#f0f0f0" />
+		<color index="2" color="#969696" />
+		<color index="3" color="#424c56" />
+		<color index="4" color="#000" />
+		<color index="5" color="#ffffcc" />
+		<color index="6" color="#ff3600" />
+		<color index="7" color="#ff6633" />
+	</theme>
+
+    <theme id="01" title="Gray">
+        <color index="0" color="#fff" />
+        <color index="1" color="#f0f0f0" />
+        <color index="2" color="#969696" />
+        <color index="3" color="#424c56" />
+        <color index="4" color="#000" />
+        <color index="5" color="#CCCCCC" />
+        <color index="6" color="#666666" />
+        <color index="7" color="#333333" />
+    </theme>
+
+	<theme id="02" title="Green">
+		<color index="0" color="#fff" />
+		<color index="1" color="#f0f0f0" />
+		<color index="2" color="#969696" />
+		<color index="3" color="#424c56" />
+		<color index="4" color="#000" />
+		<color index="5" color="#f0fce8" />
+		<color index="6" color="#75e72f" />
+		<color index="7" color="#4bc202" />
+	</theme>
+</themes>
