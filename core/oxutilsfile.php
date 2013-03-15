@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsfile.php 38540 2011-09-05 09:05:46Z linas.kukulskis $
+ * @version   SVN: $Id: oxutilsfile.php 40562 2011-12-12 14:20:20Z mindaugas.rimgaila $
  */
 
 /**
@@ -112,14 +112,14 @@ class oxUtilsFile extends oxSuperCfg
      *
      * @var array
      */
-    protected $_aBadFiles = array( 'php', 'jsp', 'cgi', 'cmf', 'exe' );
+    protected $_aBadFiles = array( 'php', 'php3', 'php4', 'php5', 'phps', 'php6', 'jsp', 'cgi', 'cmf', 'exe' );
 
     /**
      * Allowed to upload files in demo mode ( "white list")
      *
      * @var array
      */
-    protected $_aAllowedFiles = array( 'gif', 'jpg', 'png', 'pdf' );
+    protected $_aAllowedFiles = array( 'gif', 'jpg', 'jpeg', 'png', 'pdf' );
     /**
      * Returns object instance
      *

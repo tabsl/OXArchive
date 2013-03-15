@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 40291 2011-11-28 11:29:56Z vilma $
+ * @version   SVN: $Id: oxarticle.php 40662 2011-12-16 16:06:11Z linas.kukulskis $
  */
 
 // defining supported link types
@@ -410,6 +410,13 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      * @var array
      */
     protected static $_aCategoryCache = null;
+    /**
+     * stores if are stored any amount price
+     * @var bool
+     */
+    protected static $_blHasAmountPrice = null;
+
+
     /**
      * Class constructor, sets shop ID for article (oxconfig::getShopId()),
      * initiates parent constructor (parent::oxI18n()).
@@ -1038,7 +1045,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     public function loadAmountPriceInfo()
     {
         $myConfig = $this->getConfig();
-        if ( !$myConfig->getConfigParam( 'bl_perfLoadPrice' ) || !$this->_blLoadPrice || !$this->_blCalcPrice) {
+        if ( !$myConfig->getConfigParam( 'bl_perfLoadPrice' ) || !$this->_blLoadPrice || !$this->_blCalcPrice || !$this->hasAmountPrice() ) {
             return array();
         }
 
@@ -1046,7 +1053,6 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             $this->_oAmountPriceInfo = array();
             if ( count( ( $oAmPriceList = $this->_getAmountPriceList() ) ) ) {
                 $this->_oAmountPriceInfo = $this->_fillAmountPriceList( $oAmPriceList );
-
             }
         }
         return $this->_oAmountPriceInfo;
@@ -4420,5 +4426,27 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         }
 
         return $sPicUrl;
+    }
+
+     /**
+     * Checks if article has amount price
+     *
+     * @return bool
+     */
+    public function hasAmountPrice()
+    {
+        if ( self::$_blHasAmountPrice === null ) {
+
+            self::$_blHasAmountPrice = false;
+
+            $oDb = oxDb::getDb();
+            $sQ = "SELECT 1 FROM `oxprice2article` LIMIT 1";
+
+            if ( $oDb->getOne( $sQ ) ) {
+                self::$_blHasAmountPrice = true;
+            }
+        }
+
+        return self::$_blHasAmountPrice;
     }
 }

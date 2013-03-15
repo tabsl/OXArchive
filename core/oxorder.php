@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 39711 2011-11-03 12:55:22Z arvydas.vapsva $
+ * @version   SVN: $Id: oxorder.php 40704 2011-12-19 15:46:03Z mindaugas.rimgaila $
  */
 
 /**
@@ -1125,7 +1125,11 @@ class oxOrder extends oxBase
                 $oEx->setMessage( 'EXCEPTION_OUTOFSTOCK_OUTOFSTOCK' );
                 $oEx->setArticleNr( $oProd->oxarticles__oxartnum->value );
                 $oEx->setProductId( $oProd->getId() );
-                $oEx->setRemainingAmount( $oProd->oxarticles__oxstock->value );
+
+                if (!is_numeric($iOnStock)) {
+                    $iOnStock = 0;
+                }
+                $oEx->setRemainingAmount( $iOnStock );
                 throw $oEx;
             }
         }

@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 38434 2011-08-25 09:21:54Z juergen.busch $
+ * @version   SVN: $Id: help_lang.php 40458 2011-12-06 09:01:50Z justinas.straksys $
  */
 
 /**
@@ -51,6 +51,8 @@ $aLang =  array(
                                                  '<ul><li>Under 40, the compression gets clearly visible and the pictures are blurred.</li>'.
                                                  '<li>Above 80 hardly any quality improvement can be detected, but the filesize increases enormously.</li></ul><br>'.
                                                  'The default value is 75.',
+
+'HELP_SHOP_SYSTEM_DENIEDDYNGROUPS'            => 'Enable this option to filtering user groups, which are handled over "dgr" param in the URL.',
 
 'HELP_SHOP_SYSTEM_SHOWVARIANTREVIEWS'         => 'This setting affects how reviews for variants are handled: If the setting is checked, remarks from variants are also shown at the parent product.',
 

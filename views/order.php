@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: order.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
+ * @version   SVN: $Id: order.php 40613 2011-12-14 13:59:39Z mindaugas.rimgaila $
  */
 
 /**
@@ -166,8 +166,10 @@ class order extends oxUBase
 
             // can we proceed with ordering ?
             $oUser = $this->getUser();
-            if ( !$oBasket || !$oUser || ( $oBasket && !$oBasket->getProductsCount() ) ) {
-                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL(), true, 302 );
+            if (!$oUser && ($oBasket && $oBasket->getProductsCount() > 0)) {
+                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL().'cl=basket', false, 302 );
+            } elseif ( !$oBasket || !$oUser || ( $oBasket && !$oBasket->getProductsCount() ) ) {
+                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL(), false, 302 );
             }
 
             // payment is set ?

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxnewsletter.php 31954 2010-12-17 13:33:40Z sarunas $
+ * @version   SVN: $Id: oxnewsletter.php 40592 2011-12-14 09:30:59Z arvydas.vapsva $
  */
 
 /**
@@ -271,7 +271,7 @@ class oxNewsletter extends oxBase
             $sSelect  = "select $sArticleTable.* from oxorder left join oxorderarticles on oxorderarticles.oxorderid = oxorder.oxid";
             $sSelect .= " left join $sArticleTable on oxorderarticles.oxartid = $sArticleTable.oxid";
             $sSelect .= " where ".$oArticle->getSqlActiveSnippet();
-            $sSelect .= " and oxorder.oxuserid = '".$this->_oUser->getId()."' order by oxorder.oxorderdate desc";
+            $sSelect .= " and oxorder.oxuserid = '".$this->_oUser->getId()."' order by oxorder.oxorderdate desc limit 1";
 
             if ( $oArticle->assignRecord( $sSelect ) ) {
                 $oSimList = $oArticle->getSimilarProducts();

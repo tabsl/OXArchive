@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbase.php 39713 2011-11-03 13:00:48Z arvydas.vapsva $
+ * @version   SVN: $Id: oxbase.php 40604 2011-12-14 13:15:57Z arvydas.vapsva $
  */
 
 /**
@@ -174,6 +174,13 @@ class oxBase extends oxSuperCfg
     protected $_isLoaded = false;
 
     /**
+     * store objects atributes values
+     *
+     * @var array
+     */
+    protected $_aInnerLazyCache = null;
+
+    /**
      * Class constructor, sets active shop.
      */
     public function __construct()
@@ -239,6 +246,8 @@ class oxBase extends oxSuperCfg
                 break;
         }
 
+
+
         // implementing lazy loading fields
         // This part of the code is slow and normally is called before field cache is built.
         // Make sure it is not called after first page is loaded and cache data is fully built.
@@ -247,28 +256,45 @@ class oxBase extends oxSuperCfg
             if ( $this->getId() ) {
 
                 //lazy load it
-                $sFieldName = str_replace($this->_sCoreTable . "__", '', $sName);
-                $iFieldStatus = $this->_getFieldStatus($sFieldName);
+                $sFieldName      = str_replace( $this->_sCoreTable . "__", '', $sName );
+                $sCacheFieldName = strtoupper( $sFieldName );
 
-                $oDb = oxDb::getDb();
-                $sQ = "select $sFieldName from " . $this->getViewName() . " where oxid = " . $oDb->quote($this->getId());
+                $iFieldStatus = $this->_getFieldStatus( $sFieldName );
+                $sViewName    = $this->getViewName();
+                $sId = $this->getId();
 
                 try {
-                    $rs = $oDb->execute( $sQ );
-                    if ( $rs === false ) {
+                    if ( $this->_aInnerLazyCache === null ) {
+
+                        $oDb = oxDb::getDb( true );
+                        $sQ = "SELECT * FROM " . $sViewName . " WHERE `oxid` = " . $oDb->quote( $sId );
+                        $rs = $oDb->execute( $sQ );
+                        if ( $rs ) {
+                            $this->_aInnerLazyCache = $rs->fields;
+                            if ( array_key_exists( $sCacheFieldName, $rs->fields ) ) {
+                                $sFieldValue = $rs->fields[$sCacheFieldName];
+                            } else {
+                                return null;
+                            }
+                        } else {
+                            return null;
+                        }
+                    } elseif ( array_key_exists( $sCacheFieldName, $this->_aInnerLazyCache ) ) {
+                        $sFieldValue = $this->_aInnerLazyCache[$sCacheFieldName];
+                    } else {
                         return null;
                     }
 
                     $this->_addField( $sFieldName, $iFieldStatus );
-                    $this->_setFieldData( $sFieldName, $rs->fields[0] );
+                    $this->_setFieldData( $sFieldName, $sFieldValue );
 
                     //save names to cache for next loading
                     if ($this->_sCacheKey) {
                         $myUtils = oxUtils::getInstance();
                         $sCacheKey = 'fieldnames_' . $this->_sCoreTable . "_" . $this->_sCacheKey;
-                        $aFieldNames = $myUtils->fromFileCache($sCacheKey);
+                        $aFieldNames = $myUtils->fromFileCache( $sCacheKey );
                         $aFieldNames[$sFieldName] = $iFieldStatus;
-                        $myUtils->toFileCache($sCacheKey, $aFieldNames);
+                        $myUtils->toFileCache( $sCacheKey, $aFieldNames );
                     }
                 } catch ( Exception $e ) {
                     return null;
@@ -276,17 +302,8 @@ class oxBase extends oxSuperCfg
 
                 //do not use field cache for this page
                 //as if we use it for lists then objects are loaded empty instead of lazy loading.
-                self::$_blDisableFieldCaching[get_class($this)] = true;
+                self::$_blDisableFieldCaching[get_class( $this )] = true;
             }
-
-            /*
-            //save names to cache for next loading
-            if ($this->_sCacheKey) {
-                $sCacheKey = 'fieldnames_' . $this->_sCoreTable . "_" . $this->_sCacheKey;
-                $aFieldNames = oxUtils::getInstance()->fromFileCache($sCacheKey);
-                $aFieldNames[$sFieldName] = $iFieldStatus;
-                oxUtils::getInstance()->toFileCache($sCacheKey, $aFieldNames);
-            }*/
 
             oxUtilsObject::getInstance()->resetInstanceCache(get_class($this));
         }

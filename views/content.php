@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: content.php 35529 2011-05-23 07:31:20Z arunas.paskevicius $
+ * @version   SVN: $Id: content.php 40522 2011-12-12 12:40:30Z linas.kukulskis $
  */
 
 /**
@@ -62,6 +62,12 @@ class Content extends oxUBase
       * @var array
       */
      protected $_aPsAllowedContents = array( "oxagb", "oxrightofwithdrawal", "oximpressum" );
+
+     /**
+     * Current view content title
+     * @var sting
+     */
+    protected $_sContentTitle = null;
 
     /**
      * Returns prefix ID used by template engine.
@@ -315,5 +321,20 @@ class Content extends oxUBase
         $aPaths[] = $aPath;
 
         return $aPaths;
+    }
+
+    /**
+     * Template variable getter. Returns tag title
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        if ( $this->_sContentTitle === null ) {
+            $oContent = $this->getContent();
+            $this->_sContentTitle = $oContent->oxcontents__oxtitle->value;
+        }
+
+        return $this->_sContentTitle;
     }
 }

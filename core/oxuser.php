@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 39674 2011-11-02 13:39:35Z arvydas.vapsva $
+ * @version   SVN: $Id: oxuser.php 40473 2011-12-06 14:44:46Z mindaugas.rimgaila $
  */
 
 /**
@@ -838,14 +838,14 @@ class oxUser extends oxBase
     public function addToGroup( $sGroupID )
     {
         if ( !$this->inGroup( $sGroupID ) ) {
-            $oDb = oxDb::getDb();
-            $sQ = "select 1 from oxgroups where oxid=" . $oDb->quote( $sGroupID );
-            if ( $oDb->getOne( $sQ ) ) {
+            // create oxgroup object
+            $oGroup = oxNew('oxGroups');
+            if ( $oGroup->load($sGroupID) ) {
                 $oNewGroup = oxNew( 'oxobject2group' );
                 $oNewGroup->oxobject2group__oxobjectid = new oxField( $this->getId(), oxField::T_RAW );
                 $oNewGroup->oxobject2group__oxgroupsid = new oxField( $sGroupID, oxField::T_RAW );
                 if ( $oNewGroup->save() ) {
-                    $this->_oGroups[$sGroupID] = $oNewGroup;
+                    $this->_oGroups[$sGroupID] = $oGroup;
                     return true;
                 }
             }

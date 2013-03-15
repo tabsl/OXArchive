@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_shop.php 38190 2011-08-17 11:05:30Z linas.kukulskis $
+ * @version   SVN: $Id: oxcmp_shop.php 40655 2011-12-16 11:39:08Z mindaugas.rimgaila $
  */
 
 /**
@@ -54,9 +54,9 @@ class oxcmp_shop extends oxView
         // is shop active?
         $oShop = $myConfig->getActiveShop();
         if ( !$oShop->oxshops__oxactive->value && 'oxstart' != $myConfig->getActiveView()->getClassName() && !$this->isAdmin() ) {
-            $oEx = oxNew( 'oxShopException' );
-            $oEx->setMessage( 'EXCEPTION_SHOP_NOTACTIVE' );
-            throw $oEx;
+            // redirect to offline if there is no active shop
+            $sShopUrl = oxConfig::getInstance()->getShopMainUrl();
+            oxUtils::getInstance()->redirect($sShopUrl . 'offline.html', false);
         }
 
         return $oShop;

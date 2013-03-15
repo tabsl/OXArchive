@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseodecoder.php 38552 2011-09-05 11:04:05Z arvydas.vapsva $
+ * @version   SVN: $Id: oxseodecoder.php 40596 2011-12-14 12:08:05Z arvydas.vapsva $
  */
 
 /**
@@ -169,7 +169,7 @@ class oxSeoDecoder extends oxSuperCfg
         if ('oxarticle' == $aInfo['oxtype']) {
             $sMainCatId = $oDb->getOne( "select oxcatnid from ".getViewName( "oxobject2category" )." where oxobjectid = " . $oDb->quote( $sObjectId ) . " order by oxtime" );
             if ($sMainCatId) {
-                $sUrl = $oDb->getOne( "select oxseourl from oxseo where oxobjectid =  " . $oDb->quote( $sObjectId ) . " and oxlang =  " . $oDb->quote( $iLang ) . " and oxshopid = " . $oDb->quote( $iShopId ) . " and oxparams = " . $oDb->quote( $sMainCatId ) );
+                $sUrl = $oDb->getOne( "select oxseourl from oxseo where oxobjectid =  " . $oDb->quote( $sObjectId ) . " and oxlang =  " . $oDb->quote( $iLang ) . " and oxshopid = " . $oDb->quote( $iShopId ) . " and oxparams = " . $oDb->quote( $sMainCatId ) . "  order by oxexpired" );
                 if ($sUrl) {
                     return $sUrl;
                 }

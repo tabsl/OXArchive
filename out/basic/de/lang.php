@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 37318 2011-07-25 13:59:28Z vilma $
+ * @version   SVN: $Id: lang.php 40518 2011-12-12 09:44:57Z linas.kukulskis $
  */
 
 
@@ -101,7 +101,7 @@ $aLang = array(
 'EMAIL_ORDER_OWNER_HTML_MESSAGE'                              => "Mitteilung:",
 'EMAIL_ORDER_OWNER_HTML_PAYMENTINFOOFF'                       => "<b>BEZAHLINFORMATIONEN AUSGESCHALTET</b> - um diese einzuschalten bitte email_order_owner_html.tpl aendern.",
 'EMAIL_SUGGEST_HTML_MENYGREETINGS'                            => "Viele Grüsse,",
-'EXCEPTION_INPUT_NOTALLFIELDS'                                => "0",
+'EXCEPTION_INPUT_NOTALLFIELDS'                                => "Bitte Wert angeben!",
 'FACEBOOK_COMMENTS'                                           => "Facebook comments",
 'FACEBOOK_POPUP_CANCELBTN'                                    => "Abbrechen",
 'FACEBOOK_POPUP_HEADER'                                       => "Kundenkonto aktualisieren",

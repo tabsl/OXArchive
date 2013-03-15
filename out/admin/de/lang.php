@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 40254 2011-11-24 10:48:57Z juergen.busch $
+ * @version   SVN: $Id: lang.php 40609 2011-12-14 13:37:31Z juergen.busch $
  */
 
 $sLangName  = 'Deutsch';
@@ -1065,7 +1065,7 @@ $aLang = array(
 'SHOP_CONFIG_BIDIRECTCROSS'                                => 'Bidirektionales Crossselling aktivieren',
 'SHOP_CONFIG_CONFIRMAGB'                                   => 'Kunden müssen die AGB bestätigen, um bestellen zu können',
 'SHOP_CONFIG_SHOWORDERBUTTONONTHETOP'                      => 'Im 4ten Bestellschritt einen zusätzlichen "Bestellung absenden" Button oben anzeigen (Wenn die Einstellung nicht aktiv ist, wird nur der "Bestellung absenden" Button weiter unten angezeigt).',
-'SHOP_CONFIG_CALCULATEVATFORDELIVERY'                      => 'Die in den Versandkosten enthaltene Mehrwertsteuer im Warenkorb und in der Rechnung anzeigen',
+'SHOP_CONFIG_CALCULATEVATFORDELIVERY'                      => 'Im Warenkorb und in der Rechnung die Versandkosten als Nettobetrag und Mehrwertsteuer anstatt als Bruttobetrag anzeigen',
 'SHOP_CONFIG_CALCDELVATONTOP'                              => 'Versandkosten als Nettopreise eingeben (Versandkosten zuzüglich MwSt.)',
 'SHOP_CONFIG_CALCULATEVATFORWRAPPING'                      => 'Die in den Geschenkverpackungskosten enthaltene Mehrwertsteuer im Warenkorb und in der Rechnung anzeigen',
 'SHOP_CONFIG_CALCWRAPVATONTOP'                             => 'Verpackungskosten als Nettopreise eingeben (Verpackungskosten zuzüglich MwSt.)',
@@ -1148,7 +1148,7 @@ $aLang = array(
 
 'SHOP_SYSTEM_ATTRIBUTESPERCENT'                            => 'Prozentsatz gleicher Attribute, damit Artikel ähnlich sind',
 'SHOP_SYSTEM_DEFAULTIMAGEQUALITY'                          => 'Bildqualität - von 0 (schlechteste Qualität, kleine Dateigröße) bis 100 (beste Qualität, große Dateigröße)',
-'SHOP_SYSTEM_DENIEDDYNGROUPS'                              => 'Benutzergruppen, denen Kunden nicht automatisch zugeordnet werden dürfen',
+'SHOP_SYSTEM_DENIEDDYNGROUPS'                              => 'Benutzergruppen, die von dynamischer Benutzergruppen-Zuordnung via URL-Parameter "dgr" ausgeschlossen sind',
 'SHOP_SYSTEM_DISABLENAVBARS'                               => 'Einige Navigationselemente während des Bestellprozesses ausblenden',
 'SHOP_SYSTEM_GBMODERATE'                                   => 'Gästebuch-Einträge und Artikel-Bewertungen moderieren: Sie werden erst veröffentlicht, wenn sie von einem Administrator aktiv gesetzt werden',
 'SHOP_SYSTEM_ISERVERTIMESHIFT'                             => 'Zeitverschiebung des Servers in Stunden',

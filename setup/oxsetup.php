@@ -869,6 +869,11 @@ class OxSetupDb extends oxSetupCore
         $this->execSql( "update oxcountry set oxactive = '0'" );
         $this->execSql( "update oxcountry set oxactive = '1' where oxid = '$sCountryLang'" );
 
+        // if it is international eshop, setting admin user country to selected one
+        if ( $oSession->getSessionParam('location_lang') != "de" ) {
+             $this->execSql( "UPDATE oxuser SET oxcountryid = '$sCountryLang' where oxid='oxdefaultadmin'" );
+        }
+
         $this->execSql( "delete from oxconfig where oxvarname = 'blLoadDynContents'" );
         $this->execSql( "delete from oxconfig where oxvarname = 'sShopCountry'" );
         $this->execSql( "delete from oxconfig where oxvarname = 'blCheckForUpdates'" );

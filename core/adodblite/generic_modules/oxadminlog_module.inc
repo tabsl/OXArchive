@@ -4,9 +4,9 @@ class oxadminlog_ADOConnection extends mysql_oxadminlog_EXTENDER
 {
     public function &Execute( $sql, $inputarr = false )
     {
-        $sSearch = strtolower( $sql );
-        if ( ( strpos( $sSearch, 'insert into' ) !== false || strpos( $sSearch, 'update ' ) !== false ) &&
-              strpos( $sSearch, 'oxsession' ) === false && strpos( $sSearch, 'oxadminlog' ) === false ) {
+        $sSearch = strtolower( ltrim($sql) );
+        if ( ( strpos( $sSearch, 'insert into' ) === 0 || strpos( $sSearch, 'update ' ) === 0 || strpos( $sSearch, 'delete ' ) === 0 ) &&
+              strpos( $sSearch, 'oxsession' ) === false && strpos( $sSearch, 'oxadminlog' ) === false && strpos( $sSearch, 'oxcache' ) === false ) {
 
             $blInsert = true;
 

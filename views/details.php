@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: details.php 39230 2011-10-12 14:12:41Z arvydas.vapsva $
+ * @version   SVN: $Id: details.php 40663 2011-12-16 16:06:29Z linas.kukulskis $
  */
 
 /**
@@ -382,9 +382,6 @@ class Details extends oxUBase
         if ( ( $sTplName = oxConfig::getParameter( 'tpl' ) ) ) {
             $this->_sThisTemplate = basename ( $sTplName );
         }
-
-        //loading amount price list
-        $oProduct->loadAmountPriceInfo();
 
         parent::render();
 

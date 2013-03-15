@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: news.php 38718 2011-09-13 08:17:30Z linas.kukulskis $
+ * @version   SVN: $Id: news.php 40615 2011-12-14 14:02:29Z linas.kukulskis $
  */
 
 /**
@@ -70,7 +70,7 @@ class News extends oxUBase
         return $this->_oNewsList;
     }
 
-    
+
     /**
      * Returns Bread Crumb - you are here page1/page2/page3...
      *
@@ -80,12 +80,12 @@ class News extends oxUBase
     {
         $aPaths = array();
         $aPath  = array();
-        
+
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_INFO_NEWS_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
         $aPath['link']  = $this->getLink();
-        
+
         $aPaths[] = $aPath;
-        
+
         return $aPaths;
     }
 

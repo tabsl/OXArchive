@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 40253 2011-11-24 10:48:36Z juergen.busch $
+ * @version   SVN: $Id: lang.php 40608 2011-12-14 13:36:58Z juergen.busch $
  */
 
 /*
@@ -1072,7 +1072,7 @@ $aLang = array(
 'SHOP_CONFIG_BIDIRECTCROSS'                                => 'Enable bidirectional Crosselling',
 'SHOP_CONFIG_CONFIRMAGB'                                   => 'Users have to Confirm General Terms and Conditions during Check-Out',
 'SHOP_CONFIG_SHOWORDERBUTTONONTHETOP'                      => 'Show an additional "Submit Order" Button at the Top in 4th Order Step (By default "Submit Order" Button is shown only on the Bottom of the Page).',
-'SHOP_CONFIG_CALCULATEVATFORDELIVERY'                      => 'Display VAT contained in Shipping Costs in Shopping Cart and Invoice',
+'SHOP_CONFIG_CALCULATEVATFORDELIVERY'                      => 'Display shipping costs as net price and VAT (instead of gross) in shopping cart and invoice',
 'SHOP_CONFIG_CALCDELVATONTOP'                              => 'Enter Shipping Costs as net Price (plus VAT)',
 'SHOP_CONFIG_CALCULATEVATFORWRAPPING'                      => 'Display VAT contained in Gift Wrapping in Shopping Cart and Invoice',
 'SHOP_CONFIG_CALCWRAPVATONTOP'                             => 'Enter Gift Wrapping Prices as net Price (plus VAT)',
@@ -1155,7 +1155,7 @@ $aLang = array(
 
 'SHOP_SYSTEM_ATTRIBUTESPERCENT'                            => 'Number of equal Attributes for similar Products (%)',
 'SHOP_SYSTEM_DEFAULTIMAGEQUALITY'                          => 'Picture Quality - from 0 (poor Quality, small File Size) to 100 (best Quality, large File Size)',
-'SHOP_SYSTEM_DENIEDDYNGROUPS'                              => 'Prohibited User Groups for automatic User Group Assignment',
+'SHOP_SYSTEM_DENIEDDYNGROUPS'                              => 'Prohibited User Groups for dynamic User Group assignment using "dgr" URL param',
 'SHOP_SYSTEM_DISABLENAVBARS'                               => "Don't display most Navigation Elements during Checkout",
 'SHOP_SYSTEM_GBMODERATE'                                   => ' Moderate Guestbook and Product Reviews: They are only published after they are activated by an Administrator User',
 'SHOP_SYSTEM_ISERVERTIMESHIFT'                             => 'Server Time shift (hours)',

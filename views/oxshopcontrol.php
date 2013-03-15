@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxshopcontrol.php 39211 2011-10-12 13:35:37Z arvydas.vapsva $
+ * @version   SVN: $Id: oxshopcontrol.php 40659 2011-12-16 13:24:46Z vilma $
  */
 
 /**
@@ -136,8 +136,10 @@ class oxShopControl extends oxSuperCfg
             if ( $this->_isDebugMode() ) {
                 oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
                 $this->_process( 'exceptionError', 'displayExceptionError' );
-                $oEx->debugOut();
             }
+
+            // log the exception
+            $oEx->debugOut();
         }
 
     }
@@ -498,8 +500,9 @@ class oxShopControl extends oxSuperCfg
                 }
             } else {
                 // disable error logging if server is misconfigured
+                // #2015 E_NONE replaced with 0
                 if ( !ini_get( 'log_errors' ) ) {
-                    $iErrorReporting = E_NONE;
+                    $iErrorReporting = 0;
                 }
             }
             error_reporting($iErrorReporting);

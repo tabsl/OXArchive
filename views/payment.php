@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: payment.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
+ * @version   SVN: $Id: payment.php 40613 2011-12-14 13:59:39Z mindaugas.rimgaila $
  */
 
 /**
@@ -151,13 +151,6 @@ class Payment extends oxUBase
         //but first checking maybe there were redirection already to prevent infinite redirections due to possible buggy ssl detection on server
         $blAlreadyRedirected = oxConfig::getParameter( 'sslredirect' ) == 'forced';
 
-        if ( $myConfig->getCurrentShopURL() != $myConfig->getSSLShopURL() && !$blAlreadyRedirected && !oxConfig::getParameter('fnc') ) {
-            $sPayError = oxConfig::getParameter( 'payerror' )?'payerror='.oxConfig::getParameter( 'payerror' ):'';
-            $sPayErrorText = oxConfig::getParameter('payerrortext')?'payerrortext='.oxConfig::getParameter( 'payerrortext' ):'';
-            $sRedirectURL = $myConfig->getShopSecureHomeURL().'sslredirect=forced&cl=payment&'.$sPayError."&".$sPayErrorText;
-            oxUtils::getInstance()->redirect( $sRedirectURL, true, 302 );
-        }
-
         if ( $this->getIsOrderStep() ) {
 
             //additional check if we really really have a user now
@@ -168,9 +161,18 @@ class Payment extends oxUBase
             }
 
             $oUser = $this->getUser();
-            if ( !$oBasket || !$oUser || ( $oBasket && !$oBasket->getProductsCount() ) ) {
-                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=start', true, 302 );
+            if (!$oUser && ($oBasket && $oBasket->getProductsCount() > 0)) {
+                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket', false, 302 );
+            } elseif ( !$oBasket || !$oUser || ( $oBasket && !$oBasket->getProductsCount() ) ) {
+                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=start', false, 302 );
             }
+        }
+
+        if ( $myConfig->getCurrentShopURL() != $myConfig->getSSLShopURL() && !$blAlreadyRedirected && !oxConfig::getParameter('fnc') ) {
+            $sPayError = oxConfig::getParameter( 'payerror' )?'payerror='.oxConfig::getParameter( 'payerror' ):'';
+            $sPayErrorText = oxConfig::getParameter('payerrortext')?'payerrortext='.oxConfig::getParameter( 'payerrortext' ):'';
+            $sRedirectURL = $myConfig->getShopSecureHomeURL().'sslredirect=forced&cl=payment&'.$sPayError."&".$sPayErrorText;
+            oxUtils::getInstance()->redirect( $sRedirectURL, true, 302 );
         }
 
         if ( !$this->getAllSetsCnt() ) {

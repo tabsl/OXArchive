@@ -108,7 +108,77 @@
             [{ oxmultilang ident="GENERAL_STATE" }]
             </td>
             <td class="edittext">
-            <input type="text" class="editinput" size="15" maxlength="[{$edit->oxorder__oxbillstateid->fldmax_length}]" name="editval[oxorder__oxbillstateid]" value="[{$edit->oxorder__oxbillstateid->value }]" [{ $readonly }]>
+                <script type="text/javascript"><!--
+                    var allStates = new Array();
+                    var allStateIds = new Array();
+                    var allCountryIds = new Object();
+                    var cCount = 0;
+                    [{foreach from=$countrylist item=country key=country_id }]
+                        var states = new Array();
+                        var ids = new Array();
+                        var i = 0;   
+                        [{assign var=countryStates value=$country->getStates()}]
+                        [{foreach from=$countryStates item=state key=state_id}]
+                            states[i] = '[{$state->oxstates__oxtitle->value}]';
+                            ids[i] = '[{$state->oxstates__oxid->value}]';
+                            i++;
+                        [{/foreach}]
+                        allStates[++cCount] = states;
+                        allStateIds[cCount]  = ids;
+                        allCountryIds['[{$country->getId()}]']  = cCount;
+                    [{/foreach}]
+                    
+                    function getCountryStates(countries_select, states_select)
+                    {
+                        var oCountries = document.getElementById(countries_select);
+                        var oStates = document.getElementById(states_select);
+                        if (allStates[allCountryIds[oCountries.options[oCountries.selectedIndex].value]].length > 0) {
+                            oStates.options.length = 0;
+                            for (var i in allStates[allCountryIds[oCountries.options[oCountries.selectedIndex].value]])
+                            {
+                                var oOption = document.createElement('option');
+                                oOption.text = allStates[allCountryIds[oCountries.options[oCountries.selectedIndex].value]][i];
+                                oOption.value = allStateIds[allCountryIds[oCountries.options[oCountries.selectedIndex].value]][i];
+                                var oOptionOld = oStates.options[0];  
+                                try {
+                                    oStates.add(oOption, oOptionOld); /* standards compliant does not work in IE */
+                                }
+                                catch(ex) {
+                                    oStates.add(oOption, oStates.selectedIndex); /* IE only */
+                                }
+                            }
+                        }
+                        else {
+                            oStates.options.length = 0;
+                            var oOption = document.createElement('option');
+                            oOption.text = '---';
+                            oOption.value = '';
+                            var oOptionOld = oStates.options[0];  
+                            try {
+                                oStates.add(oOption, oOptionOld); /* standards compliant does not work in IE */
+                            }
+                            catch(ex) {
+                                oStates.add(oOption, oStates.selectedIndex); /* IE only */
+                            }
+                        }
+                    }
+                    //-->
+                </script>
+                
+                <select id="bill_state_select" class="editinput" name="editval[oxorder__oxbillstateid]" [{ $readonly }]>
+                [{if $edit->oxorder__oxbillstateid->value}]
+                    [{foreach from=$countrylist item=country key=country_id }]
+                        [{if $country_id == $edit->oxorder__oxbillcountryid->value}]
+                            [{assign var=countryStates value=$country->getStates()}]
+                            [{foreach from=$countryStates item=state key=state_id}]
+                                <option value='[{$state->oxstates__oxid->value}]' [{if $edit->oxorder__oxbillstateid->value == $state->oxstates__oxid->value}]selected[{/if}]>[{$state->oxstates__oxtitle->value}]</option>
+                            [{/foreach}]
+                        [{/if}]
+                    [{/foreach}]
+                [{else}]
+                    <option value=''>---</option>
+                [{/if}]
+                </select>
             [{ oxinputhelp ident="HELP_GENERAL_STATE" }]
             </td>
         </tr>
@@ -117,7 +187,7 @@
             [{ oxmultilang ident="GENERAL_COUNTRY" }]
             </td>
             <td class="edittext">
-            <select id="del_country_select" class="editinput" name="editval[oxorder__oxbillcountryid]" [{ $readonly }]>
+            <select onchange="getCountryStates('bill_country_select', 'bill_state_select');" id="bill_country_select" class="editinput" name="editval[oxorder__oxbillcountryid]" [{ $readonly }]>
                <option value=''>---</option>
                [{ foreach from=$countrylist item=oCountry}]
                <option value="[{$oCountry->oxcountry__oxid->value}]" [{if $oCountry->oxcountry__oxid->value == $edit->oxorder__oxbillcountryid->value}]selected[{/if}]>[{$oCountry->oxcountry__oxtitle->value}]</option>
@@ -228,7 +298,20 @@
             [{ oxmultilang ident="GENERAL_STATE" }]
             </td>
             <td class="edittext">
-            <input type="text" class="editinput" size="15" maxlength="[{$edit->oxorder__oxdelstateid->fldmax_length}]" name="editval[oxorder__oxdelstateid]" value="[{$edit->oxorder__oxdelstateid->value }]" [{ $readonly }]>
+                <select id="del_state_select" class="editinput" name="editval[oxorder__oxdelstateid]" [{ $readonly }]>
+                [{if $edit->oxorder__oxdelstateid->value}]
+                    [{foreach from=$countrylist item=country key=country_id }]
+                        [{if $country_id == $edit->oxorder__oxdelcountryid->value}]
+                            [{assign var=countryStates value=$country->getStates()}]
+                            [{foreach from=$countryStates item=state key=state_id}]
+                                <option value='[{$state->oxstates__oxid->value}]' [{if $edit->oxorder__oxdelstateid->value == $state->oxstates__oxid->value}]selected[{/if}]>[{$state->oxstates__oxtitle->value}]</option>
+                            [{/foreach}]
+                        [{/if}]
+                    [{/foreach}]
+                [{else}]
+                    <option value=''>---</option>
+                [{/if}]
+                </select>
             [{ oxinputhelp ident="HELP_GENERAL_STATE" }]
             </td>
         </tr>
@@ -237,7 +320,7 @@
             [{ oxmultilang ident="GENERAL_COUNTRY" }]
             </td>
             <td class="edittext">
-            <select class="editinput" name="editval[oxorder__oxdelcountryid]" [{ $readonly }]>
+            <select onchange="getCountryStates('del_country_select', 'del_state_select');" id="del_country_select" class="editinput" name="editval[oxorder__oxdelcountryid]" [{ $readonly }]>
                <option value=''>---</option>
                [{ foreach from=$countrylist item=oCountry}]
                <option value="[{$oCountry->oxcountry__oxid->value}]" [{if $oCountry->oxcountry__oxid->value == $edit->oxorder__oxdelcountryid->value}]selected[{/if}]>[{$oCountry->oxcountry__oxtitle->value}]</option>

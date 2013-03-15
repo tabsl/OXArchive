@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: tools_list.php 32221 2010-12-22 12:36:39Z alfonsas $
+ * @version   SVN: $Id: tools_list.php 40515 2011-12-12 08:42:16Z mindaugas.rimgaila $
  */
 
 /**
@@ -50,7 +50,7 @@ class Tools_List extends oxAdminList
             $this->_aViewData["blViewSuccess"]  = true;
         }
     }
-    
+
     /**
      * Method performs user passed SQL query
      *
@@ -157,7 +157,7 @@ class Tools_List extends oxAdminList
 
                 //hack?
 
-                $aBadFiles = array( "php", "jsp", "cgi", "cmf", "exe" );
+                $aBadFiles = array( "php", 'php4', 'php5', "jsp", "cgi", "cmf", "exe" );
 
                 if ( in_array( $aFilename[1], $aBadFiles ) ) {
                     oxUtils::getInstance()->showMessageAndExit( "We don't play this game, go away" );
