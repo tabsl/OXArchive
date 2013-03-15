@@ -287,9 +287,9 @@ class oxVariantHandler extends oxSuperCfg
      */
     protected function _updateArticleVarName( $sUpdate, $sArtId )
     {
-        $sUpdate = "update oxarticles set " . $sUpdate . " where oxid = '" . $sArtId . "'";
-
-        oxDb::getDb()->Execute( $sUpdate);
+        $oDb = oxDb::getDb();
+        $sUpdate = "update oxarticles set " . $sUpdate . " where oxid = " . $oDb->quote( $sArtId );
+        $oDb->Execute( $sUpdate );
     }
 
     /**

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxviewconfig.php 38300 2011-08-19 13:24:05Z linas.kukulskis $
+ * @version   SVN: $Id: oxviewconfig.php 39210 2011-10-12 13:35:14Z arvydas.vapsva $
  */
 
 /**
@@ -157,11 +157,12 @@ class oxViewConfig extends oxSuperCfg
             $sAddQ    = "oxshopid = '".$oConfig->getShopId()."' and oxactive = 1 and";
             $sViewName = getViewName( 'oxcontents' );
 
+            $oDb = oxDb::getDb();
             // checking if there is a custom content for help page
-            $sQ  = "select oxid from {$sViewName} where {$sAddQ} oxloadid = 'oxhelp".strtolower( $sClass )."' union ";
+            $sQ  = "select oxid from {$sViewName} where {$sAddQ} oxloadid = ".$oDb->quote( 'oxhelp'.strtolower( $sClass ) )." union ";
             $sQ .= "select oxid from {$sViewName} where {$sAddQ} oxloadid = 'oxhelpdefault'";
 
-            if ( $sContentId = oxDb::getDb()->getOne( $sQ ) ) {
+            if ( $sContentId = $oDb->getOne( $sQ ) ) {
                 $oContent = oxNew( "oxcontent" );
                 $oContent->load( $sContentId );
                 $sLink = $oContent->getLink();

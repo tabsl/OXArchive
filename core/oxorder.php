@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 38847 2011-09-22 07:42:12Z arvydas.vapsva $
+ * @version   SVN: $Id: oxorder.php 39241 2011-10-12 15:18:03Z arvydas.vapsva $
  */
 
 /**
@@ -523,7 +523,7 @@ class oxOrder extends oxBase
     protected function _setOrderStatus( $sStatus )
     {
         $oDb = oxDb::getDb();
-        $sQ = 'update oxorder set oxtransstatus='.$oDb->quote( $sStatus ).' where oxid="'.$this->getId().'" ';
+        $sQ = 'update oxorder set oxtransstatus='.$oDb->quote( $sStatus ).' where oxid='.$oDb->quote( $this->getId() );
         $oDb->execute( $sQ );
 
         //updating order object
@@ -1281,12 +1281,13 @@ class oxOrder extends oxBase
         $this->_oOrderBasket->setCardMessage( $this->oxorder__oxcardtext->value );
 
         if ( $this->_blReloadDiscount ) {
+            $oDb = oxDb::getDb( true );
             // disabling availability check
             $this->_oOrderBasket->setSkipVouchersChecking( true );
 
             // add previously used vouchers
-            $sQ = 'select oxid from oxvouchers where oxorderid = "'.$this->getId().'"';
-            $aVouchers = oxDb::getDb( true )->getAll( $sQ );
+            $sQ = 'select oxid from oxvouchers where oxorderid = '.$oDb->quote( $this->getId() );
+            $aVouchers = $oDb->getAll( $sQ );
             foreach ( $aVouchers as $aVoucher ) {
                 $this->_oOrderBasket->addVoucher( $aVoucher['oxid'] );
             }
@@ -1893,7 +1894,7 @@ class oxOrder extends oxBase
         $sTable = $oDelSet->getViewName();
 
         $sQ = "select 1 from {$sTable} where {$sTable}.oxid=".
-              $oDb->quote( $oBasket->getShippingId() )." and ".$oDelSet->getSqlActiveSnippet();
+         $oDb->quote( $oBasket->getShippingId() )." and ".$oDelSet->getSqlActiveSnippet();
 
         if ( !$oDb->getOne( $sQ ) ) {
             // throwing exception
@@ -1917,7 +1918,7 @@ class oxOrder extends oxBase
         $sTable = $oPayment->getViewName();
 
         $sQ = "select 1 from {$sTable} where {$sTable}.oxid=".
-              $oDb->quote( $oBasket->getPaymentId() )." and ".$oPayment->getSqlActiveSnippet();
+        $oDb->quote( $oBasket->getPaymentId() )." and ".$oPayment->getSqlActiveSnippet();
 
         if ( !$oDb->getOne( $sQ ) ) {
             return self::ORDER_STATE_INVALIDPAYMENT;

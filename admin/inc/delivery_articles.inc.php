@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: delivery_articles.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: delivery_articles.inc.php 39177 2011-10-12 13:14:39Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -62,6 +62,7 @@ class ajaxComponent extends ajaxListComponent
     protected function _getQuery()
     {
         $myConfig = $this->getConfig();
+        $oDb = oxDb::getDb();
 
         // looking for table/view
         $sArtTable = $this->_getViewName('oxarticles');
@@ -81,17 +82,17 @@ class ajaxComponent extends ajaxListComponent
             if ( $sSynchDelId && $sDelId != $sSynchDelId ) {
                 $sQAdd  = " from $sO2CView left join $sArtTable on ";
                 $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?" ( $sArtTable.oxid=$sO2CView.oxobjectid or $sArtTable.oxparentid=$sO2CView.oxobjectid)":" $sArtTable.oxid=$sO2CView.oxobjectid ";
-                $sQAdd .= "where $sO2CView.oxcatnid = '$sDelId' ";
+                $sQAdd .= "where $sO2CView.oxcatnid = ". $oDb->quote( $sDelId );
             } else {
                 $sQAdd  = ' from oxobject2delivery left join '.$sArtTable.' on '.$sArtTable.'.oxid=oxobject2delivery.oxobjectid ';
-                $sQAdd .= 'where oxobject2delivery.oxdeliveryid = "'.$sDelId.'" and oxobject2delivery.oxtype = "oxarticles" ';
+                $sQAdd .= 'where oxobject2delivery.oxdeliveryid = '.$oDb->quote( $sDelId ).' and oxobject2delivery.oxtype = "oxarticles" ';
             }
         }
 
         if ( $sSynchDelId && $sSynchDelId != $sDelId) {
             $sQAdd .= 'and '.$sArtTable.'.oxid not in ( ';
             $sQAdd .= 'select oxobject2delivery.oxobjectid from oxobject2delivery ';
-            $sQAdd .= 'where oxobject2delivery.oxdeliveryid = "'.$sSynchDelId.'" and oxobject2delivery.oxtype = "oxarticles" ) ';
+            $sQAdd .= 'where oxobject2delivery.oxdeliveryid = '.$oDb->quote( $sSynchDelId ).' and oxobject2delivery.oxtype = "oxarticles" ) ';
         }
 
         return $sQAdd;

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilscount.php 38802 2011-09-19 14:09:14Z arvydas.vapsva $
+ * @version   SVN: $Id: oxutilscount.php 39208 2011-10-12 13:31:26Z arvydas.vapsva $
  */
 
 /**
@@ -171,17 +171,18 @@ class oxUtilsCount extends oxSuperCfg
         $oArticle = oxNew( 'oxarticle' );
         $sTable   = $oArticle->getViewName();
         $sO2CView = getViewName( 'oxobject2category' );
+        $oDb = oxDb::getDb();
 
         // we use distinct if article is assigned to category twice
         $sQ = "SELECT count(*) FROM (
                    SELECT count(*) FROM $sO2CView LEFT JOIN $sTable ON $sO2CView.oxobjectid=$sTable.oxid
-                       WHERE $sO2CView.oxcatnid = '".$sCatId."' AND
+                       WHERE $sO2CView.oxcatnid = ".$oDb->quote( $sCatId ) ." AND
                              $sTable.oxparentid='' AND
                              ".$oArticle->getSqlActiveSnippet() ."
                        GROUP BY $sTable.oxid
                    ) AS ox2cat";
 
-        $aCache[$sCatId][$sActIdent] = oxDb::getDb()->getOne( $sQ );
+        $aCache[$sCatId][$sActIdent] = $oDb->getOne( $sQ );
 
         $this->_setCatCache( $aCache );
         return $aCache[$sCatId][$sActIdent];

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: vendor_main.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: vendor_main.inc.php 39178 2011-10-12 13:15:27Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,       visible, multilanguage, ident
@@ -66,7 +66,7 @@ class ajaxComponent extends ajaxListComponent
         // looking for table/view
         $sArtTable = $this->_getViewName('oxarticles');
         $sO2CView  = $this->_getViewName('oxobject2category');
-
+        $oDb = oxDb::getDb();
         $sVendorId      = oxConfig::getParameter( 'oxid' );
         $sSynchVendorId = oxConfig::getParameter( 'synchoxid' );
 
@@ -74,16 +74,16 @@ class ajaxComponent extends ajaxListComponent
         if ( !$sVendorId ) {
             // dodger performance
             $sQAdd  = ' from '.$sArtTable.' where '.$sArtTable.'.oxshopid="'.$myConfig->getShopId().'" and 1 ';
-            $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' ) ?'':" and $sArtTable.oxparentid = '' and $sArtTable.oxvendorid != '$sSynchVendorId' ";
+            $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' ) ?'':" and $sArtTable.oxparentid = '' and $sArtTable.oxvendorid != ".$oDb->quote( $sSynchVendorId );
         } else {
             // selected category ?
             if ( $sSynchVendorId && $sSynchVendorId != $sVendorId ) {
                 $sQAdd  = " from $sO2CView left join $sArtTable on ";
                 $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?" ( $sArtTable.oxid = $sO2CView.oxobjectid or $sArtTable.oxparentid = oxobject2category.oxobjectid )":" $sArtTable.oxid = $sO2CView.oxobjectid ";
-                $sQAdd .= 'where '.$sArtTable.'.oxshopid="'.$myConfig->getShopId().'" and '.$sO2CView.'.oxcatnid = "'.$sVendorId.'" and '.$sArtTable.'.oxvendorid != "'. $sSynchVendorId .'" ';
+                $sQAdd .= 'where '.$sArtTable.'.oxshopid="'.$myConfig->getShopId().'" and '.$sO2CView.'.oxcatnid = '.$oDb->quote( $sVendorId ).' and '.$sArtTable.'.oxvendorid != '. $oDb->quote( $sSynchVendorId );
                 $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?'':" and $sArtTable.oxparentid = '' ";
             } else {
-                $sQAdd  = " from $sArtTable where $sArtTable.oxvendorid = '$sVendorId' ";
+                $sQAdd  = " from $sArtTable where $sArtTable.oxvendorid = ".$oDb->quote( $sVendorId );
                 $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?'':" and $sArtTable.oxparentid = '' ";
             }
         }
@@ -148,9 +148,10 @@ class ajaxComponent extends ajaxListComponent
         }
 
         if ( $soxId && $soxId != "-1" && is_array( $aAddArticle ) ) {
-            $sSelect = "update oxarticles set oxvendorid = '$soxId' where oxid in ( ".implode(", ", oxDb::getInstance()->quoteArray( $aAddArticle ) )." )";
+            $oDb = oxDb::getDb();
+            $sSelect = "update oxarticles set oxvendorid = ".$oDb->quote( $soxId )." where oxid in ( ".implode(", ", oxDb::getInstance()->quoteArray( $aAddArticle ) )." )";
 
-            oxDb::getDb()->Execute( $sSelect);
+            $oDb->Execute( $sSelect);
             $this->resetCounter( "vendorArticle", $soxId );
         }
     }

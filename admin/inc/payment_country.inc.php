@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: payment_country.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: payment_country.inc.php 39180 2011-10-12 13:17:03Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -51,8 +51,8 @@ class ajaxComponent extends ajaxListComponent
     {
         // looking for table/view
         $sCountryTable = $this->_getViewName('oxcountry');
-
-        $sCountryId      = oxConfig::getParameter( 'oxid' );
+        $oDb = oxDb::getDb();
+        $sCountryId = oxConfig::getParameter( 'oxid' );
         $sSynchCountryId = oxConfig::getParameter( 'synchoxid' );
 
         // category selected or not ?
@@ -62,13 +62,13 @@ class ajaxComponent extends ajaxListComponent
         } else {
 
             $sQAdd  = " from oxobject2payment left join $sCountryTable on $sCountryTable.oxid=oxobject2payment.oxobjectid ";
-            $sQAdd .= "where $sCountryTable.oxactive = '1' and oxobject2payment.oxpaymentid = '$sCountryId' and oxobject2payment.oxtype = 'oxcountry' ";
+            $sQAdd .= "where $sCountryTable.oxactive = '1' and oxobject2payment.oxpaymentid = ".$oDb->quote( $sCountryId )." and oxobject2payment.oxtype = 'oxcountry' ";
         }
 
         if ( $sSynchCountryId && $sSynchCountryId != $sCountryId ) {
             $sQAdd .= "and $sCountryTable.oxid not in ( ";
             $sQAdd .= "select $sCountryTable.oxid from oxobject2payment left join $sCountryTable on $sCountryTable.oxid=oxobject2payment.oxobjectid ";
-            $sQAdd .= "where oxobject2payment.oxpaymentid = '$sSynchCountryId' and oxobject2payment.oxtype = 'oxcountry' ) ";
+            $sQAdd .= "where oxobject2payment.oxpaymentid = ".$oDb->quote( $sSynchCountryId )." and oxobject2payment.oxtype = 'oxcountry' ) ";
         }
 
         return $sQAdd;

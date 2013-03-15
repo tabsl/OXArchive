@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsysrequirements.php 38812 2011-09-20 06:28:09Z alfonsas $
+ * @version   SVN: $Id: oxsysrequirements.php 39223 2011-10-12 13:56:05Z arvydas.vapsva $
  */
 
 /**
@@ -912,12 +912,13 @@ class oxSysRequirements
      */
     public function getMissingTemplateBlocks()
     {
+        $oDb = oxDb::getDb( true );
         $aCache = array();
         $oConfig = oxConfig::getInstance();
 
-        $sShpIdParam = oxDb::getDb()->quote($oConfig->getShopId());
+        $sShpIdParam = $oDb->quote($oConfig->getShopId());
         $sSql = "select * from oxtplblocks where oxactive=1 and oxshopid=$sShpIdParam";
-        $rs = oxDb::getDb(true)->execute($sSql);
+        $rs = $oDb->execute($sSql);
         $aRet = array();
         if ($rs != false && $rs->recordCount() > 0) {
             while (!$rs->EOF) {

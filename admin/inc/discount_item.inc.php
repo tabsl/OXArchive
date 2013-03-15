@@ -60,8 +60,8 @@ class ajaxComponent extends ajaxListComponent
         $sCatTable     = $this->_getViewName('oxcategories');
         $sO2CView      = $this->_getViewName('oxobject2category');
         $sDiscTable    = $this->_getViewName('oxdiscount');
-
-        $sOxid      = oxConfig::getParameter( 'oxid' );
+        $oDb = oxDb::getDb();
+        $sOxid = oxConfig::getParameter( 'oxid' );
         $sSynchOxid = oxConfig::getParameter( 'synchoxid' );
 
         // category selected or not ?
@@ -73,20 +73,20 @@ class ajaxComponent extends ajaxListComponent
             if ( $sSynchOxid && $sOxid != $sSynchOxid ) {
                 $sQAdd  = " from $sO2CView left join $sArticleTable on ";
                 $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?"($sArticleTable.oxid=$sO2CView.oxobjectid or $sArticleTable.oxparentid=$sO2CView.oxobjectid)":" $sArticleTable.oxid=$sO2CView.oxobjectid ";
-                $sQAdd .= " where $sO2CView.oxcatnid = '$sOxid' and $sArticleTable.oxid is not null ";
+                $sQAdd .= " where $sO2CView.oxcatnid = ".$oDb->quote( $sOxid )." and $sArticleTable.oxid is not null ";
 
                 // resetting
                 $sId = null;
             } else {
                 $sQAdd  = " from $sDiscTable left join $sArticleTable on $sArticleTable.oxid=$sDiscTable.oxitmartid ";
-                $sQAdd .= " where $sDiscTable.oxid = '$sOxid' and $sDiscTable.oxitmartid != '' ";
+                $sQAdd .= " where $sDiscTable.oxid = ".$oDb->quote( $sOxid )." and $sDiscTable.oxitmartid != '' ";
             }
         }
 
         if ( $sSynchOxid && $sSynchOxid != $sOxid) {
             // dodger performance
             $sSubSelect .= " select $sArticleTable.oxid from $sDiscTable, $sArticleTable where $sArticleTable.oxid=$sDiscTable.oxitmartid ";
-            $sSubSelect .= " and $sDiscTable.oxid = '$sSynchOxid' ";
+            $sSubSelect .= " and $sDiscTable.oxid = ".$oDb->quote( $sSynchOxid );
 
             if ( stristr( $sQAdd, 'where' ) === false )
                 $sQAdd .= ' where ';

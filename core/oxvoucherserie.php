@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvoucherserie.php 38297 2011-08-19 12:45:26Z vilma $
+ * @version   SVN: $Id: oxvoucherserie.php 39202 2011-10-12 13:29:14Z arvydas.vapsva $
  */
 
 /**
@@ -87,7 +87,7 @@ class oxVoucherSerie extends oxBase
             $this->_oGroups->init( 'oxgroups' );
             $sViewName = getViewName( "oxgroups" );
             $sSelect  = "select gr.* from {$sViewName} as gr, oxobject2group as o2g where
-                         o2g.oxobjectid = '". $this->getId() ."' and gr.oxid = o2g.oxgroupsid ";
+                         o2g.oxobjectid = ". oxDb::getDb()->quote( $this->getId() ) ." and gr.oxid = o2g.oxgroupsid ";
             $this->_oGroups->selectString( $sSelect );
         }
 
@@ -101,8 +101,9 @@ class oxVoucherSerie extends oxBase
      */
     public function unsetUserGroups()
     {
-        $sDelete = 'delete from oxobject2group where oxobjectid = "' . $this->getId() . '"';
-        oxDb::getDb()->execute( $sDelete );
+        $oDB = oxDb::getDb();
+        $sDelete = 'delete from oxobject2group where oxobjectid = ' . $oDB->quote( $this->getId() );
+        $oDB->execute( $sDelete );
     }
 
     /**
@@ -112,8 +113,9 @@ class oxVoucherSerie extends oxBase
      */
     public function unsetDiscountRelations()
     {
-        $sDelete = 'delete from oxobject2discount where oxobject2discount.oxdiscountid = "' . $this->getId() . '"';
-        oxDb::getDb()->execute( $sDelete );
+        $oDB = oxDb::getDb();
+        $sDelete = 'delete from oxobject2discount where oxobject2discount.oxdiscountid = ' . $oDB->quote( $this->getId() );
+        $oDB->execute( $sDelete );
     }
 
     /**
@@ -124,7 +126,7 @@ class oxVoucherSerie extends oxBase
     public function getVoucherList()
     {
         $oVoucherList = oxNew( 'oxvoucherlist' );
-        $sSelect = 'select * from oxvouchers where oxvoucherserieid = "' . $this->getId() . '"';
+        $sSelect = 'select * from oxvouchers where oxvoucherserieid = ' . oxDb::getDb()->quote( $this->getId() );
         $oVoucherList->selectString( $sSelect );
         return $oVoucherList;
     }
@@ -136,8 +138,9 @@ class oxVoucherSerie extends oxBase
      */
     public function deleteVoucherList()
     {
-        $sDelete = 'delete from oxvouchers where oxvoucherserieid = "' . $this->getId() . '"';
-        oxDb::getDb()->execute( $sDelete );
+        $oDB = oxDb::getDb();
+        $sDelete = 'delete from oxvouchers where oxvoucherserieid = ' . $oDB->quote( $this->getId() );
+        $oDB->execute( $sDelete );
     }
 
     /**
@@ -150,10 +153,10 @@ class oxVoucherSerie extends oxBase
         $aStatus = array();
 
         $oDB = oxDb::getDb();
-        $sQuery = 'select count(*) as total from oxvouchers where oxvoucherserieid = "' . $this->getId() . '"';
+        $sQuery = 'select count(*) as total from oxvouchers where oxvoucherserieid = ' .$oDB->quote( $this->getId() );
         $aStatus['total'] = $oDB->getOne( $sQuery );
 
-        $sQuery = 'select count(*) as used from oxvouchers where oxvoucherserieid = "' . $this->getId()  . '" and oxorderid is not NULL and oxorderid != ""';
+        $sQuery = 'select count(*) as used from oxvouchers where oxvoucherserieid = ' . $oDB->quote( $this->getId() ) . ' and oxorderid is not NULL and oxorderid != ""';
         $aStatus['used'] = $oDB->getOne( $sQuery );
 
         $aStatus['available'] = $aStatus['total'] - $aStatus['used'];

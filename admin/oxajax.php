@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxajax.php 38556 2011-09-05 11:13:13Z arvydas.vapsva $
+ * @version   SVN: $Id: oxajax.php 39174 2011-10-12 13:11:26Z arvydas.vapsva $
  */
 
 // shop path for includes
@@ -633,7 +633,7 @@ class ajaxListComponent extends oxSuperCfg
             }
             $sShopId = $this->getConfig()->getShopId();
             $sQ = "delete from oxseo where oxtype='oxarticle' and oxobjectid='%s' and
-                   oxshopid='{$sShopId}' and oxparams in ('" . implode( "','", $aCatIds ) . "')";
+                   oxshopid='{$sShopId}' and oxparams in ('" . implode( ",", oxDb::getInstance()->quoteArray( $aCatIds ) ) . "')";
             $oDb = oxDb::getDb();
             $blCleanCats = true;
         }

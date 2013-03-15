@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxarticlelist.php 38784 2011-09-16 07:00:36Z arvydas.vapsva $
+ * @version   SVN: SVN: $Id: oxarticlelist.php 39199 2011-10-12 13:28:02Z arvydas.vapsva $
  */
 
 /**
@@ -417,7 +417,7 @@ class oxArticleList extends oxList
         // #1970C - if any filters are used, we can not use cached category article count
         $iArticleCount = null;
         if ( $aSessionFilter) {
-            $oRet = oxDb::getDb()->Execute( $sSelect );
+            $oRet = oxDb::getDb()->execute( $sSelect );
             $iArticleCount = $oRet->recordCount();
         }
 

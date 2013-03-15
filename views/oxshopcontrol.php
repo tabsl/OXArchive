@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxshopcontrol.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
+ * @version   SVN: $Id: oxshopcontrol.php 39211 2011-10-12 13:35:37Z arvydas.vapsva $
  */
 
 /**
@@ -173,7 +173,7 @@ class oxShopControl extends oxSuperCfg
         $sParameterQuoted = $oDb->quote( $sParameter );
 
         $sQ = "insert into oxlogs (oxtime, oxshopid, oxuserid, oxsessid, oxclass, oxfnc, oxcnid, oxanid, oxparameter) ".
-              "values( '$sTime', '$sShopID', $sUserIDQuoted, $sSidQuoted, $sClassQuoted, $sFncQuoted, '$sCnid', '$sAnid', $sParameterQuoted )";
+              "values( '$sTime', '$sShopID', $sUserIDQuoted, $sSidQuoted, $sClassQuoted, $sFncQuoted, ".$oDb->quote( $sCnid ).", ".$oDb->quote( $sAnid ).", $sParameterQuoted )";
         $oDb->execute( $sQ );
     }
 

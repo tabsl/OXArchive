@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsview.php 36730 2011-07-05 13:42:25Z vilma $
+ * @version   SVN: $Id: oxutilsview.php 39212 2011-10-12 13:36:06Z arvydas.vapsva $
  */
 
 /**
@@ -433,10 +433,11 @@ class oxUtilsView extends oxSuperCfg
             $sFile = $m[1];
         }
 
-        $sFileParam = oxDb::getDb()->quote($sFile);
-        $sShpIdParam = oxDb::getDb()->quote($oConfig->getShopId());
+        $oDb = oxDb::getDb(true);
+        $sFileParam = $oDb->quote($sFile);
+        $sShpIdParam = $oDb->quote($oConfig->getShopId());
         $sSql = "select * from oxtplblocks where oxactive=1 and oxshopid=$sShpIdParam and oxtemplate=$sFileParam order by oxpos asc";
-        $rs = oxDb::getDb(true)->Execute($sSql);
+        $rs = $oDb->Execute($sSql);
         $aRet = array();
         if ($rs != false && $rs->recordCount() > 0) {
             while (!$rs->EOF) {

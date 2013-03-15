@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: usergroup_main.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: usergroup_main.inc.php 39178 2011-10-12 13:15:27Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,  visible, multilanguage, ident
@@ -63,7 +63,7 @@ class ajaxComponent extends ajaxListComponent
 
         // looking for table/view
         $sUserTable = $this->_getViewName( 'oxuser' );
-
+        $oDb = oxDb::getDb();
         $sRoleId      = oxConfig::getParameter( 'oxid' );
         $sSynchRoleId = oxConfig::getParameter( 'synchoxid' );
 
@@ -72,12 +72,12 @@ class ajaxComponent extends ajaxListComponent
             $sQAdd  = " from $sUserTable where 1 ";
         } else {
             $sQAdd  = " from $sUserTable, oxobject2group where $sUserTable.oxid=oxobject2group.oxobjectid and ";
-            $sQAdd .= " oxobject2group.oxgroupsid = '$sRoleId' ";
+            $sQAdd .= " oxobject2group.oxgroupsid = ".$oDb->quote( $sRoleId );
         }
 
         if ( $sSynchRoleId && $sSynchRoleId != $sRoleId) {
             $sQAdd .= " and $sUserTable.oxid not in ( select $sUserTable.oxid from $sUserTable, oxobject2group where $sUserTable.oxid=oxobject2group.oxobjectid and ";
-            $sQAdd .= " oxobject2group.oxgroupsid = '$sSynchRoleId' ";
+            $sQAdd .= " oxobject2group.oxgroupsid = ".$oDb->quote( $sSynchRoleId );
             if (!$myConfig->getConfigParam( 'blMallUsers' ) )
                 $sQAdd .= " and $sUserTable.oxshopid = '".$myConfig->getShopId()."' ";
             $sQAdd .= " ) ";

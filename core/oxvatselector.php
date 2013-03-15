@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvatselector.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxvatselector.php 39203 2011-10-12 13:30:04Z arvydas.vapsva $
  */
 
 /**
@@ -144,7 +144,7 @@ class oxVatSelector extends oxSuperCfg
         $sSql = "SELECT c.oxvat
                  FROM $sCatT AS c, $sO2C AS o2c
                  WHERE c.oxid=o2c.oxcatnid AND
-                       o2c.oxobjectid = '".$oArticle->getId()."' AND
+                       o2c.oxobjectid = ".$oDb->quote( $oArticle->getId() )." AND
                        c.oxvat IS NOT NULL
                  ORDER BY o2c.oxtime ";
 

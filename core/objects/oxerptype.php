@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype.php 35102 2011-05-04 08:20:01Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxerptype.php 39205 2011-10-12 13:30:36Z arvydas.vapsva $
  */
 
 /**
@@ -127,7 +127,7 @@ class oxERPType
         if ($iShopID === null) {
             $iShopID = oxConfig::getInstance()->getShopId();
         }
-        
+
         return getViewName($this->_sTableName, -1, $iShopID);
     }
 
@@ -252,7 +252,7 @@ class oxERPType
     public function checkWriteAccess($oObj, $aData = null)
     {
             return;
-        
+
         if ($oObj->isDerived()) {
             throw new Exception( oxERPBase::$ERROR_USER_NO_RIGHTS);
         }
@@ -343,9 +343,10 @@ class oxERPType
      */
     protected function _directSqlCheckForDeletion($sId)
     {
-        $sSql = "select oxshopid from ".$this->_sTableName." where oxid = '" . $sId . "'";
+        $oDb = oxDb::getDb();
+        $sSql = "select oxshopid from ".$this->_sTableName." where oxid = " . $oDb->quote( $sId );
         try {
-            $iShopId = oxDb::getDb()->getOne($sSql);
+            $iShopId = $oDb->getOne($sSql);
         } catch (Exception $e) {
             // no shopid was found
             return;
@@ -397,9 +398,10 @@ class oxERPType
     public function delete($sID)
     {
         $myConfig = oxConfig::getInstance();
-        $sSql = "delete from ".$this->_sTableName." where oxid = '" . $sID . "'";
+        $oDb = oxDb::getDb();
+        $sSql = "delete from ".$this->_sTableName." where oxid = " . $oDb->quote( $sID );
 
-        return oxDb::getDb()->Execute($sSql);
+        return $oDb->Execute($sSql);
     }
 
     /**

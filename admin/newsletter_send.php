@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: newsletter_send.php 38557 2011-09-05 11:15:35Z arvydas.vapsva $
+ * @version   SVN: $Id: newsletter_send.php 39171 2011-10-12 13:08:53Z arvydas.vapsva $
  */
 
 /**
@@ -100,7 +100,7 @@ class Newsletter_Send extends Newsletter_Selection
                     $iSendCnt++;
 
                     // must check if such user is in DB
-                    if ( !$oDB->getOne( "select oxid from oxuser where oxid = '$sUserId'" ) ) {
+                    if ( !$oDB->getOne( "select oxid from oxuser where oxid = ".$oDB->quote( $sUserId ) ) ) {
                         $sUserId = null;
                     }
 

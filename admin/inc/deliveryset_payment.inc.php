@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: deliveryset_payment.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: deliveryset_payment.inc.php 39182 2011-10-12 13:18:54Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -47,7 +47,8 @@ class ajaxComponent extends ajaxListComponent
      */
     protected function _getQuery()
     {
-        $sId      = oxConfig::getParameter( 'oxid' );
+        $oDb = oxDb::getDb();
+        $sId = oxConfig::getParameter( 'oxid' );
         $sSynchId = oxConfig::getParameter( 'synchoxid' );
 
         $sPayTable = $this->_getViewName('oxpayments');
@@ -56,12 +57,12 @@ class ajaxComponent extends ajaxListComponent
         if ( !$sId) {
             $sQAdd = " from $sPayTable where 1 ";
         } else {
-            $sQAdd  = " from oxobject2payment, $sPayTable where oxobject2payment.oxobjectid = '$sId' ";
+            $sQAdd  = " from oxobject2payment, $sPayTable where oxobject2payment.oxobjectid = ".$oDb->quote( $sId );
             $sQAdd .= " and oxobject2payment.oxpaymentid = $sPayTable.oxid and oxobject2payment.oxtype = 'oxdelset' ";
         }
 
         if ( $sSynchId && $sSynchId != $sId) {
-            $sQAdd .= "and $sPayTable.oxid not in ( select $sPayTable.oxid from oxobject2payment, $sPayTable where oxobject2payment.oxobjectid = '$sSynchId' ";
+            $sQAdd .= "and $sPayTable.oxid not in ( select $sPayTable.oxid from oxobject2payment, $sPayTable where oxobject2payment.oxobjectid = ".$oDb->quote( $sSynchId );
             $sQAdd .= "and oxobject2payment.oxpaymentid = $sPayTable.oxid and oxobject2payment.oxtype = 'oxdelset' ) ";
         }
 
@@ -106,7 +107,7 @@ class ajaxComponent extends ajaxListComponent
             $oDb = oxDb::getDb();
             foreach ( $aChosenSets as $sChosenSet) {
                 // check if we have this entry already in
-                $sID = $oDb->GetOne("select oxid from oxobject2payment where oxpaymentid = " . oxDb::getDb()->quote( $sChosenSet ) . "  and oxobjectid = '$soxId' and oxtype = 'oxdelset'");
+                $sID = $oDb->GetOne("select oxid from oxobject2payment where oxpaymentid = " . $oDb->quote( $sChosenSet ) . "  and oxobjectid = ".$oDb->quote( $soxId )." and oxtype = 'oxdelset'");
                 if ( !isset( $sID) || !$sID) {
                     $oObject = oxNew( 'oxbase' );
                     $oObject->init( 'oxobject2payment' );

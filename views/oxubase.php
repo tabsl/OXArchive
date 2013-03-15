@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 38119 2011-08-11 09:58:34Z linas.kukulskis $
+ * @version   SVN: $Id: oxubase.php 39375 2011-10-13 15:33:56Z linas.kukulskis $
  */
 
 /**
@@ -46,35 +46,10 @@ class oxUBase extends oxView
     protected $_blFbWidgetsOn = null;
 
     /**
-     * Checks if feature is enabled
-     *
-     * @param string $sName feature name
-     *
-     * @return bool
+     * Characters which should be removed while preparing meta keywords
+     * @var string
      */
-    public function isActive( $sName )
-    {
-        return $this->getConfig()->getConfigParam( "bl".$sName."Enabled" );
-    }
-
-    /**
-     * Returns TRUE if facebook widgets are on
-     *
-     * @return boolean
-     */
-    public function isFbWidgetWisible()
-    {
-        if ( $this->_blFbWidgetsOn === null ) {
-            $oUtils = oxUtilsServer::getInstance();
-
-            // reading ..
-            $this->_blFbWidgetsOn = (bool) $oUtils->getOxCookie( "fbwidgetson" );
-
-            // .. and setting back
-            $oUtils->setOxCookie( "fbwidgetson", $this->_blFbWidgetsOn ? 1 : 0 );
-        }
-        return $this->_blFbWidgetsOn;
-    }
+    protected $_sRemoveMetaChars = '.\+*?[^]$(){}=!<>|:&';
 
     /**
      * Array of component objects.
@@ -1568,11 +1543,14 @@ class oxUBase extends oxView
     {
         $oStr = getStr();
         if ( is_array( $aInput ) ) {
-            $aStrings = $aInput;
-        } else {
-            //is String
-            $aStrings = $oStr->preg_split( "/[\s,]+/", $aInput );
+            $aInput = implode( " ", $aInput );
         }
+
+        // removing some usually met characters..
+        $aInput = $oStr->preg_replace( "/[".preg_quote( $this->_sRemoveMetaChars, "/" )."]/", " ", $aInput );
+
+        // splitting by word
+        $aStrings = $oStr->preg_split( "/[\s,]+/", $aInput );
 
         if ( $sCount = count( $aSkipTags ) ) {
             for ( $iNum = 0; $iNum < $sCount; $iNum++ ) {
@@ -1583,15 +1561,13 @@ class oxUBase extends oxView
         for ( $iNum = 0; $iNum < $sCount; $iNum++ ) {
             $aStrings[$iNum] = $oStr->strtolower( $aStrings[$iNum] );
             // removing in admin defined strings
-            if ( in_array( $aStrings[$iNum], $aSkipTags ) ) {
+            if ( !$aStrings[$iNum] || in_array( $aStrings[$iNum], $aSkipTags ) ) {
                 unset( $aStrings[$iNum] );
             }
         }
 
         // duplicates
-        $aStrings = array_unique($aStrings);
-
-        return implode( ', ', $aStrings );
+        return implode( ', ', array_unique( $aStrings ) );
     }
 
     /**
@@ -3249,5 +3225,36 @@ class oxUBase extends oxView
     public function showTags()
     {
         return (bool) $this->getConfig()->getConfigParam( "blShowTags" );
+    }
+
+    /**
+     * Checks if feature is enabled
+     *
+     * @param string $sName feature name
+     *
+     * @return bool
+     */
+    public function isActive( $sName )
+    {
+        return $this->getConfig()->getConfigParam( "bl".$sName."Enabled" );
+    }
+
+    /**
+     * Returns TRUE if facebook widgets are on
+     *
+     * @return boolean
+     */
+    public function isFbWidgetWisible()
+    {
+        if ( $this->_blFbWidgetsOn === null ) {
+            $oUtils = oxUtilsServer::getInstance();
+
+            // reading ..
+            $this->_blFbWidgetsOn = (bool) $oUtils->getOxCookie( "fbwidgetson" );
+
+            // .. and setting back
+            $oUtils->setOxCookie( "fbwidgetson", $this->_blFbWidgetsOn ? 1 : 0 );
+        }
+        return $this->_blFbWidgetsOn;
     }
 }

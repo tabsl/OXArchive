@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: payment_main.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: payment_main.inc.php 39180 2011-10-12 13:17:03Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,  visible, multilanguage, ident
@@ -50,13 +50,14 @@ class ajaxComponent extends ajaxListComponent
         $sGroupTable   = $this->_getViewName('oxgroups');
         $sGroupId      = oxConfig::getParameter( 'oxid' );
         $sSynchGroupId = oxConfig::getParameter( 'synchoxid' );
+        $oDb = oxDb::getDb();
 
         // category selected or not ?
         if ( !$sGroupId)
             $sQAdd  = " from $sGroupTable ";
         else {
             $sQAdd  = " from $sGroupTable, oxobject2group where ";
-            $sQAdd .= " oxobject2group.oxobjectid = '$sGroupId' and oxobject2group.oxgroupsid = $sGroupTable.oxid ";
+            $sQAdd .= " oxobject2group.oxobjectid = ".$oDb->quote( $sGroupId )." and oxobject2group.oxgroupsid = $sGroupTable.oxid ";
         }
 
         if ( !$sSynchGroupId )
@@ -67,7 +68,7 @@ class ajaxComponent extends ajaxListComponent
             else
                 $sQAdd .= 'and ';
             $sQAdd .= " $sGroupTable.oxid not in ( select $sGroupTable.oxid from $sGroupTable, oxobject2group where ";
-            $sQAdd .= " oxobject2group.oxobjectid = '$sSynchGroupId' and oxobject2group.oxgroupsid = $sGroupTable.oxid ) ";
+            $sQAdd .= " oxobject2group.oxobjectid = ".$oDb->quote( $sSynchGroupId )." and oxobject2group.oxgroupsid = $sGroupTable.oxid ) ";
         }
 
         return $sQAdd;

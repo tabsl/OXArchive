@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxattribute.php 32776 2011-01-27 15:05:03Z linas.kukulskis $
+ * @version   SVN: SVN: $Id: oxattribute.php 39198 2011-10-12 13:27:52Z arvydas.vapsva $
  */
 
 /**
@@ -45,19 +45,19 @@ class oxAttribute extends oxI18n
 
 
     /**
-     * Selected attribute value  
+     * Selected attribute value
      *
      * @var string
      */
     protected $_sActiveValue = null;
-    
+
     /**
      * Attribute title
      *
      * @var string
      */
     protected $_sTitle = null;
-    
+
     /**
      * Attribute values
      *
@@ -190,33 +190,32 @@ class oxAttribute extends oxI18n
      *
      * @return null;
      */
-    public function getAttributeAssigns( $sArtId)
+    public function getAttributeAssigns( $sArtId )
     {
-        if ( !$sArtId) {
-            return;
-        }
-        $sSelect  = "select o2a.oxid ";
-        $sSelect .= "from oxobject2attribute as o2a ";
-        $sSelect .= "where o2a.oxobjectid = '$sArtId' ";
-        $sSelect .= "order by o2a.oxpos";
+        if ( $sArtId ) {
+            $oDb = oxDb::getDb();
 
-        $aIds = array();
-        $rs = oxDb::getDb()->Execute( $sSelect);
-        if ($rs != false && $rs->recordCount() > 0) {
-            while (!$rs->EOF) {
-                $aIds[] = $rs->fields[0];
-                $rs->moveNext();
+            $sSelect  = "select o2a.oxid from oxobject2attribute as o2a ";
+            $sSelect .= "where o2a.oxobjectid = ".$oDb->quote( $sArtId )." order by o2a.oxpos";
+
+            $aIds = array();
+            $rs = $oDb->execute( $sSelect );
+            if ($rs != false && $rs->recordCount() > 0) {
+                while (!$rs->EOF) {
+                    $aIds[] = $rs->fields[0];
+                    $rs->moveNext();
+                }
             }
+            return $aIds;
         }
-        return $aIds;
     }
-    
-    
-    
+
+
+
      /**
      * Set attribute title
      *
-     * @param string $sTitle - attribute title 
+     * @param string $sTitle - attribute title
      *
      * @return null
      */
@@ -224,7 +223,7 @@ class oxAttribute extends oxI18n
     {
         $this->_sTitle = getStr()->htmlspecialchars( $sTitle );
     }
-    
+
     /**
      * Get attribute Title
      *
@@ -234,31 +233,31 @@ class oxAttribute extends oxI18n
     {
         return $this->_sTitle;
     }
-    
+
     /**
      * Add attribute value
      *
-     * @param string $sValue - attribute value 
+     * @param string $sValue - attribute value
      *
      * @return null
-     */      
+     */
     public function addValue( $sValue )
     {
         $this->_aValues[] = getStr()->htmlspecialchars( $sValue );
     }
-    
+
      /**
      * Set attribute selected value
      *
-     * @param string $sValue - attribute value 
+     * @param string $sValue - attribute value
      *
      * @return null
-     */    
+     */
     public function setActiveValue( $sValue )
     {
         $this->_sActiveValue = getStr()->htmlspecialchars( $sValue );
     }
-    
+
     /**
      * Get attribute Selected value
      *
@@ -266,10 +265,10 @@ class oxAttribute extends oxI18n
      */
     public function getActiveValue()
     {
-            
+
         return $this->_sActiveValue;
     }
-    
+
      /**
      * Get attribute values
      *
@@ -279,5 +278,5 @@ class oxAttribute extends oxI18n
     {
         return $this->_aValues;
     }
-    
+
 }

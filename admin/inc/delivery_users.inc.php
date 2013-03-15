@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: delivery_users.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: delivery_users.inc.php 39183 2011-10-12 13:21:04Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,  visible, multilanguage, ident
@@ -62,8 +62,8 @@ class ajaxComponent extends ajaxListComponent
         $myConfig = $this->getConfig();
 
         $sUserTable = $this->_getViewName('oxuser');
-
-        $sId      = oxConfig::getParameter( 'oxid' );
+        $oDb = oxDb::getDb();
+        $sId = oxConfig::getParameter( 'oxid' );
         $sSynchId = oxConfig::getParameter( 'synchoxid' );
 
         // category selected or not ?
@@ -75,18 +75,18 @@ class ajaxComponent extends ajaxListComponent
             // selected group ?
             if ( $sSynchId && $sSynchId != $sId ) {
                 $sQAdd  = " from oxobject2group left join $sUserTable on $sUserTable.oxid = oxobject2group.oxobjectid ";
-                $sQAdd .= " where oxobject2group.oxgroupsid = '$sId' ";
+                $sQAdd .= " where oxobject2group.oxgroupsid = ".$oDb->quote( $sId );
                 if (!$myConfig->getConfigParam( 'blMallUsers' ) )
                     $sQAdd .= " and $sUserTable.oxshopid = '".$myConfig->getShopId()."' ";
             } else {
                 $sQAdd  = " from oxobject2delivery left join $sUserTable on $sUserTable.oxid=oxobject2delivery.oxobjectid ";
-                $sQAdd .= " where oxobject2delivery.oxdeliveryid = '$sId' and oxobject2delivery.oxtype = 'oxuser' and $sUserTable.oxid IS NOT NULL ";
+                $sQAdd .= " where oxobject2delivery.oxdeliveryid = ".$oDb->quote( $sId )." and oxobject2delivery.oxtype = 'oxuser' and $sUserTable.oxid IS NOT NULL ";
             }
         }
 
         if ( $sSynchId && $sSynchId != $sId) {
             $sQAdd .= " and $sUserTable.oxid not in ( select $sUserTable.oxid from oxobject2delivery left join $sUserTable on $sUserTable.oxid=oxobject2delivery.oxobjectid ";
-            $sQAdd .= " where oxobject2delivery.oxdeliveryid = '$sSynchId' and oxobject2delivery.oxtype = 'oxuser' and $sUserTable.oxid IS NOT NULL ) ";
+            $sQAdd .= " where oxobject2delivery.oxdeliveryid = ".$oDb->quote( $sSynchId )." and oxobject2delivery.oxtype = 'oxuser' and $sUserTable.oxid IS NOT NULL ) ";
         }
 
         return $sQAdd;

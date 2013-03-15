@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 38339 2011-08-23 09:01:01Z linas.kukulskis $
+ * @version   SVN: $Id: oxconfig.php 39185 2011-10-12 13:23:02Z arvydas.vapsva $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );

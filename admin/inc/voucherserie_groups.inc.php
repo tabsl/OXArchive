@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: voucherserie_groups.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: voucherserie_groups.inc.php 39178 2011-10-12 13:15:27Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,  visible, multilanguage, ident
@@ -47,7 +47,7 @@ class ajaxComponent extends ajaxListComponent
     {
         // looking for table/view
         $sGroupTable = $this->_getViewName('oxgroups');
-
+        $oDb = oxDb::getDb();
         $sVoucherId      = oxConfig::getParameter( 'oxid' );
         $sSynchVoucherId = oxConfig::getParameter( 'synchoxid' );
 
@@ -56,12 +56,12 @@ class ajaxComponent extends ajaxListComponent
             $sQAdd  = " from $sGroupTable where 1 ";
         } else {
             $sQAdd  = " from $sGroupTable, oxobject2group where ";
-            $sQAdd .= " oxobject2group.oxobjectid = '$sVoucherId' and $sGroupTable.oxid = oxobject2group.oxgroupsid ";
+            $sQAdd .= " oxobject2group.oxobjectid = ".$oDb->quote( $sVoucherId )." and $sGroupTable.oxid = oxobject2group.oxgroupsid ";
         }
 
         if ( $sSynchVoucherId && $sSynchVoucherId != $sVoucherId) {
             $sQAdd .= " and $sGroupTable.oxid not in ( select $sGroupTable.oxid from $sGroupTable, oxobject2group where ";
-            $sQAdd .= " oxobject2group.oxobjectid = '$sSynchVoucherId' and $sGroupTable.oxid = oxobject2group.oxgroupsid ) ";
+            $sQAdd .= " oxobject2group.oxobjectid = ".$oDb->quote( $sSynchVoucherId )." and $sGroupTable.oxid = oxobject2group.oxgroupsid ) ";
         }
 
         return $sQAdd;

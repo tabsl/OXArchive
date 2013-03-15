@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: discount_articles.inc.php 34302 2011-04-06 11:08:47Z linas.kukulskis $
+ * @version   SVN: $Id: discount_articles.inc.php 39182 2011-10-12 13:18:54Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -67,7 +67,8 @@ class ajaxComponent extends ajaxListComponent
         $sCatTable     = $this->_getViewName('oxcategories');
         $sO2CView      = $this->_getViewName('oxobject2category');
 
-        $sOxid      = oxConfig::getParameter( 'oxid' );
+        $oDb = oxDb::getDb();
+        $sOxid = oxConfig::getParameter( 'oxid' );
         $sSynchOxid = oxConfig::getParameter( 'synchoxid' );
 
         // category selected or not ?
@@ -79,20 +80,20 @@ class ajaxComponent extends ajaxListComponent
             if ( $sSynchOxid && $sOxid != $sSynchOxid ) {
                 $sQAdd  = " from $sO2CView left join $sArticleTable on ";
                 $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?"($sArticleTable.oxid=$sO2CView.oxobjectid or $sArticleTable.oxparentid=$sO2CView.oxobjectid)":" $sArticleTable.oxid=$sO2CView.oxobjectid ";
-                $sQAdd .= " where $sO2CView.oxcatnid = '$sOxid' and $sArticleTable.oxid is not null ";
+                $sQAdd .= " where $sO2CView.oxcatnid = ".$oDb->quote( $sOxid )." and $sArticleTable.oxid is not null ";
 
                 // resetting
                 $sId = null;
             } else {
                 $sQAdd  = " from oxobject2discount, $sArticleTable where $sArticleTable.oxid=oxobject2discount.oxobjectid ";
-                $sQAdd .= " and oxobject2discount.oxdiscountid = '$sOxid' and oxobject2discount.oxtype = 'oxarticles' ";
+                $sQAdd .= " and oxobject2discount.oxdiscountid = ".$oDb->quote( $sOxid )." and oxobject2discount.oxtype = 'oxarticles' ";
             }
         }
 
         if ( $sSynchOxid && $sSynchOxid != $sOxid) {
             // dodger performance
             $sSubSelect .= " select $sArticleTable.oxid from oxobject2discount, $sArticleTable where $sArticleTable.oxid=oxobject2discount.oxobjectid ";
-            $sSubSelect .= " and oxobject2discount.oxdiscountid = '$sSynchOxid' and oxobject2discount.oxtype = 'oxarticles' ";
+            $sSubSelect .= " and oxobject2discount.oxdiscountid = ".$oDb->quote( $sSynchOxid )." and oxobject2discount.oxtype = 'oxarticles' ";
 
             if ( stristr( $sQAdd, 'where' ) === false )
                 $sQAdd .= ' where ';

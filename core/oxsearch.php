@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsearch.php 32008 2010-12-17 15:10:36Z sarunas $l
+ * @version   SVN: $Id: oxsearch.php 39187 2011-10-12 13:24:15Z arvydas.vapsva $l
  */
 
 /**
@@ -203,7 +203,7 @@ class oxSearch extends oxSuperCfg
         if ( $sInitialSearchCat ) {
             $sCatView = getViewName( 'oxcategories', $this->_iLanguage );
             $sInitialSearchCatQuoted = $oDb->quote( $sInitialSearchCat );
-            $sSelectCat  = "select oxid from {$sCatView} where oxid =  $sInitialSearchCatQuoted and (oxpricefrom != '0' or oxpriceto != 0)";
+            $sSelectCat  = "select oxid from {$sCatView} where oxid = $sInitialSearchCatQuoted and (oxpricefrom != '0' or oxpriceto != 0)";
             if ( $oDb->getOne($sSelectCat) ) {
                 $sSelect = "select {$sSelectFields} from {$sArticleTable} $sDescJoin " .
                            "where {$sArticleTable}.oxid in ( select {$sArticleTable}.oxid as id from {$sArticleTable}, {$sO2CView} as oxobject2category, {$sCatView} as oxcategories " .

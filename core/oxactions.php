@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxactions.php 33763 2011-03-15 09:02:55Z arvydas.vapsva $
+ * @version   SVN: $Id: oxactions.php 39184 2011-10-12 13:22:30Z arvydas.vapsva $
  */
 
 /**
@@ -53,12 +53,16 @@ class oxActions extends oxI18n
      */
     public function addArticle( $sOxId )
     {
+        $oDb = oxDb::getDb();
+        $sQ = "select max(oxsort) from oxactions2article where oxactionid = ".$oDb->quote( $this->getId() )." and oxshopid = '".$this->getShopId()."'";
+        $iSort = ( (int) $oDb->getOne( $sQ ) ) + 1;
+
         $oNewGroup = oxNew( 'oxbase' );
         $oNewGroup->init( 'oxactions2article' );
-        $oNewGroup->oxactions2article__oxshopid = new oxField($this->getShopId());
-        $oNewGroup->oxactions2article__oxactionid = new oxField($this->getId());
-        $oNewGroup->oxactions2article__oxartid = new oxField($sOxId);
-        $oNewGroup->oxactions2article__oxsort = new oxField(((int) oxDb::getDb(true)->getOne("select max(oxsort) from oxactions2article where oxactionid = '".$this->getId()."' and oxshopid = '".$this->getShopId()."'") + 1 ));
+        $oNewGroup->oxactions2article__oxshopid   = new oxField( $this->getShopId() );
+        $oNewGroup->oxactions2article__oxactionid = new oxField( $this->getId() );
+        $oNewGroup->oxactions2article__oxartid = new oxField( $sOxId );
+        $oNewGroup->oxactions2article__oxsort  = new oxField( $iSort );
         $oNewGroup->save();
     }
 
@@ -73,7 +77,7 @@ class oxActions extends oxI18n
     {
         // remove actions from articles also
         $oDb = oxDb::getDb(true);
-        $sDelete = "delete from oxactions2article where oxactionid = '".$this->getId()."' and oxartid = ".$oDb->quote($sOxId)." and oxshopid = '" . $this->getShopId() . "'";
+        $sDelete = "delete from oxactions2article where oxactionid = ".$oDb->quote( $this->getId() )." and oxartid = ".$oDb->quote($sOxId)." and oxshopid = '" . $this->getShopId() . "'";
         $oDb->execute( $sDelete );
 
         return ( bool ) $oDb->affected_Rows();

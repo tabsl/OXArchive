@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: details.php 38784 2011-09-16 07:00:36Z arvydas.vapsva $
+ * @version   SVN: $Id: details.php 39230 2011-10-12 14:12:41Z arvydas.vapsva $
  */
 
 /**
@@ -448,26 +448,22 @@ class Details extends oxUBase
      */
     protected function _prepareMetaKeyword( $sKeywords, $blRemoveDuplicatedWords = true )
     {
-        $myConfig = $this->getConfig();
-
         if ( !$sKeywords ) {
             $oProduct = $this->getProduct();
-            $aKeywords[] = trim( $this->getTitle() );
+            $sKeywords = trim( $this->getTitle() );
 
             if ( $oCatTree = $this->getCategoryTree() ) {
                 foreach ( $oCatTree->getPath() as $oCat ) {
-                    $aKeywords[] = trim( $oCat->oxcategories__oxtitle->value );
+                    $sKeywords .= ", " . trim( $oCat->oxcategories__oxtitle->value );
                 }
             }
 
-            $sKeywords = implode( ", ", $aKeywords );
-
-            $sKeywords = parent::_prepareMetaKeyword( $sKeywords, $blRemoveDuplicatedWords );
-
             //adding searchkeys info
             if ( $sSearchKeys = trim( $oProduct->oxarticles__oxsearchkeys->value ) ) {
-                $sKeywords .= ", " . parent::_prepareMetaKeyword( $sSearchKeys, false );
+                $sKeywords .= ", ". $sSearchKeys;
             }
+
+            $sKeywords = parent::_prepareMetaKeyword( $sKeywords, $blRemoveDuplicatedWords );
         }
 
         return $sKeywords;

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxpayment.php 33202 2011-02-11 09:22:02Z arvydas.vapsva $
+ * @version   SVN: $Id: oxpayment.php 39192 2011-10-12 13:25:31Z arvydas.vapsva $
  */
 
 /**
@@ -271,10 +271,10 @@ class oxPayment extends oxI18n
     public function getCountries()
     {
         if ( $this->_aCountries === null ) {
-
+            $oDb = oxDb::getDb();
             $this->_aCountries = array();
-            $sSelect = 'select oxobjectid from oxobject2payment where oxpaymentid="'.$this->getId().'" and oxtype = "oxcountry" ';
-            $rs = oxDb::getDb()->Execute( $sSelect );
+            $sSelect = 'select oxobjectid from oxobject2payment where oxpaymentid='.$oDb->quote( $this->getId() ).' and oxtype = "oxcountry" ';
+            $rs = $oDb->execute( $sSelect );
             if ( $rs && $rs->recordCount()) {
                 while ( !$rs->EOF ) {
                     $this->_aCountries[] = $rs->fields[0];

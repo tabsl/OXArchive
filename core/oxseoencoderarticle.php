@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoderarticle.php 38553 2011-09-05 11:04:56Z arvydas.vapsva $
+ * @version   SVN: $Id: oxseoencoderarticle.php 39368 2011-10-13 14:16:23Z arvydas.vapsva $
  */
 
 /**
@@ -93,6 +93,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
         if ( isset( $iLang ) && $iLang != $oArticle->getLanguage() ) {
             $sId = $oArticle->getId();
             $oArticle = oxNew( 'oxarticle' );
+            $oArticle->setSkipAssign( true );
             $oArticle->loadInLang( $iLang, $sId );
         }
 
@@ -381,7 +382,8 @@ class oxSeoEncoderArticle extends oxSeoEncoder
             $sArtId = $oArticle->oxarticles__oxparentid->value;
         }
 
-        $sMainCatId = oxDb::getDb()->getOne( "select oxcatnid from ".getViewName( "oxobject2category" )." where oxobjectid = '{$sArtId}' order by oxtime" );
+        $oDb = oxDb::getDb();
+        $sMainCatId = $oDb->getOne( "select oxcatnid from ".getViewName( "oxobject2category" )." where oxobjectid = ".$oDb->quote( $sArtId )." order by oxtime" );
         if ( $sMainCatId ) {
             $oMainCat = oxNew( "oxcategory" );
             $oMainCat->load( $sMainCatId );
@@ -764,6 +766,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
     {
         $sSeoUrl = null;
         $oArticle = oxNew( "oxarticle" );
+        $oArticle->setSkipAssign( true );
         if ( $oArticle->loadInLang( $iLang, $sObjectId ) ) {
             // choosing URI type to generate
             switch( $this->_getListType() ) {

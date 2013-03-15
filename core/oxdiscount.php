@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdiscount.php 38066 2011-08-09 11:22:02Z arvydas.vapsva $
+ * @version   SVN: $Id: oxdiscount.php 39244 2011-10-13 06:20:10Z arvydas.vapsva $
  */
 
 /**
@@ -155,7 +155,7 @@ class oxDiscount extends oxI18n
         $myDB = oxDb::getDb();
 
         // check if this article is assigned
-        $sQ  = "select 1 from oxobject2discount where oxdiscountid = '{$this->oxdiscount__oxid->value}' and oxtype = 'oxarticles' ";
+        $sQ  = "select 1 from oxobject2discount where oxdiscountid = ".$myDB->quote( $this->oxdiscount__oxid->value)." and oxtype = 'oxarticles' ";
         $sQ .= $this->_getProductCheckQuery( $oArticle );
         if ( !( $blOk = ( bool ) $myDB->getOne( $sQ ) ) ) {
 
@@ -269,9 +269,10 @@ class oxDiscount extends oxI18n
             return false;
         }
 
-        $sQ  = "select 1 from oxobject2discount where oxdiscountid='".$this->getId()."' ";
+        $oDb = oxDb::getDb();
+        $sQ  = "select 1 from oxobject2discount where oxdiscountid=".$oDb->quote( $this->getId() );
         $sQ .= $this->_getProductCheckQuery( $oArticle );
-        if ( !( $blOk = (bool) oxDb::getDb()->getOne( $sQ ) ) ) {
+        if ( !( $blOk = (bool) $oDb->getOne( $sQ ) ) ) {
             // additional checks for amounts and other dependencies
             $blOk = $this->_checkForArticleCategories( $oArticle );
         }
@@ -409,11 +410,12 @@ class oxDiscount extends oxI18n
      */
     protected function _getProductCheckQuery( $oProduct )
     {
+        $oDb = oxDb::getDb();
         // check if this article is assigned
         if ( ( $sParentId = $oProduct->getProductParentId() ) ) {
-            $sArticleId = " and ( oxobjectid = '".$oProduct->getProductId()."' or oxobjectid = '{$sParentId}' )";
+            $sArticleId = " and ( oxobjectid = ".$oDb->quote( $oProduct->getProductId() )." or oxobjectid = ".$oDb->quote( $sParentId ) . " )";
         } else {
-            $sArticleId = " and oxobjectid = '".$oProduct->getProductId()."'";
+            $sArticleId = " and oxobjectid = ".$oDb->quote( $oProduct->getProductId() );
         }
 
         return $sArticleId;

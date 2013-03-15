@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxi18n.php 38348 2011-08-23 13:17:10Z arvydas.vapsva $
+ * @version   SVN: $Id: oxi18n.php 39225 2011-10-12 14:03:49Z arvydas.vapsva $
  */
 
 /**
@@ -232,8 +232,9 @@ class oxI18n extends oxBase
         }
 
         // select from non-multilanguage core view (all ml tables joined to one)
-        $query = "select * from ".getViewName($this->_sCoreTable, -1, -1)." where oxid = '" . $this->getId() . "'";
-        $rs = oxDb::getDb( true )->getAll($query);
+        $oDb = oxDb::getDb( true );
+        $query = "select * from ".getViewName($this->_sCoreTable, -1, -1)." where oxid = " . $oDb->quote( $this->getId() );
+        $rs = $oDb->getAll($query);
 
         $aNotInLang = $aLanguages;
 
@@ -475,11 +476,14 @@ class oxI18n extends oxBase
     /**
      * return all DB tables for the language sets
      *
+     * @param string $sCoreTableName core table name [optional]
+     *
      * @return array
      */
-    protected function _getLanguageSetTables()
+    protected function _getLanguageSetTables( $sCoreTableName = null )
     {
-        return oxNew('oxDbMetaDataHandler')->getAllMultiTables($this->getCoreTableName());
+        $sCoreTableName = $sCoreTableName ? $sCoreTableName : $this->getCoreTableName();
+        return oxNew('oxDbMetaDataHandler')->getAllMultiTables( $sCoreTableName );
     }
 
     /**
@@ -609,5 +613,27 @@ class oxI18n extends oxBase
     {
         $sFieldName = preg_replace( '/_\d{1,2}$/', '', $sFieldName );
         return parent::_canFieldBeNull( $sFieldName );
+    }
+
+    /**
+     * Delete this object from the database, returns true on success.
+     *
+     * @param string $sOXID Object ID(default null)
+     *
+     * @return bool
+     */
+    public function delete( $sOXID = null )
+    {
+        $blDeleted = parent::delete( $sOXID );
+        if ( $blDeleted ) {
+            $oDB = oxDb::getDb();
+            $sOXID = $oDB->quote( $sOXID );
+
+            //delete the record
+            foreach ( $this->_getLanguageSetTables() as $sSetTbl ) {
+                $oDB->execute( "delete from {$sSetTbl} where oxid = {$sOXID}" );
+            }
+        }
+        return $blDeleted;
     }
 }

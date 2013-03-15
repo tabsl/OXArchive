@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbase.php 38562 2011-09-05 11:20:59Z arvydas.vapsva $
+ * @version   SVN: $Id: oxbase.php 39196 2011-10-12 13:27:23Z arvydas.vapsva $
  */
 
 /**
@@ -1338,14 +1338,15 @@ class oxBase extends oxSuperCfg
 
         $sIDKey = oxUtils::getInstance()->getArrFldName( $this->_sCoreTable.".oxid");
         $this->$sIDKey = new oxField($this->getId(), oxField::T_RAW);
+        $oDb = oxDB::getDb();
 
         $sUpdate= "update {$this->_sCoreTable} set ".$this->_getUpdateFields()
-                 ." where {$this->_sCoreTable}.oxid = '".$this->getId()."' ";
+                 ." where {$this->_sCoreTable}.oxid = ".$oDb->quote( $this->getId() );
 
         //trigger event
         $this->beforeUpdate();
 
-        $blRet = (bool) oxDB::getDb()->execute( $sUpdate);
+        $blRet = (bool) $oDb->execute( $sUpdate);
         $this->_rebuildCache();
 
         return $blRet;
@@ -1417,25 +1418,26 @@ class oxBase extends oxSuperCfg
         if ( is_array( $aWhere ) && count( $aWhere ) > 0) {
             $sWhere = implode(" and ", $aWhere).' and ';
         }
+        $oDb = oxDb::getDb(true);
 
         // SQL to set record number
-        $sUpdate = "update {$this->getViewName()} as t1, (select (max($sMaxField)+1) as t2max from {$this->getViewName()} where $sWhere 1) as t2 set t1.$sMaxField=t2.t2max where t1.oxid = '".$this->getId()."'";
+        $sUpdate = "update {$this->getViewName()} as t1, (select (max($sMaxField)+1) as t2max from {$this->getViewName()} where $sWhere 1) as t2 set t1.$sMaxField=t2.t2max where t1.oxid = ".$oDb->quote( $this->getId() );
 
         // SQL to check record number dublicates
         //this should not happen normally but we prefer to take extra care in this case due to parallel script execution etc.
-        $sMaxSelect = "select $sMaxField from ".$this->getViewName()." where oxid='".$this->getId()."' ";
+        $sMaxSelect = "select $sMaxField from ".$this->getViewName()." where oxid=".$oDb->quote( $this->getId() );
         $sCheck = "select count(oxid) from ".$this->getViewName()." where $sMaxField = ($sMaxSelect) and $sWhere 1 ";
 
         do {
-            if ( oxDb::getDb(true)->Execute( $sUpdate ) === false ) {
+            if ( $oDb->execute( $sUpdate ) === false ) {
                 return false;
             }
 
-            $iChkCnt = oxDb::getDb(true)->GetOne( $sCheck );
+            $iChkCnt = $oDb->getOne( $sCheck );
         } while ( ( $iChkCnt > 1 ) && $iMaxTryCnt-- );
 
         $sFieldName = $this->getViewName().'__'.$sMaxField;
-        $this->$sFieldName = new oxField(oxDb::getDb(true)->GetOne( $sMaxSelect ), oxField::T_RAW);//int value
+        $this->$sFieldName = new oxField( $oDb->getOne( $sMaxSelect ), oxField::T_RAW);//int value
 
         return ( $iChkCnt == 1 );
     }

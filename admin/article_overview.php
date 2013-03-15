@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_overview.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: article_overview.php 39171 2011-10-12 13:08:53Z arvydas.vapsva $
  */
 
 /**
@@ -64,17 +64,17 @@ class Article_Overview extends oxAdminDetails
 
                 // ordered amount
                 $sSelect =  "select sum(oxamount) from oxorderarticles ";
-                $sSelect .= "where oxartid='$soxId'";
+                $sSelect .= "where oxartid=".$oDB->quote( $soxId );
                 $this->_aViewData["totalordercnt"] = $iTotalOrderCnt = (float) $oDB->getOne( $sSelect);
 
                 // sold amount
                 $sSelect  = "select sum(oxorderarticles.oxamount) from  oxorderarticles, oxorder ";
-                $sSelect .= "where (oxorder.oxpaid>0 or oxorder.oxsenddate > 0) and oxorderarticles.oxstorno != '1' and oxorderarticles.oxartid='$soxId' ";
+                $sSelect .= "where (oxorder.oxpaid>0 or oxorder.oxsenddate > 0) and oxorderarticles.oxstorno != '1' and oxorderarticles.oxartid=".$oDB->quote( $soxId );
                 $sSelect .= "and oxorder.oxid =oxorderarticles.oxorderid";
                 $this->_aViewData["soldcnt"] = $iSoldCnt = (float) $oDB->getOne( $sSelect);;
 
                 // canceled amount
-                $sSelect =  "select sum(oxamount) from oxorderarticles where oxstorno = '1' and oxartid='$soxId' ";
+                $sSelect =  "select sum(oxamount) from oxorderarticles where oxstorno = '1' and oxartid=".$oDB->quote( $soxId );
                 $this->_aViewData["canceledcnt"] = $iCanceledCnt = (float) $oDB->getOne( $sSelect);
 
                 // not yet processed

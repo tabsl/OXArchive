@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcategory.php 38134 2011-08-11 13:22:49Z arvydas.vapsva $
+ * @version   SVN: $Id: oxcategory.php 39226 2011-10-12 14:05:24Z arvydas.vapsva $
  */
 
 /**
@@ -218,8 +218,10 @@ class oxCategory extends oxI18n implements oxIUrl
     public function delete( $sOXID = null)
     {
         if ( !$this->getId() ) {
-            $this->load( $sOXID);
+            $this->load( $sOXID );
         }
+
+        $sOXID = isset( $sOXID ) ? $sOXID : $this->getId();
 
 
         $myConfig = $this->getConfig();
@@ -247,9 +249,9 @@ class oxCategory extends oxI18n implements oxIUrl
                             AND OXRIGHT >   ".((int) $this->oxcategories__oxright->value).$sAdd );
 
             // delete entry
-            $blRet = parent::delete();
+            $blRet = parent::delete( $sOXID );
 
-            $sOxidQuoted = $oDB->quote($this->oxcategories__oxid->value);
+            $sOxidQuoted = $oDB->quote( $sOXID );
             // delete links to articles
             $oDB->execute( "delete from oxobject2category where oxobject2category.oxcatnid=$sOxidQuoted ");
 
@@ -893,7 +895,7 @@ class oxCategory extends oxI18n implements oxIUrl
 
         $oDB = oxDb::getDb();
 
-        $sOldParentID = $oDB->getOne( "select oxparentid from oxcategories where oxid = '".$this->getId()."'");
+        $sOldParentID = $oDB->getOne( "select oxparentid from oxcategories where oxid = ".$oDB->quote( $this->getId() ));
 
         if ( $this->_blIsSeoObject && $this->isAdmin() ) {
             oxSeoEncoderCategory::getInstance()->markRelatedAsExpired($this);
@@ -939,7 +941,7 @@ class oxCategory extends oxI18n implements oxIUrl
                 //echo "<br>* ) Can't asign category to it's child";
 
                 //Restoring old parentid, stoping further actions
-                $sRestoreOld = "UPDATE oxcategories SET OXPARENTID = ".$oDB->quote($sOldParentID)." WHERE oxid = '".$this->getId()."'";
+                $sRestoreOld = "UPDATE oxcategories SET OXPARENTID = ".$oDB->quote($sOldParentID)." WHERE oxid = ".$oDB->quote($this->getId());
                 $oDB->execute( $sRestoreOld );
                 return false;
             }

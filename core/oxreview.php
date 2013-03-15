@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxreview.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxreview.php 39189 2011-10-12 13:24:44Z arvydas.vapsva $
  */
 
 /**
@@ -137,7 +137,7 @@ class oxReview extends oxBase
 
         if ( $this->getConfig()->getConfigParam( 'blGBModerate' ) ) {
             $sSelect .= ' and ( oxreviews.oxactive = "1" ';
-            $sSelect .= ( $oUser = $this->getUser() ) ? 'or  oxreviews.oxuserid = "' . $oUser->getId() . '" )' :  ')';
+            $sSelect .= ( $oUser = $this->getUser() ) ? 'or  oxreviews.oxuserid = ' . $oDb->quote( $oUser->getId() ) . ' )' :  ')';
         }
 
         $sSelect .= ' order by oxreviews.oxcreate desc ';

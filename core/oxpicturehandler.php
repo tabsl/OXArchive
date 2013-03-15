@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxpicturehandler.php 38186 2011-08-17 07:40:53Z linas.kukulskis $
+ * @version   SVN: $Id: oxpicturehandler.php 39191 2011-10-12 13:25:16Z arvydas.vapsva $
  */
 
 /**
@@ -69,7 +69,6 @@ class oxPictureHandler extends oxSuperCfg
      */
     public function deleteArticleMasterPicture( $oObject, $iIndex, $blDeleteMasterPicture = true )
     {
-        $oDB        = oxDb::getDb( true );
         $myConfig   = $this->getConfig();
         $myUtilsPic = oxUtilsPic::getInstance();
         $oUtilsFile = oxUtilsFile::getInstance();

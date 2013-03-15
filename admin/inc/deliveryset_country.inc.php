@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: deliveryset_country.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: deliveryset_country.inc.php 39183 2011-10-12 13:21:04Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -49,7 +49,8 @@ class ajaxComponent extends ajaxListComponent
      */
     protected function _getQuery()
     {
-        $sId      = oxConfig::getParameter( 'oxid' );
+        $oDb = oxDb::getDb();
+        $sId = oxConfig::getParameter( 'oxid' );
         $sSynchId = oxConfig::getParameter( 'synchoxid' );
 
         $sCountryTable = $this->_getViewName('oxcountry');
@@ -58,12 +59,12 @@ class ajaxComponent extends ajaxListComponent
         if ( !$sId ) {
             $sQAdd  = " from $sCountryTable where $sCountryTable.oxactive = '1' ";
         } else {
-            $sQAdd  = " from oxobject2delivery, $sCountryTable where oxobject2delivery.oxdeliveryid = '$sId' ";
+            $sQAdd  = " from oxobject2delivery, $sCountryTable where oxobject2delivery.oxdeliveryid = ".$oDb->quote( $sId );
             $sQAdd .= " and oxobject2delivery.oxobjectid = $sCountryTable.oxid and oxobject2delivery.oxtype = 'oxdelset' ";
         }
 
         if ( $sSynchId && $sSynchId != $sId) {
-            $sQAdd .= "and $sCountryTable.oxid not in ( select $sCountryTable.oxid from oxobject2delivery, $sCountryTable where oxobject2delivery.oxdeliveryid = '$sSynchId' ";
+            $sQAdd .= "and $sCountryTable.oxid not in ( select $sCountryTable.oxid from oxobject2delivery, $sCountryTable where oxobject2delivery.oxdeliveryid = ".$oDb->quote( $sSynchId );
             $sQAdd .= "and oxobject2delivery.oxobjectid = $sCountryTable.oxid and oxobject2delivery.oxtype = 'oxdelset' ) ";
         }
 

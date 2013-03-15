@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxshop.php 38193 2011-08-17 12:24:51Z linas.kukulskis $
+ * @version   SVN: $Id: oxshop.php 39228 2011-10-12 14:09:15Z arvydas.vapsva $
  */
 
 /**
@@ -50,6 +50,7 @@ class oxShop extends oxI18n
      * @var array
      */
     protected $_aMultiShopTables = array();
+
 
     /**
      * Class constructor, initiates parent constructor (parent::oxBase()).

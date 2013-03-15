@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: suggest.php 36093 2011-06-08 14:59:33Z arvydas.vapsva $
+ * @version   SVN: $Id: suggest.php 39410 2011-10-17 11:29:46Z rimvydas.paskevicius $
  */
 
 /**
@@ -95,20 +95,26 @@ class Suggest extends oxUBase
         $sMac     = oxConfig::getParameter( 'c_mac' );
         $sMacHash = oxConfig::getParameter( 'c_mach' );
         $oCaptcha = $this->getCaptcha();
+        $oUtilsView = oxUtilsView::getInstance();
 
         if ( !$oCaptcha->pass( $sMac, $sMacHash ) ) {
             // even if there is no exception, use this as a default display method
-            oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_INPUT_WRONGCAPTCHA' );
+            $oUtilsView->addErrorToDisplay( 'EXCEPTION_INPUT_WRONGCAPTCHA' );
             return false;
         }
 
-        $oUtilsView = oxUtilsView::getInstance();
         // filled not all fields ?
         foreach ( $this->_aReqFields as $sFieldName ) {
             if ( !isset( $aParams[$sFieldName] ) || !$aParams[$sFieldName] ) {
-                $oUtilsView->addErrorToDisplay('SUGGEST_COMLETECORRECTLYFIELDS');
+                $oUtilsView->addErrorToDisplay( 'SUGGEST_COMLETECORRECTLYFIELDS' );
                 return;
             }
+        }
+
+        $oUtils = oxUtils::getInstance();
+        if ( !$oUtils->isValidEmail( $aParams["rec_email"] ) || !$oUtils->isValidEmail( $aParams["send_email"] ) ) {
+            $oUtilsView->addErrorToDisplay( 'SUGGEST_INVALIDMAIL' );
+            return;
         }
 
         $sReturn = "";
@@ -143,7 +149,7 @@ class Suggest extends oxUBase
         if ( $oProduct && $oEmail->sendSuggestMail( $oParams, $oProduct ) ) {
             return 'details?anid='.$oProduct->getId().$sReturn;
         } else {
-            oxUtilsView::getInstance()->addErrorToDisplay('SUGGEST_INVALIDMAIL');
+            $oUtilsView->addErrorToDisplay('SUGGEST_INVALIDMAIL');
         }
     }
 

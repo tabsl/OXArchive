@@ -41,14 +41,10 @@ class ajaxComponent extends ajaxListComponent
     protected function _getQuery()
     {
         $oCat = oxNew('oxcategory');
+        $oCat->setLanguage( oxConfig::getParameter('editlanguage') );
 
         $sCategoriesTable = $oCat->getViewName();
-
-        $sSynchOxid = oxConfig::getParameter( 'synchoxid' );
-
-        $sQAdd  = " from $sCategoriesTable where ".$oCat->getSqlActiveSnippet();
-
-        return $sQAdd;
+        return " from $sCategoriesTable where ".$oCat->getSqlActiveSnippet();
     }
 
     /**

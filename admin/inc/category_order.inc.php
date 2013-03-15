@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: category_order.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: category_order.inc.php 39176 2011-10-12 13:13:04Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -58,10 +58,11 @@ class ajaxComponent extends ajaxListComponent
         // looking for table/view
         $sArtTable = $this->_getViewName( 'oxarticles' );
         $sO2CView  = $this->_getViewName( 'oxobject2category' );
+        $oDb = oxDb::getDb();
 
         // category selected or not ?
         if ( $sSynchOxid  = oxConfig::getParameter( 'synchoxid' ) ) {
-            $sQAdd  = " from $sArtTable left join $sO2CView on $sArtTable.oxid=$sO2CView.oxobjectid where $sO2CView.oxcatnid = '$sSynchOxid' ";
+            $sQAdd  = " from $sArtTable left join $sO2CView on $sArtTable.oxid=$sO2CView.oxobjectid where $sO2CView.oxcatnid = ".$oDb->quote( $sSynchOxid );
             if ( $aSkipArt = oxSession::getVar( 'neworder_sess' ) ) {
                 $sQAdd .= " and $sArtTable.oxid not in ( ".implode( ", ", oxDb::getInstance()->quoteArray( $aSkipArt ) )." ) ";
             }
@@ -214,8 +215,9 @@ class ajaxComponent extends ajaxListComponent
         if ( $oCategory->load( oxConfig::getParameter( "oxid" ) ) ) {
 
 
-            $sSelect = "update oxobject2category set oxpos = '0' where oxobject2category.oxcatnid='" . $oCategory->getId() . "'";
-            oxDb::getInstance()->getDb()->execute( $sSelect );
+            $oDb = oxDb::getDb();
+            $sSelect = "update oxobject2category set oxpos = '0' where oxobject2category.oxcatnid=" . $oDb->quote( $oCategory->getId() );
+            $oDb->execute( $sSelect );
 
             oxSession::setVar( 'neworder_sess', null );
         }

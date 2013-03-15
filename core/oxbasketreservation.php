@@ -176,7 +176,6 @@ class oxBasketReservation extends oxSuperCfg
     protected function _reserveArticles($aBasketDiff)
     {
         $blAllowNegativeStock = $this->getConfig()->getConfigParam( 'blAllowNegativeStock' );
-        $oDb = oxDb::getDb();
 
         $oReserved = $this->getReservations();
         foreach ($aBasketDiff as $sId => $dAmount) {

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdelivery.php 38762 2011-09-14 13:40:14Z vilma $
+ * @version   SVN: $Id: oxdelivery.php 39186 2011-10-12 13:23:39Z arvydas.vapsva $
  */
 
 /**
@@ -142,9 +142,9 @@ class oxDelivery extends oxI18n
             return $this->_aArtIds;
         }
 
-        $sQ = 'select oxobjectid from oxobject2delivery where oxdeliveryid="'.$this->getId().'" and oxtype = "oxarticles" ';
-
-        $aArtIds = oxDb::getDb()->getArray( $sQ );
+        $oDb = oxDb::getDb();
+        $sQ = "select oxobjectid from oxobject2delivery where oxdeliveryid=".$oDb->quote($this->getId())." and oxtype = 'oxarticles'";
+        $aArtIds = $oDb->getArray( $sQ );
 
         //make single dimension array
         foreach ( $aArtIds as $aItem ) {
@@ -166,9 +166,9 @@ class oxDelivery extends oxI18n
             return $this->_aCatIds;
         }
 
-        $sQ = 'select oxobjectid from oxobject2delivery where oxdeliveryid="'.$this->getId().'" and oxtype = "oxcategories" ';
-
-        $aCatIds = oxDb::getDb()->getAll( $sQ );
+        $oDb = oxDb::getDb();
+        $sQ = "select oxobjectid from oxobject2delivery where oxdeliveryid=".$oDb->quote($this->getId())." and oxtype = 'oxcategories'";
+        $aCatIds = $oDb->getAll( $sQ );
 
         //make single dimension array
         foreach ( $aCatIds AS $aItem ) {

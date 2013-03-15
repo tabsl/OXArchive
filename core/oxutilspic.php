@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilspic.php 37224 2011-07-21 12:22:18Z arvydas.vapsva $
+ * @version   SVN: $Id: oxutilspic.php 39206 2011-10-12 13:30:56Z arvydas.vapsva $
  */
 
 /**
@@ -166,7 +166,8 @@ class oxUtilsPic extends oxSuperCfg
             return false;
         }
 
-        $iCountUsed = oxDb::getDb()->getOne( "select count(*) from $sTable where $sField = '$sPicName' group by $sField " );
+        $oDb = oxDb::getDb();
+        $iCountUsed = $oDb->getOne( "select count(*) from $sTable where $sField = ".$oDb->quote( $sPicName ). " group by $sField " );
         return $iCountUsed > 1 ? false : true;
     }
 

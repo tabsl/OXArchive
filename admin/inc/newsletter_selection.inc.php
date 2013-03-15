@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: newsletter_selection.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: newsletter_selection.inc.php 39180 2011-10-12 13:17:03Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,  visible, multilanguage, ident
@@ -48,7 +48,7 @@ class ajaxComponent extends ajaxListComponent
     {
         // active AJAX component
         $sGroupTable = $this->_getViewName('oxgroups');
-
+        $oDb = oxDb::getDb();
         $sDiscountId      = oxConfig::getParameter( 'oxid' );
         $sSynchDiscountId = oxConfig::getParameter( 'synchoxid' );
 
@@ -57,13 +57,13 @@ class ajaxComponent extends ajaxListComponent
             $sQAdd  = " from $sGroupTable where 1 ";
         } else {
             $sQAdd  = " from oxobject2group left join $sGroupTable on oxobject2group.oxgroupsid=$sGroupTable.oxid ";
-            $sQAdd .= " where oxobject2group.oxobjectid = '$sDiscountId' ";
+            $sQAdd .= " where oxobject2group.oxobjectid = ".$oDb->quote( $sDiscountId );
         }
 
         if ( $sSynchDiscountId && $sSynchDiscountId != $sDiscountId ) {
             $sQAdd .= " and $sGroupTable.oxid not in ( ";
             $sQAdd .= " select $sGroupTable.oxid from oxobject2group left join $sGroupTable on oxobject2group.oxgroupsid=$sGroupTable.oxid ";
-            $sQAdd .= " where oxobject2group.oxobjectid = '$sSynchDiscountId' ) ";
+            $sQAdd .= " where oxobject2group.oxobjectid = ".$oDb->quote( $sSynchDiscountId )." ) ";
         }
 
         // creating AJAX component

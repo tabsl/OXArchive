@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: actions_main.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: actions_main.inc.php 39175 2011-10-12 13:12:18Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -64,7 +64,7 @@ class ajaxComponent extends ajaxListComponent
     protected function _getQuery()
     {
         $myConfig = $this->getConfig();
-
+        $oDb = oxDb::getDb();
         // looking for table/view
         $sArtTable = $this->_getViewName('oxarticles');
         $sO2CView  = $this->_getViewName('oxobject2category');
@@ -83,17 +83,17 @@ class ajaxComponent extends ajaxListComponent
 
                 $sQAdd  = " from $sO2CView left join $sArtTable on ";
                 $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?" ( $sArtTable.oxid=$sO2CView.oxobjectid or $sArtTable.oxparentid=$sO2CView.oxobjectid) ":" $sArtTable.oxid=$sO2CView.oxobjectid ";
-                $sQAdd .= " where $sO2CView.oxcatnid = '$sSelId' ";
+                $sQAdd .= " where $sO2CView.oxcatnid = ".$oDb->quote( $sSelId );
             } else {
 
                 $sQAdd  = " from $sArtTable left join oxactions2article on $sArtTable.oxid=oxactions2article.oxartid ";
-                $sQAdd .= " where oxactions2article.oxactionid = '$sSelId' and oxactions2article.oxshopid = '".$myConfig->getShopID()."' ";
+                $sQAdd .= " where oxactions2article.oxactionid = ".$oDb->quote( $sSelId )." and oxactions2article.oxshopid = '".$myConfig->getShopID()."' ";
             }
         }
 
         if ( $sSynchSelId && $sSynchSelId != $sSelId ) {
             $sQAdd .= " and $sArtTable.oxid not in ( select oxactions2article.oxartid from oxactions2article ";
-            $sQAdd .= " where oxactions2article.oxactionid = '$sSynchSelId' and oxactions2article.oxshopid = '".$myConfig->getShopID()."' ) ";
+            $sQAdd .= " where oxactions2article.oxactionid = ".$oDb->quote( $sSynchSelId )." and oxactions2article.oxshopid = '".$myConfig->getShopID()."' ) ";
         }
 
         return $sQAdd;
@@ -168,11 +168,12 @@ class ajaxComponent extends ajaxListComponent
             $aArticles = $this->_getAll( $this->_addFilter( "select $sArtTable.oxid ".$this->_getQuery() ) );
         }
 
+        $oDb = oxDb::getDb();
         $sArtTable = $this->_getViewName('oxarticles');
         $sQ = "select max(oxactions2article.oxsort) from oxactions2article join $sArtTable on $sArtTable.oxid=oxactions2article.oxartid
-               where oxactions2article.oxactionid = '".$soxId."' and oxactions2article.oxshopid = '".$myConfig->getShopId()."'
+               where oxactions2article.oxactionid = ".$oDb->quote( $soxId )." and oxactions2article.oxshopid = '".$myConfig->getShopId()."'
                and $sArtTable.oxid is not null";
-        $iSort = ( (int) oxDb::getDb()->getOne( $sQ ) ) + 1;
+        $iSort = ( (int) $oDb->getOne( $sQ ) ) + 1;
 
         if ( $soxId && $soxId != "-1" && is_array( $aArticles ) ) {
             $sShopId = $myConfig->getShopId();

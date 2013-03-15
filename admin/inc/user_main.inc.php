@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: user_main.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: user_main.inc.php 39178 2011-10-12 13:15:27Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,  visible, multilanguage, ident
@@ -47,7 +47,7 @@ class ajaxComponent extends ajaxListComponent
     {
         // looking for table/view
         $sGroupTable = $this->_getViewName('oxgroups');
-
+        $oDb = oxDb::getDb();
         $sDeldId     = oxConfig::getParameter( 'oxid' );
         $sSynchDelId = oxConfig::getParameter( 'synchoxid' );
 
@@ -56,12 +56,12 @@ class ajaxComponent extends ajaxListComponent
             $sQAdd  = " from $sGroupTable where 1 ";
         } else {
             $sQAdd  = " from $sGroupTable left join oxobject2group on oxobject2group.oxgroupsid=$sGroupTable.oxid ";
-            $sQAdd .= " where oxobject2group.oxobjectid = '$sDeldId' ";
+            $sQAdd .= " where oxobject2group.oxobjectid = ".$oDb->quote( $sDeldId );
         }
 
         if ( $sSynchDelId && $sSynchDelId != $sDeldId) {
             $sQAdd .= " and $sGroupTable.oxid not in ( select $sGroupTable.oxid from $sGroupTable left join oxobject2group on oxobject2group.oxgroupsid=$sGroupTable.oxid ";
-            $sQAdd .= " where oxobject2group.oxobjectid = '$sSynchDelId' ) ";
+            $sQAdd .= " where oxobject2group.oxobjectid = ".$oDb->quote( $sSynchDelId )." ) ";
         }
 
         return $sQAdd;

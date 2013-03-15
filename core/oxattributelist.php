@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxattributelist.php 35586 2011-05-25 10:58:13Z vilma $
+ * @version   SVN: $Id: oxattributelist.php 39197 2011-10-12 13:27:35Z arvydas.vapsva $
  */
 
 /**
@@ -77,7 +77,7 @@ class oxAttributeList extends oxList
     protected function _createAttributeListFromSql( $sSelect)
     {
         $aAttributes = array();
-        $rs = oxDb::getDb()->Execute( $sSelect);
+        $rs = oxDb::getDb()->execute( $sSelect);
         if ($rs != false && $rs->recordCount() > 0) {
             while (!$rs->EOF) {
                 if ( !isset( $aAttributes[$rs->fields[0]])) {

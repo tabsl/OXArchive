@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: delivery_categories.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: delivery_categories.inc.php 39177 2011-10-12 13:14:39Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -48,7 +48,7 @@ class ajaxComponent extends ajaxListComponent
     {
         // looking for table/view
         $sCatTable = $this->_getViewName('oxcategories');
-
+        $oDb = oxDb::getDb();
         $sDelId      = oxConfig::getParameter( 'oxid' );
         $sSynchDelId = oxConfig::getParameter( 'synchoxid' );
 
@@ -57,13 +57,13 @@ class ajaxComponent extends ajaxListComponent
             $sQAdd  = " from $sCatTable ";
         } else {
             $sQAdd  = " from oxobject2delivery left join $sCatTable on $sCatTable.oxid=oxobject2delivery.oxobjectid ";
-            $sQAdd .= " where oxobject2delivery.oxdeliveryid = '$sDelId' and oxobject2delivery.oxtype = 'oxcategories' ";
+            $sQAdd .= " where oxobject2delivery.oxdeliveryid = ".$oDb->quote( $sDelId )." and oxobject2delivery.oxtype = 'oxcategories' ";
         }
 
         if ( $sSynchDelId && $sSynchDelId != $sDelId) {
             // dodger performance
             $sSubSelect  = " select $sCatTable.oxid from oxobject2delivery left join $sCatTable on $sCatTable.oxid=oxobject2delivery.oxobjectid ";
-            $sSubSelect .= " where oxobject2delivery.oxdeliveryid = '$sSynchDelId' and oxobject2delivery.oxtype = 'oxcategories' ";
+            $sSubSelect .= " where oxobject2delivery.oxdeliveryid = ".oxDb::getDb()->quote( $sSynchDelId )." and oxobject2delivery.oxtype = 'oxcategories' ";
             if ( stristr( $sQAdd, 'where' ) === false )
                 $sQAdd .= ' where ';
             else

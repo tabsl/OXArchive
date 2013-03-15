@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdiscountlist.php 31982 2010-12-17 14:03:13Z sarunas $
+ * @version   SVN: $Id: oxdiscountlist.php 39215 2011-10-12 13:39:27Z arvydas.vapsva $
  */
 
 /**
@@ -157,6 +157,7 @@ class oxDiscountList extends oxList
         $sUserId    = null;
         $sGroupIds  = null;
         $sCountryId = $this->getCountryId( $oUser );
+        $oDb = oxDb::getDb();
 
         // checking for current session user which gives additional restrictions for user itself, users group and country
         if ( $oUser ) {
@@ -169,7 +170,7 @@ class oxDiscountList extends oxList
                 if ( $sGroupIds ) {
                     $sGroupIds .= ', ';
                 }
-                $sGroupIds .= "'".$oGroup->getId()."'";
+                $sGroupIds .= $oDb->quote( $oGroup->getId() );
             }
         }
 
@@ -177,9 +178,8 @@ class oxDiscountList extends oxList
         $sGroupTable   = getViewName( 'oxgroups' );
         $sCountryTable = getViewName( 'oxcountry' );
 
-        $oDb = oxDb::getDb();
         $sCountrySql = $sCountryId?"EXISTS(select oxobject2discount.oxid from oxobject2discount where oxobject2discount.OXDISCOUNTID=$sTable.OXID and oxobject2discount.oxtype='oxcountry' and oxobject2discount.OXOBJECTID=".$oDb->quote( $sCountryId ).")":'0';
-        $sUserSql    = $sUserId   ?"EXISTS(select oxobject2discount.oxid from oxobject2discount where oxobject2discount.OXDISCOUNTID=$sTable.OXID and oxobject2discount.oxtype='oxuser' and oxobject2discount.OXOBJECTID='$sUserId')":'0';
+        $sUserSql    = $sUserId   ?"EXISTS(select oxobject2discount.oxid from oxobject2discount where oxobject2discount.OXDISCOUNTID=$sTable.OXID and oxobject2discount.oxtype='oxuser' and oxobject2discount.OXOBJECTID=".$oDb->quote( $sUserId ). ")":'0';
         $sGroupSql   = $sGroupIds ?"EXISTS(select oxobject2discount.oxid from oxobject2discount where oxobject2discount.OXDISCOUNTID=$sTable.OXID and oxobject2discount.oxtype='oxgroups' and oxobject2discount.OXOBJECTID in ($sGroupIds) )":'0';
 
         $sQ .= "and (

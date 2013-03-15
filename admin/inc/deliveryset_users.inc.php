@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: deliveryset_users.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: deliveryset_users.inc.php 39182 2011-10-12 13:18:54Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,  visible, multilanguage, ident
@@ -60,7 +60,7 @@ class ajaxComponent extends ajaxListComponent
     protected function _getQuery()
     {
         $myConfig = $this->getConfig();
-
+        $oDb = oxDb::getDb();
         $sId      = oxConfig::getParameter( 'oxid' );
         $sSynchId = oxConfig::getParameter( 'synchoxid' );
 
@@ -75,20 +75,20 @@ class ajaxComponent extends ajaxListComponent
             // selected group ?
             if ( $sSynchId && $sSynchId != $sId ) {
                 $sQAdd  = " from oxobject2group left join $sUserTable on $sUserTable.oxid = oxobject2group.oxobjectid ";
-                $sQAdd .= " where oxobject2group.oxgroupsid = '$sId' ";
+                $sQAdd .= " where oxobject2group.oxgroupsid = ".$oDb->quote( $sId );
                 if (!$myConfig->getConfigParam( 'blMallUsers' ) )
                     $sQAdd .= "and $sUserTable.oxshopid = '".$myConfig->getShopId()."' ";
 
                 // resetting
                 $sId = null;
             } else {
-                $sQAdd  = " from oxobject2delivery, $sUserTable where oxobject2delivery.oxdeliveryid = '$sId' ";
+                $sQAdd  = " from oxobject2delivery, $sUserTable where oxobject2delivery.oxdeliveryid = ".$oDb->quote( $sId );
                 $sQAdd .= "and oxobject2delivery.oxobjectid = $sUserTable.oxid and oxobject2delivery.oxtype = 'oxdelsetu' ";
             }
         }
 
         if ( $sSynchId && $sSynchId != $sId) {
-            $sQAdd .= "and $sUserTable.oxid not in ( select $sUserTable.oxid from oxobject2delivery, $sUserTable where oxobject2delivery.oxdeliveryid = '$sSynchId' ";
+            $sQAdd .= "and $sUserTable.oxid not in ( select $sUserTable.oxid from oxobject2delivery, $sUserTable where oxobject2delivery.oxdeliveryid = ".$oDb->quote( $sSynchId );
             $sQAdd .= "and oxobject2delivery.oxobjectid = $sUserTable.oxid and oxobject2delivery.oxtype = 'oxdelsetu' ) ";
         }
 

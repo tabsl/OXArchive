@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 38695 2011-09-09 13:14:53Z arvydas.vapsva $
+ * @version   SVN: $Id: oxuser.php 39213 2011-10-12 13:37:14Z arvydas.vapsva $
  */
 
 /**
@@ -693,7 +693,8 @@ class oxUser extends oxBase
 
         //loading order for registered user
         if ( $this->oxuser__oxregister->value > 1 ) {
-            $sQ = 'select * from oxorder where oxuserid = "'.$this->getId().'" and oxorderdate >= ' . oxDb::getDb()->quote( $this->oxuser__oxregister->value ) . ' ';
+            $oDb = oxDb::getDb();
+            $sQ = 'select * from oxorder where oxuserid = '.$oDb->quote( $this->getId() ).' and oxorderdate >= ' . $oDb->quote( $this->oxuser__oxregister->value ) . ' ';
 
             //#1546 - shopid check added, if it is not multishop
 
@@ -714,7 +715,7 @@ class oxUser extends oxBase
         $iCnt = 0;
         if ( $this->getId() && $this->oxuser__oxregister->value > 1 ) {
             $oDb = oxDb::getDb();
-            $sQ  = 'select count(*) from oxorder where oxuserid = "'.$this->getId().'" AND oxorderdate >= ' . $oDb->quote( $this->oxuser__oxregister->value) . ' and oxshopid = "'.$this->getConfig()->getShopId().'" ';
+            $sQ  = 'select count(*) from oxorder where oxuserid = '.$oDb->quote( $this->getId() ).' AND oxorderdate >= ' . $oDb->quote( $this->oxuser__oxregister->value) . ' and oxshopid = "'.$this->getConfig()->getShopId().'" ';
             $iCnt = (int) $oDb->getOne( $sQ );
         }
 
@@ -1443,7 +1444,6 @@ class oxUser extends oxBase
                 $sSelect =  'select oxid, oxpassword from oxuser where oxuser.oxpassword != "" and  oxuser.oxactive = 1 and oxuser.oxusername = '.$oDB->quote($sUser);
 
 
-                $oDB = oxDb::getDb();
                 $rs = $oDB->execute( $sSelect );
                 if ( $rs != false && $rs->recordCount() > 0 ) {
                     while (!$rs->EOF) {
@@ -1592,7 +1592,7 @@ class oxUser extends oxBase
         $aRights = array();
 
         // selecting current users rights ...
-        if ( $sCurrRights = $oDB->getOne( 'select oxrights from '.$this->getViewName().' where oxid="'.$this->getId().'"' ) ) {
+        if ( $sCurrRights = $oDB->getOne( 'select oxrights from '.$this->getViewName().' where oxid='.$oDB->quote( $this->getId() ) ) ) {
             $aRights[] = $sCurrRights;
         }
         $aRights[] = 'user';
@@ -1713,7 +1713,7 @@ class oxUser extends oxBase
 
         $sQ = 'select oxshopid, oxrights, oxpassword from oxuser where oxusername = '. $oDB->quote( $sEmail );
         if ( ( $sOxid = $this->getId() ) ) {
-            $sQ .= " and oxid <> '$sOxid' ";
+            $sQ .= " and oxid <> ".$oDB->quote( $sOxid );
         }
 
         $oRs = $oDB->execute( $sQ );
@@ -2289,9 +2289,10 @@ class oxUser extends oxBase
      */
     public function isTermsAccepted()
     {
+        $oDb = oxDb::getDb();
         $sShopId = $this->getConfig()->getShopId();
-        $sUserId = $this->getId();
-        return (bool) oxDb::getDb()->getOne( "select 1 from oxacceptedterms where oxuserid='{$sUserId}' and oxshopid='{$sShopId}'" );
+        $sUserId = $oDb->quote( $this->getId() );
+        return (bool) $oDb->getOne( "select 1 from oxacceptedterms where oxuserid={$sUserId} and oxshopid='{$sShopId}'" );
     }
 
     /**
@@ -2301,11 +2302,12 @@ class oxUser extends oxBase
      */
     public function acceptTerms()
     {
-        $sUserId  = $this->getId();
+        $oDb = oxDb::getDb();
+        $sUserId  = $oDb->quote( $this->getId() );
         $sShopId  = $this->getConfig()->getShopId();
         $sVersion = oxNew( "oxcontent" )->getTermsVersion();
 
-        oxDb::getDb()->execute( "replace oxacceptedterms set oxuserid='{$sUserId}', oxshopid='{$sShopId}', oxtermversion='{$sVersion}'" );
+        $oDb->execute( "replace oxacceptedterms set oxuserid={$sUserId}, oxshopid='{$sShopId}', oxtermversion='{$sVersion}'" );
     }
 
     /**
@@ -2394,7 +2396,7 @@ class oxUser extends oxBase
             $sDate = oxUtilsDate::getInstance()->formatDBDate( date("Y-m-d"), true );
             $aRecEmail = oxDb::getInstance()->quoteArray( $aRecEmail );
             foreach ( $aRecEmail as $sRecEmail ) {
-                $sSql = "INSERT INTO oxinvitations SET oxuserid = '$sUserId', oxemail = $sRecEmail,  oxdate='$sDate', oxpending = '1', oxaccepted = '0', oxtype = '1' ";
+                $sSql = "INSERT INTO oxinvitations SET oxuserid = ".$oDb->quote( $sUserId ).", oxemail = $sRecEmail,  oxdate='$sDate', oxpending = '1', oxaccepted = '0', oxtype = '1' ";
                 $oDb->execute( $sSql );
             }
         }

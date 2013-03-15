@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcontent.php 32881 2011-02-03 11:45:36Z sarunas $
+ * @version   SVN: $Id: oxcontent.php 39201 2011-10-12 13:28:37Z arvydas.vapsva $
  */
 
 /**
@@ -298,8 +298,9 @@ class oxContent extends oxI18n implements oxIUrl
             $sShopId  = $this->getConfig()->getShopId();
             $sVersion = $this->oxcontents__oxtermversion->value;
 
+            $oDb = oxDb::getDb();
             // dropping expired..
-            oxDb::getDb()->execute( "delete from oxacceptedterms where oxshopid='{$sShopId}' and oxtermversion != '$sVersion'" );
+            $oDb->execute( "delete from oxacceptedterms where oxshopid='{$sShopId}' and oxtermversion != ".$oDb->quote( $sVersion ) );
         }
         return $blSaved;
     }

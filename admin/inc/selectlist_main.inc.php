@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: selectlist_main.inc.php 34302 2011-04-06 11:08:47Z linas.kukulskis $
+ * @version   SVN: $Id: selectlist_main.inc.php 39179 2011-10-12 13:16:19Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -75,7 +75,7 @@ class ajaxComponent extends ajaxListComponent
         $sArtTable = $this->_getViewName('oxarticles');
         $sCatTable = $this->_getViewName('oxcategories');
         $sO2CView  = $this->_getViewName('oxobject2category');
-
+        $oDb = oxDb::getDb();
         $sSelId      = oxConfig::getParameter( 'oxid' );
         $sSynchSelId = oxConfig::getParameter( 'synchoxid' );
 
@@ -89,17 +89,17 @@ class ajaxComponent extends ajaxListComponent
             if ( $sSynchSelId && $sSelId != $sSynchSelId ) {
                 $sQAdd  = " from $sO2CView as oxobject2category left join $sArtTable on ";
                 $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?" ( $sArtTable.oxid=oxobject2category.oxobjectid or $sArtTable.oxparentid=oxobject2category.oxobjectid ) ":" $sArtTable.oxid=oxobject2category.oxobjectid ";
-                $sQAdd .= " where oxobject2category.oxcatnid = '$sSelId' ";
+                $sQAdd .= " where oxobject2category.oxcatnid = ".$oDb->quote( $sSelId );
             } else {
                 $sQAdd  = " from $sArtTable left join oxobject2selectlist on $sArtTable.oxid=oxobject2selectlist.oxobjectid ";
-                $sQAdd .= " where oxobject2selectlist.oxselnid = '$sSelId' ";
+                $sQAdd .= " where oxobject2selectlist.oxselnid = ".$oDb->quote( $sSelId );
             }
         }
 
         if ( $sSynchSelId && $sSynchSelId != $sSelId ) {
             // dodger performance
             $sQAdd .= " and $sArtTable.oxid not in ( select oxobject2selectlist.oxobjectid from oxobject2selectlist ";
-            $sQAdd .= " where oxobject2selectlist.oxselnid = '$sSynchSelId' ) ";
+            $sQAdd .= " where oxobject2selectlist.oxselnid = ".$oDb->quote( $sSynchSelId )." ) ";
         }
 
         return $sQAdd;

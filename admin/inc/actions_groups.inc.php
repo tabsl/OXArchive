@@ -47,6 +47,7 @@ class ajaxComponent extends ajaxListComponent
     {
         // active AJAX component
         $sGroupTable = $this->_getViewName( 'oxgroups' );
+        $oDb = oxDb::getDb();
 
         $sId      = oxConfig::getParameter( 'oxid' );
         $sSynchId = oxConfig::getParameter( 'synchoxid' );
@@ -56,12 +57,12 @@ class ajaxComponent extends ajaxListComponent
             $sQAdd  = " from $sGroupTable where 1 ";
         } else {
             $sQAdd .= " from oxobject2action, $sGroupTable where $sGroupTable.oxid=oxobject2action.oxobjectid ";
-            $sQAdd .= " and oxobject2action.oxactionid = '$sId' and oxobject2action.oxclass = 'oxgroups' ";
+            $sQAdd .= " and oxobject2action.oxactionid = ".$oDb->quote( $sId )." and oxobject2action.oxclass = 'oxgroups' ";
         }
 
         if ( $sSynchId && $sSynchId != $sId) {
             $sQAdd .= " and $sGroupTable.oxid not in ( select $sGroupTable.oxid from oxobject2action, $sGroupTable where $sGroupTable.oxid=oxobject2action.oxobjectid ";
-            $sQAdd .= " and oxobject2action.oxactionid = '$sSynchId' and oxobject2action.oxclass = 'oxgroups' ) ";
+            $sQAdd .= " and oxobject2action.oxactionid = ".$oDb->quote( $sSynchId )." and oxobject2action.oxclass = 'oxgroups' ) ";
         }
 
         return $sQAdd;

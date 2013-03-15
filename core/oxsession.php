@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsession.php 37024 2011-07-14 11:10:30Z linas.kukulskis $
+ * @version   SVN: $Id: oxsession.php 39214 2011-10-12 13:37:36Z arvydas.vapsva $
  */
 
 DEFINE('_DB_SESSION_HANDLER', getShopBasePath() . 'core/adodblite/session/adodb-session.php');
@@ -433,7 +433,7 @@ class oxSession extends oxSuperCfg
 
         if ( oxConfig::getInstance()->getConfigParam( 'blAdodbSessionHandler' ) ) {
             $oDB = oxDb::getDb();
-            $oDB->execute("UPDATE oxsessions SET SessionID = '$sNewId' WHERE SessionID = '$sOldId'");
+            $oDB->execute("UPDATE oxsessions SET SessionID = ".$oDB->quote( $sNewId )." WHERE SessionID = ".$oDB->quote( $sOldId ) );
         }
 
         return session_id();
@@ -881,8 +881,9 @@ class oxSession extends oxSuperCfg
      */
     protected function _checkSid()
     {
+        $oDb = oxDb::getDb();
         //matze changed sesskey to SessionID because structure of oxsession changed!!
-        $sSID = oxDb::getDb()->GetOne("select SessionID from oxsessions where SessionID = '".$this->getId()."'");
+        $sSID = $oDb->GetOne("select SessionID from oxsessions where SessionID = ".$oDb->quote( $this->getId() ));
 
         //2007-05-14
         //we check _blNewSession as well as this may be actually new session not written to db yet
