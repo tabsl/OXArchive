@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxarticlelist.php 28096 2010-06-02 14:05:19Z michael.keiluweit $
+ * @version   SVN: SVN: $Id: oxarticlelist.php 29759 2010-09-07 15:58:26Z tomas $
  */
 
 /**
@@ -597,7 +597,10 @@ class oxArticleList extends oxList
 
         $sSelect =  $this->_getPriceSelect( $dPriceFrom, $dPriceTo );
 
+        startProfile("loadPriceArticles");
         $this->selectString( $sSelect);
+        stopProfile("loadPriceArticles");
+
         //echo( $sSelect);
 
         if ( !$oCategory ) {
@@ -1031,28 +1034,26 @@ class oxArticleList extends oxList
      */
     protected function _getPriceSelect( $dPriceFrom, $dPriceTo )
     {
+
         $oBaseObject   = $this->getBaseObject();
         $sArticleTable = $oBaseObject->getViewName();
         $sSelectFields = $oBaseObject->getSelectFields();
 
-        $sSubSelect  = "select if( oxparentid = '',oxid,oxparentid ) as id from {$sArticleTable} where oxprice >= 0 ";
+        $sSubSelect = "";
         if ($dPriceTo) {
-            $sSubSelect .= "and oxprice <= ".(double)$dPriceTo." ";
-        } else {
-            $sSubSelect .= " ";
+            $sSubSelect .= "and oxvarminprice <= ".(double)$dPriceTo." ";
         }
+
         if ($dPriceFrom) {
-            $sSubSelect .= "group by id having min( oxprice ) >= ".(double)$dPriceFrom." ";
-        } else {
-            $sSubSelect .= " ";
+            $sSubSelect .= " and oxvarminprice <= ".(double)$dPriceFrom." ";
         }
 
         $sSelect  = "select {$sSelectFields} from {$sArticleTable} where ";
-        $sSelect .= "{$sArticleTable}.oxid in ( {$sSubSelect} ) ";
-        $sSelect .= "and ".$oBaseObject->getSqlActiveSnippet()." and {$sArticleTable}.oxissearch = 1";
+        $sSelect .= " oxvarminprice >= ".(double)$dPriceFrom." and oxvarminprice <= ".(double)$dPriceTo;
+        $sSelect .= " and ".$oBaseObject->getSqlActiveSnippet()." and {$sArticleTable}.oxissearch = 1";
 
         if ( !$this->_sCustomSorting ) {
-            $sSelect .= " order by {$sArticleTable}.oxprice asc , {$sArticleTable}.oxid";
+            $sSelect .= " order by {$sArticleTable}.oxvarminprice asc , {$sArticleTable}.oxid";
         } else {
             $sSelect .= " order by {$this->_sCustomSorting}, {$sArticleTable}.oxid ";
         }

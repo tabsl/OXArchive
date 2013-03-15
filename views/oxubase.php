@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 28315 2010-06-11 15:34:43Z arvydas $
+ * @version   SVN: $Id: oxubase.php 29553 2010-08-27 14:48:10Z sarunas $
  */
 
 /**
@@ -1702,8 +1702,7 @@ class oxUBase extends oxView
         $sClass = $this->getClassName();
         $sFnc   = $this->getFncName();
 
-        // #921 S
-        $aFnc = array( 'tobasket', 'login_noredirect', 'addVoucher' );
+        $aFnc = array( 'tobasket', 'login_noredirect', 'addVoucher', 'moveleft', 'moveright' );
         if ( in_array( $sFnc, $aFnc ) ) {
             $sFnc = '';
         }

@@ -19,7 +19,7 @@
  * @package   smarty_plugins
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: function.oxcontent.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: function.oxcontent.php 29602 2010-08-31 14:03:21Z sarunas $
  */
 
 /**
@@ -65,7 +65,7 @@ function smarty_function_oxcontent( $params, &$smarty )
             $smarty->oxidcache = clone $oContent->$sProp;
             $smarty->compile_check  = true;
             $sCacheId = oxLang::getInstance()->getBaseLanguage().(int) oxConfig::getParameter( 'currency' );
-            $sText = $smarty->fetch( "ox:".$params['ident'].$sField.$sCacheId);
+            $sText = $smarty->fetch( "ox:".(string)$sIdent.(string)$sOxid.$sField.$sCacheId);
             $smarty->compile_check  = $myConfig->getConfigParam( 'blCheckTemplates' );
         }
     }

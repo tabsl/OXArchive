@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: selectlist_main.inc.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: selectlist_main.inc.php 29956 2010-09-23 15:51:52Z tomas $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -125,7 +125,7 @@ class ajaxComponent extends ajaxListComponent
         $aChosenArt = $this->_getActionIds( 'oxobject2selectlist.oxid' );
         if ( oxConfig::getParameter( 'all' ) ) {
 
-            $sQ = $this->_addFilter( "delete oxobject2selectlist.* ".$this->_getQuery() );
+            $sQ = parent::_addFilter( "delete oxobject2selectlist.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
 
         } elseif ( is_array( $aChosenArt ) ) {

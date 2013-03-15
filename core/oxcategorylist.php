@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcategorylist.php 28204 2010-06-08 06:36:11Z michael.keiluweit $
+ * @version   SVN: $Id: oxcategorylist.php 29612 2010-09-01 12:10:44Z vilma $
  */
 
 
@@ -308,6 +308,9 @@ class oxCategoryList extends oxList
         $this->_blForceFull = true;
         $this->selectString($this->_getSelectString(false));
 
+        // build tree structure
+        $this->_ppBuildTree();
+
         // PostProcessing
         // add tree depth info
         $this->_ppAddDepthInformation();
@@ -518,8 +521,8 @@ class oxCategoryList extends oxList
     }
 
     /**
-     * Category list postprocessing routine, responsible adding depth information.
-     * Requires not reversed category list!
+     * Category list postprocessing routine, responsible for making flat category tree and adding depth information.
+     * Requires reversed category list!
      *
      * @return null
      */
@@ -530,30 +533,43 @@ class oxCategoryList extends oxList
         $iDepth = 0;
         $sPrevParent = '';
 
+        $aTree = array();
         foreach ($this->_aArray as $oCat) {
 
-            $sParentId = $oCat->oxcategories__oxparentid->value;
-            if ( $oCat->oxcategories__oxparentid->value == 'oxrootid' ) {
-                $iDepth = 1;
-                $aStack = array($sParentId => '0');
+            $aTree[$oCat->getId()] = $oCat;
+            $aSubCats = $oCat->getSubCats();
+            if ( count($aSubCats) > 0 ) {
+                foreach ($aSubCats as $oSubCat) {
+                    $aTree = $this->_addDepthInfo($aTree, $oSubCat);
+                }
             }
-
-            if ($sPrevParent != $sParentId && isset($aStack[$sParentId]) ) {
-                $iDepth -= count($aStack)- $aStack[$sParentId];
-                $aStack = array_slice($aStack, 0, $iDepth-1, true);
-            }
-
-            if ( !isset($aStack[$sParentId])) {
-                $aStack[$sParentId] = $iDepth;
-                $iDepth++;
-            }
-
-            $oCat->oxcategories__oxtitle->setValue(str_repeat('-', $iDepth-1).' '.$oCat->oxcategories__oxtitle->value);
-            $sPrevParent = $sParentId;
         }
+        $this->assign($aTree);
 
     }
 
+    /**
+     * Recursive function to add depth information
+     *
+     * @param array  $aTree  new category tree
+     * @param object $oCat   category object
+     * @param string $sDepth string to show category depth
+     *
+     * @return array $aTree
+     */
+    protected function _addDepthInfo($aTree, $oCat, $sDepth = "")
+    {
+        $sDepth .= "-";
+        $oCat->oxcategories__oxtitle->setValue($sDepth.' '.$oCat->oxcategories__oxtitle->value);
+        $aTree[$oCat->getId()] = $oCat;
+        $aSubCats = $oCat->getSubCats();
+        if ( count($aSubCats) > 0 ) {
+            foreach ($aSubCats as $oSubCat) {
+                $aTree = $this->_addDepthInfo($aTree, $oSubCat, $sDepth);
+            }
+        }
+        return $aTree;
+    }
     /**
      * Rebuilds nested sets information by updating oxleft and oxright category attributes, from oxparentid
      *

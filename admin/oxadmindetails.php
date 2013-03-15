@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadmindetails.php 26679 2010-03-19 14:40:47Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxadmindetails.php 29639 2010-09-02 14:04:02Z vilma $
  */
 
 /**
@@ -48,17 +48,23 @@ class oxAdminDetails extends oxAdminView
     public function render()
     {
         $sReturn = parent::render();
+        $oLang = oxLang::getInstance();
 
         // generate help link
         $myConfig = $this->getConfig();
         $sDir = $myConfig->getConfigParam( 'sShopDir' ) . '/documentation/admin';
+        $iLang = 1;
+        $sAbbr = $oLang->getLanguageAbbr($oLang->getTplLanguage());
+        if ( $sAbbr == "de" ) {
+            $iLang = 0;
+        }
         if ( is_dir( $sDir ) ) {
             $sDir = $myConfig->getConfigParam( 'sShopURL' ) . 'documentation/admin';
         } else {
 
                 $oShop = $this->_getEditShop( oxSession::getVar( 'actshop' ) );
                 //$sDir = "http://docu.oxid-esales.com/PE/{$oShop->oxshops__oxversion->value}/" . $myConfig->getConfigParam( 'iAdminLanguage' ) . '/admin';
-                $sDir = "http://docu.oxid-esales.com/PE/{$oShop->oxshops__oxversion->value}/" . oxLang::getInstance()->getTplLanguage() . '/admin';
+                $sDir = "http://docu.oxid-esales.com/PE/{$oShop->oxshops__oxversion->value}/" . $iLang . '/admin';
         }
 
         $this->_aViewData['sHelpURL'] = $sDir;

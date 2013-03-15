@@ -19,13 +19,8 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxstart.php 28204 2010-06-08 06:36:11Z michael.keiluweit $
+ * @version   SVN: $Id: oxstart.php 29936 2010-09-23 06:18:52Z alfonsas $
  */
-
-/**
- * Define class constants
- */
-
 
 /**
  * Encapsulates methods for application initialization.
@@ -74,8 +69,6 @@ class oxStart extends oxUBase
             return 'start.tpl';
         }
     }
-
-
 
     /**
      * Creates and starts session object, sets default currency.

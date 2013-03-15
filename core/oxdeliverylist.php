@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdeliverylist.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxdeliverylist.php 29599 2010-08-31 13:35:46Z sarunas $
  */
 
 /**
@@ -190,11 +190,6 @@ class oxDeliveryList extends oxList
         $sTable = getViewName( 'oxdelivery' );
         $sQ  = "select $sTable.* from ( select $sTable.* from $sTable left join oxdel2delset on oxdel2delset.oxdelid=$sTable.oxid ";
         $sQ .= "where ".$this->getBaseObject()->getSqlActiveSnippet()." and oxdel2delset.oxdelsetid = ".$oDb->quote($sDelSet)." ";
-
-        // do we need to check in filter starting param ?
-        //$sQ .= "and ( $sTable.oxparam != 0 and $sTable.oxparamend != 0 ";
-
-        $sQ .= "and $sTable.oxparamend != 0 ";
 
         // defining initial filter parameters
         $sUserId    = null;

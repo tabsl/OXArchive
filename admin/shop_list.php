@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_list.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: shop_list.php 29893 2010-09-17 14:00:40Z rimvydas.paskevicius $
  */
 
 /**
@@ -145,39 +145,4 @@ class Shop_List extends oxAdminList
         return $this->_aWhere;
     }
 
-    /**
-     * Deletes selected shop files from server.
-     *
-     * @return null
-     */
-    public function deleteEntry()
-    {
-        $myConfig = $this->getConfig();
-        $soxId    = oxConfig::getParameter( "delshopid");
-
-
-        // try to remove directories
-        $soxId   = strtr($soxId, "\\/", "__");
-        $sTarget = $myConfig->getConfigParam( 'sShopDir' ) . "/out/" . $soxId;
-        oxUtilsFile::getInstance()->deleteDir( $sTarget);
-
-        $oDelete = oxNew( "oxShop" );
-        $aTables = $myConfig->getConfigParam( 'aMultiShopTables' );
-        $oDelete->setMultiShopTables($aTables);
-
-
-        $oDelete->delete( $soxId );
-
-
-        // if removing acutally selected shop then switch to shop 1
-        if ( $soxId == $myConfig->getShopId()) {
-            $sShopId = $myConfig->getBaseShopId();
-        } else {
-            $sShopId = $myConfig->getShopId();
-        }
-
-        $myConfig->setShopId( $sShopId );
-
-        $this->init();
-    }
 }

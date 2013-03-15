@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: category_main.inc.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: category_main.inc.php 29920 2010-09-21 11:44:03Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -132,12 +132,6 @@ class ajaxComponent extends ajaxListComponent
         // adding
         if ( oxConfig::getParameter( 'all' ) ) {
             $aArticles = $this->_getAll( $this->_addFilter( "select $sArticleTable.oxid ".$this->_getQuery() ) );
-        } else {
-            // appending variants
-            $aVariants = $this->_getAll( "select $sArticleTable.oxid from $sArticleTable where $sArticleTable.oxparentid in ( " . implode( ", ", oxDb::getInstance()->quoteArray( $aArticles ) ) . ")" );
-            if ( count( $aVariants ) ) {
-                $aArticles = array_merge( $aArticles, $aVariants );
-            }
         }
 
         if ( is_array($aArticles)) {
@@ -189,7 +183,7 @@ class ajaxComponent extends ajaxListComponent
             $oDb->Execute( $sQ );
 
         } elseif ( is_array( $aArticles ) && count( $aArticles ) ) {
-            if ( $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ) {
+            if ( !$this->getConfig()->getConfigParam( 'blVariantsSelection' ) ) {
                 $sQ = "delete from oxobject2category where oxcatnid=".$oDb->quote( $sCategoryID )." and oxobjectid in ( select oxid from oxarticles where oxparentid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aArticles ) ) . ") )";
                 $oDb->execute( $sQ );
             }

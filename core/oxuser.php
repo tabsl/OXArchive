@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 29456 2010-08-20 11:08:34Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxuser.php 29582 2010-08-30 17:27:29Z tomas $
  */
 
 /**
@@ -1253,6 +1253,17 @@ class oxUser extends oxBase
             if ( $blCookie ) {
                 oxUtilsServer::getInstance()->setUserCookie( $this->oxuser__oxusername->value, $this->oxuser__oxpassword->value, $myConfig->getShopId() );
             }
+
+            //load basket from the database
+            try {
+                if ($oBasket = $this->getSession()->getBasket()) {
+                    $oBasket->load();
+                }
+
+            } catch (Exception $oE) {
+                //just ignore it
+            }
+
             return true;
         } else {
             $oEx = oxNew( 'oxUserException' );
@@ -1354,7 +1365,7 @@ class oxUser extends oxBase
     {
         $myConfig = $this->getConfig();
 
-        $blAdmin = $myConfig->isAdmin() || $blForceAdmin;
+        $blAdmin = $this->isAdmin() || $blForceAdmin;
         $oDB = oxDb::getDb();
 
         // first - checking session info
@@ -1419,8 +1430,11 @@ class oxUser extends oxBase
             }
         } else {
             // no user
-            oxSession::deleteVar( 'usr' );
-            oxSession::deleteVar( 'auth' );
+            if ($blAdmin) {
+                oxSession::deleteVar( 'auth' );
+            } else {
+                oxSession::deleteVar( 'usr' );
+            }
 
             return false;
         }

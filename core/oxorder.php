@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 29487 2010-08-23 07:55:25Z tomas $
+ * @version   SVN: $Id: oxorder.php 29541 2010-08-27 08:49:18Z tomas $
  */
 
 /**
@@ -996,12 +996,12 @@ class oxOrder extends oxBase
                 $sProdId = $oContent->getProductId();
 
                 // updating users notice list
-                $oUserBasketItem = $oUserBasket->getItem( $sProdId, $oContent->getSelList() );
+                $oUserBasketItem = $oUserBasket->getItem( $sProdId, $oContent->getSelList(), $oContent->getPersParams() );
                 $dNewAmount = $oUserBasketItem->oxuserbasketitems__oxamount->value - $oContent->getAmount();
                 if ( $dNewAmount < 0) {
                     $dNewAmount = 0;
                 }
-                $oUserBasket->addItemToBasket( $sProdId, $dNewAmount, $oContent->getSelList(), true );
+                $oUserBasket->addItemToBasket( $sProdId, $dNewAmount, $oContent->getSelList(), true, $oContent->getPersParams() );
             }
         }
     }

@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 29391 2010-08-17 15:53:26Z ralf.trapp $
+ * @version   SVN: $Id: lang.php 29882 2010-09-17 08:52:37Z vilma $
  */
 
 $sLangName  = 'Deutsch';
@@ -255,7 +255,6 @@ $aLang = array(
 'GENERAL_OUTOFBOUNDS'                           => 'verboten',
 'GENERAL_PASSWORD'                              => 'Passwort',
 'GENERAL_PAYCOST'                               => 'Zahlungsart-Gebühren',
-'GENERAL_PIDENT'                                => 'Postleitzahl',
 'GENERAL_PRICE'                                 => 'Preis',
 'GENERAL_RETURN'                                => 'Umsatz im letzten Jahr/Monat/Woche',
 'GENERAL_REVIEW'                                => 'Übersicht',
@@ -929,6 +928,7 @@ $aLang = array(
 'LANGUAGE_ALREADYEXISTS_ERROR'                  => 'Fehler: Eine Sprache mit diesem Sprachkürzel existiert bereits',
 'LANGUAGE_EMPTYLANGUAGENAME_ERROR'              => 'Bitte geben Sie den Namen der Sprache ein!',
 'SETUP_DIRNOTDELETED_WARNING'                   => 'Bitte löschen Sie das Setup-Verzeichnis',
+'UPDATEAPP_DIRNOTDELETED_WARNING'               => 'Bitte löschen Sie das updateApp-Verzeichnis',
 'SETUP_CONFIGPERMISSIONS_WARNING'               => 'WICHTIG: Aus Sicherheitsgründen setzen Sie Ihre config.inc.php Datei auf read-only-Modus!',
 'LOGIN_TITLE'                                   => 'OXID eShop Login',
 'LOGIN_ERROR'                                   => 'Fehler! Falscher Benutzername und/oder Passwort.',
@@ -1027,7 +1027,7 @@ $aLang = array(
 'NAVIGATION_FAVORITES_EDIT'                     => '[ändern]',
 'FAVORITES_DESC'                                => '',
 'NAVIGATION_HISTORY'                            => 'History',
-'NAVIGATION_SYSREQ_MESSAGE'                     => "Die Systemgesundheit dieses Shops ist gefährdet. Möglicherweise verhält sich Ihr OXID eShop in einigen Bereichen unerwartet. Bitte stellen Sie sicher, dass die Servereinstellungen korrekt vorgenommen werden. Unterstützng finden Sie in der ",
+'NAVIGATION_SYSREQ_MESSAGE'                     => "Die Systemgesundheit dieses Shops ist gefährdet. Möglicherweise verhält sich Ihr OXID eShop in einigen Bereichen unerwartet. Bitte stellen Sie sicher, dass die Servereinstellungen korrekt vorgenommen werden. Unterstützung finden Sie in der ",
 'NAVIGATION_SYSREQ_MESSAGE2'                    => "Systemgesundheitsprüfung.",
 
 'NEWSLETTER_DONE_NEWSSEND'                      => 'Ihr Newsletter wurde versendet.',

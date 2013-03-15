@@ -158,9 +158,6 @@ class oxVariantHandler extends oxSuperCfg
                 foreach ( $oVariants as $oSimpleVariant ) {
                     if ( !$iCounter ) {
                         //we just update the first variant
-                        //cannot use setEnableMultilang() at this place
-                        //$oVariant = oxNew("oxarticle");
-                        //$oVariant->setEnableMultilang(false);
                         $oVariant = oxNew("oxarticle");
                         $oVariant->setEnableMultilang(false);
                         $oVariant->load($oSimpleVariant->oxarticles__oxid->value);

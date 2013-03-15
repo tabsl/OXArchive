@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: actions_main.inc.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: actions_main.inc.php 29773 2010-09-09 15:27:01Z tomas $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -131,7 +131,7 @@ class ajaxComponent extends ajaxListComponent
         $aChosenArt = $this->_getActionIds( 'oxactions2article.oxid' );
         $sOxid = oxConfig::getParameter( 'oxid' );
         if ( oxConfig::getParameter( 'all' ) ) {
-            $sQ = $this->_addFilter( "delete oxactions2article.* ".$this->_getQuery() );
+            $sQ = parent::_addFilter( "delete oxactions2article.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
         } elseif ( is_array( $aChosenArt ) ) {
             $sQ = "delete from oxactions2article where oxactions2article.oxid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aChosenArt ) ) . ") ";

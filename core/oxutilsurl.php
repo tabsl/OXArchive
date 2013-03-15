@@ -108,7 +108,7 @@ class oxUtilsUrl extends oxSuperCfg
         }
 
         $oStr = getStr();
-        $sUrl = $oStr->preg_replace('/(force_)?(admin_)?sid=[a-z0-9\._]*&?(amp;)?/i', '', $sUrl);
+        $sUrl = $oStr->preg_replace('/(\?|&(amp;)?)(force_)?(admin_)?sid=[a-z0-9\._]+&?(amp;)?/i', '\1', $sUrl);
 
         if ($qpos = $oStr->strpos($sUrl, '?')) {
             if ($qpos == $oStr->strlen($sUrl)-1) {
@@ -150,7 +150,7 @@ class oxUtilsUrl extends oxSuperCfg
         $oStr = getStr();
 
         // cleaning up session id..
-        $sUrl = $oStr->preg_replace( '/(force_)?(admin_)?sid=[a-z0-9\._]*&?(amp;)?/i', '', $sUrl );
+        $sUrl = $oStr->preg_replace('/(\?|&(amp;)?)(force_)?(admin_)?sid=[a-z0-9\._]+&?(amp;)?/i', '\1', $sUrl);
         $sUrl = $oStr->preg_replace( '/(&amp;|\?)$/', '', $sUrl );
         $sSep = ( $oStr->strpos( $sUrl, '?' ) === false ) ? '?' : '&amp;';
 

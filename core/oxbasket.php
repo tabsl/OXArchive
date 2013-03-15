@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasket.php 29487 2010-08-23 07:55:25Z tomas $
+ * @version   SVN: $Id: oxbasket.php 29541 2010-08-27 08:49:18Z tomas $
  */
 
 /**
@@ -131,13 +131,6 @@ class oxBasket extends oxSuperCfg
      * @var array
      */
     protected $_aBasketSummary = null;
-
-    /**
-     * Marker if basket and basket history were merged
-     *
-     * @var bool
-     */
-    protected $_blBasketMerged = false;
 
     /**
      * Basket Payment ID
@@ -379,11 +372,6 @@ class oxBasket extends oxSuperCfg
 
         //calling update method
         $this->onUpdate();
-
-        // updating basket history
-        if ( !$blBundle ) {
-            $this->_addItemToSavedBasket( $sProductID, $dAmount, $aSel, $blOverride );
-        }
 
         if ( $oEx ) {
             throw $oEx;
@@ -1200,8 +1188,8 @@ class oxBasket extends oxSuperCfg
         $this->_oPrice = oxNew( 'oxprice' );
         $this->_oPrice->setBruttoPriceMode();
 
-        //  1. merging basket history
-        $this->_mergeSavedBasket();
+        //  1. saving basket to the database
+        $this->_save();
 
         //  2. remove all bundles
         $this->_clearBundles();
@@ -1520,75 +1508,85 @@ class oxBasket extends oxSuperCfg
 
 
     /**
-     * Checks if basket can be merged. Returns true if can
+     * Checks whether basket can be saved
      *
      * @return bool
      */
-    protected function _canMergeBasket()
+    protected function _canSaveBasket()
     {
-        $blCan = true;
-        if ( $this->getConfig()->getConfigParam( 'blPerfNoBasketSaving' ) ||
-             $this->_blBasketMerged || $this->isAdmin() ) {
-            $blCan = false;
-        }
-        return $blCan;
+        $blCanSave = !$this->getConfig()->getConfigParam( 'blPerfNoBasketSaving' );
+        return $blCanSave;
     }
 
     /**
      * Populates current basket from the saved one.
-     * Saves current basket items to SaveBasket
      *
      * @return null
      */
-    protected function _mergeSavedBasket()
+    public function load()
     {
-        if ( $this->_canMergeBasket() ) {
+        $oUser = $this->getBasketUser();
+        if ( !$oUser ) {
+            return;
+        }
 
-            $oUser = $this->getBasketUser();
-            if ( !$oUser ) {
-                $this->_blBasketMerged = false;
-                return;
+        $oBasket = $oUser->getBasket( 'savedbasket' );
+
+        // restoring from saved history
+        $aSavedItems = $oBasket->getItems();
+        foreach ( $aSavedItems as $oItem ) {
+            try {
+                $oSelList = $oItem->getSelList();
+
+                $this->addToBasket( $oItem->oxuserbasketitems__oxartid->value, $oItem->oxuserbasketitems__oxamount->value, $oSelList, $oItem->getPersParams(), true );
+            } catch( oxArticleException $oEx ) {
+                // caught and ignored
             }
-
-            $oBasket = $oUser->getBasket( 'savedbasket' );
-
-            // restoring from saved history
-            $aSavedItems = $oBasket->getItems();
-            foreach ( $aSavedItems as $oItem ) {
-                try {
-                    $this->addToBasket( $oItem->oxuserbasketitems__oxartid->value, $oItem->oxuserbasketitems__oxamount->value, $oItem->getSelList(), null, true );
-                } catch( oxArticleException $oEx ) {
-                    // caught and ignored
-                }
-            }
-
-            // refreshing history
-            foreach ( $this->_aBasketContents as $oBasketItem ) {
-                $oBasket->addItemToBasket( $oBasketItem->getProductId(), $oBasketItem->getAmount(), $oBasketItem->getSelList(), true );
-            }
-
-            // marking basked as saved
-            $this->_blBasketMerged = true;
         }
     }
 
     /**
-     * Adds item to saved basket (history
+     * Saves existing basket to database
+     *
+     * @return null;
+     */
+    protected function _save()
+    {
+        if ( $this->_canSaveBasket() ) {
+
+            if ( $oUser = $this->getBasketUser() ) {
+                //first delete all contents
+                //#2039
+                $oSavedBasket = $oUser->getBasket( 'savedbasket' );
+                $oSavedBasket->delete();
+
+                //then save
+                foreach ( $this->_aBasketContents as $oBasketItem ) {
+                    $oSavedBasket->addItemToBasket( $oBasketItem->getProductId(), $oBasketItem->getAmount(), $oBasketItem->getSelList(), true, $oBasketItem->getPersParams() );
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds item to saved basket (history)
      *
      * @param string $sProductId product id
      * @param double $dAmount    item amount
      * @param array  $aSel       article select lists
      * @param bool   $blOverride override item amount or not
+     * @param array  $aPersParam product persistent parameters (default null)
      *
      * @return null
      */
-    protected function _addItemToSavedBasket( $sProductId , $dAmount, $aSel, $blOverride = false )
+    /*
+    protected function _addItemToSavedBasket( $sProductId , $dAmount, $aSel, $blOverride = false, $aPersParam = null )
     {
         // updating basket history
         if ( $oUser = $this->getBasketUser() ) {
-            $oUser->getBasket( 'savedbasket' )->addItemToBasket( $sProductId, $dAmount, $aSel, $blOverride );
+            $oUser->getBasket( 'savedbasket' )->addItemToBasket( $sProductId, $dAmount, $aSel, $blOverride, $aPersParam );
         }
-    }
+    }*/
 
     /**
      * Cleans up saved basket data. This method usually is initiated by

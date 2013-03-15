@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 28679 2010-06-29 07:39:55Z ralf.trapp $
+ * @version   SVN: $Id: help_lang.php 29656 2010-09-07 12:46:40Z vilma $
  */
 
 /**
@@ -145,7 +145,7 @@ $aLang =  array(
                                                     '<ul><li>If the setting is checked, negative stock values are calculated if further units are bought.</li>' .
                                                     '<li>If the setting is unchecked, the stock value never falls below 0, even if further units are bought.</li></ul>',
 
-'HELP_SHOP_CONFIG_NEWARTBYINSERT'               =>  'On the front page of your eShop the newest products are shown in <span class="filename_filepath_or_italic">Just arrived!</span>. With this setting you define how the newest products are calculated: by date of creation or by date of last change.',
+'HELP_SHOP_CONFIG_NEWARTBYINSERT'               =>  'On the front page of your eShop the newest products are shown in <span class="filename_filepath_or_italic">Just arrived!</span>.  This setting determines how the newest products are calculated: by date of creation or by date of last change in admin/last order.',
 
 'HELP_SHOP_CONFIG_LOAD_DYNAMIC_PAGES'           =>  'If this setting is checked, additional information about other oxid products is shown in the menu, e.g. about OXID eFire. Which information is loaded depends on the location of your eShop.',
 

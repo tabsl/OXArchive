@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxoutput.php 27595 2010-05-06 10:52:07Z tomas $
+ * @version   SVN: $Id: oxoutput.php 29937 2010-09-23 06:34:52Z alfonsas $
  */
 
 /**
@@ -92,8 +92,12 @@ class oxOutput extends oxSuperCfg
         $sEdition = $this->getConfig()->getFullEdition();
         $sCurYear = date("Y");
 
+        // SHOW ONLY MAJOR VERSION NUMBER
+        $aVersion = explode('.', $sVersion);
+        $sMajorVersion = reset($aVersion);
+
         // Replacing only once per page
-        $sOutput = str_ireplace("</head>", "</head>\n  <!-- OXID eShop {$sEdition}, Version {$sVersion}, Shopping Cart System (c) OXID eSales AG 2003 - {$sCurYear} - http://www.oxid-esales.com -->", ltrim($sOutput));
+        $sOutput = str_ireplace("</head>", "</head>\n  <!-- OXID eShop {$sEdition}, Version {$sMajorVersion}, Shopping Cart System (c) OXID eSales AG 2003 - {$sCurYear} - http://www.oxid-esales.com -->", ltrim($sOutput));
 
         return $sOutput;
     }

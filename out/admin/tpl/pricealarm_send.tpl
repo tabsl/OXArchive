@@ -32,7 +32,7 @@ window.onload = function ()
 <div class="liste">
 <center>
 <h1>[{ oxmultilang ident="PRICEALARM_SEND_SENDED" }] [{ $iStart}] [{ oxmultilang ident="PRICEALARM_SEND_FROM" }] [{$iAllCnt}].</h1>
-</center
+</center>
 </div>
 
 [{include file="pagetabsnippet.tpl" noOXIDCheck="true"}]

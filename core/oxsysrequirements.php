@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsysrequirements.php 29333 2010-08-12 13:07:10Z arvydas $
+ * @version   SVN: $Id: oxsysrequirements.php 29902 2010-09-17 15:40:37Z sarunas $
  */
 
 /**
@@ -288,6 +288,72 @@ class oxSysRequirements
     }
 
     /**
+     * returns host, port, base dir, ssl information as assotiative array, false on error
+     * takes this info from eShop config.inc.php (via oxConfig class)
+     *
+     * @return array
+     */
+    protected function _getShopHostInfoFromConfig()
+    {
+        $sShopURL = oxConfig::getInstance()->getConfigParam( 'sShopURL' );
+        if (preg_match('#^(https?://)?([^/:]+)(:([0-9]+))?(/.*)?$#i', $sShopURL, $m)) {
+            $sHost = $m[2];
+            $iPort = (int)$m[4];
+            $blSsl = (strtolower($m[1])=='https://');
+            if (!$iPort) {
+                $iPort = $blSsl?443:80;
+            }
+            $sScript = rtrim($m[5], '/').'/';
+            return array(
+                    'host'=>$sHost,
+                    'port'=>$iPort,
+                    'dir'=>$sScript,
+                    'ssl'=>$blSsl,
+            );
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * returns host, port, base dir, ssl information as assotiative array, false on error
+     * takes this info from _SERVER variable
+     *
+     * @return array
+     */
+    protected function _getShopHostInfoFromServerVars()
+    {
+        // got here from setup dir
+        $sScript = $_SERVER['SCRIPT_NAME'];
+        $iPort = (int) $_SERVER['SERVER_PORT'];
+        $blSsl = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on'));
+        if (!$iPort) {
+            $iPort = $blSsl?443:80;
+        }
+        $sScript = rtrim(dirname(dirname( $sScript )), '/').'/';
+        return array(
+                    'host'=>$_SERVER['HTTP_HOST'],
+                    'port'=>$iPort,
+                    'dir'=>$sScript,
+                    'ssl'=>$blSsl,
+        );
+    }
+
+    /**
+     * returns host, port, current script, ssl information as assotiative array, false on error
+     *
+     * @return array
+     */
+    protected function _getShopHostInfo()
+    {
+        if ( isAdmin() ) {
+            return $this->_getShopHostInfoFromConfig();
+        } else {
+            return $this->_getShopHostInfoFromServerVars();
+        }
+    }
+
+    /**
      * Checks if mod_rewrite extension is loaded
      *
      * @return integer
@@ -295,19 +361,10 @@ class oxSysRequirements
     public function checkModRewrite()
     {
         $iModStat = null;
-        $sHost   = $_SERVER['HTTP_HOST'];
-        $sScript = $_SERVER['SCRIPT_NAME'];
-        $iPort = isset( $_SERVER['SERVER_PORT'] ) ? $_SERVER['SERVER_PORT'] : 80;
-        if ( $sScript && $rFp = @fsockopen( $sHost, $iPort, $iErrNo, $sErrStr, 10 ) ) {
-            if ( isAdmin() ) {
-                $sScript = oxConfig::getInstance()->getConfigParam( 'sShopURL' ).'oxseo.php?mod_rewrite_module_is=off';
-            } else {
-                $sScript = str_replace( basename( $sScript ), '../oxseo.php?mod_rewrite_module_is=off', $sScript );
-            }
-
-            $sReq  = "POST $sScript HTTP/1.1\r\n";
-            $sReq .= "Host: $sHost\r\n";
-            $sReq .= "User-Agent: oxid setup\r\n";
+        if ( ($aHostInfo = $this->_getShopHostInfo()) && $rFp = @fsockopen( ($aHostInfo['ssl']?'ssl://':'').$aHostInfo['host'], $aHostInfo['port'], $iErrNo, $sErrStr, 10 ) ) {
+            $sReq  = "POST {$aHostInfo['dir']}oxseo.php?mod_rewrite_module_is=off HTTP/1.1\r\n";
+            $sReq .= "Host: {$aHostInfo['host']}\r\n";
+            $sReq .= "User-Agent: OXID eShop setup\r\n";
             $sReq .= "Content-Type: application/x-www-form-urlencoded\r\n";
             $sReq .= "Content-Length: 0\r\n"; // empty post
             $sReq .= "Connection: close\r\n\r\n";

@@ -6,38 +6,38 @@
        <table width="100%" cellpadding="0" cellspacing="0">
         <tr>
          <td colspan="[{$allCols}]" align="center">&nbsp;</td>
-        </tr>       
+        </tr>
         <tr>
          <td colspan="[{$allCols}]" align="center"><b>[{ oxmultilang ident="REPORT_TOP_CLICKED_CATEGORIES_CLICKPERCAT" }]</b></td>
         </tr>
         <tr>
          <td colspan="[{$allCols}]" align="center">&nbsp;</td>
-        </tr>        
+        </tr>
         <tr>
-         <td></td>         
-         [{foreach name=outer item=classe from=$classes}]         
-          [{foreach key=key item=curr_point from=$classe}]         
-          <td class="[{$curr_point}]>[{$key}]</td>
+         <td></td>
+         [{foreach name=outer item=classe from=$classes}]
+          [{foreach key=key item=curr_point from=$classe}]
+          <td class="[{$curr_point}]">[{$key}]</td>
           [{/foreach}]
          [{/foreach}]
          <td class="report_searchstrings_scale_empty_right"></td>
         </tr>
-        [{foreach name=outer item=percent from=$percents}]         
-         [{foreach key=key item=curr_point from=$percent}]         
+        [{foreach name=outer item=percent from=$percents}]
+         [{foreach key=key item=curr_point from=$percent}]
          <tr>
           <td class="report_searchstrings_scale" style="height: 20px;width: 150px;">&nbsp;[{ $key }]&nbsp;</td><td colspan="[{$cols}]"><img src="[{ $shop->basedir }]/out/admin/img/slide.jpg" height="10" width="[{$curr_point}]%"></td><td></td>
          </tr>
          [{/foreach}]
-        [{/foreach}]        
+        [{/foreach}]
         <tr>
          <td>&nbsp;</td><td>&nbsp;</td>
-        </tr>                
-       </table>  
+        </tr>
+       </table>
       </td>
     </tr>
   </table>
 [{else}]
-<b>[{ oxmultilang ident="GENERAL_NODATA" }]</b>  
-[{/if}]  
+<b>[{ oxmultilang ident="GENERAL_NODATA" }]</b>
+[{/if}]
 <br>
 <br>

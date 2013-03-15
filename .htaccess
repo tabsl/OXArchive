@@ -22,7 +22,7 @@ RewriteRule (\.html|\/)$ oxseo.php
 </IfModule>
 
 # disabling log file access from outside
-<FilesMatch "(EXCEPTION_LOG\.txt|\.log$|\.tpl$)">
+<FilesMatch "(EXCEPTION_LOG\.txt|\.log$|\.tpl$|pkg.rev)">
 order allow,deny
 deny from all
 </FilesMatch>

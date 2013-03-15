@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 28583 2010-06-23 09:12:44Z arvydas $
+ * @version   SVN: $Id: oxconfig.php 29791 2010-09-10 13:23:35Z vilma $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -1278,8 +1278,8 @@ class oxConfig extends oxSuperCfg
     {
         if ( $sAltUrl = $this->getConfigParam( 'sAltImageDir' ) ) {
 
-            if ( $this->isSsl() ) {
-                $sAltUrl = str_replace( 'http://', 'https://', $sAltUrl );
+            if ( $this->isSsl() && $blSSL && $sSslAltUrl = $this->getConfigParam( 'sSSLAltImageDir' ) ) {
+                $sAltUrl = $sSslAltUrl;
             }
 
             if ( !is_null( $sFile ) ) {

@@ -151,15 +151,6 @@
         </tr>
         <tr>
             <td class="edittext">
-            [{ oxmultilang ident="GENERAL_PIDENT" }]&nbsp;
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="24" maxlength="[{$edit->oxorder__oxpident->fldmax_length}]" name="editval[oxorder__oxpident]" value="[{$edit->oxorder__oxpident->value }]" [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_PIDENT" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
             </td>
             <td class="edittext"><br>
             <input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="GENERAL_SAVE" }]" onClick="Javascript:document.myedit.fnc.value='save'"" [{ $readonly }]>

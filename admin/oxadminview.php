@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadminview.php 28904 2010-07-21 08:56:35Z sarunas $
+ * @version   SVN: $Id: oxadminview.php 29933 2010-09-22 13:24:31Z vilma $
  */
 
 /**
@@ -248,6 +248,10 @@ class oxAdminView extends oxView
             if ( !$sLangAbbr ) {
                 $oLang = oxLang::getInstance();
                 $sLangAbbr = $oLang->getLanguageAbbr( $oLang->getObjectTplLanguage() );
+            }
+
+            if ( $sLangAbbr != "de" ) {
+                $sLangAbbr = "en";
             }
 
             $this->_sServiceUrl = $sUrl . $this->_getShopVersionNr()."/{$sCountry}/{$sLangAbbr}/";

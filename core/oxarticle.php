@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 29400 2010-08-18 08:00:02Z sarunas $
+ * @version   SVN: $Id: oxarticle.php 29757 2010-09-07 15:02:08Z tomas $
  */
 
 // defining supported link types
@@ -4257,15 +4257,22 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         $oDb = oxDb::getDb();
         $sParentIdQuoted = $oDb->quote($sParentID);
         //#M0000883 (Sarunas)
-        $sQ = 'select min(oxprice) as varminprice from oxarticles where '.$this->getSqlActiveSnippet(true).' and (oxparentid = '.$sParentIdQuoted;
-        //#M0000886 (Sarunas)
-        if ( $this->getConfig()->getConfigParam( 'blVariantParentBuyable' ) ) {
-            $sQ .= ' or oxid = '.$sParentIdQuoted;
-        } else {
-            $sQ .= ' or (oxid = '.$sParentIdQuoted.' and oxvarcount=0)';
-        }
-        $sQ .= ')';
+        $sQ = 'select min(oxprice) as varminprice from oxarticles where '.$this->getSqlActiveSnippet(true).' and (oxparentid = '.$sParentIdQuoted.')';
         $dVarMinPrice = $oDb->getOne($sQ);
+
+        $dParentPrice = $oDb->getOne("select oxprice from oxarticles where oxid = $sParentIdQuoted ");
+
+        $blParentBuyable =  $this->getConfig()->getConfigParam( 'blVariantParentBuyable' );
+
+        if ($dVarMinPrice) {
+            if ($blParentBuyable) {
+                $dVarMinPrice = min($dVarMinPrice, $dParentPrice);
+            }
+
+        } else {
+            $dVarMinPrice = $dParentPrice;
+        }
+
         if ( $dVarMinPrice ) {
             $sQ = 'update oxarticles set oxvarminprice = '.$dVarMinPrice.' where oxid = '.$sParentIdQuoted;
             $oDb->execute($sQ);

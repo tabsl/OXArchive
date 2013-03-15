@@ -19,14 +19,15 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuserbasket.php 29487 2010-08-23 07:55:25Z tomas $
+ * @version   SVN: $Id: oxuserbasket.php 29552 2010-08-27 13:35:01Z tomas $
  */
 
 /**
- * Virtual basket manager class.
- * Virtual baskets are user product lists which are stored in database (stored basket, noticelists, wishlists).
- * Collects shopping basket information, updates it, removes or adds products to the database.
- *
+ * Virtual basket manager class. Virtual baskets are user article lists which are stored in database (noticelists, wishlists).
+ * The name of the class is left like this because of historic reasons.
+ * It is more relevant to wishlist and noticelist than to shoping basket.
+ * Collects shopping basket information, updates it (DB level), removes or adds
+ * articles to it.
  * @package core
  */
 class oxUserBasket extends oxBase
@@ -142,7 +143,7 @@ class oxUserBasket extends oxBase
         if ( is_array( $aItems ) ) {
             foreach ( $aItems as $sId => $oItem ) {
                 $oArticle = $oItem->getArticle( $sId );
-                $aRes[$this->_getItemKey($oArticle->getId(), $oItem->getSelList())] = $oArticle;
+                $aRes[$this->_getItemKey($oArticle->getId(), $oItem->getSelList(), $oItem->getPersParams())] = $oArticle;
             }
         }
         return $aRes;
@@ -176,12 +177,14 @@ class oxUserBasket extends oxBase
         }
         $sSelect .= "where oxuserbasketitems.oxbasketid = '".$this->getId()."' and $sViewName.oxid is not null ";
 
+        $sSelect .= " order by oxartnum, oxsellist, oxpersparam ";
+
         $oItems = oxNew( 'oxlist' );
         $oItems->init( 'oxuserbasketitem' );
         $oItems->selectstring( $sSelect );
 
         foreach ( $oItems as $oItem ) {
-            $sKey = $this->_getItemKey( $oItem->oxuserbasketitems__oxartid->value, $oItem->getSelList() );
+            $sKey = $this->_getItemKey( $oItem->oxuserbasketitems__oxartid->value, $oItem->getSelList(), $oItem->getPersParams() );
             $this->_aBasketItems[$sKey] = $oItem;
         }
 
@@ -191,17 +194,21 @@ class oxUserBasket extends oxBase
     /**
      * Creates and returns  oxuserbasketitem object
      *
-     * @param string $sProductId Product Id
-     * @param array  $aSelList   product select lists
+     * @param string $sProductId  Product Id
+     * @param array  $aSelList    product select lists
+     * @param string $aPersParams persistent parameters
      *
      * @return oxUserBasketItem
      */
 
-    protected function _createItem( $sProductId, $aSelList = null )
+    protected function _createItem( $sProductId, $aSelList = null, $aPersParams = null )
     {
         $oNewItem = oxNew( 'oxuserbasketitem' );
         $oNewItem->oxuserbasketitems__oxartid    = new oxField($sProductId, oxField::T_RAW);
         $oNewItem->oxuserbasketitems__oxbasketid = new oxField($this->getId(), oxField::T_RAW);
+        if ( $aPersParams && count($aPersParams) ) {
+            $oNewItem->setPersParams( $aPersParams );
+        }
 
         if ( !$aSelList ) {
             $oArticle = oxNew( 'oxArticle' );
@@ -222,17 +229,17 @@ class oxUserBasket extends oxBase
      * Searches for item in basket items array and returns it. If not item was
      * found - new item is created.
      *
-     * @param string $sProductId product id, basket item id or basket item index
-     * @param array  $aSelList   select lists
+     * @param string $sProductId  product id, basket item id or basket item index
+     * @param array  $aSelList    select lists
+     * @param string $aPersParams persistent parameters
      *
      * @return oxUserBasketItem
      */
-    public function getItem( $sProductId, $aSelList)
+    public function getItem( $sProductId, $aSelList, $aPersParams = null)
     {
         // loading basket item list
         $aItems   = $this->getItems();
-        $sItemKey = $this->_getItemKey( $sProductId, $aSelList );
-
+        $sItemKey = $this->_getItemKey( $sProductId, $aSelList, $aPersParams );
         $oItem = null;
         // returning existing item
         if ( isset( $aItems[$sProductId] )) {
@@ -240,7 +247,7 @@ class oxUserBasket extends oxBase
         } elseif ( isset( $aItems[$sItemKey] ) ) {
             $oItem = $aItems[$sItemKey];
         } else {
-            $oItem = $this->_createItem( $sProductId, $aSelList );
+            $oItem = $this->_createItem( $sProductId, $aSelList, $aPersParams );
         }
 
         return $oItem;
@@ -251,13 +258,14 @@ class oxUserBasket extends oxBase
      *
      * @param string $sProductId Product Id
      * @param array  $aSel       product select lists
+     * @param array  $aPersParam basket item persistent parameters
      *
      * @return string
      */
-    protected function _getItemKey( $sProductId, $aSel = null )
+    protected function _getItemKey( $sProductId, $aSel = null, $aPersParam = null )
     {
         $aSel = ( $aSel != null) ? $aSel : array (0=>'0');
-        return md5( $sProductId.'|'.serialize( $aSel ) );
+        return md5( $sProductId.'|'.serialize( $aSel ).'|'.serialize( $aPersParam ) );
     }
 
     /**
@@ -273,24 +281,25 @@ class oxUserBasket extends oxBase
     }
 
     /**
-     * Method adds/removes user chosen article to/from the basket. Returns total amount
+     * Method adds/removes user chosen article to/from his noticelist or wishlist. Returns total amount
      * of articles in list.
      *
      * @param string $sProductId Article ID
      * @param double $dAmount    Product amount
      * @param array  $aSel       product select lists
      * @param bool   $blOverride if true overrides $dAmount, else sums previous with current it
+     * @param array  $aPersParam product persistent parameters (default null)
      *
      * @return integer
      */
-    public function addItemToBasket( $sProductId = null, $dAmount = null, $aSel = null, $blOverride = false )
+    public function addItemToBasket( $sProductId = null, $dAmount = null, $aSel = null, $blOverride = false, $aPersParam = null )
     {
         // basket info is only written in DB when something is in it
         if ( $this->_blNewBasket ) {
             $this->save();
         }
 
-        if ( ( $oUserBasketItem = $this->getItem( $sProductId, $aSel ) ) ) {
+        if ( ( $oUserBasketItem = $this->getItem( $sProductId, $aSel, $aPersParam ) ) ) {
             // updating object info and adding (if not yet added) item into basket items array
             if ( !$blOverride && !empty($oUserBasketItem->oxuserbasketitems__oxamount->value) ) {
                 $dAmount += $oUserBasketItem->oxuserbasketitems__oxamount->value;
@@ -299,14 +308,14 @@ class oxUserBasket extends oxBase
             if ( !$dAmount ) {
                 // if amount = 0 the means remove it
                 $oUserBasketItem->delete();
-                if ( isset($this->_aBasketItems[$this->_getItemKey($sProductId, $aSel)])) {
-                    unset( $this->_aBasketItems[$this->_getItemKey($sProductId, $aSel)] );
+                if ( isset($this->_aBasketItems[$this->_getItemKey($sProductId, $aSel, $aPersParam)])) {
+                    unset( $this->_aBasketItems[$this->_getItemKey($sProductId, $aSel, $aPersParam)] );
                 }
             } else {
                 $oUserBasketItem->oxuserbasketitems__oxamount = new oxField($dAmount, oxField::T_RAW);
                 $oUserBasketItem->save();
 
-                $this->_aBasketItems[$this->_getItemKey($sProductId, $aSel)] = $oUserBasketItem;
+                $this->_aBasketItems[$this->_getItemKey($sProductId, $aSel, $aPersParam)] = $oUserBasketItem;
             }
 
             //update timestamp

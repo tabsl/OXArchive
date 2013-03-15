@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: delivery_articles.inc.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: delivery_articles.inc.php 29962 2010-09-24 08:43:23Z tomas $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -118,7 +118,7 @@ class ajaxComponent extends ajaxListComponent
         // removing all
         if ( oxConfig::getParameter( 'all' ) ) {
 
-            $sQ = $this->_addFilter( "delete oxobject2delivery.* ".$this->_getQuery() );
+            $sQ = parent::_addFilter( "delete oxobject2delivery.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
 
         } elseif ( is_array( $aChosenArt ) ) {

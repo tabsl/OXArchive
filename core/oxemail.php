@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxemail.php 28320 2010-06-14 08:51:25Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxemail.php 29935 2010-09-22 22:34:57Z alfonsas $
  */
 /**
  * Includes PHP mailer class.
@@ -384,15 +384,16 @@ class oxEmail extends PHPMailer
     {
         $sProtocol = '';
         $sSmtpHost = $sUrl;
-        if ( getStr()->preg_match('@^([0-9a-z]+://)?(.*)$@i', $sUrl, $m ) ) {
-            if ($m[1]) {
-                if (($m[1] == 'ssl://') || ($m[1] == 'tls://')) {
-                    $this->set( "SMTPSecure", substr($m[1], 0, 3) );
+        $aMatch = array();
+        if ( getStr()->preg_match('@^([0-9a-z]+://)?(.*)$@i', $sUrl, $aMatch ) ) {
+            if ($aMatch[1]) {
+                if (($aMatch[1] == 'ssl://') || ($aMatch[1] == 'tls://')) {
+                    $this->set( "SMTPSecure", substr($aMatch[1], 0, 3) );
                 } else {
-                    $sProtocol = $m[1];
+                    $sProtocol = $aMatch[1];
                 }
             }
-            $sSmtpHost = $m[2];
+            $sSmtpHost = $aMatch[2];
         }
 
         return $sProtocol.$sSmtpHost;
@@ -441,9 +442,10 @@ class oxEmail extends PHPMailer
         $blIsSmtp = false;
         if ( $sSmtpHost ) {
             $sSmtpPort = $this->SMTP_PORT;
-            if ( getStr()->preg_match('@^(.*?)(:([0-9]+))?$@i', $sSmtpHost, $m)) {
-                $sSmtpHost = $m[1];
-                $sSmtpPort = (int)$m[3];
+            $aMatch = array();
+            if ( getStr()->preg_match('@^(.*?)(:([0-9]+))?$@i', $sSmtpHost, $aMatch)) {
+                $sSmtpHost = $aMatch[1];
+                $sSmtpPort = (int)$aMatch[3];
                 if (!$sSmtpPort) {
                     $sSmtpPort = $this->SMTP_PORT;
                 }
@@ -861,8 +863,8 @@ class oxEmail extends PHPMailer
         $myConfig = $this->getConfig();
         $iActShopLang = $myConfig->getActiveShop()->getLanguage();
 
-        $sUrl      = $myConfig->getShopHomeURL().'cl=newsletter&amp;fnc=addme&amp;uid='.$sId.$sLang;
-        $sUrl .= ( $iActShopLang ) ? '&amp;lang='.$iActShopLang : "";
+        $sUrl = $myConfig->getShopHomeURL().'cl=newsletter&amp;fnc=addme&amp;uid='.$sId;
+        $sUrl.= ( $iActShopLang ) ? '&amp;lang='.$iActShopLang : "";
         return $sUrl;
     }
 
@@ -1442,7 +1444,7 @@ class oxEmail extends PHPMailer
     public function setBody( $sBody = null, $blClearSid = true )
     {
         if ( $blClearSid ) {
-            $sBody = getStr()->preg_replace("/sid=[A-Z0-9\.]+/i", "sid=x&amp;shp=" . $this->getConfig()->getShopId(), $sBody);
+            $sBody = getStr()->preg_replace('/((\?|&(amp;)?)(force_)?(admin_)?)sid=[A-Z0-9\.]+/i', '\1sid=x&amp;shp=' . $this->getConfig()->getShopId(), $sBody);
         }
 
         $this->set( "Body", $sBody );
@@ -1470,7 +1472,7 @@ class oxEmail extends PHPMailer
     public function setAltBody( $sAltBody = null, $blClearSid = true )
     {
         if ( $blClearSid ) {
-            $sAltBody = getStr()->preg_replace("/sid=[A-Z0-9\.]+/i", "sid=x&amp;shp=" . $this->getConfig()->getShopId(), $sAltBody);
+            $sAltBody = getStr()->preg_replace('/((\?|&(amp;)?)(force_)?(admin_)?)sid=[A-Z0-9\.]+/i', '\1sid=x&amp;shp=' . $this->getConfig()->getShopId(), $sAltBody);
         }
 
         // A. alt body is used for plain text emails so we should eliminate HTML entities

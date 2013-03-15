@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: compare.php 26725 2010-03-22 09:48:54Z arvydas $
+ * @version   SVN: $Id: compare.php 29553 2010-08-27 14:48:10Z sarunas $
  */
 
 /**
@@ -148,8 +148,8 @@ class Compare extends oxUBase
      */
     public function moveLeft() //#777C
     {
-        if ( $aItems = $this->getCompareItems() ) {
-            $sArticleId = oxConfig::getParameter( 'aid' );
+        $sArticleId = oxConfig::getParameter( 'aid' );
+        if ( $sArticleId && ( $aItems = $this->getCompareItems() ) ) {
             $sPrevArticleId = null;
 
             $blFound = false;
@@ -187,8 +187,8 @@ class Compare extends oxUBase
      */
     public function moveRight()  //#777C
     {
-        if ( $aItems = $this->getCompareItems() ) {
-            $sArticleId = oxConfig::getParameter( 'aid' );
+        $sArticleId = oxConfig::getParameter( 'aid' );
+        if ( $sArticleId && ( $aItems = $this->getCompareItems() ) ) {
             $sNextArticleId = 0;
 
             $blFound = false;

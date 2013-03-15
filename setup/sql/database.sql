@@ -313,6 +313,7 @@ CREATE TABLE `oxuserbasketitems` (
   `OXARTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXAMOUNT` char(32) NOT NULL default '',
   `OXSELLIST` varchar(255) NOT NULL default '',
+  `OXPERSPARAM` text NOT NULL,
   PRIMARY KEY  (`OXID`),
   KEY `OXBASKETID` (`OXBASKETID`),
   KEY `OXARTID` (`OXARTID`)
@@ -524,7 +525,7 @@ INSERT INTO `oxconfig` VALUES ('7a59f9000f39e5d9549a5d1e29c076a0', 'oxbaseshop',
 INSERT INTO `oxconfig` VALUES ('7a59f9000f39e5d9549a5d1e29c076a2', 'oxbaseshop', 'blOrderOptInEmail', 'bool', 0x07);
 INSERT INTO `oxconfig` VALUES ('bd3e73e699331eb92c557113bac02fc4', 'oxbaseshop', 'dPointsForInvitation', 'str', 0x07c4);
 INSERT INTO `oxconfig` VALUES ('bd320d322fa2f638086787c512329eec', 'oxbaseshop', 'dPointsForRegistration', 'str', 0x07c4);
-
+INSERT INTO `oxconfig` VALUES ('99065ff58e9d2c1b2e362e54c0bb54f3', 'oxbaseshop', 'blNewArtByInsert', 'bool', 0x07);
 #
 # Table structure for table `oxcontents`
 #
@@ -1340,7 +1341,6 @@ CREATE TABLE `oxorder` (
   `OXCURRENCY` varchar(32) NOT NULL default '',
   `OXCURRATE` double NOT NULL default '0',
   `OXFOLDER` varchar(32) NOT NULL default '',
-  `OXPIDENT` varchar(128) NOT NULL default '',
   `OXTRANSID` varchar(64) NOT NULL default '',
   `OXPAYID` varchar(64) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXXID` varchar(64) NOT NULL default '',
@@ -1453,7 +1453,7 @@ CREATE TABLE `oxpayments` (
 INSERT INTO `oxpayments` VALUES ('oxidcashondel', 1, 'Nachnahme', 7.5, 'abs', 0, 0, 1000000, '', 1, 'COD (Cash on Delivery)', '', '', '', '', '', '', '', '', '', 0, '');
 INSERT INTO `oxpayments` VALUES ('oxidcreditcard', 1, 'Kreditkarte', 20.9, 'abs', 500, 0, 1000000, 'kktype__@@kknumber__@@kkmonth__@@kkyear__@@kkname__@@kkpruef__@@', 1, 'Credit Card', 'kktype__@@kknumber__@@kkmonth__@@kkyear__@@kkname__@@kkpruef__@@', '', '', '', '', 'Die Belastung Ihrer Kreditkarte erfolgt mit dem Abschluss der Bestellung.', 'Your Credit Card will be charged when you submit the order.', '', '', 0, '');
 INSERT INTO `oxpayments` VALUES ('oxiddebitnote', 1, 'Bankeinzug/Lastschrift', 0, 'abs', 0, 0, 1000000, 'lsbankname__@@lsblz__@@lsktonr__@@lsktoinhaber__@@', 0, 'Direct Debit', 'lsbankname__@@lsblz__@@lsktonr__@@lsktoinhaber__@@', '', '', '', '', 'Die Belastung Ihres Kontos erfolgt mit dem Versand der Ware.', 'Your bank account will be charged when the order is shipped.', '', '', 0, '');
-INSERT INTO `oxpayments` VALUES ('oxidpayadvance', 1, 'Vorauskasse 2% Skonto', -2, '%', 0, 0, 1000000, '', 1, 'Cash in advance - 2% cash discount', '', '', '', '', '', '', '', '', '', 0, '');
+INSERT INTO `oxpayments` VALUES ('oxidpayadvance', 1, 'Vorauskasse', 0, 'abs', 0, 0, 1000000, '', 1, 'Cash in advance', '', '', '', '', '', '', '', '', '', 0, '');
 INSERT INTO `oxpayments` VALUES ('oxidinvoice', 1, 'Rechnung', 0, 'abs', 800, 0, 1000000, '', 0, 'Invoice', '', '', '', '', '', '', '', '', '', 0, '');
 INSERT INTO `oxpayments` VALUES ('oxempty', 1, 'Empty', 0, 'abs', 0, 0, 0, '', 0, 'Empty', '', '', '', '', '', 'for other countries', 'An example. Maybe for use with other countries', '', '', 0, '');
 
@@ -1693,7 +1693,7 @@ CREATE TABLE `oxshops` (
 # Data for table `oxshops`
 #
 
-INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Store', '', '', 'online kaufen', 'purchase online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'info@myoxideshop.com', 'reply@myoxideshop.com', 'order@myoxideshop.com', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order at OXID eShop', 'Thank you for your registration at OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', '', '', '', 'Your Company Name', '2425 Maple Street', '9041', 'Any City, CA', 'United States', 'Bank of America', '1234567890', '900 1234567', '', '', '', 'John', 'Doe', '217-8918712', '217-8918713', 'www.myoxideshop.com', '', '', '', '', '', '', '', '', 'CE', '4.4.2', 1, 1, 0, 0);
+INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Store', '', '', 'online kaufen', 'purchase online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'info@myoxideshop.com', 'reply@myoxideshop.com', 'order@myoxideshop.com', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order at OXID eShop', 'Thank you for your registration at OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', '', '', '', 'Your Company Name', '2425 Maple Street', '9041', 'Any City, CA', 'United States', 'Bank of America', '1234567890', '900 1234567', '', '', '', 'John', 'Doe', '217-8918712', '217-8918713', 'www.myoxideshop.com', '', '', '', '', '', '', '', '', 'CE', '4.4.3', 1, 1, 0, 0);
 
 #
 # Table structure for table `oxstatistics`

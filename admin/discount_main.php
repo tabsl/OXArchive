@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: discount_main.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: discount_main.php 29955 2010-09-23 15:36:31Z vilma $
  */
 
 /**
@@ -196,12 +196,18 @@ class Discount_Main extends oxAdminDetails
         $sArticleTable = getViewName("oxarticles");
         $sO2CView = getViewName('oxobject2category');
         $sSuffix = oxLang::getInstance()->getLanguageTag();
-        $sSelect = "select $sArticleTable.oxid, $sArticleTable.oxartnum, $sArticleTable.oxtitle$sSuffix from $sArticleTable ";
+        $sTitle = "$sArticleTable.oxtitle$sSuffix";
+        if ( $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ) {
+            $sTitle = " IF( $sArticleTable.oxparentid = '', $sArticleTable.oxtitle$sSuffix, CONCAT((select oxart.oxtitle$sSuffix from $sArticleTable as oxart where oxart.oxid = $sArticleTable.oxparentid),', ',$sArticleTable.oxvarselect$sSuffix) ) ";
+        }
+        $sSelect = "select $sArticleTable.oxid, $sArticleTable.oxartnum, $sTitle from $sArticleTable ";
         if ( !isset( $sITMChosenArtCat) || !$sITMChosenArtCat || $sITMChosenArtCat == "oxrootid") {
             $sSelect .= "where $sArticleTable.oxid = ".$oDB->quote( $sItmartid ) ." ";
         } elseif ( $sITMChosenArtCat != "-1" && $sITMChosenArtCat != "oxrootid") {
             $oArticle = oxNew( 'oxarticle' );
-            $sSelect .= "left join $sO2CView as oxobject2category on $sArticleTable.oxid=oxobject2category.oxobjectid where oxobject2category.oxcatnid = ".$oDB->quote( $sITMChosenArtCat ) ." and ".$oArticle->getSqlActiveSnippet()." order by oxobject2category.oxpos";
+            $sSelect .= "left join $sO2CView as oxobject2category on ";
+            $sSelect .= $this->getConfig()->getConfigParam( 'blVariantsSelection' )?" ( $sArticleTable.oxid=oxobject2category.oxobjectid or $sArticleTable.oxparentid=oxobject2category.oxobjectid) ":" $sArticleTable.oxid=oxobject2category.oxobjectid ";
+            $sSelect .= " where oxobject2category.oxcatnid = ".$oDB->quote( $sITMChosenArtCat ) ." and ".$oArticle->getSqlActiveSnippet()." order by oxobject2category.oxpos";
         } else {
             $sSelect .= "left join $sO2CView as oxobject2category on $sArticleTable.oxid=oxobject2category.oxobjectid where oxobject2category.oxcatnid is null AND $sArticleTable.oxparentid = '' ";
         }
