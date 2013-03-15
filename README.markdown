@@ -14,4 +14,4 @@ If you want to see a list of available versions, just type:
 
    git tag;
 
-
+If you have any suggestions/improvements, feel free to send a pull request.
