@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_user.php 52144 2012-11-22 13:29:36Z aurimas.gladutis $
+ * @version   SVN: $Id: oxcmp_user.php 53118 2012-12-19 09:13:47Z aurimas.gladutis $
  */
 
 // defining login/logout states
@@ -378,7 +378,6 @@ class oxcmp_user extends oxView
 
             // redirecting if user logs out in SSL mode
             if ( oxConfig::getParameter('redirect') && $myConfig->getConfigParam( 'sSSLShopURL' ) ) {
-
                 oxRegistry::getUtils()->redirect( $this->_getLogoutLink());
             }
         }
@@ -680,28 +679,26 @@ class oxcmp_user extends oxView
      */
     protected function _getLogoutLink()
     {
-        $myConfig = $this->getConfig();
-        $sLogoutLink = $myConfig->getShopSecureHomeUrl();
-        if ( $myConfig->isSsl() ) {
-            $sLogoutLink = $myConfig->getShopHomeUrl();
-        }
-        $sLogoutLink .= 'cl='.oxConfig::getParameter('cl').$this->getParent()->getDynUrlParams();
-        if ( $sParam = oxConfig::getParameter('anid') ) {
+        $oConfig = $this->getConfig();
+
+        $sLogoutLink = $oConfig->isSsl()? $oConfig->getShopSecureHomeUrl() : $oConfig->getShopHomeUrl();
+        $sLogoutLink .= 'cl='.$oConfig->getRequestParameter('cl').$this->getParent()->getDynUrlParams();
+        if ( $sParam = $oConfig->getRequestParameter('anid') ) {
             $sLogoutLink .= '&amp;anid='.$sParam;
         }
-        if ( $sParam = oxConfig::getParameter('cnid') ) {
+        if ( $sParam = $oConfig->getRequestParameter('cnid') ) {
             $sLogoutLink .= '&amp;cnid='.$sParam;
         }
-        if ( $sParam = oxConfig::getParameter('mnid') ) {
+        if ( $sParam = $oConfig->getRequestParameter('mnid') ) {
             $sLogoutLink .= '&amp;mnid='.$sParam;
         }
-        if ( $sParam = oxConfig::getParameter('tpl') ) {
+        if ( $sParam = $oConfig->getRequestParameter('tpl') ) {
             $sLogoutLink .= '&amp;tpl='.$sParam;
         }
-        if ( $sParam = oxConfig::getParameter('oxloadid') ) {
+        if ( $sParam = $oConfig->getRequestParameter('oxloadid') ) {
             $sLogoutLink .= '&amp;oxloadid='.$sParam;
         }
-        if ( $sParam = oxConfig::getParameter('recommid') ) {
+        if ( $sParam = $oConfig->getRequestParameter('recommid') ) {
             $sLogoutLink .= '&amp;recommid='.$sParam;
         }
         return $sLogoutLink.'&amp;fnc=logout';

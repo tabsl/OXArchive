@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2013
  * @version OXID eShop CE
- * @version   SVN: $Id: oxstrregular.php 51379 2012-11-06 07:30:52Z andrius.silgalis $
+ * @version   SVN: $Id: oxstrregular.php 53490 2013-01-08 16:04:12Z aurimas.gladutis $
  */
 
 /**
@@ -367,5 +367,19 @@ class oxStrRegular
             $sString = $this->preg_replace( "'<style[^>]*>.*</style>'siU", '', $sString );
         }
         return strip_tags( $sString, $sAllowableTags );
+    }
+
+    /**
+     * Compares two strings. Case sensitive.
+     * For use in sorting with reverse order
+     *
+     * @param string $sStr1 String to compare
+     * @param string $sStr2 String to compare
+     *
+     * @return int > 0 if str1 is less than str2; < 0 if str1 is greater than str2, and 0 if they are equal.
+     */
+    public function strrcmp( $sStr1, $sStr2 )
+    {
+        return -strcmp( $sStr1, $sStr2 );
     }
 }

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2013
  * @version OXID eShop CE
- * @version   SVN: $Id: oxfunctions.php 50925 2012-10-25 08:37:12Z saulius.stasiukaitis $
+ * @version   SVN: $Id: oxfunctions.php 53255 2013-01-02 09:54:31Z linas.kukulskis $
  */
 
 /**
@@ -150,7 +150,6 @@ function getClassDirs($sBasePath)
                          $sBasePath . 'core/cache/',
                          $sBasePath . 'core/cache/connectors/',
                          $sBasePath . 'core/wysiwigpro/',
-                         $sBasePath . 'core/jpgraph/',
                          $sBasePath . 'admin/reports/',
                          $sBasePath . 'admin/',
                          $sBasePath . 'modules/',

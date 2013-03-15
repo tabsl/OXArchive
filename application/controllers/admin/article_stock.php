@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_stock.php 52627 2012-12-03 08:28:49Z aurimas.gladutis $
+ * @version   SVN: $Id: article_stock.php 53099 2012-12-18 14:49:15Z aurimas.gladutis $
  */
 
 /**
@@ -105,11 +105,6 @@ class Article_Stock extends oxAdminDetails
         $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");
 
-        // checkbox handling
-        if ( !isset( $aParams['oxarticles__oxremindactive'])) {
-            $aParams['oxarticles__oxremindactive'] = 0;
-        }
-
             // shopid
             $sShopID = oxSession::getVar( "actshop");
             $aParams['oxarticles__oxshopid'] = $sShopID;
@@ -118,16 +113,20 @@ class Article_Stock extends oxAdminDetails
         $oArticle->loadInLang( $this->_iEditLang, $soxId );
 
         $oArticle->setLanguage( 0 );
+
+        // checkbox handling
+        if ( !$oArticle->oxarticles__oxparentid->value && !isset( $aParams['oxarticles__oxremindactive'])) {
+            $aParams['oxarticles__oxremindactive'] = 0;
+        }
+
         $oArticle->assign( $aParams );
 
         //tells to article to save in different language
         $oArticle->setLanguage( $this->_iEditLang );
         $oArticle = oxRegistry::get("oxUtilsFile")->processFiles( $oArticle );
 
-        if ( $oArticle->oxarticles__oxremindactive->value &&
-             $oArticle->oxarticles__oxremindamount->value <= $oArticle->oxarticles__oxstock->value ) {
-             $oArticle->oxarticles__oxremindactive->value = 1;
-        }
+        $oArticle->resetRemindStatus();
+
         $oArticle->updateVariantsRemind();
 
         $oArticle->save();

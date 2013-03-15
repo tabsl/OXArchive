@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2013
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 52907 2012-12-13 15:08:27Z aurimas.gladutis $
+ * @version   SVN: $Id: oxarticle.php 53455 2013-01-07 15:55:52Z aurimas.gladutis $
  */
 
 // defining supported link types
@@ -2581,32 +2581,37 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      *
      * @param string $sTag tag
      *
+     * @deprecated 2012-12-21. Use oxarticletags::getStdTagLink instead
+     *
      * @return string
      */
     public function getStdTagLink( $sTag )
     {
-        $sStdTagLink = $this->getConfig()->getShopHomeURL( $this->getLanguage(), false );
-        return $sStdTagLink . "cl=details&amp;anid=".$this->getId()."&amp;listtype=tag&amp;searchtag=".rawurlencode( $sTag );
+        $oArticleTags = oxNew('oxarticletaglist');
+        $oArticleTags->setArticleId( $this->getId() );
+        return $oArticleTags->getStdTagLink($sTag);
     }
 
     /**
      * Returns article tags
      *
+     * @deprecated 2012-12-21. Use oxarticletags::getTags instead
+     *
      * @return string;
      */
     public function getTags()
     {
-        $oDb = oxDb::getDb();
-        $sViewName = getViewName( "oxartextends", $this->getLanguage() );
-        $sQ = "select oxtags from {$sViewName} where oxid = ".$oDb->quote( $this->getId() );
-        $oTagCloud = oxNew('oxtagcloud');
-        return $oTagCloud->trimTags( $oDb->getOne( $sQ ) );
+        $oArticleTags = oxNew('oxarticletaglist');
+        $oArticleTags->load( $this->getId() );
+        return $oArticleTags->get()->__toString();
     }
 
     /**
      * Saves article tags
      *
      * @param string $sTags article tag
+     *
+     * @deprecated 2012-12-21. Use oxarticletags::saveTags instead
      *
      * @return bool
      */
@@ -2616,18 +2621,10 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         if ( !$this->allowDerivedUpdate() ) {
             return false;
         }
-
-
-        $oTagCloud = oxNew( 'oxtagcloud' );
-        $oTagCloud->resetTagCache();
-        $sTags = oxDb::getInstance()->escapeString( $oTagCloud->prepareTags( $sTags ) );
-        $oDb = oxDb::getDb();
-
-        $sTable = getLangTableName( 'oxartextends', $this->getLanguage() );
-        $sLangSuffix = oxRegistry::getLang()->getLanguageTag($this->getLanguage());
-        $sQ = "insert into {$sTable} (oxid, oxtags$sLangSuffix) value (".$oDb->quote( $this->getId() ).", '{$sTags}')
-               on duplicate key update oxtags$sLangSuffix = '{$sTags}'";
-        return $oDb->execute( $sQ );
+        $oArticleTags = oxNew('oxarticletaglist');
+        $oArticleTags->setArticleId( $this->getId() );
+        $oArticleTags->set( $sTags );
+        $oArticleTags->save();
     }
 
     /**
@@ -2635,36 +2632,19 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      *
      * @param string $sTag new tag
      *
+     * @deprecated 2012-12-21. Use oxarticletags::addTag instead
+     *
      * @return bool
      */
     public function addTag($sTag)
     {
-
-        $oDb = oxDb::getDb();
-
-        $oTagCloud = oxNew('oxtagcloud');
-        $oTagCloud->resetTagCache();
-        $sTag = $oTagCloud->prepareTags($sTag);
-        $sTagSeparator = $this->getConfig()->getConfigParam('sTagSeparator');
-
-        $sTable = getLangTableName( 'oxartextends', $this->getLanguage() );
-        $sLangSuffix = oxRegistry::getLang()->getLanguageTag($this->getLanguage());
-        if ( $oDb->getOne( "select {$sTable}.OXTAGS$sLangSuffix from {$sTable} where {$sTable}.OXID = ".$oDb->quote( $this->getId() ) ) ) {
-            $sTailTag = $sTagSeparator . $sTag;
-        } else {
-            $sTailTag = $sTag;
+        $oArticleTags = oxNew('oxarticletaglist');
+        $oArticleTags->load( $this->getId() );
+        $oArticleTags->addTag( $sTag );
+        if ( $oArticleTags->save() ) {
+            return true;
         }
-
-        $sTag = oxDb::getInstance()->escapeString($sTag);
-        $sTailTag = oxDb::getInstance()->escapeString($sTailTag);
-
-        $sTag = oxDb::getInstance()->escapeString($sTag);
-        $sTailTag = oxDb::getInstance()->escapeString($sTailTag);
-
-        $sQ = "insert into {$sTable} ( {$sTable}.OXID, {$sTable}.OXTAGS$sLangSuffix) values (".$oDb->quote( $this->getId() ).", '{$sTag}')
-                       ON DUPLICATE KEY update {$sTable}.OXTAGS$sLangSuffix = CONCAT(TRIM({$sTable}.OXTAGS$sLangSuffix), '$sTailTag') ";
-
-        return $oDb->execute( $sQ );
+        return false;
     }
 
     /**
@@ -2821,6 +2801,20 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         if ( $oPrice = $this->getPrice() ) {
             $dPrice = $this->_getPriceForView( $oPrice );
             return oxRegistry::getLang()->formatCurrency( $dPrice );
+        }
+    }
+
+    /**
+     * Resets oxremindactive status.
+     * If remindActive status is 2, reminder is already sent.
+     *
+     * @return null
+     */
+    public function resetRemindStatus()
+    {
+        if ( $this->oxarticles__oxremindactive->value == 2 &&
+            $this->oxarticles__oxremindamount->value <= $this->oxarticles__oxstock->value ) {
+            $this->oxarticles__oxremindactive->value = 1;
         }
     }
 

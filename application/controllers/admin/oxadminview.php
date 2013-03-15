@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2013
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadminview.php 48768 2012-08-16 17:56:23Z tomas $
+ * @version   SVN: $Id: oxadminview.php 53422 2013-01-07 13:26:19Z aurimas.gladutis $
  */
 
 /**
@@ -602,7 +602,7 @@ class oxAdminView extends oxView
 
         // resetting tag cache
         $oTagCloud = oxNew('oxtagcloud');
-        $oTagCloud->resetTagCache();
+        $oTagCloud->resetCache();
     }
 
     /**

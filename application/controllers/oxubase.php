@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2013
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 52642 2012-12-03 10:48:25Z aurimas.gladutis $
+ * @version   SVN: $Id: oxubase.php 54111 2013-01-22 08:24:08Z linas.kukulskis $
  */
 
 /**
@@ -278,6 +278,8 @@ class oxUBase extends oxView
     /**
      * Display sorting in templates
      * @var bool
+     *
+     * @deprecated in v4.7/5.0 on 2013-01-04; use _blShowSorting property
      */
     protected $_blActiveSorting = null;
 
@@ -502,6 +504,14 @@ class oxUBase extends oxView
      */
     protected $_blLoadComponents = true;
 
+
+    /**
+     * Sorting columns list
+     *
+     * @var array
+     */
+    protected $_aSortColumns = null;
+
     /**
      * Returns component names
      *
@@ -603,11 +613,6 @@ class oxUBase extends oxView
         }
 
         parent::init();
-
-        // enable sorting ?
-        if ( $this->showSorting() ) {
-            $this->prepareSortColumns();
-        }
     }
 
     /**
@@ -631,6 +636,11 @@ class oxUBase extends oxView
 
         $this->_sViewId .= "|".( (int) $this->_blForceNoIndex ).'|'.((int)$this->isRootCatChanged());
 
+        // #0004798: SSL should be included in viewId
+        if ($myConfig->isSsl()) {
+            $this->_sViewId .= "|ssl";
+        }
+
         // #0002866: external global viewID addition
         if (function_exists('customGetViewId')) {
             $oExtViewId = customGetViewId();
@@ -639,7 +649,6 @@ class oxUBase extends oxView
                 $this->_sViewId .= '|'.md5(serialize($oExtViewId));
             }
         }
-
         return $this->_sViewId;
     }
 
@@ -921,6 +930,94 @@ class oxUBase extends oxView
         return 'listorder';
     }
 
+
+    /**
+     * Returns page sort indentificator. It is used as intentificator in session variable aSorting[ident]
+     *
+     * @return string
+     */
+    public function getSortIdent()
+    {
+        return 'alist';
+    }
+
+    /**
+     * Returns default category sorting for selected category
+     *
+     * @return array
+     */
+    public function getDefaultSorting()
+    {
+        $aSorting = array ( 'sortby' => 'oxtitle', 'sortdir' => 'asc' );
+        return $aSorting;
+    }
+
+    /**
+     * Returns default category sorting for selected category
+     *
+     * @return array
+     */
+    public function getUserSelectedSorting()
+    {
+        $aSorting = null;
+        $oStr = getStr();
+        $oConfig = oxRegistry::getConfig();
+        $aSortDirections = array( 'desc', 'asc' );
+        $aSortColumns = $this->getSortColumns();
+
+        $sSortBy  = $oConfig->getParameter( $this->getSortOrderByParameterName() );
+        $sSortDir = $oConfig->getParameter( $this->getSortOrderParameterName() );
+
+        if ( $sSortBy && oxDb::getInstance()->isValidFieldName( $sSortBy ) && /*in_array( $oStr->strtolower($sSortBy), $aSortColumns ) &&*/
+            $sSortDir && oxRegistry::getUtils()->isValidAlpha( $sSortDir ) && in_array( $oStr->strtolower($sSortDir), $aSortDirections ) ) {
+            $aSorting = array ( 'sortby' => $sSortBy, 'sortdir' => $sSortDir );
+        }
+
+        return $aSorting;
+    }
+
+
+    /**
+     * Returns sorting variable from session
+     *
+     * @param string $sSortIdent sorting indent
+     *
+     * @return array
+     */
+    public function getSavedSorting( $sSortIdent )
+    {
+        $aSorting = oxSession::getVar( 'aSorting' );
+        if ( isset( $aSorting[$sSortIdent] ) ) {
+            return $aSorting[$sSortIdent];
+        }
+    }
+
+    /**
+     * Set sorting column name
+     *
+     * @param string $sCulumn - column name
+     *
+     * @return string
+     */
+    public function setListOrderBy( $sCulumn )
+    {
+        $this->_sListOrderBy = $sCulumn;
+    }
+
+    /**
+     * Set sorting directions
+     *
+     * @param string $sDirection - direction desc / asc
+     *
+     * @return string
+     */
+    public function setListOrderDirection( $sDirection )
+    {
+        $this->_sListOrderDir = $sDirection;
+    }
+
+
+
     /**
      * Retrieves from session or gets new sorting parameters for
      * search and category lists. Sets new sorting parameters
@@ -928,6 +1025,8 @@ class oxUBase extends oxView
      *
      * Session variables:
      * <b>listorderby</b>, <b>listorder</b>
+     *
+     * @deprecated since v4.7.3/5.0.3 (2013-01-07); use getSorting();
      *
      * @return null
      */
@@ -937,7 +1036,6 @@ class oxUBase extends oxView
         $aSortDir = array( 'desc', 'asc' );
         if ( count( $aSortColumns ) > 0 ) {
 
-            $this->_blActiveSorting = true;
             $this->_aSortColumns = $aSortColumns;
 
             $sCnid = oxConfig::getParameter( 'cnid' );
@@ -1171,6 +1269,8 @@ class oxUBase extends oxView
      * Returns if sorting is active and can be displayed
      *
      * @return bool
+     *
+     * @deprecated in v4.7/5.0 on 2013-01-04; use oxUbase::showSorting()
      */
     public function isSortingActive()
     {
@@ -1411,18 +1511,17 @@ class oxUBase extends oxView
     /**
      * Sets sorting item config
      *
-     * @param string $sCnid    sortable item id
-     * @param string $sSortBy  sort field
-     * @param string $sSortDir sort direction (optional)
+     * @param string $sSortIdent sortable item id
+     * @param string $sSortBy    sort field
+     * @param string $sSortDir   sort direction (optional)
      *
      * @return null
      */
-    public function setItemSorting( $sCnid, $sSortBy, $sSortDir = null )
+    public function setItemSorting( $sSortIdent, $sSortBy, $sSortDir = null )
     {
-
         $aSorting = oxSession::getVar( 'aSorting' );
-        $aSorting[$sCnid]['sortby']  = $sSortBy;
-        $aSorting[$sCnid]['sortdir'] = $sSortDir?$sSortDir:null;
+        $aSorting[$sSortIdent]['sortby']  = $sSortBy;
+        $aSorting[$sSortIdent]['sortdir'] = $sSortDir ? $sSortDir : null;
 
         oxSession::setVar( 'aSorting', $aSorting );
     }
@@ -1430,17 +1529,26 @@ class oxUBase extends oxView
     /**
      * Returns sorting config for current item
      *
-     * @param string $sCnid sortable item id
+     * @param string $sSortIdent sortable item id
      *
-     * @return string
+     * @return array
      */
-    public function getSorting( $sCnid )
+    public function getSorting( $sSortIdent )
     {
-        $aSorting = oxSession::getVar( 'aSorting' );
+        $aSorting = null;
 
-        if ( isset( $aSorting[$sCnid] ) ) {
-            return $aSorting[$sCnid];
+        if ( $aSorting = $this->getUserSelectedSorting() ) {
+            $this->setItemSorting( $sSortIdent, $aSorting['sortby'], $aSorting['sortdir'] );
+        } elseif ( !$aSorting = $this->getSavedSorting( $sSortIdent ) ) {
+            $aSorting = $this->getDefaultSorting();
         }
+
+        if ( $aSorting ) {
+            $this->setListOrderBy( $aSorting['sortby'] );
+            $this->setListOrderDirection( $aSorting['sortdir'] );
+        }
+
+        return $aSorting;
     }
 
     /**
@@ -1767,7 +1875,23 @@ class oxUBase extends oxView
      */
     public function getSortColumns()
     {
+        if ( $this->_aSortColumns === null ) {
+            $this->setSortColumns( $this->getConfig()->getConfigParam( 'aSortCols' ) );
+        }
         return $this->_aSortColumns;
+    }
+
+
+    /**
+     * Set sorting columns
+     *
+     * @param array $aSortColumns array of column names array('name1', 'name2',...)
+     *
+     * @return null
+     */
+    public function setSortColumns( $aSortColumns )
+    {
+        $this->_aSortColumns = $aSortColumns;
     }
 
     /**
@@ -2838,13 +2962,25 @@ class oxUBase extends oxView
     public function getDeliveryAddress()
     {
         if ( $this->_aDeliveryAddress == null ) {
-            $aAddress = oxConfig::getParameter( 'deladr');
+            $oConfig = $this->getConfig();
             //do not show deladr if address was reloaded
-            if ( $aAddress && !oxConfig::getParameter( 'reloadaddress' )) {
-                $this->_aDeliveryAddress = $aAddress;
+            if ( !$oConfig->getRequestParameter( 'reloadaddress' ) ) {
+                $this->_aDeliveryAddress = $oConfig->getRequestParameter( 'deladr');
             }
         }
         return $this->_aDeliveryAddress;
+    }
+
+    /**
+     * Template variable getter. Returns user delivery address
+     *
+     * @param array $aDeliveryAddress delivery address
+     *
+     * @return null
+     */
+    public function setDeliveryAddress($aDeliveryAddress)
+    {
+        $this->_aDeliveryAddress = $aDeliveryAddress;
     }
 
     /**

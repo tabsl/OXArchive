@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2013
  * @version OXID eShop CE
- * @version   SVN: $Id: report_base.php 48786 2012-08-17 10:20:42Z tomas $
+ * @version   SVN: $Id: report_base.php 53256 2013-01-02 09:54:49Z linas.kukulskis $
  */
 
 /**
@@ -30,7 +30,7 @@ $myConfig = oxRegistry::getConfig();
 /**
  * needed libraries location
  */
-//$sIncPath = $myConfig->getConfigParam( 'sShopDir' ).'/'.$myConfig->getConfigParam( 'sAdminDir' );
+$sIncPath = $myConfig->getConfigParam( 'sShopDir' );
 
 /**
  * switching cache off
@@ -41,11 +41,11 @@ DEFINE( 'CACHE_DIR', $myConfig->getConfigParam( 'sCompileDir' ) );
 /**
  * including libraries
  */
-//require_once "$sIncPath/reports/jpgraph/jpgraph.php";
-//require_once "$sIncPath/reports/jpgraph/jpgraph_bar.php";
-//require_once "$sIncPath/reports/jpgraph/jpgraph_line.php";
-//require_once "$sIncPath/reports/jpgraph/jpgraph_pie.php";
-//require_once "$sIncPath/reports/jpgraph/jpgraph_pie3d.php";
+require_once "$sIncPath/core/jpgraph/jpgraph.php";
+require_once "$sIncPath/core/jpgraph/jpgraph_bar.php";
+require_once "$sIncPath/core/jpgraph/jpgraph_line.php";
+require_once "$sIncPath/core/jpgraph/jpgraph_pie.php";
+require_once "$sIncPath/core/jpgraph/jpgraph_pie3d.php";
 
 if ( !class_exists( 'report_base' ) ) {
 /**

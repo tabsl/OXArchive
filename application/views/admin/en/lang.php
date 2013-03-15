@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2013
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 52927 2012-12-14 10:35:35Z juergen.busch $
+ * @version   SVN: $Id: lang.php 53942 2013-01-16 14:11:31Z aurimas.gladutis $
  */
 
 /*
@@ -410,6 +410,8 @@ $aLang = array(
 'ARTICLE_LIST_ALLPRODUCTS'                                 => 'all Products',
 'ARTICLE_LIST_MENUSUBITEM'                                 => 'Product',
 'ARTICLE_MAIN_ERRORSAVINGARTICLE'                          => 'Attention: Product already exists!',
+'ARTICLE_MAIN_PARENTNOTBUYABLE'                            => 'Attention: Parent Product can not be purchased.',
+'ARTICLE_MAIN_INVALIDTAGSFOUND'                            => 'Attention: Invalid tags removed',
 'ARTICLE_MAIN_ALDPRICE'                                    => 'Alt. Prices',
 'ARTICLE_MAIN_NONE'                                        => '-- none --',
 'ARTICLE_MAIN_GOTO'                                        => 'Go to',
@@ -773,7 +775,7 @@ $aLang = array(
 'THEME_VERSION'                                            => 'Version',
 'THEME_ACTIVATE'                                           => 'Activate',
 'THEME_PARENT_THEME_TITLE'                                 => 'Parent theme',
-'THEME_PARENT_VERSIONS'                                    => 'Comapatible parent theme versions',
+'THEME_PARENT_VERSIONS'                                    => 'Compatible parent theme versions',
 'MODULE_AUTHOR'                                            => 'Author',
 'MODULE_VERSION'                                           => 'Version',
 'MODULE_ACTIVATE'                                          => 'Activate',

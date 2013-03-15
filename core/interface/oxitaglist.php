@@ -16,54 +16,38 @@
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @link      http://www.oxid-esales.com
- * @package   views
+ * @package   core
  * @copyright (C) OXID eSales AG 2003-2013
  * @version OXID eShop CE
- * @version   SVN: $Id: oxwtagcloud.php 53343 2013-01-04 16:23:39Z aurimas.gladutis $
+ * @version   SVN: $Id: oxbasketitem.php 16608 2009-02-19 13:31:39Z vilma $
  */
 
 /**
- * Tag cloud.
- * Shop starter, manages starting visible articles, etc.
+ * oxTagCloud set interface
+ *
+ * @package core
  */
-class oxwTagCloud extends oxWidget
+interface oxITagList
 {
     /**
-     * Current class template name.
-     * @var string
+     * Returns cache id, on which tagcloud should cache content.
+     * If null is returned, content will not be cached.
+     *
+     * @return string
      */
-    protected $_sThisTemplate = 'widget/sidebar/tags.tpl';
+    public function getCacheId();
 
     /**
-     * Checks if tags list should be displayed in separate box
+     * Loads tagcloud set
      *
-     * @return bool
+     * @return boolean
      */
-    public function displayInBox()
-    {
-        return (bool) $this->getViewParameter( "blShowBox" );
-    }
+    public function loadList();
 
     /**
-     * Returns tag cloud manager class
+     * Returns tagcloud set
      *
-     * @return oxTagCloud
+     * @return oxTagSet
      */
-    public function getTagCloudManager()
-    {
-        $oTagList = oxNew( "oxtaglist" );
-        $oTagCloud = oxNew( "oxTagCloud" );
-        $oTagCloud->setTagList($oTagList);
-        return $oTagCloud;
-    }
-
-    /**
-     * Template variable getter. Returns true
-     *
-     * @return bool
-     */
-    public function isMoreTagsVisible()
-    {
-        return true;
-    }
+    public function get();
 }

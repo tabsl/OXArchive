@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2013
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasket.php 52000 2012-11-19 14:03:53Z linas.kukulskis $
+ * @version   SVN: $Id: oxbasket.php 54334 2013-01-24 09:58:39Z linas.kukulskis $
  */
 
 /**
@@ -503,6 +503,8 @@ class oxBasket extends oxSuperCfg
     {
         // adding only if amount > 0
         if ( $oOrderArticle->oxorderarticles__oxamount->value > 0 && !$oOrderArticle->isBundle() ) {
+
+            $this->_isForOrderRecalculation = true;
             $sItemId = $oOrderArticle->getId();
 
             //inserting new
@@ -1229,9 +1231,20 @@ class oxBasket extends oxSuperCfg
         $dOldprice = $this->_oDiscountProductsPriceList->getSum( $this->isCalculationModeNetto() );
 
         // add basket discounts
-        $aDiscounts = oxRegistry::get("oxDiscountList")->getBasketDiscounts( $this, $this->getBasketUser() );
+        if ( $this->_oTotalDiscount !== null  && isset($this->_isForOrderRecalculation) && $this->_isForOrderRecalculation ) {
+            //if total discutn was setted on order recalculation
+            $oTotalPrice = $this->getTotalDiscount();
+            $oDiscount = oxNew('oxDiscount');
+            $oDiscount->oxdiscount__oxaddsum = new oxField( $oTotalPrice->getPrice() );
+            $oDiscount->oxdiscount__oxaddsumtype = new oxField( 'abs' );
+            $aDiscounts[] = $oDiscount;
+        } else {
+            // discounts for basket
+            $aDiscounts = oxRegistry::get("oxDiscountList")->getBasketDiscounts( $this, $this->getBasketUser() );
+        }
+
         if ( $oPriceList = $this->getDiscountProductsPrice() ) {
-            $this->_aDiscountedVats = $oPriceList->getVatInfo( $this->isCalculationModeNetto() );
+                $this->_aDiscountedVats = $oPriceList->getVatInfo( $this->isCalculationModeNetto() );
         }
 
         foreach ( $aDiscounts as $oDiscount ) {
@@ -1440,7 +1453,6 @@ class oxBasket extends oxSuperCfg
         $this->_oNotDiscountedProductsPriceList = null;
         $this->_oProductsPriceList = null;
         $this->_oDiscountProductsPriceList = null;*/
-
 
         if ( !$this->isEnabled() ) {
             return;
@@ -2735,7 +2747,7 @@ class oxBasket extends oxSuperCfg
         $blIsBelowMinOrderPrice = false;
         $sConfValue = $this->getConfig()->getConfigParam( 'iMinOrderPrice' );
         if ( is_numeric($sConfValue) && $this->getProductsCount() ) {
-            $dMinOrderPrice = oxPrice::getPriceInActCurrency( ( int ) $sConfValue );
+            $dMinOrderPrice = oxPrice::getPriceInActCurrency( ( double ) $sConfValue );
             $dNotDiscountedProductPrice = 0;
             if ( $oPrice = $this->getNotDiscountProductsPrice() ) {
                 $dNotDiscountedProductPrice = $oPrice->getBruttoSum();

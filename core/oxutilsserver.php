@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsserver.php 49637 2012-09-19 13:21:03Z alfonsas $
+ * @version   SVN: $Id: oxutilsserver.php 53144 2012-12-19 13:36:01Z aurimas.gladutis $
  */
 
 /**
@@ -370,10 +370,9 @@ class oxUtilsServer extends oxSuperCfg
     {
         $myConfig = parent::getConfig();
         $sShopId = ( !$sShopId ) ? $myConfig->getShopId() : $sShopId;
-
         // check for SSL connection
         if (!$myConfig->isSsl() && $this->getOxCookie('oxid_'.$sShopId.'_autologin') == '1') {
-            $sSslUrl = $myConfig->getSslShopUrl();
+            $sSslUrl = rtrim($myConfig->getSslShopUrl(), '/').$_SERVER['REQUEST_URI'];
             if (stripos($sSslUrl, 'https') === 0) {
                 oxRegistry::getUtils()->redirect($sSslUrl, true, 302);
             }

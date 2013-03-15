@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2013
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxarticlelist.php 51970 2012-11-19 09:45:14Z linas.kukulskis $
+ * @version   SVN: SVN: $Id: oxarticlelist.php 53484 2013-01-08 14:28:26Z aurimas.gladutis $
  */
 
 /**
@@ -697,8 +697,9 @@ class oxArticleList extends oxList
         $sArticleFields = $oListObject->getSelectFields();
         $sViewName = getViewName( 'oxartextends', $iLang );
 
-        $oTagHandler = oxNew( 'oxtagcloud' );
-        $sTag = $oTagHandler->prepareTags( $sTag );
+        $oTag = oxNew( 'oxtag', $sTag );
+        $oTag->addUnderscores();
+        $sTag = $oTag->get();
 
         $sQ = "select {$sArticleFields} from {$sViewName} inner join {$sArticleTable} on ".
               "{$sArticleTable}.oxid = {$sViewName}.oxid where {$sArticleTable}.oxparentid = '' AND match ( {$sViewName}.oxtags ) ".
@@ -737,13 +738,14 @@ class oxArticleList extends oxList
         $sArticleTable = $oListObject->getViewName();
         $sViewName = getViewName( 'oxartextends', $iLang );
 
-        $oTagHandler = oxNew( 'oxtagcloud' );
-        $sTag = $oTagHandler->prepareTags( $sTag );
+        $oTag = oxNew( 'oxtag', $sTag );
+        $oTag->addUnderscores();
+        $sTag = $oTag->get();
 
         $sQ = "select {$sViewName}.oxid from {$sViewName} inner join {$sArticleTable} on ".
-              "{$sArticleTable}.oxid = {$sViewName}.oxid where {$sArticleTable}.oxparentid = '' and {$sArticleTable}.oxissearch = 1 and ".
-              "match ( {$sViewName}.oxtags ) ".
-              "against( ".oxDb::getDb()->quote( "\"".$sTag."\"" )." IN BOOLEAN MODE )";
+            "{$sArticleTable}.oxid = {$sViewName}.oxid where {$sArticleTable}.oxparentid = '' and {$sArticleTable}.oxissearch = 1 and ".
+            "match ( {$sViewName}.oxtags ) ".
+            "against( ".oxDb::getDb()->quote( "\"".$sTag."\"" )." IN BOOLEAN MODE )";
 
         // checking stock etc
         if ( ( $sActiveSnippet = $oListObject->getSqlActiveSnippet() ) ) {

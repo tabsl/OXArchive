@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   setup
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2013
  * @version OXID eShop CE
  * @version   SVN: $Id: lang.php 25584 2010-02-03 12:11:40Z arvydas $
  */
@@ -950,7 +950,7 @@ class OxSetupDb extends oxSetupCore
      */
     public function createDb( $sDbName )
     {
-        if ( !$this->execSql( "create database ". $sDbName ) ) {
+        if ( !$this->execSql( "create database `". $sDbName . "`" ) ) {
             // no success !
             $oSetup = $this->getInstance( "oxSetup" );
             $oSetup->setNextStep( $oSetup->getStep( 'STEP_DB_INFO' ) );
@@ -2577,7 +2577,7 @@ class oxSetupAps extends oxSetupCore
         }
 
         //swap database to english
-        if ( $aParams["sShopLang"] != "de" ) {
+        if ( $aParams["location_lang"] != "de" ) {
             $oDb->queryFile( "en.sql" );
         }
 

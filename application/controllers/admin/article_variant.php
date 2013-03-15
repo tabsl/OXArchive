@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_variant.php 52627 2012-12-03 08:28:49Z aurimas.gladutis $
+ * @version   SVN: $Id: article_variant.php 53099 2012-12-18 14:49:15Z aurimas.gladutis $
  */
 
 /**
@@ -159,6 +159,9 @@ class Article_Variant extends oxAdminDetails
         $oArticle->setLanguage( 0 );
         $oArticle->assign( $aParams );
         $oArticle->setLanguage( $this->_iEditLang );
+
+        // #0004473
+        $oArticle->resetRemindStatus();
 
         if ( $sOXID == "-1" ) {
             if ( $oParent = $this->_getProductParent( $oArticle->oxarticles__oxparentid->value ) ) {

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: order.php 49522 2012-09-13 14:13:29Z vilma $
+ * @version   SVN: $Id: order.php 53162 2012-12-20 09:44:43Z aurimas.gladutis $
  */
 
 /**
@@ -545,44 +545,16 @@ class order extends oxUBase
     {
         // bill address
         $oUser = $this->getUser();
-        $sDelAddress = '';
-
-        $sDelAddress .= $oUser->oxuser__oxcompany;
-        $sDelAddress .= $oUser->oxuser__oxusername;
-        $sDelAddress .= $oUser->oxuser__oxfname;
-        $sDelAddress .= $oUser->oxuser__oxlname;
-        $sDelAddress .= $oUser->oxuser__oxstreet;
-        $sDelAddress .= $oUser->oxuser__oxstreetnr;
-        $sDelAddress .= $oUser->oxuser__oxaddinfo;
-        $sDelAddress .= $oUser->oxuser__oxustid;
-        $sDelAddress .= $oUser->oxuser__oxcity;
-        $sDelAddress .= $oUser->oxuser__oxcountryid;
-        $sDelAddress .= $oUser->oxuser__oxstateid;
-        $sDelAddress .= $oUser->oxuser__oxzip;
-        $sDelAddress .= $oUser->oxuser__oxfon;
-        $sDelAddress .= $oUser->oxuser__oxfax;
-        $sDelAddress .= $oUser->oxuser__oxsal;
+        $sDelAddress = $oUser->getEncodedDeliveryAddress();
 
         // delivery address
         if ( oxSession::getVar( 'deladrid' )  ) {
             $oDelAdress = oxNew( 'oxaddress' );
             $oDelAdress->load( oxSession::getVar( 'deladrid' ) );
 
-            $sDelAddress .= $oDelAdress->oxaddress__oxcompany;
-            $sDelAddress .= $oDelAdress->oxaddress__oxfname;
-            $sDelAddress .= $oDelAdress->oxaddress__oxlname;
-            $sDelAddress .= $oDelAdress->oxaddress__oxstreet;
-            $sDelAddress .= $oDelAdress->oxaddress__oxstreetnr;
-            $sDelAddress .= $oDelAdress->oxaddress__oxaddinfo;
-            $sDelAddress .= $oDelAdress->oxaddress__oxcity;
-            $sDelAddress .= $oDelAdress->oxaddress__oxcountryid;
-            $sDelAddress .= $oDelAdress->oxaddress__oxstateid;
-            $sDelAddress .= $oDelAdress->oxaddress__oxzip;
-            $sDelAddress .= $oDelAdress->oxaddress__oxfon;
-            $sDelAddress .= $oDelAdress->oxaddress__oxfax;
-            $sDelAddress .= $oDelAdress->oxaddress__oxsal;
+            $sDelAddress .= $oDelAdress->getEncodedDeliveryAddress();
         }
 
-        return md5($sDelAddress);
+        return $sDelAddress;
     }
 }

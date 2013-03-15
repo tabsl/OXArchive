@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2013
  * @version OXID eShop CE
- * @version   SVN: $Id: tag.php 48767 2012-08-16 17:33:56Z tomas $
+ * @version   SVN: $Id: tag.php 53427 2013-01-07 13:29:36Z linas.kukulskis $
  */
 
 /**
@@ -85,7 +85,7 @@ class Tag extends aList
         $oArticleList = $this->getArticleList();
 
         // if tags are off or no articles - showing 404 header (#2139)
-        if ( !$this->showTags() || !$oArticleList || count( $oArticleList ) < 1 ) {
+        if ( !$this->showTags() || !$oArticleList) {
             error_404_handler();
         }
 
@@ -134,8 +134,7 @@ class Tag extends aList
         $iNrofCatArticles = $iNrofCatArticles?$iNrofCatArticles:1;
         $oArtList = oxNew( 'oxarticlelist' );
         $oArtList->setSqlLimit( $iNrofCatArticles * $this->_getRequestPageNr(), $iNrofCatArticles );
-        $oArtList->setCustomSorting( $this->getSortingSql( 'oxtags' ) );
-;
+        $oArtList->setCustomSorting( $this->getSortingSql( $this->getSortIdent() ) );
         // load the articles
         $this->_iAllArtCnt = $oArtList->loadTagArticles( $this->getTag(), oxRegistry::getLang()->getBaseLanguage());
         $this->_iCntPages  = round( $this->_iAllArtCnt / $iNrofCatArticles + 0.49 );
@@ -168,11 +167,13 @@ class Tag extends aList
      *
      * @param string $sCnid sortable item id
      *
+     * @deprecated since v4.7.3/5.0.3 (2013-01-07); dublicated code
+     *
      * @return string
      */
     public function getSorting( $sCnid )
     {
-        return parent::getSorting( "oxtags" );
+        return parent::getSorting( $sCnid );
     }
 
     /**
@@ -182,11 +183,13 @@ class Tag extends aList
      * @param string $sSortBy    sort field
      * @param string $sSortOrder sort order
      *
+     * @deprecated since v4.7.3/5.0.3 (2013-01-07); dublicated code
+     *
      * @return null
      */
     public function setItemSorting( $sCnid, $sSortBy, $sSortOrder  = null )
     {
-        parent::setItemSorting( "oxtags", $sSortBy, $sSortOrder );
+        parent::setItemSorting( $sCnid, $sSortBy, $sSortOrder );
     }
 
     /**

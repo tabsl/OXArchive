@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 51441 2012-11-06 16:06:59Z aurimas.gladutis $
+ * @version   SVN: $Id: oxorder.php 53162 2012-12-20 09:44:43Z aurimas.gladutis $
  */
 
 /**
@@ -2086,43 +2086,14 @@ class oxOrder extends oxBase
     {
         $sDelAddressMD5 =  oxConfig::getParameter( 'sDeliveryAddressMD5' );
 
-        // bill address
-        $sDelAddress = '';
-        $sDelAddress .= $oUser->oxuser__oxcompany;
-        $sDelAddress .= $oUser->oxuser__oxusername;
-        $sDelAddress .= $oUser->oxuser__oxfname;
-        $sDelAddress .= $oUser->oxuser__oxlname;
-        $sDelAddress .= $oUser->oxuser__oxstreet;
-        $sDelAddress .= $oUser->oxuser__oxstreetnr;
-        $sDelAddress .= $oUser->oxuser__oxaddinfo;
-        $sDelAddress .= $oUser->oxuser__oxustid;
-        $sDelAddress .= $oUser->oxuser__oxcity;
-        $sDelAddress .= $oUser->oxuser__oxcountryid;
-        $sDelAddress .= $oUser->oxuser__oxstateid;
-        $sDelAddress .= $oUser->oxuser__oxzip;
-        $sDelAddress .= $oUser->oxuser__oxfon;
-        $sDelAddress .= $oUser->oxuser__oxfax;
-        $sDelAddress .= $oUser->oxuser__oxsal;
+        $sDelAddress = $oUser->getEncodedDeliveryAddress();
 
-        // delivery address
+        // if delivery address is set, add it to delivery address check
         if ( ( $oDelAdress = $this->getDelAddressInfo() ) ) {
-            // set delivery address
-            $sDelAddress .= $oDelAdress->oxaddress__oxcompany;
-            $sDelAddress .= $oDelAdress->oxaddress__oxfname;
-            $sDelAddress .= $oDelAdress->oxaddress__oxlname;
-            $sDelAddress .= $oDelAdress->oxaddress__oxstreet;
-            $sDelAddress .= $oDelAdress->oxaddress__oxstreetnr;
-            $sDelAddress .= $oDelAdress->oxaddress__oxaddinfo;
-            $sDelAddress .= $oDelAdress->oxaddress__oxcity;
-            $sDelAddress .= $oDelAdress->oxaddress__oxcountryid;
-            $sDelAddress .= $oDelAdress->oxaddress__oxstateid;
-            $sDelAddress .= $oDelAdress->oxaddress__oxzip;
-            $sDelAddress .= $oDelAdress->oxaddress__oxfon;
-            $sDelAddress .= $oDelAdress->oxaddress__oxfax;
-            $sDelAddress .= $oDelAdress->oxaddress__oxsal;
+            $sDelAddress .= $oDelAdress->getEncodedDeliveryAddress();
         }
 
-        if ($sDelAddressMD5 != md5($sDelAddress)) {
+        if ( $sDelAddressMD5 != $sDelAddress ) {
             return self::ORDER_STATE_INVALIDDElADDRESSCHANGED;
         }
 

@@ -90,6 +90,16 @@ class oxAddress extends oxBase
     }
 
     /**
+     * Returns encoded address.
+     *
+     * @return string
+     */
+    public function getEncodedDeliveryAddress()
+    {
+        return md5($this->_getMergedAddressFields());
+    }
+
+    /**
      * Returns string representation of address state
      *
      * @return string
@@ -117,5 +127,30 @@ class oxAddress extends oxBase
     public function setSelected()
     {
         $this->_blSelected = true;
+    }
+
+    /**
+     * Returns merged address fields.
+     *
+     * @return string
+     */
+    protected function _getMergedAddressFields()
+    {
+        $sDelAddress = '';
+        $sDelAddress .= $this->oxaddress__oxcompany;
+        $sDelAddress .= $this->oxaddress__oxfname;
+        $sDelAddress .= $this->oxaddress__oxlname;
+        $sDelAddress .= $this->oxaddress__oxstreet;
+        $sDelAddress .= $this->oxaddress__oxstreetnr;
+        $sDelAddress .= $this->oxaddress__oxaddinfo;
+        $sDelAddress .= $this->oxaddress__oxcity;
+        $sDelAddress .= $this->oxaddress__oxcountryid;
+        $sDelAddress .= $this->oxaddress__oxstateid;
+        $sDelAddress .= $this->oxaddress__oxzip;
+        $sDelAddress .= $this->oxaddress__oxfon;
+        $sDelAddress .= $this->oxaddress__oxfax;
+        $sDelAddress .= $this->oxaddress__oxsal;
+
+        return $sDelAddress;
     }
 }
