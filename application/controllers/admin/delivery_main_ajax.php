@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: delivery_main_ajax.php 48458 2012-08-10 06:59:10Z linas.kukulskis $
+ * @version   SVN: $Id: delivery_main_ajax.php 52048 2012-11-20 13:33:41Z vaidas.matulevicius $
  */
 
 /**
@@ -57,8 +57,8 @@ class delivery_main_ajax extends ajaxListComponent
     {
         $sCountryTable = $this->_getViewName('oxcountry');
         $oDb = oxDb::getDb();
-        $sId = oxConfig::getParameter( 'oxid' );
-        $sSynchId = oxConfig::getParameter( 'synchoxid' );
+        $sId = $this->getConfig()->getRequestParameter( 'oxid' );
+        $sSynchId = $this->getConfig()->getRequestParameter( 'synchoxid' );
 
         // category selected or not ?
         if ( !$sId) {
@@ -84,7 +84,7 @@ class delivery_main_ajax extends ajaxListComponent
     public function removeCountryFromDel()
     {
         $aChosenCntr = $this->_getActionIds( 'oxobject2delivery.oxid' );
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( 'all' ) ) {
 
             $sQ = $this->_addFilter( "delete oxobject2delivery.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
@@ -103,10 +103,10 @@ class delivery_main_ajax extends ajaxListComponent
     public function addCountryToDel()
     {
         $aChosenCntr = $this->_getActionIds( 'oxcountry.oxid' );
-        $soxId       = oxConfig::getParameter( 'synchoxid');
+        $soxId       = $this->getConfig()->getRequestParameter( 'synchoxid');
 
         // adding
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( 'all' ) ) {
             $sCountryTable = $this->_getViewName('oxcountry');
             $aChosenCntr = $this->_getAll( $this->_addFilter( "select $sCountryTable.oxid ".$this->_getQuery() ) );
         }

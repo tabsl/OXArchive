@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: alist.php 48768 2012-08-16 17:56:23Z tomas $
+ * @version   SVN: $Id: alist.php 52435 2012-11-26 07:22:18Z aurimas.gladutis $
  */
 
 /**
@@ -467,8 +467,9 @@ class aList extends oxUBase
         }
 
         // making safe for output
-        $sDescription = getStr()->cleanStr($sDescription);
-        $sDescription = strip_tags( getStr()->html_entity_decode( $sDescription ) );
+        $sDescription = getStr()->html_entity_decode( $sDescription );
+        $sDescription = getStr()->strip_tags( $sDescription );
+        $sDescription = getStr()->cleanStr( $sDescription );
         $sDescription = getStr()->htmlspecialchars( $sDescription );
         return trim( $sDescription );
     }
@@ -584,7 +585,7 @@ class aList extends oxUBase
         if ( count( $aArticleList = $this->getArticleList() ) ) {
             $oStr = getStr();
             foreach ( $aArticleList as $oProduct ) {
-                $sDesc = strip_tags( trim( $oStr->strtolower( $oProduct->getLongDescription()->value ) ) );
+                $sDesc = $oStr->strip_tags( trim( $oStr->strtolower( $oProduct->getLongDescription()->value ) ) );
 
                 //removing dots from string (they are not cleaned up during general string cleanup)
                 $sDesc = $oStr->preg_replace( "/\./", " ", $sDesc );
@@ -689,7 +690,7 @@ class aList extends oxUBase
         $oActCat = $this->getActCategory();
         if ( !$aSorting && $oActCat && $oActCat->oxcategories__oxdefsort->value ) {
             $sSortBy  = $oActCat->oxcategories__oxdefsort->value;
-            $sSortDir = ( $oActCat->oxcategories__oxdefsortmode->value ) ? "desc" : null;
+            $sSortDir = ( $oActCat->oxcategories__oxdefsortmode->value ) ? "desc" : "asc";
 
             $this->setItemSorting( $sCnid, $sSortBy, $sSortDir );
             $aSorting = array ( 'sortby' => $sSortBy, 'sortdir' => $sSortDir );
@@ -957,7 +958,7 @@ class aList extends oxUBase
             $this->_aBargainArticleList = array();
             if ( $this->getConfig()->getConfigParam( 'bl_perfLoadAktion' ) && $this->_isActCategory() ) {
                 $oArtList = oxNew( 'oxarticlelist' );
-                $oArtList->loadAktionArticles( 'OXBARGAIN' );
+                $oArtList->loadActionArticles( 'OXBARGAIN' );
                 if ( $oArtList->count() ) {
                     $this->_aBargainArticleList = $oArtList;
                 }
@@ -1012,15 +1013,5 @@ class aList extends oxUBase
     public function getPageCount()
     {
         return $this->_iCntPages;
-    }
-
-    /**
-     * Should "More tags" link be visible.
-     *
-     * @return bool
-     */
-    public function isMoreTagsVisible()
-    {
-        return true;
     }
 }

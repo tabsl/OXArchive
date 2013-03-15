@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdbmetadatahandler.php 48727 2012-08-16 09:09:02Z tomas $
+ * @version   SVN: $Id: oxdbmetadatahandler.php 51491 2012-11-07 11:37:05Z aurimas.gladutis $
  */
 
 /**
@@ -493,14 +493,40 @@ class oxDbMetaDataHandler extends oxSuperCfg
     }
 
     /**
-     * Performs full view update
+     * Updates shop views
      *
-     * @return mixed
+     * @param array $aTables If you need to update specific tables, just pass its names as array [optional]
+     *
+     * @return bool
      */
-    public function updateViews()
+    public function updateViews( $aTables = null )
     {
-        oxDb::getInstance()->updateViews();
-    }
+        set_time_limit( 0 );
 
+        $oDb = oxDb::getDb();
+        $oConfig = oxRegistry::getConfig();
+
+        $aShops = $oDb->getAll( "select * from oxshops" );
+
+        $aTables = $aTables ? $aTables : $oConfig->getConfigParam( 'aMultiShopTables' );
+
+        $bSuccess = true;
+        foreach ( $aShops as $aShop ) {
+            $sShopId = $aShop[0];
+            $oShop = oxNew( 'oxshop' );
+            $oShop->load( $sShopId );
+            $oShop->setMultiShopTables( $aTables );
+            $blMultishopInherit = $oConfig->getShopConfVar( 'blMultishopInherit_oxcategories', $sShopId );
+            $aMallInherit = array();
+            foreach ( $aTables as $sTable ) {
+                $aMallInherit[$sTable] = $oConfig->getShopConfVar( 'blMallInherit_' . $sTable, $sShopId );
+            }
+            if ( !$oShop->generateViews( $blMultishopInherit, $aMallInherit ) && $bSuccess ) {
+                $bSuccess = false;
+            }
+        }
+
+        return $bSuccess;
+    }
 }
 

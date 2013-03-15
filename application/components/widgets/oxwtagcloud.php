@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxwtagcloud.php 47017 2012-07-05 11:57:07Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxwtagcloud.php 51853 2012-11-15 11:28:55Z vilma $
  */
 
 /**
@@ -33,20 +33,6 @@ class oxwTagCloud extends oxWidget
      * @var string
      */
     protected $_sThisTemplate = 'widget/sidebar/tags.tpl';
-
-    /**
-     * Executes parent::render(), loads action articles
-     * (oxarticlelist::loadAktionArticles()). Returns name of
-     * template file to render.
-     *
-     * @return  string  cuurent template file name
-     */
-    public function render()
-    {
-        parent::render();
-
-        return $this->_sThisTemplate;
-    }
 
     /**
      * Checks if tags list should be displayed in separate box

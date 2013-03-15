@@ -91,7 +91,7 @@ class oxTheme extends oxSuperCfg
     public function getList()
     {
         $this->_aThemeList   = array();
-        $sOutDir = $this->getConfig()->getOutDir();
+        $sOutDir = $this->getConfig()->getViewsDir();
         foreach ( glob( $sOutDir."*", GLOB_ONLYDIR ) as $sDir ) {
             $oTheme = oxNew('oxTheme');
             if ($oTheme->load(basename($sDir))) {

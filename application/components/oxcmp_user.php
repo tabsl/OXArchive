@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_user.php 48767 2012-08-16 17:33:56Z tomas $
+ * @version   SVN: $Id: oxcmp_user.php 52144 2012-11-22 13:29:36Z aurimas.gladutis $
  */
 
 // defining login/logout states
@@ -224,7 +224,7 @@ class oxcmp_user extends oxView
             $this->setLoginStatus( USER_LOGIN_SUCCESS );
         } catch ( oxUserException $oEx ) {
             // for login component send excpetion text to a custom component (if defined)
-            oxRegistry::get("oxUtilsView")->addErrorToDisplay( $oEx, false, true );
+            oxRegistry::get("oxUtilsView")->addErrorToDisplay( $oEx, false, true, '', 'oxwservicemenu' );
             return 'user';
         } catch( oxCookieException $oEx ){
             oxRegistry::get("oxUtilsView")->addErrorToDisplay( $oEx );
@@ -406,6 +406,7 @@ class oxcmp_user extends oxView
 
     /**
      * Executes oxcmp_user::_changeuser_noredirect().
+     * returns "account_user" (this redirects to billing and shipping settings page)
      *
      * @return null
      */
@@ -415,6 +416,7 @@ class oxcmp_user extends oxView
         // on selecting delivery address
 
         $this->_changeUser_noRedirect();
+        return 'account_user';
     }
 
     /**
@@ -475,6 +477,9 @@ class oxcmp_user extends oxView
             $oUser->setPassword( $sPassword );
             $oUser->oxuser__oxactive   = new oxField( $iActState, oxField::T_RAW);
 
+            // used for checking if user email currently subscribed
+            $iSubscriptionStatus = $oUser->getNewsSubscription()->getOptInStatus();
+
             $oUser->createUser();
             $oUser->load( $oUser->getId() );
             $oUser->changeUserData( $oUser->oxuser__oxusername->value, $sPassword, $sPassword, $aInvAdress, $aDelAdress );
@@ -492,8 +497,15 @@ class oxcmp_user extends oxView
             }
 
             // assigning to newsletter
-            $blOptin = oxConfig::getParameter( 'blnewssubscribed' );
-            $this->_blNewsSubscriptionStatus = $oUser->setNewsSubscription( $blOptin, $this->getConfig()->getConfigParam( 'blOrderOptInEmail' ) );
+            $blOptin = oxRegistry::getConfig()->getRequestParameter( 'blnewssubscribed' );
+            if ( $blOptin && $iSubscriptionStatus == 1 ) {
+                // if user was assigned to newsletter and is creating account with newsletter checked, don't require confirm
+                $oUser->getNewsSubscription()->setOptInStatus(1);
+                $oUser->addToGroup( 'oxidnewsletter' );
+                $this->_blNewsSubscriptionStatus = 1;
+            } else {
+                $this->_blNewsSubscriptionStatus = $oUser->setNewsSubscription( $blOptin, $this->getConfig()->getConfigParam( 'blOrderOptInEmail' ) );
+            }
 
             $oUser->addToGroup( 'oxidnotyetordered' );
             $oUser->addDynGroup( oxSession::getVar( 'dgr' ), $myConfig->getConfigParam( 'aDeniedDynGroups' ) );
@@ -603,7 +615,9 @@ class oxcmp_user extends oxView
             if (($blOptin = oxConfig::getParameter( 'blnewssubscribed' )) === null) {
                 $blOptin = $oUser->getNewsSubscription()->getOptInStatus();
             }
-            $this->_blNewsSubscriptionStatus = $oUser->setNewsSubscription( $blOptin, $this->getConfig()->getConfigParam( 'blOrderOptInEmail' ) );
+            // check if email address changed, if so, force check news subscription settings.
+            $blForceCheckOptIn = ( $aInvAdress['oxuser__oxusername'] !== $sUserName );
+            $this->_blNewsSubscriptionStatus = $oUser->setNewsSubscription( $blOptin, $this->getConfig()->getConfigParam( 'blOrderOptInEmail' ), $blForceCheckOptIn );
 
         } catch ( oxUserException $oEx ) { // errors in input
             // marking error code
@@ -686,6 +700,9 @@ class oxcmp_user extends oxView
         }
         if ( $sParam = oxConfig::getParameter('oxloadid') ) {
             $sLogoutLink .= '&amp;oxloadid='.$sParam;
+        }
+        if ( $sParam = oxConfig::getParameter('recommid') ) {
+            $sLogoutLink .= '&amp;recommid='.$sParam;
         }
         return $sLogoutLink.'&amp;fnc=logout';
     }

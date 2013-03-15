@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 50229 2012-10-06 13:38:49Z linas.kukulskis $
+ * @version   SVN: $Id: oxorder.php 51441 2012-11-06 16:06:59Z aurimas.gladutis $
  */
 
 /**
@@ -1794,7 +1794,7 @@ class oxOrder extends oxBase
     /**
      * Get payment type
      *
-     * @return oxPayment
+     * @return oxUserPayment
      */
     public function getPaymentType()
     {

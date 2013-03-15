@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: pricealarm_send.php 48727 2012-08-16 09:09:02Z tomas $
+ * @version   SVN: $Id: pricealarm_send.php 51449 2012-11-07 07:24:19Z aurimas.gladutis $
  */
 
 /**
@@ -44,10 +44,10 @@ class PriceAlarm_Send extends oxAdminList
      */
     public function render()
     {
-        $myConfig  = $this->getConfig();
-        $oDB = oxDb::getDb();
-
         parent::render();
+
+        $myConfig  = $this->getConfig();
+        $oDB = oxDb::getDb(oxDb::FETCH_MODE_ASSOC);
 
         ini_set("session.gc_maxlifetime", 36000);
 

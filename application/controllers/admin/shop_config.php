@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_config.php 50565 2012-10-16 10:44:53Z aurimas.gladutis $
+ * @version   SVN: $Id: shop_config.php 51669 2012-11-12 10:31:49Z aurimas.gladutis $
  */
 
 /**
@@ -40,6 +40,7 @@ class Shop_Config extends oxAdminDetails
         "arr"    => 'confarrs',
         "aarr"   => 'confaarrs',
         "select" => 'confselects',
+        "num"    => 'confnum',
     );
 
     /**
@@ -85,7 +86,7 @@ class Shop_Config extends oxAdminDetails
 
         }
 
-        $aDbVariables = $this->_loadConfVars($soxId, $this->_getModuleForConfigVars());
+        $aDbVariables = $this->loadConfVars($soxId, $this->_getModuleForConfigVars());
         $aConfVars = $aDbVariables['vars'];
         $aConfVars['str']['sVersion'] = $myConfig->getConfigParam( 'sVersion' );
 
@@ -184,9 +185,28 @@ class Shop_Config extends oxAdminDetails
      * @param string $sShopId Shop id
      * @param string $sModule module to load (empty string is for base values)
      *
+     * @deprecated since v5.0.0 (2012-10-19); Use public loadConfVars().
+     *
      * @return array
      */
     public function _loadConfVars($sShopId, $sModule)
+    {
+        return $this->loadConfVars($sShopId, $sModule);
+    }
+
+    /**
+     * Load and parse config vars from db.
+     * Return value is a map:
+     *      'vars'        => config variable values as array[type][name] = value
+     *      'constraints' => constraints list as array[name] = constraint
+     *      'grouping'    => grouping info as array[name] = grouping
+     *
+     * @param string $sShopId Shop id
+     * @param string $sModule module to load (empty string is for base values)
+     *
+     * @return array
+     */
+    public function loadConfVars($sShopId, $sModule)
     {
         $myConfig  = $this->getConfig();
         $aConfVars = array(
@@ -195,6 +215,7 @@ class Shop_Config extends oxAdminDetails
             "arr"     => array(),
             "aarr"    => array(),
             "select"  => array(),
+            "num"     => array(),
         );
         $aVarConstraints = array();
         $aGrouping       = array();
@@ -294,6 +315,7 @@ class Shop_Config extends oxAdminDetails
             case "str":
             case "select":
             case "int":
+            case "num":
                 $mData = $oStr->htmlentities( $sValue );
                 if (in_array($sName, $this->_aParseFloat)) {
                     $mData = str_replace( ',', '.', $mData );

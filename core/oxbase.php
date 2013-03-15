@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbase.php 50080 2012-10-03 14:53:20Z tomas $
+ * @version   SVN: $Id: oxbase.php 52113 2012-11-21 15:46:41Z aurimas.gladutis $
  */
 
 /**
@@ -726,7 +726,12 @@ class oxBase extends oxSuperCfg
         $sViewName = $this->getViewName( $blForceCoreTableUsage );
 
         foreach ( $this->_aFieldNames as $sKey => $sField ) {
-            $aSelectFields[] = $sViewName . '.' . $sKey;
+            if ( $sViewName ) {
+                $aSelectFields[] = "`$sViewName`.`$sKey`";
+            } else {
+                $aSelectFields[] = ".`$sKey`";
+            }
+
         }
 
         $sSelectFields = join( ", ", $aSelectFields );
@@ -785,11 +790,11 @@ class oxBase extends oxSuperCfg
             foreach ($this->_aFieldNames as $sName => $sVal) {
                 $sLongName = $this->_getFieldLongName($sName);
                 if ( isset($this->$sLongName->fldtype) && $this->$sLongName->fldtype == "datetime" ) {
-                    oxDb::getInstance()->convertDBDateTime( $this->$sLongName, true );
+                    oxRegistry::get("oxUtilsDate")->convertDBDateTime( $this->$sLongName, true );
                 } elseif ( isset($this->$sLongName->fldtype) && $this->$sLongName->fldtype == "timestamp" ) {
-                    oxDb::getInstance()->convertDBTimestamp( $this->$sLongName, true);
+                    oxRegistry::get("oxUtilsDate")->convertDBTimestamp( $this->$sLongName, true);
                 } elseif ( isset($this->$sLongName->fldtype) && $this->$sLongName->fldtype == "date" ) {
-                    oxDb::getInstance()->convertDBDate( $this->$sLongName, true);
+                    oxRegistry::get("oxUtilsDate")->convertDBDate( $this->$sLongName, true);
                 }
             }
         }

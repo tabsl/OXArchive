@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: deliveryset_payment_ajax.php 48458 2012-08-10 06:59:10Z linas.kukulskis $
+ * @version   SVN: $Id: deliveryset_payment_ajax.php 52082 2012-11-21 10:50:35Z vaidas.matulevicius $
  */
 
 /**
@@ -54,8 +54,8 @@ class deliveryset_payment_ajax extends ajaxListComponent
     protected function _getQuery()
     {
         $oDb = oxDb::getDb();
-        $sId = oxConfig::getParameter( 'oxid' );
-        $sSynchId = oxConfig::getParameter( 'synchoxid' );
+        $sId = $this->getConfig()->getRequestParameter( 'oxid' );
+        $sSynchId = $this->getConfig()->getRequestParameter( 'synchoxid' );
 
         $sPayTable = $this->_getViewName('oxpayments');
 
@@ -83,7 +83,7 @@ class deliveryset_payment_ajax extends ajaxListComponent
     public function removePayFromSet()
     {
         $aChosenCntr = $this->_getActionIds( 'oxobject2payment.oxid' );
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( 'all' ) ) {
 
             $sQ = $this->_addFilter( "delete oxobject2payment.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
@@ -102,10 +102,10 @@ class deliveryset_payment_ajax extends ajaxListComponent
     public function addPayToSet()
     {
         $aChosenSets = $this->_getActionIds( 'oxpayments.oxid' );
-        $soxId       = oxConfig::getParameter( 'synchoxid');
+        $soxId       = $this->getConfig()->getRequestParameter( 'synchoxid');
 
         // adding
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( 'all' ) ) {
             $sPayTable = $this->_getViewName('oxpayments');
             $aChosenSets = $this->_getAll( $this->_addFilter( "select $sPayTable.oxid ".$this->_getQuery() ) );
         }

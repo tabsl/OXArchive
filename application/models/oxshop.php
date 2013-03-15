@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxshop.php 49203 2012-08-31 13:24:15Z vilma $
+ * @version   SVN: $Id: oxshop.php 52092 2012-11-21 11:47:26Z linas.kukulskis $
  */
 
 /**
@@ -73,7 +73,7 @@ class oxShop extends oxI18n
      * @param bool  $blMultishopInheritCategories config option blMultishopInherit
      * @param array $aMallInherit                 array of config options blMallInherit
      *
-     * @return null
+     * @return bool is all views generated successfully
      */
     public function generateViews( $blMultishopInheritCategories = false, $aMallInherit = null )
     {
@@ -95,9 +95,13 @@ class oxShop extends oxI18n
             }
         }
 
+        $bSuccess = true;
         foreach ($aQ as $sQ) {
-            $oDb->execute( $sQ );
+            if ( !$oDb->execute( $sQ ) ) {
+                $bSuccess = false;
+            }
         }
+        return $bSuccess;
     }
 
     /**
@@ -159,5 +163,15 @@ class oxShop extends oxI18n
         return $sJoin;
     }
 
+
+    /**
+     * Returns default category of the shop.
+     *
+     * @return string
+     */
+    public function getDefaultCategory()
+    {
+        return $this->oxshops__oxdefcat->value;
+    }
 
 }

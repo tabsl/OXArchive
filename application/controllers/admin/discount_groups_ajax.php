@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: discount_groups_ajax.php 48513 2012-08-10 12:40:09Z linas.kukulskis $
+ * @version   SVN: $Id: discount_groups_ajax.php 52041 2012-11-20 13:02:38Z vilma $
  */
 
 /**
@@ -51,11 +51,12 @@ class discount_groups_ajax extends ajaxListComponent
      */
     protected function _getQuery()
     {
+        $oConfig = $this->getConfig();
         // active AJAX component
         $sGroupTable = $this->_getViewName('oxgroups');
         $oDb = oxDb::getDb();
-        $sId = oxConfig::getParameter( 'oxid' );
-        $sSynchId = oxConfig::getParameter( 'synchoxid' );
+        $sId = $oConfig->getRequestParameter( 'oxid' );
+        $sSynchId = $oConfig->getRequestParameter( 'synchoxid' );
 
         // category selected or not ?
         if ( !$sId) {
@@ -80,9 +81,10 @@ class discount_groups_ajax extends ajaxListComponent
      */
     public function removeDiscGroup()
     {
+        $oConfig = $this->getConfig();
 
         $aRemoveGroups = $this->_getActionIds( 'oxobject2discount.oxid' );
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $oConfig->getRequestParameter( 'all' ) ) {
 
             $sQ = $this->_addFilter( "delete oxobject2discount.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
@@ -100,11 +102,12 @@ class discount_groups_ajax extends ajaxListComponent
      */
     public function addDiscGroup()
     {
+        $oConfig = $this->getConfig();
         $aChosenCat = $this->_getActionIds( 'oxgroups.oxid' );
-        $soxId      = oxConfig::getParameter( 'synchoxid' );
+        $soxId      = $oConfig->getRequestParameter( 'synchoxid' );
 
 
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $oConfig->getRequestParameter( 'all' ) ) {
             $sGroupTable = $this->_getViewName('oxgroups');
             $aChosenCat = $this->_getAll( $this->_addFilter( "select $sGroupTable.oxid ".$this->_getQuery() ) );
         }

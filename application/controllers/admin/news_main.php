@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: news_main.php 48727 2012-08-16 09:09:02Z tomas $
+ * @version   SVN: $Id: news_main.php 52113 2012-11-21 15:46:41Z aurimas.gladutis $
  */
 
 
@@ -111,7 +111,7 @@ class News_Main extends oxAdminDetails
         $oConvObject->fldmax_length = 0;
         $oConvObject->fldtype = "date";
         $oConvObject->value   = $aParams['oxnews__oxdate'];
-        $aParams['oxnews__oxdate'] = oxDb::getInstance()->convertDBDate( $oConvObject, true);
+        $aParams['oxnews__oxdate'] = oxRegistry::get("oxUtilsDate")->convertDBDate( $oConvObject, true);
 
         $oNews = oxNew( "oxnews" );
 
@@ -158,7 +158,7 @@ class News_Main extends oxAdminDetails
         $oConvObject->fldmax_length = 0;
         $oConvObject->fldtype = "date";
         $oConvObject->value   = $aParams['oxnews__oxdate'];
-        $aParams['oxnews__oxdate'] = oxDb::getInstance()->convertDBDate( $oConvObject, true );
+        $aParams['oxnews__oxdate'] = oxRegistry::get("oxUtilsDate")->convertDBDate( $oConvObject, true );
 
         $oNews = oxNew( "oxnews" );
 

@@ -77,7 +77,9 @@ class Module_Main extends oxAdminDetails
             return;
         }
         try {
-            $oModule->activate();
+            if ( $oModule->activate() ) {
+                $this->_aViewData["updatenav"] = "1";
+            }
         } catch (oxException $oEx) {
             oxRegistry::get("oxUtilsView")->addErrorToDisplay( $oEx );
             $oEx->debugOut();
@@ -98,7 +100,9 @@ class Module_Main extends oxAdminDetails
             return;
         }
         try {
-            $oModule->deactivate();
+            if ( $oModule->deactivate() ) {
+                $this->_aViewData["updatenav"] = "1";
+            }
         } catch (oxException $oEx) {
             oxRegistry::get("oxUtilsView")->addErrorToDisplay( $oEx );
             $oEx->debugOut();

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdiscount.php 50311 2012-10-09 15:16:26Z linas.kukulskis $
+ * @version   SVN: $Id: oxdiscount.php 51556 2012-11-08 15:08:48Z linas.kukulskis $
  */
 
 /**
@@ -227,7 +227,7 @@ class oxDiscount extends oxI18n
                 $dRate = $oBasket->getBasketCurrency()->rate;
                 if ( $this->oxdiscount__oxprice->value ) {
                     if ( ( $oPrice = $oBasketArticle->getPrice() ) ) {
-                        $dAmount += ($oPrice->getBruttoPrice() * $oBasketItem->getAmount())/$dRate;
+                        $dAmount += ($oPrice->getPrice() * $oBasketItem->getAmount())/$dRate;
                     }
                 } elseif ( $this->oxdiscount__oxamount->value ) {
                     $dAmount += $oBasketItem->getAmount();
@@ -256,6 +256,7 @@ class oxDiscount extends oxI18n
             ( $dAmount < $this->oxdiscount__oxamount->value || $dAmount > $this->oxdiscount__oxamountto->value ) ) {
             $blIs = false;
         }
+
         return $blIs;
     }
 
@@ -354,6 +355,8 @@ class oxDiscount extends oxI18n
      *
      * @param oxprice $oPrice  basket item price object
      * @param double  $dAmount basket item amount (default 1)
+     *
+     * @deprecated since v5.0.1 (2012-11-08); use oxPrice class  discount calculation methods;
      *
      * @return null
      */

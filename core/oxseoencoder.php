@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoder.php 48869 2012-08-21 08:10:48Z tomas $
+ * @version   SVN: $Id: oxseoencoder.php 51988 2012-11-19 13:01:16Z aurimas.gladutis $
  */
 
 /**
@@ -605,12 +605,10 @@ class oxSeoEncoder extends oxSuperCfg
         $sUri = $this->encodeString( $sUri, true, $iLang );
 
         // basic string preparation
-        $sUri = strip_tags( $sUri );
         $oStr = getStr();
-
+        $sUri = $oStr->strip_tags( $sUri );
 
         // if found ".html" or "/" at the end - removing it temporary
-        $oStr = getStr();
         $sExt = $this->_getUrlExtension();
         if ($sExt === null) {
             $aMatched = array();
@@ -625,7 +623,12 @@ class oxSeoEncoder extends oxSuperCfg
         }
 
         // removing any special characters
-        $sRegExp = '/[^A-Za-z0-9'.preg_quote( self::$_sSeparator, '/').preg_quote( self::$_sPrefix, '/').'\/]+/';
+        // #0004282 bugfix, php <5.3 does not escape - char, so we do it manually
+        $sQuotedPrefix = preg_quote( self::$_sSeparator . self::$_sPrefix, '/');
+        if ( phpversion() < '5.3' ) {
+            $sQuotedPrefix = str_replace( '-', '\-', $sQuotedPrefix );
+        }
+        $sRegExp = '/[^A-Za-z0-9' . $sQuotedPrefix . '\/]+/';
         $sUri  = $oStr->preg_replace( array( "/\W*\/\W*/", $sRegExp ), array( "/", self::$_sSeparator ), $sUri );
 
         // SEO id is empty ?
@@ -648,7 +651,12 @@ class oxSeoEncoder extends oxSuperCfg
         $sUri = $oStr->preg_replace( "#^(/*)(".implode('|', $this->_getReservedEntryKeys()).")(/|$)#i", "\$1\$2$sAdd\$3", $sUri );
 
         // cleaning
-        return $oStr->preg_replace( array( '|//+|', '/' . preg_quote( self::$_sSeparator . self::$_sSeparator, '/' ) .'+/' ),
+        // #0004282 bugfix, php < 5.3 does not escape - char, so we do it manually\
+        $sQuotedSeparator = preg_quote( self::$_sSeparator, '/');
+        if ( phpversion() < '5.3' ) {
+            $sQuotedSeparator = str_replace( '-', '\-', $sQuotedSeparator );
+        }
+        return $oStr->preg_replace( array( '|//+|', '/' . $sQuotedSeparator . $sQuotedSeparator .'+/' ),
                              array( '/', self::$_sSeparator ), $sUri );
     }
 
@@ -1140,11 +1148,11 @@ class oxSeoEncoder extends oxSuperCfg
 
             $oStr = getStr();
             if ( $sKeywords !== false ) {
-                $sKeywords = $oDb->quote( $oStr->htmlspecialchars( $this->encodeString( strip_tags( $sKeywords ), false, $iLang ) ) );
+                $sKeywords = $oDb->quote( $oStr->htmlspecialchars( $this->encodeString( $oStr->strip_tags( $sKeywords ), false, $iLang ) ) );
             }
 
             if ( $sDescription !== false ) {
-                $sDescription = $oDb->quote( $oStr->htmlspecialchars( strip_tags( $sDescription ) ) );
+                $sDescription = $oDb->quote( $oStr->htmlspecialchars( $oStr->strip_tags( $sDescription ) ) );
             }
 
             $sQ = "insert into oxobject2seodata

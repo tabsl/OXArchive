@@ -30,15 +30,6 @@ $aLang = array(
 
 'charset'                                  => 'ISO-8859-15',
 
-'EMAIL_SENDEDNOW_HTML_ORDERSHIPPEDTO'      => 'Die Sendung geht an:',
-'EMAIL_SENDEDNOW_HTML_ORDERNOMBER'         => 'Ihre Bestellnr.:',
-'EMAIL_SENDEDNOW_HTML_QUANTITY'            => 'Anzahl',
-'EMAIL_SENDEDNOW_HTML_PRODUCT'             => 'Artikel',
-'EMAIL_SENDEDNOW_HTML_PRODUCTRATING'       => 'Artikel bewerten',
-'EMAIL_SENDEDNOW_HTML_ARTNOMBER'           => 'Art.Nr.:',
-'EMAIL_SENDEDNOW_HTML_REVIEW'              => 'bewerten',
-'EMAIL_SENDEDNOW_HTML_YUORTEAM1'           => 'Ihr',
-'EMAIL_SENDEDNOW_HTML_YUORTEAM2'           => 'Team',
 );
 
 /*

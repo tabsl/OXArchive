@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsysrequirements.php 48727 2012-08-16 09:09:02Z tomas $
+ * @version   SVN: $Id: oxsysrequirements.php 51905 2012-11-15 15:49:37Z aurimas.gladutis $
  */
 
 /**
@@ -338,9 +338,10 @@ class oxSysRequirements
 
         $aPathsToCheck = array(
                             $sPath."out/pictures{$sVerPrefix}/promo/",
-                            $sPath."out/pictures{$sVerPrefix}/media/",
                             $sPath."out/pictures{$sVerPrefix}/master/",
                             $sPath."out/pictures{$sVerPrefix}/generated/",
+                            $sPath."out/pictures{$sVerPrefix}/media/", // @deprecated, use out/media instead
+                            $sPath."out/media/",
                             $sPath."log/",
                             $sTmp
                             );

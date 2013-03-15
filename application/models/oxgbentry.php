@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxgbentry.php 48786 2012-08-17 10:20:42Z tomas $
+ * @version   SVN: $Id: oxgbentry.php 51697 2012-11-12 13:09:33Z saulius.stasiukaitis $
  */
 
 /**

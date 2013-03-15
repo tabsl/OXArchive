@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxrssfeed.php 50217 2012-10-05 15:09:29Z vilma $
+ * @version   SVN: $Id: oxrssfeed.php 51865 2012-11-15 12:43:58Z linas.kukulskis $
  */
 
 /**
@@ -861,7 +861,7 @@ class oxRssFeed extends oxSuperCfg
         }
 
         $oArtList = oxNew( 'oxarticlelist' );
-        $oArtList->loadAktionArticles( 'OXBARGAIN', $this->getConfig()->getConfigParam( 'iRssItemsCount' ) );
+        $oArtList->loadActionArticles( 'OXBARGAIN', $this->getConfig()->getConfigParam( 'iRssItemsCount' ) );
 
         $oLang = oxRegistry::getLang();
         $this->_loadData(

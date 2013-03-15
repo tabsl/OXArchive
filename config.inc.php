@@ -187,9 +187,3 @@
      */
     $this->blUseCron = false;
 
-
-
-    //include custom configuraiton file cust_config.inc.php
-    if ( is_readable(dirname(__FILE__) . "/cust_config.inc.php" ) ) {
-        require_once (dirname(__FILE__) . "/cust_config.inc.php");
-    }

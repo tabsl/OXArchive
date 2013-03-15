@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: manufacturer_main_ajax.php 48854 2012-08-20 14:59:23Z vilma $
+ * @version   SVN: $Id: manufacturer_main_ajax.php 52082 2012-11-21 10:50:35Z vaidas.matulevicius $
  */
 
 /**
@@ -73,27 +73,24 @@ class manufacturer_main_ajax extends ajaxListComponent
         $sO2CView  = $this->_getViewName('oxobject2category');
         $oDb = oxDb::getDb();
 
-        $sManufacturerId      = oxConfig::getParameter( 'oxid' );
-        $sSynchManufacturerId = oxConfig::getParameter( 'synchoxid' );
+        $sManufacturerId      = $myConfig->getRequestParameter( 'oxid' );
+        $sSynchManufacturerId = $myConfig->getRequestParameter( 'synchoxid' );
 
         // Manufacturer selected or not ?
         if ( !$sManufacturerId ) {
             // dodger performance
             $sQAdd  = ' from '.$sArtTable.' where '.$sArtTable.'.oxshopid="'.$myConfig->getShopId().'" and 1 ';
-            $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' ) ?'':" and $sArtTable.oxparentid = '' and $sArtTable.oxmanufacturerid != ".$oDb->quote( $sSynchManufacturerId );
-        } else {
+            $sQAdd .= $myConfig->getRequestParameter( 'blVariantsSelection' ) ?'':" and $sArtTable.oxparentid = '' and $sArtTable.oxmanufacturerid != ".$oDb->quote( $sSynchManufacturerId );
+        } elseif ( $sSynchManufacturerId && $sSynchManufacturerId != $sManufacturerId ) {
             // selected category ?
-            if ( $sSynchManufacturerId && $sSynchManufacturerId != $sManufacturerId ) {
-                $sQAdd  = " from $sO2CView left join $sArtTable on ";
-                $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?" ( $sArtTable.oxid = $sO2CView.oxobjectid or $sArtTable.oxparentid = oxobject2category.oxobjectid )":" $sArtTable.oxid = $sO2CView.oxobjectid ";
-                $sQAdd .= 'where '.$sArtTable.'.oxshopid="'.$myConfig->getShopId().'" and '.$sO2CView.'.oxcatnid = '.$oDb->quote( $sManufacturerId ).' and '.$sArtTable.'.oxmanufacturerid != '.$oDb->quote( $sSynchManufacturerId );
-                $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?'':" and $sArtTable.oxparentid = '' ";
-            } else {
-                $sQAdd  = " from $sArtTable where $sArtTable.oxmanufacturerid = ".$oDb->quote( $sManufacturerId );
-                $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?'':" and $sArtTable.oxparentid = '' ";
-            }
+            $sQAdd  = " from $sO2CView left join $sArtTable on ";
+            $sQAdd .= $myConfig->getRequestParameter( 'blVariantsSelection' )?" ( $sArtTable.oxid = $sO2CView.oxobjectid or $sArtTable.oxparentid = $sO2CView.oxobjectid )":" $sArtTable.oxid = $sO2CView.oxobjectid ";
+            $sQAdd .= 'where '.$sArtTable.'.oxshopid="'.$myConfig->getShopId().'" and '.$sO2CView.'.oxcatnid = '.$oDb->quote( $sManufacturerId ).' and '.$sArtTable.'.oxmanufacturerid != '.$oDb->quote( $sSynchManufacturerId );
+            $sQAdd .= $myConfig->getRequestParameter( 'blVariantsSelection' )?'':" and $sArtTable.oxparentid = '' ";
+        } else {
+            $sQAdd  = " from $sArtTable where $sArtTable.oxmanufacturerid = ".$oDb->quote( $sManufacturerId );
+            $sQAdd .= $myConfig->getRequestParameter( 'blVariantsSelection' )?'':" and $sArtTable.oxparentid = '' ";
         }
-
         return $sQAdd;
     }
 
@@ -110,7 +107,7 @@ class manufacturer_main_ajax extends ajaxListComponent
         $sQ = parent::_addFilter( $sQ );
 
         // display variants or not ?
-        $sQ .= $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ? ' group by '.$sArtTable.'.oxid ' : '';
+        $sQ .= $this->getConfig()->getRequestParameter( 'blVariantsSelection' ) ? ' group by '.$sArtTable.'.oxid ' : '';
         return $sQ;
     }
 
@@ -123,17 +120,18 @@ class manufacturer_main_ajax extends ajaxListComponent
     {
         $myConfig   = $this->getConfig();
         $aRemoveArt = $this->_getActionIds( 'oxarticles.oxid' );
+        $sOxid = $myConfig->getRequestParameter( 'oxid' );
 
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( "all" ) ) {
             $sArtTable = $this->_getViewName( 'oxarticles' );
             $aRemoveArt = $this->_getAll( $this->_addFilter( "select $sArtTable.oxid ".$this->_getQuery() ) );
         }
-
-        if ( is_array(  $aRemoveArt ) ) {
+        
+        if ( is_array(  $aRemoveArt ) && !empty( $aRemoveArt ) ) {
             $sSelect = "update oxarticles set oxmanufacturerid = null where oxid in ( ".implode(", ", oxDb::getInstance()->quoteArray( $aRemoveArt ) ).") ";
             oxDb::getDb()->Execute( $sSelect);
 
-            $this->resetCounter( "manufacturerArticle", oxConfig::getParameter( 'oxid' ) );
+            $this->resetCounter( "manufacturerArticle", $sOxid );
         }
     }
 
@@ -147,19 +145,19 @@ class manufacturer_main_ajax extends ajaxListComponent
         $myConfig = $this->getConfig();
 
         $aAddArticle = $this->_getActionIds( 'oxarticles.oxid' );
-        $soxId       = oxConfig::getParameter( 'synchoxid' );
+        $sSynchOxid       = $myConfig->getRequestParameter( 'synchoxid' );
 
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $myConfig->getRequestParameter( 'all' ) ) {
             $sArtTable = $this->_getViewName( 'oxarticles' );
             $aAddArticle = $this->_getAll( $this->_addFilter( "select $sArtTable.oxid ".$this->_getQuery() ) );
         }
 
-        if ( $soxId && $soxId != "-1" && is_array( $aAddArticle ) ) {
+        if ( $sSynchOxid && $sSynchOxid != "-1" && is_array( $aAddArticle ) ) {
             $oDb = oxDb::getDb();
-            $sSelect = "update oxarticles set oxmanufacturerid = ".$oDb->quote( $soxId )." where oxid in ( ".implode(", ", oxDb::getInstance()->quoteArray( $aAddArticle ) )." )";
+            $sSelect = "update oxarticles set oxmanufacturerid = ".$oDb->quote( $sSynchOxid )." where oxid in ( ".implode(", ", oxDb::getInstance()->quoteArray( $aAddArticle ) )." )";
 
             $oDb->Execute( $sSelect);
-            $this->resetCounter( "manufacturerArticle", $soxId );
+            $this->resetCounter( "manufacturerArticle", $sSynchOxid );
         }
     }
 }

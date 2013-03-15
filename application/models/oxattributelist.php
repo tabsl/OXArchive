@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxattributelist.php 48727 2012-08-16 09:09:02Z tomas $
+ * @version   SVN: $Id: oxattributelist.php 52099 2012-11-21 13:35:31Z linas.kukulskis $
  */
 
 /**
@@ -100,26 +100,37 @@ class oxAttributeList extends oxList
     /**
      * Load attributes by article Id
      *
-     * @param string $sArtId article ids
+     * @param string $sArticleId article id
+     * @param string $sParentId  article parent id
      *
      * @return null;
      */
-    public function loadAttributes( $sArtId )
+    public function loadAttributes( $sArticleId, $sParentId = null )
     {
-        if ( $sArtId ) {
+        if ( $sArticleId ) {
+
+            $oDb = oxDb::getDb( oxDb::FETCH_MODE_ASSOC );
 
             $sAttrViewName = getViewName( 'oxattribute' );
             $sViewName     = getViewName( 'oxobject2attribute' );
 
-            $sSelect  = "select {$sAttrViewName}.*, o2a.* from {$sViewName} as o2a ";
+            $sSelect  = "select {$sAttrViewName}.`oxid`, {$sAttrViewName}.`oxtitle`, o2a.`oxvalue` from {$sViewName} as o2a ";
             $sSelect .= "left join {$sAttrViewName} on {$sAttrViewName}.oxid = o2a.oxattrid ";
-            $sSelect .= "where o2a.oxobjectid = '{$sArtId}' and o2a.oxvalue != '' ";
+            $sSelect .= "where o2a.oxobjectid = '%s' and o2a.oxvalue != '' ";
             $sSelect .= "order by o2a.oxpos, {$sAttrViewName}.oxpos";
 
-            $this->selectString( $sSelect );
+            $aAttributes = $oDb->getAll( sprintf( $sSelect, $sArticleId ) );
+
+            if ( $sParentId ) {
+                $aParentAttributes = $oDb->getAll( sprintf( $sSelect, $sParentId ));
+                $aAttributes = $this->_mergeAttributes( $aAttributes, $aParentAttributes );
+            }
+
+            $this->assignArray( $aAttributes );
         }
+
     }
-    
+
     /**
      * Load displayable in baskte/order attributes by article Id
      *
@@ -209,4 +220,32 @@ class oxAttributeList extends oxList
 
         return $this;
     }
+
+    /**
+     * Merge attribute arrays
+     *
+     * @param array $aAttributes       array of attributes
+     * @param array $aParentAttributes array of parent article attributes
+     *
+     * @return array $aAttributes
+     */
+    protected function _mergeAttributes( $aAttributes, $aParentAttributes )
+    {
+
+        if ( count( $aParentAttributes ) ) {
+            $aAttrIds = array();
+            foreach ( $aAttributes as $aAttribute ) {
+                $aAttrIds[] = $aAttribute['OXID'];
+            }
+
+            foreach ( $aParentAttributes as $aAttribute ) {
+                if ( !in_array( $aAttribute['OXID'], $aAttrIds ) ) {
+                    $aAttributes[] = $aAttribute;
+                }
+            }
+        }
+
+        return $aAttributes;
+    }
+
 }

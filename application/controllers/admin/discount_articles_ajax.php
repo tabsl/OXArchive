@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: discount_articles_ajax.php 48521 2012-08-10 13:52:17Z linas.kukulskis $
+ * @version   SVN: $Id: discount_articles_ajax.php 52041 2012-11-20 13:02:38Z vilma $
  */
 
 /**
@@ -66,25 +66,24 @@ class discount_articles_ajax extends ajaxListComponent
      */
     protected function _getQuery()
     {
-        $myConfig = $this->getConfig();
+        $oConfig = $this->getConfig();
 
         $sArticleTable = $this->_getViewName('oxarticles');
-        $sCatTable     = $this->_getViewName('oxcategories');
         $sO2CView      = $this->_getViewName('oxobject2category');
 
         $oDb = oxDb::getDb();
-        $sOxid = oxConfig::getParameter( 'oxid' );
-        $sSynchOxid = oxConfig::getParameter( 'synchoxid' );
+        $sOxid = $oConfig->getRequestParameter( 'oxid' );
+        $sSynchOxid = $oConfig->getRequestParameter( 'synchoxid' );
 
         // category selected or not ?
         if ( !$sOxid && $sSynchOxid ) {
             $sQAdd  = " from $sArticleTable where 1 ";
-            $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?'':"and $sArticleTable.oxparentid = '' ";
+            $sQAdd .= $oConfig->getConfigParam( 'blVariantsSelection' )?'':"and $sArticleTable.oxparentid = '' ";
         } else {
             // selected category ?
             if ( $sSynchOxid && $sOxid != $sSynchOxid ) {
                 $sQAdd  = " from $sO2CView left join $sArticleTable on ";
-                $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?"($sArticleTable.oxid=$sO2CView.oxobjectid or $sArticleTable.oxparentid=$sO2CView.oxobjectid)":" $sArticleTable.oxid=$sO2CView.oxobjectid ";
+                $sQAdd .= $oConfig->getConfigParam( 'blVariantsSelection' )?"($sArticleTable.oxid=$sO2CView.oxobjectid or $sArticleTable.oxparentid=$sO2CView.oxobjectid)":" $sArticleTable.oxid=$sO2CView.oxobjectid ";
                 $sQAdd .= " where $sO2CView.oxcatnid = ".$oDb->quote( $sOxid )." and $sArticleTable.oxid is not null ";
 
                 // resetting
@@ -120,7 +119,7 @@ class discount_articles_ajax extends ajaxListComponent
         $aChosenArt = $this->_getActionIds( 'oxobject2discount.oxid' );
 
 
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( 'all' ) ) {
 
             $sQ = parent::_addFilter( "delete oxobject2discount.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
@@ -138,12 +137,13 @@ class discount_articles_ajax extends ajaxListComponent
      */
     public function addDiscArt()
     {
+        $oConfig = $this->getConfig();
         $aChosenArt = $this->_getActionIds( 'oxarticles.oxid' );
-        $soxId      = oxConfig::getParameter( 'synchoxid');
+        $soxId      = $oConfig->getRequestParameter('synchoxid');
 
 
         // adding
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $oConfig->getRequestParameter( 'all' ) ) {
             $sArticleTable = $this->_getViewName('oxarticles');
             $aChosenArt = $this->_getAll( parent::_addFilter( "select $sArticleTable.oxid ".$this->_getQuery() ) );
         }

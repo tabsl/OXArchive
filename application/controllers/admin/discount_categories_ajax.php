@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: discount_categories_ajax.php 48521 2012-08-10 13:52:17Z linas.kukulskis $
+ * @version   SVN: $Id: discount_categories_ajax.php 52061 2012-11-20 16:05:09Z vilma $
  */
 
 /**
@@ -55,8 +55,9 @@ class discount_categories_ajax extends ajaxListComponent
     protected function _getQuery()
     {
         $oDb = oxDb::getDb();
-        $sId = oxConfig::getParameter( 'oxid' );
-        $sSynchId = oxConfig::getParameter( 'synchoxid' );
+        $oConfig = $this->getConfig();
+        $sId = $oConfig->getRequestParameter( 'oxid' );
+        $sSynchId = $oConfig->getRequestParameter( 'synchoxid' );
 
         $sCategoryTable = $this->_getViewName('oxcategories');
 
@@ -89,10 +90,11 @@ class discount_categories_ajax extends ajaxListComponent
      */
     public function removeDiscCat()
     {
+        $oConfig = $this->getConfig();
         $aChosenCat = $this->_getActionIds( 'oxobject2discount.oxid' );
 
 
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $oConfig->getRequestParameter( 'all' ) ) {
 
             $sQ = $this->_addFilter( "delete oxobject2discount.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
@@ -110,11 +112,12 @@ class discount_categories_ajax extends ajaxListComponent
      */
     public function addDiscCat()
     {
+        $oConfig = $this->getConfig();
         $aChosenCat = $this->_getActionIds( 'oxcategories.oxid' );
-        $soxId      = oxConfig::getParameter( 'synchoxid');
+        $soxId      = $oConfig->getRequestParameter( 'synchoxid');
 
 
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $oConfig->getRequestParameter( 'all' ) ) {
             $sCategoryTable = $this->_getViewName('oxcategories');
             $aChosenCat = $this->_getAll( $this->_addFilter( "select $sCategoryTable.oxid ".$this->_getQuery() ) );
         }
@@ -128,9 +131,6 @@ class discount_categories_ajax extends ajaxListComponent
                 $oObject2Discount->save();
             }
         }
-
-        $oCategory = oxNew( 'oxCategory' );
-        $oCategory->executeDependencyEvent( $aChosenCat );
 
     }
 }

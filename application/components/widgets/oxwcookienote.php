@@ -44,10 +44,6 @@ class oxwCookieNote extends oxWidget
     public function render()
     {
         parent::render();
-
-        // seeting cookie that cookie notification was shown [cookie solution]
-        $oUtilsServer = oxRegistry::get("oxUtilsServer");
-
         return $this->_sThisTemplate;
     }
 

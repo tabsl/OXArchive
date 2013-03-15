@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsview.php 50159 2012-10-05 00:37:56Z alfonsas $
+ * @version   SVN: $Id: oxutilsview.php 52031 2012-11-20 10:51:04Z aurimas.gladutis $
  */
 
 /**
@@ -152,10 +152,11 @@ class oxUtilsView extends oxSuperCfg
      * @param bool      $blFull              if true the whole object is add to display (default false)
      * @param bool      $blCustomDestination true if the exception shouldn't be displayed at the default position (default false)
      * @param string    $sCustomDestination  defines a name of the view variable containing the messages, overrides Parameter 'CustomError' ("default")
+     * @param string    $sActiveController   defines a name of the controller, which should handle the error.
      *
      * @return null
      */
-    public function addErrorToDisplay( $oEr, $blFull = false, $blCustomDestination = false, $sCustomDestination = "" )
+    public function addErrorToDisplay( $oEr, $blFull = false, $blCustomDestination = false, $sCustomDestination = "", $sActiveController = "" )
     {
         if ( $blCustomDestination && ( oxConfig::getParameter( 'CustomError' ) || $sCustomDestination!= '' ) ) {
             // check if the current request wants do display exceptions on its own
@@ -203,12 +204,14 @@ class oxUtilsView extends oxSuperCfg
 
         if ( $oEr ) {
             $aEx[$sDestination][] = serialize( $oEr );
-            oxSession::setVar( 'Errors', $aEx );
+            oxRegistry::getSession()->setVariable( 'Errors', $aEx );
 
-            $sActiveController = oxConfig::getParameter( 'actcontrol' );
+            if ( $sActiveController == '' ) {
+                $sActiveController = oxRegistry::getConfig()->getRequestParameter( 'actcontrol' );
+            }
             if ( $sActiveController ) {
                 $aControllerErrors[$sDestination] = $sActiveController;
-                oxSession::setVar( 'ErrorController', $aControllerErrors );
+                oxRegistry::getSession()->setVariable( 'ErrorController', $aControllerErrors );
             }
         }
     }

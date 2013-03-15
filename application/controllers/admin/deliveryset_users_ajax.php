@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: deliveryset_users_ajax.php 48458 2012-08-10 06:59:10Z linas.kukulskis $
+ * @version   SVN: $Id: deliveryset_users_ajax.php 52048 2012-11-20 13:33:41Z vaidas.matulevicius $
  */
 
 /**
@@ -67,8 +67,8 @@ class deliveryset_users_ajax extends ajaxListComponent
     {
         $myConfig = $this->getConfig();
         $oDb = oxDb::getDb();
-        $sId      = oxConfig::getParameter( 'oxid' );
-        $sSynchId = oxConfig::getParameter( 'synchoxid' );
+        $sId      = $myConfig->getRequestParameter( 'oxid' );
+        $sSynchId = $myConfig->getRequestParameter( 'synchoxid' );
 
         $sUserTable = $this->_getViewName('oxuser');
 
@@ -77,20 +77,18 @@ class deliveryset_users_ajax extends ajaxListComponent
             $sQAdd  = " from $sUserTable where 1 ";
             if (!$myConfig->getConfigParam( 'blMallUsers' ) )
                 $sQAdd .= "and $sUserTable.oxshopid = '".$myConfig->getShopId()."' ";
-        } else {
+        } elseif ( $sSynchId && $sSynchId != $sId ) {
             // selected group ?
-            if ( $sSynchId && $sSynchId != $sId ) {
-                $sQAdd  = " from oxobject2group left join $sUserTable on $sUserTable.oxid = oxobject2group.oxobjectid ";
-                $sQAdd .= " where oxobject2group.oxgroupsid = ".$oDb->quote( $sId );
-                if (!$myConfig->getConfigParam( 'blMallUsers' ) )
-                    $sQAdd .= "and $sUserTable.oxshopid = '".$myConfig->getShopId()."' ";
+            $sQAdd  = " from oxobject2group left join $sUserTable on $sUserTable.oxid = oxobject2group.oxobjectid ";
+            $sQAdd .= " where oxobject2group.oxgroupsid = ".$oDb->quote( $sId );
+            if (!$myConfig->getConfigParam( 'blMallUsers' ) )
+                $sQAdd .= "and $sUserTable.oxshopid = '".$myConfig->getShopId()."' ";
 
-                // resetting
-                $sId = null;
-            } else {
-                $sQAdd  = " from oxobject2delivery, $sUserTable where oxobject2delivery.oxdeliveryid = ".$oDb->quote( $sId );
-                $sQAdd .= "and oxobject2delivery.oxobjectid = $sUserTable.oxid and oxobject2delivery.oxtype = 'oxdelsetu' ";
-            }
+            // resetting
+            $sId = null;
+        } else {
+            $sQAdd  = " from oxobject2delivery, $sUserTable where oxobject2delivery.oxdeliveryid = ".$oDb->quote( $sId );
+            $sQAdd .= "and oxobject2delivery.oxobjectid = $sUserTable.oxid and oxobject2delivery.oxtype = 'oxdelsetu' ";
         }
 
         if ( $sSynchId && $sSynchId != $sId) {
@@ -109,7 +107,7 @@ class deliveryset_users_ajax extends ajaxListComponent
     public function removeUserFromSet()
     {
         $aRemoveGroups = $this->_getActionIds( 'oxobject2delivery.oxid' );
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( 'all' ) ) {
 
             $sQ = $this->_addFilter( "delete oxobject2delivery.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
@@ -128,10 +126,10 @@ class deliveryset_users_ajax extends ajaxListComponent
     public function addUserToSet()
     {
         $aChosenUsr = $this->_getActionIds( 'oxuser.oxid' );
-        $soxId      = oxConfig::getParameter( 'synchoxid' );
+        $soxId      = $this->getConfig()->getRequestParameter( 'synchoxid' );
 
         // adding
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( 'all' ) ) {
             $sUserTable = $this->_getViewName('oxuser');
             $aChosenUsr = $this->_getAll( $this->_addFilter( "select $sUserTable.oxid ".$this->_getQuery() ) );
         }

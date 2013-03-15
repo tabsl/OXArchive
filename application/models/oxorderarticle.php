@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorderarticle.php 49434 2012-09-11 12:13:42Z linas.kukulskis $
+ * @version   SVN: $Id: oxorderarticle.php 52113 2012-11-21 15:46:41Z aurimas.gladutis $
  */
 
 /**
@@ -122,7 +122,7 @@ class oxOrderArticle extends oxBase implements oxIArticle
                 // formatting view
                 if ( !$this->getConfig()->getConfigParam( 'blSkipFormatConversion' ) ) {
                     if ( $sFieldName == "oxorderarticles__oxinsert" ) {
-                        oxDb::getInstance()->convertDBDate( $this->$sFieldName, true );
+                        oxRegistry::get("oxUtilsDate")->convertDBDate( $this->$sFieldName, true );
                     }
                 }
             }

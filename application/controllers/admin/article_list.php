@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_list.php 48458 2012-08-10 06:59:10Z linas.kukulskis $
+ * @version   SVN: $Id: article_list.php 52113 2012-11-21 15:46:41Z aurimas.gladutis $
  */
 
 /**
@@ -66,11 +66,11 @@ class Article_List extends oxAdminList
                 // formatting view
                 if ( !$myConfig->getConfigParam( 'blSkipFormatConversion' ) ) {
                     if ( $oArticle->$sFieldName->fldtype == "datetime" )
-                        oxDb::getInstance()->convertDBDateTime( $oArticle->$sFieldName );
+                        oxRegistry::get("oxUtilsDate")->convertDBDateTime( $oArticle->$sFieldName );
                     elseif ( $oArticle->$sFieldName->fldtype == "timestamp" )
-                        oxDb::getInstance()->convertDBTimestamp( $oArticle->$sFieldName );
+                        oxRegistry::get("oxUtilsDate")->convertDBTimestamp( $oArticle->$sFieldName );
                     elseif ( $oArticle->$sFieldName->fldtype == "date" )
-                        oxDb::getInstance()->convertDBDate( $oArticle->$sFieldName );
+                        oxRegistry::get("oxUtilsDate")->convertDBDate( $oArticle->$sFieldName );
                 }
 
                 $oArticle->pwrsearchval = $oArticle->$sFieldName->value;

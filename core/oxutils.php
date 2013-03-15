@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutils.php 51086 2012-10-30 09:42:27Z arturas.sevcenko $
+ * @version   SVN: $Id: oxutils.php 51910 2012-11-15 16:19:01Z linas.kukulskis $
  */
 
 /**
@@ -254,6 +254,34 @@ class oxUtils extends oxSuperCfg
         return (float) $fRet;
     }
 
+
+    /**
+     * Returns formatted float, according to formatting standards.
+     *
+     * @param string $sValue Formatted price
+     *
+     * @return float
+     */
+    public function string2Float( $sValue)
+    {
+        $fRet = str_replace( " ", "", $sValue);
+        $iCommaPos = strpos( $fRet, ",");
+        $iDotPos = strpos( $fRet, ".");
+        if (!$iDotPos xor !$iCommaPos) {
+            if (substr_count( $fRet, ",") > 1 || substr_count( $fRet, ".") > 1) {
+                $fRet = str_replace( array(",","."), "", $fRet);
+            } else {
+                $fRet = str_replace( ",", ".", $fRet);
+            }
+        } else if ( $iDotPos < $iCommaPos ) {
+            $fRet = str_replace( ".", "", $fRet);
+            $fRet = str_replace( ",", ".", $fRet);
+        }
+        // remove thousands
+        $fRet = str_replace( array(" ",","), "", $fRet);
+        return (float) $fRet;
+    }
+
     /**
      * Checks if current web client is Search Engine. Returns true on success.
      *
@@ -341,7 +369,6 @@ class oxUtils extends oxSuperCfg
     {
         // improved #533
         // checking for available profiles list
-        $aInterfaceProfiles = $aInterfaceProfiles;
         if ( is_array( $aInterfaceProfiles ) ) {
             //checking for previous profiles
             $sPrevProfile = oxRegistry::get("oxUtilsServer")->getOxCookie('oxidadminprofile');
@@ -1303,8 +1330,6 @@ class oxUtils extends oxSuperCfg
      */
     public function getCacheFilePath( $sCacheName, $blPathOnly = false, $sExtension = 'txt' )
     {
-        $sVersionPrefix = "";
-
 
             $sVersionPrefix = 'pe';
 

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_main.php 48786 2012-08-17 10:20:42Z tomas $
+ * @version   SVN: $Id: article_main.php 51936 2012-11-16 13:49:16Z linas.kukulskis $
  */
 
 /**
@@ -331,7 +331,6 @@ class Article_Main extends oxAdminDetails
             // setting oxinsert/oxtimestamp
             $iNow = date( 'Y-m-d H:i:s', oxRegistry::get("oxUtilsDate")->getTime() );
             $oArticle->oxarticles__oxinsert    = new oxField( $iNow );
-            $oArticle->oxarticles__oxtimestamp = new oxField( $iNow );
 
             // mantis#0001590: OXRATING and OXRATINGCNT not set to 0 when copying article
             $oArticle->oxarticles__oxrating    = new oxField( 0 );

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxnewsletter.php 48767 2012-08-16 17:33:56Z tomas $
+ * @version   SVN: $Id: oxnewsletter.php 51864 2012-11-15 12:43:47Z linas.kukulskis $
  */
 
 /**
@@ -253,7 +253,7 @@ class oxNewsletter extends oxBase
     {
         if ( $blPerfLoadAktion ) {
             $oArtList = oxNew( 'oxarticlelist' );
-            $oArtList->loadAktionArticles( 'OXNEWSLETTER' );
+            $oArtList->loadActionArticles( 'OXNEWSLETTER' );
             $oView->addTplParam( 'articlelist', $oArtList );
         }
 

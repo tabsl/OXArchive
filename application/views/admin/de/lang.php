@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 50659 2012-10-17 13:49:48Z aurimas.gladutis $
+ * @version   SVN: $Id: lang.php 52121 2012-11-22 07:56:36Z linas.kukulskis $
  */
 
 $sLangName  = 'Deutsch';
@@ -515,6 +515,7 @@ $aLang = array(
 'ARTICLE_STOCK_WEEKS'                                      => 'Wochen',
 'ARTICLE_STOCK_ORDERINFO'                                  => 'Zusatzinfo in Bestellbestätigung',
 'ARTICLE_STOCK_VPE'                                        => 'Verpackungseinheit',
+'ARTICLE_STOCK_ERRORSCALEPRICE'                            => '[TR]Attention: Scale price must be lower than normal price.',
 'ARTICLE_USERDEF_USERDEFRANGE'                             => 'Benutzerdefinierter Bereich - hier können Sie ihre eigenen Felder und Änderungen hinzufügen.',
 'ARTICLE_VARIANT_YOUWANTTODELETE'                          => 'Wollen Sie diese Variante wirklich löschen?',
 'ARTICLE_VARIANT_EDIT'                                     => 'Edit',
@@ -949,7 +950,7 @@ $aLang = array(
 'ORDER_OVERVIEW_PDF_BRUTTO'                                => '(brutto)',
 'ORDER_OVERVIEW_PDF_NETTO'                                 => '(netto)',
 'WRAPPING_COSTS'                              => 'Geschenkverpackung',
-'GIFTCARD_COSTS'                              => 'Geschenkverpackung',
+'GIFTCARD_COSTS'                              => 'Grußkarte',
 'ORDER_OVERVIEW_PDF_PAYMENTIMPACT'                         => 'Aufschlag Zahlungsart',
 'ORDER_OVERVIEW_PDF_ALLSUM_NET'                            => 'Gesamtsumme (netto)',
 'ORDER_OVERVIEW_PDF_ALLSUM'                                => 'Gesamtsumme (brutto)',
@@ -997,6 +998,7 @@ $aLang = array(
 'PAYMENT_MAIN_AVAILIBLEINGROUP'                            => 'Zugeordnete Benutzergruppen',
 'PAYMENT_MAIN_NOTAVAILIBLEINGROUP'                         => 'Alle Benutzergruppen',
 'PAYMENT_MAIN_LONGDESC'                                    => 'Beschreibung der Zahlungsart',
+'PAYMENT_MAIN_NOTICEDEFAULTVALUESSELECTED'                 => '[TR]Default values have been selected',
 'PAYMENT_OVERVIEW_HOWMANYPAYMENTS'                         => 'Wieviel Einkäufe wurden mit dieser Zahlungsart gemacht',
 'PRICEALARM_DONE_SENDEMAIL'                                => 'Preisalarm E-Mails versendet.',
 'PRICEALARM_DONE_GOTOPRICEALARM'                           => 'gehen Sie zu Preisalarm ',
@@ -1415,6 +1417,7 @@ $aLang = array(
 'TOOLS_MAIN_START'                                         => 'Update starten',
 'TOOLS_MAIN_CHECKPICS'                                     => 'Unbenutzte Bilder suchen und löschen',
 'TOOLS_LIST_UPDATEVIEWSSECCESS'                            => 'Datenbank-Views wurden erfolgreich aktualisiert.',
+'TOOLS_LIST_UPDATEVIEWSFAILED'                             => '[TR]DB Views update failed.',
 'TOOLS_MAIN_UPDATEVIEWSINFO'                               => 'Nachdem Sie Änderungen am Tabellenlayout vorgenommen haben, müssen Sie die VIEWS neu generieren.',
 'TOOLS_MAIN_UPDATEVIEWSNOW'                                => 'VIEWS jetzt updaten',
 'TOOLS_MAIN_UPDATEVIEWSCONFIRM'                            => 'Sind Sie sicher das Sie die VIEWS jetzt updaten wollen',
@@ -1493,6 +1496,7 @@ $aLang = array(
 'USER_LIST_ZIP'                                            => 'PLZ',
 'USER_LIST_PLACE'                                          => 'Ort',
 'USER_LIST_CUSTOMERNUM'                                    => 'Kundennummer',
+'CUSTOMERNUM'                                              => 'Kundennummer',
 'USER_LIST_MENNUITEM'                                      => 'Benutzer verwalten',
 'USER_LIST_MENNUSUBITEM'                                   => 'Benutzer',
 'USER_MAIN_RIGHTS'                                         => 'Rechte',
@@ -2020,7 +2024,6 @@ $aLang = array(
 'EMAIL_PRICEALARM_CUSTOMER_TEAM1'                          => 'Ihr',
 'EMAIL_PRICEALARM_CUSTOMER_TEAM2'                          => 'Team',
 
-'NO_REVERSE_PROXY_BETWEEN'                                 => 'Kein Reverse Proxy vor dem Administrationsbereich',
 'IS_REVERSE_PROXY_AVAILABLE'                               => 'Verfügbarkeit des Reverse Proxy testen',
 'REVERSE_PROXY_TEST_SUCCESS'                               => 'Test des Reverse Proxy erfolgreich',
 'REVERSE_PROXY_TEST_FAILURE'                               => 'Test des Reverse Proxy fehlgeschlagen',

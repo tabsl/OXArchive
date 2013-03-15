@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 49848 2012-09-27 12:50:38Z juergen.busch $
+ * @version   SVN: $Id: help_lang.php 52122 2012-11-22 07:58:17Z linas.kukulskis $
  */
 
 /**
@@ -285,9 +285,6 @@ $aLang =  array(
                                                  'If no separator is entered, - is used.',
 
 'HELP_SHOP_SEO_SAFESEOPREF'                   => 'If several products have the same name and are in the same category, they would get the same SEO URL. For avoiding this, the SEO Suffix is attached. If no SEO Suffix is defined, <span class="filename_filepath_or_italic">oxid</span> is used.',
-
-'HELP_SHOP_SEO_REPLACECHARS'                  => 'Some special characters like German umlauts should be removed from URLs. They can cause problems. Here you can define how they are replaced. The syntax is <code>special character -> replacement character</code>, e.g. <code>Ü -> Ue</code>.<br>' .
-                                                 'For German, the replacements are already entered.',
 
 'HELP_SHOP_SEO_RESERVEDWORDS'                 => 'Some URLs are defined in OXID eShop, like www.youreshop.com/admin for accessing eShop admin. If a category was named <span class="filename_filepath_or_italic">admin</span> the SEO URL would be www.youreshop.com/admin too - the category couldn\'t be accessed. Therefore the SEO suffix is attached to these URLs. You can define here which URLs are suffixed automatically.',
 

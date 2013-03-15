@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxselectlist.php 48727 2012-08-16 09:09:02Z tomas $
+ * @version   SVN: $Id: oxselectlist.php 51379 2012-11-06 07:30:52Z andrius.silgalis $
  */
 
 /**
@@ -86,7 +86,7 @@ class oxSelectlist extends oxI18n implements oxISelectList
         if ( $this->_aFieldList == null && $this->oxselectlist__oxvaldesc->value ) {
             $this->_aFieldList = oxRegistry::getUtils()->assignValuesFromText( $this->oxselectlist__oxvaldesc->value, $dVat );
             foreach ( $this->_aFieldList as $sKey => $oField ) {
-                $this->_aFieldList[$sKey]->name = strip_tags( $this->_aFieldList[$sKey]->name );
+                $this->_aFieldList[$sKey]->name = getStr()->strip_tags( $this->_aFieldList[$sKey]->name );
             }
         }
         return $this->_aFieldList;
@@ -161,7 +161,7 @@ class oxSelectlist extends oxI18n implements oxISelectList
             $aList = oxRegistry::getUtils()->assignValuesFromText( $this->oxselectlist__oxvaldesc->value, $this->getVat() );
             foreach ( $aList as $sKey => $oField ) {
                 if ( $oField->name ) {
-                   $this->_aList[$sKey] = oxNew( "oxSelection", getStr()->htmlspecialchars( strip_tags( $oField->name ) ), $sKey, false, $this->_aList === false ? true : false );
+                   $this->_aList[$sKey] = oxNew( "oxSelection", getStr()->htmlspecialchars( getStr()->strip_tags( $oField->name ) ), $sKey, false, $this->_aList === false ? true : false );
                 }
             }
         }

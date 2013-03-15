@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxviewconfig.php 48979 2012-08-24 07:26:22Z vilma $
+ * @version   SVN: $Id: oxviewconfig.php 52009 2012-11-19 15:12:31Z linas.kukulskis $
  */
 
 /**
@@ -107,7 +107,7 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getActContentLoadId()
     {
-        $sTplName = oxConfig::getParameter( 'oxloadid' );
+        $sTplName = oxRegistry::getConfig()->getRequestParameter( 'oxloadid' );
         // #M1176: Logout from CMS page
         if ( !$sTplName && $this->getConfig()->getTopActiveView() ) {
             $sTplName = $this->getConfig()->getTopActiveView()->getViewConfig()->getViewConfigParam('oxloadid');
@@ -122,7 +122,7 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getActTplName()
     {
-        return oxConfig::getParameter( 'tpl' );
+        return oxRegistry::getConfig()->getRequestParameter( 'tpl' );
     }
 
     /**
@@ -223,7 +223,7 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getActCatId()
     {
-        return oxConfig::getParameter( 'cnid' );
+        return oxRegistry::getConfig()->getRequestParameter( 'cnid' );
     }
 
      /**
@@ -233,7 +233,7 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getActArticleId()
     {
-        return oxConfig::getParameter( 'anid' );
+        return oxRegistry::getConfig()->getRequestParameter( 'anid' );
     }
 
      /**
@@ -243,7 +243,7 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getActSearchParam()
     {
-        return oxConfig::getParameter( 'searchparam' );
+        return oxRegistry::getConfig()->getRequestParameter( 'searchparam' );
     }
 
      /**
@@ -253,7 +253,7 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getActSearchTag()
     {
-        return oxConfig::getParameter( 'searchtag' );
+        return oxRegistry::getConfig()->getRequestParameter( 'searchtag' );
     }
 
      /**
@@ -263,7 +263,7 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getActRecommendationId()
     {
-        return oxConfig::getParameter( 'recommid' );
+        return oxRegistry::getConfig()->getRequestParameter( 'recommid' );
     }
 
     /**
@@ -273,7 +273,7 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getActListType()
     {
-        return oxConfig::getParameter( 'listtype' );
+        return oxRegistry::getConfig()->getRequestParameter( 'listtype' );
     }
 
     /**
@@ -283,7 +283,7 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getActManufacturerId()
     {
-        return oxConfig::getParameter( 'mnid' );
+        return oxRegistry::getConfig()->getRequestParameter( 'mnid' );
     }
 
      /**
@@ -293,7 +293,7 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getContentId()
     {
-        return oxConfig::getParameter( 'oxcid' );
+        return oxRegistry::getConfig()->getRequestParameter( 'oxcid' );
     }
 
     /**
@@ -563,8 +563,10 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getResourceUrl( $sFile = null )
     {
-        if ( ( $sValue = $this->getViewConfigParam( 'basetpldir' ) ) === null ) {
+        if ( $sFile ) {
             $sValue = $this->getConfig()->getResourceUrl( $sFile, $this->isAdmin() );
+        } elseif ( ( $sValue = $this->getViewConfigParam( 'basetpldir' ) ) === null ) {
+            $sValue = $this->getConfig()->getResourceUrl( '', $this->isAdmin() );
             $this->setViewConfigParam( 'basetpldir', $sValue );
         }
         return $sValue;
@@ -783,7 +785,7 @@ class oxViewConfig extends oxSuperCfg
     public function getNrOfCatArticles()
     {
         // checking if all needed data is set
-        switch (oxSession::getVar( 'ldtype' )) {
+        switch (oxRegistry::getSession()->getVariable( 'ldtype' )) {
             case 'grid':
                 return $this->getConfig()->getConfigParam( 'aNrofCatArticlesInGrid' );
                 break;
@@ -860,7 +862,7 @@ class oxViewConfig extends oxSuperCfg
     public function getActLanguageId()
     {
         if ( ( $sValue = $this->getViewConfigParam( 'lang' ) ) === null ) {
-            $iLang = oxConfig::getParameter( 'lang' );
+            $iLang = oxRegistry::getConfig()->getRequestParameter( 'lang' );
             $sValue = ( $iLang !== null ) ? $iLang : oxRegistry::getLang()->getBaseLanguage();
             $this->setViewConfigParam( 'lang', $sValue );
         }
@@ -949,7 +951,7 @@ class oxViewConfig extends oxSuperCfg
             $aNavParams = $this->getConfig()->getActiveView()->getNavigationParams();
             foreach ( $aNavParams as $sName => $sValue ) {
                 if ( isset( $sValue ) ) {
-                    $sParams .= "<input type=\"hidden\" name=\"{$sName}\" value=\"".$oStr->htmlentities( $sValue )."\">\n";
+                    $sParams .= "<input type=\"hidden\" name=\"{$sName}\" value=\"".$oStr->htmlentities( $sValue )."\" />\n";
                 }
             }
             $this->setViewConfigParam( 'navformparams', $sParams );

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: delivery_categories_ajax.php 48458 2012-08-10 06:59:10Z linas.kukulskis $
+ * @version   SVN: $Id: delivery_categories_ajax.php 52048 2012-11-20 13:33:41Z vaidas.matulevicius $
  */
 
 /**
@@ -57,8 +57,8 @@ class delivery_categories_ajax extends ajaxListComponent
         // looking for table/view
         $sCatTable = $this->_getViewName('oxcategories');
         $oDb = oxDb::getDb();
-        $sDelId      = oxConfig::getParameter( 'oxid' );
-        $sSynchDelId = oxConfig::getParameter( 'synchoxid' );
+        $sDelId      = $this->getConfig()->getRequestParameter( 'oxid' );
+        $sSynchDelId = $this->getConfig()->getRequestParameter( 'synchoxid' );
 
         // category selected or not ?
         if ( !$sDelId) {
@@ -71,7 +71,7 @@ class delivery_categories_ajax extends ajaxListComponent
         if ( $sSynchDelId && $sSynchDelId != $sDelId) {
             // dodger performance
             $sSubSelect  = " select $sCatTable.oxid from oxobject2delivery left join $sCatTable on $sCatTable.oxid=oxobject2delivery.oxobjectid ";
-            $sSubSelect .= " where oxobject2delivery.oxdeliveryid = ".oxDb::getDb()->quote( $sSynchDelId )." and oxobject2delivery.oxtype = 'oxcategories' ";
+            $sSubSelect .= " where oxobject2delivery.oxdeliveryid = ".$oDb->quote( $sSynchDelId )." and oxobject2delivery.oxtype = 'oxcategories' ";
             if ( stristr( $sQAdd, 'where' ) === false )
                 $sQAdd .= ' where ';
             else
@@ -92,7 +92,7 @@ class delivery_categories_ajax extends ajaxListComponent
         $aChosenCat = $this->_getActionIds( 'oxobject2delivery.oxid' );
 
         // removing all
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( 'all' ) ) {
 
             $sQ = $this->_addFilter( "delete oxobject2delivery.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
@@ -111,10 +111,10 @@ class delivery_categories_ajax extends ajaxListComponent
     public function addCatToDel()
     {
         $aChosenCat = $this->_getActionIds( 'oxcategories.oxid' );
-        $soxId      = oxConfig::getParameter( 'synchoxid');
+        $soxId      = $this->getConfig()->getRequestParameter( 'synchoxid');
 
         // adding
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( 'all' ) ) {
             $sCatTable = $this->_getViewName('oxcategories');
             $aChosenCat = $this->_getAll( $this->_addFilter( "select $sCatTable.oxid ".$this->_getQuery() ) );
         }

@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 49847 2012-09-27 12:50:04Z juergen.busch $
+ * @version   SVN: $Id: help_lang.php 52122 2012-11-22 07:58:17Z linas.kukulskis $
  */
 
 /**
@@ -280,9 +280,6 @@ $aLang =  array(
                                                  'Wenn Sie kein Trennzeichen eingeben, wird der Bindestrich - als Trennzeichen verwendet.',
 
 'HELP_SHOP_SEO_SAFESEOPREF'                   => 'Wenn mehrere Artikel den gleichen Namen haben und in der gleichen Kategorie sind, würden sie die gleiche SEO URL erhalten. Damit das nicht passiert, wird das SEO Suffix angehängt. Dadurch werden gleiche SEO URLs vermieden. Wenn Sie kein SEO Suffix angeben, wird <span class="filename_filepath_or_italic">oxid</span> als Standard verwendet.',
-
-'HELP_SHOP_SEO_REPLACECHARS'                  => 'Bestimmte Sonderzeichen wie Umlaute (Ä,Ö,Ü) sollten in URLs nicht vorkommen, da Sie Probleme verursachen können. In dem Eingabefeld wird angegeben, mit welchen Zeichen die Sonderzeichen ersetzt werden. Die Syntax ist <code>Sonderzeichen => Ersatzzeichen</code>, z. B. <code>Ü -> Ue</code>.<br>' .
-                                                 'Für die deutsche Sprache sind die Ersetzungen bereits eingetragen.',
 
 'HELP_SHOP_SEO_RESERVEDWORDS'                 => 'Bestimmte URLs sind im eShop festgelegt, z.B. www.ihronlineshop.de/admin, um den Administrationsbereich zu öffnen. Wenn eine Kategorie <span class="filename_filepath_or_italic">admin</span> heißen würde, wäre die SEO URL zu dieser Kategorie ebenfalls www.ihronlineshop.de/admin - die Kategorie könnte nicht geöffnet werden. Deswegen wird an solche SEO URLs automatisch das SEO Suffix angehängt. Mit dem Eingabefeld können Sie einstellen, an welche SEO URLs das SEO Suffix automatisch angehängt werden soll.',
 

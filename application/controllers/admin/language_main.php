@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: language_main.php 48767 2012-08-16 17:33:56Z tomas $
+ * @version   SVN: $Id: language_main.php 51851 2012-11-15 11:06:55Z aurimas.gladutis $
  */
 
 /**
@@ -373,7 +373,7 @@ class Language_Main extends oxAdminDetails
         $myConfig = $this->getConfig();
         $iBaseId = $this->_aLangData['params'][$sOxId]['baseId'];
 
-        $sDir = dirname( $myConfig->getDir( 'lang.php', oxRegistry::getLang()->getLanguageAbbr( $iBaseId ), 0, $iBaseId ) );
+        $sDir = dirname( $myConfig->getTranslationsDir( 'lang.php', oxRegistry::getLang()->getLanguageAbbr( $iBaseId ) ) );
 
         if ( empty($sDir) ) {
             $oEx = oxNew( "oxExceptionToDisplay" );

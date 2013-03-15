@@ -1428,7 +1428,8 @@ class OxSetupUtils extends oxSetupCore
 
             // promo & media
             $aParams['sShopDir']."/$sBasePic/promo",
-            $aParams['sShopDir']."/$sBasePic/media",
+            $aParams['sShopDir']."/$sBasePic/media", // deprecated, use out/media instead
+            $aParams['sShopDir']."/out/media",
 
             // Master
                 // product required paths

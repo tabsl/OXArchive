@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: newsletter.php 48767 2012-08-16 17:33:56Z tomas $
+ * @version   SVN: $Id: newsletter.php 51867 2012-11-15 12:45:08Z linas.kukulskis $
  */
 
 /**
@@ -230,7 +230,7 @@ class Newsletter extends oxUBase
             $this->_oActionArticles = false;
             if ( $this->getConfig()->getConfigParam( 'bl_perfLoadAktion' ) ) {
                 $oArtList = oxNew( 'oxarticlelist' );
-                $oArtList->loadAktionArticles( 'OXTOPSTART' );
+                $oArtList->loadActionArticles( 'OXTOPSTART' );
                 if ( $oArtList->count() ) {
                     $this->_oTopArticle     = $oArtList->current();
                     $this->_oActionArticles = $oArtList;

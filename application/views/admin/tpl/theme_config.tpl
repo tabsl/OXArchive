@@ -52,7 +52,9 @@ function _groupExp(el) {
                                 <input type=hidden name=confbools[[{$theme_var}]] value=false>
                                 <input type=checkbox name=confbools[[{$theme_var}]] value=true  [{if ($confbools.$theme_var)}]checked[{/if}] [{ $readonly }]>
                             [{elseif $var_type == 'str'}]
-                                <input type=text  class="txt" name=confstrs[[{$theme_var}]] value="[{$confstrs.$theme_var}]" [{ $readonly }]>
+                                <input type=text  class="txt" style="width: 250px;" name=confstrs[[{$theme_var}]] value="[{$confstrs.$theme_var}]" [{ $readonly }]>
+                            [{elseif $var_type == 'num'}]
+                                <input type=text  class="txt" style="width: 50px;" name=confnum[[{$module_var}]] value="[{$confnum.$module_var}]" [{ $readonly }]>
                             [{elseif $var_type == 'arr'}]
                                 <textarea class="txtfield" name=confarrs[[{$theme_var}]] [{ $readonly }]>[{$confarrs.$theme_var}]</textarea>
                             [{elseif $var_type == 'aarr'}]

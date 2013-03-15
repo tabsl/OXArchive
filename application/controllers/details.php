@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: details.php 50303 2012-10-09 14:22:22Z linas.kukulskis $
+ * @version   SVN: $Id: details.php 52016 2012-11-19 16:02:27Z aurimas.gladutis $
  */
 
 /**
@@ -302,6 +302,7 @@ class Details extends oxUBase
                 //lets additionally add parent article if it is sellable
                 if ( count( $this->_aVariantList ) && $myConfig->getConfigParam( 'blVariantParentBuyable' ) ) {
                     //#1104S if parent is buyable load selectlists too
+                    $oParent->enablePriceLoad();
                     $oParent->aSelectlist = $oParent->getSelectLists();
                     $this->_aVariantList = array_merge( array( $oParent ), $this->_aVariantList->getArray() );
                 }
@@ -434,9 +435,10 @@ class Details extends oxUBase
             $oProduct = $this->getProduct();
 
             $sMeta = $oProduct->getLongDescription()->value;
-            $sMeta = str_replace( array( '<br>', '<br />', '<br/>' ), "\n", $sMeta );
+            if ( $sMeta == '' ) {
+                $sMeta = $oProduct->oxarticles__oxshortdesc->value;
+            }
             $sMeta = $oProduct->oxarticles__oxtitle->value.' - '.$sMeta;
-            $sMeta = strip_tags( $sMeta );
         }
         return parent::_prepareMetaDescription( $sMeta, $iLength, $blDescTag );
     }
@@ -481,9 +483,7 @@ class Details extends oxUBase
      */
     public function ratingIsActive()
     {
-        $myConfig = $this->getConfig();
-
-        return $myConfig->getConfigParam( 'bl_perfLoadReviews' );
+        return $this->getConfig()->getConfigParam( 'bl_perfLoadReviews' );
     }
 
     /**
@@ -496,7 +496,6 @@ class Details extends oxUBase
         if ( $this->_blCanRate === null ) {
 
             $this->_blCanRate = false;
-            $myConfig = $this->getConfig();
 
             if ( $this->ratingIsActive() && $oUser = $this->getUser() ) {
 
@@ -1599,17 +1598,6 @@ class Details extends oxUBase
             return $aVariantSelections['oActiveVariant'];
         }
         return $this->getProduct();
-    }
-
-
-     /**
-     * Should "More tags" link be visible.
-     *
-     * @return bool
-     */
-    public function isMoreTagsVisible()
-    {
-        return true;
     }
 
      /**

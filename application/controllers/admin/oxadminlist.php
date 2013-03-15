@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadminlist.php 48769 2012-08-16 18:27:46Z tomas $
+ * @version   SVN: $Id: oxadminlist.php 52113 2012-11-21 15:46:41Z aurimas.gladutis $
  */
 
 /**
@@ -549,7 +549,7 @@ class oxAdminList extends oxAdminView
         $oConvObject->setValue($sValue);
         if ( $sFldType == "datetime" ) {
             if ( strlen($sValue) == 10 || strlen($sValue) == 22 || ( strlen($sValue) == 19 && !stripos( $sValue, "m" ) ) ) {
-                oxDb::getInstance()->convertDBDateTime( $oConvObject, true );
+                oxRegistry::get("oxUtilsDate")->convertDBDateTime( $oConvObject, true );
             } else {
                 if ( strlen($sValue) > 10 ) {
                     return $this->_convertTime( $sValue );
@@ -559,7 +559,7 @@ class oxAdminList extends oxAdminView
             }
         } elseif ( $sFldType == "date" ) {
             if ( strlen($sValue) == 10 ) {
-                oxDb::getInstance()->convertDBDate( $oConvObject, true);
+                oxRegistry::get("oxUtilsDate")->convertDBDate( $oConvObject, true);
             } else {
                 return $this->_convertDate( $sValue );
             }
@@ -615,7 +615,7 @@ class oxAdminList extends oxAdminView
         $sDate = substr( $sFullDate, 0, 10 );
         $oConvObject = new oxField();
         $oConvObject->setValue($sDate);
-        oxDb::getInstance()->convertDBDate( $oConvObject, true);
+        oxRegistry::get("oxUtilsDate")->convertDBDate( $oConvObject, true);
         $oStr = getStr();
 
         // looking for time field

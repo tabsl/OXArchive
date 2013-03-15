@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxarticlelist.php 50489 2012-10-15 09:02:17Z linas.kukulskis $
+ * @version   SVN: SVN: $Id: oxarticlelist.php 51970 2012-11-19 09:45:14Z linas.kukulskis $
  */
 
 /**
@@ -224,7 +224,7 @@ class oxArticleList extends oxList
                 break;
             case 1:
                 // manually entered
-                $this->loadAktionArticles( 'oxnewest', $iLimit );
+                $this->loadActionArticles( 'oxnewest', $iLimit );
                 break;
             case 2:
                 $sArticleTable = getViewName('oxarticles');
@@ -268,7 +268,7 @@ class oxArticleList extends oxList
                 break;
             case 1:
                 // manually entered
-                $this->loadAktionArticles( 'oxtop5', $iLimit );
+                $this->loadActionArticles( 'oxtop5', $iLimit );
                 break;
             case 2:
                 $sArticleTable = getViewName('oxarticles');
@@ -286,7 +286,7 @@ class oxArticleList extends oxList
         }
     }
 
-    /**
+     /**
      * Loads shop AktionArticles.
      *
      * @param string $sActionID Action id
@@ -294,7 +294,7 @@ class oxArticleList extends oxList
      *
      * @return null
      */
-    public function loadAktionArticles( $sActionID, $iLimit = null )
+    public function loadActionArticles( $sActionID, $iLimit = null )
     {
         // Performance
         if ( !trim( $sActionID) ) {
@@ -325,6 +325,23 @@ class oxArticleList extends oxList
         $this->selectString( $sSelect );
     }
 
+
+    /**
+     * Loads shop AktionArticles.
+     *
+     * @param string $sActionID Action id
+     * @param int    $iLimit    Select limit
+     *
+     * @deprecated since v5.0.1 (2012-11-15); use oxArticleList::loadActionArticles()
+     *
+     * @return null
+     */
+    public function loadAktionArticles( $sActionID, $iLimit = null )
+    {
+        $this->loadActionArticles( $sActionID, $iLimit = null );
+
+    }
+
     /**
      * Loads article crosssellings
      *
@@ -352,9 +369,15 @@ class oxArticleList extends oxList
 
         // #525 bidirectional crossselling
         if ( $myConfig->getConfigParam( 'blBidirectCross' ) ) {
-            $sSelect  = "select distinct $sArticleTable.* from oxobject2article left join $sArticleTable on (oxobject2article.oxobjectid=$sArticleTable.oxid or oxobject2article.oxarticlenid=$sArticleTable.oxid) ";
-            $sSelect .= "where (oxobject2article.oxarticlenid = $sArticleId or oxobject2article.oxobjectid = $sArticleId )";
-            $sSelect .= " and $sArticleTable.oxid is not null and " .$oBaseObject->getSqlActiveSnippet(). " having $sArticleTable.oxid!=$sArticleId order by rand()";
+            $sSelect = "SELECT $sArticleTable.* FROM $sArticleTable
+                LEFT JOIN oxobject2article AS O2A1 on
+                    ( O2A1.oxobjectid = $sArticleTable.oxid AND O2A1.oxarticlenid = $sArticleId )
+                LEFT JOIN oxobject2article AS O2A2 ON
+                    ( O2A2.oxarticlenid = $sArticleTable.oxid AND O2A2.oxobjectid = $sArticleId )
+                WHERE 1
+                    AND ( O2A2.oxarticlenid IS NOT NULL OR O2A1.oxobjectid IS NOT NULL )
+                    AND " . $oBaseObject->getSqlActiveSnippet() . "
+                    AND ($sArticleTable.oxid != $sArticleId) order by rand()";
         }
 
         $this->setSqlLimit( 0, $myConfig->getConfigParam( 'iNrofCrossellArticles' ));
@@ -788,7 +811,7 @@ class oxArticleList extends oxList
         $oBaseObject    = $this->getBaseObject();
         $sArticleTable  = $oBaseObject->getViewName();
         $sArticleFields = $oBaseObject->getSelectFields();
-        $sArticleFields = str_replace( "$sArticleTable.oxid", "oxorderarticles.oxartid as oxid", $sArticleFields );
+        $sArticleFields = str_replace( "`$sArticleTable`.`oxid`", "`oxorderarticles`.`oxartid` AS `oxid`", $sArticleFields );
 
         $sSelect  = "SELECT $sArticleFields FROM oxorderarticles ";
         $sSelect .= "left join $sArticleTable on oxorderarticles.oxartid = $sArticleTable.oxid ";

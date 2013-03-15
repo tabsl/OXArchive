@@ -31,7 +31,7 @@
  */
 class Theme_Config extends Shop_Config
 {
-    protected $_sTheme = 'shop_config.tpl';
+    protected $_sTheme = null;
 
     /**
      * Executes parent method parent::render(), creates deliveryset category tree,
@@ -55,7 +55,7 @@ class Theme_Config extends Shop_Config
             $this->_aViewData["oTheme"] =  $oTheme;
 
             try {
-                $aDbVariables = $this->_loadConfVars($sShopId, $this->_getModuleForConfigVars());
+                $aDbVariables = $this->loadConfVars($sShopId, $this->_getModuleForConfigVars());
                 $this->_aViewData["var_constraints"] = $aDbVariables['constraints'];
                 $this->_aViewData["var_grouping"]    = $aDbVariables['grouping'];
                 foreach ($this->_aConfParams as $sType => $sParam) {
@@ -71,19 +71,6 @@ class Theme_Config extends Shop_Config
         return 'theme_config.tpl';
     }
 
-
-    /**
-     * Set theme
-     *
-     * @return null
-     */
-    public function setTheme()
-    {
-        $sTheme = $this->getEditObjectId();
-        $oTheme = oxNew('oxtheme');
-        $oTheme->setTheme($sTheme);
-    }
-
     /**
      * return theme filter for config variables
      *
@@ -91,6 +78,10 @@ class Theme_Config extends Shop_Config
      */
     protected function _getModuleForConfigVars()
     {
+        if ($this->_sTheme === null) {
+            $this->_sTheme = $this->getEditObjectId();
+        }
+
         return oxConfig::OXMODULE_THEME_PREFIX.$this->_sTheme;
     }
 
@@ -105,13 +96,12 @@ class Theme_Config extends Shop_Config
 
         oxAdminDetails::save();
 
-        $sTheme  = $this->_sTheme = $this->getEditObjectId();
         $sShopId = $myConfig->getShopId();
 
         $sModule = $this->_getModuleForConfigVars();
 
         foreach ($this->_aConfParams as $sType => $sParam) {
-            $aConfVars = oxConfig::getParameter($sParam);
+            $aConfVars = $myConfig->getRequestParameter($sParam);
             if (is_array($aConfVars)) {
                 foreach ( $aConfVars as $sName => $sValue ) {
                     $myConfig->saveShopConfVar(

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: deliveryset_main_ajax.php 48458 2012-08-10 06:59:10Z linas.kukulskis $
+ * @version   SVN: $Id: deliveryset_main_ajax.php 52048 2012-11-20 13:33:41Z vaidas.matulevicius $
  */
 
 /**
@@ -53,8 +53,8 @@ class deliveryset_main_ajax extends ajaxListComponent
      */
     protected function _getQuery()
     {
-        $sId = oxConfig::getParameter( 'oxid' );
-        $sSynchId = oxConfig::getParameter( 'synchoxid' );
+        $sId = $this->getConfig()->getRequestParameter( 'oxid' );
+        $sSynchId = $this->getConfig()->getRequestParameter( 'synchoxid' );
         $oDb = oxDb::getDb();
 
         $sDeliveryViewName = $this->_getViewName('oxdelivery');
@@ -83,7 +83,7 @@ class deliveryset_main_ajax extends ajaxListComponent
     public function removeFromSet()
     {
         $aRemoveGroups = $this->_getActionIds( 'oxdel2delset.oxid' );
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( 'all' ) ) {
 
             $sQ = $this->_addFilter( "delete oxdel2delset.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
@@ -105,7 +105,7 @@ class deliveryset_main_ajax extends ajaxListComponent
         $soxId       = oxConfig::getParameter( 'synchoxid');
 
         // adding
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( 'all' ) ) {
             $sDeliveryViewName = $this->_getViewName('oxdelivery');
             $aChosenSets = $this->_getAll( $this->_addFilter( "select $sDeliveryViewName.oxid ".$this->_getQuery() ) );
         }

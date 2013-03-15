@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_utils.php 48727 2012-08-16 09:09:02Z tomas $
+ * @version   SVN: $Id: oxcmp_utils.php 51871 2012-11-15 12:46:50Z linas.kukulskis $
  */
 
 /**
@@ -38,7 +38,7 @@ class oxcmp_utils extends oxView
 
     /**
      * If passed article ID (by URL or posted form) - loads article,
-     * otherwise - loads list of action articles oxarticlelist::loadAktionArticles().
+     * otherwise - loads list of action articles oxarticlelist::loadActionArticles().
      * In this case, the last list object will be used. Loaded article info
      * is serialized and outputted to client system.
      *
@@ -60,7 +60,7 @@ class oxcmp_utils extends oxView
             $oProduct = oxNewArticle( $sId );
         } elseif ( $myConfig->getConfigParam( 'bl_perfLoadAktion' ) ) {
             $oArtList = oxNew( 'oxarticlelist');
-            $oArtList->loadAktionArticles( 'OXAFFILIATE' );
+            $oArtList->loadActionArticles( 'OXAFFILIATE' );
             $oProduct = $oArtList->current();
         }
 

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: start.php 48768 2012-08-16 17:56:23Z tomas $
+ * @version   SVN: $Id: start.php 51870 2012-11-15 12:46:36Z linas.kukulskis $
  */
 
 /**
@@ -119,7 +119,7 @@ class Start extends oxUBase
 
     /**
      * Executes parent::render(), loads action articles
-     * (oxarticlelist::loadAktionArticles()). Returns name of
+     * (oxarticlelist::loadActionArticles()). Returns name of
      * template file to render.
      *
      * @return  string  cuurent template file name
@@ -220,7 +220,7 @@ class Start extends oxUBase
             if ( $this->_getLoadActionsParam() ) {
                 // start list
                 $oArtList = oxNew( 'oxarticlelist' );
-                $oArtList->loadAktionArticles( 'OXSTART' );
+                $oArtList->loadActionArticles( 'OXSTART' );
                 if ( $oArtList->count() ) {
                     $this->_aArticleList = $oArtList;
                 }
@@ -241,7 +241,7 @@ class Start extends oxUBase
             if ( $this->_getLoadActionsParam() ) {
                 // start list
                 $oArtList = oxNew( 'oxarticlelist' );
-                $oArtList->loadAktionArticles( 'OXTOPSTART' );
+                $oArtList->loadActionArticles( 'OXTOPSTART' );
                 if ( $oArtList->count() ) {
                     $this->_aTopArticleList = $oArtList;
                 }
@@ -286,7 +286,7 @@ class Start extends oxUBase
             if ( $this->_getLoadActionsParam() ) {
                 // top articles ( big one )
                 $oArtList = oxNew( 'oxarticlelist' );
-                $oArtList->loadAktionArticles( 'OXFIRSTSTART' );
+                $oArtList->loadActionArticles( 'OXFIRSTSTART' );
                 if ( $oArtList->count() ) {
                     $this->_oFirstArticle = $oArtList->current();
                 }
@@ -323,23 +323,13 @@ class Start extends oxUBase
             if ( $this->_getLoadActionsParam() ) {
                 // "category offer" articles
                 $oArtList = oxNew( 'oxarticlelist' );
-                $oArtList->loadAktionArticles( 'OXCATOFFER' );
+                $oArtList->loadActionArticles( 'OXCATOFFER' );
                 if ( $oArtList->count() ) {
                     $this->_oCatOfferArtList = $oArtList;
                 }
             }
         }
         return $this->_oCatOfferArtList;
-    }
-
-    /**
-     * Template variable getter. Returns true
-     *
-     * @return bool
-     */
-    public function isMoreTagsVisible()
-    {
-        return true;
     }
 
     /**

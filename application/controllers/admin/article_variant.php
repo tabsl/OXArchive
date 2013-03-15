@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_variant.php 48768 2012-08-16 17:56:23Z tomas $
+ * @version   SVN: $Id: article_variant.php 51714 2012-11-12 14:13:56Z andrius.silgalis $
  */
 
 /**
@@ -160,6 +160,15 @@ class Article_Variant extends oxAdminDetails
         $oArticle->assign( $aParams );
         $oArticle->setLanguage( $this->_iEditLang );
 
+        if ( $sOXID == "-1" ) {
+            if ( $oParent = $this->_getProductParent( $oArticle->oxarticles__oxparentid->value ) ) {
+
+                // assign field from parent for new variant
+                // #4406
+                $oArticle->oxarticles__oxisconfigurable = new oxField( $oParent->oxarticles__oxisconfigurable->value );
+
+            }
+        }
 
         $oArticle->save();
     }

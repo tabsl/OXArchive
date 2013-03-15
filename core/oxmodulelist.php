@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxmodulelist.php 50825 2012-10-22 13:28:48Z aurimas.gladutis $
+ * @version   SVN: $Id: oxmodulelist.php 51426 2012-11-06 15:21:45Z aurimas.gladutis $
  */
 
 /**
@@ -604,8 +604,25 @@ class oxModuleList extends oxSuperCfg
                 }
             }
         }
+        // sorting by name
+        if ( $this->_aModules !== null ) {
+            uasort($this->_aModules, array($this, '_sortModules'));
+        }
 
         return $this->_aModules;
+    }
+
+    /**
+     * Callback function for sorting module objects by name.
+     *
+     * @param object $oModule1 module object
+     * @param object $oModule2 module object
+     *
+     * @return bool
+     */
+    protected function _sortModules( $oModule1, $oModule2 )
+    {
+        return strcasecmp($oModule1->getTitle(), $oModule2->getTitle());
     }
 
     /**

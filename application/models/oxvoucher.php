@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvoucher.php 49982 2012-10-02 10:44:32Z linas.kukulskis $
+ * @version   SVN: $Id: oxvoucher.php 51702 2012-11-12 13:19:54Z linas.kukulskis $
  */
 
 /**
@@ -237,12 +237,6 @@ class oxVoucher extends oxBase
      */
     protected function _isAvailablePrice( $dPrice )
     {
-        if ( $this->getDiscountValue( $dPrice ) < 0 ) {
-            $oEx = oxNew( 'oxVoucherException' );
-            $oEx->setMessage('EXCEPTION_VOUCHER_TOTALBELOWZERO');
-            $oEx->setVoucherNr($this->oxvouchers__oxvouchernr->value);
-            throw $oEx;
-        }
         $oSerie = $this->getSerie();
         $oCur = $this->getConfig()->getActShopCurrencyObject();
         if ( $oSerie->oxvoucherseries__oxminimumvalue->value && $dPrice < ($oSerie->oxvoucherseries__oxminimumvalue->value*$oCur->rate) ) {

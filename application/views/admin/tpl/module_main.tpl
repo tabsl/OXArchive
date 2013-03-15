@@ -1,5 +1,9 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign box="box"}]
 
+[{if $updatenav }]
+    [{oxscript add="top.oxid.admin.reloadNavigation('`$oxid`');" priority=10}]
+[{/if}]
+
 <form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
     [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">

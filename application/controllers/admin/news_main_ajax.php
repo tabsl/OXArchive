@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: news_main_ajax.php 48854 2012-08-20 14:59:23Z vilma $
+ * @version   SVN: $Id: news_main_ajax.php 52117 2012-11-21 15:49:12Z vaidas.matulevicius $
  */
 
 /**
@@ -54,8 +54,8 @@ class news_main_ajax extends ajaxListComponent
         // active AJAX component
         $sGroupTable = $this->_getViewName('oxgroups');
         $oDb = oxDb::getDb();
-        $sDiscountId      = oxConfig::getParameter( 'oxid' );
-        $sSynchDiscountId = oxConfig::getParameter( 'synchoxid' );
+        $sDiscountId      = $this->getConfig()->getRequestParameter( 'oxid' );
+        $sSynchDiscountId = $this->getConfig()->getRequestParameter( 'synchoxid' );
 
         // category selected or not ?
         if ( !$sDiscountId) {
@@ -81,7 +81,7 @@ class news_main_ajax extends ajaxListComponent
     public function removeGroupFromNews()
     {
         $aRemoveGroups = $this->_getActionIds( 'oxobject2group.oxid' );
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( 'all' ) ) {
 
             $sQ = $this->_addFilter( "delete oxobject2group.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
@@ -100,9 +100,9 @@ class news_main_ajax extends ajaxListComponent
     public function addGroupToNews()
     {
         $aAddGroups = $this->_getActionIds( 'oxgroups.oxid' );
-        $soxId      = oxConfig::getParameter( 'synchoxid' );
+        $soxId      = $this->getConfig()->getRequestParameter( 'synchoxid' );
 
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( 'all' ) ) {
             $sGroupTable = $this->_getViewName('oxgroups');
             $aAddGroups = $this->_getAll( $this->_addFilter( "select $sGroupTable.oxid ".$this->_getQuery() ) );
         }

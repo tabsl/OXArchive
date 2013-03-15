@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsession.php 50916 2012-10-25 06:55:21Z saulius.stasiukaitis $
+ * @version   SVN: $Id: oxsession.php 52011 2012-11-19 15:14:56Z linas.kukulskis $
  */
 
 DEFINE('_DB_SESSION_HANDLER', getShopBasePath() . 'core/adodblite/session/adodb-session.php');
@@ -663,10 +663,10 @@ class oxSession extends oxSuperCfg
     {
         $sSid = $sToken = '';
         if ($this->isSidNeeded()) {
-             $sSid   = "<input type=\"hidden\" name=\"".$this->getForcedName()."\" value=\"". $this->getId() . "\">";
+             $sSid   = "<input type=\"hidden\" name=\"".$this->getForcedName()."\" value=\"". $this->getId() . "\" />";
         }
         if ($this->getId()) {
-            $sToken = "<input type=\"hidden\" name=\"stoken\" value=\"".$this->getSessionChallengeToken(). "\">";
+            $sToken = "<input type=\"hidden\" name=\"stoken\" value=\"".$this->getSessionChallengeToken(). "\" />";
         }
         return $sToken.$sSid;
     }

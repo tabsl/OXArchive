@@ -284,14 +284,12 @@ class oxFile extends oxBase
      */
     public function delete( $sOXID = null )
     {
-        $blDeleted = false;
-
         $sOXID = $sOXID ? $sOXID : $this->getId();
 
         $this->load($sOXID);
         // if record cannot be delete, abort deletion
-        if ( parent::delete( $sOXID ) ) {
-            $blDeleted = $this->_deleteFile( );
+        if ($blDeleted = parent::delete( $sOXID ) ) {
+            $this->_deleteFile( );
         }
 
         return $blDeleted;

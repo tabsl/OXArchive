@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: voucherserie_main.php 48458 2012-08-10 06:59:10Z linas.kukulskis $
+ * @version   SVN: $Id: voucherserie_main.php 51704 2012-11-12 13:28:32Z linas.kukulskis $
  */
 
 /**
@@ -98,6 +98,9 @@ class VoucherSerie_Main extends DynExportBase
         }
 
 
+
+        $aSerieParams["oxvoucherseries__oxdiscount"] = abs($aSerieParams["oxvoucherseries__oxdiscount"]);
+
         $oVoucherSerie->assign( $aSerieParams );
         $oVoucherSerie->save();
 
@@ -162,5 +165,16 @@ class VoucherSerie_Main extends DynExportBase
         oxSession::setVar( "voucherAmount", abs( (int) oxConfig::getParameter( "voucherAmount" ) ) );
         oxSession::setVar( "randomVoucherNr", oxConfig::getParameter( "randomVoucherNr" ) );
         oxSession::setVar( "voucherNr", oxConfig::getParameter( "voucherNr" ) );
+    }
+
+    /**
+     * Current view ID getter helps to identify navigation position
+     * fix for 0003701, passing dynexportbase::getViewId
+     *
+     * @return string
+     */
+    public function getViewId()
+    {
+        return oxAdminView::getViewId();
     }
 }

@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 50659 2012-10-17 13:49:48Z aurimas.gladutis $
+ * @version   SVN: $Id: lang.php 52101 2012-11-21 14:03:01Z linas.kukulskis $
  */
 
 /*
@@ -519,6 +519,7 @@ $aLang = array(
 'ARTICLE_STOCK_WEEKS'                                      => 'Weeks',
 'ARTICLE_STOCK_ORDERINFO'                                  => 'Add. info in order confirmation mail.',
 'ARTICLE_STOCK_VPE'                                        => 'Packingunit',
+'ARTICLE_STOCK_ERRORSCALEPRICE'                            => 'Attention: Scale price must be lower than normal price.',
 'ARTICLE_USERDEF_USERDEFRANGE'                             => 'User-defined Area - here you can add your own fields.',
 'ARTICLE_VARIANT_YOUWANTTODELETE'                          => 'Do you really want to delete this Variant?',
 'ARTICLE_VARIANT_EDIT'                                     => 'Edit',
@@ -1001,6 +1002,7 @@ $aLang = array(
 'PAYMENT_MAIN_AVAILIBLEINGROUP'                            => 'Available in User Groups',
 'PAYMENT_MAIN_NOTAVAILIBLEINGROUP'                         => 'Not available in User Groups',
 'PAYMENT_MAIN_LONGDESC'                                    => 'Payment Description',
+'PAYMENT_MAIN_NOTICEDEFAULTVALUESSELECTED'                 => 'Default values have been selected',
 'PAYMENT_OVERVIEW_HOWMANYPAYMENTS'                         => 'How many purchases were paid with this payment method',
 'PRICEALARM_DONE_SENDEMAIL'                                => 'Sent Price Alert e-mails.',
 'PRICEALARM_DONE_GOTOPRICEALARM'                           => 'go to Price Alert ',
@@ -1422,6 +1424,7 @@ $aLang = array(
 'TOOLS_MAIN_UPDATEVIEWSNOW'                                => 'Update DB Views now',
 'TOOLS_MAIN_UPDATEVIEWSCONFIRM'                            => 'Are you sure you want to update views now?',
 'TOOLS_LIST_UPDATEVIEWSSECCESS'                            => 'DB Views updated successfully.',
+'TOOLS_LIST_UPDATEVIEWSFAILED'                            => 'DB Views update failed.',
 'TOOLTIPS_ADDSUMTYPE'                                      => 'Absolute or<br>percentage<br>Surcharge/Reduction',
 'TOOLTIPS_ADDSUMITMTYPE'                                   => 'Absolute, percentage<br> or Product<br>Markup/Discount',
 'TOOLTIPS_ARTICLEVAT'                                      => 'Specify only if individual VAT',
@@ -1497,6 +1500,7 @@ $aLang = array(
 'USER_LIST_ZIP'                                            => 'ZIP',
 'USER_LIST_PLACE'                                          => 'City',
 'USER_LIST_CUSTOMERNUM'                                    => 'Cust No.',
+'CUSTOMERNUM'                                               => 'Cust No.',
 'USER_LIST_MENNUITEM'                                      => 'Administer Users',
 'USER_LIST_MENNUSUBITEM'                                   => 'Users',
 'USER_MAIN_RIGHTS'                                         => 'Rights',
@@ -2009,9 +2013,9 @@ $aLang = array(
 'SHOP_PERF_SEO_CACHE'                                      => 'Enable SEO cache',
 'INFO_MODULES_MOVED_TO_EXTENSIONS'                         => 'Themes and modules handling moved to new menu "Extensions"',
 'EXCEPTION_THEME_SHOULD_BE_ONLY_IN_DATABASE'               => 'Theme should not be defined in config.inc.php',
-'EMAIL_PRICEALARM_CUSTOMER_PRICEALARMIN'                   => 'Price Alert in ',
+'EMAIL_PRICEALARM_CUSTOMER_PRICEALARMIN'                      => 'Price Alert in ',
 'EMAIL_PRICEALARM_CUSTOMER_HY'                             => 'Hallo,',
-'EMAIL_PRICEALARM_CUSTOMER_HAVEPRICEALARM'                 => 'we habe a Price Alert in',
+'EMAIL_PRICEALARM_CUSTOMER_HAVEPRICEALARM'                 => 'we have a Price Alert in',
 'EMAIL_PRICEALARM_CUSTOMER_ITEM1'                          => 'The Product',
 'EMAIL_PRICEALARM_CUSTOMER_ITEM2'                          => "you're interested in and you offered a price of",
 'EMAIL_PRICEALARM_CUSTOMER_ITEM3'                          => 'is now available for',
@@ -2021,7 +2025,6 @@ $aLang = array(
 'EMAIL_PRICEALARM_CUSTOMER_TEAM1'                          => 'Your',
 'EMAIL_PRICEALARM_CUSTOMER_TEAM2'                          => 'Team',
 
-'NO_REVERSE_PROXY_BETWEEN'                                 => 'No Reverse Proxy in front of admin area',
 'IS_REVERSE_PROXY_AVAILABLE'                               => 'Test Reverse Proxy\'s availability',
 'REVERSE_PROXY_TEST_SUCCESS'                               => 'Reverse Proxy test succeed',
 'REVERSE_PROXY_TEST_FAILURE'                               => 'Reverse Proxy test failed',

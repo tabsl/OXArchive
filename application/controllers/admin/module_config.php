@@ -107,7 +107,7 @@ class Module_Config extends Shop_Config
         $aVarConstraints = array();
         $aGrouping       = array();
         
-        $aDbVariables = $this->_loadConfVars($oConfig->getShopId(), $this->_getModuleForConfigVars());
+        $aDbVariables = $this->loadConfVars($oConfig->getShopId(), $this->_getModuleForConfigVars());
 
         if ( is_array($aModuleSettings) ) {
 

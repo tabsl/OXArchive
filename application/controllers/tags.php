@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: tags.php 48727 2012-08-16 09:09:02Z tomas $
+ * @version   SVN: $Id: tags.php 51853 2012-11-15 11:28:55Z vilma $
  */
 
 /**
@@ -35,7 +35,7 @@ class Tags extends oxUBase
     protected $_sThisTemplate = "page/tags/tags.tpl";
 
     /**
-     * If tags are ON - returns parent::render() value, else - displays 404 
+     * If tags are ON - returns parent::render() value, else - displays 404
      * page, as tags are off
      *
      * @return string
@@ -59,16 +59,6 @@ class Tags extends oxUBase
         $oManager = oxNew( "oxTagCloud" );
         $oManager->setExtendedMode( true );
         return $oManager;
-    }
-
-    /**
-     * Should "More tags" link be visible.
-     *
-     * @return bool
-     */
-    public function isMoreTagsVisible()
-    {
-        return false;
     }
 
     /**

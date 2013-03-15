@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: payment.php 49929 2012-10-01 12:06:19Z linas.kukulskis $
+ * @version   SVN: $Id: payment.php 51960 2012-11-19 09:11:15Z vilma $
  */
 
 /**
@@ -249,12 +249,12 @@ class Payment extends oxUBase
      */
     public function changeshipping()
     {
-        $mySession = $this->getSession();
+        $oSession = $this->getSession();
 
-        $oBasket = $mySession->getBasket();
+        $oBasket = $oSession->getBasket();
         $oBasket->setShipping( null );
         $oBasket->onUpdate();
-        oxSession::setVar( 'sShipSet', oxConfig::getParameter( 'sShipSet' ) );
+        $oSession->setVariable( 'sShipSet', $this->getConfig()->getRequestParameter( 'sShipSet' ) );
     }
 
     /**
@@ -271,24 +271,24 @@ class Payment extends oxUBase
     public function validatePayment()
     {
         $myConfig  = $this->getConfig();
-        $mySession = $this->getSession();
+        $oSession = $this->getSession();
 
         //#1308C - check user. Function is executed before render(), and oUser is not set!
         // Set it manually for use in methods getPaymentList(), getShippingSetList()...
         $oUser = $this->getUser();
         if ( !$oUser ) {
-            oxSession::setVar( 'payerror', 2 );
+            $oSession->setVariable( 'payerror', 2 );
             return;
         }
 
         if (! ($sShipSetId = oxConfig::getParameter( 'sShipSet' ))) {
-            $sShipSetId = oxSession::getVar('sShipSet');
+            $sShipSetId = $oSession->getVariable('sShipSet');
         }
         if (! ($sPaymentId = oxConfig::getParameter( 'paymentid' ))) {
-            $sPaymentId = oxSession::getVar('paymentid');
+            $sPaymentId = $oSession->getVariable('paymentid');
         }
         if (! ($aDynvalue = oxConfig::getParameter( 'dynvalue' ))) {
-            $aDynvalue = oxSession::getVar('dynvalue');
+            $aDynvalue = $oSession->getVariable('dynvalue');
         }
 
         // A. additional protection
@@ -298,16 +298,16 @@ class Payment extends oxUBase
 
         //#1308C - check if we have paymentID, and it really exists
         if ( !$sPaymentId ) {
-            oxSession::setVar( 'payerror', 1 );
+            $oSession->setVariable( 'payerror', 1 );
             return;
         }
 
         if ( $this->getDynDataFiltered() && $sPaymentId == 'oxidcreditcard' ) {
-            oxSession::setVar( 'payerror', 7 );
+            $oSession->setVariable( 'payerror', 7 );
             return;
         }
 
-        $oBasket = $mySession->getBasket();
+        $oBasket = $oSession->getBasket();
         $oBasket->setPayment(null);
         $oPayment = oxNew( 'oxpayment' );
         $oPayment->load( $sPaymentId );
@@ -318,26 +318,26 @@ class Payment extends oxUBase
         $blOK = $oPayment->isValidPayment( $aDynvalue, $myConfig->getShopId(), $oUser, $dBasketPrice, $sShipSetId );
 
         if ( $blOK ) {
-            oxSession::setVar( 'paymentid', $sPaymentId );
-            oxSession::setVar( 'dynvalue', $aDynvalue );
+            $oSession->setVariable( 'paymentid', $sPaymentId );
+            $oSession->setVariable( 'dynvalue', $aDynvalue );
             if ( oxConfig::getParameter( 'bltsprotection' ) ) {
                 $sTsProductId = oxConfig::getParameter( 'stsprotection' );
                 $oBasket->setTsProductId($sTsProductId);
-                oxSession::setVar( 'stsprotection', $sTsProductId );
+                $oSession->setVariable( 'stsprotection', $sTsProductId );
             } else {
-                oxSession::deleteVar( 'stsprotection' );
+                $oSession->deleteVariable( 'stsprotection' );
                 $oBasket->setTsProductId(null);
             }
             $oBasket->setShipping($sShipSetId);
-            oxSession::deleteVar( '_selected_paymentid' );
+            $oSession->deleteVariable( '_selected_paymentid' );
             return 'order';
         } else {
-            oxSession::setVar( 'payerror', $oPayment->getPaymentErrorNumber() );
+            $oSession->setVariable( 'payerror', $oPayment->getPaymentErrorNumber() );
 
             //#1308C - delete paymentid from session, and save selected it just for view
-            oxSession::deleteVar( 'paymentid' );
-            oxSession::setVar( '_selected_paymentid', $sPaymentId );
-            oxSession::deleteVar( 'stsprotection' );
+            $oSession->deleteVariable( 'paymentid' );
+            $oSession->setVariable( '_selected_paymentid', $sPaymentId );
+            $oSession->deleteVariable( 'stsprotection' );
             $oBasket->setTsProductId(null);
             return;
         }

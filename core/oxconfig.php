@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 51149 2012-10-31 12:31:17Z arturas.sevcenko $
+ * @version   SVN: $Id: oxconfig.php 51851 2012-11-15 11:06:55Z aurimas.gladutis $
  */
 
 //max integer
@@ -1226,6 +1226,25 @@ class oxConfig extends oxSuperCfg
     }
 
     /**
+     * Returns path to translations dir
+     *
+     * @param string $sFile      File name
+     * @param string $sDir       Directory name
+     * @param bool   $blAbsolute mode - absolute/relative path
+     *
+     * @return string
+     */
+    public function getTranslationsDir( $sFile, $sDir, $blAbsolute = true )
+    {
+        $sPath = $blAbsolute ? $this->getConfigParam( 'sShopDir' ) : '';
+        $sPath .= 'application/translations/';
+        if ( is_readable( $sPath. $sDir. '/'. $sFile ) ) {
+            return $sPath. $sDir. '/'. $sFile;
+        }
+        return false;
+    }
+
+    /**
      * Returns path to out dir
      *
      * @param bool $blAbsolute mode - absolute/relative path
@@ -1864,6 +1883,11 @@ class oxConfig extends oxSuperCfg
                 $sVarVal = (( $sVarVal == 'true' || $sVarVal) && $sVarVal && strcasecmp($sVarVal, "false"));
                 //db value
                 $sValue  = $sVarVal?"1":"";
+                break;
+            case 'num':
+                //config param
+                $sVarVal = $sVarVal != ''? oxRegistry::getUtils()->string2Float( $sVarVal ) : '';
+                $sValue = $sVarVal;
                 break;
             default:
                 $sValue  = $sVarVal;

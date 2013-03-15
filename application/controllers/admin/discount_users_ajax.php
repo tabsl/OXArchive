@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: discount_users_ajax.php 48513 2012-08-10 12:40:09Z linas.kukulskis $
+ * @version   SVN: $Id: discount_users_ajax.php 52116 2012-11-21 15:48:54Z vilma $
  */
 
 /**
@@ -65,24 +65,24 @@ class discount_users_ajax extends ajaxListComponent
      */
     protected function _getQuery()
     {
-        $myConfig = $this->getConfig();
+        $oConfig = $this->getConfig();
 
         $sUserTable = $this->_getViewName( 'oxuser' );
         $oDb = oxDb::getDb();
-        $sId = oxConfig::getParameter( 'oxid' );
-        $sSynchId = oxConfig::getParameter( 'synchoxid' );
+        $sId = $oConfig->getRequestParameter( 'oxid' );
+        $sSynchId = $oConfig->getRequestParameter( 'synchoxid' );
 
         // category selected or not ?
         if ( !$sId ) {
             $sQAdd = " from $sUserTable where 1 ";
-            if (!$myConfig->getConfigParam( 'blMallUsers' ) )
-                $sQAdd .= " and oxshopid = '".$myConfig->getShopId()."' ";
+            if (!$oConfig->getConfigParam( 'blMallUsers' ) )
+                $sQAdd .= " and oxshopid = '".$oConfig->getShopId()."' ";
         } else {
             // selected group ?
             if ( $sSynchId && $sSynchId != $sId ) {
                 $sQAdd = " from oxobject2group left join $sUserTable on $sUserTable.oxid = oxobject2group.oxobjectid where oxobject2group.oxgroupsid = ".$oDb->quote( $sId );
-                if ( !$myConfig->getConfigParam( 'blMallUsers' ) )
-                    $sQAdd .= "and $sUserTable.oxshopid = '".$myConfig->getShopId()."' ";
+                if ( !$oConfig->getConfigParam( 'blMallUsers' ) )
+                    $sQAdd .= " and $sUserTable.oxshopid = '".$oConfig->getShopId()."' ";
 
             } else {
                 $sQAdd  = " from oxobject2discount, $sUserTable where $sUserTable.oxid=oxobject2discount.oxobjectid ";
@@ -105,9 +105,10 @@ class discount_users_ajax extends ajaxListComponent
      */
     public function removeDiscUser()
     {
+        $oConfig = $this->getConfig();
 
         $aRemoveGroups = $this->_getActionIds( 'oxobject2discount.oxid' );
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $oConfig->getRequestParameter( 'all' ) ) {
 
             $sQ = $this->_addFilter( "delete oxobject2discount.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
@@ -125,11 +126,12 @@ class discount_users_ajax extends ajaxListComponent
      */
     public function addDiscUser()
     {
+        $oConfig = $this->getConfig();
         $aChosenUsr = $this->_getActionIds( 'oxuser.oxid' );
-        $soxId       = oxConfig::getParameter( 'synchoxid');
+        $soxId       = $oConfig->getRequestParameter( 'synchoxid');
 
 
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $oConfig->getRequestParameter( 'all' ) ) {
             $sUserTable = $this->_getViewName( 'oxuser' );
             $aChosenUsr = $this->_getAll( $this->_addFilter( "select $sUserTable.oxid ".$this->_getQuery() ) );
         }

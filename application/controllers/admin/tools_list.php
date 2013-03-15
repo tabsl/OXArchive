@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: tools_list.php 48727 2012-08-16 09:09:02Z tomas $
+ * @version   SVN: $Id: tools_list.php 51491 2012-11-07 11:37:05Z aurimas.gladutis $
  */
 
 /**
@@ -45,9 +45,9 @@ class Tools_List extends oxAdminList
     public function updateViews()
     {
         //preventing edit for anyone except malladmin
-        if ( oxSession::getVar( "malladmin" ) ) {
-            oxDb::getInstance()->updateViews();
-            $this->_aViewData["blViewSuccess"]  = true;
+        if ( oxRegistry::getSession()->getVariable( "malladmin" ) ) {
+            $oMetaData = oxNew('oxDbMetaDataHandler');
+            $this->_aViewData["blViewSuccess"] = $oMetaData->updateViews();
         }
     }
 

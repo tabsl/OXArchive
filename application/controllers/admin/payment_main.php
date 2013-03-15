@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: payment_main.php 48727 2012-08-16 09:09:02Z tomas $
+ * @version   SVN: $Id: payment_main.php 51586 2012-11-09 08:36:11Z aurimas.gladutis $
  */
 
 /**
@@ -126,6 +126,10 @@ class Payment_Main extends oxAdminDetails
 
         // setting add sum calculation rules
         $aRules = (array) oxConfig::getParameter( "oxpayments__oxaddsumrules" );
+        // if sum eqals 0, show notice, that default value will be used.
+        if ( empty($aRules) ) {
+            $this->_aViewData["noticeoxaddsumrules"] = 1;
+        }
         $oPayment->oxpayments__oxaddsumrules = new oxField( array_sum( $aRules ) );
 
         //#708

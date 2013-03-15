@@ -62,6 +62,13 @@
                 [{ oxinputhelp ident="HELP_PAYMENT_MAIN_ADDPRICE" }]
                 </td>
             </tr>
+            [{if $noticeoxaddsumrules eq 1}]
+            <tr>
+                <td colspan="2">
+                    <div class="errorbox">[{ oxmultilang ident="PAYMENT_MAIN_NOTICEDEFAULTVALUESSELECTED" }]</div>
+                </td>
+            </tr>
+            [{ /if}]
             <tr>
                 <td class="edittext" valign="top">
                 [{oxmultilang ident="PAYMENT_MAIN_ADDSUMRULES"}]
@@ -171,13 +178,13 @@
     <!-- Anfang rechte Seite -->
     <td valign="top" class="edittext" align="left" width="50%">
         [{ if $oxid != "-1"}]
-            <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" style="margin-bottom:30px;" onclick="JavaScript:showDialog('&cl=payment_main&aoc=1&oxid=[{ $oxid }]');">
+            <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" style="margin-bottom:20px;" onclick="JavaScript:showDialog('&cl=payment_main&aoc=1&oxid=[{ $oxid }]');">
         [{ /if}]
 
         [{block name="admin_payment_main_editor"}]
             [{oxhasrights object=$edit field='oxlongdesc' readonly=$readonly }]
                 <div>
-                    [{ oxmultilang ident="PAYMENT_MAIN_LONGDESC" }]
+                    <p>[{ oxmultilang ident="PAYMENT_MAIN_LONGDESC" }]</p>
                     [{ $editor }]
                     <div class="messagebox">[{ oxmultilang ident="EDITOR_PLAINTEXT_HINT" }]</div>
                 </div>

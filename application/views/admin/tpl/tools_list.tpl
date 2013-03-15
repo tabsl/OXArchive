@@ -21,14 +21,20 @@ window.onload = function ()
 <div id="liste">
 
     <table cellspacing="0" cellpadding="0" border="0">
-    [{ if $blViewSuccess}]
+    [{if isset($blViewSuccess)}]
     <tr>
-    <td class="editnavigation">[{ oxmultilang ident="TOOLS_LIST_UPDATEVIEWSSECCESS" }]</td>
+        <td class="editnavigation">
+            [{if $blViewSuccess}]
+            [{ oxmultilang ident="TOOLS_LIST_UPDATEVIEWSSECCESS" }]
+            [{else}]
+            [{ oxmultilang ident="TOOLS_LIST_UPDATEVIEWSFAILED" }]
+            [{/if}]
+        </td>
     </tr>
     [{/if}]
-    [{ if $blMailSuccess}]
+    [{if $blMailSuccess}]
     <tr>
-    <td class="editnavigation">[{ oxmultilang ident="TOOLS_LIST_SECCESS" }]</td>
+        <td class="editnavigation">[{ oxmultilang ident="TOOLS_LIST_SECCESS" }]</td>
     </tr>
     [{/if}]
     <tr>

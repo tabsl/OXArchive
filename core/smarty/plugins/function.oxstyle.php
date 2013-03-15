@@ -95,7 +95,7 @@ function smarty_function_oxstyle($params, &$smarty)
         }
     } else {
         foreach ($aStyles as $sSrc) {
-            $sOutput .= '<link rel="stylesheet" type="text/css" href="'.$sSrc.'">'.PHP_EOL;
+            $sOutput .= '<link rel="stylesheet" type="text/css" href="'.$sSrc.'" />'.PHP_EOL;
         }
         foreach ($aCtyles as $sSrc => $sCondition) {
             $sOutput .= '<!--[if '.$sCondition.']><link rel="stylesheet" type="text/css" href="'.$sSrc.'"><![endif]-->'.PHP_EOL;

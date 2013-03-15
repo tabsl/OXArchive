@@ -100,12 +100,15 @@ class oxUtilsUrl extends oxSuperCfg
      */
     public function prepareUrlForNoSession( $sUrl )
     {
+        $oStr = getStr();
+
+        // cleaning up session id..
+        $sUrl = $oStr->preg_replace('/(\?|&(amp;)?)(force_)?(admin_)?sid=[a-z0-9\._]+&?(amp;)?/i', '\1', $sUrl);
+        $sUrl = $oStr->preg_replace( '/(&amp;|\?)$/', '', $sUrl );
+
         if ( oxRegistry::getUtils()->seoIsActive() ) {
             return $sUrl;
         }
-
-        $oStr = getStr();
-        $sUrl = $oStr->preg_replace('/(\?|&(amp;)?)(force_)?(admin_)?sid=[a-z0-9\._]+&?(amp;)?/i', '\1', $sUrl);
 
         if ($qpos = $oStr->strpos($sUrl, '?')) {
             if ($qpos == $oStr->strlen($sUrl)-1) {
@@ -231,14 +234,14 @@ class oxUtilsUrl extends oxSuperCfg
         }
 
         $ret = oxRegistry::getSession()->processUrl(
-                    oxRegistry::getLang()->processUrl(
-                        $this->appendUrl(
-                                $sUrl,
-                                $aAddParams
-                        ),
-                        $iLang
-                    )
-                );
+            oxRegistry::getLang()->processUrl(
+                $this->appendUrl(
+                    $sUrl,
+                    $aAddParams
+                ),
+                $iLang
+            )
+        );
 
         if ($blFinalUrl) {
             $ret = getStr()->preg_replace('/(\?|&(amp;)?)$/', '', $ret);
@@ -423,7 +426,7 @@ class oxUtilsUrl extends oxSuperCfg
         $sProtocol = "http://";
 
         if ( isset($aServerParams['HTTPS']) && (($aServerParams['HTTPS'] == 'on' || $aServerParams['HTTPS'] == 1))
-         || (isset($aServerParams['HTTP_X_FORWARDED_PROTO']) && $aServerParams['HTTP_X_FORWARDED_PROTO'] == 'https')
+            || (isset($aServerParams['HTTP_X_FORWARDED_PROTO']) && $aServerParams['HTTP_X_FORWARDED_PROTO'] == 'https')
         ) {
             $sProtocol = 'https://';
         }

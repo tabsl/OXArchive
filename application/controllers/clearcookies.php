@@ -56,15 +56,16 @@ class ClearCookies extends oxUBase
      */
     protected function _removeCookies()
     {
+        $oUtilsServer = oxRegistry::get("oxUtilsServer");
         if ( isset( $_SERVER['HTTP_COOKIE'] ) ) {
             $aCookies = explode( ';', $_SERVER['HTTP_COOKIE'] );
             foreach ( $aCookies as $sCookie ) {
                 $sRawCookie = explode('=', $sCookie);
-                setcookie( trim( $sRawCookie[0] ), '', time() - 10000, '/' );
+                $oUtilsServer->setOxCookie( trim( $sRawCookie[0] ), '', time() - 10000, '/' );
             }
         }
-        setcookie( 'language', '', time() - 10000, '/' );
-        setcookie( 'displayedCookiesNotification', '', time() - 10000, '/' );
+        $oUtilsServer->setOxCookie( 'language', '', time() - 10000, '/' );
+        $oUtilsServer->setOxCookie( 'displayedCookiesNotification', '', time() - 10000, '/' );
     }
 
     /**

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxemail.php 50562 2012-10-16 10:34:10Z aurimas.gladutis $
+ * @version   SVN: $Id: oxemail.php 51971 2012-11-19 09:45:49Z aurimas.gladutis $
  */
 /**
  * Includes PHP mailer class.
@@ -630,9 +630,10 @@ class oxEmail extends PHPMailer
         $this->setSubject( $sSubject );
         $this->setRecipient( $oShop->oxshops__oxowneremail->value, $oLang->translateString("order") );
 
-        if ( $oUser->oxuser__oxusername->value != "admin" )
+        if ( $oUser->oxuser__oxusername->value != "admin" ) {
             $sFullName = $oUser->oxuser__oxfname->getRawValue() . " " . $oUser->oxuser__oxlname->getRawValue();
             $this->setReplyTo( $oUser->oxuser__oxusername->value, $sFullName );
+        }
 
         $blSuccess = $this->send();
 
@@ -718,7 +719,7 @@ class oxEmail extends PHPMailer
      * @param string $sEmailAddress user email address
      * @param string $sSubject      user defined subject [optional]
      *
-     * @return bool
+     * @return mixed true - success, false - user not found, -1 - could not send
      */
     public function sendForgotPwdEmail( $sEmailAddress, $sSubject = null )
     {
@@ -767,11 +768,14 @@ class oxEmail extends PHPMailer
                 $this->setRecipient( $sEmailAddress, $sFullName );
                 $this->setReplyTo( $oShop->oxshops__oxorderemail->value, $oShop->oxshops__oxname->getRawValue() );
 
-                return $this->send();
+                if ( !$this->send() ) {
+                    return -1; // failed to send
+                }
+                return true; // success
             }
         }
 
-        return false;
+        return false; // user with this email not found
     }
 
     /**
@@ -797,7 +801,7 @@ class oxEmail extends PHPMailer
         $this->setSubject( $sSubject );
 
         $this->setRecipient( $oShop->oxshops__oxinfoemail->value, "" );
-        $this->setFrom( $sEmailAddress, "" );
+        $this->setFrom( $oShop->oxshops__oxowneremail->value, $oShop->oxshops__oxname->getRawValue() );
         $this->setReplyTo( $sEmailAddress, "" );
 
         return $this->send();

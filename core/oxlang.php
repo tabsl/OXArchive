@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlang.php 51096 2012-10-30 11:03:35Z arturas.sevcenko $
+ * @version   SVN: $Id: oxlang.php 52070 2012-11-21 08:09:03Z linas.kukulskis $
  */
 
 /**
@@ -706,13 +706,12 @@ class oxLang extends oxSuperCfg
         $oConfig = $this->getConfig();
         $aLangFiles = array();
 
-        //$sOutDir        = $oConfig->getOutDir();
         $sAppDir        = $oConfig->getAppDir();
         $sLang          = oxRegistry::getLang()->getLanguageAbbr( $iLang );
         $sTheme         = $oConfig->getConfigParam( "sTheme" );
         $sCustomTheme   = $oConfig->getConfigParam( "sCustomTheme" );
         $sShopId        = $oConfig->getShopId();
-        $aModuleInfo    = $this->_getActiveModuleInfo();
+        $aModulePaths   = $this->_getActiveModuleInfo();
 
         //get generic lang files
         $sGenericPath = $sAppDir . 'translations/' . $sLang;
@@ -733,33 +732,16 @@ class oxLang extends oxSuperCfg
             $sCustPath = $sAppDir . 'views/' . $sCustomTheme .'/' . $sLang;
             $aLangFiles[] = $sCustPath . "/lang.php";
             $aLangFiles = $this->_appendLangFile( $aLangFiles, $sCustPath );
-
-            // custom theme shop languages
-            if ( $sCustomTheme ) {
-                $sShopPath = $sAppDir . 'views/'. $sCustomTheme .'/' . $sShopId . '/' . $sLang;
-                $aLangFiles[] = $sShopPath . "/lang.php";
-                $aLangFiles = $this->_appendLangFile( $aLangFiles, $sShopPath );
-            }
-        } else {
-            // theme shop languages
-            if ( $sTheme ) {
-                $sShopPath = $sAppDir . 'views/'. $sTheme .'/' . $sShopId . '/' . $sLang;
-                $aLangFiles[] = $sShopPath . "/lang.php";
-                $aLangFiles = $this->_appendLangFile( $aLangFiles, $sShopPath );
-            }
         }
 
-        //modules language files
-        if ( is_array( $aModuleInfo ) ) {
-            foreach ( $aModuleInfo as $sPath ) {
-                $sFullPath = $oConfig->getModulesDir() . $sPath . '/translations/' . $sLang;
-                // for < 4.6 modules, since 4.7/5.0 translation files should be in modules/modulepath/translations/ dir
-                if ( !is_dir($sFullPath) ) {
-                    $sFullPath = $oConfig->getModulesDir() . $sPath . '/out/lang/' . $sLang;
-                }
-                $aLangFiles = $this->_appendLangFile( $aLangFiles, $sFullPath );
-            }
-        }
+
+        // custom theme shop languages
+
+        // modules language files
+        $aLangFiles = $this->_appendModuleLangFiles( $aLangFiles, $aModulePaths, $sLang );
+
+        // custom language files
+        $aLangFiles = $this->_appendCustomLangFiles( $aLangFiles, $sLang );
 
         return count( $aLangFiles ) ? $aLangFiles : false;
     }
@@ -776,13 +758,12 @@ class oxLang extends oxSuperCfg
         $oConfig = $this->getConfig();
         $aLangFiles = array();
 
-        //$sOutDir        = $oConfig->getOutDir();
         $sAppDir        = $oConfig->getAppDir();
         $sLang          = oxRegistry::getLang()->getLanguageAbbr( $iLang );
 
-        $aActiveModuleInfo   = $this->_getActiveModuleInfo();
-        $aDisabledModuleInfo = $this->_getDisabledModuleInfo();
-
+        $aModulePaths = array();
+        $aModulePaths = array_merge( $aModulePaths, $this->_getActiveModuleInfo() );
+        $aModulePaths = array_merge( $aModulePaths, $this->_getDisabledModuleInfo() );
 
         // admin lang files
         $sAdminPath = $sAppDir . 'views/admin/' . $sLang;
@@ -792,53 +773,104 @@ class oxLang extends oxSuperCfg
 
         // themes options lang files
         $sThemePath = $sAppDir . 'views/*/' . $sLang;
-        // append options file
         $aLangFiles = $this->_appendLangFile( $aLangFiles, $sThemePath, "options" );
 
-        //load admin modules lang files
-        if ( is_array( $aActiveModuleInfo ) ) {
-            foreach ( $aActiveModuleInfo as $sPath ) {
-                $sFullPath = $oConfig->getModulesDir() . $sPath . '/views/admin/' . $sLang;
-                // for < 4.6 modules, since 4.7/5.0 translation files should be in modules/modulepath/views/admin/ dir
-                if ( !is_dir($sFullPath) ) {
-                    $sFullPath = $oConfig->getModulesDir() . $sPath . '/out/admin/' . $sLang;
-                }
-                $aLangFiles = $this->_appendLangFile( $aLangFiles, $sFullPath );
-                //load admin modules options lang files
-                $aLangFiles[] = $sFullPath . '/module_options.php';
-            }
-        }
+        // module language files
+        $aLangFiles = $this->_appendModuleLangFiles( $aLangFiles, $aModulePaths, $sLang, true );
 
-        //load module options file for disabled modules
-        if ( is_array( $aDisabledModuleInfo ) ) {
-            foreach ( $aDisabledModuleInfo as $sPath ) {
-                $sFullPath = $oConfig->getModulesDir() . $sPath . '/views/admin/' . $sLang;
-                // for < 4.6 modules, since 4.7/5.0 translation files should be in modules/modulepath/views/admin/ dir
-                if ( !is_dir($sFullPath) ) {
-                    $sFullPath = $oConfig->getModulesDir() . $sPath . '/out/admin/' . $sLang;
-                }
-                $aLangFiles[] = $sFullPath . '/module_options.php';
-            }
-        }
+        // custom language files
+        $aLangFiles = $this->_appendCustomLangFiles( $aLangFiles, $sLang, true );
 
         return count( $aLangFiles ) ? $aLangFiles : false;
     }
 
     /**
-     * Appends lang or options files if exists
+     * Appends lang or options files if exists, exept custom lang files
      *
      * @param array  $aLangFiles   existing language files
-     * @param array  $sFullPath    path to language files to append
+     * @param string $sFullPath    path to language files to append
      * @param string $sFilePattern file pattern to search for, default is "lang"
      *
      * @return array
      */
     protected function _appendLangFile( $aLangFiles, $sFullPath, $sFilePattern = "lang" )
     {
-        $aModuleFiles = glob( $sFullPath . "/*_{$sFilePattern}.php" );
-        if ( is_array( $aModuleFiles ) && count( $aModuleFiles ) ) {
-            $aLangFiles = array_merge( $aLangFiles, $aModuleFiles );
+        $aFiles = glob( $sFullPath . "/*_{$sFilePattern}.php" );
+        if ( is_array( $aFiles ) && count( $aFiles ) ) {
+            foreach ( $aFiles as $sFile ) {
+                if ( !strpos( $sFile, 'cust_lang.php' ) ) {
+                    $aLangFiles[] = $sFile;
+                }
+            }
         }
+        return $aLangFiles;
+    }
+
+    /**
+     * Appends Custom language files cust_lang.php
+     *
+     * @param array  $aLangFiles existing language files
+     * @param string $sLang      language abbreviation
+     * @param bool   $blForAdmin add files for admin
+     *
+     * @return array
+     */
+    protected function _appendCustomLangFiles( $aLangFiles, $sLang, $blForAdmin = false  )
+    {
+        $oConfig      = $this->getConfig();
+        $sAppDir      = $oConfig->getAppDir();
+        $sTheme       = $oConfig->getConfigParam( "sTheme" );
+        $sCustomTheme = $oConfig->getConfigParam( "sCustomTheme" );
+
+        if ( $blForAdmin ) {
+            $aLangFiles[] = $sAppDir . 'views/admin/' . $sLang . '/cust_lang.php';
+        } else {
+            if ( $sTheme ) {
+                $aLangFiles[] = $sAppDir . 'views/' . $sTheme . '/' . $sLang . '/cust_lang.php';
+            }
+            if ( $sCustomTheme ) {
+                $aLangFiles[] = $sAppDir . 'views/' . $sCustomTheme . '/' . $sLang . '/cust_lang.php';
+            }
+        }
+
+        return $aLangFiles;
+    }
+
+    /**
+     * Appends module lang or options files if exists
+     *
+     * @param array  $aLangFiles   existing language files
+     * @param array  $aModulePaths module language file paths
+     * @param string $sLang        language abbreviation
+     * @param bool   $blForAdmin   add files for admin
+     *
+     * @return array
+     */
+    protected function _appendModuleLangFiles( $aLangFiles, $aModulePaths, $sLang, $blForAdmin = false )
+    {
+        if ( is_array( $aModulePaths ) ) {
+
+            $oConfig = $this->getConfig();
+
+            foreach ( $aModulePaths as $sPath ) {
+                $sFullPath  = $oConfig->getModulesDir() . $sPath;
+                $sFullPath .= ($blForAdmin) ? '/views/admin/' : '/translations/';
+                $sFullPath .= $sLang;
+                //@deprecated since v4.7.1/5.0.1 (2012-11-20); for < 4.6 modules, since 4.7/5.0 translation files should be in modules/modulepath/views/admin/ dir
+                if ( !is_dir( $sFullPath ) ) {
+                    $sFullPath = $oConfig->getModulesDir() . $sPath;
+                    $sFullPath .= ($blForAdmin) ? '/out/admin/' : '/out/lang/';
+                    $sFullPath .= $sLang;
+                }
+                // END deprecated
+                $aLangFiles = $this->_appendLangFile( $aLangFiles, $sFullPath );
+                //load admin modules options lang files
+                if ( $blForAdmin ) {
+                    $aLangFiles[] = $sFullPath . '/module_options.php';
+                }
+            }
+        }
+
         return $aLangFiles;
     }
 
@@ -1049,7 +1081,7 @@ class oxLang extends oxSuperCfg
     {
         $sLang = null;
         if ( !$this->isAdmin()) {
-            $sLang = "<input type=\"hidden\" name=\"".$this->getName()."\" value=\"". $this->getBaseLanguage() . "\">";
+            $sLang = "<input type=\"hidden\" name=\"".$this->getName()."\" value=\"". $this->getBaseLanguage() . "\" />";
         }
         return $sLang;
     }

@@ -19,14 +19,16 @@
  * @package   smarty_plugins
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: function.oxmultilang.php 48727 2012-08-16 09:09:02Z tomas $
+ * @version   SVN: $Id: function.oxmultilang.php 52136 2012-11-22 09:53:14Z linas.kukulskis $
  */
 
 /**
  * Smarty function
  * -------------------------------------------------------------
  * Purpose: Output multilang string
- * add [{ oxmultilang ident="..." }] where you want to display content
+ * add [{ oxmultilang ident="..." args=... }] where you want to display content
+ * ident - language constant
+ * args - array of argument that can be parsed to language constant threw %s
  * -------------------------------------------------------------
  *
  * @param array  $params  params
@@ -36,10 +38,11 @@
 */
 function smarty_function_oxmultilang( $params, &$smarty )
 {
-
     startProfile("smarty_function_oxmultilang");
     $oLang = oxRegistry::getLang();
     $sIdent  = isset( $params['ident'] ) ? $params['ident'] : 'IDENT MISSING';
+    $aArgs = isset( $params['args'] ) ? $params['args'] : 0 ;
+
     $iLang   = null;
     $blAdmin = $oLang->isAdmin();
 
@@ -52,6 +55,9 @@ function smarty_function_oxmultilang( $params, &$smarty )
 
     try {
         $sTranslation = $oLang->translateString( $sIdent, $iLang, $blAdmin );
+        if ( $aArgs && is_array( $aArgs ) ) {
+            $sTranslation = vsprintf( $sTranslation, $aArgs );
+        }
     } catch ( oxLanguageException $oEx ) {
         // is thrown in debug mode and has to be caught here, as smarty hangs otherwise!
     }
@@ -63,7 +69,6 @@ function smarty_function_oxmultilang( $params, &$smarty )
     if ( $sTranslation == $sIdent && isset( $params['alternative'] ) ) {
         $sTranslation = $params['alternative'];
     }
-
 
     stopProfile("smarty_function_oxmultilang");
 

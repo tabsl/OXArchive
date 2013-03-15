@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcontent.php 48768 2012-08-16 17:56:23Z tomas $
+ * @version   SVN: $Id: oxcontent.php 51983 2012-11-19 12:07:35Z linas.kukulskis $
  */
 
 /**
@@ -140,7 +140,7 @@ class oxContent extends oxI18n implements oxIUrl
             $sContQ .= " FROM oxcontents WHERE oxloadid = '{$sLoadId}' AND oxshopid = '{$sShopId}'";
 
             $sSelect = $this->buildSelectString( $aParams );
-            $sSelect = str_replace( "{$sTable}.oxcontent", "( $sContQ ) as oxcontent", $sSelect );
+            $sSelect = str_replace( "`{$sTable}`.`oxcontent`", "( $sContQ ) as oxcontent", $sSelect );
         }
 
         $aData = oxDb::getDb( oxDb::FETCH_MODE_ASSOC )->getRow( $sSelect );

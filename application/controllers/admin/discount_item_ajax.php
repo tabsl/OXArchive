@@ -29,8 +29,8 @@ class discount_item_ajax extends ajaxListComponent
 {
     /**
      * Columns array
-     * 
-     * @var array 
+     *
+     * @var array
      */
     protected $_aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
                                         array( 'oxartnum', 'oxarticles', 1, 0, 0 ),
@@ -59,25 +59,25 @@ class discount_item_ajax extends ajaxListComponent
      */
     protected function _getQuery()
     {
-        $myConfig = $this->getConfig();
+        $oConfig = $this->getConfig();
 
         $sArticleTable = $this->_getViewName('oxarticles');
         $sCatTable     = $this->_getViewName('oxcategories');
         $sO2CView      = $this->_getViewName('oxobject2category');
         $sDiscTable    = $this->_getViewName('oxdiscount');
         $oDb = oxDb::getDb();
-        $sOxid = oxConfig::getParameter( 'oxid' );
-        $sSynchOxid = oxConfig::getParameter( 'synchoxid' );
+        $sOxid = $oConfig->getRequestParameter( 'oxid' );
+        $sSynchOxid = $oConfig->getRequestParameter( 'synchoxid' );
 
         // category selected or not ?
         if ( !$sOxid && $sSynchOxid ) {
             $sQAdd  = " from $sArticleTable where 1 ";
-            $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?'':"and $sArticleTable.oxparentid = '' ";
+            $sQAdd .= $oConfig->getConfigParam( 'blVariantsSelection' )?'':"and $sArticleTable.oxparentid = '' ";
         } else {
             // selected category ?
             if ( $sSynchOxid && $sOxid != $sSynchOxid ) {
                 $sQAdd  = " from $sO2CView left join $sArticleTable on ";
-                $sQAdd .= $myConfig->getConfigParam( 'blVariantsSelection' )?"($sArticleTable.oxid=$sO2CView.oxobjectid or $sArticleTable.oxparentid=$sO2CView.oxobjectid)":" $sArticleTable.oxid=$sO2CView.oxobjectid ";
+                $sQAdd .= $oConfig->getConfigParam( 'blVariantsSelection' )?"($sArticleTable.oxid=$sO2CView.oxobjectid or $sArticleTable.oxparentid=$sO2CView.oxobjectid)":" $sArticleTable.oxid=$sO2CView.oxobjectid ";
                 $sQAdd .= " where $sO2CView.oxcatnid = ".$oDb->quote( $sOxid )." and $sArticleTable.oxid is not null ";
 
                 // resetting
@@ -110,7 +110,7 @@ class discount_item_ajax extends ajaxListComponent
      */
     public function removeDiscArt()
     {
-        $soxId      = oxConfig::getParameter( 'oxid');
+        $soxId      = $this->getConfig()->getRequestParameter( 'oxid');
         $aChosenArt = $this->_getActionIds( 'oxdiscount.oxitmartid' );
         if ( is_array( $aChosenArt ) ) {
             $sQ = "update oxdiscount set oxitmartid = '' where oxid = ? and oxitmartid = ?";
@@ -126,7 +126,7 @@ class discount_item_ajax extends ajaxListComponent
     public function addDiscArt()
     {
         $aChosenArt = $this->_getActionIds( 'oxarticles.oxid' );
-        $soxId      = oxConfig::getParameter( 'synchoxid');
+        $soxId      = $this->getConfig()->getRequestParameter( 'synchoxid');
         if ( $soxId && $soxId != "-1" && is_array( $aChosenArt ) ) {
             $sQ = "update oxdiscount set oxitmartid = ? where oxid = ?";
             oxDb::getDb()->execute( $sQ, array( reset( $aChosenArt ), $soxId ) );
@@ -141,7 +141,7 @@ class discount_item_ajax extends ajaxListComponent
      */
     protected function _getQueryCols()
     {
-        $myConfig = $this->getConfig();
+        $oConfig = $this->getConfig();
         $sLangTag = oxRegistry::getLang()->getLanguageTag();
 
         $sQ = '';
@@ -155,7 +155,7 @@ class discount_item_ajax extends ajaxListComponent
 
             $sCol = $aCol[3] ? $aCol[0] : $aCol[0];
 
-            if ( $myConfig->getConfigParam( 'blVariantsSelection' ) && $aCol[0] == 'oxtitle' ) {
+            if ( $oConfig->getConfigParam( 'blVariantsSelection' ) && $aCol[0] == 'oxtitle' ) {
                 $sVarSelect = "$sViewTable.oxvarselect".$sLangTag;
                 $sQ .= " IF( $sViewTable.$sCol != '', $sViewTable.$sCol, CONCAT((select oxart.$sCol from $sViewTable as oxart where oxart.oxid = $sViewTable.oxparentid),', ',$sVarSelect)) as _" . $iCnt;
             } else {

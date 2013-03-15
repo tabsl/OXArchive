@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 50072 2012-10-03 13:13:13Z tomas $
+ * @version   SVN: $Id: oxuser.php 52144 2012-11-22 13:29:36Z aurimas.gladutis $
  */
 
 /**
@@ -616,11 +616,16 @@ class oxUser extends oxBase
     public function load( $oxID )
     {
 
-        $blRet = parent::Load( $oxID );
+        $blRet = parent::load( $oxID );
 
         // convert date's to international format
         if ( isset( $this->oxuser__oxcreate->value ) ) {
             $this->oxuser__oxcreate->setValue(oxRegistry::get("oxUtilsDate")->formatDBDate( $this->oxuser__oxcreate->value ));
+        }
+
+        // change newsSubcription user id
+        if ( isset($this->_oNewsSubscription) ) {
+            $this->_oNewsSubscription->oxnewssubscribed__oxuserid = new oxField( $oxID, oxField::T_RAW);
         }
 
         return $blRet;
@@ -1094,12 +1099,13 @@ class oxUser extends oxBase
     /**
      * Sets newsletter subscription status to user
      *
-     * @param bool $blSubscribe subscribes/unsubscribes user from newsletter
-     * @param bool $blSendOptIn if to send confirmation email
+     * @param bool $blSubscribe       subscribes/unsubscribes user from newsletter
+     * @param bool $blSendOptIn       if to send confirmation email
+     * @param bool $blForceCheckOptIn forces to check subscription even when it is set to 1
      *
      * @return bool
      */
-    public function setNewsSubscription( $blSubscribe, $blSendOptIn )
+    public function setNewsSubscription( $blSubscribe, $blSendOptIn, $blForceCheckOptIn = false )
     {
         // assigning to newsletter
         $blSuccess = false;
@@ -1109,7 +1115,7 @@ class oxUser extends oxBase
         // user wants to get newsletter messages or no ?
         $oNewsSubscription = $this->getNewsSubscription();
         if ( $oNewsSubscription ) {
-            if ( $blSubscribe && ( $iOptInStatus = $oNewsSubscription->getOptInStatus() ) != 1 ) {
+            if ( $blSubscribe && ($blForceCheckOptIn || ( $iOptInStatus = $oNewsSubscription->getOptInStatus() ) != 1) ) {
                 if ( !$blSendOptIn ) {
 
                     // double-opt-in check is disabled - assigning automatically
@@ -1163,7 +1169,6 @@ class oxUser extends oxBase
     {
         // validating values before saving. If validation fails - exception is thrown
         $this->checkValues( $sUser, $sPassword, $sPassword2, $aInvAddress, $aDelAddress );
-
         // input data is fine - lets save updated user info
         $this->assign( $aInvAddress );
 

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: recommlist.php 48727 2012-08-16 09:09:02Z tomas $
+ * @version   SVN: $Id: recommlist.php 51437 2012-11-06 15:41:58Z aurimas.gladutis $
  */
 
 /**
@@ -198,7 +198,7 @@ class RecommList extends aList
                 $dRating = (int) $dRating;
             }
 
-            if ( $dRating !== null && $dRating >= 0 && $dRating <= 5 ) {
+            if ( $dRating !== null && $dRating >= 1 && $dRating <= 5 ) {
                 $oRating = oxNew( 'oxrating' );
                 if ( $oRating->allowRating( $oUser->getId(), 'oxrecommlist', $oRecommList->getId() ) ) {
                     $oRating->oxratings__oxuserid   = new oxField( $oUser->getId() );

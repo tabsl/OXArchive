@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 51088 2012-10-30 09:46:58Z arturas.sevcenko $
+ * @version   SVN: $Id: oxarticle.php 52168 2012-11-23 09:55:27Z aurimas.gladutis $
  */
 
 // defining supported link types
@@ -191,6 +191,11 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      * Variable used to force load parent data in export
      */
     protected $_blLoadParentData = false;
+
+    /**
+     * Variable used to determine if setting parentId to empty value is allowed
+     */
+    protected $_blAllowEmptyParentId = false;
 
     /**
      * Variable used to force load parent data in export
@@ -639,6 +644,16 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     }
 
     /**
+     * Enable article price loading, if disabled.
+     *
+     * @return null
+     */
+    public function enablePriceLoad()
+    {
+        $this->_blLoadPrice = true;
+    }
+
+    /**
      * Returns item key used with oxuserbasket
      *
      * @return string
@@ -852,7 +867,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
 
     /**
      * Loads object data from DB (object data ID must be passed to method).
-     * Converts dates (oxarticle::oxarticles__oxinsert, oxarticle::oxarticles__oxtimestamp)
+     * Converts dates (oxarticle::oxarticles__oxinsert)
      * to international format (oxutils.php oxRegistry::get("oxUtilsDate")->formatDBDate(...)).
      * Returns true if article was loaded successfully.
      *
@@ -871,8 +886,6 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         if ( $aData ) {
             $this->assign( $aData );
             // convert date's to international format
-            $this->oxarticles__oxinsert    = new oxField(oxRegistry::get("oxUtilsDate")->formatDBDate( $this->oxarticles__oxinsert->value));
-            $this->oxarticles__oxtimestamp = new oxField(oxRegistry::get("oxUtilsDate")->formatDBDate( $this->oxarticles__oxtimestamp->value));
             $this->_isLoaded = true;
             return true;
         }
@@ -1127,7 +1140,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         //optionall function parameter $sKeyPrefix added, used only in basket.php
         $sKey = $this->getId();
         if ( isset( $sKeyPrefix ) ) {
-            $sKey = $sKeyPrefix.'__'.$this->getId();
+            $sKey = $sKeyPrefix.'__'.$sKey;
         }
 
         if ( !isset( self::$_aSelList[$sKey] ) ) {
@@ -1205,7 +1218,6 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      */
     public function getVariantSelections( $aFilterIds = null, $sActVariantId = null, $iLimit = 0 )
     {
-
         $iLimit = (int) $iLimit;
         if ( !isset( $this->_aVariantSelections[$iLimit] ) ) {
             $this->_aVariantSelections[$iLimit] = false;
@@ -2063,6 +2075,24 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         return $blRet;
     }
 
+    /**
+     * Changes article variant to parent article
+     *
+     * @return null
+     */
+    public function resetParent()
+    {
+        $sParentId = $this->oxarticles__oxparentid;
+        $this->oxarticles__oxparentid = new oxField( '', oxField::T_RAW );
+        $this->_blAllowEmptyParentId = true;
+        $this->save();
+        $this->_blAllowEmptyParentId = false;
+
+        if ( $sParentId !== '' ) {
+            $this->onChange( ACTION_UPDATE, null, $sParentId );
+        }
+    }
+
 
     /**
      * collect article pics, icons, zoompic and puts it all in an array
@@ -2199,11 +2229,11 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         $sId = ( $sParentID ) ? $sParentID : $sOXID;
         $this->_setVarMinMaxPrice( $sId );
 
-            // reseting articles count cache if stock has changed and some
-            // articles goes offline (M:1448)
-            if ( $sAction === ACTION_UPDATE_STOCK ) {
-                $this->_onChangeStockResetCount( $sOXID );
-            }
+        // reseting articles count cache if stock has changed and some
+        // articles goes offline (M:1448)
+        if ( $sAction === ACTION_UPDATE_STOCK ) {
+            $this->_onChangeStockResetCount( $sOXID );
+        }
 
     }
 
@@ -2337,7 +2367,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     {
         if ( $this->_oAttributeList === null ) {
             $this->_oAttributeList = oxNew( 'oxattributelist' );
-            $this->_oAttributeList->loadAttributes( $this->getId() );
+            $this->_oAttributeList->loadAttributes( $this->getId(), $this->getParentId() );
         }
 
         return $this->_oAttributeList;
@@ -3027,7 +3057,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
        // $this->_aSkipSaveFields[] = 'oxlongdesc';
         $this->_aSkipSaveFields[] = 'oxinsert';
 
-        if ( !isset( $this->oxarticles__oxparentid->value) || $this->oxarticles__oxparentid->value == '') {
+        if ( !$this->_blAllowEmptyParentId && (!isset( $this->oxarticles__oxparentid->value) || $this->oxarticles__oxparentid->value == '') ) {
             $this->_aSkipSaveFields[] = 'oxparentid';
         }
 
@@ -3552,9 +3582,10 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             return true;
         }
 
-        $aDoubleCopyFields = array('oxarticles__oxprice', 'oxarticles__oxvat');
+        // certain fields with zero value treat as empty
+        $aZeroValueFields = array('oxarticles__oxprice', 'oxarticles__oxvat', 'oxarticles__oxunitquantity');
 
-        if (!$mValue && in_array( $sFieldName, $aDoubleCopyFields ) ) {
+        if (!$mValue && in_array( $sFieldName, $aZeroValueFields ) ) {
             return true;
         }
 
@@ -3831,7 +3862,6 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         // set oxinsert
         $sNow = date('Y-m-d H:i:s', oxRegistry::get("oxUtilsDate")->getTime());
         $this->oxarticles__oxinsert    = new oxField( $sNow );
-        $this->oxarticles__oxtimestamp = new oxField( $sNow );
         if ( !is_object($this->oxarticles__oxsubclass) || $this->oxarticles__oxsubclass->value == '') {
             $this->oxarticles__oxsubclass = new oxField('oxarticle');
         }
@@ -3890,8 +3920,8 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         $sDelete = 'delete from oxreviews where oxtype="oxarticle" and oxobjectid = '.$sOXID.' ';
         $oDb->execute( $sDelete);
 
-        //$sDelete = 'delete from oxratings where oxobjectid = '.$sOXID.' ';
-        //$rs = $oDb->execute( $sDelete );
+        $sDelete = 'delete from oxratings where oxobjectid = '.$sOXID.' ';
+        $rs = $oDb->execute( $sDelete );
 
         $sDelete = 'delete from oxaccessoire2article where oxobjectid = '.$sOXID.' or oxarticlenid = '.$sOXID.' ';
         $oDb->execute( $sDelete);
@@ -4027,19 +4057,19 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             $sQ = 'update oxarticles set oxvarstock = '.$iStock.' where oxid = '.$sParentIdQuoted;
             $oDb->execute( $sQ );
 
-                //now lets update category counts
-                //first detect stock status change for this article (to or from 0)
-                if ( $iStock < 0 ) {
-                    $iStock = 0;
-                }
-                if ( $iOldStock < 0 ) {
-                    $iOldStock = 0;
-                }
-                if ( $this->oxarticles__oxstockflag->value == 2 && $iOldStock xor $iStock ) {
-                    //means the stock status could be changed (oxstock turns from 0 to 1 or from 1 to 0)
-                    // so far we leave it like this but later we could move all count resets to one or two functions
-                    $this->_onChangeResetCounts( $sParentID, $iVendorID, $iManufacturerID );
-                }
+            //now lets update category counts
+            //first detect stock status change for this article (to or from 0)
+            if ( $iStock < 0 ) {
+                $iStock = 0;
+            }
+            if ( $iOldStock < 0 ) {
+                $iOldStock = 0;
+            }
+            if ( $this->oxarticles__oxstockflag->value == 2 && $iOldStock xor $iStock ) {
+                //means the stock status could be changed (oxstock turns from 0 to 1 or from 1 to 0)
+                // so far we leave it like this but later we could move all count resets to one or two functions
+                $this->_onChangeResetCounts( $sParentID, $iVendorID, $iManufacturerID );
+            }
         }
     }
 
@@ -4098,10 +4128,10 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
                     MAX(`oxprice`) AS `varmaxprice`
                 FROM ' . $this->getViewName(true) . '
                 WHERE ' .$this->getSqlActiveSnippet(true) . '
-                    AND ( `oxparentid` = ' . $oDb->quote( $sParentId ) . ')';
-
+                    AND ( `oxparentid` = ' . $oDb->quote( $sParentId ) . ')
+                    AND `oxprice` > 0';
+            $oDb->setFetchMode( oxDb::FETCH_MODE_ASSOC );
             $aPrices = $oDb->getRow( $sQ, false, false );
-
             if ( !is_null( $aPrices['varminprice'] ) || !is_null( $aPrices['varmaxprice'] ) ) {
                 $sQ = '
                     UPDATE `oxarticles`

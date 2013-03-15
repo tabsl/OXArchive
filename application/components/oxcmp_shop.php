@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_shop.php 48727 2012-08-16 09:09:02Z tomas $
+ * @version   SVN: $Id: oxcmp_shop.php 52083 2012-11-21 10:58:30Z linas.kukulskis $
  */
 
 /**
@@ -45,11 +45,6 @@ class oxcmp_shop extends oxView
         parent::render();
 
         $myConfig = $this->getConfig();
-            $sShopLogo = $myConfig->getConfigParam( 'sShopLogo' );
-            if ( $sShopLogo && file_exists( $myConfig->getImageDir().'/'.$sShopLogo ) ) {
-                $oParentView = $this->getParent();
-                $oParentView->setShopLogo( $sShopLogo );
-            }
 
         // is shop active?
         $oShop = $myConfig->getActiveShop();

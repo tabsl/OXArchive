@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_basket.php 48767 2012-08-16 17:33:56Z tomas $
+ * @version   SVN: $Id: oxcmp_basket.php 51799 2012-11-14 12:13:36Z linas.kukulskis $
  */
 
 /**
@@ -364,6 +364,11 @@ class oxcmp_basket extends oxView
                 $oInfo = $oBasket->getBasketSummary();
                 $aProducts[$sAddProductId]['am'] = isset( $oInfo->aArticles[$sProductId] ) ? $oInfo->aArticles[$sProductId] : 0;
             }
+        }
+
+        //if basket empty remove posible gift card
+        if ( $oBasket->getProductsCount() == 0 ) {
+            $oBasket->setCardId( null );
         }
 
         // information that last call was tobasket

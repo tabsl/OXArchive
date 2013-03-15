@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: discount_main_ajax.php 48513 2012-08-10 12:40:09Z linas.kukulskis $
+ * @version   SVN: $Id: discount_main_ajax.php 52116 2012-11-21 15:48:54Z vilma $
  */
 
 /**
@@ -55,10 +55,11 @@ class discount_main_ajax extends ajaxListComponent
      */
     protected function _getQuery()
     {
+        $oConfig = $this->getConfig();
         $sCountryTable = $this->_getViewName('oxcountry');
         $oDb = oxDb::getDb();
-        $sId = oxConfig::getParameter( 'oxid' );
-        $sSynchId = oxConfig::getParameter( 'synchoxid' );
+        $sId = $oConfig->getRequestParameter( 'oxid' );
+        $sSynchId = $oConfig->getRequestParameter( 'synchoxid' );
 
         // category selected or not ?
         if ( !$sId) {
@@ -83,9 +84,10 @@ class discount_main_ajax extends ajaxListComponent
      */
     public function removeDiscCountry()
     {
+        $oConfig = $this->getConfig();
 
         $aChosenCntr = $this->_getActionIds( 'oxobject2discount.oxid' );
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $oConfig->getRequestParameter( 'all' ) ) {
 
             $sQ = $this->_addFilter( "delete oxobject2discount.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
@@ -103,11 +105,12 @@ class discount_main_ajax extends ajaxListComponent
      */
     public function addDiscCountry()
     {
+        $oConfig = $this->getConfig();
         $aChosenCntr = $this->_getActionIds( 'oxcountry.oxid' );
-        $soxId       = oxConfig::getParameter( 'synchoxid');
+        $soxId       = $oConfig->getRequestParameter( 'synchoxid');
 
 
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $oConfig->getRequestParameter( 'all' ) ) {
             $sCountryTable = $this->_getViewName('oxcountry');
             $aChosenCntr = $this->_getAll( $this->_addFilter( "select $sCountryTable.oxid ".$this->_getQuery() ) );
         }

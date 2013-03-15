@@ -65,9 +65,9 @@ class oxModule extends oxSuperCfg
 
     /**
      * Set passed module data
-     * 
+     *
      * @param array $aModule module data
-     * 
+     *
      * @return null
      */
     public function setModuleData( $aModule )
@@ -446,7 +446,7 @@ class oxModule extends oxSuperCfg
 
 
             $this->_callEvent('onActivate', $sModuleId);
-            
+
             return true;
         }
         return false;
@@ -544,8 +544,8 @@ class oxModule extends oxSuperCfg
         $oUtilsObject = oxUtilsObject::getInstance();
         $oUtilsObject->resetModuleVars();
     }
-    
-    
+
+
     /**
      * Build module chains from nested array
      *

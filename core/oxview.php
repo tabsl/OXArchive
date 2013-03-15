@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxview.php 50270 2012-10-08 16:06:27Z vilma $
+ * @version   SVN: $Id: oxview.php 52086 2012-11-21 11:07:44Z linas.kukulskis $
  */
 
 /**
@@ -211,7 +211,7 @@ class oxView extends oxSuperCfg
      */
     public function getViewParameter( $sKey )
     {
-        $sValue = ( isset( $this->_aViewParams[$sKey] ) ) ? $this->_aViewParams[$sKey] : oxConfig::getParameter( $sKey );
+        $sValue = ( isset( $this->_aViewParams[$sKey] ) ) ? $this->_aViewParams[$sKey] : $this->getConfig()->getRequestParameter( $sKey );
 
         return $sValue;
     }
@@ -308,11 +308,11 @@ class oxView extends oxSuperCfg
      */
     public function getBelboonParam()
     {
-        if ( $sBelboon = oxSession::getVar( 'belboon' ) ) {
+        if ( $sBelboon = $this->getSession()->getVariable( 'belboon' ) ) {
             return $sBelboon;
         }
-        if ( ( $sBelboon = oxConfig::getParameter( 'belboon' ) ) ) {
-            oxSession::setVar( 'belboon', $sBelboon );
+        if ( ( $sBelboon = $this->getConfig()->getRequestParameter( 'belboon' ) ) ) {
+            $this->getSession()->setVariable( 'belboon', $sBelboon );
         }
 
         return $sBelboon;
@@ -593,7 +593,7 @@ class oxView extends oxSuperCfg
 
 
             //#M341 do not add redirect parameter
-            oxRegistry::getUtils()->redirect( $sUrl, (bool) oxConfig::getParameter( 'redirected' ), 302 );
+            oxRegistry::getUtils()->redirect( $sUrl, (bool) $myConfig->getRequestParameter( 'redirected' ), 302 );
         }
     }
 
@@ -777,12 +777,16 @@ class oxView extends oxSuperCfg
     }
 
     /**
-     * Template variable getter. Returns shop logo
+     * Template variable getter. Returns shop logo from config option
      *
      * @return string
      */
     public function getShopLogo()
     {
+        if ( $this->_sShopLogo === null ) {
+            $this->setShopLogo( $this->getConfig()->getConfigParam( 'sShopLogo' ) );
+        }
+
         return $this->_sShopLogo;
     }
 
@@ -841,7 +845,7 @@ class oxView extends oxSuperCfg
      */
     public function getCategoryId()
     {
-        if ( $this->_sCategoryId == null && ( $sCatId = oxConfig::getParameter( 'cnid' ) ) ) {
+        if ( $this->_sCategoryId == null && ( $sCatId = $this->getConfig()->getRequestParameter( 'cnid' ) ) ) {
             $this->_sCategoryId = $sCatId;
         }
 
@@ -918,8 +922,8 @@ class oxView extends oxSuperCfg
      */
     public function showFbConnectToAccountMsg()
     {
-        if ( $this->getConfig()->getParameter( "fblogin" ) ) {
-            if ( !$this->getUser() || ($this->getUser() && oxSession::getVar( '_blFbUserIdUpdated' ) ) ) {
+        if ( $this->getConfig()->getRequestParameter( "fblogin" ) ) {
+            if ( !$this->getUser() || ($this->getUser() && $this->getSession()->getVariable( '_blFbUserIdUpdated' ) ) ) {
                 return true;
             } else {
                 return false;

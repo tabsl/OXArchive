@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: payment_main_ajax.php 48458 2012-08-10 06:59:10Z linas.kukulskis $
+ * @version   SVN: $Id: payment_main_ajax.php 52139 2012-11-22 10:49:37Z vaidas.matulevicius $
  */
 
 /**
@@ -53,8 +53,8 @@ class payment_main_ajax extends ajaxListComponent
     {
         // looking for table/view
         $sGroupTable   = $this->_getViewName('oxgroups');
-        $sGroupId      = oxConfig::getParameter( 'oxid' );
-        $sSynchGroupId = oxConfig::getParameter( 'synchoxid' );
+        $sGroupId      = $this->getConfig()->getRequestParameter( 'oxid' );
+        $sSynchGroupId = $this->getConfig()->getRequestParameter( 'synchoxid' );
         $oDb = oxDb::getDb();
 
         // category selected or not ?
@@ -66,7 +66,7 @@ class payment_main_ajax extends ajaxListComponent
         }
 
         if ( !$sSynchGroupId )
-            $sSynchGroupId = oxConfig::getParameter('oxajax_synchfid');
+            $sSynchGroupId = $this->getConfig()->getRequestParameter('oxajax_synchfid');
         if ( $sSynchGroupId && $sSynchGroupId != $sGroupId) {
             if ( !$sGroupId )
                 $sQAdd .= 'where ';
@@ -87,7 +87,7 @@ class payment_main_ajax extends ajaxListComponent
     public function removePayGroup()
     {
         $aRemoveGroups = $this->_getActionIds( 'oxobject2group.oxid' );
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( 'all' ) ) {
 
             $sQ = $this->_addFilter( "delete oxobject2group.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
@@ -106,9 +106,9 @@ class payment_main_ajax extends ajaxListComponent
     public function addPayGroup()
     {
         $aAddGroups = $this->_getActionIds( 'oxgroups.oxid' );
-        $soxId      = oxConfig::getParameter( 'synchoxid');
+        $soxId      = $this->getConfig()->getRequestParameter( 'synchoxid');
 
-        if ( oxConfig::getParameter( 'all' ) ) {
+        if ( $this->getConfig()->getRequestParameter( 'all' ) ) {
             $sGroupTable   = $this->_getViewName('oxgroups');
             $aAddGroups = $this->_getAll( $this->_addFilter( "select $sGroupTable.oxid ".$this->_getQuery() ) );
         }

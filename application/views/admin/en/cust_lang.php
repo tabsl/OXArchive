@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: cust_lang.php 49916 2012-10-01 08:51:58Z alfonsas $
+ * @version   SVN: $Id: cust_lang.php 52040 2012-11-20 12:17:44Z linas.kukulskis $
  */
 
 $sLangName  = "English";
@@ -30,17 +30,6 @@ $aLang = array(
 
 'charset'                                  => 'ISO-8859-15',
 
-'EMAIL_PRICEALARM_CUSTOMER_PRICEALARMIN'   => 'Price Alert in ',
-'EMAIL_PRICEALARM_CUSTOMER_HY'             => 'Hallo,',
-'EMAIL_PRICEALARM_CUSTOMER_HAVEPRICEALARM' => 'we have a Price Alert in',
-'EMAIL_PRICEALARM_CUSTOMER_ITEM1'          => 'The Product',
-'EMAIL_PRICEALARM_CUSTOMER_ITEM2'          => "you're interested in and you offered a price of",
-'EMAIL_PRICEALARM_CUSTOMER_ITEM3'          => 'is now available for',
-'EMAIL_PRICEALARM_CUSTOMER_ITEM4'          => '!',
-'EMAIL_PRICEALARM_CUSTOMER_CLICKHERE1'     => 'To get directly to the product please click ',
-'EMAIL_PRICEALARM_CUSTOMER_CLICKHERE2'     => 'here',
-'EMAIL_PRICEALARM_CUSTOMER_TEAM1'          => 'Your',
-'EMAIL_PRICEALARM_CUSTOMER_TEAM2'          => 'Team',
 );
 
 /*

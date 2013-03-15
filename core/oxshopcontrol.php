@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxshopcontrol.php 50798 2012-10-22 08:59:35Z saulius.stasiukaitis $
+ * @version   SVN: $Id: oxshopcontrol.php 52049 2012-11-20 13:37:56Z saulius.stasiukaitis $
  */
 
 /**
@@ -65,6 +65,25 @@ class oxShopControl extends oxSuperCfg
      * @var array
      */
     protected $_aErrors = null;
+
+    /**
+     * same as errors in session
+     *
+     * @see _getErrors
+     *
+     * @var array
+     */
+    protected $_aAllErrors = null;
+
+    /**
+     * same as controller errors in session
+     *
+     * @see _getErrors
+     *
+     * @var array
+     */
+    protected $_aControllerErrors = null;
+
 
     /**
      * output handler object
@@ -535,27 +554,27 @@ class oxShopControl extends oxSuperCfg
      */
     protected function _getErrors( $sCurrentControllerName )
     {
-        if (null === $this->_aErrors) {
-            $this->_aErrors = oxSession::getVar( 'Errors' );
-            if (null === $this->_aErrors) {
+        if ( null === $this->_aErrors ) {
+            $this->_aErrors = oxRegistry::getSession()->getVariable( 'Errors' );
+            $this->_aControllerErrors = oxRegistry::getSession()->getVariable( 'ErrorController' );
+            if ( null === $this->_aErrors ) {
                 $this->_aErrors = array();
             }
-            // resetting errors of current controller or widget from session
-            $aControllerErrors = oxSession::getVar( 'ErrorController' );
-            $aAllErrors = $this->_aErrors;
-            if ( is_array($aControllerErrors) && !empty($aControllerErrors)) {
-                foreach ( $aControllerErrors as $sErrorName => $sControllerName ) {
-                    if ( $sControllerName == $sCurrentControllerName ) {
-                        unset($aAllErrors[$sErrorName]);
-                        unset($aControllerErrors[$sErrorName]);
-                    }
-                }
-            } else {
-                $aAllErrors = array();
-            }
-            oxSession::setVar( 'ErrorController', $aControllerErrors );
-            oxSession::setVar( 'Errors', $aAllErrors );
+            $this->_aAllErrors = $this->_aErrors;
         }
+        // resetting errors of current controller or widget from session
+        if ( is_array($this->_aControllerErrors) && !empty($this->_aControllerErrors) ) {
+            foreach ( $this->_aControllerErrors as $sErrorName => $sControllerName ) {
+                if ( $sControllerName == $sCurrentControllerName ) {
+                    unset( $this->_aAllErrors[$sErrorName] );
+                    unset( $this->_aControllerErrors[$sErrorName] );
+                }
+            }
+        } else {
+            $this->_aAllErrors = array();
+        }
+        oxRegistry::getSession()->setVariable( 'ErrorController', $this->_aControllerErrors );
+        oxRegistry::getSession()->setVariable( 'Errors', $this->_aAllErrors );
         return $this->_aErrors;
     }
 

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_stock.php 48727 2012-08-16 09:09:02Z tomas $
+ * @version   SVN: $Id: article_stock.php 52440 2012-11-26 08:39:37Z aurimas.gladutis $
  */
 
 /**
@@ -117,6 +117,7 @@ class Article_Stock extends oxAdminDetails
 
         $oArticle = oxNew( "oxarticle");
         $oArticle->loadInLang( $this->_iEditLang, $soxId );
+
         $oArticle->setLanguage( 0 );
         $oArticle->assign( $aParams );
 
@@ -200,6 +201,16 @@ class Article_Stock extends oxAdminDetails
             $oArticlePrice->oxprice2article__oxamount->value <= $oArticlePrice->oxprice2article__oxamountto->value
             ) {
             $oArticlePrice->save();
+        }
+
+        // check if abs price is lower than base price
+        $oArticle = oxNew( "oxarticle");
+        $oArticle->loadInLang( $this->_iEditLang, $sOxArtId );
+        if ( $aParams['price'] >= $oArticle->oxarticles__oxprice->value) {
+            if ( is_null($sOXID) ) {
+                $sOXID = $oArticlePrice->getId();
+            }
+            $this->_aViewData["errorscaleprice"][] = $sOXID;
         }
 
     }

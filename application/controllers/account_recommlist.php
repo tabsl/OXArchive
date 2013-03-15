@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: account_recommlist.php 49318 2012-09-05 14:04:37Z vilma $
+ * @version   SVN: $Id: account_recommlist.php 52182 2012-11-23 12:19:31Z aurimas.gladutis $
  */
 
 /**
@@ -157,7 +157,13 @@ class Account_Recommlist extends Account
                 $oItemList = $oRecommList->getArticles();
 
                 if ( $oItemList->count() ) {
-                    foreach ( $oItemList as $oItem ) {
+                    foreach ( $oItemList as $key => $oItem ) {
+                        if ( !$oItem->isVisible() ) {
+                            $oRecommList->removeArticle( $oItem->getId() );
+                            $oItemList->offsetUnset( $key );
+                            continue;
+                        }
+
                         $oItem->text = $oRecommList->getArtDescription( $oItem->getId() );
                     }
                     $this->_oActRecommListArticles = $oItemList;

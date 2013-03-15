@@ -20,7 +20,7 @@ hr{height: 1px;border:none;color:#bdbdbd;background:#bdbdbd;margin:.7em 0;paddin
 ul{ padding:0;margin:0;}
 ul li {list-style-position: inside;list-style: none;padding:2px 2px 2px 11px;margin:0;background:transparent url(bg/nav.gif) -4px center no-repeat;}
 
-.popUpStyle {color: #000;display:block;position: absolute;visibility: hidden;background: #FFFFCC;border: 1px solid #000;padding:3px;}
+.popUpStyle {color: #000;display:block;position: absolute;visibility: hidden;background: #FFFFCC;border: 1px solid #000;padding:3px;z-index:1}
 
 /* Content boxes */
 div.list {margin-top:-1px;border-bottom:1px solid #7a7a7a;height: 100%;}
@@ -41,7 +41,7 @@ dl dd ul a {color:#535353}
 
 /* Lists */
 #liste {padding: 5px 0 32px;}
-#liste td.listfilter {background: #f0f0f0 url(bg/filter_bg.gif) -1px 0 no-repeat;padding:0 0 0 5px;}
+#liste td.listfilter {background: #f0f0f0 url(bg/filter_bg.gif) -1px 0 no-repeat;padding:0 0 0 5px;white-space:nowrap;}
 #liste td.listfilter input, #liste td.listfilter  select{font-size: 11px;}
 #liste td.listfilter .r1{background: #f0f0f0 url(bg/filter_bg.gif) top right no-repeat;padding:0 5px 0 0;}
 #liste td.listfilter .b1{background: #f0f0f0;padding:5px 0 2px;border-top: 1px solid #c8c8c8;height: 25px;}
@@ -49,7 +49,7 @@ dl dd ul a {color:#535353}
 #liste td.listfilter .find{float:right;}
 #liste td.listfilter .find input{border:0;color:transparent;background: #f0f0f0 url(bg/ico_find.gif) center center no-repeat;width:20px;height:20px;padding-left:20px;cursor: pointer;cursor: hand;}
 
-#liste td.listheader {background-color: #f0f0f0;border:1px solid #c8c8c8;padding:0 5px 2px;border-top:none;border-left:none;color:#000;font-weight: bold;}
+#liste td.listheader {background-color: #f0f0f0;border:1px solid #c8c8c8;padding:0 5px 2px;border-top:none;border-left:none;color:#000;font-weight: bold;white-space:nowrap;}
 #liste td.listheader.first{border-left:1px solid #c8c8c8;}
 #liste td.listitem {background-color:#fafafa;border-right:1px solid #fff;}
 #liste td.listitem2 {background-color:#f0f0f0;border-right:1px solid #fff;}

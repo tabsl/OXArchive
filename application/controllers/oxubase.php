@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 49878 2012-09-28 12:36:27Z saulius.stasiukaitis $
+ * @version   SVN: $Id: oxubase.php 52464 2012-11-26 22:46:36Z alfonsas $
  */
 
 /**
@@ -891,6 +891,9 @@ class oxUBase extends oxView
         if (!is_array($this->_aRssLinks)) {
             $this->_aRssLinks = array();
         }
+
+        $sUrl = oxRegistry::get("oxUtilsUrl")->prepareUrlForNoSession($sUrl);
+
         if ($key === null) {
             $this->_aRssLinks[] = array('title'=>$sTitle, 'link' => $sUrl);
         } else {
@@ -1044,7 +1047,7 @@ class oxUBase extends oxView
             $oContent = oxNew( 'oxcontent' );
             if ( $oContent->loadByIdent( $sMetaIdent ) &&
                  $oContent->oxcontents__oxactive->value ) {
-                return strip_tags( $oContent->oxcontents__oxcontent->value );
+                return getStr()->strip_tags( $oContent->oxcontents__oxcontent->value );
             }
         }
     }
@@ -1096,7 +1099,7 @@ class oxUBase extends oxView
     }
 
     /**
-     * Get active language
+     * Get active currency
      *
      * @return object
      */
@@ -1106,7 +1109,7 @@ class oxUBase extends oxView
     }
 
     /**
-     * Active language setter
+     * Active currency setter
      *
      * @param object $oCur corrency object
      *
@@ -1284,7 +1287,7 @@ class oxUBase extends oxView
             // decoding html entities
             $sMeta = $oStr->html_entity_decode( $sMeta );
             // stripping HTML tags
-            $sMeta = strip_tags( $sMeta );
+            $sMeta = $oStr->strip_tags( $sMeta );
 
             // removing some special chars
             $sMeta = $oStr->cleanStr( $sMeta );
@@ -1857,16 +1860,6 @@ class oxUBase extends oxView
     }
 
     /**
-     * Should "More tags" link be visible.
-     *
-     * @return bool
-     */
-    public function isMoreTagsVisible()
-    {
-        return false;
-    }
-
-    /**
      * Returns current view title. Default is null
      *
      * @return null
@@ -2382,7 +2375,7 @@ class oxUBase extends oxView
                 $this->_aBargainArticleList = array();
                 if ( $this->getConfig()->getConfigParam( 'bl_perfLoadAktion' ) ) {
                     $oArtList = oxNew( 'oxarticlelist' );
-                    $oArtList->loadAktionArticles( 'OXBARGAIN' );
+                    $oArtList->loadActionArticles( 'OXBARGAIN' );
                     if ( $oArtList->count() ) {
                         $this->_aBargainArticleList = $oArtList;
                     }
