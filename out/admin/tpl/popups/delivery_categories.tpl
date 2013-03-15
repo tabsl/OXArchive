@@ -62,8 +62,8 @@
             <td valign="top" id="container2"></td>
         </tr>
         <tr>
-            <td><input type="button" class="edittext oxid-aoc-button" value="[{ oxmultilang ident="GENERAL_AJAX_ASSIGNALL" }]" id="container1_btn"></td>
-            <td><input type="button" class="edittext oxid-aoc-button" value="[{ oxmultilang ident="GENERAL_AJAX_UNASSIGNALL" }]" id="container2_btn"></td>
+            <td class="oxid-aoc-actions"><input type="button" value="[{ oxmultilang ident="GENERAL_AJAX_ASSIGNALL" }]" id="container1_btn"></td>
+            <td class="oxid-aoc-actions"><input type="button" value="[{ oxmultilang ident="GENERAL_AJAX_UNASSIGNALL" }]" id="container2_btn"></td>
         </tr>
     </table>
 

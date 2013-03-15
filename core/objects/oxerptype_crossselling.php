@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_crossselling.php 18032 2009-04-09 12:14:09Z arvydas $
+ * $Id: oxerptype_crossselling.php 23188 2009-10-13 06:59:38Z sarunas $
  */
 
 require_once 'oxerptype.php';

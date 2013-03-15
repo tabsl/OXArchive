@@ -33,7 +33,7 @@ window.onload = function ()
     [{ /if}]
     top.reloadEditFrame();
 }
-//-->
+         //-->
 </script>
 
 <form name="search" id="search" action="[{ $shop->selflink }]" method="post">

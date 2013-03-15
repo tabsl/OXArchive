@@ -19,8 +19,12 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdb.php 22479 2009-09-21 15:18:40Z rimvydas.paskevicius $
+ * $Id: oxdb.php 22896 2009-10-02 11:04:57Z sarunas $
  */
+
+
+// Including main ADODB include
+require_once getShopBasePath() . 'core/adodblite/adodb.inc.php';
 
 /**
  * Database connection class
@@ -837,11 +841,7 @@ class oxDb extends oxSuperCfg
      */
     public function escapeString( $sString )
     {
-        if ( !get_magic_quotes_gpc() ) {
-            $sString = mysql_real_escape_string( $sString, $this->_getConnectionId() );
-        }
-
-        return $sString;
+        return mysql_real_escape_string( $sString, $this->_getConnectionId() );
     }
 
 }

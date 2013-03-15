@@ -97,12 +97,6 @@
             <td><label>[{ oxmultilang ident="FORGOTPWD_YOUREMAIL" }]</label></td>
             <td><input id="test_lgn_usr" type="text" name="lgn_usr" value="[{$lgn_usr}]" size="45" ></td>
           </tr>
-          [{ if $oView->getForgotEmail()}]
-            <tr>
-              <td></td>
-              <td>[{ oxmultilang ident="FORGOTPWD_PWDWASSEND" }] [{$oView->getForgotEmail()}]</td>
-            </tr>
-          [{ /if}]
           <tr>
             <td></td>
             <td><span class="btn"><input type="submit" name="save" value="[{ oxmultilang ident="FORGOTPWD_REQUESTPWD" }]" class="btn"></span></td>

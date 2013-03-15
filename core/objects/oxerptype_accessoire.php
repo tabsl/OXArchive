@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_accessoire.php 18030 2009-04-09 11:36:21Z arvydas $
+ * $Id: oxerptype_accessoire.php 23188 2009-10-13 06:59:38Z sarunas $
  */
 
 require_once 'oxerptype.php';

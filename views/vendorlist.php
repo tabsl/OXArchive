@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: vendorlist.php 20503 2009-06-26 14:54:11Z vilma $
+ * $Id: vendorlist.php 23400 2009-10-20 14:38:13Z arvydas $
  */
 
 /**
@@ -85,7 +85,7 @@ class VendorList extends aList
      *
      * @var int
      */
-    protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXFOLLOW;
+    protected $_iViewIndexState = VIEW_INDEXSTATE_INDEX;
 
     /**
      * Executes parent::render(), loads active vendor, prepares article
@@ -230,9 +230,8 @@ class VendorList extends aList
                 $sUrl = oxSeoEncoderVendor::getInstance()->getVendorPageUrl( $oVendor, $iPage, $iLang, $this->_isFixedUrl( $oVendor ) );
             }
         } else {
-            $sUrl = parent::_addPageNrParam( $sUrl, $iPage, $iLang );
+            $sUrl = oxUBase::_addPageNrParam( $sUrl, $iPage, $iLang );
         }
-
         return $sUrl;
     }
 
@@ -329,6 +328,8 @@ class VendorList extends aList
     /**
      * Template variable getter. Returns template location
      *
+     * @deprecated use vendorList::getTreePath() and adjust template
+     *
      * @return string
      */
     public function getTemplateLocation()
@@ -340,6 +341,18 @@ class VendorList extends aList
             }
         }
         return $this->_sTplLocation;
+    }
+
+    /**
+     * Template variable getter. Returns category path array
+     *
+     * @return array
+     */
+    public function getTreePath()
+    {
+        if ( $oVendorTree = $this->getVendorTree() ) {
+            return $oVendorTree->getPath();
+        }
     }
 
     /**
@@ -415,5 +428,18 @@ class VendorList extends aList
     protected function _prepareMetaDescription( $sMeta, $iLength = 1024, $blDescTag = false )
     {
         return parent::_collectMetaDescription( $sMeta, $iLength, $blDescTag );
+    }
+
+    /**
+     * returns object, assosiated with current view.
+     * (the object that is shown in frontend)
+     *
+     * @param int $iLang language id
+     *
+     * @return object
+     */
+    protected function _getSubject( $iLang )
+    {
+        return $this->getActVendor();
     }
 }

@@ -3,7 +3,7 @@
 [{/foreach}]
 [{if !$oxcmp_user->oxuser__oxpassword->value}]
   <form name="rlogin" action="[{ $oViewConf->getSslSelfLink() }]" method="post">
-    <div>
+    <div class="form">
         [{ $oViewConf->getHiddenSid() }]
         [{$_login_additional_form_parameters}]
         <input type="hidden" name="fnc" value="login_noredirect">
@@ -15,55 +15,34 @@
           [{assign var="product" value=$oView->getProduct() }]
           <input type="hidden" name="anid" value="[{ $product->oxarticles__oxnid->value }]">
         [{/if}]
+
+        <label for="test_RightLogin_Email">[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_EMAIL" }]</label>
+        <input id="test_RightLogin_Email" type="text" name="lgn_usr" value="" class="txt">
+
+        <label for="test_RightLogin_Pwd">[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_PWD" }]</label>
+        <input id="test_RightLogin_Pwd" type="password" name="lgn_pwd" value="" class="txt">
+
+        <label for="test_RightLogin_KeepLogggedIn">
+            <input id="test_RightLogin_KeepLogggedIn" type="checkbox" name="lgn_cook" value="1" class="chk">
+            [{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_KEEPLOGGEDIN" }]
+        </label>
+
+        <span class="btn"><input id="test_RightLogin_Login" type="submit" name="send" value="[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_LOGIN" }]" class="btn"></span>
+        <a id="test_RightLogin_Register" class="link" href="[{ oxgetseourl ident=$oViewConf->getSslSelfLink()|cat:"cl=register" params=$oViewConf->getNavUrlParams() }]" rel="nofollow">[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_OPENACCOUNT" }]</a>
+        <a id="test_RightLogin_LostPwd" class="link" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=forgotpwd" params=$oViewConf->getNavUrlParams() }]" rel="nofollow">[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_FORGOTPWD" }]</a>
     </div>
-    <table class="form">
-      <colgroup>
-        <col width="30%">
-        <col width="70%">
-      </colgroup>
-      <tr>
-        <td><label>[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_EMAIL" }]</label></td>
-        <td><input id="test_RightLogin_Email" type="text" name="lgn_usr" value="" class="fullsize"></td>
-      </tr>
-      <tr>
-        <td><label>[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_PWD" }]</label></td>
-        <td><input id="test_RightLogin_Pwd" type="password" name="lgn_pwd" value="" class="fullsize"></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td>
-            <div class="left"><input id="test_RightLogin_KeepLogggedIn" type="checkbox" name="lgn_cook" value="1" class="chk"></div>
-            <div class="left"><label>[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_KEEPLOGGEDIN" }]</label></div>
-        </td>
-      </tr>
-      <tr>
-        <td></td>
-        <td><span class="btn"><input id="test_RightLogin_Login" type="submit" name="send" value="[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_LOGIN" }]" class="btn"></span></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td><a id="test_RightLogin_Register" class="link" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=register" params=$oViewConf->getNavUrlParams() }]" rel="nofollow">[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_OPENACCOUNT" }]</a></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td ><a id="test_RightLogin_LostPwd" class="link" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=forgotpwd" params=$oViewConf->getNavUrlParams() }]" rel="nofollow">[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_FORGOTPWD" }]</a></td>
-      </tr>
-    </table>
   </form>
 [{else}]
-  <table cellspacing="0" cellpadding="0" border="0" width="100%">
-    <tr>
-      <td id="test_LoginUser">
+
+      <div id="test_LoginUser">
         [{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_LOGGEDINAS" }]<br>
         [{assign var="fullname" value=$oxcmp_user->oxuser__oxfname->value|cat:" "|cat:$oxcmp_user->oxuser__oxlname->value }]
         <b>&quot;[{ $oxcmp_user->oxuser__oxusername->value|oxtruncate:25:"...":true }]&quot;</b> <br>
         ([{ $fullname|oxtruncate:25:"...":true }])
-      </td>
-    </tr>
-    <tr>
-      <td align="right">
-        <form action="[{ $oViewConf->getSelfActionLink() }]" method="post">
-          <div>
+      </div>
+
+      <form action="[{ $oViewConf->getSelfActionLink() }]" method="post">
+        <div class="form">
           [{ $oViewConf->getHiddenSid() }]
           [{$_login_additional_form_parameters}]
           <input type="hidden" name="fnc" value="logout">
@@ -82,9 +61,6 @@
           [{/if}]
 
               <span class="btn"><input id="test_RightLogout" type="submit" name="send" value="[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_LOGOUT" }]" class="btn"></span>
-          </div>
-        </form>
-      </td>
-    </tr>
-  </table>
+        </div>
+      </form>
 [{/if }]

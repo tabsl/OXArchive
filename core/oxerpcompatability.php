@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerpcompatability.php 21461 2009-08-05 16:42:31Z tomas $
+ * $Id: oxerpcompatability.php 23188 2009-10-13 06:59:38Z sarunas $
  */
 
 /**

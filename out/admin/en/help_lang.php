@@ -19,7 +19,7 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: help_lang.php 21163 2009-07-28 14:35:21Z philipp.grashoff $
+ * $Id: help_lang.php 23326 2009-10-16 15:21:46Z rimvydas.paskevicius $
  */
 
 /**
@@ -65,6 +65,14 @@ $aLang =  array(
 'HELP_SHOP_SYSTEM_ISERVERTIMESHIFT'				=>	'The server the eShop is running on can be in a different time zone. With this setting the time shift can be adjusted: Enter the amount of hours that are to be added/subtracted from the server time, e. g. <kdb>+2</kdb> or <kdb>-2</kdb>',
 
 'HELP_SHOP_SYSTEM_INLINEIMGEMAIL'				=>	'If the setting is checked, the pictures in e-mails are sent together with the e-mail. If the setting is unchecked, the pictures are downloaded by the e-mail program when the e-mail is opened.',
+
+
+
+'HELP_SHOP_CACHE_ENABLED'                       =>  'If Dynamic content caching is active, additional contents are cached for increasing performance. Deactivate this setting as long as you adapt the Shop (writing modules, adapting templates and so on).',
+
+'HELP_SHOP_CACHE_LIFETIME'                      =>  'Here you set how many seconds cached contents are saved at most before they are recreated. The default setting is 36000 seconds.',
+
+'HELP_SHOP_CACHE_CLASSES'                       =>  'Here you set which view classes are cached.<br /> Only change this setting if you are familiar with the caching mechanisms!',
 
 
 
@@ -141,7 +149,14 @@ $aLang =  array(
 
 'HELP_SHOP_CONFIG_LOAD_DYNAMIC_PAGES'			=>	'If this setting is checked, additional information about other oxid products is shown in the menu, e.g. about OXID eFire. Which information is loaded depends on the location of your eShop.',
 
+
 'HELP_SHOP_CONFIG_DELETERATINGLOGS'				=>	'If users rate a product, they cannot rate the product again. Here you can set after how many days users are allowed to rate a product again. Leave empty to disable - products can be rated only once per user.',
+
+'HELP_SHOP_MALL_MALLMODE'                       =>  'Here you can set what is shown as front page of this eShop:' .
+                                                    '<ul><li><span class="navipath_or_inputname">Show shop selector</span>: A page where the different eShops can be selected is shown.</li>' .
+                                                    '<li><span class="navipath_or_inputname">Show main shop front page</span>: The normal front page of this Shop is shown.</li></ul>',
+
+'HELP_SHOP_MALL_PRICEADDITION'                  =>  'You can define a surcharge on all product prices in this shop: Enter the surcharge and select if its a percental (<span class="userinput_or_code">%</span>) or absolute (<span class="userinput_or_code">abs</span>).',
 
 
 
@@ -176,6 +191,13 @@ $aLang =  array(
 
 'HELP_SHOP_PERF_LOADSELECTLISTSINALIST'			=>	'Normally selection lists are only shown in the detail view of a product. If you activate this setting, the selection lists are also shown in product lists (e. g. search results, categories).',
 
+'HELP_SHOP_PERF_CHECKIFTPLCOMPILE'              =>  'If this setting is activated the eShop checks on each call if any templates were changed. If so, the output is  recalculated. Activate this setting when adapting templates, deactivate it if the eShop is live for better performance. <br />' .
+                                                    'Further information can be found in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/advices-adepting-templates" target="_blank" target="_blank">caching article in the manual</a>.',
+
+'HELP_SHOP_PERF_CLEARCACHEONLOGOUT'             =>  'Usually the complete cache is emptied as soon as you save any changes in the eShop admin. This can lead to performance problems in admin. If this setting is activated, the cache is only emptied when you log out from eShop admin.',
+
+
+
 
 
 'HELP_SHOP_SEO_TITLEPREFIX'						=>	'Each page has a title. this title is shown in the top bar of the browser window. With <span class="navipath_or_inputname">Title Prefix</span> and <span class="navipath_or_inputname">Title Suffix</span> you can fill in text before and after page titles:<br />' .
@@ -200,8 +222,8 @@ $aLang =  array(
 
 
 
-'HELP_SHOP_MAIN_PRODUCTIVE'						=>	'If this setting is <b>not</b> active, information about execution times and debug information are displayed  at the bottom of each page. These information is useful when customizing eShop.<br />' .
-                                                    '<b>Activate this setting when the eShop is launched. Thereby only the eShop without additional information is displayed to your users.</b>',
+'HELP_SHOP_MAIN_PRODUCTIVE'						=>	'As long as this setting is <span class="warning_or_important_hint">not</span> active, information about execution times and debug information are displayed  at the bottom of each page. These information is useful when customizing eShop.<br />' .
+                                                    '<span class="warning_or_important_hint">Activate this setting when the eShop is launched. Thereby only the eShop without additional information is displayed to your users.</span>',
 
 'HELP_SHOP_MAIN_ACTIVE'							=>	'With <span class="navipath_or_inputname">Active</span> you can enable/disable the complete eShop. If the eShop is disabled, a message saying the eShop is temporary offline is displayed to the users. This can be useful for maintenance.',
 
@@ -211,9 +233,15 @@ $aLang =  array(
 
 'HELP_SHOP_MAIN_OWNEREMAIL'						=>	'When users order, you receive an e-mail with a summary of the order. These e-mails are sent to <span class="navipath_or_inputname">Order E-mails to</span>.',
 
+'HELP_SHOP_MAIN_SMTPSERVER'						=>	'SMTP data is needed for sending e-mails (e.g. sending customers an order confirmation e-mail) Further information can be found in the <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/entering-smtp-data" target="_blank">accordant manual entry</a>.',
 
 
-'HELP_ARTICLE_MAIN_ALDPRICE'					=>	'With <span class="navipath_or_inputname">Alt. Prices</span> you can set up special prices for certain users. More information is available in the <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/set-alternative-prices-special-users">eShop Manual</a> on the OXID eSales website.',
+
+'HELP_ARTICLE_MAIN_ALDPRICE'					=>	'With <span class="navipath_or_inputname">Alt. Prices</span> you can set up special prices for certain users. More information is available in the <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/set-alternative-prices-special-users" target="_blank">eShop Manual</a> on the OXID eSales website.',
+
+'HELP_ARTICLE_MAIN_VAT'							=>	'Here you can enter a special VAT for this product. This VAT is used for this product in all later calculations (basket, order, invoice)',
+
+'HELP_ARTICLE_MAIN_TAGS'                        =>  'Here you can enter tags for the product. From these tags the tag cloud on the front page is generated. The tags are separated by a space.',
 
 
 
@@ -227,6 +255,26 @@ $aLang =  array(
 
 'HELP_ARTICLE_EXTEND_SKIPDISCOUNTS'				=>	'If <span class="navipath_or_inputname">Skip all negative discounts</span> is active, negative allowances will not be calculated for this product. These include discounts and vouchers.',
 
+'HELP_ARTICLE_EXTEND_TEMPLATE'					=>	'The detail view of a product can be displayed with a different template. For doing so, enter the filename of the template to be used. Further information is available in the <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/display-certain-products-or-categories-another-template" target="_blank">accordant manual entry</a>.',
+
+
+
+'HELP_ARTICLE_PICTURES_ICON'                    =>  'Icons are the smallest pictures of a product. For example, they are used in the shopping cart.<br />'.
+                                                    'You can upload an icon in <span class="navipath_or_inputname">Icon upload</span>. After uploading, the filename is shown in <span class="navipath_or_inputname">Icon</span>. If no icon is uploaded yet, <span class="userinput_or_code">nopic.jpg</span> is displayed. <br />' .
+                                                    'Further information is available in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/product-images-basics" target="_blank">product pictures manual entry</a>.',
+
+'HELP_ARTICLE_PICTURES_THUMB'                   =>  'Thumbnails are small product pictures. For example, they are used in product lists (categories, search results).<br />' .
+                                                    'You can upload a thumbnail in <span class="navipath_or_inputname">Thumb. upload</span>. After uploading, the filename is shown in <span class="navipath_or_inputname">Thumbnail</span>. If no thumbnail is uploaded yet, <span class="userinput_or_code">nopic.jpg</span> is displayed.<br />' .
+                                                    'Further information is available in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/product-images-basics" target="_blank">product pictures manual entry</a>.',
+
+'HELP_ARTICLE_PICTURES_PIC1'                    =>  'Pictures are used in the detail view of a product. You can upload up to 7 pictures per product. </br>' .
+                                                    'You can upload pictures in <span class="navipath_or_inputname">Picture x upload</span>. After uploading, the filename is shown in <span class="navipath_or_inputname">Pic X</span>. If no picture is uploaded yet, <span class="userinput_or_code">nopic.jpg</span> is displayed.<br />' .
+                                                    'Further information is available in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/product-images-basics" target="_blank">product pictures manual entry</a>.',
+
+'HELP_ARTICLE_PICTURES_ZOOM1'                   =>  'Zoom pictures are extra large pictures which can be opened from the detail view of a product. </br>' .
+                                                    'You can upload zoom pictures in <span class="navipath_or_inputname">Zoom X upload</span>. After uploading, the filename is shown in <span class="navipath_or_inputname">Zoom X</span>. If no zoom picture is uploaded yet, <span class="userinput_or_code">nopic.jpg</span> is displayed.<br />' .
+                                                    'Further information is available in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/product-images-basics" target="_blank">product pictures manual entry</a>.',
+
 
 
 'HELP_ARTICLE_STOCK_STOCKFLAG'					=>	'At <span class="navipath_or_inputname">Delivery status</span> you can select from 4 settings:' .
@@ -239,8 +287,6 @@ $aLang =  array(
 
 'HELP_ARTICLE_STOCK_DELIVERY'					=>	'Here you can enter the date when the product will be available again if it is sold out. The format is year-month-day, e. g. 2009-02-16.',
 
-
-
 'HELP_ARTICLE_SEO_FIXED'						=>	'You can let the eShop recalculate the SEO URLs. A product page gets a new SEO URL if e. g. the title of the product has changed. The setting <span class="navipath_or_inputname">Fixed URL</span> prevents this: If it is active, the old SEO URL is kept and no new SEO URL is calculated.',
 
 'HELP_ARTICLE_SEO_KEYWORDS'						=>	'These keywords are integrated in the HTML sourcecode of the product page (META keywords). This information is used by search engines. Suitable keywords for the product can be entered here. If it\'s left blank, the keywords are generated automatically.',
@@ -248,6 +294,20 @@ $aLang =  array(
 'HELP_ARTICLE_SEO_DESCRIPTION'					=>	'This description is integrated in the HTML sourcecode of the product page (META description). This text is often displayed in result pages of search engines. A suitable description can be entered here. If it\'s left blank, the description is generated automatically.',
 
 'HELP_ARTICLE_SEO_ACTCAT'						=>	'You can define several SEO URLs for products: For certain categories and manufacturer pages. With <span class="navipath_or_inputname">Active Category/Vendor</span> you can select the SEO URL you want to edit.',
+'HELP_ARTICLE_STOCK_STOCKTEXT'					=>	'Here you can enter a message which is shown if the product is in stock. Further information about stock messages can be found in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/setting-messages-stock-levels" target="_blank">article about stock messages in the manual</a>.',
+
+'HELP_ARTICLE_STOCK_NOSTOCKTEXT'				=>	'Here you can enter a message which is shown if the product is off stock. Further information about stock messages can be found in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/setting-messages-stock-levels" target="_blank">article about stock messages in the manual</a>.',
+
+'HELP_ARTICLE_STOCK_AMOUNTPRICE_AMOUNTFROM'     =>  'In <span class="navipath_or_inputname">Quantity From/To/bis</span> you set for which quantity range the scale price is valid.<br />' .
+                                                    'Further information about scale prices can be found in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/setting-graduated-prices" target="_blank">scale price article in the manual.</a>.',
+
+'HELP_ARTICLE_STOCK_AMOUNTPRICE_PRICE'          =>  'Here you can set the price for the quantity entered above. You can enter the price absolutely or as percental discount.<br /> ' .
+                                                    'Further information about scale prices can be found in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/setting-graduated-prices" target="_blank">scale price article in the manual.</a>.',
+
+
+
+'HELP_ARTICLE_VARIANT_VARNAME'                  =>  '<span class="navipath_or_inputname">Name of Selection</span> defines how the selection of the variants is labeled , e.g. <span class="userinput_or_code">Color</span> or <span class="userinput_or_code">Size</span>.<br /> '.
+                                                    'Further Information can be found in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/setting-variants-a-product" target="_blank">variants article in the manual</a>.',
 
 
 
@@ -261,13 +321,13 @@ $aLang =  array(
 
 'HELP_CATEGORY_MAIN_PRICEFROMTILL'				=>	'With <span class="navipath_or_inputname">Price From/To</span> you can specify that <span class="warning_or_important_hint">all</span> products in a certain price range are shown in this category. Enter the lower limit in the first entry field and the upper limit in the second entry field. Then <span class="warning_or_important_hint">all products of the eShop</span> within this price range are shown in this category.',
 
-'HELP_CATEGORY_MAIN_DEFSORT'					=>	'With <span class="navipath_or_inputname">Fast Sorting</span> you specify the manner in which the products in the category will be sorted. To learn about the available options, refer to <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/sorting-products">the eShop manual</a> an the OXID eSales website.',
+'HELP_CATEGORY_MAIN_DEFSORT'					=>	'With <span class="navipath_or_inputname">Fast Sorting</span> you specify the manner in which the products in the category will be sorted. To learn about the available options, refer to <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/sorting-products" target="_blank">the eShop manual</a> an the OXID eSales website.',
 
 'HELP_CATEGORY_MAIN_SORT'						=>	'You can use <span class="navipath_or_inputname">Sorting</span> to define the order in which categories are displayed: The category with the lowest number is displayed at the top, and the category with the highest number at the bottom.',
 
 'HELP_CATEGORY_MAIN_THUMB'						=>	'With <span class="navipath_or_inputname">Picture</span> and <span class="navipath_or_inputname">Upload Picture</span> you can upload a picture for this category. The picture is shown at top of the category is viewed. Select the picture in <span class="navipath_or_inputname">Upload Picture</span>. When clicking on <span class="navipath_or_inputname">Save</span>, th picture is uploaded. After uploading, the filename of the picture is shown in <span class="navipath_or_inputname">Picture</span>.',
 
-'HEOLP_CATEGORY_MAIN_SKIPDISCOUNTS'				=>	'<li>If <span class="navipath_or_inputname">Skip all negative discounts</span> is active, negative allowances will not be calculated for any products in this category.',
+'HELP_CATEGORY_MAIN_SKIPDISCOUNTS'				=>	'<li>If <span class="navipath_or_inputname">Skip all negative discounts</span> is active, negative allowances will not be calculated for any products in this category.',
 
 
 
@@ -278,19 +338,13 @@ $aLang =  array(
 'HELP_CATEGORY_SEO_DESCRIPTION'					=>	'This description is integrated in the HTML sourcecode of the category page (META description). This text is often displayed in result pages of search engines. A suitable description can be entered here. If it\'s left blank, the description is generated automatically.',
 
 'HELP_CATEGORY_SEO_SHOWSUFFIX'					=>	'With this setting you can specify if the title suffix is shown in the browser window title when the category page is opened. The title suffix can be set in <span class="navipath_or_inputname">Master Settings -> Core Settings -> SEO -> Title Suffix</span>.',
-
-
-
 'HELP_CONTENT_MAIN_SNIPPET'						=>	'If you select <span class="navipath_or_inputname">Snippet</span> you can include this CMS page within other CMS pages by its ident: <span class="userinput_or_code">[{ oxcontent ident=ident_of_the_cms_page }]</span>',
 
 'HELP_CONTENT_MAIN_MAINMENU'					=>	'If you select <span class="navipath_or_inputname">Upper Menu</span>, a link to this CMS page is shown in the upper menu (At Terms and About Us).',
 
 'HELP_CONTENT_MAIN_CATEGORY'					=>	'If you select <span class="navipath_or_inputname">Category</span>, a link to this CMS page is shown in the category navigation below the other categories.',
 
-'HELP_CONTENT_MAIN_MANUAL'						=>	'If you select <span class="navipath_or_inputname">Manual</span>, a link is created which you can use to include this CMS page in other CMS pages. The link is shown below when you click on <span class="navipath_or_inputname">Save</span>',
-
-
-
+'HELP_CONTENT_MAIN_MANUAL'						=>	'If you select <span class="navipath_or_inputname">Manually</span>, a link is created which you can use to include this CMS page in other CMS pages. The link is shown below when you click on <span class="navipath_or_inputname">Save</span>',
 'HELP_CONTENT_SEO_FIXED'						=>	'You can let the eShop recalculate the SEO URLs. A CMS page gets a new SEO URL if e. g. the title of the CMS page has changed. The setting <span class="navipath_or_inputname">Fixed URL</span> prevents this: If it is active, the old SEO URL is kept and no new SEO URL is calculated.',
 
 'HELP_CONTENT_SEO_KEYWORDS'						=>	'These keywords are integrated in the HTML sourcecode of the CMS page (META keywords). This information is used by search engines. Suitable keywords for the CMS page can be entered here. If it\'s left blank, the keywords are generated automatically.',
@@ -330,10 +384,28 @@ $aLang =  array(
 'HELP_DISCOUNT_MAIN_AMOUNT'						=>	'You can use <span class="navipath_or_inputname">Quantity</span> to specify that the discount is only valid for certain purchase quantities. If you want the discount to be valid for all purchase quantities, enter <span class="userinput_or_code">0</span> in <span class="navipath_or_inputname">From</span> and <span class="userinput_or_code">0</span> in <span class="navipath_or_inputname">To</span>.',
 
 'HELP_DISCOUNT_MAIN_REBATE'						=>	'In <span class="navipath_or_inputname">Discount</span>, you specify the magnitude of the discount. You can use the selection list after the entry field to specify whether the discount is to be applied as an absolute discount or as a percentage discount:' .
-                                                    '<ul>' . 
-													'<li><span class="userinput_or_code">abs</span>: The discount is an absolute discount, e.g. EUR 5.</li>' .
+                                                    '<ul>' .
+                                                    '<li><span class="userinput_or_code">abs</span>: The discount is an absolute discount, e.g. EUR 5.</li>' .
                                                     '<li><span class="userinput_or_code">%</span>: The discount is a percentage discount, e.g. 10 percent of the purchase price.</li>' .
-													'</ul>',
+                                                    '</ul>',
+
+
+
+'HELP_GENERAL_SEO_ACTCAT'                       =>  'You can define several SEO URLs for products: For certain categories and manufacturer pages. With <span class="navipath_or_inputname">Active Category/Vendor</span> you can select the SEO URL you want to edit.',
+
+'HELP_GENERAL_SEO_FIXED'                        =>  'The eShop automatically recalculate the SEO URLs. For example, a product page gets a new SEO URL if the title of the product has changed. The setting <span class="navipath_or_inputname">Fixed URL</span> prevents the recalculation: If it is active, the old SEO URL is kept and no new SEO URL is generated.',
+
+'HELP_GENERAL_SEO_SHOWSUFFIX'                   =>  'With this setting you can specify if the title suffix is shown in the browser window title when the according page is opened. The title suffix can be set in <span class="navipath_or_inputname">Master Settings -> Core Settings -> SEO -> Title Suffix</span>.',
+
+'HELP_GENERAL_SEO_OXKEYWORDS'                   =>  'These keywords are integrated in the HTML sourcecode (META keywords). This information is used by search engines. Suitable keywords for the product can be entered here. If it\'s left blank, the keywords are generated automatically.',
+
+'HELP_GENERAL_SEO_OXDESCRIPTION'                =>  'This description is integrated in the HTML sourcecode (META description). This text is often displayed in result pages of search engines. A suitable description can be entered here. If it\'s left blank, the description is generated automatically.',
+
+
+
+'HELP_GENIMPORT_FIRSTCOLHEADER'                 =>  'Activate this setting if the first line of the CSV file contains the names of the database columns the CSV values are to be assigned to. The values are automatically assigned to the database columns.',
+
+'HELP_GENIMPORT_REPEATIMPORT'                   =>  'If this setting is active, step one is shown after successful import so you can start the next import immediately.',
 
 
 
@@ -351,9 +423,9 @@ $aLang =  array(
                                                     '<li>With <span class="userinput_or_code">%</span>, the price is calculated relative to the purchase price (e.g.: if you enter <span class="userinput_or_code">2</span>, the price is 2 percent of the purchase price)</li></ul>',
 
 
-'HELP_SELECTLIST_MAIN_IDENTTITLE'				=>	'In <span class="navipath_or_inputname">Working Title</span>, you can enter an additional name that is not displayed to users of your eShop. You can use the working title to differentiate between similar selection lists (e.g., Sizes for trousers and Sizes for shirts).',
+'HELP_SELECTLIST_MAIN_TITLEIDENT'				=>	'In <span class="navipath_or_inputname">Working Title</span>, you can enter an additional name that is not displayed to users of your eShop. You can use the working title to differentiate between similar selection lists (e.g., Sizes for trousers and Sizes for shirts).',
 
-'HELP_SELECTLIST_MAIN_FIELDS'					=>	'All available options are displayed in the <span class="navipath_or_inputname">Fields</span> list. You can use the entry fields to the right to set up new options. Further information is available in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/implementing-simple-variants-selection-lists">eShop manual</a> on the OXID eSales website.',
+'HELP_SELECTLIST_MAIN_FIELDS'					=>	'All available options are displayed in the <span class="navipath_or_inputname">Fields</span> list. You can use the entry fields to the right to set up new options. Further information is available in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/implementing-simple-variants-selection-lists" target="_blank">eShop manual</a> on the OXID eSales website.',
 
 
 
@@ -385,13 +457,11 @@ $aLang =  array(
 
 'HELP_MANUFACTURER_SEO_SHOWSUFFIX'				=>	'With this setting you can specify if the title suffix is shown in the browser window title when the manufacturer page is opened. The title suffix can be set in <span class="navipath_or_inputname">Master Settings -> Core Settings -> SEO -> Title Suffix</span>.',
 
-
-
 'HELP_VOUCHERSERIE_MAIN_DISCOUNT'				=>	'In <span class="navipath_or_inputname">Discount</span>, you specify the magnitude of the discount. You can use the selection list after the entry field to specify whether the discount is to be applied as an absolute discount or as a percentage discount:' .
                                                     '<ul>' .
-													'<li><span class="userinput_or_code">abs</span>: The discount is an absolute discount, e.g. EUR 5.</li>' .
+                                                    '<li><span class="userinput_or_code">abs</span>: The discount is an absolute discount, e.g. EUR 5.</li>' .
                                                     '<li><span class="userinput_or_code">%</span>: The discount is a percentage discount, e.g. 10 percent of the purchase price.</li>' .
-													'</ul>',
+                                                    '</ul>',
 
 
 

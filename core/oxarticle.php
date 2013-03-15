@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxarticle.php 22731 2009-09-29 07:55:55Z arvydas $
+ * $Id: oxarticle.php 23538 2009-10-23 09:52:29Z vilma $
  */
 
 // defining supported link types
@@ -36,7 +36,7 @@ define( 'OXARTICLE_LINKTYPE_TAG', 4 );
  *
  * @package core
  */
-class oxArticle extends oxI18n implements oxIArticle
+class oxArticle extends oxI18n implements oxIArticle, oxIUrl
 {
     /**
      * Object core table name
@@ -137,6 +137,11 @@ class oxArticle extends oxI18n implements oxIArticle
      * As an opposite to $_oVariantList this works even if variants are not active
      */
     protected $_blHasVariants = false;
+
+    /**
+     * $_blHasVariants is set to true if article has multidimensional variants.
+     */
+    protected $_blHasMdVariants = false;
 
     /**
      * Indicates how many variants this article has "on stock" (very large number for unlimited)
@@ -347,6 +352,33 @@ class oxArticle extends oxI18n implements oxIArticle
      * @var array
      */
     protected static $_aArticleCats = array();
+
+    /**
+     * Do not copy certain parent fields to variant
+     *
+     * @var array
+     */
+    protected $_aNonCopyParentFields = array('oxarticles__oxinsert',
+                                             'oxarticles__oxtimestamp',
+                                             'oxarticles__oxnid',
+                                             'oxarticles__oxid',
+                                             'oxarticles__oxparentid');
+
+    /**
+     * Override certain parent fields to variant
+     *
+     * @var array
+     */
+    protected $_aCopyParentField = array('oxarticles__oxnonmaterial',
+                                         'oxarticles__oxfreeshipping',
+                                         'oxarticles__oxremindactive');
+
+    /**
+     * Multidimensional variant tree structure
+     *
+     * @var OxMdVariant
+     */
+    protected $_oMdVariants = null;
 
     /**
      * Class constructor, sets shop ID for article (oxconfig::getShopId()),
@@ -1182,6 +1214,16 @@ class oxArticle extends oxI18n implements oxIArticle
     }
 
     /**
+     * Checks if article has multidimensional variants
+     *
+     * @return bool
+     */
+    public function hasMdVariants()
+    {
+        return $this->_blHasMdVariants;
+    }
+
+    /**
      * Collects and returns article variants.
      *
      * @param bool $blRemoveNotOrderables if true, removes from list not orderable articles, which are out of stock
@@ -1230,6 +1272,12 @@ class oxArticle extends oxI18n implements oxIArticle
                        " order by $sArticleTable.oxsort";
 
             $oVariants->selectString( $sSelect );
+
+            //if this is multidimensional variants, make additional processing
+            if ( $myConfig->getConfigParam( 'blUseMultidimensionVariants' ) ) {
+                $oMdVariants = oxNew( "oxVariantHandler" );
+                $this->_blHasMdVariants = $oMdVariants->isMdVariant( $oVariants->current() );
+            }
             stopProfile("selectVariants");
         }
 
@@ -1321,13 +1369,13 @@ class oxArticle extends oxI18n implements oxIArticle
         $oStr = getStr();
         $sWhere   = $oCategory->getSqlActiveSnippet();
         $sSelect  = $this->_generateSearchStr( $sOXID );
-        $sSelect .= ( $oStr->strstr( $sSelect, 'where' )?' and ':' where ') . $sWhere . " order by oxobject2category.oxtime ";
+        $sSelect .= ( $oStr->strstr( $sSelect, 'where' )?' and ':' where ') . $sWhere . " order by oxobject2category.oxtime limit 1";
 
         // category not found ?
         if ( !$oCategory->assignRecord( $sSelect ) ) {
 
             $sSelect  = $this->_generateSearchStr( $sOXID, true );
-            $sSelect .= ( $oStr->strstr( $sSelect, 'where' )?' and ':' where ') . $sWhere ;
+            $sSelect .= ( $oStr->strstr( $sSelect, 'where' )?' and ':' where ') . $sWhere . " limit 1";
 
             // looking for price category
             if ( !$oCategory->assignRecord( $sSelect ) ) {
@@ -1340,7 +1388,7 @@ class oxArticle extends oxI18n implements oxIArticle
     }
 
     /**
-     * Returns ID's of categories. where this article is assigned
+     * Returns ID's of categories where this article is assigned
      *
      * @param bool $blActCats   select categories if all parents are active
      * @param bool $blSkipCache Whether to skip cache
@@ -1501,8 +1549,7 @@ class oxArticle extends oxI18n implements oxIArticle
     }
 
     /**
-     * Checks if artickle is assigned to category $sCatNID.
-     * on success.
+     * Checks if article is assigned to category $sCatNID.
      *
      * @param string $sCatNid category ID
      *
@@ -2275,17 +2322,38 @@ class oxArticle extends oxI18n implements oxIArticle
     }
 
     /**
+     * Get link type
+     *
+     * @return int
+     */
+    public function getLinkType()
+    {
+        return $this->_iLinkType;
+    }
+
+
+    /**
      * Returns standard URL to product
      *
-     * @param int $iLang required language. optional
+     * @param int   $iLang required language. optional
+     * @param array $aParams additional params to use [optional]
      *
      * @return string
      */
-    public function getStdLink($iLang = null)
+    public function getStdLink($iLang = null, $aParams = array() )
     {
         //always returns shop url, not admin
         $this->_sStdLink  = $this->getConfig()->getShopHomeURL( $iLang, false );
         $this->_sStdLink .= "cl=details&amp;anid=".$this->getId();
+
+        if ( !isset($aParams['cnid']) ) {
+            $aParams['cnid'] = oxConfig::getParameter( 'cnid' );
+        }
+        foreach ($aParams as $key => $value) {
+            if ( $value ) {
+                $this->_sStdLink .= "&amp;$key=$value";
+            }
+        }
 
         $blSeo = oxUtils::getInstance()->seoIsActive();
         if ( !$blSeo || $this->_iLinkType != 0 ) {
@@ -2295,10 +2363,6 @@ class oxArticle extends oxI18n implements oxIArticle
                 if ( $iPgNr > 0 ) {
                     $this->_sStdLink .= "&amp;pgNr={$iPgNr}";
                 }
-            }
-
-            if ( ( $sCat = oxConfig::getParameter( 'cnid' ) ) ) {
-                $this->_sStdLink .= "&amp;cnid={$sCat}";
             }
 
             if ( ( $sCat = oxConfig::getParameter( 'mnid' ) ) ) {
@@ -2325,6 +2389,29 @@ class oxArticle extends oxI18n implements oxIArticle
         }
 
         return $this->_sStdLink = $this->getSession()->processUrl( $this->_sStdLink );
+    }
+
+    /**
+     * Returns main object URL. If SEO is ON returned link will be in SEO form,
+     * else URL will have dynamic form
+     *
+     * @param int $iLang language id [optional]
+     *
+     * @return string
+     */
+    public function getMainLink( $iLang = null )
+    {
+        if (isset($iLang)) {
+            $iLang = (int) $iLang;
+            if ($iLang == (int) $this->getLanguage()) {
+                $iLang = null;
+            }
+        }
+        if ( oxUtils::getInstance()->seoIsActive() ) {
+            return oxSeoEncoderArticle::getInstance()->getArticleMainUrl( $this, $iLang );
+        } else {
+            return $this->getStdLink($iLang, array('cnid'=>''));
+        }
     }
 
     /**
@@ -3427,7 +3514,7 @@ class oxArticle extends oxI18n implements oxIArticle
      */
     protected function _assignParentFieldValue($sFieldName)
     {
-        if (!($oParentArticle = $this->_getParentAricle())) {
+        if (!($oParentArticle = $this->getParentArticle())) {
             return;
         }
 
@@ -3442,21 +3529,9 @@ class oxArticle extends oxI18n implements oxIArticle
             }
 
             //do not copy certain fields
-            $aNonCopyFields = array('oxarticles__oxinsert',
-                                    'oxarticles__oxtimestamp',
-                                    'oxarticles__oxnid',
-                                    'oxarticles__oxid',
-                                    'oxarticles__oxparentid');
-
-            $aCopyParentField = array('oxarticles__oxnonmaterial',
-                                      'oxarticles__oxfreeshipping',
-                                      'oxarticles__oxremindactive');
-
-            if (in_array($sCopyFieldName, $aNonCopyFields)) {
+            if (in_array($sCopyFieldName, $this->_aNonCopyParentFields)) {
                 return;
             }
-
-
 
             //do not copy parent data for icons in case we have (need) own variant icon (in case variant thumbnail exists)
             if ($sFieldName == "oxicon" && !$this->_isFieldEmpty("oxarticles__oxthumb") && $this->oxarticles__oxthumb->value != $oParentArticle->oxarticles__oxthumb->value && $this->getConfig()->getConfigParam( 'blAutoIcons' ) ) {
@@ -3466,7 +3541,7 @@ class oxArticle extends oxI18n implements oxIArticle
             //COPY THE VALUE
             //replaced the code bellow with this two liner
             //T2009-01-12
-            if ($this->_isFieldEmpty($sCopyFieldName) || in_array($sCopyFieldName, $aCopyParentField)) {
+            if ($this->_isFieldEmpty($sCopyFieldName) || in_array( $sCopyFieldName, $this->_aCopyParentField ) ) {
                 $this->$sCopyFieldName = clone $oParentArticle->$sCopyFieldName;
             }
 
@@ -3504,7 +3579,7 @@ class oxArticle extends oxI18n implements oxIArticle
      *
      * @return oxArticle
      */
-    protected function _getParentAricle()
+    public function getParentArticle()
     {
         $sParentId = $this->oxarticles__oxparentid->value;
         if (!$sParentId) {
@@ -3524,6 +3599,18 @@ class oxArticle extends oxI18n implements oxIArticle
     }
 
     /**
+     * Get parent article
+     *
+     * @deprecated since version 4.2
+     *
+     * @return oxArticle
+     */
+    protected function _getParentAricle()
+    {
+        return $this->getParentArticle();
+    }
+
+    /**
      * Assigns parent field values to article
      *
      * @return null;
@@ -3538,7 +3625,7 @@ class oxArticle extends oxI18n implements oxIArticle
                 }
 
                 //assing long description
-                $oParentArticle = $this->_getParentAricle();
+                $oParentArticle = $this->getParentArticle();
                 if ( !$this->oxarticles__oxlongdesc->value ) {
                     $this->oxarticles__oxlongdesc = $oParentArticle->oxarticles__oxlongdesc;
                 }
@@ -4185,5 +4272,92 @@ class oxArticle extends oxI18n implements oxIArticle
     public function isVariant()
     {
         return (bool) ( isset( $this->oxarticles__oxparentid ) ? $this->oxarticles__oxparentid->value : false );
+    }
+
+    /**
+     * Returns TRUE if product is multidimensional variant, and false if not
+     *
+     * @return bool
+     */
+    public function isMdVariant()
+    {
+        $oMdVariant = oxNew( "oxVariantHandler" );
+
+        return $oMdVariant->isMdVariant();
+    }
+
+    /**
+     * get Sql for loading price categories which include this article
+     *
+     * @param string $sFields fields to load from oxcategories
+     *
+     * @return string
+     */
+    public function getSqlForPriceCategories($sFields = '')
+    {
+        if (!$sFields) {
+            $sFields = 'oxid';
+        }
+        $sSelectWhere = "select $sFields from ".$this->_getObjectViewName('oxcategories')." where";
+        $sQuotedPrice = oxDb::getDb()->quote( $this->oxarticles__oxprice->value );
+        return  "$sSelectWhere oxpricefrom != 0 and oxpriceto != 0 and oxpricefrom <= $sQuotedPrice and oxpriceto >= $sQuotedPrice"
+               ." union $sSelectWhere oxpricefrom != 0 and oxpriceto = 0 and oxpricefrom <= $sQuotedPrice"
+               ." union $sSelectWhere oxpricefrom = 0 and oxpriceto != 0 and oxpriceto >= $sQuotedPrice";
+    }
+
+    /**
+     * Checks if artickle is assigned to price category $sCatNID.
+     *
+     * @param string $sCatNid Price category ID
+     *
+     * @return bool
+     */
+    public function inPriceCategory( $sCatNid )
+    {
+        $oDb = oxDb::getDb();
+
+        $sQuotedPrice = oxDb::getDb()->quote( $this->oxarticles__oxprice->value );
+        $sQuotedCnid = oxDb::getDb()->quote( $sCatNid );
+        return (bool) $oDb->getOne(
+            "select 1 from ".$this->_getObjectViewName('oxcategories')." where oxid=$sQuotedCnid and"
+           ."(   (oxpricefrom != 0 and oxpriceto != 0 and oxpricefrom <= $sQuotedPrice and oxpriceto >= $sQuotedPrice)"
+           ." or (oxpricefrom != 0 and oxpriceto = 0 and oxpricefrom <= $sQuotedPrice)"
+           ." or (oxpricefrom = 0 and oxpriceto != 0 and oxpriceto >= $sQuotedPrice)"
+           .")"
+        );
+    }
+
+    /**
+     * Returns multidimensional variant structure
+     *
+     * @return OxMdVariants
+     */
+    public function getMdVariants()
+    {
+        if ( $this->_oMdVariants ) {
+            return $this->_oMdVariants;
+        }
+
+        $oParentArticle = $this->getParentArticle();
+        if ( $oParentArticle ) {
+            $oVariants = $oParentArticle->getVariants();
+        } else {
+            $oVariants = $this->getVariants();
+        }
+
+        $oVariantHandler = oxNew( "oxVariantHandler" );
+        $this->_oMdVariants = $oVariantHandler->buildMdVariants( $oVariants, $this->getId() );
+
+        return $this->_oMdVariants;
+    }
+
+    /**
+     * Returns first level variants from multidimensional variants list
+     *
+     * @return OxMdVariants
+     */
+    public function getMdSubvariants()
+    {
+        return $this->getMdVariants()->getMdSubvariants();
     }
 }

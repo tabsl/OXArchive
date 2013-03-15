@@ -19,7 +19,7 @@
  * @package smartyPlugins
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: insert.oxid_newbasketitem.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: insert.oxid_newbasketitem.php 23250 2009-10-14 13:40:12Z alfonsas $
  */
 
 /*
@@ -36,23 +36,24 @@ function smarty_insert_oxid_newbasketitem($params, &$smarty)
     $myConfig  = oxConfig::getInstance();
 
     $aTypes = array('0' => 'none','1' => 'message', '2' =>'popup', '3' =>'basket');
-    $sType = $aTypes[$myConfig->getConfigParam( 'iNewBasketItemMessage' )];
+    $iType  = $myConfig->getConfigParam( 'iNewBasketItemMessage' );
 
     // If corect type of message is expected
-    if($params['type'] && $params['type'] != $sType ){
+    if($iType && $params['type'] && $params['type'] != $aTypes[$iType] ){
         return '';
     }
 
     //name of template file where is stored message text
-    $sTemplate = $myConfig->getTemplateDir().'/'.($params['tpl']?$params['tpl']:'inc_newbasketitem.snippet.tpl');
+    $sTemplate = $params['tpl']?$params['tpl']:'inc_newbasketitem.snippet.tpl';
+
+    //allways render for ajaxstyle popup
+    $blRender = $params['ajax'];
 
     //fetching article data
     $oNewItem = oxSession::getVar( '_newitem' );
-    $blNewSID = $myConfig->getGlobalParameter( '_newSID' );
     $oBasket  = oxSession::getInstance()->getBasket();
 
-    if ( $oNewItem  && $sType != 'none' ) {
-
+    if ( $oNewItem ) {
         // loading article object here because on some system passing article by session couses problems
         $oNewItem->oArticle = oxNew( 'oxarticle' );
         $oNewItem->oArticle->Load( $oNewItem->sId );
@@ -63,16 +64,11 @@ function smarty_insert_oxid_newbasketitem($params, &$smarty)
         // deleting article object data
         oxSession::deleteVar( '_newitem' );
 
-        // returning generated message content
-        return $smarty->fetch( $sTemplate );
-    } elseif ( $blNewSID ) {
-        $myConfig->setGlobalParameter( '_newSID', 0);
-        if ( $sType == 'popup' && $oBasket->getProductsCount() > 0 ) {
-            $smarty->assign( '_newSID', true );
-            return $smarty->fetch( $sTemplate );
-        }
-    }elseif($params['ajax']){
-        // returning generated message content
+        $blRender = true;
+    }
+
+    // returning generated message content
+    if( $blRender ) {
         return $smarty->fetch( $sTemplate );
     }
 }

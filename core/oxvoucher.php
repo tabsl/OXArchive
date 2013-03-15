@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxvoucher.php 22548 2009-09-22 13:50:42Z rimvydas.paskevicius $
+ * $Id: oxvoucher.php 23555 2009-10-23 13:31:07Z alfonsas $
  */
 
 /**
@@ -465,11 +465,11 @@ class oxVoucher extends oxBase
     /**
      * Returns compact voucher object which is used in oxbasket
      *
-     * @return oxstdclass
+     * @return oxStdClass
      */
     public function getSimpleVoucher()
     {
-        $oVoucher = new OxstdClass();
+        $oVoucher = new oxStdClass();
         $oVoucher->sVoucherId = $this->getId();
         $oVoucher->sVoucherNr = $this->oxvouchers__oxvouchernr->value;
         // R. setted in oxbasket : $oVoucher->fVoucherdiscount = oxLang::getInstance()->formatCurrency( $this->oxvouchers__oxdiscount->value );
@@ -493,5 +493,46 @@ class oxVoucher extends oxBase
         }
         $this->_oSerie = $oSerie;
         return $oSerie;
+    }
+
+    /**
+     * Extra getter to guarantee compatibility with templates
+     *
+     * @param string $sName name of variable to get
+     *
+     * @return unknown
+     */
+    public function __get( $sName )
+    {
+        switch ( $sName ) {
+
+            // simple voucher mapping
+            case 'sVoucherId':
+                return $this->getId();
+                break;
+            case 'sVoucherNr':
+                return $this->oxvouchers__oxvouchernr;
+                break;
+            case 'fVoucherdiscount':
+                return $this->oxvouchers__oxdiscount;
+                break;
+
+            // deprecated values for email templates
+            case 'oxmodvouchers__oxvouchernr':
+                return $this->oxvouchers__oxvouchernr;
+                break;
+            case 'oxmodvouchers__oxdiscounttype':
+                return $this->getSerie()->oxvoucherseries__oxdiscounttype;
+                break;
+            case 'oxmodvouchers__oxdiscount':
+                // former email templates are expecting type dependent discount values !!!
+                if($this->getSerie()->oxvoucherseries__oxdiscounttype->value == 'absolute') {
+                    return $this->oxvouchers__oxdiscount;
+                } else {
+                    return $this->getSerie()->oxvoucherseries__oxdiscount;
+                }
+                break;
+        }
+        return parent::__get($sName);
     }
 }

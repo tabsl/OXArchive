@@ -19,7 +19,7 @@
         </div>
     </form>
     <div class="wishsearchresults">
-    [{if $oView->getWishList() }]
+    [{if $oView->getWishListUsers() }]
         [{foreach from=$oView->getWishListUsers() item=wishres }]
             <div class="searchitem">
                 <a href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=wishlist" params="wishid=`$wishres->oxuser__oxid->value`" }]">

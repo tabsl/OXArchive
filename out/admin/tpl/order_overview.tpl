@@ -22,7 +22,8 @@
             <br>
             [{ if $edit->oxorder__oxbillcompany->value }][{ oxmultilang ident="GENERAL_COMPANY" }] [{$edit->oxorder__oxbillcompany->value }]<br>[{/if}]
             [{ if $edit->oxorder__oxbilladdinfo->value }][{$edit->oxorder__oxbilladdinfo->value }]<br>[{/if}]
-            [{$edit->oxorder__oxbillsal->value }] [{$edit->oxorder__oxbillfname->value }] [{$edit->oxorder__oxbilllname->value }]<br>
+            [{assign var=_sal value=$edit->oxorder__oxbillsal->value}]
+            [{oxmultilang ident="GENERAL_SALUTATION_$_sal" noerror="yes" alternative=$_sal }] [{$edit->oxorder__oxbillfname->value }] [{$edit->oxorder__oxbilllname->value }]<br>
             [{$edit->oxorder__oxbillstreet->value }] [{$edit->oxorder__oxbillstreetnr->value }]<br>
             [{$edit->oxorder__oxbillzip->value }] [{$edit->oxorder__oxbillcity->value }]<br>
             [{$edit->oxorder__oxbillcountry->value }]<br>
@@ -56,7 +57,7 @@
             <tr>
                 <td valign="top" class="edittext">[{ $listitem->oxorderarticles__oxamount->value }] * </td>
                 <td valign="top" class="edittext">&nbsp;[{ $listitem->oxorderarticles__oxartnum->value }]</td>
-                <td valign="top" class="edittext">&nbsp;[{ $listitem->oxorderarticles__oxtitle->getRawValue()|string_format:"%.20s"|strip_tags }][{if $listitem->oxwrapping__oxname->value}]&nbsp;([{$listitem->oxwrapping__oxname->value}])&nbsp;[{/if}]</td>
+                <td valign="top" class="edittext">&nbsp;[{ $listitem->oxorderarticles__oxtitle->getRawValue()|oxtruncate:20:""|strip_tags }][{if $listitem->oxwrapping__oxname->value}]&nbsp;([{$listitem->oxwrapping__oxname->value}])&nbsp;[{/if}]</td>
                 <td valign="top" class="edittext">&nbsp;[{ $listitem->oxorderarticles__oxselvariant->value }]</td>
                 <td valign="top" class="edittext">&nbsp;&nbsp;[{ $listitem->ftotbrutprice }] [{ $edit->oxorder__oxcurrency->value }]</td>
                 [{ if $listitem->aPersParam }]
@@ -172,7 +173,9 @@
                 [{foreach from=$afolder key=field item=color}]
                 <option value="[{ $field }]" [{ if $edit->oxorder__oxfolder->value == $field || ($field|oxmultilangassign == $edit->oxorder__oxfolder->value)}]SELECTED[{/if}] style="color: [{ $color }];">[{ oxmultilang ident=$field noerror=true }]</option>
                 [{/foreach}]
-                </select>&nbsp;&nbsp;
+                </select>
+                [{ oxinputhelp ident="HELP_ORDER_OVERVIEW_INFOLDER" }]
+                &nbsp;&nbsp;
                 </form>
             [{/if}]
             [{ if $edit && $edit->oxorder__oxtransstatus->value }]

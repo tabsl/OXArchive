@@ -19,7 +19,7 @@
  * @package setup
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 22591 2009-09-24 07:09:30Z vilma $
+ * $Id: lang.php 23462 2009-10-21 15:15:23Z vilma $
  */
 
 $aLang = array(
@@ -82,7 +82,7 @@ $aLang = array(
 'MOD_INI_SET'                                     => 'ini_set erlaubt',
 'MOD_REGISTER_GLOBALS'                            => 'register_globals muss ausgeschaltet sein',
 'MOD_ZEND_OPTIMIZER'                              => 'Zend Optimizer installiert',
-'MOD_ZEND_PLATFORM'                               => 'Zend Platform installiert',
+'MOD_ZEND_PLATFORM_OR_SERVER'                     => 'Zend Platform oder Zend Server installiert',
 'MOD_MB_STRING'                                   => 'mbstring',
 'MOD_UNICODE_SUPPORT'                             => 'UTF-8 Unterstützung',
 
@@ -103,7 +103,7 @@ $aLang = array(
                                                       Bertoldstr. 48<br>
                                                       79098 Freiburg<br>
                                                       Deutschland<br>",
-'STEP_1_CHECK_UPDATES'                            => 'Regelmaßig überprüfen, ob Updates vorhanden sind',
+'STEP_1_CHECK_UPDATES'                            => 'Regelmäßig überprüfen, ob Aktualisierungen vorhanden sind.',
 'BUTTON_BEGIN_INSTALL'                            => "Shopinstallation beginnen",
 'BUTTON_PROCEED_INSTALL'                          => "Setup beginnen",
 
@@ -170,6 +170,7 @@ $aLang = array(
 
 'ATTENTION'                                       => "Bitte beachten Sie",
 'SETUP_DIR_DELETE_NOTICE'                         => "WICHTIG: Bitte l&ouml;schen Sie Ihr Setup Verzeichnis falls dieses nicht bereits automatisch entfernt wurde!",
+'SETUP_CONFIG_PERMISSIONS'                        => "WICHTIG: Aus Sicherheitsgründen setzen Sie Ihre config.inc.php Datei auf read-only-Modus!",
 
 'SELECT_SETUP_LANG'                               => "Sprache f&uuml;r die Installation",
 'SELECT_COUNTRY_LANG'                             => "Ihr Standort",

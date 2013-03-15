@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: review.php 20503 2009-06-26 14:54:11Z vilma $
+ * $Id: review.php 23584 2009-10-26 10:01:11Z arvydas $
  */
 
 /**
@@ -531,5 +531,27 @@ class Review extends oxUBase
             $sAddParams .= '&amp;recommid='.$oActRecommList->getId();
         }
         return $sAddParams;
+    }
+
+    /**
+     * returns additional url params for dynamic url building
+     *
+     * @return string
+     */
+    public function getDynUrlParams()
+    {
+        $sParams = parent::getDynUrlParams();
+
+        if ( $sVal = oxConfig::getParameter( 'cnid' ) ) {
+            $sParams .= "&amp;cnid={$sVal}";
+        }
+        if ( $sVal= oxConfig::getParameter( 'anid' ) ) {
+            $sParams .= "&amp;anid={$sVal}";
+        }
+        if ( $sVal= oxConfig::getParameter( 'listtype' ) ) {
+            $sParams .= "&amp;listtype={$sVal}";
+        }
+
+        return $sParams;
     }
 }

@@ -1,4 +1,4 @@
-[{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign}] 
+[{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign}]
 
 <form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
     [{ $shop->hiddensid }]
@@ -12,7 +12,8 @@
 
 &nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_REVIEW" }]<br>
 <br>
-&nbsp;&nbsp;&nbsp;[{$edit->oxuser__oxsal->value }] [{$edit->oxuser__oxfname->value }] [{$edit->oxuser__oxlname->value }]<br>
+[{assign var=_sal value=$edit->oxuser__oxsal->value}]
+&nbsp;&nbsp;&nbsp;[{oxmultilang ident="GENERAL_SALUTATION_$_sal" noerror="yes" alternative=$_sal }] [{$edit->oxuser__oxfname->value }] [{$edit->oxuser__oxlname->value }]<br>
 &nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_FON" }] : [{$edit->oxuser__oxfon->value }]<br>
 &nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_EMAIL" }] : <a href="mailto:[{$edit->oxuser__oxusername->value}]">[{$edit->oxuser__oxusername->value}]</a><br>
 <br>
@@ -27,6 +28,6 @@
 
 </td>
 </tr>
-[{include file="bottomnaviitem.tpl"}] 
+[{include file="bottomnaviitem.tpl"}]
 </table>
-[{include file="bottomitem.tpl"}]         
+[{include file="bottomitem.tpl"}]

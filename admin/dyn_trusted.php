@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: dyn_trusted.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: dyn_trusted.php 22945 2009-10-05 15:40:36Z alfonsas $
  */
 
 
@@ -43,9 +43,9 @@ class dyn_trusted extends Shop_Config
         $aIds = $this->_aViewData["confaarrs"]['iShopID_TrustedShops'];
         // compability to old data
         if ( $aConfStrs = $this->_aViewData["str"]['iShopID_TrustedShops'] ) {
-        	$aIds = array( 0 => $aConfStrs );
+            $aIds = array( 0 => $aConfStrs );
         }
-        
+
         $this->_aViewData["aShopID_TrustedShops"] = $aIds;
         $this->_aViewData["alllang"] = oxLang::getInstance()->getLanguageNames();
 
@@ -78,9 +78,9 @@ class dyn_trusted extends Shop_Config
             $blSave = false;
             $this->_aViewData["aShopID_TrustedShops"] = null;
         }
-        
+
         if ( $blSave ) {
-            $myConfig->saveShopConfVar( "aarr", 'iShopID_TrustedShops', serialize($aConfStrs), $myConfig->getShopId() );
+            $myConfig->saveShopConfVar( "aarr", 'iShopID_TrustedShops', $aConfStrs, $myConfig->getShopId() );
         }
     }
 

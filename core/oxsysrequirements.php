@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxsysrequirements.php 16545 2009-02-13 14:24:57Z vilma $
+ * $Id: oxsysrequirements.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**
@@ -454,13 +454,22 @@ class oxSysRequirements
     }
 
     /**
-     * Checks if ZEND Platform Version 3.5 is installed
+     * Checks if ZEND Platform Version 3.5 or Zend Server with Data Cache is installed
      *
      * @return integer
      */
-    public function checkZendPlatform()
+    public function checkZendPlatformOrServer()
     {
-        return function_exists( 'output_cache_get' ) ? 2 : 1;
+        if (function_exists( 'output_cache_get' )) {
+            return 2;
+        }
+        if (function_exists( 'zend_disk_cache_fetch' )) {
+            return 2;
+        }
+        if (function_exists( 'zend_shm_cache_fetch' )) {
+            return 2;
+        }
+        return 1;
     }
 
     /**
@@ -622,5 +631,4 @@ class oxSysRequirements
 
         return $sBytes;
     }
-
 }

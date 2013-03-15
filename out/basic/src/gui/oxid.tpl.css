@@ -52,10 +52,9 @@ span.btn a{padding:3px 8px 2px; position:relative;}
 
 input.btn.hl {border-color:#f90;color:#f90;}
 input.chbox {vertical-align:middle; margin-top: 0px;}
-input.chk {margin: 1px 5px 1px 0px;}
-input.fullsize {width: 100%;}
+input.chk {margin: 1px 5px 1px 0px !important; padding: 0 !important;}
 textarea.fullsize {width: 100%;}
-input.openid {background: #fff url(bg/openid-icon-small.gif) no-repeat 0pt 50%; border:1px solid activeCaption; padding:1px 1px 1px 18px;}
+input.openid {background: #fff url(bg/openid-icon-small.gif) no-repeat 0 50%; border:1px solid activeCaption; padding:2px 1px 2px 18px;}
 
 /* Tables .....*/
 table {border-collapse: collapse;}
@@ -79,8 +78,8 @@ dl.box dd        {margin:0;padding:4px 4px 0;}
 ul.menue      {padding:0; margin:0; list-style:none;}
 ul.menue li   {margin:0; white-space:nowrap;position: relative;}
 ul.menue li a {line-height: 100%;}
-ul.menue.horizontall li {float:left;}
-ul.menue.verticall   li {float:none;height: 100%;}
+ul.menue.horizontal  li {float:left;}
+ul.menue.vertical    li {float:none;height: 100%;}
 
 .dropdown { visibility: hidden; display:block; position:absolute; left:0;top:100%;padding:0;margin:0;z-index:1000;}
 .open .dropdown { visibility: visible; }
@@ -164,10 +163,10 @@ div.bar.categories a.fixed { padding: 10px 0; text-align: center; background-col
 div.bar.categories a.fixed:hover { background-color: oxHeaderBarFixedHlBg;color:oxHeaderBarFixedHlCl;text-decoration: none; }
 div.bar.categories li.open a, div.bar.categories li a.exp{ background-color: oxHeaderBarCatsOpenBg;color:oxHeaderBarCatsOpenCl;text-decoration: none; }
 
-div.bar.categories ul.menue.horizontall li {float:left; border-right : 1px solid oxHeaderBr;}
-div.bar.categories ul.menue.verticall   li {float:none; border-top   : 1px solid oxHeaderBr;}
-div.bar.categories ul.menue.verticall   li a { text-align:left;padding: 7px 10px; background: oxHeaderBarCatsOpenBg;color:oxHeaderBarCatsOpenCl;font-weight: normal;}
-div.bar.categories ul.menue.verticall   li a:hover { background-color:oxHeaderBarCatsOpenHlBg;color:oxHeaderBarCatsOpenHlCl;}
+div.bar.categories ul.menue.horizontal  li {float:left; border-right : 1px solid oxHeaderBr;}
+div.bar.categories ul.menue.vertical    li {float:none; border-top   : 1px solid oxHeaderBr;}
+div.bar.categories ul.menue.vertical    li a { text-align:left;padding: 7px 10px; background: oxHeaderBarCatsOpenBg;color:oxHeaderBarCatsOpenCl;font-weight: normal;}
+div.bar.categories ul.menue.vertical    li a:hover { background-color:oxHeaderBarCatsOpenHlBg;color:oxHeaderBarCatsOpenHlCl;}
 
 /* + layout - footer*/
 #footer a{text-decoration: none;}
@@ -231,9 +230,11 @@ ul.tree li a.exp.act{background-position: 0 -225px;}
 #right strong.h2 a:hover {text-decoration: underline;}
 #right div.box {border-left:4px solid oxRightBr;padding:7px 10px;}
 #right div.box p{padding:7px 10px;}
-#right form label {color:oxRightFormLabelCl;}
-#right span.btn input {width: 119px;}
-#right input.fullsize {width: 116px; padding: 0;}
+#right .form label {color:oxRightFormLabelCl;display:block;margin:0 0 3px;}
+#right .form input.txt {width: 176px; margin:0 0 3px;}
+#right .form input.txt.openid{width: 159px;}
+#right .form span.btn input {width: 179px;}
+#right .form a.link {display:block;margin:0 0 3px;}
 
 #right div.forms strong.h2 {background-color: oxRightFormsHdBg;color:oxRightFormsHdCl;border-left-color:oxRightFormsBr;}
 #right div.forms strong.h2 a{color:oxRightFormsHdCl;}
@@ -277,7 +278,6 @@ ul.tree li a.exp.act{background-position: 0 -225px;}
 
 #right .recommlistsearch .btn {width: auto;}
 #right .recommlistsearch .search_input {width: 120px;}
-#right input.openid {width: 99px; background: #fff url(bg/openid-icon-small.gif) no-repeat 0pt 50%; border:1px solid activeCaption; padding:1px 1px 1px 18px;}
 
 /* RSS */
 #right .box  {position:relative;}
@@ -382,12 +382,15 @@ a.rss{display:block;position:absolute;right:0;bottom:0; width:14px;height:14px; 
 #body .product .amprice {clear: left;}
 #body .product .amount {padding-top:.5em;}
 #body .product .amount label{margin-right:.5em;color:oxProductInputLabelCl;font-size: 10px;}
-#body .product .price {margin-bottom:2px; }
+#body .product .price {margin-bottom: 4px; }
 #body .product .price big {font-size: 18px;line-height: 100%; font-weight: bold;white-space:nowrap;}
 #body .product .price sup.dinfo {vertical-align:super;margin:0;padding:0;}
 #body .product .price sup.dinfo a{color: inherit;text-decoration: none;font-weight: bold;font-size: 13px;}
 #body .product .price sup.dinfo a:hover{text-decoration: underline;color: inherit;}
 #body .product .price small {font-weight: inherit; font-size:69% ;}
+#body .product span.btn a { width: 135px; line-height: 19px; padding: 0px; margin-top: 0px; font-size: 10px; text-align: center; color:oxButtonCl; display: block;}
+#body .product span.btn a:hover { text-decoration: none; }
+#body .product .price .pricefrom {line-height: 9px;}
 
 #body .product .tocart { height:18px;line-height: 1;width: 134px; background: transparent url(oxButtons) no-repeat right 0; margin:0; border: 0 none;padding:0 1px 0 0;clear:left;}
 #body .product .tocart input{ height:18px;line-height: 1;width: 134px; background: transparent url(oxButtons) no-repeat 0 0; border:0;color:oxButtonCl;padding:0 0 0 23px;cursor:pointer;font-weight: bold;}
@@ -419,6 +422,7 @@ a.rss{display:block;position:absolute;right:0;bottom:0; width:14px;height:14px; 
 #body .product.small .tocart {width:121px;}
 #body .product.small .tocart input{width:121px;}
 #body .product.small .variants select{width: 123px;}
+#body .product.small span.btn a { width: 121px;}
 
 #body .product.thin{width:433px;height:130px; border-color: oxProductFilledHdBr;}
 #body .product.head strong.h4{margin:0;background:oxProductBg; padding:8px 5px 1px 7px;height:20px; position:absolute;top:-30px;left:-1px;border-top:1px solid oxProductHdBr;border-left:8px solid oxProductHdBr;border-right:1px solid oxProductHdBr;width:259px;line-height:20px; font-size: 11px;font-weight: bold;color:oxProductHdCl;}
@@ -426,6 +430,8 @@ a.rss{display:block;position:absolute;right:0;bottom:0; width:14px;height:14px; 
 #body .product.thin .price {position:absolute; top:5px; right:5px;}
 #body .product.thin .amount {position:absolute; bottom:25px; right:5px;}
 #body .product.thin .tocart {position:absolute; bottom:5px; right:5px;}
+#body .product.thin .moreinfo {position:absolute; bottom:5px; right:100px;}
+#body .product.thin .moreinfo a {width: 135px;}
 #body .product.thin .variants {position:absolute; bottom:25px; right:100px;}
 #body .product.thin .actions {margin-top:2em;}
 #body .product.thin tt {float: left;}
@@ -440,7 +446,7 @@ a.rss{display:block;position:absolute;right:0;bottom:0; width:14px;height:14px; 
 #body .product.thinest .price sup.dinfo a{font-size: 11px;}
 #body .product.thinest .amount {position:absolute; bottom:5px; right:170px;}
 #body .product.thinest .tocart {position:absolute; bottom:5px; right:5px;}
-#body .product.thinest .actions {margin-top:0em;}
+#body .product.thinest .actions {margin-top:0em; clear: left;}
 #body .product.thinest tt {float: left;}
 #body .product.thinest .flag {float: left;margin-left:4px;}
 #body .product.thinest .variants {height: auto;}
@@ -526,7 +532,7 @@ a.rss{display:block;position:absolute;right:0;bottom:0; width:14px;height:14px; 
 #body .box .pricealarm th {padding-top:.5em;}
 #body .box .pricealarm th label{font-weight: bold;font-size: 10px;color:oxDetailsPriceAlarmLabelsCl;}
 
-#body .wellcome {float:left;width:280px;height:157px;margin:0 5px 10px 5px;padding:0;}
+#body .welcome {float:left;width:280px;height:157px;margin:0 5px 10px 5px;padding:0;}
 
 #body .box .guestbook {margin-top: 9px;}
 #body .box .guestbook .head td {border-top: 1px solid oxGuestbookLine; border-bottom: 1px solid oxGuestbookLine; padding: 5px 0; color: oxGuestbookHdCl;}
@@ -643,7 +649,7 @@ a.rss{display:block;position:absolute;right:0;bottom:0; width:14px;height:14px; 
 
 #body .basket .frombasket { height:18px;line-height:1;width: 100px; background: transparent url(oxButtons) no-repeat right -50px; margin:0; border: 0 none; padding:0 1px 0 0;float: left}
 #body .basket .frombasket input{ height:18px;line-height:1;width: 100px; background: transparent url(oxButtons) no-repeat 0 -50px; margin:0; border:0;color:oxButtonCl;padding:0 0 0 23px;cursor:pointer;font-weight: bold;}
-#body .basket .frombasket a { width: 77px; background: transparent; margin:0; border:0;color:oxButtonCl;padding:2px 0 0 23px;font-weight: bold; font-size: 10px; text-align: center; text-decoration: none; display: block;}
+#body .basket .frombasket a { width: 77px; height: 16px; background: transparent url(oxButtons) no-repeat 0 -50px; margin:0; border:0; color:oxButtonCl; padding:4px 0 0 23px; font-weight: bold; font-size: 10px; text-align: center; text-decoration: none; display: block;}
 
 
 /* user options step */
@@ -713,8 +719,8 @@ a.rss{display:block;position:absolute;right:0;bottom:0; width:14px;height:14px; 
 #body .account small{font-size: 10px;}
 
 /* Account remove from list button */
-#body .product .fromlist { right: 155px; top: 117px; height:18px; width: 100px; background: transparent url(oxButtons) 0 -50px no-repeat; margin:0; border: 0 none; padding:0; border-right: 1px solid oxButtonBr; position: absolute;}
-#body .product .fromlist input { width: 100%; background: transparent; margin:0; border:0;color:oxButtonCl;padding:2px 0 0 23px;cursor:pointer;font-weight: bold;}
+#body .product .fromlist { position: absolute;right: 155px; top: 117px; height:18px;line-height:1;width: 100px; background: transparent url(oxButtons) no-repeat right -50px; margin:0; border: 0 none; padding:0 1px 0 0;float: left}
+#body .product .fromlist input{ height:18px;line-height:1;width: 100px; background: transparent url(oxButtons) no-repeat 0 -50px; margin:0; border:0;color:oxButtonCl;padding:0 0 0 23px;cursor:pointer;font-weight: bold;}
 
 /* Account wishlist */
 #body .wishlist .product {padding: 5px 0 5px 130px; margin: 0; border: none;}
@@ -770,11 +776,11 @@ a.rss{display:block;position:absolute;right:0;bottom:0; width:14px;height:14px; 
 
 div.popup{visibility: hidden;display:none;}
 div.popup strong{display: block; margin: 9px 0; font-size: 11px;}
-div.on.popup{visibility: visible;display:block;position:fixed;top:50%;left:50%;width:250px;height: 150px;background: oxBasketPopupBg;z-index: 2000;margin-top:-75px;margin-left:-125px;border:1px solid oxBasketPopupBr;padding:10px;}
+div.on.popup{visibility: visible;display:block;position:fixed;top:50%;left:50%;width:270px;height: 150px;background: oxBasketPopupBg;z-index: 2000;margin-top:-75px;margin-left:-135px;border:1px solid oxBasketPopupBr;padding:10px;}
 div.on.popup.load {background: #fff url(bg/ajax-loader.gif) center center no-repeat;}
 div.on.popup table {width:100%;}
-div.on.popup input {color:oxBasketPopupBtnCl;background:oxBasketPopupBtnBg;border:1px solid oxBasketPopupBtnBr;font-weight: bold;padding:2px;width:120px;}
-div.on.popup input.disabled {color:#cbcbcb;background:#fff;border:1px solid #cbcbcb;font-weight: bold;padding:2px;width:120px;}
+div.on.popup input {color:oxBasketPopupBtnCl;background:oxBasketPopupBtnBg;border:1px solid oxBasketPopupBtnBr;font-weight: bold;padding:2px;width:130px;}
+div.on.popup input.disabled {color:#cbcbcb;background:#fff;border:1px solid #cbcbcb;font-weight: bold;padding:2px;width:130px;}
 div.on.popup input.bl{position:absolute;bottom:10px;left:10px;}
 div.on.popup input.br{position:absolute;bottom:10px;right:10px;}
 
@@ -785,7 +791,7 @@ div.on.popup input.br{position:absolute;bottom:10px;right:10px;}
 #zoom ul.tabs li.close{float:right;}
 
 /* Message boxes */
-#body .msg{ float:left;width:548px;background: oxMsgBoxBg;border: 1px solid oxMsgBoxBr;margin: 0 5px 10px 5px;padding: 5px 10px;}
+#body .msg{ float:left;width:548px;color: oxMsgBoxCl;background: oxMsgBoxBg;border: 1px solid oxMsgBoxBr;margin: 0 5px 10px 5px;padding: 5px 10px;}
 #body .msg .err{color: oxMsgBoxErrCl;font-weight: bold;}
 
 /* Tags */
@@ -795,27 +801,27 @@ div.on.popup input.br{position:absolute;bottom:10px;right:10px;}
 
 /* Ratings */
 #write_review {display: none;}
-#body .rating_review_background { width:89px; height:16px; margin:0; padding:0; background: url(bg/stars.jpg) no-repeat 0 0;}
-#body .onestar {background-position:-72px -38px}
-#body .twostar {background-position:-54px -38px}
-#body .threestar {background-position:-36px -38px}
-#body .fourstar {background-position:-18px -38px}
-#body .fivestar {background-position:0 -38px}
+#body td.rating { width:89px; height:16px; margin:0; padding:0; background: url(bg/stars.jpg) no-repeat 0 0;}
+#body td.rating.s1 {background-position:-72px -38px;}
+#body td.rating.s2 {background-position:-54px -38px;}
+#body td.rating.s3 {background-position:-36px -38px;}
+#body td.rating.s4 {background-position:-18px -38px;}
+#body td.rating.s5 {background-position:0 -38px;}
 #body ul.rating {width:89px; height:16px; margin:0 0 3px; padding:0; list-style:none; clear:both; position:relative; background: url(bg/stars.jpg) no-repeat left top;}
 #body ul.rating li {cursor: pointer; float:left;}
 #body ul.rating li a {position:absolute; left:0; top:0; width:18px; height:16px; text-decoration:none; z-index: 200;}
 #body ul.rating li a b {display: none;}
-#body ul.rating li.one a {left:0}
-#body ul.rating li.two a {left:17px;}
-#body ul.rating li.three a {left:34px;}
-#body ul.rating li.four a {left:51px;}
-#body ul.rating li.five a {left:68px;}
-#body ul.rating li a:hover {z-index:2; width:89px; height:16px; overflow:hidden; left:0; background: url(bg/stars.jpg) no-repeat 0 -18px}
-#body ul.rating li.one a:hover {background-position: -72px -18px;}
-#body ul.rating li.two a:hover {background-position: -54px -18px;}
-#body ul.rating li.three a:hover {background-position: -36px -18px;}
-#body ul.rating li.four a:hover {background-position: -18px -18px;}
-#body ul.rating li.five a:hover {background-position: 0 -18px;}
+#body ul.rating li.s1 a {left:0;}
+#body ul.rating li.s2 a {left:17px;}
+#body ul.rating li.s3 a {left:34px;}
+#body ul.rating li.s4 a {left:51px;}
+#body ul.rating li.s5 a {left:68px;}
+#body ul.rating li a:hover {z-index:2; width:89px; height:16px; overflow:hidden; left:0; background: url(bg/stars.jpg) no-repeat 0 -18px;}
+#body ul.rating li.s1 a:hover {background-position: -72px -18px;}
+#body ul.rating li.s2 a:hover {background-position: -54px -18px;}
+#body ul.rating li.s3 a:hover {background-position: -36px -18px;}
+#body ul.rating li.s4 a:hover {background-position: -18px -18px;}
+#body ul.rating li.s5 a:hover {background-position: 0 -18px;}
 #body .rating_review_input {margin:0; height:16px;}
 #body .rating li.current_rate{background: url(bg/stars.jpg) left bottom; position: absolute; height: 16px; z-index: 1;}
 

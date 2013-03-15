@@ -2,7 +2,7 @@
   <p class="err">[{ $oEr->getOxMessage()}]</p>
 [{/foreach}]
   <form name="ropenidlogin" action="[{ $oViewConf->getSslSelfLink() }]" method="post">
-    <div>
+    <div class="form">
         [{ $oViewConf->getHiddenSid() }]
         [{$_login_additional_form_parameters}]
         <input type="hidden" name="fnc" value="login_noredirect">
@@ -14,19 +14,8 @@
           [{assign var="product" value=$oView->getProduct() }]
           <input type="hidden" name="anid" value="[{ $product->oxarticles__oxnid->value }]">
         [{/if}]
+        <label for="test_RightLogin_OpenId" >[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_OPENID" }]</label>
+        <input id="test_RightLogin_OpenId" type="text" name="lgn_openid" value="" class="txt openid">
+        <span class="btn"><input id="test_RightLogin_OpenIdLogin" type="submit" name="send" value="[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_LOGIN" }]" class="btn"></span>
     </div>
-    <table class="form">
-      <colgroup>
-        <col width="30%">
-        <col width="70%">
-      </colgroup>
-        <tr>
-            <td><label>[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_OPENID" }]</label></td>
-            <td><input id="test_RightLogin_OpenId" type="text" name="lgn_openid" value="" class="openid"></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td><span class="btn"><input id="test_RightLogin_OpenIdLogin" type="submit" name="send" value="[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_LOGIN" }]" class="btn"></span></td>
-        </tr>
-    </table>
   </form>

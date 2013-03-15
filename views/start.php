@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: start.php 20551 2009-06-30 12:04:07Z arvydas $
+ * $Id: start.php 23255 2009-10-14 15:25:09Z sarunas $
  */
 
 /**
@@ -108,21 +108,6 @@ class Start extends oxUBase
      * @var bool
      */
     protected $_blBargainAction = true;
-
-    /**
-     * Unsets SEO category and call parent::init();
-     *
-     * @return null
-     */
-    public function init()
-    {
-        if ( oxUtils::getInstance()->seoIsActive() ) {
-            // cleaning category id tracked by SEO
-            $this->setSessionCategoryId( null );
-        }
-
-        parent::init();
-    }
 
     /**
      * Executes parent::render(), loads action articles
@@ -412,4 +397,15 @@ class Start extends oxUBase
         return $this->getConfig()->getActiveShop()->oxshops__oxstarttitle->value;
     }
 
+    /**
+     * Returns view canonical url
+     *
+     * @return string
+     */
+    public function getCanonicalUrl()
+    {
+        if ( oxUtils::getInstance()->seoIsActive() && ( $oViewConf = $this->getViewConfig() ) ) {
+            return $oViewConf->getHomeLink();
+        }
+    }
 }

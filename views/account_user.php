@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: account_user.php 20634 2009-07-03 14:24:34Z arvydas $
+ * $Id: account_user.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**
@@ -100,6 +100,7 @@ class Account_User extends Account
             if ( $oAdresses->count() ) {
                 foreach ( $oAdresses as $oAddress ) {
                     if ( $oAddress->selected == 1 ) {
+                        $this->_aViewData['deladr'] = null;
                         return $oAddress;
                     }
                 }

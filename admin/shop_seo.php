@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: shop_seo.php 22499 2009-09-22 07:46:50Z arvydas $
+ * $Id: shop_seo.php 23224 2009-10-13 14:24:30Z arvydas $
  */
 
 /**
@@ -181,7 +181,7 @@ class Shop_Seo extends Shop_Config
      */
     public function dropSeoIds()
     {
-        oxSeoEncoder::getInstance()->markAsExpired( null, $this->getConfig()->getShopId(), 2, null, 'oxtype != "static"' );
+        oxSeoEncoder::getInstance()->markAsExpired( null, $this->getConfig()->getShopId(), 1, null, 'oxtype != "static"' );
     }
 
     /**

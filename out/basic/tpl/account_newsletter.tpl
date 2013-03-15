@@ -24,7 +24,7 @@
               </select>
               <div class="dot_sep"></div>
               <div class="right">
-                <input id="test_newsletterSettingsSave" type="submit" value="[{ oxmultilang ident="ACCOUNT_NEWSLETTER_SAVE" }]">
+                <span class="btn"><input id="test_newsletterSettingsSave" type="submit" value="[{ oxmultilang ident="ACCOUNT_NEWSLETTER_SAVE" }]" class="btn"></span>
               </div>
               <br><br>
           </div>

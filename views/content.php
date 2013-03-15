@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: content.php 21008 2009-07-20 07:31:26Z arvydas $
+ * $Id: content.php 23255 2009-10-14 15:25:09Z sarunas $
  */
 
 /**
@@ -64,11 +64,6 @@ class Content extends oxUBase
      */
     public function init()
     {
-        if ( oxUtils::getInstance()->seoIsActive() ) {
-            // cleaning category id tracked by SEO
-            $this->setSessionCategoryId( null );
-        }
-
         parent::init();
     }
 
@@ -112,6 +107,7 @@ class Content extends oxUBase
         }
 
         $this->_aViewData['tpl'] = $sTpl;
+        $this->getViewConfig()->setViewConfigParam( 'tpl', $sTpl );
         return $this->_sThisTemplate;
     }
 

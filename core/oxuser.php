@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxuser.php 22657 2009-09-25 15:39:22Z arvydas $
+ * $Id: oxuser.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**
@@ -322,7 +322,7 @@ class oxUser extends oxBase
             if ( $sAddressId = $this->getSelectedAddressId() ) {
                 foreach ( $this->_oAddresses as $oAddress ) {
                     $oAddress->selected = 0;
-                    if ( $oAddress->getId() == $sAddressId ) {
+                    if ( $oAddress->getId() === $sAddressId ) {
                         $oAddress->selected = 1;
                         break;
                     }
@@ -333,13 +333,28 @@ class oxUser extends oxBase
     }
 
     /**
+     * Selected user address setter
+     *
+     * @param string $sAddressId selected address id
+     */
+    public function setSelectedAddressId( $sAddressId )
+    {
+        $this->_sSelAddressId = $sAddressId;
+    }
+
+    /**
      * Returns user chosen address id ("oxaddressid" or "deladrid")
      *
      * @return string
      */
     public function getSelectedAddressId()
     {
-        if ( !( $sAddressId = oxConfig::getParameter( "oxaddressid") ) ) {
+        if ( $this->_sSelAddressId !== null ) {
+            return $this->_sSelAddressId;
+        }
+
+        $sAddressId = oxConfig::getParameter( "oxaddressid");
+        if ( !$sAddressId && !oxConfig::getParameter( 'reloadaddress' ) ) {
             $sAddressId = oxSession::getVar( "deladrid" );
         }
         return $sAddressId;
@@ -1132,7 +1147,6 @@ class oxUser extends oxBase
             // resetting
             oxSession::setVar( 'deladrid', null );
         }
-
     }
 
     /**

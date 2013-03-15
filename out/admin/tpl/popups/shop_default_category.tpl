@@ -22,13 +22,18 @@
         {
             return sRequest;
         }
+
+        // subscribint buttons
+        YAHOO.oxid.container1.oRemoveBtn = new YAHOO.widget.Button('remBtn');
+        YAHOO.oxid.container1.oSaveBtn = new YAHOO.widget.Button('saveBtn');
+
         YAHOO.oxid.container1.onSave = function()
         {
             var aSelRows= YAHOO.oxid.container1.getSelectedRows();
             if ( aSelRows.length ) {
                 oParam = YAHOO.oxid.container1.getRecord(aSelRows[0]);
                 $('defcat_title').innerHTML  = oParam._oData._0;
-                $('remBtn').disabled = false;
+                YAHOO.oxid.container1.oRemoveBtn.set("disabled",false);
                 $D.setStyle( $('_defcat'), 'visibility', '' );
             }
         }
@@ -50,7 +55,7 @@
         YAHOO.oxid.container1.onRemove = function()
         {
             $('defcat_title').innerHTML  = '';
-            $('remBtn').disabled = true;
+            YAHOO.oxid.container1.oRemoveBtn.set("disabled",true);
             $D.setStyle( $('_defcat'), 'visibility', 'hidden' );
         }
         YAHOO.oxid.container1.onFailure = function() { /* currently does nothing */ }
@@ -64,9 +69,10 @@
             YAHOO.util.Connect.asyncRequest( 'GET', '[{ $oViewConf->getAjaxLink() }]&cmpid=container1&container=shop_default_category&fnc=unassignCat&oxid=[{ $oxid }]', callback );
 
         }
-        // subscribint event listeners on buttons
-        $E.addListener( $('remBtn'), "click", YAHOO.oxid.container1.unassignCat, $('remBtn') );
-        $E.addListener( $('saveBtn'), "click", YAHOO.oxid.container1.assignCat, $('saveBtn') );
+        // subscribing  listeners on buttons
+        YAHOO.oxid.container1.oRemoveBtn.on("click", YAHOO.oxid.container1.unassignCat);
+        YAHOO.oxid.container1.oSaveBtn.on("click", YAHOO.oxid.container1.assignCat);
+
     }
     $E.onDOMReady( initAoc );
 </script>
@@ -82,9 +88,9 @@
             <td valign="top" id="container1"></td>
         </tr>
         <tr>
-            <td>
-                <input id="saveBtn" type="button" class="edittext oxid-aoc-button" value="[{ oxmultilang ident="SHOP_CONFIG_ASSIGNDEFAULTCAT" }]">
-                <input id="remBtn" type="button" class="edittext oxid-aoc-button" value="[{ oxmultilang ident="SHOP_CONFIG_UNASSIGNDEFAULTCAT" }]" [{if !$defcat }] disabled [{/if}]>
+            <td class="oxid-aoc-actions">
+                <input id="saveBtn" type="button" value="[{ oxmultilang ident="SHOP_CONFIG_ASSIGNDEFAULTCAT" }]">
+                <input id="remBtn" type="button" value="[{ oxmultilang ident="SHOP_CONFIG_UNASSIGNDEFAULTCAT" }]" [{if !$defcat }] disabled [{/if}]>
             </td>
         </tr>
         <tr>

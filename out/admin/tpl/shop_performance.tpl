@@ -33,6 +33,7 @@
          <td valign="top">
             <input type=hidden name=confbools[blCheckTemplates] value=false>
             <input type=checkbox name=confbools[blCheckTemplates] value=true  [{if ($confbools.blCheckTemplates)}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_SHOP_PERF_CHECKIFTPLCOMPILE" }]
          </td>
          <td valign="top" width="100%" >
             [{ oxmultilang ident="SHOP_PERF_CHECKIFTPLCOMPILE" }]
@@ -43,6 +44,7 @@
          <td valign="top">
             <input type=hidden name=confbools[blLoadVariants] value=false>
             <input type=checkbox name=confbools[blLoadVariants] value=true  [{if ($confbools.blLoadVariants)}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_SHOP_PERF_LOADVARIANTS" }]
          </td>
          <td valign="top" width="100%">
           [{ oxmultilang ident="SHOP_PERF_LOADVARIANTS" }]
@@ -53,6 +55,7 @@
          <td valign="top">
             <input type=hidden name=confbools[blUseTimeCheck] value=false>
             <input type=checkbox name=confbools[blUseTimeCheck] value=true  [{if ($confbools.blUseTimeCheck)}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_SHOP_PERF_USETIMECHECKINARTLOAD" }]
          </td>
          <td valign="top" width="100%">
           [{ oxmultilang ident="SHOP_PERF_USETIMECHECKINARTLOAD" }]
@@ -60,12 +63,13 @@
         </tr>
 
         <tr class="conftext[{cycle}]">
-         <td valign="top">
+         <td valign="top" class="nowrap">
            <select class="confinput" name=confstrs[iTop5Mode] [{ $readonly }]>
              <option value="0" [{ if $confstrs.iTop5Mode == 0}]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_OFF" }]</option>
              <option value="1" [{ if $confstrs.iTop5Mode == 1}]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_MANUELL" }]</option>
              <option value="2" [{ if $confstrs.iTop5Mode == 2}]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_AUTO" }]</option>
            </select>
+           [{ oxinputhelp ident="HELP_SHOP_PERF_TOPSELLER" }]
          </td>
          <td valign="top" width="100%">
               [{ oxmultilang ident="SHOP_PERF_TOPSELLER" }]
@@ -79,6 +83,7 @@
              <option value="1" [{ if $confstrs.iNewestArticlesMode == 1}]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_MANUELL" }]</option>
              <option value="2" [{ if $confstrs.iNewestArticlesMode == 2}]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_AUTO" }]</option>
            </select>
+           [{ oxinputhelp ident="HELP_SHOP_PERF_NEWESTARTICLES" }]
          </td>
          <td valign="top" width="100%">
               [{ oxmultilang ident="SHOP_PERF_NEWESTARTICLES" }]
@@ -89,6 +94,7 @@
          <td valign="top">
             <input type=hidden name=confbools[blLoadFullTree] value=false>
             <input type=checkbox name=confbools[blLoadFullTree] value=true  [{if ($confbools.blLoadFullTree)}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_SHOP_PERF_LOADFULLTREE" }]
          </td>
          <td valign="top" width="100%">
           [{ oxmultilang ident="SHOP_PERF_LOADFULLTREE" }]
@@ -99,6 +105,7 @@
          <td valign="top">
             <input type=hidden name=confbools[blDontShowEmptyCategories] value=false>
             <input type=checkbox class="confinput" name=confbools[blDontShowEmptyCategories] value=true  [{if ($confbools.blDontShowEmptyCategories)}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_SHOP_PERF_DONTSHOWEMTYCATEGORIES" }]
          </td>
          <td valign="top" width="100%" >
            [{ oxmultilang ident="SHOP_PERF_DONTSHOWEMTYCATEGORIES" }]
@@ -109,6 +116,7 @@
          <td valign="top">
             <input type=hidden name=confbools[blClearCacheOnLogout] value=false>
             <input type=checkbox class="confinput" name=confbools[blClearCacheOnLogout] value=true  [{if ($confbools.blClearCacheOnLogout)}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_SHOP_PERF_CLEARCACHEONLOGOUT" }]
          </td>
          <td valign="top" width="100%" >
            [{ oxmultilang ident="SHOP_PERF_CLEARCACHEONLOGOUT" }]
@@ -125,9 +133,10 @@
             <table border=0 width="100%">
 
             <tr>
-             <td valign="top" class="conftext">
+             <td valign="top" class="conftext nowrap">
                 <input type=hidden name=confbools[bl_perfLoadAktion] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadAktion] value=true  [{if ($confbools.bl_perfLoadAktion)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADACTION" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADACTION" }]
@@ -138,6 +147,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadReviews] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadReviews] value=true  [{if ($confbools.bl_perfLoadReviews)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADREVIEWS" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADREVIEWS" }]
@@ -148,6 +158,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadCrossselling] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadCrossselling] value=true  [{if ($confbools.bl_perfLoadCrossselling)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADCROSSSELLING" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADCROSSSELLING" }]
@@ -158,6 +169,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadAccessoires] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadAccessoires] value=true  [{if ($confbools.bl_perfLoadAccessoires)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADACCESSOIRES" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADACCESSOIRES" }]
@@ -168,6 +180,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadCustomerWhoBoughtThis] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadCustomerWhoBoughtThis] value=true  [{if ($confbools.bl_perfLoadCustomerWhoBoughtThis)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADCUSTOMERWHOBOUGHTTHIS" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADCUSTOMERWHOBOUGHTTHIS" }]
@@ -178,6 +191,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadSimilar] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadSimilar] value=true  [{if ($confbools.bl_perfLoadSimilar)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADSIMILAR" }]
              </td>
              <td valign="top" class="conftext" width="100%">
              [{ oxmultilang ident="SHOP_PERF_LOADSIMILAR" }]
@@ -188,6 +202,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadSelectLists] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadSelectLists] value=true  [{if ($confbools.bl_perfLoadSelectLists)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADSELECTLIST" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADSELECTLIST" }]
@@ -198,6 +213,7 @@
               <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadSelectListsInAList] value=false>
                 <input type=checkbox class="confinput" name=confbools[bl_perfLoadSelectListsInAList] value=true  [{if ($confbools.bl_perfLoadSelectListsInAList)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADSELECTLISTSINALIST" }]
               </td>
               <td valign="top" class="conftext" width="100%" >
                 [{ oxmultilang ident="SHOP_PERF_LOADSELECTLISTSINALIST" }]
@@ -208,6 +224,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadCompare] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadCompare] value=true  [{if ($confbools.bl_perfLoadCompare)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_COMPARE" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_COMPARE" }]
@@ -218,6 +235,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadVendorTree] value=false>
                 <input type=checkbox class="confinput" name=confbools[bl_perfLoadVendorTree] value=true  [{if ($confbools.bl_perfLoadVendorTree)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADVENDORTREE" }]
              </td>
              <td valign="top" class="conftext" width="100%" >
                [{ oxmultilang ident="SHOP_PERF_LOADVENDORTREE" }]
@@ -228,6 +246,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadManufacturerTree] value=false>
                 <input type=checkbox class="confinput" name=confbools[bl_perfLoadManufacturerTree] value=true  [{if ($confbools.bl_perfLoadManufacturerTree)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADMANUFACTURERTREE" }]
              </td>
              <td valign="top" class="conftext" width="100%" >
                [{ oxmultilang ident="SHOP_PERF_LOADMANUFACTURERTREE" }]
@@ -238,6 +257,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfShowLeftBasket] value=false>
                 <input type=checkbox class="confinput" name=confbools[bl_perfShowLeftBasket] value=true  [{if ($confbools.bl_perfShowLeftBasket)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_SHOWLEFTBASKET" }]
              </td>
              <td valign="top" class="conftext" width="100%" >
                [{ oxmultilang ident="SHOP_PERF_SHOWLEFTBASKET" }]
@@ -248,6 +268,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfShowRightBasket] value=false>
                 <input type=checkbox class="confinput" name=confbools[bl_perfShowRightBasket] value=true  [{if ($confbools.bl_perfShowRightBasket)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_SHOWRIGHTBASKET" }]
              </td>
              <td valign="top" class="conftext" width="100%" >
                [{ oxmultilang ident="SHOP_PERF_SHOWRIGHTBASKET" }]
@@ -258,6 +279,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfShowTopBasket] value=false>
                 <input type=checkbox class="confinput" name=confbools[bl_perfShowTopBasket] value=true  [{if ($confbools.bl_perfShowTopBasket)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_SHOWTOPBASKET" }]
              </td>
              <td valign="top" class="conftext" width="100%" >
                [{ oxmultilang ident="SHOP_PERF_SHOWTOPBASKET" }]
@@ -268,6 +290,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfUseSelectlistPrice] value=false>
                 <input type=checkbox class="confinput" name=confbools[bl_perfUseSelectlistPrice] value=true  [{if ($confbools.bl_perfUseSelectlistPrice)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_USESELECTLISTPRICE" }]
              </td>
              <td valign="top" class="conftext" width="100%" >
                [{ oxmultilang ident="SHOP_PERF_USESELECTLISTPRICE" }]
@@ -278,6 +301,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[blPerfNoBasketSaving] value=false>
                 <input type=checkbox class="confinput" name=confbools[blPerfNoBasketSaving] value=true  [{if ($confbools.blPerfNoBasketSaving)}]checked[{/if}]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_DISBASKETSAVING" }]
              </td>
              <td valign="top" class="conftext" width="100%" >
                [{ oxmultilang ident="SHOP_PERF_DISBASKETSAVING" }]
@@ -292,9 +316,10 @@
             <table border=0 width="100%">
 
             <tr>
-             <td valign="top" class="conftext">
+             <td valign="top" class="conftext nowrap">
                 <input type=hidden name=confbools[bl_perfLoadDelivery] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadDelivery] value=true  [{if ($confbools.bl_perfLoadDelivery)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADDELIVERY" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADDELIVERY" }]
@@ -305,6 +330,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadPrice] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadPrice] value=true  [{if ($confbools.bl_perfLoadPrice)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADPRICE" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADPRICE" }]
@@ -315,6 +341,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadPriceForAddList] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadPriceForAddList] value=true  [{if ($confbools.bl_perfLoadPriceForAddList)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADPRICEFORADDLIST" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADPRICEFORADDLIST" }]
@@ -325,6 +352,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadTreeForSearch] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadTreeForSearch] value=true  [{if ($confbools.bl_perfLoadTreeForSearch)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADTREEFORSEARCH" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADTREEFORSEARCH" }]
@@ -335,6 +363,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfShowActionCatArticleCnt] value=false>
                 <input type=checkbox name=confbools[bl_perfShowActionCatArticleCnt] value=true  [{if ($confbools.bl_perfShowActionCatArticleCnt)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_SHOWACTCATARTCOUNT" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_SHOWACTCATARTCOUNT" }]
@@ -345,6 +374,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadCatTree] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadCatTree] value=true  [{if ($confbools.bl_perfLoadCatTree)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADCATTREE" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADCATTREE" }]
@@ -355,6 +385,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadCurrency] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadCurrency] value=true  [{if ($confbools.bl_perfLoadCurrency)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADCURRENCY" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADCURRENCY" }]
@@ -365,6 +396,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadLanguages] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadLanguages] value=true  [{if ($confbools.bl_perfLoadLanguages)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADLANGUAGES" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADLANGUAGES" }]
@@ -375,6 +407,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadNews] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadNews] value=true  [{if ($confbools.bl_perfLoadNews)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADNEWS" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADNEWS" }]
@@ -385,6 +418,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadNewsOnlyStart] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadNewsOnlyStart] value=true  [{if ($confbools.bl_perfLoadNewsOnlyStart)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADNEWSONLYSTART" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADNEWSONLYSTART" }]
@@ -395,6 +429,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfParseLongDescinSmarty] value=false>
                 <input type=checkbox name=confbools[bl_perfParseLongDescinSmarty] value=true  [{if ($confbools.bl_perfParseLongDescinSmarty)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_PARSELONGDESCINSMARTY" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_PARSELONGDESCINSMARTY" }]
@@ -405,6 +440,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfCalcVatOnlyForBasketOrder] value=false>
                 <input type=checkbox name=confbools[bl_perfCalcVatOnlyForBasketOrder] value=true  [{if ($confbools.bl_perfCalcVatOnlyForBasketOrder)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_CALCVATONLYFORBASKETORDER" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_CALCVATONLYFORBASKETORDER" }]
@@ -415,6 +451,7 @@
              <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadAttributes] value=false>
                 <input type=checkbox name=confbools[bl_perfLoadAttributes] value=true  [{if ($confbools.bl_perfLoadAttributes)}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADATTRIBUTES" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_LOADATTRIBUTES" }]

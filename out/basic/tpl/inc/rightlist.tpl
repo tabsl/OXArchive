@@ -2,14 +2,14 @@
   [{foreach from=$list name=rightlist item=_product}]
   <div class="listitem rightlist[{if $smarty.foreach.rightlist.last}] lastinlist[{/if}]">
       [{ assign var="sRightListArtTitle" value="`$_product->oxarticles__oxtitle->value` `$_product->oxarticles__oxvarselect->value`" }]
-      <a id="test_[{$test_Type}]_pic_[{$_product->oxarticles__oxid->value}]" href="[{$_product->getLink()}]" class="picture">
+      <a id="test_[{$test_Type}]_pic_[{$_product->oxarticles__oxid->value}]" href="[{$_product->getMainLink()}]" class="picture">
           <img src="[{$_product->getIconUrl()}]" alt="[{ $sRightListArtTitle|strip_tags }]">
       </a>
-      <b><a id="test_[{$test_Type}]_Title_[{$_product->oxarticles__oxid->value}]" href="[{$_product->getLink()}]" class="arttitle">[{ $sRightListArtTitle|strip_tags }]</a></b>
+      <b><a id="test_[{$test_Type}]_Title_[{$_product->oxarticles__oxid->value}]" href="[{$_product->getMainLink()}]" class="arttitle">[{ $sRightListArtTitle|strip_tags }]</a></b>
       <tt id="test_[{$test_Type}]_No_[{$_product->oxarticles__oxid->value}]">[{ oxmultilang ident="INC_RIGHTLIST_ARTNOMBER" }] [{ $_product->oxarticles__oxartnum->value }]</tt>
 
       <div class="actions">
-          <a id="test_[{$test_Type}]_details_[{$_product->oxarticles__oxid->value}]" href="[{ $_product->getLink()}]" class="link" rel="nofollow">[{ oxmultilang ident="INC_PRODUCTITEM_MOREINFO" }]</a>
+          <a id="test_[{$test_Type}]_details_[{$_product->oxarticles__oxid->value}]" href="[{ $_product->getMainLink()}]" class="link">[{ oxmultilang ident="INC_PRODUCTITEM_MOREINFO" }]</a>
           [{ if $isfiltering }]
               [{oxid_include_dynamic file="dyn/compare_links.tpl" testid="_`$test_Type`_`$_product->oxarticles__oxid->value`" type="compare" aid=$_product->oxarticles__oxid->value anid=$altproduct->oxarticles__oxnid->value in_list=$_product->isOnComparisonList() class="link" page=$pageNavigation->actPage-1 text_from_id="INC_RIGHTLIST_REMOVEFROMCOMPARELIST" text_to_id="INC_RIGHTLIST_COMPARE"}]
           [{ /if }]
@@ -49,4 +49,3 @@
       [{/oxhasrights}]
    </div>
   [{/foreach}]
-

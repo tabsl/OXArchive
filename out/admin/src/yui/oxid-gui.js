@@ -1,3 +1,5 @@
+// http://developer.yahoo.com/yui/articles/hosting/?base&button&colorpicker&container&reset-fonts-grids&slider&stylesheet&tabview&treeview&utilities&MIN&nocombine&norollup&basepath&[{$shop->basetpldir}]yui/build/
+
 YAHOO.namespace( 'YAHOO.oxid' );
 
 var $  = YAHOO.util.Dom.get,
@@ -9,7 +11,7 @@ var $  = YAHOO.util.Dom.get,
 if(YAHOO.widget.Dialog && YAHOO.widget.ColorPicker){
 (function () {
 
-    YAHOO.oxid.gui = function( elBox, elTabs, elTheme , elPicker, elTree, elPreview, selfUrl, srcUrl)
+    YAHOO.oxid.gui = function( elBox, elTabs, elPicker, elTree, elPreview, selfUrl, srcUrl)
     {
         var me     = this;
         var slf    = selfUrl;
@@ -33,8 +35,8 @@ if(YAHOO.widget.Dialog && YAHOO.widget.ColorPicker){
         this.init = function() {
 
             me.dialog = new YAHOO.widget.Dialog(elBox, {
-                width : "350px",
-                height : "518px",
+                width  : "410px",
+                height : "522px",
                 fixedcenter : false,
                 visible : false,
                 constraintoviewport : true ,
@@ -65,16 +67,13 @@ if(YAHOO.widget.Dialog && YAHOO.widget.ColorPicker){
             if (!me.tree) {
                 me.tree = new YAHOO.widget.TreeView( elTree );
                 me.tree.render();
-                me.tree.subscribe("expand", function(node) {
-
-                // all colors has no child nodes
-                if (!node.hasChildren()) {
-                    var iid = node.getEl().getElementsByTagName('b')[0].title;
-
-                    me.editColor( iid );
-                    return false;
-                }
-
+                me.tree.subscribe("clickEvent", function(e) {
+                    // all colors has no child nodes
+                    if (!e.node.hasChildren()) {
+                        var iid = e.node.getEl().getElementsByTagName('b')[0].title;
+                        me.editColor( iid );
+                        //return false;
+                    }
                 });
             }
 
@@ -94,8 +93,7 @@ if(YAHOO.widget.Dialog && YAHOO.widget.ColorPicker){
         };
 
         this.parseColor = function(id,style){
-
-            var cl = $D.getStyle($(id),style);
+            var cl = $D.getStyle(id,style);
 
             if(cl.indexOf('#') != -1){
                 return this.normalizeColor(cl);
@@ -133,12 +131,13 @@ if(YAHOO.widget.Dialog && YAHOO.widget.ColorPicker){
                 $(this.edit).value = c;
 
                 if(tab == 1) {
-                    this.addStyle(2, this.edit, c);
+                    this.addStyle('gui-cl-css', this.edit, c);
+                    this.clearStyles('gui-st-css');
                     this.setColor();
                 }
 
                 if(tab == 2) {
-                    this.addStyle(1, this.edit, c);
+                    this.addStyle('gui-st-css', this.edit, c);
                     this.setStyle();
                 }
             }
@@ -148,37 +147,25 @@ if(YAHOO.widget.Dialog && YAHOO.widget.ColorPicker){
             var i, a;
             for(i=0; (a = document.getElementsByTagName("style")[i]); i++) {
                 if( a.title && a.getAttribute("rel") && a.getAttribute("rel").indexOf("style") != -1 ) {
-                    a.disabled = (a.id != id);
+                    if(a.id == id){
+                        YAHOO.util.StyleSheet(a).enable();
+                    }else{
+                        YAHOO.util.StyleSheet(a).disable();
+                    }
                 }
             }
         };
 
-        this.clearStyles = function(){
-            var css = $(block);
-            //css.innerHTML = '';
+        this.clearStyles = function(style){
+            YAHOO.util.StyleSheet(style).disable();
         };
 
-        this.addStyle = function(nng,name,color){
-
-            var ln = document.styleSheets.length;
-            var nr = ln-nng;
-            var st = document.styleSheets[nr];
-
-            if(st){
-                if (st.insertRule) {
-                    st.insertRule ('.'+name+'{  background-color:'+color+';', st.cssRules.length );
-                }
-                else if (st.addRule) {
-                    st.addRule ('.'+name , 'background-color:'+color+';' );
-                }
-            }
-
+        this.addStyle = function(style,name,color){
+            YAHOO.util.StyleSheet(style).set('.'+name,{backgroundColor:color}).enable();
         };
 
         this.render = function() {
             this.dialog.render(document.body);
-
-            $E.on(elTheme,'change',function() {me.setTheme(this.value);});
             $E.on(elPreview,'load',function() {me.doPreview();});
         };
 
@@ -187,8 +174,11 @@ if(YAHOO.widget.Dialog && YAHOO.widget.ColorPicker){
         };
 
         this.setTheme = function(t){
-            this.setUrl('theme',"&t="+t);
             this.switchStyles('gui-th-'+t);
+            this.clearStyles('gui-cl-css');
+            this.clearStyles('gui-st-css');
+
+            this.setUrl('theme',"&t="+t);
             this.doPreview();
             this.loadColors();
         };
@@ -236,19 +226,19 @@ if(YAHOO.widget.Dialog && YAHOO.widget.ColorPicker){
         };
 
 
+        //YAHOO.util.Get.PURGE_THRESH = 1;
         this.doPreview = function() {
             var url = me.getUrl();
             if(url) {
-                //YAHOO.util.Get.css(css+data,{data:'aaa=10',win:frames.preview});
-                var rq = YAHOO.util.Connect.asyncRequest('POST', slf, { success: function(o) { me.setCss( o.responseText)}}, css+url );
-
+                //YAHOO.util.Get.css(slf+'?'+css+url,{win:frames.preview,autopurge: true});
+                var rq = YAHOO.util.Connect.asyncRequest('POST', slf, { success: function(o) { me.setCss( o.responseText);}}, css+url );
             }
         };
 
         this.doSave = function() {
             var url = me.getUrl();
             if(url) {
-                var rq = YAHOO.util.Connect.asyncRequest('POST', slf, { success: function(o) { me.showMessage(o.responseText)}}, sav+url);
+                var rq = YAHOO.util.Connect.asyncRequest('POST', slf, { success: function(o) { me.showMessage(o.responseText);}}, sav+url);
             }
         };
 
@@ -260,19 +250,15 @@ if(YAHOO.widget.Dialog && YAHOO.widget.ColorPicker){
                 el.cssText = csstext;
             }else{
                 var cel , sel, gid = 'gui-css-preview';
-
-                // FIXME: inserts style tag, afer 2'nd link element
-                el  = frames.preview.document.getElementsByTagName('link')[1];
                 cel = document.createElement('style');
                 cel.setAttribute('id',gid);
                 cel.appendChild(document.createTextNode(csstext));
 
                 sel = frames.preview.document.getElementById(gid);
-
                 if(sel){
                     sel.parentNode.replaceChild(cel,sel);
                 }else{
-                    $D.insertAfter(cel,el);
+                    frames.preview.document.getElementsByTagName('head')[0].appendChild(cel);
                 }
             }
 
@@ -280,7 +266,7 @@ if(YAHOO.widget.Dialog && YAHOO.widget.ColorPicker){
 
         this.showMessage = function (msgtext) {
             if(msgtext.length){
-                alert(msgtext)
+                alert(msgtext);
             }
         };
 

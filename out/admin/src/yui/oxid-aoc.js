@@ -1,10 +1,12 @@
-// creating own namespace
+// http://developer.yahoo.com/yui/articles/hosting/?button&connection&container&datatable&dragdrop&json&menu&utilities&MIN&nocombine&norollup&basepath&[{$shop-%3Ebasetpldir}]yui/build/
+
 YAHOO.namespace( 'YAHOO.oxid' );
 
-// shortcuts
 var $  = YAHOO.util.Dom.get,
     $D = YAHOO.util.Dom,
     $E = YAHOO.util.Event;
+
+//--------------------------------------------------------------------------------
 
 YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
 {
@@ -186,7 +188,6 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
         // subscribing event listener on scroll bar
         $E.on( this._elScroll, 'scroll', this.scrollTo, this );
 
-        //
         this.iScrollOffset = $D.getY( this._elScroll );
     };
 
@@ -276,9 +277,6 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
         }
     };
 
-    /**
-     *
-     */
     this.initDataView_fl = function( sRequest, oResponse )
     {
         me.initDataView( sRequest, oResponse, 1, 1 );
@@ -394,7 +392,7 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
             var elTd = document.createElement( 'th' );
             elTd.id = "yui-dt" + this._nIndex + "-filter_" + i;
 
-            $D.addClass( elTd,  'yui-dt-resizeable yui-dt-sortable' )
+            $D.addClass( elTd,  'yui-dt-resizeable yui-dt-sortable' );
 
             var elDiv = document.createElement( 'div' );
 
@@ -429,8 +427,6 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
                 (nKeyCode >= 18 && nKeyCode <= 20) ||    // alt,pause/break,caps lock
                 (nKeyCode == 27) || // esc
                 (nKeyCode >= 33 && nKeyCode <= 35) ||    // page up,page down,end
-                /*(nKeyCode >= 36 && nKeyCode <= 38) ||  // home,left,up
-                (nKeyCode == 40) || // down*/
                 (nKeyCode >= 36 && nKeyCode <= 40) ||    // home,left,up, right, down
                 (nKeyCode >= 44 && nKeyCode <= 45)) {    // print screen,insert
             return true;
@@ -453,7 +449,7 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
         me.inpCtr++;
         sCall = me.inpCtr + 0;
         var sSecondParam = $E.getTarget( e, false );
-        setTimeout( function( ) { me.filterBy( sCall, sSecondParam ) }, 100 );
+        setTimeout( function( ) { me.filterBy( sCall, sSecondParam ); }, 100 );
     };
 
     /**
@@ -482,12 +478,12 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
         }
     };
 
-    this.onMouseDown = function( oEvent )
+    this.onMouseDown = function( e )
     {
-        if ( this.getSelectedRows().length == 0) {
-            this.onEventSelectRow( oEvent );
+        if ( !(e.shiftKey || e.event.ctrlKey || ((navigator.userAgent.toLowerCase().indexOf("mac") != -1) && e.event.metaKey)) && !this.isSelected(e.target) ) {
+            this.onEventSelectRow(e);
         }
-    }
+    };
 
     /**
      * Initializes and mounts drag&drop on dataTable component
@@ -564,11 +560,11 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
     this.onSuccess = function( oResponse )
     {
         me.onSuccessCalback( oResponse );
-        var oSrc = oResponse.argument[0]
+        var oSrc = oResponse.argument[0];
             oSrc.getDataSource().flushCache();
             oSrc.getPage( 0 );
 
-        var oTrg = oResponse.argument[1]
+        var oTrg = oResponse.argument[1];
             oTrg.getDataSource().flushCache();
             oTrg.getPage( 0 );
     };
@@ -645,7 +641,7 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
         var callback = { success:  me.onSuccess,
                          failure:  me.onFailure,
                          argument: [ oSource, oTarget ]
-                       }
+                       };
         YAHOO.util.Connect.asyncRequest( 'GET', me.getDropUrl() + '&' + me.getDropParams() + '&' + me.getDropAction(), callback, null );
     };
 
@@ -846,9 +842,10 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
     this.initAssignBtn = function()
     {
         // only if this action is allowed
-        var oBtn = $( this.elContainer + '_btn' );
-        if ( oBtn != null ) {
-            $E.on( oBtn, 'click', this.assignAll, this );
+        var oBtn,sBtn = $( this.elContainer + '_btn' );
+        if ( sBtn != null ) {
+            oBtn = new YAHOO.widget.Button(sBtn);
+            oBtn.on("click", this.assignAll, this );
         }
     };
 
@@ -996,7 +993,7 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
         } else {
             me.focusCtr++;
             sCall = me.focustCtr + 0;
-            setTimeout( function( ) { me.waitForFocus( sCall ) }, 100 );
+            setTimeout( function( ) { me.waitForFocus( sCall ); }, 100 );
         }
     };
 
@@ -1098,8 +1095,7 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
     this.initAssignBtn();
 
     for ( var i=0; i < this.aColsTohide.length; i++ ) {
-        //this.hideNumberedColumn( this.aColsTohide[i], false, this.getColumn(0)._sId )
-        this.hideNumberedColumn( this.aColsTohide[i], false, i )
+        this.hideNumberedColumn( this.aColsTohide[i], false, i );
     }
 
     // table must be 100% width ..
@@ -1136,4 +1132,4 @@ YAHOO.oxid.aoc.prototype.onDataReturnSetRows = function( sRequest, oResponse, oP
      setTimeout( function () { me.waitForFocus( 0 ); }, 100 );
 
      this.hideTableMessage();
-}
+};

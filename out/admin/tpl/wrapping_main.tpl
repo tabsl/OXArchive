@@ -47,6 +47,7 @@ function DeletePic( sField )
             </td>
             <td class="edittext" colspan="2">
             <input class="edittext" type="checkbox" name="editval[oxwrapping__oxactive]" value='1' [{if $edit->oxwrapping__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
             </td>
         </tr>
         <tr>
@@ -58,6 +59,7 @@ function DeletePic( sField )
                 <option value="WRAP" [{ if $edit->oxwrapping__oxtype->value == "WRAP" }]SELECTED[{/if}]>[{ oxmultilang ident="WRAPPING_MAIN_PRESENTPACKUNG" }]</option>
                 <option value="CARD" [{ if $edit->oxwrapping__oxtype->value == "CARD" }]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_CARD" }]</option>
             </select>
+            [{ oxinputhelp ident="HELP_GENERAL_TYPE" }]
             </td>
         </tr>
         <tr>
@@ -66,6 +68,7 @@ function DeletePic( sField )
             </td>
             <td class="edittext" colspan="2">
             <input type="text" class="editinput" size="25" maxlength="[{$edit->oxwrapping__oxname->fldmax_length}]" name="editval[oxwrapping__oxname]" value="[{$edit->oxwrapping__oxname->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_NAME" }]
             </td>
         </tr>
         <tr>
@@ -74,6 +77,7 @@ function DeletePic( sField )
             </td>
             <td class="edittext" colspan="2">
             <input type="text" class="editinput" size="10" maxlength="[{$edit->oxwrapping__oxprice->fldmax_length}]" name="editval[oxwrapping__oxprice]" value="[{$edit->oxwrapping__oxprice->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_PRICE" }]
             </td>
         </tr>
         <tr>
@@ -82,6 +86,7 @@ function DeletePic( sField )
             </td>
             <td class="edittext">
             <input id="oxpic" type="text" class="editinput" size="42" maxlength="[{$edit->oxwrapping__oxpic->fldmax_length}]" name="editval[oxwrapping__oxpic]" value="[{$edit->oxwrapping__oxpic->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_WRAPPING_MAIN_PICTURE" }]
             [{ if (!($edit->oxwrapping__oxpic->value=="nopic.jpg" || $edit->oxwrapping__oxpic->value=="" || $edit->oxwrapping__oxpic->value=="nopic_ico.jpg")) }]
             </td>
             <td class="edittext">
@@ -95,6 +100,7 @@ function DeletePic( sField )
             </td>
             <td class="edittext" colspan="2">
             <input class="editinput" name="myfile[WP@oxwrapping__oxpic]" size="26" type="file" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_WRAPPING_MAIN_PICUPLOAD" }]
             </td>
         </tr>
         [{if $oxid != "-1"}]

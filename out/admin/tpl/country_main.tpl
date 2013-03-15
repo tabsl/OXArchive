@@ -50,6 +50,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input class="edittext" type="checkbox" name="editval[oxcountry__oxactive]" value='1' [{if $edit->oxcountry__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
             </td>
         </tr>
         <tr>
@@ -58,6 +59,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="40" maxlength="[{$edit->oxcountry__oxtitle->fldmax_length}]" id="oLockTarget" name="editval[oxcountry__oxtitle]" value="[{$edit->oxcountry__oxtitle->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_TITLE" }]
             </td>
         </tr>
         <tr>
@@ -66,6 +68,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="40" maxlength="[{$edit->oxcountry__oxshortdesc->fldmax_length}]" name="editval[oxcountry__oxshortdesc]" value="[{$edit->oxcountry__oxshortdesc->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_SHORTDESC" }]
             </td>
         </tr>
         <tr>
@@ -74,6 +77,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="5" maxlength="[{$edit->oxcountry__oxisoalpha2->fldmax_length}]" name="editval[oxcountry__oxisoalpha2]" value="[{$edit->oxcountry__oxisoalpha2->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_COUNTRY_MAIN_ISO2" }]
             </td>
         </tr>
         <tr>
@@ -82,6 +86,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="5" maxlength="[{$edit->oxcountry__oxisoalpha3->fldmax_length}]" name="editval[oxcountry__oxisoalpha3]" value="[{$edit->oxcountry__oxisoalpha3->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_COUNTRY_MAIN_ISO3" }]
             </td>
         </tr>
         <tr>
@@ -90,6 +95,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="5" maxlength="[{$edit->oxcountry__oxunnum3->fldmax_length}]" name="editval[oxcountry__oxunnum3]" value="[{$edit->oxcountry__oxunnum3->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_COUNTRY_MAIN_ISOUNNUM" }]
             </td>
         </tr>
         <tr>
@@ -98,6 +104,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="5" maxlength="[{$edit->oxcountry__oxorder->fldmax_length}]" name="editval[oxcountry__oxorder]" value="[{$edit->oxcountry__oxorder->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_SORT" }]
             </td>
         </tr>
             [{if $blForeignCountry}]
@@ -109,9 +116,11 @@ window.onload = function ()
                 <fieldset style="margin: 5px 0 0 0;">
                     <input type="radio" name="editval[oxcountry__oxvatstatus]" value="0" [{if $edit->oxcountry__oxvatstatus->value == 0}]checked[{/if}] [{ $readonly }]>
                     [{ oxmultilang ident="COUNTRY_MAIN_OXVATSTATUS_0" }]
+                    [{ oxinputhelp ident="HELP_COUNTRY_MAIN_OXVATSTATUS_0" }]
                     <br />
                     <input type="radio" name="editval[oxcountry__oxvatstatus]" value="1" [{if $edit->oxcountry__oxvatstatus->value == 1}]checked[{/if}] [{ $readonly }]>
                     [{ oxmultilang ident="COUNTRY_MAIN_OXVATSTATUS_1" }]
+                    [{ oxinputhelp ident="HELP_COUNTRY_MAIN_OXVATSTATUS_1" }]
                 </fieldset>
                 </td>
             </tr>

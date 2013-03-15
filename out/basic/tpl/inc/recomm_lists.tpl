@@ -50,8 +50,8 @@
             <input type="hidden" name="cl" value="account_recommlist">
             <input type="hidden" name="fnc" value="editList">
             <input type="hidden" name="recommid" value="[{$recommlist->getId()}]">
-            <span class="btn"><input id="test_recomListDelete_[{$smarty.foreach.testRecList.iteration}]" type="submit" name="deleteList" class="btn" value="[{ oxmultilang ident="INC_RECOMM_LISTS_REMOVE" }]"></span>
-            <span class="btn"><input id="test_recomListEdit_[{$smarty.foreach.testRecList.iteration}]" type="submit" name="editList" class="btn" value="[{ oxmultilang ident="INC_RECOMM_LISTS_EDIT" }]"></span>
+            <span class="btn"><input id="test_recomListDelete_[{$smarty.foreach.testRecList.iteration}]" type="submit" name="deleteList" value="[{ oxmultilang ident="INC_RECOMM_LISTS_REMOVE" }]"></span>
+            <span class="btn"><input id="test_recomListEdit_[{$smarty.foreach.testRecList.iteration}]" type="submit" name="editList" value="[{ oxmultilang ident="INC_RECOMM_LISTS_EDIT" }]"></span>
         </div>
       </form>
     [{/if}]

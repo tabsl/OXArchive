@@ -30,7 +30,8 @@
                                                       [{/strip}]
                                                       [{assign var="sSep" value=","}]
                                                       [{ /foreach }] ],
-                                                    '[{ $oViewConf->getAjaxLink() }]cmpid=container2&container=attribute_category&oxid=[{ $oxid }]'
+                                                    '[{ $oViewConf->getAjaxLink() }]cmpid=container2&container=attribute_category&oxid=[{ $oxid }]',
+                                                    { selectionMode:'single' }
                                                     );
 
         YAHOO.oxid.container1.getDropAction = function()
@@ -43,20 +44,51 @@
             return 'fnc=removecatfromattr';
         }
 
-        YAHOO.oxid.container3 = null;
-        YAHOO.oxid.container2.subscribe( "dataReturnEvent", function( oParam ) {
-            if ( YAHOO.oxid.container3.oContextMenu ) {
-                YAHOO.oxid.container3.oContextMenu.destroy();
+        YAHOO.oxid.orderBtn = function(upId,downId,autoHide)
+        {
+            YAHOO.oxid.orderBtn.oUp    = new YAHOO.widget.Button(upId);
+            YAHOO.oxid.orderBtn.oDown  = new YAHOO.widget.Button(downId);
+
+            YAHOO.oxid.orderBtn.hide = function()
+            {
+                $D.setStyle(YAHOO.oxid.orderBtn.oUp  , 'visibility', 'hidden');
+                $D.setStyle(YAHOO.oxid.orderBtn.oDown, 'visibility', 'hidden');
+            };
+
+            YAHOO.oxid.orderBtn.show = function()
+            {
+                $D.setStyle(YAHOO.oxid.orderBtn.oUp  , 'visibility', 'visible');
+                $D.setStyle(YAHOO.oxid.orderBtn.oDown, 'visibility', 'visible');
+            };
+
+            YAHOO.oxid.orderBtn.addOn = function(onUp,onDown)
+            {
+                YAHOO.oxid.orderBtn.oUp.on("click", onUp);
+                YAHOO.oxid.orderBtn.oDown.on("click", onDown);
+            };
+
+            if(autoHide){
+                YAHOO.oxid.orderBtn.hide();
             }
-            YAHOO.oxid.container3 = null;
-            $('container3').innerHTML = '';
-            $D.setStyle( $('orderup'), 'visibility', 'hidden' );
-            $D.setStyle( $('orderdown'), 'visibility', 'hidden' );
+
+        };
+
+        YAHOO.oxid.container3 = null;
+
+        YAHOO.oxid.orderBtn('orderup','orderdown',true);
+
+        YAHOO.oxid.container2.subscribe( "dataReturnEvent", function( oParam ) {
+            resetSortingContainer();
         })
         //
         YAHOO.oxid.container2.subscribe( "rowSelectEvent", function( oParam )
         {
             var sOxid = oParam.record._oData._3;
+
+            if ( YAHOO.oxid.container3 != null && ( !YAHOO.oxid.container3._lastRecord || YAHOO.oxid.container3._lastRecord != oParam.record ) ) {
+                resetSortingContainer();
+            }
+
             if ( YAHOO.oxid.container3 == null) {
                 YAHOO.oxid.container3 = new YAHOO.oxid.aoc( 'container3',
                                                 [ [{ foreach from=$oxajax.container3 item=aItem key=iKey }]
@@ -74,17 +106,15 @@
                 YAHOO.oxid.container3._lastRecord = false;
                 YAHOO.oxid.container3.subscribe( "dataReturnEvent", function()
                 {
-                    $D.setStyle( $('orderup'), 'visibility', 'hidden' );
-                    $D.setStyle( $('orderdown'), 'visibility', 'hidden' );
+                    YAHOO.oxid.orderBtn.hide();
                 })
                 YAHOO.oxid.container3.subscribe( "rowClickEvent", function( oParam )
                 {
-                    var sVisibility = 'hidden';
                     if ( YAHOO.oxid.container3.getSelectedRows().length ) {
-                        sVisibility = '';
+                        YAHOO.oxid.orderBtn.show();
+                    }else{
+                        YAHOO.oxid.orderBtn.hide();
                     }
-                    $D.setStyle($('orderup'), 'visibility', sVisibility );
-                    $D.setStyle($('orderdown'), 'visibility', sVisibility );
                 })
                 YAHOO.oxid.container3.setOrderUp = function()
                 {
@@ -107,17 +137,21 @@
                     }
                 }
 
-                $E.addListener( $('orderup'), "click", YAHOO.oxid.container3.setOrderUp, $('orderup') );
-                $E.addListener( $('orderdown'), "click", YAHOO.oxid.container3.setOrderDown, $('orderdown') );
+                YAHOO.oxid.orderBtn.addOn(YAHOO.oxid.container3.setOrderUp,YAHOO.oxid.container3.setOrderDown);
                 YAHOO.oxid.container3._lastRecord = oParam.record;
-            } else if ( !YAHOO.oxid.container3._lastRecord || YAHOO.oxid.container3._lastRecord != oParam.record ) {
-                YAHOO.oxid.container3._lastRecord = oParam.record;
-                YAHOO.oxid.container3.modRequest = function( sRequest ) { return sRequest+'&oxid='+sOxid; }
-                YAHOO.oxid.container3.getPage( 0 );
             }
         })
     }
     $E.onDOMReady( initAoc );
+    function resetSortingContainer()
+    {
+        if ( YAHOO.oxid.container3.oContextMenu ) {
+            YAHOO.oxid.container3.oContextMenu.destroy();
+        }
+        YAHOO.oxid.container3 = null;
+        $('container3').innerHTML = '';
+        YAHOO.oxid.orderBtn.hide();
+    }
 </script>
 
     <table width="100%">
@@ -144,8 +178,8 @@
             </td>
         </tr>
         <tr>
-            <td><input type="button" class="edittext oxid-aoc-button" value="[{ oxmultilang ident="GENERAL_AJAX_ASSIGNALL" }]" id="container1_btn"></td>
-            <td><input type="button" class="edittext oxid-aoc-button" value="[{ oxmultilang ident="GENERAL_AJAX_UNASSIGNALL" }]" id="container2_btn"></td>
+            <td class="oxid-aoc-actions"><input type="button" value="[{ oxmultilang ident="GENERAL_AJAX_ASSIGNALL" }]" id="container1_btn"></td>
+            <td class="oxid-aoc-actions"><input type="button" value="[{ oxmultilang ident="GENERAL_AJAX_UNASSIGNALL" }]" id="container2_btn"></td>
             <td></td>
             <td></td>
         </tr>

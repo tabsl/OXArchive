@@ -1,3 +1,142 @@
+4.8.007 (2009-09-23)
+	- Infinite loop problem caused by nobr attribute was fixed.
+	
+4.8.006 (2009-09-23)
+	- Bug item #2864522 "No images if DOCUMENT_ROOT=='/'" was fixed.
+	- Support for text-indent CSS attribute was added.
+	- Method rollbackTransaction() was changed to support self-reassigment of previous object (check source code documentation).
+	- Support for the HTML "nobr" attribute was added to avoid splitting a table or a table row on two pages (i.e.: <tr nobr="true">...</tr>).
+
+4.8.005 (2009-09-17)
+	- A bug relative to multiple transformations and annotations was fixed.
+
+4.8.004 (2009-09-16)
+	- A bug on _putannotsrefs() method was fixed.
+
+4.8.003 (2009-09-15)
+	- Bug item #2858754 "Division by zero" was fixed.
+	- A bug relative to HTML list items was fixed.
+	- A bug relative to form fields on multiple pages was fixed.
+	- PolyLine() method was added (see example n. 12).
+	- Signature of Polygon() method was changed.
+
+4.8.002 (2009-09-12)
+	- A problem related to CID-0 fonts offset was fixed: if the $cw[1] entry on the CID-0 font file is not defined, then a CID keys offset is introduced.
+
+4.8.001 (2009-09-09)
+	- The appearance streams (AP) for anotations form fields was fixed (see examples n. 14 and 54).
+	- Radiobuttons were fixed.
+
+4.8.000 (2009-09-07)
+	- This version includes some support for Forms fields (see example n. 14) and XHTML forms (see example n. 54).
+	- The following methods were changed to work without JavaScript: TextField(), RadioButton(), ListBox(), ComboBox(), CheckBox(), Button().
+	- Support for Widget annotations was improved.
+	- Alignment of annotation objects was fixed (examples 36 and 41 were updated).
+	- addJavascriptObject() method was added.
+	- Signature of Image() method was changed.
+	- htmlcolors.php file was updated.
+
+--------------------------------------------------------------------------------
+
+4.7.003 (2009-09-03)
+	- Support for TCPDF methods on HTML was improved (see example n. 49).
+	
+4.7.002 (2009-09-02)
+	- Bug item #2848892 "writeHTML + table: Gaps between rows" was fixed.
+	- JavaScript support was fixed (see example n. 53).
+	
+4.7.001 (2009-08-30)
+	- The Polygon() and Arrow() methods were fixed and improved (see example n. 12).
+	
+4.7.000 (2009-08-29)
+	- This is a major release.
+	- Some procedures were internally optimized.
+	- The problem of mixed signature and annotations was fixed (example n. 52).
+	
+4.6.030 (2009-08-29)
+	- IMPORTANT: percentages on table cell widths are now relative to the full table width (as in standard HTML).
+	- Various minor bugs were fixed.
+	- Example n. 52 (digital signature) was updated.
+	
+4.6.029 (2009-08-26)
+	- PHP4 version was fixed.
+
+4.6.028 (2009-08-25)
+	- Signature algorithm was finally fixed (see example n. 52).
+
+4.6.027 (2009-08-24)
+	- TCPDF now supports unembedded TrueTypeUnicode Fonts (just comment the $file entry on the fonts' php file.
+
+4.6.026 (2009-08-21)
+	- Bug #2841693 "Problem with MultiCell and ishtml and justification" was fixed.
+	- Signature functions were improved but not yet fixed (tcpdf.crt and example n. 52 were updated).
+
+4.6.025 (2009-08-17)
+	- Carriage returns (\r) were removed from source code.
+	- Problem related to set_magic_quotes_runtime() depracated was fixed.
+
+4.6.024 (2009-08-07)
+	- Bug item #2833556 "justification using other units than mm" was fixed.
+	- Documentation was fixed/updated.
+
+4.6.023 (2009-08-02)
+	- Bug item #2830537 "MirrorH can show mask for transparent PNGs" was fixed.
+
+4.6.022 (2009-07-24)
+	- A bug relative to single line printing when using WriteHTMLCell() was fixed.
+	- Signature support were improved but is still experimental.
+	- Fonts Free and Dejavu were updated to latest versions.
+
+4.6.021 (2009-07-20)
+	- Bug item #2824015 "XHTML Ampersand &amp; in hyperlink bug" was fixed.
+	- Bug item #2824036 "Image as hyperlink in table, text displaced at page break" was fixed.
+	- Links alignment on justified text was fixed.
+	- Unicode "\u" modifier was added to re_spaces variable by default.
+	
+4.6.020 (2009-07-16)
+	- Bug item #2821921 "issue in example 18" was fixed.
+	- Signature of SetRTL() method was changed.
+	
+4.6.019 (2009-07-13)
+	- Bug item #2820703 "xref table broken" was fixed.
+	
+4.6.018 (2009-07-10)
+	- Bug item #2819319 "Text over text" was fixed.
+	- Method Arrow() was added to print graphic arrows (example 12 was updated).
+	
+4.6.017 (2009-07-05)
+	- Bug item #2816079 "Example 48 not working" was fixed.
+	- The signature of the checkPageBreak() was changed. The parameter $addpage was added to turn off the automatic page creation.
+	
+4.6.016 (2009-06-16)
+	- Method setSpacesRE() was added to set the regular expression used for detecting withespaces or word separators. If you are using chinese, try: setSpacesRE('/[\s\p{Z}\p{Lo}]/');, otherwise you can use setSpacesRE('/[\s\p{Z}]/');
+	- The method _putinfo() now automatically fills the metadata with '?' in case of empty string.
+	
+4.6.015 (2009-06-11)
+	- Bug #2804667 "word wrap bug" was fixed.
+
+4.6.014 (2009-06-04)
+	- Bug #2800931 "Table thead tag bug" was fixed.
+	- A bug related to <pre> tag was fixed.
+
+4.6.013 (2009-05-28)
+	- List bullets position was fixed for RTL languages.
+
+4.6.012 (2009-05-23)
+	- setUserRights() method doesn't work anymore unless you call the setSignature() method with the Adobe private key!
+
+4.6.011 (2009-05-18)
+	- Signature of the Image() method was changed to include the new $fitbox parameter (see source code documentation).
+
+4.6.010 (2009-05-17)
+	- Image() method was improved: now is possible to specify the maximum dimensions for a constraint box defined by $w and $h parameters, and setting the $resize parameter to null.
+	- <tcpdf> tag indent problem was fixed.
+	- $y parameter was added to checkPageBreak() method.
+	- Bug n. 2791773 "writeHTML" was fixed.
+
+4.6.009 (2009-05-13)
+	- xref table for embedded files was fixed.
+
 4.6.008 (2009-05-07)
 	- setSignature() method was improved (but is still experimental).
 	- Example n. 52 was added.
@@ -990,3 +1129,4 @@
 	- Bitstream Vera Fonts were added (http://www.bitstream.com/font_rendering/products/dev_fonts/vera.html).
 	- Now the AddFont and SetFont functions returns the basic font if the styled version do not exist.
 
+EOF ----------------------------------------------------------------------------

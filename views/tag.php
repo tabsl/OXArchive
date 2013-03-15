@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: tag.php 19631 2009-06-05 12:21:07Z arvydas $
+ * $Id: tag.php 23400 2009-10-20 14:38:13Z arvydas $
  */
 
 /**
@@ -71,20 +71,15 @@ class Tag extends aList
      *
      * @var int
      */
-    protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXFOLLOW;
+    protected $_iViewIndexState = VIEW_INDEXSTATE_INDEX;
 
     /**
-     * Unsets SEO category, initiates tag view and calls parent::init();
+     * Initiates tag view and calls parent::init();
      *
      * @return null
      */
     public function init()
     {
-        if ( oxUtils::getInstance()->seoIsActive() ) {
-            // cleaning category id tracked by SEO
-            $this->setSessionCategoryId( null );
-        }
-
         $this->_sTag = oxConfig::getParameter("searchtag", 1);
         return parent::init();
     }
@@ -297,6 +292,8 @@ class Tag extends aList
     /**
      * Template variable getter. Returns template location
      *
+     * @deprecated use tag::getTreePath() and adjust template
+     *
      * @return string
      */
     public function getTemplateLocation()
@@ -310,6 +307,27 @@ class Tag extends aList
             }
         }
         return $this->_sTemplateLocation;
+    }
+
+    /**
+     * Template variable getter. Returns category path array
+     *
+     * @return array
+     */
+    public function getTreePath()
+    {
+        if ( ( $sTag = $this->getTag() ) ) {
+            $oStr = getStr();
+
+            $aPath[0] = oxNew( "oxcategory" );
+            $aPath[0]->setLink( false );
+            $aPath[0]->oxcategories__oxtitle = new oxField( oxLang::getInstance()->translateString('TAGS') );
+
+            $aPath[1] = oxNew( "oxcategory" );
+            $aPath[1]->setLink( false );
+            $aPath[1]->oxcategories__oxtitle = new oxField( $oStr->htmlspecialchars( $oStr->ucfirst( $sTag ) ) );
+            return $aPath;
+        }
     }
 
     /**
@@ -349,5 +367,19 @@ class Tag extends aList
     protected function _prepareMetaDescription( $sMeta, $iLength = 1024, $blDescTag = false )
     {
         return parent::_collectMetaDescription( $sMeta, $iLength, $blDescTag );
+    }
+
+    /**
+     * Returns view canonical url
+     *
+     * @return string
+     */
+    public function getCanonicalUrl()
+    {
+        if ( ( $iPage = $this->getActPage() ) ) {
+            return $this->_addPageNrParam( $this->generatePageNavigationUrl(), $iPage );
+        } elseif ( ( $sTag = $this->getTag() ) ) {
+            return oxSeoEncoderTag::getInstance()->getTagUrl( $sTag );
+        }
     }
 }

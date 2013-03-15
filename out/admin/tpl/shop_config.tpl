@@ -47,6 +47,7 @@ function _groupExp(el) {
                         <option value="[{$oCountry->oxcountry__oxid->value}]"[{if $oCountry->selected}] selected[{/if}]>[{$oCountry->oxcountry__oxtitle->value}]</option>
                         [{/foreach}]
                     </select>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_INLANDCUSTOMERS" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_INLANDCUSTOMERS" }]
@@ -64,6 +65,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blAutoSearchOnCat] value=false>
                     <input type=checkbox name=confbools[blAutoSearchOnCat] value=true  [{if ($confbools.blAutoSearchOnCat)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_AUTOSEARCHONCAT" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_AUTOSEARCHONCAT" }]
@@ -74,6 +76,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <textarea class="txtfield" name=confarrs[aSearchCols] [{ $readonly}]>[{$confarrs.aSearchCols}]</textarea>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_SEARCHFIELDS" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_SEARCHFIELDS" }]
@@ -85,6 +88,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blSearchUseAND] value=false>
                     <input type=checkbox name=confbools[blSearchUseAND] value=true  [{if ($confbools.blSearchUseAND)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_SEARCHUSEAND" }]
@@ -102,6 +106,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blUseStock] value=false>
                     <input type=checkbox name=confbools[blUseStock] value=true  [{if ($confbools.blUseStock)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_USESTOCK" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_USESTOCK" }]
@@ -113,6 +118,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blAllowNegativeStock] value=false>
                     <input type=checkbox name=confbools[blAllowNegativeStock] value=true  [{if ($confbools.blAllowNegativeStock)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_USENEGATIVESTOCK" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_USENEGATIVESTOCK" }]
@@ -123,6 +129,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
             <input type=text class="txt" name=confstrs[sStockWarningLimit] value="[{$confstrs.sStockWarningLimit}]" [{ $readonly}]>
+            [{ oxinputhelp ident="HELP_SHOP_CONFIG_STOCKWARNINGLIMIT" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_STOCKWARNINGLIMIT" }]
@@ -134,6 +141,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blStockOnDefaultMessage] value=false>
                     <input type=checkbox name=confbools[blStockOnDefaultMessage] value=true  [{if ($confbools.blStockOnDefaultMessage)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_STOCKONDEFAULTMESSAGE" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_STOCKONDEFAULTMESSAGE" }]
@@ -145,6 +153,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blStockOffDefaultMessage] value=false>
                     <input type=checkbox name=confbools[blStockOffDefaultMessage] value=true  [{if ($confbools.blStockOffDefaultMessage)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_STOCKOFFDEFAULTMESSAGE" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_STOCKOFFDEFAULTMESSAGE" }]
@@ -161,6 +170,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <textarea class="txtfield" name=confarrs[aNrofCatArticles] [{ $readonly}]>[{$confarrs.aNrofCatArticles}]</textarea>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_NROFCATARTICLES" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_NROFCATARTICLES" }]
@@ -171,6 +181,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[iNrofSimilarArticles] value="[{$confstrs.iNrofSimilarArticles}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_NUMBEROFSIMILARARTICLES" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_NUMBEROFSIMILARARTICLES" }]
@@ -181,6 +192,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[iNrofCustomerWhoArticles] value="[{$confstrs.iNrofCustomerWhoArticles}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_NROFCUSTOMERWHOARTICLES" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_NROFCUSTOMERWHOARTICLES" }]
@@ -191,6 +203,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[iNrofNewcomerArticles] value="[{$confstrs.iNrofNewcomerArticles}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_NROFNEWCOMERARTICLES" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_NROFNEWCOMERARTICLES" }]
@@ -201,6 +214,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[iNrofCrossellArticles] value="[{$confstrs.iNrofCrossellArticles}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_NUMBEROFCROSSSELLARTICLES" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_NUMBEROFCROSSSELLARTICLES" }]
@@ -212,6 +226,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blShowSorting] value=false>
                     <input type=checkbox name=confbools[blShowSorting] value=true  [{if ($confbools.blShowSorting)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_SORTITEMSLIST" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_SORTITEMSLIST" }]
@@ -222,6 +237,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <textarea class="txtfield" name=confarrs[aSortCols] [{ $readonly}]>[{$confarrs.aSortCols}]</textarea>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_SORTFIELDS" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_SORTFIELDS" }]
@@ -233,6 +249,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blOverrideZeroABCPrices] value=false>
                     <input type=checkbox name=confbools[blOverrideZeroABCPrices] value=true  [{if ($confbools.blOverrideZeroABCPrices)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_OVERRIDEZEROABCPRICES" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_OVERRIDEZEROABCPRICES" }]
@@ -244,6 +261,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blWarnOnSameArtNums] value=false>
                     <input type=checkbox name=confbools[blWarnOnSameArtNums] value=true [{if ($confbools.blWarnOnSameArtNums)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_WARNONSAMEARTNUMS" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_WARNONSAMEARTNUMS" }]
@@ -255,6 +273,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blNewArtByInsert] value=false>
                     <input type=checkbox name=confbools[blNewArtByInsert] value=true  [{if ($confbools.blNewArtByInsert)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_NEWARTBYINSERT" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_NEWARTBYINSERT" }]
@@ -266,6 +285,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blDisableDublArtOnCopy] value=false>
                     <input type=checkbox name=confbools[blDisableDublArtOnCopy] value=true [{if ($confbools.blDisableDublArtOnCopy)}]checked[{/if}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_DISABLEARTDUBLICATES" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_DISABLEARTDUBLICATES" }]
@@ -282,6 +302,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[sMidlleCustPrice] value="[{$confstrs.sMidlleCustPrice}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_MIDLLECUSTOMERPRICE" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_MIDLLECUSTOMERPRICE" }]
@@ -292,6 +313,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[sLargeCustPrice] value="[{$confstrs.sLargeCustPrice}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_LARGECUSTOMERPRICE" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_LARGECUSTOMERPRICE" }]
@@ -303,6 +325,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blAllowUnevenAmounts] value=false>
                     <input type=checkbox name=confbools[blAllowUnevenAmounts] value=true  [{if ($confbools.blAllowUnevenAmounts)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_ALLOWUNEVENAMOUNTS" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_ALLOWUNEVENAMOUNTS" }]
@@ -313,6 +336,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[iMinOrderPrice] value="[{$confstrs.iMinOrderPrice}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_MINORDERPRICE" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_MINORDERPRICE" }]
@@ -324,6 +348,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blShowBirthdayFields] value=false>
                     <input type=checkbox name=confbools[blShowBirthdayFields] value=true  [{if ($confbools.blShowBirthdayFields)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWBIRTHDAYFIELDS" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_SHOWBIRTHDAYFIELDS" }]
@@ -335,6 +360,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blShowOrderButtonOnTop] value=false>
                     <input type=checkbox name=confbools[blShowOrderButtonOnTop] value=true  [{if ($confbools.blShowOrderButtonOnTop)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWORDERBUTTONONTHETOP" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_SHOWORDERBUTTONONTHETOP" }]
@@ -346,6 +372,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blConfirmAGB] value=false>
                     <input type=checkbox name=confbools[blConfirmAGB] value=true  [{if ($confbools.blConfirmAGB)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_CONFIRMAGB" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_CONFIRMAGB" }]
@@ -357,6 +384,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blStoreCreditCardInfo] value=false>
                     <input type=checkbox name=confbools[blStoreCreditCardInfo] value=true  [{if ($confbools.blStoreCreditCardInfo)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_STORECREDITCARDINFO" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_STORECREDITCARDINFO" }]<br>[{ oxmultilang ident="SHOP_CONFIG_ATTENTION" }]
@@ -374,6 +402,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blCalcVATForDelivery] value=false>
                     <input type=checkbox name=confbools[blCalcVATForDelivery] value=true  [{if ($confbools.blCalcVATForDelivery)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_CALCULATEVATFORDELIVERY" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_CALCULATEVATFORDELIVERY" }]
@@ -385,6 +414,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blDeliveryVatOnTop] value=false>
                     <input type=checkbox name=confbools[blDeliveryVatOnTop] value=true  [{if ($confbools.blDeliveryVatOnTop)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_CALCDELVATONTOP" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_CALCDELVATONTOP" }]
@@ -396,6 +426,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blCalcVATForPayCharge] value=false>
                     <input type=checkbox name=confbools[blCalcVATForPayCharge] value=true  [{if ($confbools.blCalcVATForPayCharge)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_CALCULATEVATOFORPAYCHARGE" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_CALCULATEVATOFORPAYCHARGE" }]
@@ -406,6 +437,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" style="width:70" name=confstrs[dDefaultVAT] value="[{$confstrs.dDefaultVAT}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_DEFAULTVAT" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_DEFAULTVAT" }]
@@ -417,6 +449,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blCalcVatForWrapping] value=false>
                     <input type=checkbox name=confbools[blCalcVatForWrapping] value=true  [{if ($confbools.blCalcVatForWrapping)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_CALCULATEVATFORWRAPPING" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_CALCULATEVATFORWRAPPING" }]
@@ -433,6 +466,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[iUseGDVersion] value="[{$confstrs.iUseGDVersion}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_USEGDVERSION" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_USEGDVERSION" }]
@@ -443,6 +477,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[sIconsize] value="[{$confstrs.sIconsize}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_ICONSIZE" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_ICONSIZE" }]
@@ -454,6 +489,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blAutoIcons] value=false>
                     <input type=checkbox name=confbools[blAutoIcons] value=true  [{if ($confbools.blAutoIcons)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_AUTOICONS" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_AUTOICONS" }]
@@ -464,6 +500,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[sThumbnailsize] value="[{$confstrs.sThumbnailsize}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_THUMBNAILSIZE" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_THUMBNAILSIZE" }]
@@ -474,6 +511,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <textarea class="txtfield" name=confaarrs[aDetailImageSizes] [{ $readonly}]>[{$confaarrs.aDetailImageSizes}]</textarea>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_DETAILIMAGESIZE" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_DETAILIMAGESIZE" }]
@@ -484,6 +522,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <textarea class="txtfield" name=confaarrs[aZoomImageSizes] [{ $readonly}]>[{$confaarrs.aZoomImageSizes}]</textarea>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_ZOOMIMAGESIZE" }]
                 </dt>
                 <dd>
                 [{ oxmultilang ident="SHOP_CONFIG_ZOOMIMAGESIZE" }]
@@ -494,6 +533,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[sCatThumbnailsize] value="[{$confstrs.sCatThumbnailsize}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_CATEGORYTHUMBNAILSIZE" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_CATEGORYTHUMBNAILSIZE" }]
@@ -511,6 +551,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blTopNaviLayout] value=false>
                     <input type=checkbox name=confbools[blTopNaviLayout] value=true  [{if ($confbools.blTopNaviLayout)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_TOPNAVILAYOUT" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_TOPNAVILAYOUT" }]
@@ -521,6 +562,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type="button" value="[{if isset($defcat) && isset($defcat->oxcategories__oxtitle)}][{$defcat->oxcategories__oxtitle->value}][{else}]---[{/if}]" onclick="JavaScript:showDialog('?cl=shop_config&aoc=1&oxid=[{$oxid|escape:'url'}]');">
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_TOPNAVICATCOUNT" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_ACTIVECATEGORYBYSTART" }]
@@ -531,6 +573,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" style="width:70" name=confstrs[iTopNaviCatCount] value="[{$confstrs.iTopNaviCatCount}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_ACTIVECATEGORYBYSTART" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_TOPNAVICATCOUNT" }]
@@ -541,6 +584,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[sCntOfNewsLoaded] value="[{$confstrs.sCntOfNewsLoaded}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_CNTOFNEWS" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_CNTOFNEWS" }]
@@ -557,6 +601,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <textarea class="txtfield" name=confaarrs[aCMSfolder] [{ $readonly}]>[{$confaarrs.aCMSfolder}]</textarea>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_CMSFOLDER" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_CMSFOLDER" }]
@@ -568,6 +613,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blOrderOptInEmail] value=false>
                     <input type=checkbox name=confbools[blOrderOptInEmail] value=true  [{if ($confbools.blOrderOptInEmail)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_ORDEROPTINEMAIL" }]
                 </dt>
                 <dd>
                    [{ oxmultilang ident="SHOP_CONFIG_ORDEROPTINEMAIL" }]
@@ -578,6 +624,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <textarea class="txtfield" name=confaarrs[aOrderfolder] [{ $readonly}]>[{$confaarrs.aOrderfolder}]</textarea>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_ORDERFOLDER" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_ORDERFOLDER" }]
@@ -592,6 +639,7 @@ function _groupExp(el) {
                         <option value="EUR" [{if $confstrs.sLocalDateFormat == "EUR"}]selected[{/if}]>EUR: DD.MM.YYYY</option>
                         <option value="USA" [{if $confstrs.sLocalDateFormat == "USA"}]selected[{/if}]>USA: MM/DD/YYYY</option>
                     </select>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_DATEFORMAT" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_DATEFORMAT" }]
@@ -606,6 +654,7 @@ function _groupExp(el) {
                         <option value="EUR" [{if $confstrs.sLocalTimeFormat == "EUR"}]selected[{/if}]>EUR: HH.MM.SS</option>
                         <option value="USA" [{if $confstrs.sLocalTimeFormat == "USA"}]selected[{/if}]>USA: HH:MM:SS AM (PM)</option>
                     </select>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_TIMEFORMAT" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_TIMEFORMAT" }]
@@ -617,6 +666,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name="confbools[blLoadDynContents]" value="false">
                     <input type=checkbox name="confbools[blLoadDynContents]" value="true"  [{if ($confbools.blLoadDynContents)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_LOAD_DYNAMIC_PAGES" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_LOAD_DYNAMIC_PAGES" }]
@@ -643,6 +693,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <textarea class="txtfield" name=confarrs[aMustFillFields] [{ $readonly}]>[{$confarrs.aMustFillFields}]</textarea>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_MUSTFILLFIELDS" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_MUSTFILLFIELDS" }]
@@ -653,6 +704,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[iMaxGBEntriesPerDay] value="[{$confstrs.iMaxGBEntriesPerDay}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_MAXGBENTRIESPERDAY" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_MAXGBENTRIESPERDAY" }]
@@ -663,6 +715,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <textarea class="txtfield" name=confarrs[aCurrencies] [{ $readonly}]>[{$confarrs.aCurrencies}]</textarea>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_SETORDELETECURRENCY" }]
                 </dt>
                 <dd>
                   [{ oxmultilang ident="SHOP_CONFIG_SETORDELETECURRENCY" }]<br>
@@ -675,6 +728,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blExclNonMaterialFromDelivery] value=false>
                     <input type=checkbox name=confbools[blExclNonMaterialFromDelivery] value=true  [{if ($confbools.blExclNonMaterialFromDelivery)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_EXCLUDENONMATERIALPRODUCTS" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_EXCLUDENONMATERIALPRODUCTS" }]
@@ -686,6 +740,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blBidirectCross] value=false>
                     <input type=checkbox name=confbools[blBidirectCross] value=true  [{if ($confbools.blBidirectCross)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_BIDIRECTCROSS" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_BIDIRECTCROSS" }]
@@ -696,6 +751,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[iRatingLogsTimeout] value="[{$confstrs.iRatingLogsTimeout}]" [{ $readonly }]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_DELETERATINGLOGS" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_DELETERATINGLOGS" }]
@@ -706,6 +762,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[iRssItemsCount] value="[{$confstrs.iRssItemsCount}]" [{ $readonly }]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_RSSITEMSCOUNT" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_RSSITEMSCOUNT" }]
@@ -735,6 +792,7 @@ function _groupExp(el) {
                         <option value="oxrss_recommlistarts">[{ oxmultilang ident="SHOP_CONFIG_RSSRECOMMLISTARTS" }]</option>
                       [{/if}]
                     </select>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_RSSSELECTED" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_RSSSELECTED" }]
@@ -746,6 +804,7 @@ function _groupExp(el) {
                 <dt>
                     <input type=hidden name=confbools[blCalculateDelCostIfNotLoggedIn] value=false>
                     <input type=checkbox name=confbools[blCalculateDelCostIfNotLoggedIn] value=true  [{if ($confbools.blCalculateDelCostIfNotLoggedIn)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_DELIVERYCOSTS" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_DELIVERYCOSTS" }]
@@ -757,6 +816,7 @@ function _groupExp(el) {
                 <dt>
             <input type=hidden name=confbools[blEnterNetPrice] value=false>
             <input type=checkbox name=confbools[blEnterNetPrice] value=true  [{if ($confbools.blEnterNetPrice)}]checked[{/if}] [{ $readonly}]>
+            [{ oxinputhelp ident="HELP_SHOP_CONFIG_ENTERNETPRICE" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_ENTERNETPRICE" }]
@@ -777,6 +837,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[sCSVSign] value="[{$confstrs.sCSVSign}]">
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_CSVSEPARATOR" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_CSVSEPARATOR" }]
@@ -787,6 +848,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[sDecimalSeparator] value="[{$confstrs.sDecimalSeparator}]">
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_CSVDECIMALSEPARATOR" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_CSVDECIMALSEPARATOR" }]
@@ -797,6 +859,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[iExportNrofLines] value="[{$confstrs.iExportNrofLines}]">
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_EXPORTNUMBEROFLINES" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_EXPORTNUMBEROFLINES" }]
@@ -807,6 +870,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[iExportTickerRefresh] value="[{$confstrs.iExportTickerRefresh}]">
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_EXPORTTICKERREFRESH" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_EXPORTTICKERREFRESH" }]
@@ -817,6 +881,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[iImportNrofLines] value="[{$confstrs.iImportNrofLines}]">
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_IMPORTNUMBEROFLINES" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_IMPORTNUMBEROFLINES" }]
@@ -827,6 +892,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[iImportTickerRefresh] value="[{$confstrs.iImportTickerRefresh}]">
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_IMPORTTICKERREFRESH" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_IMPORTTICKERREFRESH" }]
@@ -837,6 +903,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <input type=text class="txt" name=confstrs[iCntofMails] value="[{$confstrs.iCntofMails}]">
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_NUMBEROFEMAILSPERTICK" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_NUMBEROFEMAILSPERTICK" }]
@@ -847,6 +914,7 @@ function _groupExp(el) {
             <dl>
                 <dt>
                     <textarea class="txtfield" name=confaarrs[aLexwareVAT] [{ $readonly}]>[{$confaarrs.aLexwareVAT}]</textarea>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_MWSTSETTING" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_MWSTSETTING" }]

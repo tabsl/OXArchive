@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: category_main.inc.php 22508 2009-09-22 09:57:39Z vilma $
+ * $Id: category_main.inc.php 23547 2009-10-23 12:22:59Z arvydas $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -36,7 +36,7 @@ $aColumns = array( 'container1' => array(    // field , table,         visible, 
                                         array( 'oxean',    'oxarticles', 1, 0, 0 ),
                                         array( 'oxprice',  'oxarticles', 0, 0, 0 ),
                                         array( 'oxstock',  'oxarticles', 0, 0, 0 ),
-                                        array( 'oxid',     'oxobject2category', 0, 0, 1 )
+                                        array( 'oxid',     'oxarticles', 0, 0, 1 )
                                         )
                     );
 
@@ -72,10 +72,10 @@ class ajaxComponent extends ajaxListComponent
         } else {
 
             // copied from oxadminview (not sure if this works)
-            $sJoin = $myConfig->getConfigParam( 'blVariantsSelection' )? ' ('.$sArticleTable.'.oxparentid='.$sO2CView.'.oxobjectid or '.$sArticleTable.'.oxid='.$sO2CView.'.oxobjectid ) ' : ' '.$sArticleTable.'.oxid='.$sO2CView.'.oxobjectid ';
+            $sJoin = " {$sArticleTable}.oxid={$sO2CView}.oxobjectid ";
 
             $sSubSelect = '';
-            if ( $sSynchOxid && $sOxid != $sSynchOxid) {
+            if ( $sSynchOxid && $sOxid != $sSynchOxid ) {
 
                 $sSubSelect  = ' and '.$sArticleTable.'.oxid not in ( ';
                 $sSubSelect .= "select $sArticleTable.oxid from $sO2CView left join $sArticleTable ";
@@ -92,19 +92,22 @@ class ajaxComponent extends ajaxListComponent
     }
 
     /**
-     * Return fully formatted query for data loading
+     * Adds filter SQL to current query
      *
-     * @param string $sQ part of initial query
+     * @param string $sQ query to add filter condition
      *
      * @return string
      */
-    protected function _getDataQuery( $sQ )
+    protected function _addFilter( $sQ )
     {
         $sArtTable = getViewName('oxarticles');
-        $sQ = parent::_getDataQuery( $sQ );
+        $sQ = parent::_addFilter( $sQ );
 
         // display variants or not ?
-        $sQ .= $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ? ' group by '.$sArtTable.'.oxid ' : '';
+        if ( !$this->getConfig()->getConfigParam( 'blVariantsSelection' ) ) {
+            $sQ .=  " and {$sArtTable}.oxparentid = '' ";
+        }
+
         return $sQ;
     }
 
@@ -118,19 +121,25 @@ class ajaxComponent extends ajaxListComponent
     {
         $myConfig = $this->getConfig();
 
-        $aArticles = $this->_getActionIds( 'oxarticles.oxid' );
+        $aArticles  = $this->_getActionIds( 'oxarticles.oxid' );
         $sCategoryID = oxConfig::getParameter( 'synchoxid');
         $sShopID     = $myConfig->getShopId();
+        $oDb         = oxDb::getDb();
+        $sArticleTable = getViewName( 'oxarticles' );
 
         // adding
         if ( oxConfig::getParameter( 'all' ) ) {
-            $sArticleTable = getViewName( 'oxarticles' );
             $aArticles = $this->_getAll( $this->_addFilter( "select $sArticleTable.oxid ".$this->_getQuery() ) );
+        } else {
+            // appending variants
+            $aVariants = $this->_getAll( "select $sArticleTable.oxid from $sArticleTable where $sArticleTable.oxparentid in ( " . implode( ", ", oxDb::getInstance()->quoteArray( $aArticles ) ) . ")" );
+            if ( count( $aVariants ) ) {
+                $aArticles = array_merge( $aArticles, $aVariants );
+            }
         }
 
         if ( is_array($aArticles)) {
 
-            $oDb = oxDb::getDb();
 
             $sO2CView = getViewName('oxobject2category');
 
@@ -164,7 +173,7 @@ class ajaxComponent extends ajaxListComponent
      */
     public function removearticle()
     {
-        $aArticles = $this->_getActionIds( 'oxobject2category.oxid' );
+        $aArticles = $this->_getActionIds( 'oxarticles.oxid' );
         $sCategoryID = oxConfig::getParameter( 'oxid');
         $sShopID     = $this->getConfig()->getShopId();
         $oDb = oxDb::getDb();
@@ -177,9 +186,12 @@ class ajaxComponent extends ajaxListComponent
             $oDb->Execute( $sQ );
 
         } elseif ( is_array( $aArticles ) && count( $aArticles ) ) {
-
-            $sQ = "delete from oxobject2category where oxid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aArticles ) ) . ")";
-            $oDb->Execute( $sQ );
+            if ( $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ) {
+                $sQ = "delete from oxobject2category where oxcatnid=".$oDb->quote( $sCategoryID )." and oxobjectid in ( select oxid from oxarticles where oxparentid in (" . implode( ", ", oxDb::getInstance()->quoteArray( $aArticles ) ) . ") )";
+                $oDb->execute( $sQ );
+            }
+            $sQ = "delete from oxobject2category where oxcatnid=".$oDb->quote( $sCategoryID )." and oxobjectid in ( " . implode( ", ", oxDb::getInstance()->quoteArray( $aArticles ) ) . ")";
+            $oDb->execute( $sQ );
 
         }
 

@@ -3,8 +3,8 @@
 
     <theme id="ce" title="Default">
         <color index="0" color="#ffffff" />
-        <color index="1" color="#efefef" />
-        <color index="2" color="#5e5e5e" />
+        <color index="1" color="#e2e2e2" />
+        <color index="2" color="#555555" />
         <color index="3" color="#000000" />
         <color index="4" color="#fc6634" />
     </theme>

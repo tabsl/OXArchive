@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: report_base.php 22452 2009-09-21 08:28:12Z arvydas $
+ * $Id: report_base.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**
@@ -90,6 +90,22 @@ if ( !class_exists( 'report_base' ) ) {
         public function getSmarty()
         {
             return $this->_oSmarty;
+        }
+
+        /**
+         * Returns array with week range points
+         *
+         * @return array
+         */
+        public function getWeekRange()
+        {
+            $myConfig = $this->getConfig();
+
+            // initializing one week before current..
+            $iFrom = oxUtilsDate::getInstance()->getWeekNumber($myConfig->getConfigParam( 'iFirstWeekDay' ), strtotime( oxConfig::getParameter( "time_from") ) );
+            $iTo   = oxUtilsDate::getInstance()->getWeekNumber($myConfig->getConfigParam( 'iFirstWeekDay' ), strtotime( oxConfig::getParameter( "time_to") ) );
+
+            return array( $iFrom - 1, $iTo + 1 );
         }
     }
 }

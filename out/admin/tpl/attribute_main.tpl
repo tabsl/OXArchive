@@ -31,6 +31,7 @@
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="20" maxlength="[{$edit->oxattribute__oxtitle->fldmax_length}]" name="editval[oxattribute__oxtitle]" value="[{$edit->oxattribute__oxtitle->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_NAME" }]
             </td>
         </tr>
         <tr>
@@ -39,6 +40,7 @@
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="20" maxlength="[{$edit->oxattribute__oxpos->fldmax_length}]" name="editval[oxattribute__oxpos]" value="[{$edit->oxattribute__oxpos->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_ATTRIBUTE_MAIN_SORTING" }]
             </td>
         </tr>
         <tr>

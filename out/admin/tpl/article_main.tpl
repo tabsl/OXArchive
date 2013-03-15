@@ -86,6 +86,7 @@ window.onload = function ()
                   </td>
                   <td class="edittext">
                     <input class="edittext" type="checkbox" name="editval[oxarticles__oxactive]" value='1' [{if $edit->oxarticles__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
+                    [{ oxinputhelp ident="HELP_ARTICLE_MAIN_ACTIVE" }]
                   </td>
                 </tr>
 
@@ -97,6 +98,7 @@ window.onload = function ()
                   <td class="edittext">
                     [{ oxmultilang ident="ARTICLE_MAIN_ACTIVEFROM" }]&nbsp;<input type="text" class="editinput" size="27" name="editval[oxarticles__oxactivefrom]" value="[{$edit->oxarticles__oxactivefrom|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]><br>
                     [{ oxmultilang ident="ARTICLE_MAIN_ACTIVETO" }]&nbsp;&nbsp;<input type="text" class="editinput" size="27" name="editval[oxarticles__oxactiveto]" value="[{$edit->oxarticles__oxactiveto|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]>
+                    [{ oxinputhelp ident="HELP_ARTICLE_MAIN_ACTIVFROMTILL" }]
                   </td>
                 </tr>
                 [{ /if }]
@@ -107,6 +109,7 @@ window.onload = function ()
                   </td>
                   <td class="edittext">
                     <input type="text" class="editinput" size="32" maxlength="[{$edit->oxarticles__oxtitle->fldmax_length}]" id="oLockTarget" name="editval[oxarticles__oxtitle]" value="[{$edit->oxarticles__oxtitle->value}]">
+                    [{ oxinputhelp ident="HELP_ARTICLE_MAIN_TITLE" }]
                   </td>
                 </tr>
                 <tr>
@@ -115,6 +118,7 @@ window.onload = function ()
                   </td>
                   <td class="edittext">
                     <input type="text" class="editinput" size="32" maxlength="[{$edit->oxarticles__oxartnum->fldmax_length}]" name="editval[oxarticles__oxartnum]" value="[{$edit->oxarticles__oxartnum->value}]" [{ $readonly }]>
+                    [{ oxinputhelp ident="HELP_ARTICLE_MAIN_ARTNUM" }]
                   </td>
                 </tr>
 
@@ -124,6 +128,7 @@ window.onload = function ()
                   </td>
                   <td class="edittext">
                     <input type="text" class="editinput" size="32" maxlength="[{$edit->oxarticles__oxean->fldmax_length}]" name="editval[oxarticles__oxean]" value="[{$edit->oxarticles__oxean->value}]">
+                    [{ oxinputhelp ident="HELP_ARTICLE_MAIN_EAN" }]
                   </td>
                 </tr>
 
@@ -133,6 +138,7 @@ window.onload = function ()
                   </td>
                   <td class="edittext">
                     <input type="text" class="editinput" size="32" maxlength="[{$edit->oxarticles__oxdistean->fldmax_length}]" name="editval[oxarticles__oxdistean]" value="[{$edit->oxarticles__oxdistean->value}]">
+                    [{ oxinputhelp ident="HELP_ARTICLE_MAIN_DISTEAN" }]
                   </td>
                 </tr>
               <tr>
@@ -141,6 +147,7 @@ window.onload = function ()
                 </td>
                 <td class="edittext">
                     <input type="text" class="editinput" size="32" maxlength="[{$edit->oxarticles__oxshortdesc->fldmax_length}]" name="editval[oxarticles__oxshortdesc]" value="[{$edit->oxarticles__oxshortdesc->value}]" [{ $readonly }]>
+                    [{ oxinputhelp ident="HELP_ARTICLE_MAIN_SHORTDESC" }]
                 </td>
               </tr>
               <tr>
@@ -149,6 +156,7 @@ window.onload = function ()
                 </td>
                 <td class="edittext">
                     <input type="text" class="editinput" size="32" maxlength="[{$edit->oxarticles__oxsearchkeys->fldmax_length}]" name="editval[oxarticles__oxsearchkeys]" value="[{$edit->oxarticles__oxsearchkeys->value}]" [{ $readonly }]>
+                    [{ oxinputhelp ident="HELP_ARTICLE_MAIN_SEARCHKEYS" }]
                 </td>
               </tr>
 
@@ -158,6 +166,7 @@ window.onload = function ()
                 </td>
                 <td class="edittext">
                   <input type="text" class="editinput" size="32" maxlength="255" name="editval[tags]" value="[{$edit->tags}]">
+                  [{ oxinputhelp ident="HELP_ARTICLE_MAIN_TAGS" }]
                 </td>
               </tr>
 
@@ -172,6 +181,7 @@ window.onload = function ()
                     <option value="[{$oVendor->oxvendor__oxid->value}]"[{if $edit->oxarticles__oxvendorid->value == $oVendor->oxvendor__oxid->value}] selected[{/if}]>[{ $oVendor->oxvendor__oxtitle->value }]</option>
                     [{/foreach}]
                     </select>
+                    [{ oxinputhelp ident="HELP_ARTICLE_MAIN_VENDORID" }]
                 </td>
               </tr>
 
@@ -186,6 +196,7 @@ window.onload = function ()
                     <option value="[{$oManufacturer->oxmanufacturers__oxid->value}]"[{if $edit->oxarticles__oxmanufacturerid->value == $oManufacturer->oxmanufacturers__oxid->value}] selected[{/if}]>[{ $oManufacturer->oxmanufacturers__oxtitle->value }]</option>
                     [{/foreach}]
                     </select>
+                    [{ oxinputhelp ident="HELP_ARTICLE_MAIN_MANUFACTURERID" }]
                 </td>
               </tr>
 
@@ -198,6 +209,7 @@ window.onload = function ()
                   <td class="edittext">
                     <input type="text" class="editinput" size="8" maxlength="[{$edit->oxarticles__oxprice->fldmax_length}]" name="editval[oxarticles__oxprice]" value="[{$edit->oxarticles__oxprice->value}]" [{ $readonly }]>
                     &nbsp;<em>( [{$edit->fprice}] )</em>
+                    [{ oxinputhelp ident="HELP_ARTICLE_MAIN_PRICE" }]
                   </td>
                 </tr>
 
@@ -209,6 +221,7 @@ window.onload = function ()
                     [{ oxmultilang ident="ARTICLE_MAIN_PRICEA" }] <input type="text" class="editinput" size="4" maxlength="[{$edit->oxarticles__oxpricea->fldmax_length}]" name="editval[oxarticles__oxpricea]" value="[{$edit->oxarticles__oxpricea->value}]" [{ $readonly }]>
                     [{ oxmultilang ident="ARTICLE_MAIN_PRICEB" }] <input type="text" class="editinput" size="4" maxlength="[{$edit->oxarticles__oxpriceb->fldmax_length}]" name="editval[oxarticles__oxpriceb]" value="[{$edit->oxarticles__oxpriceb->value}]" [{ $readonly }]>
                     [{ oxmultilang ident="ARTICLE_MAIN_PRICEC" }] <input type="text" class="editinput" size="4" maxlength="[{$edit->oxarticles__oxpricec->fldmax_length}]" name="editval[oxarticles__oxpricec]" value="[{$edit->oxarticles__oxpricec->value}]" [{ $readonly }]>
+                    [{ oxinputhelp ident="HELP_ARTICLE_MAIN_ALDPRICE" }]
                 </td>
               </tr>
               <tr>
@@ -217,6 +230,7 @@ window.onload = function ()
                 </td>
                 <td class="edittext">
                     <input type="text" class="editinput" size="10" maxlength="[{$edit->oxarticles__oxvat->fldmax_length}]" name="editval[oxarticles__oxvat]" value="[{$edit->oxarticles__oxvat->value}]" [{include file="help.tpl" helpid=article_vat}] [{ $readonly }]>
+                    [{ oxinputhelp ident="HELP_ARTICLE_MAIN_VAT" }]
                 </td>
               </tr>
 
@@ -242,6 +256,7 @@ window.onload = function ()
                 <option value="[{ $pcat->oxcategories__oxid->value }]">[{ $pcat->oxcategories__oxtitle->value|oxtruncate:40:"..":true }]</option>
                 [{/foreach}]
                 </select>
+                [{ oxinputhelp ident="HELP_" }]
                 </td>
               </tr>
               [{/if}]

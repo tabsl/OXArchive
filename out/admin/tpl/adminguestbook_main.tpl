@@ -31,6 +31,7 @@
           <td class="edittext">
           <input type="text" class="editinput" size="27" value="[{$edit->oxgbentries__oxcreate|oxformdate }]" [{include file="help.tpl" helpid=article_vonbis}] readonly [{ $readonly }]>
           <input type="hidden" name="editval[oxgbentries__oxcreate]" value="[{$edit->oxgbentries__oxcreate->value}]">
+          [{ oxinputhelp ident="HELP_GENERAL_DATE" }]
           </td>
         </tr>
         [{if $blShowActBox}]
@@ -40,6 +41,7 @@
           </td>
           <td class="edittext">
           <input class="edittext" type="checkbox" name="editval[oxgbentries__oxactive]" value='1' [{if $edit->oxgbentries__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
+          [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
           </td>
         </tr>
         [{/if}]

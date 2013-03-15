@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: manufacturer_list.php 14014 2008-11-06 13:26:22Z arvydas $
+ * $Id: manufacturer_list.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**

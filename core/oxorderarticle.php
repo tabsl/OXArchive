@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxorderarticle.php 22526 2009-09-22 12:01:34Z arvydas $
+ * $Id: oxorderarticle.php 22931 2009-10-05 11:51:31Z arvydas $
  */
 
 /**
@@ -654,5 +654,42 @@ class oxOrderArticle extends oxBase implements oxIArticle
                 $this->updateArticleStock( $this->oxorderarticles__oxamount->value, $myConfig->getConfigParam('blAllowNegativeStock') );
             }
         }
+   }
+
+    /**
+     * Deletes order article object. If deletion succeded - updates
+     * article stock information. Returns deletion status
+     *
+     * @return bool
+     */
+   public function delete( $sOXID = null)
+   {
+       if ( $blDelete = parent::delete( $sOXID ) ) {
+           $myConfig = $this->getConfig();
+           if ( $myConfig->getConfigParam( 'blUseStock' ) && $this->oxorderarticles__oxstorno->value != 1 ) {
+               $this->updateArticleStock( $this->oxorderarticles__oxamount->value, $myConfig->getConfigParam('blAllowNegativeStock') );
+           }
+       }
+       return $blDelete;
+   }
+
+   /**
+    * Saves order article object. If saving succeded - updates
+    * article stock information if oxOrderArticle::isNewOrderItem()
+    * returns TRUE. Returns saving status
+    *
+    * @return bool
+    */
+   public function save()
+   {
+       // ordered articles
+       if ( ( $blSave = parent::save() ) && $this->isNewOrderItem() ) {
+           $myConfig = $this->getConfig();
+           if ( $myConfig->getConfigParam( 'blUseStock' ) ) {
+               $this->updateArticleStock( $this->oxorderarticles__oxamount->value * (-1), $myConfig->getConfigParam( 'blAllowNegativeStock' ) );
+           }
+       }
+
+       return $blSave;
    }
 }

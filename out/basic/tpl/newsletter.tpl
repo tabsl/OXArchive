@@ -18,10 +18,7 @@
           <tr>
             <td><label>[{ oxmultilang ident="NEWSLETTER_TITLE" }]</label></td>
             <td>
-              <select name="editval[oxuser__oxsal]" class="newsletter_text">
-                <option [{if $aRegParams.oxuser__oxsal == "NEWSLETTER_MR"|oxmultilangassign}]selected[{/if}]>[{ oxmultilang ident="NEWSLETTER_MR" }]</option>
-                <option [{if $aRegParams.oxuser__oxsal == "NEWSLETTER_MRS"|oxmultilangassign}]selected[{/if}]>[{ oxmultilang ident="NEWSLETTER_MRS" }]</option>
-              </select>
+              [{include file="inc/salutation.tpl" name="editval[oxuser__oxsal]" value=$aRegParams.oxuser__oxsal class="newsletter_text"}]
             </td>
           </tr>
           <tr>

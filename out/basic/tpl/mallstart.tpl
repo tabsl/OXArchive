@@ -47,12 +47,12 @@
 
     <div class="mallfooter">
         <div class="copyright">
-            <div class="right">&copy; <a href="http://www.oxid-esales.com">[{ oxmultilang ident="MALLSTART_OXIDSOFTWARE" }]</a> &nbsp;</div>
+            <div class="right">&copy; <a href="[{ oxmultilang ident="OXID_ESALES_URL" }]">[{ oxmultilang ident="MALLSTART_OXIDSOFTWARE" }]</a> &nbsp;</div>
             <div class="right"><img src="[{$oViewConf->getImageDir()}]/barrcode.gif" alt="">&nbsp;</div>
         </div>
         <br><br>
         <div class="left"><img src="[{$oViewConf->getImageDir()}]/cc.jpg" alt=""></div>
-        <div class="right"><a href="http://www.oxid-esales.com"><img src="[{$oViewConf->getImageDir()}]/oxid_powered.jpg" alt="[{ oxmultilang ident="MALLSTART_OXIDSOFTWAREALT" }]"></a></div>
+        <div class="right"><a href="[{ oxmultilang ident="OXID_ESALES_URL" }]" title="[{ oxmultilang ident="OXID_ESALES_URL_TITLE" }]"><img src="[{$oViewConf->getImageDir()}]/oxid_powered.jpg" alt="[{ oxmultilang ident="MALLSTART_OXIDSOFTWAREALT" }]"></a></div>
       </div>
     </div>
 

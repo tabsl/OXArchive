@@ -14,7 +14,6 @@
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
 </form>
 
-
 <form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
 [{ $shop->hiddensid }]
 <input type="hidden" name="cl" value="payment_main">
@@ -35,6 +34,7 @@
             </td>
             <td class="edittext">
             <input class="edittext" type="checkbox" name="editval[oxpayments__oxactive]" value='1' [{if $edit->oxpayments__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
             </td>
         </tr>
         <tr>
@@ -43,6 +43,7 @@
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="25" maxlength="[{$edit->oxpayments__oxdesc->fldmax_length}]" name="editval[oxpayments__oxdesc]" value="[{$edit->oxpayments__oxdesc->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_PAYMENT_MAIN_NAME" }]
             </td>
         </tr>
         <tr>
@@ -56,6 +57,7 @@
                 <option value="[{ $sum }]" [{ if $sum == $edit->oxpayments__oxaddsumtype->value}]SELECTED[{/if}]>[{ $sum }]</option>
                 [{/foreach}]
                 </select>
+            [{ oxinputhelp ident="HELP_PAYMENT_MAIN_ADDPRICE" }]
             </td>
         </tr>
         <tr>
@@ -64,6 +66,7 @@
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="25" maxlength="[{$edit->oxpayments__oxfromboni->fldmax_length}]" name="editval[oxpayments__oxfromboni]" value="[{$edit->oxpayments__oxfromboni->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_PAYMENT_MAIN_FROMBONI" }]
             </td>
         </tr>
         <tr>
@@ -72,6 +75,7 @@
             </td>
             <td class="edittext">
             [{ oxmultilang ident="PAYMENT_MAIN_FROM" }] <input type="text" class="editinput" size="5" maxlength="[{$edit->oxpayments__oxfromamount->fldmax_length}]" name="editval[oxpayments__oxfromamount]" value="[{$edit->oxpayments__oxfromamount->value}]" [{ $readonly }]>  [{ oxmultilang ident="PAYMENT_MAIN_TILL" }] <input type="text" class="editinput" size="5" maxlength="[{$edit->oxpayments__oxtoamount->fldmax_length}]" name="editval[oxpayments__oxtoamount]" value="[{$edit->oxpayments__oxtoamount->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_PAYMENT_MAIN_AMOUNT" }]
             </td>
         </tr>
 
@@ -81,6 +85,7 @@
             </td>
             <td class="edittext">
             <input type="checkbox" name="editval[oxpayments__oxchecked]" value="1" [{if $edit->oxpayments__oxchecked->value}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_PAYMENT_MAIN_SELECTED" }]
             </td>
         </tr>
         <tr>
@@ -89,6 +94,7 @@
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="25" maxlength="[{$edit->oxpayments__oxsort->fldmax_length}]" name="editval[oxpayments__oxsort]" value="[{$edit->oxpayments__oxsort->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_PAYMENT_MAIN_SORT" }]
             </td>
         </tr>
         <tr>
@@ -97,6 +103,7 @@
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="25" maxlength="[{$edit->oxpayments__oxlongdesc->fldmax_length}]" name="editval[oxpayments__oxlongdesc]" value="[{$edit->oxpayments__oxlongdesc->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_SHORTDESC" }]
             </td>
         </tr>
 
@@ -110,13 +117,15 @@
                 <option value="[{ $sField->name }]">[{ $sField->name }]</option>
                 [{/foreach}]
              </select>
+             [{ oxinputhelp ident="HELP_GENERAL_FIELDS" }]
             </td>
         </tr>
         <tr>
             <td class="edittext" valign="top">
             </td>
             <td class="edittext">
-                      <input type="text" class="edittext" name="sAddField" value="" size="128" style="width: 150px;"><br>
+                <input type="text" class="edittext" name="sAddField" value="" size="128" style="width: 150px;">
+                <br>
                 <input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="GENERAL_FIELDS_ADD" }]" onClick="Javascript:document.myedit.fnc.value='addfield'"" [{ $readonly }] style="width: 125px;"><br>
               <br>
             </td>

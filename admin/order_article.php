@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: order_article.php 22607 2009-09-24 12:04:48Z arvydas $
+ * $Id: order_article.php 22931 2009-10-05 11:51:31Z arvydas $
  */
 
 /**
@@ -222,11 +222,6 @@ class Order_Article extends oxAdminDetails
         // order and order article exits?
         if ( $oOrderArticle->load( $sOrderArtId ) && $oOrder->load( $sOrderId ) ) {
             $myConfig = $this->getConfig();
-
-            // restoring stock info if needed
-            if ( $myConfig->getConfigParam( 'blUseStock' ) ) {
-                $oOrderArticle->updateArticleStock( $oOrderArticle->oxorderarticles__oxamount->value, $myConfig->getConfigParam('blAllowNegativeStock') );
-            }
 
             // deleting record
             $oOrderArticle->delete();

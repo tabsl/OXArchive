@@ -74,15 +74,17 @@ function onSelect_aField(){
             </td>
             <td class="edittext">
             <input [{ $readonly }] type="text" class="editinput" size="25" maxlength="[{$edit->oxselectlist__oxtitle->fldmax_length}]" name="editval[oxselectlist__oxtitle]" value="[{$edit->oxselectlist__oxtitle->value}]" style="width: 150px;">
+            [{ oxinputhelp ident="HELP_GENERAL_TITLE" }]
             </td>
             <td>&nbsp;</td>
         </tr>
         <tr>
             <td class="edittext" width="100">
-            [{ oxmultilang ident="GENERAL_TITLEIDENT" }]
+            [{ oxmultilang ident="SELECTLIST_MAIN_TITLEIDENT" }]
             </td>
             <td class="edittext">
             <input [{ $readonly }] type="text" class="editinput" size="25" maxlength="[{$edit->oxselectlist__oxident->fldmax_length}]" name="editval[oxselectlist__oxident]" value="[{$edit->oxselectlist__oxident->value}]" style="width: 150px;">
+            [{ oxinputhelp ident="HELP_SELECTLIST_MAIN_TITLEIDENT" }]
             </td>
             <td>&nbsp;
             [{if $iErrorCode == 1}]
@@ -96,7 +98,7 @@ function onSelect_aField(){
 
         <tr valign="top">
             <td class="edittext">
-            [{ oxmultilang ident="GENERAL_FIELDS" }]
+            [{ oxmultilang ident="SELECTLIST_MAIN_FIELDS" }]
             </td>
             <td class="edittext">
             <select name="aFields[]" id="aFields" size="12" multiple class="editinput" style="width: 150px;" onchange="javascript:onSelect_aField()">
@@ -104,6 +106,7 @@ function onSelect_aField(){
                 <option value="[{ $smarty.foreach.fields.iteration }]__@@[{ $sField->name }]__@@[{ $sField->price }]">[{ $smarty.foreach.fields.iteration }] - [{ $sField->name }][{ if $sField->price }],[{ $sField->price }][{/if}]</option>
                 [{/foreach}]
              </select>
+             [{ oxinputhelp ident="HELP_SELECTLIST_MAIN_FIELDS" }]
             </td>
             <td class="edittext">
                 <table cellspacing="0" cellpadding="0" border="0">
@@ -114,6 +117,7 @@ function onSelect_aField(){
                         </td>
                         <td class="edittext" align="right">
                             <input [{ $readonly }] type="text" class="edittext" id="EditAddName" name="sAddField" value="" size="15" style="width: 100px;">
+                            [{ oxinputhelp ident="HELP_SELECTLIST_MAIN_ADDFIELD_NAME" }]
                         </td>
                     </tr>
                     <tr>
@@ -127,6 +131,7 @@ function onSelect_aField(){
                                 <option value="" >abs</option>
                                 <option value="%" >%</option>
                             </select>
+                            [{ oxinputhelp ident="HELP_SELECTLIST_MAIN_ADDFIELD_PREIS" }]
                         </td>
                     </tr>
                     <tr>
@@ -136,6 +141,7 @@ function onSelect_aField(){
                         </td>
                         <td class="edittext" align="right">
                             <input [{ $readonly }] type="text" class="edittext" id="EditAddPos" name="sAddFieldPos" value="" size="15" style="width: 100px;">
+                            [{ oxinputhelp ident="HELP_SELECTLIST_MAIN_ADDFIELD_POS" }]
                         </td>
                     </tr>
                     <tr height="5">

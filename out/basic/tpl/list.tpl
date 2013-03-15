@@ -1,4 +1,4 @@
-[{include file="_header.tpl" location=$oView->getTemplateLocation() }]
+[{include file="_header.tpl" tree_path=$oView->getTreePath() titlepagesuffix=$oView->getTitlePageSuffix()}]
 [{assign var="pageNavigation" value=$oView->getPageNavigation()}]
 
     <div class="boxhead">

@@ -7,7 +7,7 @@
     </dt>
     <dd id="tm.basket.dd" class="dropdown">
         [{strip}]
-        <ul id="basket_menu" class="menue verticall">
+        <ul id="basket_menu" class="menue vertical">
             <li><a href="[{ oxgetseourl ident=$oViewConf->getSslSelfLink()|cat:"cl=basket" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_TOBASKET" }]</a></li>
             [{if $oxcmp_user->oxuser__oxpassword->value && $oView->isLowOrderPrice()}]
             <li><a href="[{ oxgetseourl ident=$oViewConf->getSslSelfLink()|cat:"cl=payment" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_TOPAYMENT" }]</a></li>

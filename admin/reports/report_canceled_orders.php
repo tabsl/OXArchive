@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: report_canceled_orders.php 22478 2009-09-21 14:51:46Z arvydas $
+ * $Id: report_canceled_orders.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 if ( !class_exists( 'report_canceled_orders' ) ) {
@@ -90,8 +90,13 @@ if ( !class_exists( 'report_canceled_orders' ) ) {
             $myConfig = $this->getConfig();
             $oDb = oxDb::getDb();
 
-            $aDataX = array();
-            $aDataY = array();
+            $aDataX  = array();
+            $aDataX2 = array();
+            $aDataX3 = array();
+            $aDataX4 = array();
+            $aDataX5 = array();
+            $aDataX6 = array();
+            $aDataY  = array();
 
             $dTimeTo    = strtotime( oxConfig::getParameter( "time_to"));
             $sTime_to   = $oDb->quote( date( "Y-m-d H:i:s", $dTimeTo ) );
@@ -105,28 +110,24 @@ if ( !class_exists( 'report_canceled_orders' ) ) {
                 $aTemp[date( "m/Y", mktime(23, 59, 59, date( "m", $dTimeFrom)+$i, date( "d", $dTimeFrom), date( "Y", $dTimeFrom)) )] = 0;
 
             $rs = $oDb->execute( $sSQL);
-            $blData = false;
+
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     $aTemp[date( "m/Y", strtotime( $rs->fields[0]))]++;
                     $rs->moveNext();
-                    $blData = true;
                 }
             }
 
-            $aDataX2  = array();
-            $aDataX3  = array();
-            if ($blData) {
-                foreach ( $aTemp as $key => $value) {
-                    $aDataX[$key]   = $value;
-                    $aDataX2[$key]  = 0;
-                    $aDataX3[$key]  = 0;
-                    $aDataX4[$key]  = 0;
-                    $aDataX5[$key]  = 0;
-                    $aDataX6[$key]  = 0;
-                    $aDataY[]       = $key;
-                }
+            foreach ( $aTemp as $key => $value) {
+                $aDataX[$key]  = $value;
+                $aDataX2[$key] = 0;
+                $aDataX3[$key] = 0;
+                $aDataX4[$key] = 0;
+                $aDataX5[$key] = 0;
+                $aDataX6[$key] = 0;
+                $aDataY[]      = $key;
             }
+
             // collects sessions what executed 'order' function
             $sSQL = "select oxtime, oxsessid from `oxlogs` where oxclass = 'order' and oxfnc = 'execute' and oxtime >= $sTime_from and oxtime <= $sTime_to group by oxsessid";
             $aTempOrder = array();
@@ -323,8 +324,13 @@ if ( !class_exists( 'report_canceled_orders' ) ) {
             $myConfig = $this->getConfig();
             $oDb = oxDb::getDb();
 
-            $aDataX = array();
-            $aDataY = array();
+            $aDataX  = array();
+            $aDataX2 = array();
+            $aDataX3 = array();
+            $aDataX4 = array();
+            $aDataX5 = array();
+            $aDataX6 = array();
+            $aDataY  = array();
 
             $dTimeTo    = strtotime( oxConfig::getParameter( "time_to"));
             $sTime_to   = $oDb->quote( date( "Y-m-d H:i:s", $dTimeTo ) );
@@ -335,28 +341,36 @@ if ( !class_exists( 'report_canceled_orders' ) ) {
 
             $aTemp = array();
             $rs = $oDb->execute( $sSQL);
-            $blData = false;
+
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     $aTemp[oxUtilsDate::getInstance()->getWeekNumber($myConfig->getConfigParam( 'iFirstWeekDay' ), strtotime( $rs->fields[0]))]++;
                     $rs->moveNext();
-                    $blData = true;
                 }
             }
 
-            $aDataX2  = array();
-            $aDataX3  = array();
-            if ($blData) {
-                foreach ( $aTemp as $key => $value) {
-                    $aDataX[$key]   = $value;
-                    $aDataX2[$key]  = 0;
-                    $aDataX3[$key]  = 0;
-                    $aDataX4[$key]  = 0;
-                    $aDataX5[$key]  = 0;
-                    $aDataX6[$key]  = 0;
-                    $aDataY[]       = "KW ".$key;
-                }
+            // initializing
+            list( $iFrom, $iTo ) = $this->getWeekRange();
+            for ( $i = $iFrom; $i < $iTo; $i++ ) {
+                $aDataX[$i]  = 0;
+                $aDataX2[$i] = 0;
+                $aDataX3[$i] = 0;
+                $aDataX4[$i] = 0;
+                $aDataX5[$i] = 0;
+                $aDataX6[$i] = 0;
+                $aDataY[]    = "KW ".$i;
             }
+
+            foreach ( $aTemp as $key => $value) {
+                $aDataX[$key]  = $value;
+                $aDataX2[$key] = 0;
+                $aDataX3[$key] = 0;
+                $aDataX4[$key] = 0;
+                $aDataX5[$key] = 0;
+                $aDataX6[$key] = 0;
+                $aDataY[]      = "KW ".$key;
+            }
+
             // collects sessions what executed 'order' function
             $sSQL = "select oxtime, oxsessid FROM `oxlogs` where oxclass = 'order' and oxfnc = 'execute' and oxtime >= $sTime_from and oxtime <= $sTime_to group by oxsessid";
             $aTempOrder = array();
@@ -465,8 +479,7 @@ if ( !class_exists( 'report_canceled_orders' ) ) {
                     $aDataX5[$key] = $value;
             }
 
-
-            header ("Content-type: image/png" );
+            //header ("Content-type: image/png" );
 
             // New graph with a drop shadow
             $graph = new Graph( max( 800, count( $aDataX) * 80), 600);

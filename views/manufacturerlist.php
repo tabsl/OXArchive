@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: manufacturerlist.php 14141 2008-11-11 14:09:46Z arvydas $
+ * $Id: manufacturerlist.php 23400 2009-10-20 14:38:13Z arvydas $
  */
 
 /**
@@ -85,7 +85,7 @@ class ManufacturerList extends aList
      *
      * @var int
      */
-    protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXFOLLOW;
+    protected $_iViewIndexState = VIEW_INDEXSTATE_INDEX;
 
     /**
      * Executes parent::render(), loads active Manufacturer, prepares article
@@ -227,7 +227,6 @@ class ManufacturerList extends aList
         } else {
             $sUrl = parent::_addPageNrParam( $sUrl, $iPage, $iLang );
         }
-
         return $sUrl;
     }
 
@@ -324,6 +323,8 @@ class ManufacturerList extends aList
     /**
      * Template variable getter. Returns template location
      *
+     * @deprecated use manufacturerList::getTreePath() and adjust template
+     *
      * @return string
      */
     public function getTemplateLocation()
@@ -335,6 +336,18 @@ class ManufacturerList extends aList
             }
         }
         return $this->_sTplLocation;
+    }
+
+    /**
+     * Template variable getter. Returns category path array
+     *
+     * @return array
+     */
+    public function getTreePath()
+    {
+        if ( $oManufacturerTree = $this->getManufacturerTree() ) {
+            return $oManufacturerTree->getPath();
+        }
     }
 
     /**
@@ -411,5 +424,18 @@ class ManufacturerList extends aList
     protected function _prepareMetaDescription( $aCatPath, $iLength = 1024, $blDescTag = false )
     {
         return parent::_collectMetaDescription( $aCatPath, $iLength, $blDescTag );
+    }
+
+    /**
+     * returns object, assosiated with current view.
+     * (the object that is shown in frontend)
+     *
+     * @param int $iLang language id
+     *
+     * @return object
+     */
+    protected function _getSubject( $iLang )
+    {
+        return $this->getActManufacturer();
     }
 }

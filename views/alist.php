@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: alist.php 22590 2009-09-24 06:24:00Z alfonsas $
+ * $Id: alist.php 23591 2009-10-26 11:18:34Z arvydas $
  */
 
 /**
@@ -244,23 +244,6 @@ class aList extends oxUBase
     }
 
     /**
-     * Special page indexing handling for price categories (page should not be indexed):
-     *  - if current category is price category returns VIEW_INDEXSTATE_NOINDEXFOLLOW
-     *  - else returns parent::noIndex()
-     *
-     * @return int
-     */
-    public function noIndex()
-    {
-        // no indexing for price categories
-        if ( $this->_getProductLinkType() == OXARTICLE_LINKTYPE_PRICECATEGORY ) {
-            return $this->_iViewIndexState = VIEW_INDEXSTATE_NOINDEXFOLLOW;
-        }
-
-        return parent::noIndex();
-    }
-
-    /**
      * Returns product link type:
      *  - OXARTICLE_LINKTYPE_PRICECATEGORY - when active category is price category
      *  - OXARTICLE_LINKTYPE_CATEGORY - when active category is regular category
@@ -405,6 +388,25 @@ class aList extends oxUBase
     }
 
     /**
+     * Template variable getter. Returns meta description
+     *
+     * @return string
+     */
+    public function getMetaDescription()
+    {
+        $sMeta = parent::getMetaDescription();
+
+        if ( $sTitlePageSuffix = $this->getTitlePageSuffix() ) {
+            if ( $sMeta ) {
+                $sMeta .= ", ";
+            }
+            $sMeta .= $sTitlePageSuffix;
+        }
+
+        return $sMeta;
+    }
+
+    /**
      * Metatags - description and keywords - generator for search
      * engines. Uses string passed by parameters, cleans HTML tags,
      * string dublicates, special chars. Also removes strings defined
@@ -490,7 +492,7 @@ class aList extends oxUBase
      */
     protected function _collectMetaKeyword( $sKeywords )
     {
-        $iMaxTextLenght = 60;
+        $iMaxTextLength = 60;
         $sText = '';
 
         if ( count( $aArticleList = $this->getArticleList() ) ) {
@@ -501,9 +503,9 @@ class aList extends oxUBase
                 //removing dots from string (they are not cleaned up during general string cleanup)
                 $sDesc = preg_replace( "/\./", " ", $sDesc );
 
-                if ( $oStr->strlen( $sDesc ) > $iMaxTextLenght ) {
-                    $sMidText = $oStr->substr( $sDesc, 0, $iMaxTextLenght );
-                    $sDesc   .= $oStr->substr( $sMidText, 0, ( $oStr->strlen( $sMidText ) - $oStr->strpos( strrev( $sMidText ), ' ' ) ) );
+                if ( $oStr->strlen( $sDesc ) > $iMaxTextLength ) {
+                    $sMidText = $oStr->substr( $sDesc, 0, $iMaxTextLength );
+                    $sDesc    = $oStr->substr( $sMidText, 0, ( $oStr->strlen( $sMidText ) - $oStr->strpos( strrev( $sMidText ), ' ' ) ) );
                 }
                 if ( $sText ) {
                     $sText .= ', ';
@@ -653,6 +655,18 @@ class aList extends oxUBase
     }
 
     /**
+     * Returns title page suffix used in template
+     *
+     * @return string
+     */
+    public function getTitlePageSuffix()
+    {
+        if ( ( $iPage = $this->getActPage() ) ) {
+            return oxLang::getInstance()->translateString( 'INC_HEADER_TITLEPAGE' ). ( $iPage + 1 );
+        }
+    }
+
+    /**
      * returns object, assosiated with current view.
      * (the object that is shown in frontend)
      *
@@ -739,6 +753,8 @@ class aList extends oxUBase
     /**
      * Template variable getter. Returns category html path
      *
+     * @deprecated use aList::getTreePath() and adjust template
+     *
      * @return string
      */
     public function getTemplateLocation()
@@ -751,6 +767,18 @@ class aList extends oxUBase
             }
         }
         return $this->_sCatTreeHtmlPath;
+    }
+
+    /**
+     * Template variable getter. Returns category path array
+     *
+     * @return array
+     */
+    public function getTreePath()
+    {
+        if ( $oCatTree = $this->getCategoryTree() ) {
+            return $oCatTree->getPath();
+        }
     }
 
     /**
@@ -867,4 +895,17 @@ class aList extends oxUBase
         return $this->getActCategory();
     }
 
+    /**
+     * Returns view canonical url
+     *
+     * @return string
+     */
+    public function getCanonicalUrl()
+    {
+        if ( ( $iPage = $this->getActPage() ) ) {
+            return $this->_addPageNrParam( $this->generatePageNavigationUrl(), $iPage );
+        } elseif ( ( $oCategory = $this->getActiveCategory() ) ) {
+            return $oCategory->getLink();
+        }
+    }
 }

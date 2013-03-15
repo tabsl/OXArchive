@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_variant.php 22482 2009-09-22 06:53:41Z arvydas $
+ * $Id: article_variant.php 23364 2009-10-20 07:18:49Z vilma $
  */
 
 /**
@@ -154,7 +154,6 @@ class Article_Variant extends oxAdminDetails
         if ( $soxId != "-1") {
             $oArticle->loadInLang( $this->_iEditLang, $soxId );
         }
-        //$aParams = $oArticle->ConvertNameArray2Idx( $aParams);
 
 
         $oArticle->setLanguage(0);
@@ -163,19 +162,6 @@ class Article_Variant extends oxAdminDetails
 
             //echo $aParams['oxarticles__oxartnum']."---";
             $oArticle->save();
-
-        /*V Do we need this?
-        $sParentVarName = oxConfig::getParameter("parentvarname");
-        if ($sParentVarName) {
-            $oParent = oxNew( "oxarticle");
-            $oArticle->loadInLang( $this->_iEditLang, $oArticle->oxarticles__oxparentid->value );
-            $oParent->setLanguage(0);
-            $aParam['oxarticles__oxvarname'] = $sParentVarName;
-            $oParent->assign( $aParam);
-            $oParent->setLanguage($this->_iEditLang);
-            $oParent->save();
-            $oParent->setLanguage($this->_iEditLang);
-        }*/
 
         $oArticle->setLanguage( $this->_iEditLang);
     }
@@ -258,90 +244,16 @@ class Article_Variant extends oxAdminDetails
 
         $aSels = oxConfig::getParameter("allsel");
         $sParentID = oxConfig::getParameter("oxid");
+        
         $oArticle = oxNew("oxarticle");
+        $oArticle->setEnableMultilang(false);
         $oArticle->load($sParentID);
-        $oVariants = $oArticle->getAdminVariants();
 
 
-
-        $sSLViewName = getViewName('oxselectlist');
 
         if ($aSels) {
-            $myUtils = oxUtils::getInstance();
-            $myLang  = oxLang::getInstance();
-            $oDb = oxDb::getDb();
-            foreach ($aSels as $sSelID) {
-
-                $oSel = oxNew("oxselectlist");
-                $oSel->load($sSelID);
-
-                //selecting select list name values
-                $this->sLanguage = $myLang->getBaseLanguage();
-
-                $sField = "oxvaldesc".$myLang->getLanguageTag();
-                $sQ = "select $sField from $sSLViewName where oxid  = ". $oDb->quote( $sSelID );
-                $sValues = $oDb->GetOne($sQ);
-
-                $aValues = $myUtils->assignValuesFromText($sValues );
-                //iterating through all select list values (eg. $oValue->name = S, M, X, XL)
-                $iCounter = 0;
-                foreach ($aValues as $oValue) {
-                    $dPriceMod = 0;
-                    if ( $myConfig->getConfigParam( 'bl_perfLoadSelectLists' ) && $myConfig->getConfigParam( 'bl_perfUseSelectlistPrice' ) ) {
-                        if ($oValue->priceUnit == 'abs')
-                            $dPriceMod = $oValue->price;
-                        elseif ($oValue->priceUnit == '%') {
-                            $dPriceModPerc = abs($oValue->price)*$oArticle->oxarticles__oxprice->value/100.0;
-                            if (($oValue->price) >= 0.0)
-                                $dPriceMod = $dPriceModPerc;
-                            else
-                                $dPriceMod = -$dPriceModPerc;
-                        }
-                    }
-
-                    if ($oVariants->count()>0) {
-                        //if we have any existing variants then copying each variant with $oValue->name
-                        foreach ($oVariants as $oSimpleVariant) {
-                            if (!$iCounter) {
-                                //we just update the first variant
-                                $oVariant = oxNew("oxarticle");
-                                $oVariant->load($oSimpleVariant->oxarticles__oxid->value);
-                                $oVariant->oxarticles__oxprice->setValue($oVariant->oxarticles__oxprice->value + $dPriceMod);
-                                $oVariant->oxarticles__oxvarselect->setValue($oVariant->oxarticles__oxvarselect->value." ".$oValue->name);
-                                $oVariant->oxarticles__oxsort->setValue($oVariant->oxarticles__oxsort->value * 10);
-                                $oVariant->save();
-                            } else {
-
-                                //we create new variants
-                                $aParams['oxarticles__oxvarselect'] = $oSimpleVariant->oxarticles__oxvarselect->value." ".$oValue->name;
-                                $aParams['oxarticles__oxartnum'] = $oSimpleVariant->oxarticles__oxartnum->value;
-                                $aParams['oxarticles__oxprice'] = $oSimpleVariant->oxarticles__oxprice->value + $dPriceMod;
-                                $aParams['oxarticles__oxsort'] = $oSimpleVariant->oxarticles__oxsort->value*10 + 10*$iCounter;
-                                $aParams['oxarticles__oxstock'] = 0;
-                                $aParams['oxarticles__oxstockflag'] = $oSimpleVariant->oxarticles__oxstockflag->value;
-                                $this->savevariant(null, $aParams);
-                            }
-                        }
-
-                        $iCounter++;
-
-                    } else {
-                        //in case we don't have any variants then we just create variant(s) with $oValue->name
-
-                        //so yes here we create a new variant
-                        $aParams['oxarticles__oxvarselect'] = $oValue->name;
-                        $aParams['oxarticles__oxartnum'] = $oArticle->oxarticles__oxartnum->value;
-                        $aParams['oxarticles__oxprice'] = $oArticle->oxarticles__oxprice->value + $dPriceMod;
-                        $aParams['oxarticles__oxsort'] = 5000 + $iCounter++ * 1000;
-                        $aParams['oxarticles__oxstock'] = 0;
-                        $aParams['oxarticles__oxstockflag'] = $oArticle->oxarticles__oxstockflag->value;
-                        $this->savevariant(null, $aParams);
-                    }
-                }
-                $oArticle->oxarticles__oxvarname->setValue($oArticle->oxarticles__oxvarname->value." ".$oSel->oxselectlist__oxtitle->value);
-                $oArticle->oxarticles__oxvarname->setValue(trim($oArticle->oxarticles__oxvarname->value));
-                $oArticle->save();
-            }
+	        $oVariantHandler = oxNew("oxVariantHandler");
+	        $oVariantHandler->genVariantFromSell( $aSels, $oArticle );
         }
     }
 }

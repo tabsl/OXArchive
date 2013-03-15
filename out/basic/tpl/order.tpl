@@ -39,7 +39,7 @@
                     <input type="hidden" name="ord_agb" value="0">
                     <table>
                       <tr>
-                        <td><input id="test_OrderConfirmAGBTop" type="checkbox" class="chkbox" name="ord_agb" value="1"></td>
+                        <td><input id="test_OrderConfirmAGBTop" type="checkbox" class="chk" name="ord_agb" value="1"></td>
                         <td>
                             [{assign var="oCont" value=$oView->getContentByIdent("oxagb") }]
                             [{ oxmultilang ident="ORDER_IAGREETOTERMS1" }] <a id="test_OrderOpenAGBTop" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'agb_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ oxmultilang ident="ORDER_IAGREETOTERMS2" }]</a> [{ oxmultilang ident="ORDER_IAGREETOTERMS3" }],&nbsp;
@@ -167,7 +167,7 @@
       [{foreach from=$Errors.basket item=oEr key=key name=orderErrors}]
        [{if $oEr->getErrorClassType() == 'oxOutOfStockException'}]
        <!-- display only the excpetions for the current article-->
-           [{if $basketitem->sProduct == $oEr->getValue('articleNr') }]
+           [{if $basketitem->sProduct == $oEr->getValue('productId') }]
            <tr>
              <td class="brd"></td>
              <td id="test_orderErrors_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.orderErrors.iteration}]" colspan="7"><span class="err">[{ $oEr->getOxMessage() }] [{ $oEr->getValue('remainingAmount') }]</span></td>
@@ -318,7 +318,7 @@
       [{ if $oxcmp_basket->getPaymentCosts() }]
         <tr class="sumrow">
           <td class="brd"></td>
-          <td colspan="6" class="sumdesc">[{if $oxcmp_basket->getPaymentCosts() }][{ oxmultilang ident="ORDER_PAYMENT1" }][{else}][{ oxmultilang ident="ORDER_PAYMENT2" }][{/if}] [{ oxmultilang ident="ORDER_PAYMENT3" }]</td>
+          <td colspan="6" class="sumdesc">[{if $oxcmp_basket->getPaymentCosts() >= 0 }][{ oxmultilang ident="ORDER_PAYMENT1" }][{else}][{ oxmultilang ident="ORDER_PAYMENT2" }][{/if}] [{ oxmultilang ident="ORDER_PAYMENT3" }]</td>
           <td id="test_orderPaymentNet" align="right">[{ $oxcmp_basket->getPayCostNet() }]&nbsp;[{ $currency->sign}]</td>
           <td></td>
         </tr>
@@ -412,7 +412,9 @@
             <br>
             [{ oxmultilang ident="ORDER_EMAIL" }]&nbsp;[{ $oxcmp_user->oxuser__oxusername->value }]<br>
             [{ $oxcmp_user->oxuser__oxcompany->value }]&nbsp;<br>
-            [{ $oxcmp_user->oxuser__oxsal->value }]&nbsp;[{ $oxcmp_user->oxuser__oxfname->value }]&nbsp;[{ $oxcmp_user->oxuser__oxlname->value }]<br>
+
+            [{assign var=_sal value=$oxcmp_user->oxuser__oxsal->value}]
+            [{oxmultilang ident="SALUTATION_$_sal" noerror="yes" alternative=$_sal }]&nbsp;[{ $oxcmp_user->oxuser__oxfname->value }]&nbsp;[{ $oxcmp_user->oxuser__oxlname->value }]<br>
             [{ $oxcmp_user->oxuser__oxaddinfo->value }]<br>
             [{ $oxcmp_user->oxuser__oxstreet->value }]&nbsp;[{ $oxcmp_user->oxuser__oxstreetnr->value }]<br>
             [{ $oxcmp_user->oxuser__oxzip->value }]&nbsp;[{ $oxcmp_user->oxuser__oxcity->value }]<br>
@@ -437,7 +439,8 @@
             [{if $oDelAdress }]
               <br>
               [{ $oDelAdress->oxaddress__oxcompany->value }]&nbsp;<br>
-              [{ $oDelAdress->oxaddress__oxsal->value }]&nbsp;[{ $oDelAdress->oxaddress__oxfname->value }]&nbsp;[{ $oDelAdress->oxaddress__oxlname->value }]<br>
+              [{assign var=_sal value=$oDelAdress->oxaddress__oxsal->value}]
+              [{oxmultilang ident="SALUTATION_$_sal" noerror="yes" alternative=$_sal }]&nbsp;[{ $oDelAdress->oxaddress__oxfname->value }]&nbsp;[{ $oDelAdress->oxaddress__oxlname->value }]<br>
               [{ $oDelAdress->oxaddress__oxaddinfo->value }]<br>
               [{ $oDelAdress->oxaddress__oxstreet->value }]&nbsp;[{ $oDelAdress->oxaddress__oxstreetnr->value }]<br>
               [{ $oDelAdress->oxaddress__oxzip->value }]&nbsp;[{ $oDelAdress->oxaddress__oxcity->value }]<br>
@@ -532,7 +535,7 @@
                         <input type="hidden" name="ord_agb" value="0">
                         <table>
                           <tr>
-                            <td><input id="test_OrderConfirmAGBBottom" type="checkbox" class="chkbox" name="ord_agb" value="1"></td>
+                            <td><input id="test_OrderConfirmAGBBottom" type="checkbox" class="chk" name="ord_agb" value="1"></td>
                             <td>
                                 [{assign var="oCont" value=$oView->getContentByIdent("oxagb") }]
                                 [{ oxmultilang ident="ORDER_IAGREETOTERMS1" }] <a id="test_OrderOpenAGBBottom" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'agb_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;" class="fontunderline">[{ oxmultilang ident="ORDER_IAGREETOTERMS2" }]</a> [{ oxmultilang ident="ORDER_IAGREETOTERMS3" }],&nbsp;

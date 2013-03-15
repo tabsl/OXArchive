@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: payment.php 22336 2009-09-15 15:44:43Z vilma $
+ * $Id: payment.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**
@@ -166,7 +166,7 @@ class Payment extends oxUBase
         $oUser = $this->getUser();
         $oBasket = $this->getSession()->getBasket();
         if ( !$oBasket || !$oUser || ( $oBasket && !$oBasket->getProductsCount() ) ) {
-            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() );
+            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=start' );
         }
 
         // passing payments to view
@@ -319,7 +319,7 @@ class Payment extends oxUBase
             oxSession::deleteVar( '_selected_paymentid' );
             return 'order';
         } else {
-            oxSession::setVar( 'payerror', 1 );
+            oxSession::setVar( 'payerror', $oPayment->getPaymentErrorNumber() );
 
             //#1308C - delete paymentid from session, and save selected it just for view
             oxSession::deleteVar( 'paymentid' );

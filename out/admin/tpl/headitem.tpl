@@ -11,6 +11,13 @@
   <link rel="stylesheet" href="[{$shop->basetpldir}]colors.css">
   [{include file="tooltips.tpl"}]
 
+  <link rel="stylesheet" type="text/css" href="[{$shop->basetpldir}]yui/build/assets/skins/sam/container.css">
+
+  <script type="text/javascript" src="[{$shop->basetpldir}]yui/build/utilities/utilities.js"></script>
+  <script type="text/javascript" src="[{$shop->basetpldir}]yui/build/container/container-min.js"></script>
+
+  <script type="text/javascript" src="[{$shop->basetpldir}]yui/oxid-help.js"></script>
+
   <script type="text/javascript">
   <!--
     // standard messages
@@ -32,7 +39,7 @@
     var ajaxpopup = null;
     function showDialog( sParams )
     {
-        ajaxpopup = window.open('[{ $shop->selflink }]'+sParams, 'ajaxpopup', 'width=600,height=680,scrollbars=yes,resizable=yes');
+        ajaxpopup = window.open('[{ $shop->selflink }]'+sParams, 'ajaxpopup', 'width=800,height=680,scrollbars=yes,resizable=yes');
     }
 
     function focusPopup()
@@ -86,5 +93,12 @@
 </head>
 <body>
 <div id="oxajax_data"></div>
+
 <div class="[{$box|default:'box'}]">
 [{include file="inc_error.tpl" Errorlist=$Errors.default}]
+
+<!-- Input help popup -->
+<div id="helpTextContainer" class="yui-skin-sam">
+    <div id="helpPanel"></div>
+</div>
+

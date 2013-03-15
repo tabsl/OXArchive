@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxattribute.php 22524 2009-09-22 11:47:27Z sarunas $
+ * $Id: oxattribute.php 23441 2009-10-21 11:37:48Z vilma $
  */
 
 /**
@@ -78,5 +78,112 @@ class oxAttribute extends oxI18n
         $rs = $oDB->execute( $sDelete);
 
         return parent::delete( $sOXID);
+    }
+
+    /**
+     * Assigns attribute to variant
+     *
+     * @param array $aMDVariants article ids with selectionlist values
+     * @param array $aSelTitle   selection list titles 
+     *
+     * @return null
+     */
+    public function assignVarToAttribute( $aMDVariants, $aSelTitle )
+    {
+        $myLang    = oxLang::getInstance();
+        $aConfLanguages = $myLang->getLanguageIds();
+        $sAttrId = $this->_getAttrId( $aSelTitle[0] );
+        if ( !$sAttrId ) {
+            $sAttrId = $this->_createAttribute( $aSelTitle );
+        }
+        foreach ( $aMDVariants as $sVarId => $oValue ) {
+        	if ( strpos( $sVarId, "mdvar_" ) === 0 ) {
+            	foreach ( $oValue as $sId ) {
+	                //var_dump($sVarId, $oAttribute->oxattribute__oxid->value);
+            		$sVarId = substr($sVarId, 6);
+            		$oNewAssign = oxNew( "oxbase" );
+	                $oNewAssign->init( "oxobject2attribute" );
+	                $sNewId = oxUtilsObject::getInstance()->generateUID();
+	                if ($oNewAssign->load($sId)) {
+                        $oNewAssign->oxobject2attribute__oxobjectid = new oxField($sVarId);
+	                    $oNewAssign->setId($sNewId);
+	                    $oNewAssign->save();
+	                }
+            	}
+            } else {
+	        	$oNewAssign = oxNew( "oxbase" );
+	            $oNewAssign->init( "oxobject2attribute" );
+	            $oNewAssign->oxobject2attribute__oxobjectid = new oxField($sVarId);
+	            $oNewAssign->oxobject2attribute__oxattrid   = new oxField($sAttrId);
+	            foreach ($aConfLanguages as $sKey => $sLang) {
+	                $sPrefix = $myLang->getLanguageTag($sKey);
+	                $oNewAssign->{'oxobject2attribute__oxvalue'.$sPrefix} = new oxField($oValue[$sKey]->name);
+	            }
+	            $oNewAssign->save();
+            }
+        }
+    }
+
+    /**
+     * Searches for attribute by oxtitle. If exists returns attribute id
+     *
+     * @param string $sSelTitle selection list title
+     *
+     * @return mixed attribute id or false
+     */
+    protected function _getAttrId( $sSelTitle )
+    {
+        $oDb = oxDb::getDB();
+        $sAttViewName = getViewName('oxattribute');
+        return $oDb->getOne("select oxid from $sAttViewName where LOWER(oxtitle) = " . $oDb->quote(getStr()->strtolower($sSelTitle)));
+    }
+
+    /**
+     * Checks if attribute exists
+     *
+     * @param string $sSelTitle selection list title
+     *
+     * @return string attribute id
+     */
+    protected function _createAttribute( $aSelTitle )
+    {
+        $myLang    = oxLang::getInstance();
+        $aConfLanguages = $myLang->getLanguageIds();
+        $oAttr = oxNew('oxbase');
+        $oAttr->init('oxattribute');
+        foreach ($aConfLanguages as $sKey => $sLang) {
+           $sPrefix = $myLang->getLanguageTag($sKey);
+           $oAttr->{'oxattribute__oxtitle'.$sPrefix} = new oxField($aSelTitle[$sKey]);
+        }
+        $oAttr->save();
+        return $oAttr->getId();
+    }
+
+    /**
+     * Returns all oxobject2attribute Ids of article
+     *
+     * @param string $sArtId article ids
+     *
+     * @return null;
+     */
+    public function getAttributeAssigns( $sArtId)
+    {
+        if ( !$sArtId) {
+            return;
+        }
+        $sSelect  = "select o2a.oxid ";
+        $sSelect .= "from oxobject2attribute as o2a ";
+        $sSelect .= "where o2a.oxobjectid = '$sArtId' ";
+        $sSelect .= "order by o2a.oxpos";
+
+        $aIds = array();
+        $rs = oxDb::getDb()->Execute( $sSelect);
+        if ($rs != false && $rs->recordCount() > 0) {
+            while (!$rs->EOF) {
+                $aIds[] = $rs->fields[0];
+                $rs->moveNext();
+            }
+        }
+        return $aIds;
     }
 }

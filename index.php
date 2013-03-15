@@ -19,7 +19,7 @@
  * @package main
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: index.php 18893 2009-05-08 11:25:32Z sarunas $
+ * $Id: index.php 23188 2009-10-13 06:59:38Z sarunas $
  */
 
 // Setting error reporting mode
@@ -71,8 +71,6 @@ include getShopBasePath() . 'modules/functions.php';
 require_once getShopBasePath() . 'core/oxfunctions.php';
 
 
-// Including main ADODB include
-require_once getShopBasePath() . 'core/adodblite/adodb.inc.php';
 // set the exception handler already here to catch everything, also uncaught exceptions from the config or utils
 
 // initializes singleton config class
@@ -96,8 +94,6 @@ if (isSearchEngineUrl()) {
     oxNew('oxSeoDecoder')->processSeoCall();
 }
 
-//strips magics quote if any
-oxUtils::getInstance()->stripGpcMagicQuotes();
 //Starting the shop
 $oShopControl = oxNew('oxShopControl');
 

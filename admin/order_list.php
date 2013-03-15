@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: order_list.php 22543 2009-09-22 13:45:36Z arvydas $
+ * $Id: order_list.php 23390 2009-10-20 13:48:50Z vilma $
  */
 
 /**
@@ -122,6 +122,7 @@ class Order_List extends oxAdminList
     protected function _buildSelectString( $oListObject = null )
     {
         $sSql = parent::_buildSelectString( $oListObject );
+        $oDb = oxDb::getDb();
 
         $sSearch      = oxConfig::getParameter( 'addsearch' );
         $sSearch      = trim( $sSearch );

@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: list_order.php 22642 2009-09-25 12:13:51Z rimvydas.paskevicius $
+ * $Id: list_order.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**
@@ -54,6 +54,7 @@ class List_Order extends Order_List
 
         return "list_order.tpl";
     }
+
 
     /**
      * Adding folder check

@@ -19,8 +19,13 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcmp_user.php 22448 2009-09-21 08:09:11Z vilma $
+ * $Id: oxcmp_user.php 23173 2009-10-12 13:29:45Z sarunas $
  */
+
+// defining login/logout states
+define( 'USER_LOGIN_SUCCESS', 1 );
+define( 'USER_LOGIN_FAIL', 2 );
+define( 'USER_LOGOUT', 3 );
 
 /**
  * User object manager.
@@ -46,6 +51,15 @@ class oxcmp_user extends oxView
      * @var bool
      */
     protected $_blNewsSubscriptionStatus = null;
+
+    /**
+     * User login state marker:
+     *  - USER_LOGIN_SUCCESS - user successfully logged in;
+     *  - USER_LOGIN_FAIL - login failed;
+     *  - USER_LOGOUT - user logged out.
+     * @var int
+     */
+    protected $_iLoginStatus = null;
 
     /**
      * Sets oxcmp_oxuser::blIsComponent = true, fetches user error
@@ -97,9 +111,8 @@ class oxcmp_user extends oxView
             $this->_oParent->addTplParam( 'invadr', $aInvAdress );
         }
 
-
-        if ( $aDelAdress = oxConfig::getParameter( 'deladr') ) {
-            $this->_oParent->addTplParam( 'deladr', $aDelAdress );
+        if ( ( $aDelAdress = oxConfig::getParameter( 'deladr') ) && !oxConfig::getParameter( 'reloadaddress' ) ) {
+               $this->_oParent->addTplParam( 'deladr', $aDelAdress );
         }
 
         if ( $sUser = oxConfig::getParameter( 'lgn_usr' ) ) {
@@ -178,6 +191,8 @@ class oxcmp_user extends oxView
         $sCookie   = oxConfig::getParameter( 'lgn_cook' );
         $sOpenId   = oxConfig::getParameter( 'lgn_openid' );
 
+        $this->setLoginStatus( USER_LOGIN_FAIL );
+
         // trying to login user
         try {
             $oUser = oxNew( 'oxuser' );
@@ -190,6 +205,7 @@ class oxcmp_user extends oxView
             } else {
                 $oUser->login( $sUser, $sPassword, $sCookie );
             }
+            $this->setLoginStatus( USER_LOGIN_SUCCESS );
         } catch ( oxUserException $oEx ) {
             // for login component send excpetion text to a custom component (if defined)
             oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true );
@@ -199,7 +215,7 @@ class oxcmp_user extends oxView
             return 'user';
         }
         // finalizing ..
-        $this->_afterLogin( $oUser );
+        return $this->_afterLogin( $oUser );
     }
 
     /**
@@ -293,6 +309,8 @@ class oxcmp_user extends oxView
 
         if ( $oUser->logout() ) {
 
+            $this->setLoginStatus( USER_LOGOUT );
+
             // finalizing ..
             $this->_afterLogout();
 
@@ -317,6 +335,7 @@ class oxcmp_user extends oxView
     public function changeUser( )
     {
         // checking if "open address area" button was clicked
+        // or reloading form when delivery address was selected
         if ( $this->_setupDelAddress() ) {
             return;
         }
@@ -337,6 +356,9 @@ class oxcmp_user extends oxView
      */
     public function changeuser_testvalues()
     {
+        // skip updating user info if this is just form reload
+        // on selecting delivery address
+
         $this->_changeUser_noRedirect();
     }
 
@@ -446,7 +468,7 @@ class oxcmp_user extends oxView
     /**
      * Creates new oxid user
      *
-     * @return  string    partial parameter string or null
+     * @return string partial parameter string or null
      */
     public function registerUser()
     {
@@ -637,6 +659,8 @@ class oxcmp_user extends oxView
      */
     public function loginOid()
     {
+        $this->setLoginStatus( USER_LOGIN_FAIL );
+
         $iOldErrorReproting = error_reporting();
         //for 3rd part library disabling our E_STRICT error reporting
         error_reporting($iOldErrorReproting & ~E_STRICT);
@@ -644,8 +668,8 @@ class oxcmp_user extends oxView
             $oOpenId = oxNew( "oxOpenID" );
             $aData = $oOpenId->getOidResponse( $this->_getReturnUrl() );
         } catch ( oxUserException $oEx ) {
-                // for login component send excpetion text to a custom component (if defined)
-                oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true );
+            // for login component send excpetion text to a custom component (if defined)
+            oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true );
         }
         error_reporting($iOldErrorReproting);
         if ( count( $aData ) < 1 ) {
@@ -690,6 +714,7 @@ class oxcmp_user extends oxView
 
             try {
                 $oUser->openIdLogin( $oUser->oxuser__oxusername->value );
+                $this->setLoginStatus( USER_LOGIN_SUCCESS );
             } catch ( oxUserException $oEx ) {
                 // for login component send excpetion text to a custom component (if defined)
                 oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true );
@@ -737,4 +762,28 @@ class oxcmp_user extends oxView
         return $sReturnUrl;
     }
 
+    /**
+     * Sets user login state
+     *
+     * @param int $iStatus login state (USER_LOGIN_SUCCESS/USER_LOGIN_FAIL/USER_LOGOUT)
+     *
+     * @return null
+     */
+    public function setLoginStatus( $iStatus )
+    {
+        $this->_iLoginStatus = $iStatus;
+    }
+
+    /**
+     * Returns user login state marker:
+     *  - USER_LOGIN_SUCCESS - user successfully logged in;
+     *  - USER_LOGIN_FAIL - login failed;
+     *  - USER_LOGOUT - user logged out.
+     *
+     * @return int
+     */
+    public function getLoginStatus()
+    {
+        return $this->_iLoginStatus;
+    }
 }

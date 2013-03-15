@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: shop_system.php 13400 2008-10-21 08:58:21Z rimvydas.paskevicius $
+ * $Id: dynscreen_local.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**

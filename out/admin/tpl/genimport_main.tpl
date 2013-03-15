@@ -67,12 +67,14 @@
                     <option value="[{ $sTableTypePrefix }]">[{ $sTableType }]</option>
                 [{/foreach}]
                 </select>
+                [{ oxinputhelp ident="HELP_GENIMPORT_TABLE" }]
             </td>
         </tr>
         <tr>
             <td class="edittext" height="40">[{ oxmultilang ident="GENIMPORT_CSVFILE" }]:</td>
             <td class="edittext">
             <input type="file" class="edittext" style="width: 210px;" name="csvfile" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENIMPORT_CSVFILE" }]
             </td>
         </tr>
         <tr>
@@ -90,7 +92,7 @@
         <tr>
             <td class="edittext" height="40"></td>
             <td class="edittext">
-                <label><input type="checkbox" class="edittext" name="blContainsHeader" value="1"> [{ oxmultilang ident="GENIMPORT_FIRSTCOLHEADER" }]</label>
+                <input type="checkbox" class="edittext" name="blContainsHeader" value="1">[{ oxinputhelp ident="HELP_GENIMPORT_FIRSTCOLHEADER" }] [{ oxmultilang ident="GENIMPORT_FIRSTCOLHEADER" }]
             </td>
         </tr>
         <tr>
@@ -136,13 +138,16 @@
                     <option value="[{ $sDbField }]" [{ if $sDbField == $sCsvField}]selected[{/if}]>[{ $sDbField }]</option>
                 [{/foreach}]
                 </select>
+                [{ oxinputhelp ident="HELP_GENIMPORT_DBFIELDS" }]
             </td>
         </tr>
         [{/foreach}]
         <tr>
             <td class="edittext"></td>
             <td class="edittext">
-                <input type="checkbox" class="edittext" name="iRepeatImport" value="1"> [{ oxmultilang ident="GENIMPORT_REPEATIMPORT" }]<br>
+                <input type="checkbox" class="edittext" name="iRepeatImport" value="1"> [{ oxmultilang ident="GENIMPORT_REPEATIMPORT" }]
+                [{ oxinputhelp ident="HELP_GENIMPORT_REPEATIMPORT" }]
+                <br>
             </td>
         </tr>
         <tr>

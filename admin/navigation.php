@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: navigation.php 22591 2009-09-24 07:09:30Z vilma $
+ * $Id: navigation.php 23384 2009-10-20 12:58:12Z vilma $
  */
 
 /**
@@ -165,7 +165,7 @@ class Navigation extends oxAdminView
                     $sOutput = file_get_contents($sPath);
 
                     // Fix base path
-                    $sOutput = preg_replace("/<\/head>/i", "<base href=\"{$sBase}\"></head>\n  <!-- OXID eShop {$sEdition}, Version {$sVersion}, Shopsystem (c) OXID eSales AG 2003 - {$sCurYear} - http://www.oxid-esales.com -->", $sOutput);
+                    $sOutput = preg_replace("/<\/head>/i", "<base href=\"{$sBase}\"></head>\n  <!-- OXID eShop {$sEdition}, Version {$sVersion}, Shopping Cart System (c) OXID eSales AG 2003 - {$sCurYear} - http://www.oxid-esales.com -->", $sOutput);
 
                     // Fix self url's
                     $sOutput = preg_replace("/href=\"#\"/i", 'href="javascript::void();"', $sOutput);
@@ -231,6 +231,13 @@ class Navigation extends oxAdminView
         // check if setup dir is deleted
         if ( file_exists( $this->getConfig()->getConfigParam( 'sShopDir' ) . '/setup/index.php' ) ) {
             $aMessage['warning']  .= ( ( !empty($aMessage['warning']) ) ? "<br>" : '' ) . oxLang::getInstance()->translateString('SETUP_DIRNOTDELETED_WARNING');
+        }
+
+        // check if config file is writable
+        $sConfPath = $this->getConfig()->getConfigParam( 'sShopDir' )."/config.inc.php";
+        $sPerms = substr( decoct( fileperms($sConfPath) ), 2 );
+        if ( $sPerms > 644 ) {
+            $aMessage['warning']  .= ( ( !empty($aMessage['warning']) ) ? "<br>" : '' ) . oxLang::getInstance()->translateString('SETUP_CONFIGPERMISSIONS_WARNING');
         }
 
         return $aMessage;

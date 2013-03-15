@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxlang.php 22390 2009-09-17 14:40:09Z arvydas $
+ * $Id: oxlang.php 23422 2009-10-21 07:22:02Z tomas $
  */
 
 /**
@@ -260,7 +260,7 @@ class oxLang extends oxSuperCfg
                     //skipping non active languages
                     if ( !$aLangParams[$key]['active'] ) {
                         $i++;
-                        continue;
+                    	continue;
                     }
                 }
 
@@ -391,7 +391,7 @@ class oxLang extends oxSuperCfg
     }
 
     /**
-     * Returns formatted currency string, according to formatting standards.
+     * Returns formatted number, according to active currency formatting standards.
      *
      * @param double $dValue  Plain price
      * @param object $oActCur Object of active currency
@@ -732,6 +732,38 @@ class oxLang extends oxSuperCfg
         return $sStringToTranslate;
     }
 
+    /**
+     * Language sorting callback function
+     *
+     * @param object $a1 first value to check
+     * @param object $a2 second value to check
+     *
+     * @return bool
+     */
+    /**
+     * Language sorting callback function
+     *
+     * @param object $a1 first value to check
+     * @param object $a2 second value to check
+     *
+     * @return bool
+     */
+    /**
+     * Language sorting callback function
+     *
+     * @param object $a1 first value to check
+     * @param object $a2 second value to check
+     *
+     * @return bool
+     */
+    /**
+     * Language sorting callback function
+     *
+     * @param object $a1 first value to check
+     * @param object $a2 second value to check
+     *
+     * @return bool
+     */
     /**
      * Language sorting callback function
      *

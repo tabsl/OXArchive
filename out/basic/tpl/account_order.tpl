@@ -92,7 +92,7 @@
               <td class="amount" id="test_accOrderAmount_[{$order->oxorder__oxordernr->value}]_[{$smarty.foreach.testOrderItem.iteration}]">[{ $orderitem->oxorderarticles__oxamount->value }]</td>
               <td>
                 [{ if $oArticle->oxarticles__oxid->value && $oArticle->isVisible() }]<a  id="test_accOrderLink_[{$order->oxorder__oxordernr->value}]_[{$smarty.foreach.testOrderItem.iteration}]" href="[{ $oArticle->getLink() }]" class="artlink">[{/if }]
-                [{ $orderitem->oxorderarticles__oxtitle->value }]
+                [{ $orderitem->oxorderarticles__oxtitle->value }] [{ $orderitem->oxorderarticles__oxselvariant->value }]
                 [{ if $oArticle->oxarticles__oxid->value && $oArticle->isVisible() }]</a>[{/if }]
               </td>
               <td align="right">

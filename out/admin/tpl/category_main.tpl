@@ -77,6 +77,7 @@ function LockAssignment(obj)
             <input class="edittext" type="checkbox" name="editval[oxcategories__oxactive]" value='1' [{if $edit->oxcategories__oxactive->value == 1}]checked[{/if}] [{$readonly}]>&nbsp;&nbsp;&nbsp;
             [{ oxmultilang ident="CATEGORY_MAIN_HIDDEN" }]&nbsp;&nbsp;&nbsp;
             <input class="edittext" type="checkbox" name="editval[oxcategories__oxhidden]" value='1' [{if $edit->oxcategories__oxhidden->value == 1}]checked[{/if}] [{$readonly}]>
+            [{ oxinputhelp ident="HELP_CATEGORY_MAIN_ACTIVE" }]
             </td>
         </tr>
         <tr>
@@ -85,6 +86,7 @@ function LockAssignment(obj)
             </td>
             <td class="edittext" colspan="2">
             <input type="text" class="editinput" size="25" maxlength="[{$edit->oxcategories__oxtitle->fldmax_length}]" name="editval[oxcategories__oxtitle]" value="[{$edit->oxcategories__oxtitle->value}]" [{$readonly}]>
+            [{ oxinputhelp ident="HELP_CATEGORY_MAIN_TITLE" }]
             </td>
         </tr>
         <tr>
@@ -93,6 +95,7 @@ function LockAssignment(obj)
             </td>
             <td class="edittext" colspan="2">
             <input type="text" class="editinput" size="25" maxlength="[{$edit->oxcategories__oxdesc->fldmax_length}]" name="editval[oxcategories__oxdesc]" value="[{$edit->oxcategories__oxdesc->value}]" [{$readonly}]>
+            [{ oxinputhelp ident="HELP_CATEGORY_MAIN_DESCRIPTION" }]
             </td>
         </tr>
         <tr>
@@ -105,6 +108,7 @@ function LockAssignment(obj)
                 <option value="[{if $pcat->oxcategories__oxid->value}][{$pcat->oxcategories__oxid->value}][{else}]oxrootid[{/if}]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value|oxtruncate:33:"..":true }]</option>
                 [{/foreach}]
                 </select>
+                [{ oxinputhelp ident="HELP_CATEGORY_MAIN_PARENTID" }]
             </td>
         </tr>
         <tr>
@@ -113,6 +117,7 @@ function LockAssignment(obj)
             </td>
             <td class="edittext" colspan="2">
             <input type="text" class="editinput" size="25" maxlength="[{$edit->oxcategories__oxorder->fldmax_length}]" name="editval[oxcategories__oxsort]" value="[{$edit->oxcategories__oxsort->value}]" [{$readonly}]>
+            [{ oxinputhelp ident="HELP_CATEGORY_MAIN_SORT" }]
             </td>
         </tr>
         <tr>
@@ -121,6 +126,7 @@ function LockAssignment(obj)
             </td>
             <td class="edittext">
             <input id="oxthumb" type="text" class="editinput" size="42" maxlength="[{$edit->oxcategories__oxthumb->fldmax_length}]" name="editval[oxcategories__oxthumb]" value="[{$edit->oxcategories__oxthumb->value}]">
+            [{ oxinputhelp ident="HELP_CATEGORY_MAIN_THUMB" }]            
             [{ if (!($edit->oxcategories__oxthumb->value=="nopic.jpg" || $edit->oxcategories__oxthumb->value=="" || $edit->oxcategories__oxthumb->value=="nopic_ico.jpg")) }]
             </td>
             <td class="edittext">
@@ -142,6 +148,7 @@ function LockAssignment(obj)
             </td>
             <td class="edittext">
             <input id="oxicon" type="text" class="editinput" size="42" maxlength="[{$edit->oxcategories__oxicon->fldmax_length}]" name="editval[oxcategories__oxicon]" value="[{$edit->oxcategories__oxicon->value}]">
+            [{ oxinputhelp ident="HELP_CATEGORY_MAIN_ICON" }]
             </td>
             <td class="edittext">
             [{ if (!($edit->oxcategories__oxicon->value=="nopic.jpg" || $edit->oxcategories__oxicon->value=="" || $edit->oxcategories__oxicon->value=="nopic_ico.jpg")) }]
@@ -163,6 +170,7 @@ function LockAssignment(obj)
             </td>
             <td class="edittext" colspan="2">
             <input type="text" class="editinput" size="42" maxlength="[{$edit->oxcategories__oxextlink->fldmax_length}]" name="editval[oxcategories__oxextlink]" value="[{$edit->oxcategories__oxextlink->value}]" [{$readonly}]>
+            [{ oxinputhelp ident="HELP_CATEGORY_MAIN_EXTLINK" }]
             </td>
         </tr>
         <tr>
@@ -171,6 +179,7 @@ function LockAssignment(obj)
             </td>
             <td class="edittext" colspan="2">
             <input type="text" class="editinput" size="42" maxlength="[{$edit->oxcategories__oxtemplate->fldmax_length}]" name="editval[oxcategories__oxtemplate]" value="[{$edit->oxcategories__oxtemplate->value}]" [{include file="help.tpl" helpid=article_template}] [{$readonly}]>
+            [{ oxinputhelp ident="HELP_CATEGORY_MAIN_TEMPLATE" }]
             </td>
         </tr>
 
@@ -189,6 +198,7 @@ function LockAssignment(obj)
             </select>
             <input type="radio" class="editinput" name="editval[oxcategories__oxdefsortmode]" [{if !$defsort}]disabled[{/if}] value="0" [{if $edit->oxcategories__oxdefsortmode->value=="0"}]checked[{/if}]>[{ oxmultilang ident="CATEGORY_MAIN_ASC" }]
             <input type="radio" class="editinput" name="editval[oxcategories__oxdefsortmode]" [{if !$defsort}]disabled[{/if}] value="1" [{if $edit->oxcategories__oxdefsortmode->value=="1"}]checked[{/if}]>[{ oxmultilang ident="CATEGORY_MAIN_DESC" }]
+            [{ oxinputhelp ident="HELP_CATEGORY_MAIN_DEFSORT" }]
             </td>
         </tr>
         <tr>
@@ -198,6 +208,7 @@ function LockAssignment(obj)
             <td class="edittext" colspan="2">
             <input type="text" class="editinput" size="5" maxlength="[{$edit->oxcategories__oxpricefrom->fldmax_length}]" name="editval[oxcategories__oxpricefrom]" value="[{$edit->oxcategories__oxpricefrom->value}]" [{$readonly}]>&nbsp;
             <input type="text" class="editinput" size="5" maxlength="[{$edit->oxcategories__oxpriceto->fldmax_length}]" name="editval[oxcategories__oxpriceto]" value="[{$edit->oxcategories__oxpriceto->value}]" onchange="JavaScript:LockAssignment(this);" onkeyup="JavaScript:LockAssignment(this);" onmouseout="JavaScript:LockAssignment(this);" [{$readonly}]>
+            [{ oxinputhelp ident="HELP_CATEGORY_MAIN_PRICEFROMTILL" }]
             </td>
         </tr>
         <tr>
@@ -206,6 +217,7 @@ function LockAssignment(obj)
             </td>
             <td class="edittext" colspan="2">
             <input type="text" class="editinput" size="5" maxlength="[{$edit->oxcategories__oxvat->fldmax_length}]" name="editval[oxcategories__oxvat]" value="[{$edit->oxcategories__oxvat->value}]" [{$readonly}]>
+            [{ oxinputhelp ident="HELP_CATEGORY_MAIN_VAT" }]
             </td>
         </tr>
         <tr>
@@ -215,6 +227,7 @@ function LockAssignment(obj)
             <td class="edittext" colspan="2">
             <input type="hidden" name="editval[oxcategories__oxskipdiscounts]" value='0' [{$readonly_fields}]>
             <input class="edittext" type="checkbox" name="editval[oxcategories__oxskipdiscounts]" value='1' [{if $edit->oxcategories__oxskipdiscounts->value == 1}]checked[{/if}] [{$readonly_fields}]>
+            [{ oxinputhelp ident="HELP_CATEGORY_MAIN_SKIPDISCOUNTS" }]
             </td>
         </tr>
         <tr>

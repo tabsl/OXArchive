@@ -17,7 +17,7 @@
     </dl>
 
     [{assign var=showStepLinks value=false}]
-    [{if !$oView->isLowOrderPrice()}]
+    [{if !$oView->isLowOrderPrice() && $oxcmp_basket->getProductsCount() }]
         [{assign var=showStepLinks value=true}]
     [{/if}]
 
@@ -33,7 +33,7 @@
     </dl>
 
     [{assign var=showStepLinks value=false}]
-    [{if $highlight != 1 && $oxcmp_user && !$oView->isLowOrderPrice()}]
+    [{if $highlight != 1 && $oxcmp_user && !$oView->isLowOrderPrice() && $oxcmp_basket->getProductsCount() }]
         [{assign var=showStepLinks value=true}]
     [{/if}]
 

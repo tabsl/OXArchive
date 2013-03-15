@@ -54,7 +54,7 @@ class oxSimpleVariantList extends oxList
     }
 
     /**
-     * Sets parent for variant. This method is invoked.
+     * Sets parent for variant. This method is invoked for each element in oxList::assign() loop.
      *
      * @param oxSimleVariant $oListObject Simple variant
      * @param array          $aDbFields   Array of available

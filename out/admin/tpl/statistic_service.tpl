@@ -37,7 +37,9 @@
             <option value="62">[{ oxmultilang ident="STASTISTIC_SERVICE_OLDER" }] 2 [{ oxmultilang ident="GENERAL_MONTHS" }]</option>
             <option value="31">[{ oxmultilang ident="STASTISTIC_SERVICE_OLDER" }] 1 [{ oxmultilang ident="GENERAL_MONTH" }]</option>
             <option value="1">[{ oxmultilang ident="STASTISTIC_SERVICE_OLDER" }] 1 [{ oxmultilang ident="STASTISTIC_SERVICE_DAY" }]</option>
-            </select><br><br>
+            </select>
+            [{ oxinputhelp ident="HELP_GENERAL_INTIME" }]
+            <br><br>
             </td>
         </tr>
         <tr>

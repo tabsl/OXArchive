@@ -13,10 +13,16 @@
     </form>
 </div>
 
-[{ if $oxcmp_basket->getProductsCount() && $_newitem}]
+[{ if $oxcmp_basket->getProductsCount() && ( $_newitem || $Errors.popup )}]
 [{assign var="currency" value=$oView->getActCurrency() }]
 <div id="popup" class="popup">
-    <strong>[{ oxmultilang ident="BASKET_POPUP_FULL_ADDEDARTICLETOBASKET" }]</strong>
+    [{if $Errors.popup}]
+        [{foreach from=$Errors.popup item=oEr }]
+            <strong class="err">[{ $oEr->getOxMessage() }]</strong>
+        [{/foreach}]
+    [{else}]
+        <strong>[{ oxmultilang ident="BASKET_POPUP_FULL_ADDEDARTICLETOBASKET" }]</strong>
+    [{/if}]
     [{oxhasrights ident="TOBASKET"}]
     [{if $oxcmp_basket->getContents()}]
      <table summary="[{ oxmultilang ident="INC_HEADER_CART" }]" cellpadding="2" cellspacing="2">

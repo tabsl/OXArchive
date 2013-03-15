@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutils.php 22590 2009-09-24 06:24:00Z alfonsas $
+ * $Id: oxutils.php 23456 2009-10-21 14:49:35Z sarunas $
  */
 
 /**
@@ -84,7 +84,7 @@ class oxUtils extends oxSuperCfg
 
         }
 
-        if ( !self::$_instance instanceof oxUtils ) {
+        if ( !(self::$_instance instanceof oxUtils) ) {
 
 
             self::$_instance = oxNew( 'oxUtils' );
@@ -489,23 +489,23 @@ class oxUtils extends oxSuperCfg
         //due to possible race conditions
         //check if there are any other cache files already opened for writing by another process
         //additionally perform the check for older (aged 40 or more secs) locked files
-        if (!isset($this->_aFileCacheContents[$sKey]) && file_exists($sFilePath) && abs($iCurTime - filectime($sFilePath) < 40) ) {
+        clearstatcache();
+        if (!isset($this->_aFileCacheContents[$sKey]) && file_exists($sFilePath) && (!filesize($sFilePath)) && abs($iCurTime - filectime($sFilePath) < 40) ) {
             //then leave the cache to be dealt by another process and do nothing
             return false;
         }
         //the above code ensures that $_aFileCacheContet is writen only in case cache file has not been started
         //by another process
+        if (!isset($this->_aFileCacheContents[$sKey])) {
+            //start a blank file to inform other processes we are dealing with it.
+            $hFile = fopen($sFilePath, "w");
+            if ($hFile) {
+                fclose($hFile);
+            }
+            clearstatcache();
+        }
 
         $this->_aFileCacheContents[$sKey] = $mContents;
-
-        //start a blank file to inform other processes we are dealing with it.
-        if (!file_exists($sFilePath)) {
-            $hFile = fopen( $sFilePath, "w");
-            if ( $hFile) {
-                fwrite( $hFile, null);
-                fclose( $hFile);
-            }
-        }
 
         return true;
     }
@@ -558,7 +558,8 @@ class oxUtils extends oxSuperCfg
         }
 
         //empty buffer
-        //$this->_aFileCacheContents = array();
+        $this->_aFileCacheContents = array();
+        clearstatcache ();
     }
 
     /**
@@ -728,10 +729,7 @@ class oxUtils extends oxSuperCfg
 
         $myConfig = $this->getConfig();
 
-        if ( $this->isAdmin() ) {
-            // allways off in admin
-            $this->_blSeoIsActive = false;
-        } elseif ( ( $this->_blSeoIsActive = $myConfig->getConfigParam( 'blSeoMode' ) ) === null ) {
+        if ( ( $this->_blSeoIsActive = $myConfig->getConfigParam( 'blSeoMode' ) ) === null ) {
             $this->_blSeoIsActive = true;
 
             $aSeoModes  = $myConfig->getconfigParam( 'aSeoModes' );
@@ -1038,7 +1036,8 @@ class oxUtils extends oxSuperCfg
             if ( gettype( $sText ) != 'string' ) {
                 $sText = var_export( $sText, true);
             }
-            @error_log("----------------------------------------------\n$sText".( ( $blNewline ) ?"\n":"" )."\n", 3, $myConfig->getConfigParam( 'sCompileDir' ).'/log.txt' );
+            $sLogMsg = "----------------------------------------------\n{$sText}".( ( $blNewline ) ?"\n":"" )."\n";
+            $this->writeToLog( $sLogMsg, "log.txt" );
         }
 
     }
@@ -1130,7 +1129,7 @@ class oxUtils extends oxSuperCfg
 
             $sVersionPrefix = 'pe';
 
-        $sPath = $this->getConfig()->getConfigParam( 'sCompileDir' );
+        $sPath = realpath($this->getConfig()->getConfigParam( 'sCompileDir' ));
         return $blPathOnly ? "{$sPath}/" : "{$sPath}/ox{$sVersionPrefix}c_{$sCacheName}.txt";
     }
 
@@ -1182,4 +1181,24 @@ class oxUtils extends oxSuperCfg
         return $sUrl;
     }
 
+    /**
+     * Writes given log message. Returns write state
+     *
+     * @param string $sLogMessage  log message
+     * @param string $sLogFileName log file name
+     *
+     * @return bool
+     */
+    public function writeToLog( $sLogMessage, $sLogFileName )
+    {
+        $sLogDist = $this->getConfig()->getLogsDir().$sLogFileName;
+        $blOk = false;
+
+        if ( ( $oHandle = fopen( $sLogDist, 'a' ) ) !== false ) {
+            fwrite( $oHandle, $sLogMessage );
+            $blOk = fclose( $oHandle );
+        }
+
+        return $blOk;
+    }
 }

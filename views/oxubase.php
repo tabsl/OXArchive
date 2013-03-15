@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxubase.php 22650 2009-09-25 14:32:34Z tomas $
+ * $Id: oxubase.php 23483 2009-10-22 08:37:14Z rimvydas.paskevicius $
  */
 
 /**
@@ -1271,9 +1271,7 @@ class oxUBase extends oxView
 
         $oViewConf = $this->getViewConfig();
         //value from user input
-        if ( ( $iUserArtPerPage = (int) oxConfig::getParameter( '_artperpage' ) ) ) {
-            // performing floor() to skip such variants as 7.5 etc
-            $iNrofArticles = ( $iUserArtPerPage > 100 ) ? 10 : abs( $iUserArtPerPage );
+        if ( ( $iNrofArticles = (int) oxConfig::getParameter( '_artperpage' ) ) ) {
             // M45 Possibility to push any "Show articles per page" number parameter
             $iNrofCatArticles = ( in_array( $iNrofArticles, $aNrofCatArticles ) ) ? $iNrofArticles : $iNrofCatArticles;
             $oViewConf->setViewConfigParam( 'iartPerPage', $iNrofCatArticles );
@@ -1617,6 +1615,15 @@ class oxUBase extends oxView
             // fallback to old non seo url
             return $this->_addPageNrParam( $sUrl, $iActPageNr, $iLang );
         }
+    }
+
+    /**
+     * Returns view object canonical url
+     *
+     * @return string
+     */
+    public function getCanonicalUrl()
+    {
     }
 
     /**
@@ -2440,29 +2447,6 @@ class oxUBase extends oxView
     {
         $this->_aViewData['articlebargainlist'] = $this->getBargainArticleList();
         $this->_aViewData['aTop5Articles']      = $this->getTop5ArticleList();
-    }
-
-    /**
-     * Active category id tracker used when SEO is on to track active category and
-     * keep correct navigation
-     *
-     * @param string $sCategoryId active category Id
-     *
-     * @return null
-     */
-    public function setSessionCategoryId( $sCategoryId )
-    {
-        oxSession::setVar( 'cnid', $sCategoryId );
-    }
-
-    /**
-     * Active category id getter
-     *
-     * @return string
-     */
-    public function getSessionCategoryId()
-    {
-        return oxSession::getVar( 'cnid' );
     }
 
     /**

@@ -145,9 +145,8 @@ class oxException extends Exception
     public function debugOut($iDebug = -1)
     {
         if (0 != $iDebug) {
-            $f = fopen($this->_sFileName, 'a');
-            fputs($f, $this->getString() . "\n---------------------------------------------\n");
-            fclose($f);
+            $sLogMsg = $this->getString() . "\n---------------------------------------------\n";
+            oxUtils::getInstance()->writeToLog( $sLogMsg, $this->getLogFileName() );
         }
     }
 

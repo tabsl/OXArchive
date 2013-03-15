@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxvendorlist.php 19752 2009-06-10 13:01:01Z arvydas $
+ * $Id: oxvendorlist.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**
@@ -231,20 +231,20 @@ class oxVendorList extends oxList
      */
     protected function _seoSetVendorData()
     {
-        if (!oxUtils::getInstance()->seoIsActive()) {
-            return;
-        }
+        // only when SEO id on and in front end
+        if ( oxUtils::getInstance()->seoIsActive() && !$this->isAdmin()) {
 
-        $oEncoder = oxSeoEncoderVendor::getInstance();
+            $oEncoder = oxSeoEncoderVendor::getInstance();
 
-        // preparing root vendor category
-        if ($this->_oRoot) {
-            $oEncoder->getVendorUrl($this->_oRoot);
-        }
+            // preparing root vendor category
+            if ($this->_oRoot) {
+                $oEncoder->getVendorUrl($this->_oRoot);
+            }
 
-        // encoding vendor category
-        foreach ($this as $sVndId => $value) {
-            $oEncoder->getVendorUrl( $this->_aArray[$sVndId] );
+            // encoding vendor category
+            foreach ($this as $sVndId => $value) {
+                $oEncoder->getVendorUrl( $this->_aArray[$sVndId] );
+            }
         }
     }
 }

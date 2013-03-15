@@ -52,6 +52,7 @@ function ChangeDiscountType(oObj)
             </td>
             <td class="edittext" width="250">
             <input type="text" class="editinput" size="50" maxlength="[{$edit->oxdiscount__oxtitle->fldmax_length}]" name="editval[oxdiscount__oxtitle]" value="[{$edit->oxdiscount__oxtitle->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_NAME" }]
             </td>
         </tr>
         [{ if $oxid != "-1"}]
@@ -61,6 +62,7 @@ function ChangeDiscountType(oObj)
             </td>
             <td class="edittext">
             <input class="edittext" type="checkbox" name="editval[oxdiscount__oxactive]" value='1' [{if $edit->oxdiscount__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
             </td>
         </tr>
         <tr>
@@ -70,6 +72,7 @@ function ChangeDiscountType(oObj)
             <td class="edittext">
             <input type="text" class="editinput" size="27" name="editval[oxdiscount__oxactivefrom]" value="[{$edit->oxdiscount__oxactivefrom|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]>[{ oxmultilang ident="DISCOUNT_MAIN_AFROM" }]<br>
             <input type="text" class="editinput" size="27" name="editval[oxdiscount__oxactiveto]" value="[{$edit->oxdiscount__oxactiveto|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]>[{ oxmultilang ident="DISCOUNT_MAIN_ATILL" }]
+            [{ oxinputhelp ident="HELP_GENERAL_ACTIVFROMTILL" }]
             </td>
         </tr>
         <tr>
@@ -79,6 +82,7 @@ function ChangeDiscountType(oObj)
             <td class="edittext">
             [{ oxmultilang ident="GENERAL_FROM" }] <input type="text" class="editinput" size="10" maxlength="[{$edit->oxdiscount__oxamount->fldmax_length}]" name="editval[oxdiscount__oxamount]" value="[{$edit->oxdiscount__oxamount->value}]" [{ $readonly }]>
             [{ oxmultilang ident="GENERAL_TILL" }] <input type="text" class="editinput" size="10" maxlength="[{$edit->oxdiscount__oxamountto->fldmax_length}]" name="editval[oxdiscount__oxamountto]" value="[{$edit->oxdiscount__oxamountto->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_DISCOUNT_MAIN_AMOUNT" }]
             </td>
         </tr>
         <tr>
@@ -88,6 +92,7 @@ function ChangeDiscountType(oObj)
             <td class="edittext">
             [{ oxmultilang ident="GENERAL_FROM" }] <input type="text" class="editinput" size="10" maxlength="[{$edit->oxdiscount__oxprice->fldmax_length}]" name="editval[oxdiscount__oxprice]" value="[{$edit->oxdiscount__oxprice->value}]" [{ $readonly }]>
             [{ oxmultilang ident="GENERAL_TILL" }] <input type="text" class="editinput" size="10" maxlength="[{$edit->oxdiscount__oxpriceto->fldmax_length}]" name="editval[oxdiscount__oxpriceto]" value="[{$edit->oxdiscount__oxpriceto->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_DISCOUNT_MAIN_PRICE" }]
             </td>
         </tr>
         <tr>
@@ -96,11 +101,12 @@ function ChangeDiscountType(oObj)
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="15" maxlength="[{$edit->oxdiscount__oxaddsum->fldmax_length}]" name="editval[oxdiscount__oxaddsum]" id="editval[oxdiscount__oxaddsum]" value="[{$edit->oxdiscount__oxaddsum->value }]" style="display: [{if $itm_disp == ""}]none[{/if}];" [{ $readonly }]>
-                <select name="editval[oxdiscount__oxaddsumtype]" class="editinput" [{include file="help.tpl" helpid=addsumitmtype}] onChange="Javascript:ChangeDiscountType(this);" [{ $readonly }]>
+                <select name="editval[oxdiscount__oxaddsumtype]" class="editinput" onChange="Javascript:ChangeDiscountType(this);" [{ $readonly }]>
                 [{foreach from=$sumtype item=sum}]
                 <option value="[{ $sum }]" [{ if $sum == $edit->oxdiscount__oxaddsumtype->value}]SELECTED[{/if}]>[{ $sum }]</option>
                 [{/foreach}]
                 </select>
+                [{ oxinputhelp ident="HELP_DISCOUNT_MAIN_REBATE" }]
             </td>
         </tr>
         <tr id="itmart" style="display: [{$itm_disp}];">
@@ -135,6 +141,7 @@ function ChangeDiscountType(oObj)
                       <option value="[{ $pcat->oxcategories__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value }]</option>
                       [{/foreach}]
                       </select>
+                      [{ oxinputhelp ident="HELP_DISCOUNT_MAIN_EXTRA" }]
                     </td>
                   </tr>
                 </table>

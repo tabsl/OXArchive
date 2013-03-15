@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxconfig.php 22669 2009-09-28 07:43:10Z sarunas $
+ * $Id: oxconfig.php 23366 2009-10-20 08:53:58Z arvydas $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -803,10 +803,7 @@ class oxConfig extends oxSuperCfg
      */
     public function getCoreUtilsUrl()
     {
-        if ( ( $sSSLShopURL = $this->getConfigParam( 'sSSLShopURL' ) ) ) {
-            return $sSSLShopURL.'core/utils/';
-        }
-        return $this->getConfigParam( 'sShopURL' ).'core/utils/';
+        return $this->getCurrentShopUrl().'core/utils/';
     }
 
     /**
@@ -1066,6 +1063,14 @@ class oxConfig extends oxSuperCfg
      */
     public function getDir($sFile, $sDir, $blAdmin, $iLang = null, $iShop = null, $sTheme = null, $blAbsolute = true )
     {
+        if ( is_null($sTheme) ) {
+            $sTheme = $this->getConfigParam( 'sTheme' );
+        }
+
+        if ( $blAdmin ) {
+            $sTheme = 'admin';
+        }
+
         $sBase    = $this->getOutDir( $blAbsolute );
         $sAbsBase = $this->getOutDir();
 
@@ -1081,14 +1086,6 @@ class oxConfig extends oxSuperCfg
             $iShop = $this->getShopId();
         }
 
-        if ( is_null($sTheme) ) {
-            $sTheme = $this->getConfigParam( 'sTheme' );
-        }
-
-        if ( $blAdmin ) {
-            $sTheme = 'admin';
-        }
-
         //Load from
         $sPath = "$sTheme/$iShop/$sLang/$sDir/$sFile";
         $sCacheKey = $sPath . "_$blAbsolute";
@@ -1098,6 +1095,12 @@ class oxConfig extends oxSuperCfg
         }
 
         $sReturn = false;
+
+        // Check for custom template
+        $sCustomTheme = $this->getConfigParam( 'sCustomTheme' );
+        if( !$blAdmin && $sCustomTheme && $sCustomTheme != $sTheme) {
+            $sReturn = $this->getDir($sFile, $sDir, $blAdmin, $iLang, $iShopl, $sCustomTheme, $blAbsolute, $blReturnArray);
+        }
 
         //test lang level ..
         if ( !$sReturn && !$blAdmin && ( is_readable( $sAbsBase.$sPath ) || is_dir( realpath( $sAbsBase.$sPath ) ) ) ) {
@@ -1726,32 +1729,58 @@ class oxConfig extends oxSuperCfg
 
     /**
      * Updates or adds new shop configuration parameters to DB.
+     * Arrays must be passed not serialized, serialized values are supported just for backward compatibility.
      *
      * @param string $sVarType Variable Type
      * @param string $sVarName Variable name
-     * @param string $sVarVal  Variable value
+     * @param mixed  $sVarVal  Variable value (can be string, integer or array)
      * @param string $sShopId  Shop ID, default is current shop
      *
      * @return null
      */
     public function saveShopConfVar( $sVarType, $sVarName, $sVarVal, $sShopId = null )
     {
+        switch ( $sVarType ) {
+            case 'arr':
+            case 'aarr':
+                if (is_array($sVarVal)) {
+                    $sValue = serialize( $sVarVal );
+                } else {
+                    // Deprecated functionality
+                    $sValue  = $sVarVal ;
+                    $sVarVal = unserialize( $sVarVal );
+                }
+                break;
+            case 'bool':
+                $sValue  =  $sVarVal = ( $sVarVal == 'true' || $sVarVal == '1' );
+                break;
+            default:
+                $sValue  = $sVarVal;
+                break;
+        }
+
         if ( !$sShopId ) {
             $sShopId = $this->getShopId();
+        }
+
+        // Update value only for current shop
+        if ($sShopId == $this->getShopId()) {
+            $this->setConfigParam( $sVarName, $sVarVal );
         }
 
         $oDb = oxDb::getDb();
         $sQ = "delete from oxconfig where oxshopid = '$sShopId' and oxvarname = '$sVarName'";
         $oDb->execute( $sQ );
-        $sUid = oxUtilsObject::getInstance()->generateUID();
 
-        $sUid     = mysql_real_escape_string($sUid);
-        $sShopId  = mysql_real_escape_string($sShopId);
-        $sVarName = mysql_real_escape_string($sVarName);
-        $sVarVal  = mysql_real_escape_string($sVarVal);
+        $sNewOXIDdQuoted  = $oDb->quote(oxUtilsObject::getInstance()->generateUID());
+        $sShopIdQuoted    = $oDb->quote($sShopId);
+        $sVarNameQuoted   = $oDb->quote($sVarName);
+        $sVarTypeQuoted   = $oDb->quote($sVarType);
+        $sVarValueQuoted  = $oDb->quote($sValue);
+        $sConfigKeyQuoted = $oDb->quote($this->getConfigParam('sConfigKey'));
 
         $sQ = "insert into oxconfig (oxid, oxshopid, oxvarname, oxvartype, oxvarvalue)
-               values('$sUid', '$sShopId', '$sVarName', '$sVarType', ENCODE( '$sVarVal', '".$this->getConfigParam('sConfigKey')."'))";
+               values($sNewOXIDdQuoted, $sShopIdQuoted, $sVarNameQuoted, $sVarTypeQuoted, ENCODE( $sVarValueQuoted, $sConfigKeyQuoted))";
 
         $oDb->execute( $sQ );
     }
@@ -1789,7 +1818,7 @@ class oxConfig extends oxSuperCfg
                 default:
                     $sValue = $sVarVal;
                     break;
-            }
+                }
         }
         return $sValue;
     }
@@ -1878,5 +1907,15 @@ class oxConfig extends oxSuperCfg
     public function isUtf()
     {
         return ( bool ) $this->getConfigParam( 'iUtfMode' );
+    }
+
+    /**
+     * Returns log files storage path
+     *
+     * @return string
+     */
+    public function getLogsDir()
+    {
+        return $this->getConfigParam( 'sShopDir' ).'log/';
     }
 }

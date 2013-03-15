@@ -61,15 +61,19 @@
         {
             return 'fnc=removecat';
         }
+
+        YAHOO.oxid.container2.oActiveBtn = new YAHOO.widget.Button('makeact');
+
         YAHOO.oxid.container2.subscribe( "rowSelectEvent", function( oParam )
         {
             if ( oData = oParam.record.getData() ) {
                 if ( oData._3 ) {
                     $('defcat').value = oData._4;
-                    $('makeact').disabled = false;
+                    YAHOO.oxid.container2.oActiveBtn.set("disabled", false);
                 }
             }
         });
+
         YAHOO.oxid.container2.onActive = function()
         {
             YAHOO.oxid.container1.getDataSource().flushCache();
@@ -78,6 +82,7 @@
             YAHOO.oxid.container2.getPage( 0 );
         }
         YAHOO.oxid.container2.onFailure = function() { /* currently does nothing */}
+
         YAHOO.oxid.container2.makeActive = function()
         {
             var callback = {
@@ -87,10 +92,11 @@
             };
 
             YAHOO.util.Connect.asyncRequest( 'GET', '[{ $oViewConf->getAjaxLink() }]&cmpid=container2&container=article_extend&fnc=setasdefault&oxid=[{ $oxid }]'+'&defcat='+$('defcat').value, callback );
-            $('makeact').disabled = true;
+            YAHOO.oxid.container2.oActiveBtn.disable();
         }
-        YAHOO.oxid.container2.subscribe( "dataReturnEvent", function() { $('makeact').disabled = true;} );
-        $E.addListener( $('makeact'), "click", YAHOO.oxid.container2.makeActive, $('makeact') );
+
+
+        YAHOO.oxid.container2.subscribe( "dataReturnEvent", function() { YAHOO.oxid.container2.oActiveBtn.on("click", YAHOO.oxid.container2.makeActive, this );} );
     }
     $E.onDOMReady( initAoc );
 </script>
@@ -111,11 +117,11 @@
             <td valign="top" id="container2"></td>
         </tr>
         <tr>
-            <td><input type="button" class="edittext oxid-aoc-button" value="[{ oxmultilang ident="GENERAL_AJAX_ASSIGNALL" }]" id="container1_btn"></td>
-            <td>
-              <input type="button" class="edittext oxid-aoc-button" value="[{ oxmultilang ident="GENERAL_AJAX_UNASSIGNALL" }]" id="container2_btn">
+            <td class="oxid-aoc-actions"><input type="button" value="[{ oxmultilang ident="GENERAL_AJAX_ASSIGNALL" }]" id="container1_btn"></td>
+            <td class="oxid-aoc-actions">
+              <input type="button" value="[{ oxmultilang ident="GENERAL_AJAX_UNASSIGNALL" }]" id="container2_btn">
               <input type="hidden" id="defcat">
-              <input type="button" class="edittext oxid-aoc-button" id="makeact" value="[{ oxmultilang ident="ARTICLE_EXTEND_DEFAULT" }]" style="width:140px;" disabled>
+              <input type="button" id="makeact" value="[{ oxmultilang ident="ARTICLE_EXTEND_DEFAULT" }]" style="width:140px;" disabled>
             </td>
         </tr>
     </table>

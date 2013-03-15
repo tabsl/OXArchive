@@ -39,21 +39,25 @@
 
   [{/if}]
 
-  [{ if $oView->getPaymentError() == 1}]
+  [{assign var="iPayError" value=$oView->getPaymentError() }]
+
+  [{ if $iPayError == 1}]
     <br><div class="errorbox">[{ oxmultilang ident="PAYMENT_COMLETEALLFIELDS" }]</div>
-  [{/if}]
-  [{ if  $oView->getPaymentError() == 2}]
+  [{ elseif $iPayError == 2}]
     <br><div class="errorbox">[{ oxmultilang ident="PAYMENT_AUTHORIZATIONFAILED" }]</div>
-  [{/if}]
-  [{ if  $oView->getPaymentError() > 3}]
+  [{ elseif $iPayError == 4 }]
+    <br><div class="errorbox">[{ oxmultilang ident="PAYMENT_UNAVAILABLESHIPPING" }]</div>
+  [{ elseif $iPayError == 5 }]
+    <br><div class="errorbox">[{ oxmultilang ident="PAYMENT_UNAVAILABLEPAYMENT" }]</div>
+  [{ elseif $iPayError > 5 }]
     <!--Add custom error message here-->
     <br><div class="errorbox">[{ oxmultilang ident="PAYMENT_UNAVAILABLEPAYMENT" }]</div>
-  [{/if}]
-  [{ if  $oView->getPaymentError() == -1}]
+  [{ elseif $iPayError == -1}]
     <br><div class="errorbox">[{ oxmultilang ident="PAYMENT_ERRUNAVAILABLEPAYMENT" }] "[{ $oView->getPaymentErrorText() }]").</div>
-  [{/if}]
-  [{ if  $oView->getPaymentError() == -2}]
+  [{ elseif $iPayError == -2}]
     <br><div class="errorbox">[{ oxmultilang ident="PAYMENT_NOSHIPPINGFOUND" }]</div>
+  [{ elseif $iPayError == -3}]
+    <br><div class="errorbox">[{ oxmultilang ident="PAYMENT_SELECTANOTHERPAYMENT" }]</div>
   [{/if}]
 
 

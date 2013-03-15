@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutilscount.php 22628 2009-09-25 06:47:51Z vilma $
+ * $Id: oxutilscount.php 23567 2009-10-23 14:40:30Z arvydas $
  */
 
 /**
@@ -173,8 +173,13 @@ class oxUtilsCount extends oxSuperCfg
         $sO2CView = getViewName( 'oxobject2category' );
 
         // we use distinct if article is assigned to category twice
-        $sQ  = "select count(*) from (select distinct oxobject2category.oxcatnid, oxobject2category.oxobjectid from $sO2CView as oxobject2category WHERE oxobject2category.oxcatnid = '".$sCatId."' ";
-        $sQ .= "and oxobject2category.oxobjectid in ( SELECT oxid FROM $sTable where ".$oArticle->getSqlActiveSnippet().") ) as ox2cat";
+        $sQ = "SELECT count(*) FROM (
+                   SELECT count(*) FROM $sTable LEFT JOIN $sO2CView ON $sO2CView.oxobjectid=$sTable.oxid
+                       WHERE $sO2CView.oxcatnid = '".$sCatId."' AND
+                             $sTable.oxparentid='' AND
+                             ".$oArticle->getSqlActiveSnippet() ."
+                       GROUP BY $sTable.oxid
+                   ) AS ox2cat";
 
         $aCache[$sCatId][$sActIdent] = oxDb::getDb()->getOne( $sQ );
 
@@ -458,7 +463,7 @@ class oxUtilsCount extends oxSuperCfg
      */
     protected function _setManufacturerCache( $aCache )
     {
-    	$this->getConfig()->setGlobalParameter( 'aLocalManufacturerCache', $aCache );
+        $this->getConfig()->setGlobalParameter( 'aLocalManufacturerCache', $aCache );
         oxUtils::getInstance()->toFileCache( 'aLocalManufacturerCache', $aCache );
     }
 

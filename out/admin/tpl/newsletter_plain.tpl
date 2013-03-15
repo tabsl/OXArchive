@@ -24,6 +24,7 @@
             </td>
             <td class="edittext">
             <textarea class="editinput" cols="150" rows="15" wrap="VIRTUAL" name="editval[oxnewsletter__oxplaintemplate]">[{$edit->oxnewsletter__oxplaintemplate->value}]</textarea><br>
+            [{ oxinputhelp ident="HELP_NEWSLETTER_PLAIN_TEXT" }]
             </td>
         </tr>
         <tr>

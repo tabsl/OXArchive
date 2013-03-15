@@ -37,6 +37,7 @@
             </td>
             <td class="edittext">
                 <textarea class="confinput" style="width: 370; height: 182" name="updatesql" [{ $readonly }]></textarea>
+                [{ oxinputhelp ident="HELP_TOOLS_MAIN_UPDATESQL" }]
             </td>
         </tr>
         <tr>
@@ -45,6 +46,7 @@
             </td>
             <td class="edittext"><br>
                 <input type="file" style="width: 370" class="edittext" name="myfile[SQL1@usqlfile]" [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_TOOLS_MAIN_SQLDUMB" }]
             </td>
         </tr>
         <tr>

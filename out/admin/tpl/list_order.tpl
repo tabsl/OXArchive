@@ -81,7 +81,7 @@ function editThis( sID )
     </td>
     <td class="listfilter">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxorderarticles.oxtitle]" value="[{ $where->oxorderarticles__oxtitle }]">
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxorderarticles.oxtitle]" value="[{ $where->oxorderarticles__oxtitle }] [{ $where->oxorderarticles__oxselvariant->value }]">
         </div></div>
     </td>
     <td class="listfilter" colspan="2">

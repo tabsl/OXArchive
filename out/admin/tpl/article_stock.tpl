@@ -69,6 +69,7 @@ function editThis( sID )
                 </td>
                 <td class="edittext">
                   <input type="text" class="editinput" size="20" maxlength="[{$edit->oxarticles__oxstock->fldmax_length}]" name="editval[oxarticles__oxstock]" value="[{$edit->oxarticles__oxstock->value}]" [{include file="help.tpl" helpid=article_stock}] [{ $readonly }]>
+                  [{ oxinputhelp ident="HELP_ARTICLE_STOCK_STOCK" }]
                 </td>
               </tr>
               <tr>
@@ -82,6 +83,7 @@ function editThis( sID )
                     <option value="2" [{ if $edit->oxarticles__oxstockflag->value == 2 }]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_OFFLINE" }]</option>
                     <option value="3" [{ if $edit->oxarticles__oxstockflag->value == 3 }]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_NONORDER" }]</option>
                   </select>
+                  [{ oxinputhelp ident="HELP_ARTICLE_STOCK_STOCKFLAG" }]
                 </td>
               </tr>
               <tr>
@@ -90,14 +92,16 @@ function editThis( sID )
                 </td>
                 <td class="edittext">
                   <input type="text" class="editinput" size="20" maxlength="[{$edit->oxarticles__oxdelivery->fldmax_length}]" name="editval[oxarticles__oxdelivery]" value="[{$edit->oxarticles__oxdelivery|oxformdate}]" [{include file="help.tpl" helpid=article_delivery}] [{ $readonly }]>
+                  [{ oxinputhelp ident="HELP_ARTICLE_STOCK_DELIVERY" }]
                 </td>
               </tr>
               <tr>
-                <td class="edittext">
+                <td class="edittext wrap">
                   [{ oxmultilang ident="ARTICLE_STOCK_REMINDACTIV" }]
                 </td>
                 <td class="edittext">
                   <input type="checkbox" class="editinput" name="editval[oxarticles__oxremindactive]" value='[{if $edit->oxarticles__oxremindactive->value }][{ $edit->oxarticles__oxremindactive->value }][{else}]1[{/if}]' [{if $edit->oxarticles__oxremindactive->value }]checked[{/if}] [{ $readonly }]><input type="text" class="editinput" size="20" maxlength="[{$edit->oxarticles__oxremindamount->fldmax_length}]" name="editval[oxarticles__oxremindamount]" value="[{$edit->oxarticles__oxremindamount->value}]" [{ $readonly }]>
+                  [{ oxinputhelp ident="HELP_ARTICLE_STOCK_REMINDACTIV" }]
                 </td>
               </tr>
               <tr>
@@ -115,6 +119,7 @@ function editThis( sID )
                          <option value="[{ $lang }]"[{ if $olang->selected}]SELECTED[{/if}]>[{ $olang->sLangDesc }]</option>
                          [{/foreach}]
                          </select>
+                         [{ oxinputhelp ident="HELP_GENERAL_LANGUAGE" }]
                       </td>
                     </tr>
                     <tr>
@@ -123,6 +128,7 @@ function editThis( sID )
                       </td>
                       <td class="edittext">
                         <input type="text" class="editinput" size="40" maxlength="[{$edit->oxarticles__oxstocktext->fldmax_length}]" name="editval[oxarticles__oxstocktext]" value="[{$edit->oxarticles__oxstocktext->value}]" [{ $readonly }]>
+                        [{ oxinputhelp ident="HELP_ARTICLE_STOCK_STOCKTEXT" }]
                       </td>
                     </tr>
                     <tr>
@@ -131,6 +137,7 @@ function editThis( sID )
                       </td>
                       <td class="edittext">
                         <input type="text" class="editinput" size="40" maxlength="[{$edit->oxarticles__oxnostocktext->fldmax_length}]" name="editval[oxarticles__oxnostocktext]" value="[{$edit->oxarticles__oxnostocktext->value}]" [{ $readonly }]>
+                        [{ oxinputhelp ident="HELP_ARTICLE_STOCK_NOSTOCKTEXT" }]
                       </td>
                     </tr>
                   </table>
@@ -190,11 +197,12 @@ function editThis( sID )
                       </td>
                       <td class="edittext">
                         <input class="edittext" type="text" name="editval[oxprice2article__oxamountto]">
+                        [{ oxinputhelp ident="HELP_ARTICLE_STOCK_AMOUNTPRICE_AMOUNTFROM" }]
                       </td>
                     </tr>
                     <tr>
                       <td class="edittext">
-                        [{ oxmultilang ident="GENERAL_PRICE" }] :
+                        [{ oxmultilang ident="ARTICLE_STOCK_AMOUNTPRICE_PRICE"}]
                       </td>
                       <td class="edittext" nowrap colspan=3>
                         <select  class="edittext" name="editval[pricetype]">
@@ -202,6 +210,7 @@ function editThis( sID )
                           <option value="oxprice2article__oxaddperc">[{ oxmultilang ident="ARTICLE_STOCK_AMOUNTPRICE_DISCOUNT" }]
                         </select>
                         <input class="edittext" type="text" name="editval[price]">
+                        [{ oxinputhelp ident="HELP_ARTICLE_STOCK_AMOUNTPRICE_PRICE" }]
                       </td>
                       <td>
                       </td>

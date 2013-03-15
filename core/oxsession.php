@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxsession.php 22352 2009-09-16 11:34:18Z sarunas $
+ * $Id: oxsession.php 22900 2009-10-02 12:43:11Z arvydas $
  */
 
 DEFINE('_DB_SESSION_HANDLER', getShopBasePath() . 'core/adodblite/session/adodb-session.php');
@@ -897,7 +897,7 @@ class oxSession extends oxSuperCfg
      */
     public function processUrl( $sUrl )
     {
-        if ( $this->isSidNeeded( $sUrl ) ) {
+        if ( !$this->isAdmin() && $this->isSidNeeded( $sUrl ) ) {
             $oStr = getStr();
             // only if sid is not yet set and we have something to append
             $sSid = $this->sid( true );

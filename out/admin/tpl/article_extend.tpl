@@ -85,6 +85,7 @@ function editThis( sID )
             </td>
             <td class="edittext">
               <input type="text" class="editinput" size="10" maxlength="[{$edit->oxarticles__oxweight->fldmax_length}]" name="editval[oxarticles__oxweight]" value="[{$edit->oxarticles__oxweight->value}]" [{ $readonly }]>kg
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_WEIGHT" }]
             </td>
           </tr>
           <tr>
@@ -95,6 +96,7 @@ function editThis( sID )
               [{ oxmultilang ident="ARTICLE_EXTEND_LENGTH" }]&nbsp;<input type="text" class="editinput" size="3" maxlength="[{$edit->oxarticles__oxlength->fldmax_length}]" name="editval[oxarticles__oxlength]" value="[{$edit->oxarticles__oxlength->value}]" [{ $readonly }]>m
               [{ oxmultilang ident="ARTICLE_EXTEND_WIDTH" }]&nbsp;<input type="text" class="editinput" size="3" maxlength="[{$edit->oxarticles__oxlength->fldmax_width}]" name="editval[oxarticles__oxwidth]" value="[{$edit->oxarticles__oxwidth->value}]" [{ $readonly }]>m
               [{ oxmultilang ident="ARTICLE_EXTEND_HEIGHT" }]&nbsp;<input type="text" class="editinput" size="3" maxlength="[{$edit->oxarticles__oxlength->fldmax_height}]" name="editval[oxarticles__oxheight]" value="[{$edit->oxarticles__oxheight->value}]" [{ $readonly }]>m
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_MASS" }]
             </td>
           </tr>
           <tr>
@@ -105,6 +107,7 @@ function editThis( sID )
               <input type="text" class="editinput" size="10" maxlength="[{$edit->oxarticles__oxunitquantity->fldmax_length}]" name="editval[oxarticles__oxunitquantity]" value="[{$edit->oxarticles__oxunitquantity->value}]" [{ $readonly }]>
               &nbsp;&nbsp;&nbsp;&nbsp; [{ oxmultilang ident="ARTICLE_EXTEND_UNITNAME" }]:
               <input type="text" class="editinput" size="10" maxlength="[{$edit->oxarticles__oxunitname->fldmax_length}]" name="editval[oxarticles__oxunitname]" value="[{$edit->oxarticles__oxunitname->value}]" [{ $readonly }]>
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_UNITQUANTITY" }]
             </td>
           </tr>
           <tr>
@@ -113,6 +116,7 @@ function editThis( sID )
             </td>
             <td class="edittext">
               <input type="text" class="editinput" size="40" maxlength="[{$edit->oxarticles__oxexturl->fldmax_length}]" name="editval[oxarticles__oxexturl]" value="http://[{$edit->oxarticles__oxexturl->value}]" [{ $readonly }]>
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_EXTURL" }]
             </td>
           </tr>
           <tr>
@@ -121,6 +125,7 @@ function editThis( sID )
             </td>
             <td class="edittext">
               <input type="text" class="editinput" size="40" maxlength="[{$edit->oxarticles__oxurldesc->fldmax_length}]" name="editval[oxarticles__oxurldesc]" value="[{$edit->oxarticles__oxurldesc->value}]" [{ $readonly }]>
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_URLDESC" }]
             </td>
           </tr>
           <tr>
@@ -129,6 +134,7 @@ function editThis( sID )
             </td>
             <td class="edittext">
               <input type="text" class="editinput" size="8" maxlength="[{$edit->oxarticles__oxbprice->fldmax_length}]" name="editval[oxarticles__oxbprice]" value="[{$edit->oxarticles__oxbprice->value}]" [{ $readonly }]>&nbsp;&nbsp;[{ oxmultilang ident="ARTICLE_EXTEND_TPRICE" }] <input type="text" class="editinput" size="8" maxlength="[{$edit->oxarticles__oxtprice->fldmax_length}]" name="editval[oxarticles__oxtprice]" value="[{$edit->oxarticles__oxtprice->value}]" [{ $readonly }]>
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_BPRICE" }]
             </td>
           </tr>
           <tr>
@@ -137,6 +143,7 @@ function editThis( sID )
             </td>
             <td class="edittext">
               <input type="text" class="editinput" size="25" maxlength="[{$edit->oxarticles__oxfile->fldmax_length}]" name="editval[oxarticles__oxfile]" value="[{$edit->oxarticles__oxfile->value}]" [{ $readonly }]>
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_FILE" }]
             </td>
           </tr>
           <tr>
@@ -145,6 +152,7 @@ function editThis( sID )
             </td>
             <td class="edittext">
               <input class="editinput" name="myfile[FL@oxarticles__oxfile]" type="file" [{ $readonly }]>
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_FILEUPLOAD" }]
             </td>
           </tr>
           <tr>
@@ -153,6 +161,7 @@ function editThis( sID )
             </td>
             <td class="edittext">
               <input type="text" class="editinput" size="25" maxlength="[{$edit->oxarticles__oxtemplate->fldmax_length}]" name="editval[oxarticles__oxtemplate]" value="[{$edit->oxarticles__oxtemplate->value}]" [{include file="help.tpl" helpid=article_template}] [{ $readonly }]>
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_TEMPLATE" }]
             </td>
           </tr>
           <tr>
@@ -161,6 +170,7 @@ function editThis( sID )
             </td>
             <td class="edittext">
               <input type="text" class="editinput" size="25" maxlength="[{$edit->oxarticles__oxquestionemail->fldmax_length}]" name="editval[oxarticles__oxquestionemail]" value="[{$edit->oxarticles__oxquestionemail->value}]" [{ $readonly }]>
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_QUESTIONEMAIL" }]
             </td>
           </tr>
           <tr>
@@ -170,6 +180,7 @@ function editThis( sID )
             <td class="edittext">
               <input class="edittext" type="hidden" name="editval[oxarticles__oxissearch]" value='0'>
               <input class="edittext" type="checkbox" name="editval[oxarticles__oxissearch]" value='1' [{if $edit->oxarticles__oxissearch->value == 1}]checked[{/if}] [{ $readonly }]>
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_ISSEARCH" }]
             </td>
           </tr>
           <tr>
@@ -179,6 +190,7 @@ function editThis( sID )
             <td class="edittext">
               <input class="edittext" type="hidden" name="editval[oxarticles__oxnonmaterial]" value='0'>
               <input class="edittext" type="checkbox" name="editval[oxarticles__oxnonmaterial]" value='1' [{if $edit->oxarticles__oxnonmaterial->value == 1}]checked[{/if}] [{ $readonly }]>
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_NONMATERIAL" }]
             </td>
           </tr>
           <tr>
@@ -188,6 +200,7 @@ function editThis( sID )
             <td class="edittext">
               <input class="edittext" type="hidden" name="editval[oxarticles__oxfreeshipping]" value='0'>
               <input class="edittext" type="checkbox" name="editval[oxarticles__oxfreeshipping]" value='1' [{if $edit->oxarticles__oxfreeshipping->value == 1}]checked[{/if}] [{ $readonly }]>
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_FREESHIPPING" }]
             </td>
           </tr>
           <tr>
@@ -196,6 +209,7 @@ function editThis( sID )
             </td>
             <td class="edittext">
               <input class="edittext" type="checkbox" name="editval[oxarticles__oxblfixedprice]" value='1' [{if $edit->oxarticles__oxblfixedprice->value == 1}]checked[{/if}] [{ $readonly }]>
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_BLFIXEDPRICE" }]
             </td>
           </tr>
           <tr>
@@ -205,6 +219,7 @@ function editThis( sID )
             <td class="edittext">
               <input type="hidden" name="editval[oxarticles__oxskipdiscounts]" value='0'>
               <input class="edittext" type="checkbox" name="editval[oxarticles__oxskipdiscounts]" value='1' [{if $edit->oxarticles__oxskipdiscounts->value == 1}]checked[{/if}]>
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_SKIPDISCOUNTS" }]
             </td>
           </tr>
           <tr>

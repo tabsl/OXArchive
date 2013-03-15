@@ -129,9 +129,13 @@ var oxid = {
         },
 
         addShim : function(){
-             var _mk = document.getElementById('mask');
-             if(_mk) {_mk.appendChild(document.createElement('iframe'));}
-        },
+            var _fr, _mk = document.getElementById('mask');
+            if(_mk) {
+                _fr = document.createElement('iframe');
+                _fr.setAttribute('src','javascript:false;'); //MS Q261188
+                _mk.appendChild(_fr);
+            }
+       },
 
         open : function(url,w,h,r){
             if (url !== null && url.length > 0) {
@@ -227,7 +231,7 @@ var oxid = {
             if(_form) { _form.submit(); }
         },
 
-        // submits form + changes cl and fnc values
+        // submits form + changes cl, fnc, formReload values
         reload: function(stop,form,cl,fnc) {
             if(stop) { return; }
             var _form = document.forms[form];
@@ -255,14 +259,63 @@ var oxid = {
         select: function(id,value) {
             var _el = document.getElementsByName(id);
             if(_el) { _el[value].checked='true'; }
+        },
+
+        set: function(id, value, blset) {
+            var _el = document.getElementsByName(id);
+            if (_el) {
+                _el.value = value;
+            }
         }
 
+    },
+
+    // Review / Rating
+    review: {
+        show : function(){
+            oxid.showhideblock('write_review',true);
+            oxid.showhideblock('write_new_review',false);
+        },
+
+        rate : function(value){
+            oxid.review.show();
+            var _form = document.getElementById("rating");
+            if ( _form !== null) {
+                if (_form.artrating) {
+                    _form.artrating.value = value;
+                } else if (_form.recommlistrating) {
+                    _form.recommlistrating.value = value;
+                }
+                document.getElementById('current_rate').style.width = (value * 20) + '%';
+            }
+       }
+    },
+
+    // SelectList
+    sellist: {
+        set : function(name,value){
+            //selectlist
+            var _slist = document.getElementById("slist");
+            if ( _slist !== null) {
+                _slist.href = _slist.href + "&" + name + "=" + value;
+            }
+            //wishlist
+            var _wlist = document.getElementById("wlist");
+            if ( _wlist !== null) {
+                _wlist.href = _wlist.href + "&" + name + "=" + value;
+            }
+        }
     },
 
     // etc...
     showhide: function(id,show){
         var _el = document.getElementById(id);
-        if (_el) { _el.style.display=show?'':'none'; }
+        if (_el) { _el.style.display=show?'':'none';}
+    },
+
+    showhideblock: function(id,show){
+        var _el = document.getElementById(id);
+        if (_el) { _el.style.display=show?'block':'none';}
     },
 
     focus: function(id){
@@ -294,39 +347,142 @@ var oxid = {
                 }
             }
         }
-    }
+    },
 
-};
+    getEventTarget: function(e) {
+        var targ;
+        if (!e) {
+            var e = window.event;
+        }
+        if (e.target) {
+            targ = e.target;
+        } else if (e.srcElement) {
+            targ = e.srcElement;
+        }
+        //Safari
+        if (targ.nodeType == 3) {
+            targ = targ.parentNode;
+        }
+        return targ;
+    },
 
-function showReview()
-{
-    document.getElementById('write_review').style.display = 'block';
-    document.getElementById('write_new_review').style.display = 'none';
-    if (arguments.length == 1) {
-        var oActForm = document.getElementById("rating");
-        if ( oActForm !== null) {
-            if (oActForm.artrating) {
-                oActForm.artrating.value = arguments[0];
-            } else if (oActForm.recommlistrating) {
-                oActForm.recommlistrating.value = arguments[0];
+    mdVariants: {
+        // reloading page by selected value in select list
+        getMdVariantUrl: function(selId) {
+            var _mdVar  = document.getElementById(selId);
+
+            if (_mdVar) {
+                _newUrl = _mdVar.options[_mdVar.selectedIndex].value;
             }
-            var width = arguments[0] * 20;
-            document.getElementById('current_rate').style.width = width + '%';
+
+            if(_newUrl) {
+                document.location.href = _newUrl;
+            }
+        },
+
+        mdAttachAll: function()
+        {
+            if (!mdVariantSelectIds) {
+                mdVariantSelectIds = Array();
+            }
+
+            if (!mdRealVariants) {
+                mdRealVariants = Array();
+            }
+
+            for (var i = 0; i < mdVariantSelectIds.length; i++) {
+                if (mdVariantSelectIds[i]) {
+                    for (var j=0; j < mdVariantSelectIds[i].length; j++) {
+                        //attach JS handlers
+                        var mdSelect = document.getElementById(mdVariantSelectIds[i][j]);
+                        if (mdSelect) {
+                            mdSelect.onchange = oxid.mdVariants.resetMdVariantSelection;
+                        }
+                    }
+                }
+            }
+        },
+
+        resetMdVariantSelection: function(e) {
+            mdSelect = oxid.getEventTarget(e);
+            //hide all
+            selectedValue = mdSelect.options[mdSelect.selectedIndex].value;
+            level = oxid.mdVariants.getSelectLevel(mdSelect.id);
+            if (level !== null) {
+                oxid.mdVariants.hideAllMdSelect(level+1);
+            }
+            //show selection
+            var showId = selectedValue;
+            while (showId) {
+                showSelectId = oxid.mdVariants.getMdSelectNameById(showId);
+                oxid.mdVariants.showMdSelect(showSelectId);
+                shownSelect = document.getElementById(showSelectId);
+                if (shownSelect) {
+                    showId = shownSelect.options[shownSelect.selectedIndex].value;
+                } else {
+                    showId = null;
+                }
+            }
+
+            oxid.mdVariants.showMdRealVariant();
+        },
+
+        getMdSelectNameById: function(id)
+        {
+            var name = 'mdvariantselect_' + id;
+            return name;
+        },
+
+        getSelectLevel: function(name) {
+            for (var i=0; i < mdVariantSelectIds.length; i++) {
+                for (var j=0; j < mdVariantSelectIds[i].length; j++) {
+                    if (mdVariantSelectIds[i][j] == name) {
+                        return i;
+                    }
+                }
+            }
+            return null;
+        },
+
+        showMdSelect: function(id) {
+            if (document.getElementById(id)) {
+              document.getElementById(id).style.display = 'inline';
+            }
+        },
+
+        hideAllMdSelect: function (level) {
+            for (var i=level; i < mdVariantSelectIds.length; i++) {
+                if (mdVariantSelectIds[i]) {
+                    for (var j=0; j < mdVariantSelectIds[i].length; j++) {
+                        if (document.getElementById(mdVariantSelectIds[i][j])) {
+                            document.getElementById(mdVariantSelectIds[i][j]).style.display = 'none';
+                        }
+                    }
+                }
+            }
+        },
+
+        getSelectedMdRealVariant: function() {
+            for (var i=0; i < mdVariantSelectIds.length; i++) {
+                for (var j=0; j < mdVariantSelectIds[i].length; j++) {
+                    var mdSelectId = mdVariantSelectIds[i][j];
+                    var mdSelect = document.getElementById(mdSelectId);
+                    if (mdSelect && mdSelect.style.display == "inline") {
+                        var selectedVal = mdSelect.options[mdSelect.selectedIndex].value;
+                        if (mdRealVariants[selectedVal])
+                            return mdRealVariants[selectedVal];
+                    }
+                }
+            }
+        },
+
+        showMdRealVariant: function() {
+            document.getElementById('md_variant_box').innerHTML = '';
+            var selectedId = oxid.mdVariants.getSelectedMdRealVariant();
+            if (selectedId && document.getElementById('mdvariant_' + selectedId)) {
+                document.getElementById('md_variant_box').innerHTML = document.getElementById('mdvariant_' + selectedId).innerHTML;
+            }
+
         }
     }
-}
-
-function setSellList( oInObj)
-{
-    //for module wlist
-    var _wlist = document.getElementById("wlist");
-    if ( _wlist !== null) {
-        _wlist.href = _wlist.href + "&" + oInObj.name + "=" + oInObj.value;
-    }
-    //for original selectlist
-    var _slist = document.getElementById("slist");
-    if ( _slist !== null) {
-        _slist.href = _slist.href + "&" + oInObj.name + "=" + oInObj.value;
-    }
-}
-
+};

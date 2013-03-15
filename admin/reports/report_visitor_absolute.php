@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: report_visitor_absolute.php 22478 2009-09-21 14:51:46Z arvydas $
+ * $Id: report_visitor_absolute.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 if ( !class_exists( "report_visitor_absolute") ) {
@@ -222,11 +222,20 @@ if ( !class_exists( "report_visitor_absolute") ) {
                 }
             }
 
+            // initializing
+            list( $iFrom, $iTo ) = $this->getWeekRange();
+            for ( $i = $iFrom; $i < $iTo; $i++ ) {
+                $aDataX[$i]  = 0;
+                $aDataX2[$i] = 0;
+                $aDataX3[$i] = 0;
+                $aDataY[]      = "KW ".$i;
+            }
+
             foreach ( $aTemp as $key => $value) {
-                 $aDataX[$key]     = $value;
-                $aDataX2[$key]    = 0;
-                $aDataX3[$key]    = 0;
-                $aDataY[]         = "KW ".$key;
+                $aDataX[$key]  = $value;
+                $aDataX2[$key] = 0;
+                $aDataX3[$key] = 0;
+                $aDataY[]      = "KW ".$key;
             }
 
             // buyer

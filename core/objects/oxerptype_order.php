@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_order.php 20535 2009-06-30 00:58:33Z alfonsas $
+ * $Id: oxerptype_order.php 23188 2009-10-13 06:59:38Z sarunas $
  */
 
 require_once 'oxerptype.php';

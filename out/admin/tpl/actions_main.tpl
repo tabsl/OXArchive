@@ -37,6 +37,7 @@
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="32" maxlength="[{$edit->oxactions__oxtitle->fldmax_length}]" name="editval[oxactions__oxtitle]" value="[{$edit->oxactions__oxtitle->value}]" [{ $readonly }] [{ $disableSharedEdit }]>
+            [{ oxinputhelp ident="HELP_GENERAL_NAME" }]
             </td>
         </tr>
 
@@ -52,6 +53,7 @@
           </td>
           <td class="edittext">
             <input class="edittext" type="checkbox" name="editval[oxactions__oxactive]" value='1' [{if $edit->oxactions__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
           </td>
         </tr>
         <tr>
@@ -61,6 +63,7 @@
           <td class="edittext">
           [{ oxmultilang ident="GENERAL_FROM" }]&nbsp;<input type="text" class="editinput" size="27" name="editval[oxactions__oxactivefrom]" value="[{$edit->oxactions__oxactivefrom|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]><br>
           [{ oxmultilang ident="GENERAL_TILL" }]&nbsp;&nbsp;<input type="text" class="editinput" size="27" name="editval[oxactions__oxactiveto]" value="[{$edit->oxactions__oxactiveto|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]>
+          [{ oxinputhelp ident="HELP_GENERAL_ACTIVFROMTILL" }]
           </td>
         </tr>
         <tr>

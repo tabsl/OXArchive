@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxfunctions.php 21136 2009-07-27 14:49:28Z rimvydas.paskevicius $
+ * $Id: oxfunctions.php 22884 2009-10-02 08:54:10Z sarunas $
  */
 
 /**
@@ -421,3 +421,6 @@ if ( !function_exists( 'getRequestUrl' ) ) {
         }
     }
 }
+
+//strips magics quote if any
+oxUtils::getInstance()->stripGpcMagicQuotes();

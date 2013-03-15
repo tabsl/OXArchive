@@ -451,6 +451,7 @@ INSERT INTO `oxconfig` VALUES ('b1296159b7641d31b93423972af6150b', 'oxbaseshop',
 INSERT INTO `oxconfig` VALUES ('fd770460540c32422b415a65fefb8f90', 'oxbaseshop', 'blLoadDynContents', 'bool', 0x7900fdf51e);
 INSERT INTO `oxconfig` VALUES ('fd7a064bbb64466f8e6ba847902b2005', 'oxbaseshop', 'sShopCountry', 'str', '');
 INSERT INTO `oxconfig` VALUES ('44bcd90bd1d059.053753111', 'oxbaseshop', 'sTagList', 'str', 0x071d33336bce8dbe0606);
+INSERT INTO `oxconfig` VALUES ('603a1a28ff2a421b64c631ffaf97f324', 'oxbaseshop', 'sGiCsvFieldEncloser', 'str', 0x95);
 
 
 #
@@ -1597,7 +1598,7 @@ CREATE TABLE `oxshops` (
 # Data for table `oxshops`
 #
 
-INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Shop', '', '', 'online kaufen', 'buy online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'Ihre Info E-Mail Adresse', 'Ihre Bestell Reply E-Mail Adresse', 'Ihre Bestell E-Mail Adresse', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order from OXID eShop', 'Thank you for your registration in OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', 'Tragen Sie bitte hier Ihren SMTP Server ein', '', '', 'Ihr Firmenname', 'Musterstr. 10', '79098', 'Musterstadt', 'Deutschland', 'Volksbank Musterstadt', '1234567890', '900 1234567', 'DE651234567', '', '', 'Hans', 'Mustermann', '0800 1234567', '0800 1234567', 'www.meineshopurl.com', '8a142c3e60a535f16.78077188', '', '', '', '', '', '', '', 'CE', '4.1.6', 1, 1, 0, 0);
+INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Shop', '', '', 'online kaufen', 'buy online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'Ihre Info E-Mail Adresse', 'Ihre Bestell Reply E-Mail Adresse', 'Ihre Bestell E-Mail Adresse', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order from OXID eShop', 'Thank you for your registration in OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', 'Tragen Sie bitte hier Ihren SMTP Server ein', '', '', 'Ihr Firmenname', 'Musterstr. 10', '79098', 'Musterstadt', 'Deutschland', 'Volksbank Musterstadt', '1234567890', '900 1234567', 'DE651234567', '', '', 'Hans', 'Mustermann', '0800 1234567', '0800 1234567', 'www.meineshopurl.com', '8a142c3e60a535f16.78077188', '', '', '', '', '', '', '', 'CE', '4.2.0', 1, 1, 0, 0);
 
 #
 # Table structure for table `oxstatistics`

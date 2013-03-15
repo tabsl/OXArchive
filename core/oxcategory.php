@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcategory.php 22565 2009-09-23 07:04:30Z sarunas $
+ * $Id: oxcategory.php 23323 2009-10-16 14:59:42Z sarunas $
  */
 
 /**
@@ -28,7 +28,7 @@
  * of categories nodes. By recursion methods are set structure of category.
  * @package core
  */
-class oxCategory extends oxI18n
+class oxCategory extends oxI18n implements oxIUrl
 {
     /**
      * Subcategories array.
@@ -564,10 +564,11 @@ class oxCategory extends oxI18n
      * Returns standard URL to category
      *
      * @param int $iLang language
+     * @param array $aParams additional params to use [optional]
      *
      * @return string
      */
-    public function getStdLink($iLang = null)
+    public function getStdLink($iLang = null, $aParams = array() )
     {
         $sLink = '';
         if ( $this->oxcategories__oxextlink->value ) {
@@ -580,6 +581,12 @@ class oxCategory extends oxI18n
             $iLang = (int) $iLang;
             if ($iLang != (int) $this->getLanguage()) {
                 $sLink .= "&amp;lang={$iLang}";
+            }
+        }
+
+        foreach ($aParams as $key => $value) {
+            if ( $value ) {
+                $sLink .= "&amp;$key=$value";
             }
         }
 

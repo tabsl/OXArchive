@@ -19,7 +19,7 @@
  * @package setup
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: index.php 22591 2009-09-24 07:09:30Z vilma $
+ * $Id: index.php 23384 2009-10-20 12:58:12Z vilma $
  */
 
 
@@ -287,7 +287,7 @@ function GetDatabaseVersion($aDB)
 function AlreadySetUp()
 {
     global $sVerPrefix;
-
+return false;
     $sConfig = join("", file("../config.inc.php"));
     if ( strpos($sConfig, "<dbHost$sVerPrefix>") === false)
         return true;
@@ -675,7 +675,7 @@ if ( $istep == $aSetupSteps['STEP_WELCOME'] ) {
               </td>
             </tr>
           </table>
-          
+
         </td>
     </tr>
     <input type="hidden" name="sid" value="<?php echo( getSID()); ?>">
@@ -1097,6 +1097,7 @@ if ( $istep == $aSetupSteps['STEP_DIRS_WRITE'] ) {
                     $aPath['sDIR']."/$sBaseOut/z4",
                     $aPath['sDIR']."/out/basic/src/bg",
                     $aPath['sDIR']."/out/basic/src",
+                    $aPath['sDIR']."/log",
                     $aPath['sTMP']);
 
     foreach ( $aPaths as $sPath) {
@@ -1132,7 +1133,6 @@ if ( $istep == $aSetupSteps['STEP_DIRS_WRITE'] ) {
     if ( $fp) {
         fwrite($fp, $sConfFile);
         fclose($fp);
-        @chmod( $sConfPath, 0755);
     } else {
         // error ? strange !?
         $iRedir2Step = $aSetupSteps['STEP_DIRS_INFO'];
@@ -1203,12 +1203,21 @@ if ( $istep == $aSetupSteps['STEP_FINISH'] ) {
          //Commented until deployment
          $blRemoved = removeDir("../setup", true);
      }
-
-     if ( !$blRemoved) {
+     $sConfPath = $aPath['sDIR']."/config.inc.php";
+     $sPerms = substr( decoct( fileperms($sConfPath) ), 2 );
+     if ( !$blRemoved || $sPerms > 644 ) {
 ?>
-<strong><?php echo( $aLang['ATTENTION'] ) ?>:</strong><br>
+<strong style="font-size:16px;color:red;"><?php echo( $aLang['ATTENTION'] ) ?>:</strong><br>
 <br>
-<?php echo( $aLang['SETUP_DIR_DELETE_NOTICE'] ) ?><br>
+<?php }
+      if ( !$blRemoved ) {
+?>
+<strong style="font-size:16px;color:red;"><?php echo( $aLang['SETUP_DIR_DELETE_NOTICE'] ) ?></strong><br><br>
+<?php
+      }
+      if ( $sPerms > 644 ) {
+?>
+<strong style="font-size:16px;color:red;"><?php echo( $aLang['SETUP_CONFIG_PERMISSIONS'] ) ?></strong><br>
 <?php
      }
      if ( isset( $sBottomItem)) {

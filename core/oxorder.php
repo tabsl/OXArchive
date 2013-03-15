@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxorder.php 22620 2009-09-24 13:54:00Z arvydas $
+ * $Id: oxorder.php 23550 2009-10-23 12:58:05Z alfonsas $
  */
 
 /**
@@ -29,6 +29,43 @@
  */
 class oxOrder extends oxBase
 {
+    // defining order state constants
+    /**
+     * Error while sending order notification mail to customer
+     * @var int
+     */
+    const ORDER_STATE_MAILINGERROR = 0;
+
+    /**
+     * Order finalization was completed without errors
+     * @var int
+     */
+    const ORDER_STATE_OK = 1;
+
+    /**
+     * Error during payment execution
+     * @var int
+     */
+    const ORDER_STATE_PAYMENTERROR = 2;
+
+    /**
+     * Order with such id allready exist
+     * @var int
+     */
+    const ORDER_STATE_ORDEREXISTS = 3;
+
+    /**
+     * Delivery parameters used for order are invalid
+     * @var int
+     */
+    const ORDER_STATE_INVALIDDELIVERY = 4;
+
+    /**
+     * Payment parameters used for order are invalid
+     * @var int
+     */
+    const ORDER_STATE_INVALIDPAYMENT = 5;
+
     /**
      * Skip update fields
      *
@@ -368,13 +405,18 @@ class oxOrder extends oxBase
         if ( $this->_checkOrderExist( $sGetChallenge ) ) {
             oxUtils::getInstance()->logger( 'BLOCKER' );
             // we might use this later, this means that somebody klicked like mad on order button
-            return 3;
+            return self::ORDER_STATE_ORDEREXISTS;
         }
 
         // if not recalculating order, use sess_challenge id, else leave old order id
         if ( !$blRecalculatingOrder ) {
             // use this ID
             $this->setId( $sGetChallenge );
+
+            // validating various order/basket parameters before finalizing
+            if ( $iOrderState = $this->validateOrder( $oBasket, $oUser ) ) {
+                return $iOrderState;
+            }
         }
 
         // copies user info
@@ -413,9 +455,6 @@ class oxOrder extends oxBase
         // store orderid
         $oBasket->setOrderId( $this->getId() );
 
-        // updating bought items stock
-        $this->_updateStock();
-
         // updating wish lists
         $this->_updateWishlist( $oBasket->getContents(), $oUser );
 
@@ -433,7 +472,7 @@ class oxOrder extends oxBase
         if ( !$blRecalculatingOrder ) {
             $iRet = $this->_sendOrderByEmail( $oUser, $oBasket, $oUserPayment );
         } else {
-            $iRet = 1;
+            $iRet = self::ORDER_STATE_OK;
         }
 
         return $iRet;
@@ -678,7 +717,8 @@ class oxOrder extends oxBase
                 $oOrderArticle->oxorderarticles__oxartnum     = clone $oProduct->oxarticles__oxartnum;
                 $oOrderArticle->oxorderarticles__oxselvariant = new oxField( trim( $sSelList.' '.$oProduct->oxarticles__oxvarselect->value ), oxField::T_RAW );
                 $oOrderArticle->oxorderarticles__oxshortdesc  = new oxField( $oProduct->oxarticles__oxshortdesc->value, oxField::T_RAW );
-                $oOrderArticle->oxorderarticles__oxtitle      = new oxField( trim( $oProduct->oxarticles__oxtitle->value.' '.$oOrderArticle->oxorderarticles__oxselvariant->value ), oxField::T_RAW );
+                // #M974: duplicated entries for the name of variants in orders
+                $oOrderArticle->oxorderarticles__oxtitle      = new oxField( trim( $oProduct->oxarticles__oxtitle->value ), oxField::T_RAW );
 
                 // copying persistent parameters ...
                 if ( !is_array( $aPersParams = $oProduct->getPersParams() ) ) {
@@ -754,7 +794,7 @@ class oxOrder extends oxBase
                 }
             }
 
-            return 2; // means no authentication
+            return self::ORDER_STATE_PAYMENTERROR; // means no authentication
         }
         return true; // everything fine
     }
@@ -793,7 +833,7 @@ class oxOrder extends oxBase
         // #756M Preserve already stored payment information
         if ( !$aDynvalue && ( $oUserpayment = $this->getPaymentType() ) ) {
             if ( is_array( $aStoredDynvalue = $oUserpayment->getDynValues() ) ) {
-                foreach ( $aStoredDynvalue as $oVal ) {
+            foreach ( $aStoredDynvalue as $oVal ) {
                     $aDynvalue[$oVal->name] = $oVal->value;
                 }
             }
@@ -935,7 +975,7 @@ class oxOrder extends oxBase
     }
 
     /**
-     * Markes voucher as used (oxvoucher::markAsUsed())
+     * Marks voucher as used (oxvoucher::markAsUsed())
      * and sets them to $this->_aVoucherList.
      *
      * @param oxBasket $oBasket basket object
@@ -950,17 +990,10 @@ class oxOrder extends oxBase
         $this->_aVoucherList = $oBasket->getVouchers();
 
         if ( is_array( $this->_aVoucherList ) ) {
-            foreach ( array_keys( $this->_aVoucherList ) as $sVoucherId ) {
+            foreach ( $this->_aVoucherList as $sVoucherId => $oSimpleVoucher) {
                 $oVoucher = oxNew( 'oxvoucher' );
                 $oVoucher->load( $sVoucherId );
-                $oVSerie = $oVoucher->getSerie();
-                $oVoucher->markAsUsed( $this->oxorder__oxid->value, $oUser->oxuser__oxid->value, $oVSerie->oxvoucherseries__oxdiscount );
-
-                // -- set deprecated values for email templates
-                $oVoucher->oxmodvouchers__oxvouchernr = $oVoucher->oxvouchers__oxvouchernr;
-                $oVoucher->oxmodvouchers__oxdiscount     = clone $oVSerie->oxvoucherseries__oxdiscount;
-                $oVoucher->oxmodvouchers__oxdiscounttype = clone $oVSerie->oxvoucherseries__oxdiscounttype;
-                // -- set deprecated values for email templates
+                $oVoucher->markAsUsed( $this->oxorder__oxid->value, $oUser->oxuser__oxid->value, $oSimpleVoucher->fVoucherdiscount );
 
                 $this->_aVoucherList[$sVoucherId] = $oVoucher;
             }
@@ -1117,14 +1150,9 @@ class oxOrder extends oxBase
         }
 
 
-        // update article stock information and delete order articles
-        $myConfig = $this->getConfig();
-        $blUseStock = $myConfig->getConfigParam( 'blUseStock' );
+        // delete order articles
         $oOrderArticles = $this->getOrderArticles( false );
         foreach ( $oOrderArticles as $oOrderArticle ) {
-            if ( $blUseStock && $oOrderArticle->oxorderarticles__oxstorno->value != 1 ) {
-                $oOrderArticle->updateArticleStock( $oOrderArticle->oxorderarticles__oxamount->value, $myConfig->getConfigParam('blAllowNegativeStock') );
-            }
             $oOrderArticle->delete();
         }
 
@@ -1460,7 +1488,7 @@ class oxOrder extends oxBase
      */
     protected function _sendOrderByEmail( $oUser = null, $oBasket = null, $oPayment = null )
     {
-        $iRet = 0;
+        $iRet = self::ORDER_STATE_MAILINGERROR;
 
         // add user, basket and payment to order
         $this->_oUser    = $oUser;
@@ -1472,7 +1500,7 @@ class oxOrder extends oxBase
         // send order email to user
         if ( $oxEmail->sendOrderEMailToUser( $this ) ) {
             // mail to user was successfully sent
-            $iRet = 1;
+            $iRet = self::ORDER_STATE_OK;
         }
 
         // send order email to shop owner
@@ -1720,7 +1748,6 @@ class oxOrder extends oxBase
         }
         return $this->oxorder__oxdelcountry;
     }
-
     /**
      * Tells to keep old or reload delivery costs while recalculating order
      *
@@ -1783,5 +1810,84 @@ class oxOrder extends oxBase
             }
         }
         return $this->_oOrderCurrency;
+    }
+
+    /**
+     * Validates order parameters like stock, delivery and payment
+     * parameters
+     *
+     * @param oxbasket $oBasket basket object
+     * @param oxuser   $oUser   order user
+     *
+     * @return null
+     */
+    public function validateOrder( $oBasket, $oUser )
+    {
+        // validating stock
+        $iValidState = $this->validateStock( $oBasket );
+
+        if ( !$iValidState ) {
+            // validating delivery
+            $iValidState = $this->validateDelivery( $oBasket );
+        }
+
+        if ( !$iValidState ) {
+            // validating payment
+            $iValidState = $this->validatePayment( $oBasket );
+        }
+
+        return $iValidState;
+    }
+
+    /**
+     * Checks if delivery set used for current order is available and active.
+     * Throws exception if not available
+     *
+     * @param oxbasket $oBasket basket object
+     *
+     * @return null
+     */
+    public function validateDelivery( $oBasket )
+    {
+        // proceed with no delivery
+        // used for other countries
+        if ( $oBasket->getPaymentId() == 'oxempty') {
+            return;
+        }
+        $oDb = oxDb::getDb();
+
+        $oDelSet = oxNew( "oxdeliveryset" );
+        $sTable = $oDelSet->getViewName();
+
+        $sQ = "select 1 from {$sTable} where {$sTable}.oxid=".
+              $oDb->quote( $oBasket->getShippingId() )." and ".$oDelSet->getSqlActiveSnippet();
+
+        if ( !$oDb->getOne( $sQ ) ) {
+            // throwing exception
+            return self::ORDER_STATE_INVALIDDELIVERY;
+        }
+    }
+
+    /**
+     * Checks if payment used for current order is available and active.
+     * Throws exception if not available
+     *
+     * @param oxbasket $oBasket basket object
+     *
+     * @return null
+     */
+    public function validatePayment( $oBasket )
+    {
+        $oDb = oxDb::getDb();
+
+        $oPayment = oxNew( "oxpayment" );
+        $sTable = $oPayment->getViewName();
+
+        $sQ = "select 1 from {$sTable} where {$sTable}.oxid=".
+              $oDb->quote( $oBasket->getPaymentId() )." and ".$oPayment->getSqlActiveSnippet();
+
+        if ( !$oDb->getOne( $sQ ) ) {
+            return self::ORDER_STATE_INVALIDPAYMENT;
+        }
     }
 }

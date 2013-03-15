@@ -70,8 +70,8 @@
             <td align="center"><b>[{ oxmultilang ident="CATEGORY_MAIN_ITEMSINCATEGORY" }]</b></td>
         </tr>
         <tr>
-            <td style="padding-left:4px;padding-right:10px">
-                <select name="artcat" id="artcat" style="width:100%;" class="editinput">
+            <td class="oxid-aoc-category">
+                <select name="artcat" id="artcat">
                 [{foreach from=$artcattree->aList item=pcat}]
                 <option value="[{ $pcat->oxcategories__oxid->value }]">[{ $pcat->oxcategories__oxtitle->value }]</option>
                 [{/foreach}]
@@ -84,8 +84,8 @@
             <td valign="top" id="container2"></td>
         </tr>
         <tr>
-            <td><input type="button" class="edittext oxid-aoc-button" value="[{ oxmultilang ident="GENERAL_AJAX_ASSIGNALL" }]" id="container1_btn"></td>
-            <td><input type="button" class="edittext oxid-aoc-button" value="[{ oxmultilang ident="GENERAL_AJAX_UNASSIGNALL" }]" id="container2_btn"></td>
+            <td class="oxid-aoc-actions"><input type="button" value="[{ oxmultilang ident="GENERAL_AJAX_ASSIGNALL" }]" id="container1_btn"></td>
+            <td class="oxid-aoc-actions"><input type="button" value="[{ oxmultilang ident="GENERAL_AJAX_UNASSIGNALL" }]" id="container2_btn"></td>
         </tr>
     </table>
 

@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: recommlist.php 21990 2009-08-31 12:40:28Z arvydas $
+ * $Id: recommlist.php 23400 2009-10-20 14:38:13Z arvydas $
  */
 
 /**
@@ -275,6 +275,8 @@ class RecommList extends oxUBase
     /**
      * Show login template
      *
+     * @deprecated use link to account page instead (e.g. "cl=account&amp;sourcecl=recommlist"+required parameters)
+     *
      * @return null;
      */
     public function showLogin()
@@ -512,6 +514,8 @@ class RecommList extends oxUBase
     /**
      * Template variable getter. Returns template location
      *
+     * @deprecated use recommList::getTreePath() and adjust template
+     *
      * @return string
      */
     public function getTemplateLocation()
@@ -530,6 +534,31 @@ class RecommList extends oxUBase
             }
         }
         return $this->_sTplLocation;
+    }
+
+    /**
+     * Template variable getter. Returns category path array
+     *
+     * @return array
+     */
+    public function getTreePath()
+    {
+        $oLang = oxLang::getInstance();
+
+        $aPath[0] = oxNew( "oxcategory" );
+        $aPath[0]->setLink( false );
+        $aPath[0]->oxcategories__oxtitle = new oxField( $oLang->translateString('RECOMMLIST') );
+
+        if ( $sSearchparam = $this->getRecommSearch() ) {
+            $sUrl   = $this->getConfig()->getShopHomeURL()."cl=recommlist&amp;searchrecomm=".rawurlencode( $sSearchparam );
+            $sTitle = $oLang->translateString('RECOMMLIST_SEARCH').' "'.$sSearchparam.'"';
+
+            $aPath[1] = oxNew( "oxcategory" );
+            $aPath[1]->setLink( $sUrl );
+            $aPath[1]->oxcategories__oxtitle = new oxField( $sTitle );
+        }
+
+        return $aPath;
     }
 
     /**

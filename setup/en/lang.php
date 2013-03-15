@@ -19,7 +19,7 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 22591 2009-09-24 07:09:30Z vilma $
+ * $Id: lang.php 23430 2009-10-21 08:12:41Z birute $
  */
 
 $aLang = array(
@@ -82,7 +82,7 @@ $aLang = array(
 'MOD_INI_SET'                                     => 'ini_set allowed',
 'MOD_REGISTER_GLOBALS'                            => 'register_globals must be off',
 'MOD_ZEND_OPTIMIZER'                              => 'Zend Optimizer installed',
-'MOD_ZEND_PLATFORM'                               => 'Zend Platform installed',
+'MOD_ZEND_PLATFORM_OR_SERVER'                     => 'Zend Platform or Zend Server installed',
 'MOD_MB_STRING'                                   => 'mbstring',
 'MOD_UNICODE_SUPPORT'                             => 'UTF-8 support',
 
@@ -170,6 +170,7 @@ $aLang = array(
 
 'ATTENTION'                                       => "Attention, important",
 'SETUP_DIR_DELETE_NOTICE'                         => "Due to security reasons remove setup directory if not yet done during installation.",
+'SETUP_CONFIG_PERMISSIONS'                        => "Due to security reasons put your config.inc.php file to read-only mode!",
 
 'SELECT_SETUP_LANG'                               => "Please choose your language",
 'SELECT_COUNTRY_LANG'                             => "Please choose your country",

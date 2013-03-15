@@ -60,7 +60,6 @@
             <SUBMENU id="mxvouchers" cl="voucherserie" list="voucherserie_list">
                 <TAB id="tbclvoucherserie_main" cl="voucherserie_main" />
                 <TAB id="tbclvoucherserie_groups" cl="voucherserie_groups" />
-                <TAB id="tbclvoucherserie_export" cl="voucherserie_export" />
                 <BTN id="voucher_new"/>
             </SUBMENU>
             <SUBMENU id="mxwrapping" cl="admin_wrapping" list="wrapping_list">

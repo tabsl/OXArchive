@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: sysreq.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: sysreq.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**

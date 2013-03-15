@@ -111,7 +111,7 @@ function StornoThisArticle( sID)
     [{/if}]
     <td valign="top" class="[{ $listclass}]">[{ if $listitem->oxorderarticles__oxstorno->value != 1 }]<input type="text" name="aOrderArticles[[{$listitem->getId()}]][oxamount]" value="[{ $listitem->oxorderarticles__oxamount->value }]" class="listedit">[{else}][{ $listitem->oxorderarticles__oxamount->value }][{/if}]</td>
     <td valign="top" class="[{ $listclass}]" height="15">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:editThis('[{ $listitem->oxarticles__oxid->value}]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxartnum->value }]</a></td>
-    <td valign="top" class="[{ $listclass}]">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:editThis('[{ $listitem->oxarticles__oxid->value }]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxtitle->value|string_format:"%.20s"|strip_tags }]</a></td>
+    <td valign="top" class="[{ $listclass}]">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:editThis('[{ $listitem->oxarticles__oxid->value }]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxtitle->value|oxtruncate:20:""|strip_tags }]</a></td>
     <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxselvariant->value }]</td>
     <td valign="top" class="[{ $listclass}]">
         [{ if $listitem->aPersParam }]
@@ -120,7 +120,7 @@ function StornoThisArticle( sID)
             [{/foreach}]
         [{/if}]
     </td>
-    <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxshortdesc->value|string_format:"%.20s"|strip_tags }]</td>
+    <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxshortdesc->value|oxtruncate:20:""|strip_tags }]</td>
     <td valign="top" class="[{ $listclass}]">[{ $listitem->fnetprice }]</td>
     <td valign="top" class="[{ $listclass}]">[{ $listitem->fbrutprice }]</td>
     <td valign="top" class="[{ $listclass}]">[{ $listitem->ftotbrutprice }]</td>

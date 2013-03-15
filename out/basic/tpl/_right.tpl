@@ -110,9 +110,9 @@
     </div>
 [{ /if }]
 
-[{ if $oView->getAlsoBoughtThiesProducts() }]
+[{ if $oView->getAlsoBoughtTheseProducts() }]
     <strong class="h2" id="test_RightSideCustWhoHeader">[{ oxmultilang ident="INC_RIGHTITEM_CUSTOMERWHO" }]</strong>
     <div class="box">
-        <div>[{include file="inc/rightlist.tpl" list=$oView->getAlsoBoughtThiesProducts() altproduct=$product test_Type=customerwho}]</div>
+        <div>[{include file="inc/rightlist.tpl" list=$oView->getAlsoBoughtTheseProducts() altproduct=$product test_Type=customerwho}]</div>
     </div>
 [{ /if }]

@@ -50,6 +50,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input class="edittext" type="checkbox" name="editval[oxmanufacturers__oxactive]" value='1' [{if $edit->oxmanufacturers__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
             </td>
         </tr>
         <tr>
@@ -58,6 +59,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="40" maxlength="[{$edit->oxmanufacturers__oxtitle->fldmax_length}]" id="oLockTarget" name="editval[oxmanufacturers__oxtitle]" value="[{$edit->oxmanufacturers__oxtitle->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_TITLE" }]
             </td>
         </tr>
         <tr>
@@ -66,6 +68,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="40" maxlength="[{$edit->oxmanufacturers__oxshortdesc->fldmax_length}]" name="editval[oxmanufacturers__oxshortdesc]" value="[{$edit->oxmanufacturers__oxshortdesc->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_SHORTDESC" }]
             </td>
         </tr>
 
@@ -75,6 +78,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="25" maxlength="[{$edit->oxmanufacturers__oxicon->fldmax_length}]" name="editval[oxmanufacturers__oxicon]" value="[{$edit->oxmanufacturers__oxicon->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_ICON" }]
             </td>
         </tr>
         <tr>
@@ -83,6 +87,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input class="editinput" name="myfile[ICO@oxmanufacturers__oxicon]" type="file" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_MANUFACTURER_MAIN_ICONUPLOAD" }]
             </td>
         </tr>
 

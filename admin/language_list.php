@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: country_list.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: language_list.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**
@@ -78,22 +78,19 @@ class Language_List extends oxAdminList
         unset( $aLangData['sslUrls'][$iBaseId] );
 
         //saving languages info back to DB
-        $myConfig->saveShopConfVar( 'aarr', 'aLanguageParams', serialize($aLangData['params']) );
-        $myConfig->saveShopConfVar( 'aarr', 'aLanguages', serialize($aLangData['lang']) );
-        $myConfig->saveShopConfVar( 'arr',  'aLanguageURLs', serialize($aLangData['urls']) );
-        $myConfig->saveShopConfVar( 'arr',  'aLanguageSSLURLs', serialize($aLangData['sslUrls']) );
-
-        //updating oConfig object
-        $myConfig->setConfigParam( 'aLanguageParams', $aLangData['params'] );
-        $myConfig->setConfigParam( 'aLanguages', $aLangData['lang'] );
-        $myConfig->setConfigParam( 'aLanguageURLs', $aLangData['urls'] );
-        $myConfig->setConfigParam( 'aLanguageSSLURLs', $aLangData['sslUrls'] );
+        $myConfig->saveShopConfVar( 'aarr', 'aLanguageParams',  $aLangData['params']  );
+        $myConfig->saveShopConfVar( 'aarr', 'aLanguages',       $aLangData['lang']    );
+        $myConfig->saveShopConfVar( 'arr',  'aLanguageURLs',    $aLangData['urls']    );
+        $myConfig->saveShopConfVar( 'arr',  'aLanguageSSLURLs', $aLangData['sslUrls'] );
 
         //if deleted language was default, setting defalt lang to 0
         if ( $iBaseId == $myConfig->getConfigParam( 'sDefaultLang' ) ) {
             $myConfig->saveShopConfVar( 'str',  'sDefaultLang', 0 );
-            $myConfig->setConfigParam( 'sDefaultLang', 0 );
         }
+
+        // reseting all multilanguage DB fields with deleted lang id
+        // to default value
+        $this->_resetMultiLangDbFields( $iBaseId );
     }
 
     /**
@@ -168,4 +165,43 @@ class Language_List extends oxAdminList
             return ($sVal1 > $sVal2) ? -1 : 1;
         }
     }
+
+    /**
+     * Resets all multilanguage fields with specific language id
+     * to default value in all tables.
+     *
+     * @param string $iLangId language ID
+
+     * @return null
+     */
+    protected function _resetMultiLangDbFields( $iLangId )
+    {
+        $iLangId = (int)$iLangId;
+
+        //skipping reseting language with id = 0
+        if ( $iLangId == 0 ) {
+            return;
+        }
+
+        $oDbMeta = oxNew( "oxDbMetaDataHandler" );
+
+        oxDb::startTransaction();
+
+        try {
+            $oDbMeta->resetLanguage( $iLangId );
+        } catch( Exception $oEx ) {
+            // if exception, rollBack everything
+            oxDb::rollbackTransaction();
+            //show warning
+            $oEx = new oxExceptionToDisplay();
+            $oEx->setMessage( 'LANGUAGE_ERROR_RESETING_MULTILANG_FIELDS' );
+            oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
+
+            return;
+        }
+
+        oxDb::commitTransaction();
+    }
+
+
 }

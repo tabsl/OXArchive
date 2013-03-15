@@ -27,7 +27,10 @@
       <table class="form" width="100%">
         <tr>
           <td><label>[{ oxmultilang ident="ACCOUNT_RECOMM_LISTTITLE" }]:</label></td>
-          <td><input type="text" name="recomm_title" size=73 maxlength=73 value="[{$actvrecommlist->oxrecommlists__oxtitle->value}]" ></td>
+          <td>
+            <input type="text" name="recomm_title" size=73 maxlength=73 value="[{$actvrecommlist->oxrecommlists__oxtitle->value}]" >
+            <span class="req">*</span>
+          </td>
         </tr>
         <tr>
           <td><label>[{ oxmultilang ident="ACCOUNT_RECOMM_LISTAUTHOR" }]:</label></td>
@@ -44,14 +47,13 @@
       </div>
 
     </form>
-
-    [{if $actvrecommlist }]
-      [{if $oView->getActiveRecommItems() }]
-        [{include file="inc/recommlist.tpl" removeFunction="removeArticle" recommid=$actvrecommlist->getId()}]
-      [{/if}]
-    [{/if}]
 </div>
 
+[{if $actvrecommlist }]
+  [{if $oView->getActiveRecommItems() }]
+    [{include file="inc/recommlist.tpl" removeFunction="removeArticle" recommid=$actvrecommlist->getId()}]
+  [{/if}]
+[{/if}]
 
 [{if !$actvrecommlist }]
   [{assign var="blEdit" value=true }]

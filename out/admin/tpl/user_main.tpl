@@ -59,6 +59,7 @@ function chkInsert()
             </td>
             <td class="edittext">
             <input class="edittext" type="checkbox" name="editval[oxuser__oxactive]" value='1' [{if $edit->oxuser__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
             </td>
         </tr>
         <tr>
@@ -71,6 +72,7 @@ function chkInsert()
                 <option value="[{ $shopitem->id }]" [{ if $shopitem->selected}]SELECTED[{/if}]>[{ $shopitem->name }]</option>
                 [{/foreach}]
                 </select>
+                [{ oxinputhelp ident="HELP_USER_MAIN_RIGHTS" }]
             </td>
         </tr>
         <tr>
@@ -79,6 +81,7 @@ function chkInsert()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="25" maxlength="[{$edit->oxuser__oxusername->fldmax_length}]" name="editval[oxuser__oxusername]" value="[{$edit->oxuser__oxusername->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_USER_MAIN_EMAILLOGIN" }]
             </td>
         </tr>
 
@@ -88,6 +91,7 @@ function chkInsert()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="15" maxlength="[{$edit->oxuser__oxcustnr->fldmax_length}]" name="editval[oxuser__oxcustnr]" value="[{$edit->oxuser__oxcustnr->value }]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_USER_MAIN_CUSTOMERSNR" }]
             </td>
         </tr>
         <tr>
@@ -95,7 +99,11 @@ function chkInsert()
             [{ oxmultilang ident="GENERAL_BILLSAL" }]
             </td>
             <td class="edittext">
-            <input type="text" class="editinput" size="15" maxlength="[{$edit->oxuser__oxsal->fldmax_length}]" name="editval[oxuser__oxsal]" value="[{$edit->oxuser__oxsal->value }]" [{ $readonly }]>
+              <select name="editval[oxuser__oxsal]" class="editinput" [{ $readonly }]>
+                <option value="MR"  [{if $edit->oxuser__oxsal->value|lower  == "mr"  }]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_SALUTATION_MR"  }]</option>
+                <option value="MRS" [{if $edit->oxuser__oxsal->value|lower  == "mrs" }]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_SALUTATION_MRS" }]</option>
+              </select>
+            [{ oxinputhelp ident="HELP_GENERAL_BILLSAL" }]
             </td>
         </tr>
         <tr>
@@ -105,6 +113,7 @@ function chkInsert()
             <td class="edittext">
             <input type="text" class="editinput" size="10" maxlength="[{$edit->oxuser__oxfname->fldmax_length}]" name="editval[oxuser__oxfname]" value="[{$edit->oxuser__oxfname->value }]" [{ $readonly }]>
             <input type="text" class="editinput" size="20" maxlength="[{$edit->oxuser__oxlname->fldmax_length}]" name="editval[oxuser__oxlname]" value="[{$edit->oxuser__oxlname->value }]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_USER_MAIN_NAME" }]
             </td>
         </tr>
         <tr>
@@ -113,6 +122,7 @@ function chkInsert()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="37" maxlength="[{$edit->oxuser__oxcompany->fldmax_length}]" name="editval[oxuser__oxcompany]" value="[{$edit->oxuser__oxcompany->value }]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_COMPANY" }]
             </td>
         </tr>
         <tr>
@@ -121,6 +131,7 @@ function chkInsert()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="28" maxlength="[{$edit->oxuser__oxstreet->fldmax_length}]" name="editval[oxuser__oxstreet]" value="[{$edit->oxuser__oxstreet->value }]" [{ $readonly }]> <input type="text" class="editinput" size="5" maxlength="[{$edit->oxuser__oxstreetnr->fldmax_length}]" name="editval[oxuser__oxstreetnr]" value="[{$edit->oxuser__oxstreetnr->value }]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_USER_MAIN_STRNR" }]
             </td>
         </tr>
         <tr>
@@ -130,6 +141,7 @@ function chkInsert()
             <td class="edittext">
             <input type="text" class="editinput" size="5" maxlength="[{$edit->oxuser__oxzip->fldmax_length}]" name="editval[oxuser__oxzip]" value="[{$edit->oxuser__oxzip->value }]" [{ $readonly }]>
             <input type="text" class="editinput" size="25" maxlength="[{$edit->oxuser__oxcity->fldmax_length}]" name="editval[oxuser__oxcity]" value="[{$edit->oxuser__oxcity->value }]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_ZIPCITY" }]
             </td>
         </tr>
         <tr>
@@ -138,6 +150,7 @@ function chkInsert()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="15" maxlength="[{$edit->oxuser__oxustid->fldmax_length}]" name="editval[oxuser__oxustid]" value="[{$edit->oxuser__oxustid->value }]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_USTID" }]
             </td>
         </tr>
         <tr>
@@ -146,6 +159,7 @@ function chkInsert()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="37" maxlength="[{$edit->oxuser__oxaddinfo->fldmax_length}]" name="editval[oxuser__oxaddinfo]" value="[{$edit->oxuser__oxaddinfo->value }]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_EXTRAINFO" }]
             </td>
         </tr>
         <tr>
@@ -158,6 +172,7 @@ function chkInsert()
                <option value="[{$oCountry->oxcountry__oxid->value}]" [{if $oCountry->oxcountry__oxid->value == $edit->oxuser__oxcountryid->value}]selected[{/if}]>[{$oCountry->oxcountry__oxtitle->value}]</option>
                [{/foreach}]
              </select>
+             [{ oxinputhelp ident="HELP_GENERAL_COUNTRY" }]
             </td>
         </tr>
         <tr>
@@ -166,6 +181,7 @@ function chkInsert()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="20" maxlength="[{$edit->oxuser__oxfon->fldmax_length}]" name="editval[oxuser__oxfon]" value="[{$edit->oxuser__oxfon->value }]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_TELEPHONE" }]
             </td>
         </tr>
         <tr>
@@ -174,6 +190,7 @@ function chkInsert()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="20" maxlength="[{$edit->oxuser__oxfax->fldmax_length}]" name="editval[oxuser__oxfax]" value="[{$edit->oxuser__oxfax->value }]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_FAX" }]
             </td>
         </tr>
         <tr>
@@ -184,6 +201,7 @@ function chkInsert()
               <input type="text" class="editinput" size="3" maxlength="2" name="editval[oxuser__oxbirthdate][day]" value="[{$edit->oxuser__oxbirthdate->value|regex_replace:"/^([0-9]{4})[-]([0-9]{1,2})[-]/":"" }]" [{ $readonly }]>
               <input type="text" class="editinput" size="3" maxlength="2" name="editval[oxuser__oxbirthdate][month]" value="[{$edit->oxuser__oxbirthdate->value|regex_replace:"/^([0-9]{4})[-]/":""|regex_replace:"/[-]([0-9]{1,2})$/":"" }]" [{ $readonly }]>
               <input type="text" class="editinput" size="8" maxlength="4" name="editval[oxuser__oxbirthdate][year]" value="[{$edit->oxuser__oxbirthdate->value|regex_replace:"/[-]([0-9]{1,2})[-]([0-9]{1,2})$/":"" }]" [{ $readonly }]>
+              [{ oxinputhelp ident="HELP_GENERAL_BIRTHDATE" }]
             </td>
         </tr>
         [{ if $oxid != "-1"}]
@@ -193,6 +211,7 @@ function chkInsert()
             </td>
             <td class="edittext"><br>
             [{if $edit->oxuser__oxpassword->value}][{ oxmultilang ident="GENERAL_YES" }][{else}][{ oxmultilang ident="GENERAL_NO" }][{/if}]
+            [{ oxinputhelp ident="HELP_USER_MAIN_HASPASSWORD" }]
             </td>
         </tr>
         [{/if}]
@@ -202,6 +221,7 @@ function chkInsert()
             </td>
             <td class="edittext"><br>
             <input type="text" class="editinput" size="15" name="newPassword" value="" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_USER_MAIN_NEWPASSWORD" }]
             </td>
         </tr>
 

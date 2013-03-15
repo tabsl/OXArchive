@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: user.php 22647 2009-09-25 13:49:12Z tomas $
+ * $Id: user.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**
@@ -383,6 +383,7 @@ class User extends oxUBase
                     $oAdress->init( 'oxaddress' );
                     if ( $oAdress->load( $sAddressId ) ) {
                         $this->_oDelAddress = $oAdress;
+                        $this->_aViewData['deladr'] = null;
                     }
                 }
             }

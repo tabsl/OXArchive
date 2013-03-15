@@ -49,6 +49,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input class="edittext" type="checkbox" name="editval[active]" value='1' [{if $edit.active == 1}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
             </td>
         </tr>
         <tr>
@@ -57,6 +58,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="5" maxlength="3" id="oLockTarget" name="editval[abbr]" value="[{$edit.abbr}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_LANGUAGE_ABBERVATION" }]
             </td>
         </tr>
         <tr>
@@ -65,6 +67,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="40" maxlength="50" name="editval[desc]" value="[{$edit.desc}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_LANGUAGE_DESCRIPTION" }]
             </td>
         </tr>
         <tr>
@@ -73,6 +76,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input class="edittext" type="checkbox" name="editval[default]" value='1' [{if $edit.default}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_LANGUAGE_DEFAULT" }]
             </td>
         </tr>
         [{ if !$isMall }]
@@ -82,6 +86,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="40" maxlength="255" name="editval[baseurl]" value="[{$edit.baseurl}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_LANGUAGE_BASEURL" }]
             </td>
         </tr>
         <tr>
@@ -90,6 +95,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="40" maxlength="255" name="editval[basesslurl]" value="[{$edit.basesslurl}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_LANGUAGE_BASESSLURL" }]
             </td>
         </tr>
         [{/if}]
@@ -109,6 +115,7 @@ window.onload = function ()
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="5" maxlength="5" name="editval[sort]" value="[{$edit.sort}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_SORT" }]
             </td>
         </tr>
         <tr>

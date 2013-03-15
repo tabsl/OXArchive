@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: report_conversion_rate.php 22478 2009-09-21 14:51:46Z arvydas $
+ * $Id: report_conversion_rate.php 23188 2009-10-13 06:59:38Z sarunas $
  */
 
 if ( !class_exists( "report_conversion_rate")) {
@@ -85,25 +85,23 @@ if ( !class_exists( "report_conversion_rate")) {
                 $aTemp[date( "m/Y", mktime( 23, 59, 59, date( "m", $dTimeFrom)+$i, date( "d", $dTimeFrom), date( "Y", $dTimeFrom)) )] = 0;
 
             $rs = $oDb->execute( $sSQL);
-            $blData = false;
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     $aTemp[date( "m/Y", strtotime( $rs->fields[0]))]++;
                     $rs->moveNext();
-                    $blData = true;
                 }
             }
 
             $aDataX2  = array();
             $aDataX3  = array();
-            if ($blData) {
-                foreach ( $aTemp as $key => $value) {
-                    $aDataX[$key]   = $value;
-                    $aDataX2[$key]  = 0;
-                    $aDataX3[$key]  = 0;
-                    $aDataY[]       = $key;
-                }
+
+            foreach ( $aTemp as $key => $value) {
+                $aDataX[$key]   = $value;
+                $aDataX2[$key]  = 0;
+                $aDataX3[$key]  = 0;
+                $aDataY[]       = $key;
             }
+
             // orders
             $sSQL = "select oxorderdate from oxorder where oxorderdate >= $sTime_from and oxorderdate <= $sTime_to order by oxorderdate";
             $aTemp = array();
@@ -218,6 +216,8 @@ if ( !class_exists( "report_conversion_rate")) {
             $oDb = oxDb::getDb();
 
             $aDataX = array();
+            $aDataX2  = array();
+            $aDataX3  = array();
             $aDataY = array();
 
             $dTimeTo    = strtotime( oxConfig::getParameter( "time_to"));
@@ -228,33 +228,29 @@ if ( !class_exists( "report_conversion_rate")) {
             $sSQL = "select oxtime, count(*) as nrof from oxlogs where oxtime >= $sTime_from and oxtime <= $sTime_to group by oxsessid order by oxtime";
             $aTemp = array();
             $rs = $oDb->execute( $sSQL);
-            $blData = false;
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     //$aTemp[date( "W", strtotime( $rs->fields[0]))]++;
                     $aTemp[oxUtilsDate::getInstance()->getWeekNumber($myConfig->getConfigParam( 'iFirstWeekDay' ), strtotime( $rs->fields[0]))]++;
                     $rs->moveNext();
-                    $blData = true;
                 }
             }
 
-            $aDataX2  = array();
-            $aDataX3  = array();
-            if ($blData) {
-                // initializing one week before current..
-                reset( $aTemp );
-                $iCurrKey = ( (int) key( $aTemp ) ) - 1;
-                $aDataX[$iCurrKey] = 0;
-                $aDataX2[$iCurrKey] = 0;
-                $aDataX3[$iCurrKey] = 0;
-                $aDataY[] = "KW ".$iCurrKey;
 
-                foreach ( $aTemp as $key => $value) {
-                    $aDataX[$key]   = $value;
-                    $aDataX2[$key]  = 0;
-                    $aDataX3[$key]  = 0;
-                    $aDataY[]       = "KW ".$key;
-                }
+            // initializing
+            list( $iFrom, $iTo ) = $this->getWeekRange();
+            for ( $i = $iFrom; $i < $iTo; $i++ ) {
+                $aDataX[$i]  = 0;
+                $aDataX2[$i] = 0;
+                $aDataX3[$i] = 0;
+                $aDataY[]    = "KW ".$i;
+            }
+
+            foreach ( $aTemp as $key => $value) {
+                $aDataX[$key]   = $value;
+                $aDataX2[$key]  = 0;
+                $aDataX3[$key]  = 0;
+                $aDataY[]       = "KW ".$key;
             }
 
             // buyer

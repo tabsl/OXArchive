@@ -54,6 +54,7 @@ function ThisDate( sID)
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="15" maxlength="[{$edit->oxorder__oxordernr->fldmax_length}]" name="editval[oxorder__oxordernr]" value="[{$edit->oxorder__oxordernr->value }]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_ORDERNUM" }]
             </td>
         </tr>
         <tr>
@@ -62,6 +63,7 @@ function ThisDate( sID)
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="15" maxlength="[{$edit->oxorder__oxbillnr->fldmax_length}]" name="editval[oxorder__oxbillnr]" value="[{$edit->oxorder__oxbillnr->value }]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_ORDER_MAIN_BILLNUM" }]
             </td>
         </tr>
         <tr>
@@ -70,6 +72,7 @@ function ThisDate( sID)
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="25" maxlength="[{$edit->oxorder__oxtrackcode->fldmax_length}]" name="editval[oxorder__oxtrackcode]" value="[{$edit->oxorder__oxtrackcode->value }]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_ORDER_MAIN_TRACKCODE" }]
             </td>
         </tr>
         <tr>
@@ -78,6 +81,7 @@ function ThisDate( sID)
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="15" maxlength="[{$edit->oxorder__oxdelcost->fldmax_length}]" name="editval[oxorder__oxdelcost]" value="[{$edit->oxorder__oxdelcost->value }]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_DELIVERYCOST" }]
             </td>
         </tr>
         <tr>
@@ -86,6 +90,7 @@ function ThisDate( sID)
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="15" maxlength="[{$edit->oxorder__oxdiscount->fldmax_length}]" name="editval[oxorder__oxdiscount]" value="[{$edit->oxorder__oxdiscount->value }]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_ORDER_MAIN_DISCOUNT" }]
             </td>
         </tr>
         <tr>
@@ -93,7 +98,9 @@ function ThisDate( sID)
                 [{ oxmultilang ident="ORDER_MAIN_PAIDON" }]
             </td>
             <td class="edittext">[{assign var=date value=$edit->oxorder__oxpaid->value|replace:"0000-00-00 00:00:00":""}]
-                <input type="text" class="editinput" size="25" name="editval[oxorder__oxpaid]" value="[{$edit->oxorder__oxpaid|oxformdate }]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]>&nbsp;<a href="Javascript:ThisDate('[{$sNowValue|oxformdate:'datetime':true}]');" class="edittext" [{if $readonly }]onclick="JavaScript:return false;"[{/if}]><u>[{ oxmultilang ident="ORDER_MAIN_CURRENT_DATE" }]</u></a> 			</td>
+                <input type="text" class="editinput" size="25" name="editval[oxorder__oxpaid]" value="[{$edit->oxorder__oxpaid|oxformdate }]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]>&nbsp;<a href="Javascript:ThisDate('[{$sNowValue|oxformdate:'datetime':true}]');" class="edittext" [{if $readonly }]onclick="JavaScript:return false;"[{/if}]><u>[{ oxmultilang ident="ORDER_MAIN_CURRENT_DATE" }]</u></a>
+                [{ oxinputhelp ident="HELP_ORDER_MAIN_PAIDON" }] 			
+            </td>
         </tr>
         <tr>
             <td class="edittext" valign="middle">
@@ -148,6 +155,7 @@ function ThisDate( sID)
                 <option value="[{ $sShipSetId }]" [{ if $edit->oxorder__oxdeltype->value == $sShipSetId }]SELECTED[{/if}]>[{$oShipSet->oxdeliveryset__oxtitle->value}]</option>
                 [{/foreach}]
                 </select>
+                [{ oxinputhelp ident="HELP_ORDER_MAIN_DELTYPE" }]
             </td>
             <td>
                 <input type="submit" name="updateShipping" id="updateShipping" value="[{ oxmultilang ident="ORDER_MAIN_UPDATE_DELPAY" }]">
@@ -173,6 +181,7 @@ function ThisDate( sID)
                     <option value="[{ $sPaymentId }]" [{ if $edit->oxorder__oxpaymenttype->value == $sPaymentId }]SELECTED[{/if}]>[{$oPayment->oxpayments__oxdesc->value}]</option>
                     [{/foreach}]
                     </select>
+                    [{ oxinputhelp ident="HELP_ORDER_MAIN_PAIDWITH" }]
                 [{else}]
                     <b>[{$paymentType->oxpayments__oxdesc->value}]</b>
                 [{/if}]

@@ -75,7 +75,7 @@
     <!-- basket items -->
     <tbody>
     [{assign var="basketitemlist" value=$oView->getBasketArticles() }]
-    [{foreach key=basketindex from=$oxcmp_basket->getContents() item=basketitem name=test_Contents}]    
+    [{foreach key=basketindex from=$oxcmp_basket->getContents() item=basketitem name=test_Contents}]
     [{assign var="basketproduct" value=$basketitemlist.$basketindex }]
     <tr valign="top">
       <!-- product image -->
@@ -149,20 +149,11 @@
       <td></td>
     </tr>
 
-   [{if $basketproduct->oxarticles__oxvpe->value > 1}]
-     <tr class="notice">
-       <td class="brd"></td>
-       <td id="test_basket_VPE_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.test_Contents.iteration}]" colspan="6">
-         [{ oxmultilang ident="BASKET_VPE_MESSAGE" }] [{ $basketproduct->oxarticles__oxvpe->value}]
-       </td>
-       <td></td>
-     </tr>
-    [{/if}]
 
         [{foreach from=$Errors.basket item=oEr key=key }]
         [{if $oEr->getErrorClassType() == 'oxOutOfStockException'}]
         <!-- display only the exceptions for the current article-->
-           [{if $basketproduct->oxarticles__oxartnum->value == $oEr->getValue('articleNr') }]
+           [{if $basketproduct->oxarticles__oxid->value == $oEr->getValue('productId') }]
                <tr>
                  <td class="brd"></td>
                  <td id="test_basket_StockError_[{ $basketproduct->oxarticles__oxid->value }]_[{$key}]" colspan="6">
@@ -173,7 +164,7 @@
             [{/if}]
          [{/if}]
          [{if $oEr->getErrorClassType() == 'oxArticleInputException'}]
-            [{if $basketproduct->oxarticles__oxartnum->value == $oEr->getValue('articleNr') }]
+            [{if $basketproduct->oxarticles__oxid->value == $oEr->getValue('productId') }]
                 <tr class="notice">
                  <td></td>
                  <td colspan="6">
@@ -206,8 +197,8 @@
          </div>
          &nbsp;&nbsp;&nbsp;
          <span class="btn">
-         	<input id="test_basketUpdate" class="upd" type="submit" name="updateBtn" value="[{ oxmultilang ident="BASKET_UPDATE" }]">
-		 </span>
+             <input id="test_basketUpdate" class="upd" type="submit" name="updateBtn" value="[{ oxmultilang ident="BASKET_UPDATE" }]">
+         </span>
        </td>
        <td></td>
      </tr>
@@ -299,12 +290,16 @@
         </tr>
       [{/foreach }]
     [{/if }]
+
+    [{if $oxcmp_basket->getDelCostNet() || $oxcmp_basket->getDelCostVat()}]
     <tr class="bsk_sep">
       <td class="brd"></td>
       <td colspan="6" class="line"></td>
       <td></td>
     </tr>
+    [{/if}]
 
+    [{if $oxcmp_basket->getDelCostNet() }]
       <tr class="sumrow">
         <td class="brd"></td>
         <td colspan="5" class="sumdesc">[{if $oxcmp_basket->getDelCostVat() }][{ oxmultilang ident="BASKET_SHIPPINGNET" }][{else}][{ oxmultilang ident="BASKET_SHIPPING" }][{/if }]</td>
@@ -318,6 +313,7 @@
         <td id="test_basketDeliveryVAT" align="right">[{ $oxcmp_basket->getDelCostVat() }]&nbsp;[{ $currency->sign }]</td>
         <td></td>
       </tr>
+    [{/if }]
     [{/if }]
 
     [{if $oxcmp_basket->getPaymentCosts() }]

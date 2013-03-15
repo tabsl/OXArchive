@@ -102,6 +102,7 @@ function editThis( sID )
               <option value="[{ $pcat->oxselectlist__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxselectlist__oxtitle->value }][{if $pcat->oxselectlist__oxident->value}] | [{ $pcat->oxselectlist__oxident->value }][{/if}]</option>
               [{/foreach}]
               </select>
+              [{ oxinputhelp ident="HELP_ARTICLE_VARIANT_SELECTLIST" }]
             </td>
             <td class="edittext">
               &nbsp;<a href="Javascript:document.myedit3.fnc.value='addsel';document.myedit3.submit();"><b>==></b></a>&nbsp;<br>
@@ -133,6 +134,7 @@ function editThis( sID )
         <input type="hidden" name="voxid" value="">
         <b>[{ oxmultilang ident="ARTICLE_VARIANT_VARNAME" }]</b><br>
         <input type="text" class="editinput" size="32" maxlength="[{$edit->oxarticles__oxvarname->fldmax_length}]" name="editval[oxarticles__oxvarname]" value="[{$edit->oxarticles__oxvarname->value}]" [{ $readonly }]>
+        [{ oxinputhelp ident="HELP_ARTICLE_VARIANT_VARNAME" }]
         [{if !$shop->buyableparent}]<input class="edittext" type="submit" value="[{ oxmultilang ident="ARTICLE_VARIANT_ARTSAVE" }]" [{ $readonly }]>[{/if}]
         <br><br>
 

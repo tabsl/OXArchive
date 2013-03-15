@@ -887,6 +887,10 @@ class Auth_OpenID_Message {
 
     function getAliasedArg($aliased_key, $default = null)
     {
+        if ($aliased_key == 'ns') {
+            // Return the namespace URI for the OpenID namespace
+            return $this->getOpenIDNamespace();
+        }
         $parts = explode('.', $aliased_key, 2);
 
         if (count($parts) != 2) {

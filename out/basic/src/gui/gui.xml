@@ -355,6 +355,7 @@
             <group title="GUI_GROUP_MSG_BOXES">
                 <color const="oxMsgBoxBg" color="0" title="GUI_BACKGROUND" />
                 <color const="oxMsgBoxBr" color="1" title="GUI_BORDER" />
+                <color const="oxMsgBoxCl" color="3" title="GUI_TEXT" />
                 <color const="oxMsgBoxErrCl" color="2" title="GUI_ERROR_TEXT" />
             </group>
 

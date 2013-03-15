@@ -19,13 +19,13 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxmanufacturer.php 15252 2009-01-14 13:57:13Z arvydas $
+ * $Id: oxmanufacturer.php 23323 2009-10-16 14:59:42Z sarunas $
  */
 
 /**
  * @package core
  */
-class oxManufacturer extends oxI18n
+class oxManufacturer extends oxI18n implements oxIUrl
 {
 
     protected static $_aRootManufacturer = array();
@@ -239,11 +239,12 @@ class oxManufacturer extends oxI18n
     /**
      * Returns standard URL to manufacturer
      *
-     * @param integer $iLang language
+     * @param int   $iLang language
+     * @param array $aParams additional params to use [optional]
      *
      * @return string
      */
-    public function getStdLink($iLang = null)
+    public function getStdLink($iLang = null, $aParams = array() )
     {
         $sLangUrl = '';
 
@@ -253,6 +254,13 @@ class oxManufacturer extends oxI18n
                 $sLangUrl = "&amp;lang={$iLang}";
             }
         }
+
+        foreach ($aParams as $key => $value) {
+            if ( $value ) {
+                $sLangUrl .= "&amp;$key=$value";
+            }
+        }
+
         return $this->getConfig()->getShopHomeURL().'cl=manufacturerlist&amp;mnid='.$this->getId().$sLangUrl;
     }
 

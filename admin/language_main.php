@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: country_main.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: language_main.php 23174 2009-10-12 13:48:10Z sarunas $
  */
 
 /**
@@ -174,16 +174,10 @@ class Language_Main extends oxAdminDetails
         $this->_aViewData["updatelist"] = "1";
 
         //saving languages info
-        $this->getConfig()->saveShopConfVar( 'aarr', 'aLanguageParams', serialize($this->_aLangData['params']) );
-        $this->getConfig()->saveShopConfVar( 'aarr', 'aLanguages', serialize($this->_aLangData['lang']) );
-        $this->getConfig()->saveShopConfVar( 'arr',  'aLanguageURLs', serialize($this->_aLangData['urls']) );
-        $this->getConfig()->saveShopConfVar( 'arr',  'aLanguageSSLURLs', serialize($this->_aLangData['sslUrls']) );
-
-        //updating oConfig object
-        $this->getConfig()->setConfigParam( 'aLanguageParams', $this->_aLangData['params'] );
-        $this->getConfig()->setConfigParam( 'aLanguages', $this->_aLangData['lang'] );
-        $this->getConfig()->setConfigParam( 'aLanguageURLs', $this->_aLangData['urls'] );
-        $this->getConfig()->setConfigParam( 'aLanguageSSLURLs', $this->_aLangData['sslUrls'] );
+        $this->getConfig()->saveShopConfVar( 'aarr', 'aLanguageParams',  $this->_aLangData['params']  );
+        $this->getConfig()->saveShopConfVar( 'aarr', 'aLanguages',       $this->_aLangData['lang']    );
+        $this->getConfig()->saveShopConfVar( 'arr',  'aLanguageURLs',    $this->_aLangData['urls']    );
+        $this->getConfig()->saveShopConfVar( 'arr',  'aLanguageSSLURLs', $this->_aLangData['sslUrls'] );
     }
 
     /**
@@ -313,7 +307,6 @@ class Language_Main extends oxAdminDetails
     {
         $sDefaultId = $this->_aLangData['params'][$sOxId]['baseId'];
         $this->getConfig()->saveShopConfVar( 'str',  'sDefaultLang', $sDefaultId );
-        $this->getConfig()->setConfigParam( 'sDefaultLang', $sDefaultId );
     }
 
     /**
@@ -379,10 +372,36 @@ class Language_Main extends oxAdminDetails
      */
     protected function _checkMultiLangDbFields( $sOxId )
     {
+        $oDbMeta = oxNew( "oxDbMetaDataHandler" );
+        $iBaseId = $this->_aLangData['params'][$sOxId]['baseId'];
+
+        $sPrefix = oxLang::getInstance()->getLanguageTag( $iBaseId );
+        $sMultiLangCol = 'OXTITLE' . $sPrefix;
+
+        if ( !$oDbMeta->fieldExists( $sMultiLangCol, "oxarticles" ) ) {
+            //creating new multilanguage fields with new id over whole DB
+            oxDb::startTransaction();
+            try {
+                $oDbMeta->addNewLangToDb();
+            } catch( Exception $oEx ) {
+                // if exception, rollBack everything
+                oxDb::rollbackTransaction();
+
+                //show warning
+                $oEx = new oxExceptionToDisplay();
+                $oEx->setMessage( 'LANGUAGE_ERROR_ADDING_MULTILANG_FIELDS' );
+                oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
+
+                return;
+            }
+
+            oxDb::commitTransaction();
+        }
+
+        /*
         $oDB = oxDb::getDb( true );
         $myConfig = $this->getConfig();
 
-        $iBaseId = $this->_aLangData['params'][$sOxId]['baseId'];
 
         $sSql = "SHOW COLUMNS FROM oxarticles";
         $aFields = $oDB->getAll( $sSql );
@@ -403,7 +422,7 @@ class Language_Main extends oxAdminDetails
             $oEx->setMessage( 'LANGUAGE_NODBMULTILANGFIELDS_WARNING' );
             oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
         }
-
+        */
     }
 
     /**

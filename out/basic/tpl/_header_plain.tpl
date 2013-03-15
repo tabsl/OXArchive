@@ -3,9 +3,9 @@
 <head>
     [{assign var="_titlesuffix" value=$_titlesuffix|default:$oView->getTitleSuffix()}]
     [{assign var="title" value=$title|default:$oView->getTitle() }]
-    <title>[{ $oView->getTitlePrefix() }][{if $title}] | [{$title|strip_tags}][{/if}][{if $_titlesuffix}] | [{$_titlesuffix}][{/if}]</title>
+    <title>[{ $oView->getTitlePrefix() }][{if $title}] | [{$title|strip_tags}][{/if}][{if $_titlesuffix}] | [{$_titlesuffix}][{/if}][{if $titlepagesuffix}] | [{$titlepagesuffix}][{/if}]</title>
     <meta http-equiv="Content-Type" content="text/html; charset=[{$charset}]">
-    [{if $oView->noIndex()}]
+    [{if $oView->noIndex() == 1 }]
     <meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
     [{elseif $oView->noIndex() == 2 }]
     <meta name="ROBOTS" content="NOINDEX, FOLLOW">
@@ -14,7 +14,9 @@
     [{if $oView->getMetaKeywords()}]<meta name="keywords" content="[{$oView->getMetaKeywords()}]">[{/if}]
     <link rel="shortcut icon" href="[{ $oViewConf->getBaseDir()}]favicon.ico">
     <link rel="stylesheet" type="text/css" href="[{ $oViewConf->getResourceUrl() }]oxid.css">
-    <!--[if lt IE 8]><link rel="stylesheet" type="text/css" href="[{ $oViewConf->getResourceUrl() }]oxidbc.css"><![endif]-->
+    <!--[if IE 8]><link rel="stylesheet" type="text/css" href="[{ $oViewConf->getResourceUrl() }]oxid_ie8.css"><![endif]-->
+    <!--[if IE 7]><link rel="stylesheet" type="text/css" href="[{ $oViewConf->getResourceUrl() }]oxid_ie7.css"><![endif]-->
+    <!--[if IE 6]><link rel="stylesheet" type="text/css" href="[{ $oViewConf->getResourceUrl() }]oxid_ie6.css"><![endif]-->
 
     [{if $rsslinks}]
       [{foreach from=$rsslinks item='rssentry'}]

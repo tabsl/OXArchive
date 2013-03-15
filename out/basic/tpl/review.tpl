@@ -1,10 +1,15 @@
-[{assign var="product" value=$oView->getProduct()}]
-[{assign var="template_title" value=$product->oxarticles__oxtitle->value|cat:" "|cat:$product->oxarticles__oxvarselect->value}]
+[{if $oView->getProduct()}]
+  [{assign var="product" value=$oView->getProduct()}]
+  [{assign var="template_title" value=$product->oxarticles__oxtitle->value|cat:" "|cat:$product->oxarticles__oxvarselect->value}]
+[{else}]
+  [{assign var="template_title" value="REVIEW_YOURREVIEW"|oxmultilangassign}]
+[{/if}]
 [{include file="_header.tpl" title=$template_title location=$template_title}]
 
 [{if !$oxcmp_user->oxuser__oxusername->value && !$oView->getProduct()}]
   [{include file="inc/cmp_login.tpl" }]
 [{else}]
+  [{if $oView->getProduct()}]
   <strong class="boxhead">[{$template_title}]</strong>
   <div class="box info">
     <table width="100%">
@@ -30,6 +35,7 @@
       </tr>
     </table>
   </div>
+  [{/if}]
 
   [{if $oView->getReviewSendStatus()}]
     <strong class="boxhead">[{ oxmultilang ident="REVIEW_REVIEW" }]</strong>
@@ -43,18 +49,18 @@
         <div>
             [{ if $oView->canRate() }]
               <table>
-                <tr title="5 [{ oxmultilang ident="REVIEW_STARS" }]"><td><input type="radio" name="artrating" value="5" class="rating_review_input"></td><td class="rating_review_background fivestar">&nbsp;</td></tr>
-                <tr title="4 [{ oxmultilang ident="REVIEW_STARS" }]"><td><input type="radio" name="artrating" value="4" class="rating_review_input"></td><td class="rating_review_background fourstar">&nbsp;</td></tr>
-                <tr title="3 [{ oxmultilang ident="REVIEW_STARS" }]"><td><input type="radio" name="artrating" value="3" class="rating_review_input"></td><td class="rating_review_background threestar">&nbsp;</td></tr>
-                <tr title="2 [{ oxmultilang ident="REVIEW_STARS" }]"><td><input type="radio" name="artrating" value="2" class="rating_review_input"></td><td class="rating_review_background twostar">&nbsp;</td></tr>
-                <tr title="1 [{ oxmultilang ident="REVIEW_STAR" }]"><td><input type="radio" name="artrating" value="1" class="rating_review_input"></td><td class="rating_review_background onestar">&nbsp;</td></tr>
+              [{section name=star start=5 loop=6 step=-1 max=5}]
+              <tr title="[{$smarty.section.star.index}] [{if $smarty.section.star.index==1}][{ oxmultilang ident="REVIEW_STAR" }][{else}][{ oxmultilang ident="REVIEW_STARS" }][{/if}]"><td><input type="radio" name="artrating" value="[{$smarty.section.star.index}]" class="rating_review_input"></td><td class="rating s[{$smarty.section.star.index}]">&nbsp;</td></tr>
+              [{/section}]
               </table>
             [{/if}]
             [{ $oViewConf->getHiddenSid() }]
             [{ $oViewConf->getNavFormParams() }]
             <input type="hidden" name="fnc" value="savereview">
             <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
+            [{if $product}]
             <input type="hidden" name="anid" value="[{ $product->oxarticles__oxid->value }]">
+            [{/if}]
             <input type="hidden" name="reviewuserid" value="[{$oView->getReviewUserId()}]">
             <textarea cols="102" rows="15" name="rvw_txt" class="fullsize"></textarea><br>
             <span class="btn"><input type="submit" value="[{ oxmultilang ident="REVIEW_TOSAVEREVIEW" }]" class="btn"></span>
@@ -69,10 +75,10 @@
         [{foreach from=$oView->getReviews() item=review}]
         <dl class="review">
             <dt>
-                <span class="left"><b>[{ $review->oxuser__oxfname->value }]</b> [{ oxmultilang ident="DETAILS_PERSPARAM_WRITES" }]</span>
-                <span class="right param"><b>[{ oxmultilang ident="DETAILS_PERSPARAM_TIME" }]</b>&nbsp;[{ $review->oxreviews__oxcreate->value|date_format:"%H:%M" }]</span>
-                <span class="right param"><b>[{ oxmultilang ident="DETAILS_PERSPARAM_DATE" }]</b>&nbsp;[{ $review->oxreviews__oxcreate->value|date_format:"%d.%m.%Y" }]</span>
-                <span class="right param">[{if $review->oxreviews__oxrating->value }]<b>[{ oxmultilang ident="DETAILS_PERSPARAM_RATING" }]</b>&nbsp;[{ $review->oxreviews__oxrating->value }][{/if}]</span>
+                <span class="left"><b>[{ $review->oxuser__oxfname->value }]</b> [{ oxmultilang ident="DETAILS_WRITES" }]</span>
+                <span class="right param"><b>[{ oxmultilang ident="DETAILS_TIME" }]</b>&nbsp;[{ $review->oxreviews__oxcreate->value|date_format:"%H:%M" }]</span>
+                <span class="right param"><b>[{ oxmultilang ident="DETAILS_DATE" }]</b>&nbsp;[{ $review->oxreviews__oxcreate->value|date_format:"%d.%m.%Y" }]</span>
+                <span class="right param">[{if $review->oxreviews__oxrating->value }]<b>[{ oxmultilang ident="DETAILS_RATING" }]</b>&nbsp;[{ $review->oxreviews__oxrating->value }][{/if}]</span>
             </dt>
             <dd>
                 [{ $review->oxreviews__oxtext->value }]

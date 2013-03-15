@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: order.php 22381 2009-09-17 13:11:50Z vilma $
+ * $Id: order.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**
@@ -250,10 +250,7 @@ class Order extends oxUBase
             try {
                 $oOrder = oxNew( 'oxorder' );
 
-                // validating stock
-                $oOrder->validateStock( $oBasket );
-
-                // finalizing ordering process (storing order into DB, executing payment, setting status ...)
+                // finalizing ordering process (validating, storing order into DB, executing payment, setting status ...)
                 $iSuccess = $oOrder->finalizeOrder( $oBasket, $oUser );
 
                 // performing special actions after user finishes order (assignment to special user groups)
@@ -286,21 +283,21 @@ class Order extends oxUBase
 
         //little trick with switch for multiple cases
         switch ( true ) {
-            case ( is_numeric( $iSuccess ) && ( $iSuccess == 0 ) ):
+            case ( $iSuccess === oxOrder::ORDER_STATE_MAILINGERROR ):
                 $sNextStep = 'thankyou?mailerror=1';
                 break;
-            case ( $iSuccess == 2 ):
+            case ( $iSuccess === oxOrder::ORDER_STATE_PAYMENTERROR ):
                 // no authentication, kick back to payment methods
                 oxSession::setVar( 'payerror', 2 );
                 $sNextStep = 'payment?payerror=2';
                 break;
-            case ( $iSuccess == 3 ):
+            case ( $iSuccess === oxOrder::ORDER_STATE_ORDEREXISTS ):
                 break;  // reload blocker activ
-            case ( $iSuccess > 3 ):
+            case ( is_numeric( $iSuccess ) && $iSuccess > 3 ):
                 oxSession::setVar( 'payerror', $iSuccess );
                 $sNextStep = 'payment?payerror='.$iSuccess;
                 break;
-            case ( !is_numeric( $iSuccess ) && strlen( $iSuccess ) > 0 ):
+            case ( !is_numeric( $iSuccess ) && $iSuccess ):
                 //instead of error code getting error text and setting payerror to -1
                 oxSession::setVar( 'payerror', -1 );
                 $iSuccess = urlencode( $iSuccess );

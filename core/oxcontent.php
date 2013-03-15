@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcontent.php 22539 2009-09-22 13:05:20Z sarunas $
+ * $Id: oxcontent.php 23323 2009-10-16 14:59:42Z sarunas $
  */
 
 /**
@@ -28,7 +28,7 @@
  *
  * @package core
  */
-class oxContent extends oxI18n
+class oxContent extends oxI18n implements oxIUrl
 {
     /**
      * Core database table name. $_sCoreTbl could be only original data table name and not view name.
@@ -143,7 +143,6 @@ class oxContent extends oxI18n
         $this->oxcontents__oxcontent->setValue(str_replace( '&amp;', '&', $this->oxcontents__oxcontent->value ), oxField::T_RAW);
         // workaround for firefox showing &lang= as &9001;= entity, mantis#0001272
         $this->oxcontents__oxcontent->setValue(str_replace( '&lang=', '&amp;lang=', $this->oxcontents__oxcontent->value ), oxField::T_RAW);
-        $this->getLink();
     }
 
     /**
@@ -182,11 +181,12 @@ class oxContent extends oxI18n
     /**
      * Returns standard URL to product
      *
-     * @param integer $iLang language
+     * @param integer $iLang   language
+     * @param array   $aParams additional params to use [optional]
      *
      * @return string
      */
-    public function getStdLink($iLang = null)
+    public function getStdLink( $iLang = null, $aParams = array() )
     {
         $sAdd = '';
 
@@ -234,7 +234,7 @@ class oxContent extends oxI18n
     public function delete( $sOXID = null)
     {
         if ( !$sOXID ) {
-        	$sOXID = $this->getId();
+            $sOXID = $this->getId();
         }
         if (parent::delete($sOXID)) {
             oxSeoEncoderContent::getInstance()->onDeleteContent($sOXID);

@@ -1,6 +1,8 @@
 [{foreach from=$oView->getActiveRecommItems() name=recommlist item=product}]
 
-  [{if $smarty.foreach.noticelist.first && !$smarty.foreach.recommlist.last }]
+  [{if $smarty.foreach.recommlist.first && $smarty.foreach.recommlist.last }]
+    [{assign var="recommlist_class" value=""}]
+  [{elseif $smarty.foreach.recommlist.first && !$smarty.foreach.recommlist.last }]
     [{assign var="recommlist_class" value="firstinlist"}]
   [{elseif $smarty.foreach.recommlist.last}]
     [{assign var="recommlist_class" value="lastinlist"}]

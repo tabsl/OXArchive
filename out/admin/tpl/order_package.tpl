@@ -25,7 +25,8 @@ function printWindow()
 <tr>
 	<td class="listitem" width="150" valign="top">
 		<b>[{ oxmultilang ident="GENERAL_BILLADDRESS" }]<br></b>
-		[{ $order->fields.OXBILLSAL }]&nbsp;[{ $order->fields.OXBILLFNAME }]&nbsp;[{ $order->fields.OXBILLLNAME }]<br>
+                [{assign var=_sal value=$order->fields.OXBILLSAL}]
+                [{oxmultilang ident="GENERAL_SALUTATION_$_sal" noerror="yes" alternative=$_sal }]&nbsp;[{ $order->fields.OXBILLFNAME }]&nbsp;[{ $order->fields.OXBILLLNAME }]<br>
 		[{ $order->fields.OXBILLCOMPANY }]<br>
 		[{ $order->fields.OXBILLSTREET }]  [{ $order->fields.OXBILLSTREETNR }]<br>
 		[{ $order->fields.OXBILLZIP }]&nbsp;[{ $order->fields.OXBILLCITY }]<br>
@@ -38,7 +39,8 @@ function printWindow()
 	</td>
 	<td class="listitem" width="150" valign="top">
 		<b>[{ oxmultilang ident="GENERAL_DELIVERYADDRESS" }]:<br></b>
-		[{ $order->fields.OXBILLSAL }]&nbsp;[{if $order->fields.OXDELFNAME}][{ $order->fields.OXDELFNAME }][{ else }][{ $order->fields.OXBILLFNAME }][{/if}]&nbsp;[{if $order->fields.OXDELLNAME }][{$order->fields.OXDELLNAME }][{else}][{$order->fields.OXBILLLNAME }][{/if}]<br>
+                [{assign var=_sal value=$order->fields.OXBILLSAL}]
+                [{oxmultilang ident="GENERAL_SALUTATION_$_sal" noerror="yes" alternative=$_sal }]&nbsp;[{if $order->fields.OXDELFNAME}][{ $order->fields.OXDELFNAME }][{ else }][{ $order->fields.OXBILLFNAME }][{/if}]&nbsp;[{if $order->fields.OXDELLNAME }][{$order->fields.OXDELLNAME }][{else}][{$order->fields.OXBILLLNAME }][{/if}]<br>
 		[{ if $order->fields.OXDELCOMPANY }][{ $order->fields.OXDELCOMPANY }][{else}][{ $order->fields.OXBILLCOMPANY }][{/if}]<br>
 		[{ if $order->fields.OXDELSTREET }][{ $order->fields.OXDELSTREET }]&nbsp;[{ $order->fields.OXDELSTREETNR }][{else}][{ $order->fields.OXBILLSTREET }]&nbsp;[{ $order->fields.OXBILLSTREETNR }][{/if}]<br>
 		[{ if $order->fields.OXDELZIP }][{ $order->fields.OXDELZIP }][{else}][{ $order->fields.OXBILLZIP }][{/if}]&nbsp;[{ if $order->fields.OXDELCITY }][{ $order->fields.OXDELCITY }][{else}][{ $order->fields.OXBILLCITY }][{/if}]<br>

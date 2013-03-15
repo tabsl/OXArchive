@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxseoencodervendor.php 22590 2009-09-24 06:24:00Z alfonsas $
+ * $Id: oxseoencodervendor.php 23319 2009-10-16 14:03:21Z arvydas $
  */
 
 /**
@@ -98,7 +98,7 @@ class oxSeoEncoderVendor extends oxSeoEncoder
                 $sSeoUrl .= $this->_aRootVendorUri[$iLang];
             }
 
-            $sSeoUrl .= $this->_prepareTitle( $oVendor->oxvendor__oxtitle->value .'/' );
+            $sSeoUrl .= $this->_prepareTitle( $oVendor->oxvendor__oxtitle->value ) .'/';
             $sSeoUrl  = $this->_processSeoUrl( $sSeoUrl, $oVendor->getId(), $iLang );
 
             // save to db

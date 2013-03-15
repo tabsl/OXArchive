@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: account.php 17315 2009-03-17 16:18:58Z arvydas $
+ * $Id: account.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**
@@ -125,6 +125,10 @@ class Account extends oxUBase
     {
         parent::render();
 
+        // performing redirect if needed
+        $this->redirectAfterLogin();
+
+
         // loading actions
         $this->_loadActions();
 
@@ -153,48 +157,56 @@ class Account extends oxUBase
     }
 
     /**
-     * Builds string with parameters for noredirect.
+     * Returns array from parent::getNavigationParams(). If current request
+     * contains "sourcecl" and "anid" parameters - appends array with this
+     * data. Array is used to fill forms and append shop urls with actual
+     * state parameters
      *
-     * @return string $sReturn parameter string for url
+     * @return array
      */
-    public function login_noredirect()
+    public function getNavigationParams()
     {
-        $sReturn = $this->_oaComponents['oxcmp_user']->login_noredirect();
+        $aParams = parent::getNavigationParams();
 
-        $sArtID = oxConfig::getParameter( 'aid' );
-        if ( $sArtID ) {
-            $sReturn = "details?anid=$sArtID";
-
-            $sCatId = oxConfig::getParameter( 'cnid' );
-            if ( $sCatId ) {
-                $sReturn .= "&cnid=$sCatId";
-            }
-            // #1834M - specialchar search
-            $sSearchParamForLink = rawurlencode( oxConfig::getParameter( 'searchparam', true ) );
-            if ( $sSearchParamForLink ) {
-                $sReturn .= "&searchparam=$sSearchParamForLink";
-            }
-
-            $sSearchCatId = oxConfig::getParameter( 'searchcnid' );
-            if ( $sSearchCatId ) {
-                $sReturn .= "&searchcnid=$sSearchCatId";
-            }
-
-            if ( ( $sSearchVendor = oxConfig::getParameter( 'searchvendor' ) ) ) {
-                $sReturn .= "&searchvendor=$sSearchVendor";
-            }
-
-            if ( ( $sSearchManufacturer = oxConfig::getParameter( 'searchmanufacturer' ) ) ) {
-                $sReturn .= "&searchmanufacturer=$sSearchManufacturer";
-            }
-
-            $sListType = oxConfig::getParameter( 'listtype' );
-            if ( $sListType ) {
-                $sReturn .= "&listtype=$sListType";
-            }
+        // source class name
+        if ( $sSource = oxConfig::getParameter( "sourcecl" ) ) {
+            $aParams['sourcecl'] = $sSource;
         }
 
-        return $sReturn;
+        if ( $sSource = oxConfig::getParameter( "anid" ) ) {
+            $aParams['anid'] = $sSource;
+        }
+
+        return $aParams;
+    }
+
+    /**
+     * For some user actions (like writing guestbook entry or product
+     * review) user must be logged in. So e.g. in product details page
+     * there is a link leading to current view. Link contains parameter
+     * "sourcecl", which tells where to redirect after successfull login.
+     * If this parameter is defined and oxcmp_user::getLoginStatus() ==
+     * USER_LOGIN_SUCCESS (means user has just logged in) then user is
+     * redirected back to source view.
+     *
+     * @return null
+     */
+    public function redirectAfterLogin()
+    {
+        // in case source class is provided - redirecting back to it with all default parameters
+        if ( ( $sSource = oxConfig::getParameter( "sourcecl" ) ) &&
+             $this->_oaComponents['oxcmp_user']->getLoginStatus() === USER_LOGIN_SUCCESS ) {
+
+            $sParams = '';
+            // building redirect link
+            foreach ( $this->getNavigationParams() as $sName => $sValue ) {
+                if ( $sValue && $sName != "sourcecl" ) {
+                    $sParams .= '&'.rawurlencode( $sName ) . "=" . rawurlencode( $sValue );
+                }
+            }
+
+            oxUtils::getInstance()->redirect( $this->getConfig()->getShopUrl().'index.php?cl='.rawurlencode( $sSource ).$sParams );
+        }
     }
 
     /**

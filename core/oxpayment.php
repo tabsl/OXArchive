@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxpayment.php 22525 2009-09-22 11:51:55Z arvydas $
+ * $Id: oxpayment.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**
@@ -57,6 +57,13 @@ class oxPayment extends oxI18n
      * @var array
      */
     protected $_aDynValues = null;
+
+    /**
+     * payment error type
+     *
+     * @var int
+     */
+    protected $_iPaymentError = null;
 
     /**
      * Class constructor, initiates parent constructor (parent::oxI18n()).
@@ -245,6 +252,7 @@ class oxPayment extends oxI18n
 
         $oValidator = oxNew( 'oxinputvalidator' );
         if ( !$oValidator->validatePaymentInputData( $this->oxpayments__oxid->value, $aDynvalue ) ) {
+            $this->_iPaymentError = 1;
             return false;
         }
 
@@ -255,12 +263,25 @@ class oxPayment extends oxI18n
             $aPaymentList = oxPaymentList::getInstance()->getPaymentList( $sShipSetId, $dBasketPrice, $oUser );
 
             if ( !array_key_exists( $this->getId(), $aPaymentList ) ) {
+                $this->_iPaymentError = -3;
                 return false;
             }
         } else {
+            $this->_iPaymentError = -2;
             return false;
         }
 
         return true;
     }
+
+    /**
+     * Payment error number getter
+     *
+     * @return int
+     */
+    public function getPaymentErrorNumber()
+    {
+        return $this->_iPaymentError;
+    }
+
 }

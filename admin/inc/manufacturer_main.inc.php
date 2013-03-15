@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: manufacturer_main.inc.php 14035 2008-11-06 14:48:53Z arvydas $
+ * $Id: manufacturer_main.inc.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,       visible, multilanguage, ident
@@ -83,16 +83,16 @@ class ajaxComponent extends ajaxListComponent
     }
 
     /**
-     * Return fully formatted query for data loading
+     * Adds filter SQL to current query
      *
-     * @param string $sQ part of initial query
+     * @param string $sQ query to add filter condition
      *
      * @return string
      */
-    protected function _getDataQuery( $sQ )
+    protected function _addFilter( $sQ )
     {
         $sArtTable = getViewName('oxarticles');
-        $sQ = parent::_getDataQuery( $sQ );
+        $sQ = parent::_addFilter( $sQ );
 
         // display variants or not ?
         $sQ .= $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ? ' group by '.$sArtTable.'.oxid ' : '';

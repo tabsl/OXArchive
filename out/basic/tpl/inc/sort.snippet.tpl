@@ -4,9 +4,9 @@
   [{assign var="columnnames_oxprice" value="INC_SORT_PRICE"|oxmultilangassign }]
   [{assign_adv var="columnnames" value="array
   (
-    'oxtitle' => $columnnames_oxtitle,
-    'oxprice' => $columnnames_oxprice,
-    'oxvarminprice' => $columnnames_oxprice
+    'oxtitle' => '$columnnames_oxtitle',
+    'oxprice' => '$columnnames_oxprice',
+    'oxvarminprice' => '$columnnames_oxprice'
   )"}]
 
   <span class="sort_row">

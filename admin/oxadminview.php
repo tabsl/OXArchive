@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxadminview.php 22480 2009-09-21 15:19:33Z rimvydas.paskevicius $
+ * $Id: oxadminview.php 23224 2009-10-13 14:24:30Z arvydas $
  */
 
 /**
@@ -553,14 +553,14 @@ class oxAdminView extends oxView
     }
 
     /**
-     * Marks seo entires as expired (oxseo::oxexpired = 2), cleans up tag clouds cache
+     * Marks seo entires as expired, cleans up tag clouds cache
      *
      * @return null
      */
     public function resetSeoData( $sShopId )
     {
         $oEncoder = oxSeoEncoder::getInstance();
-        $oEncoder->markAsExpired( null, $sShopId, 2 );
+        $oEncoder->markAsExpired( null, $sShopId );
 
         // resetting tag cache
         $oTagCloud = oxNew('oxtagcloud');

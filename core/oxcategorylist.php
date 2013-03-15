@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcategorylist.php 22537 2009-09-22 13:00:18Z sarunas $
+ * $Id: oxcategorylist.php 23355 2009-10-19 12:37:04Z arvydas $
  */
 
 
@@ -98,7 +98,7 @@ class oxCategoryList extends oxList
      *
      * @param string $sTable   table name
      * @param array  $aColumns required column names (optional)
-     * 
+     *
      * @return string return
      */
     protected function _getSqlSelectFieldsForTree($sTable, $aColumns = null)
@@ -120,7 +120,7 @@ class oxCategoryList extends oxList
                     ." $sTable.oxrootid as oxrootid, $sTable.oxsort as oxsort,"
                     ." $sTable.oxtitle$sLangSuffix as oxtitle, $sTable.oxdesc$sLangSuffix as oxdesc,"
                     ." $sTable.oxpricefrom as oxpricefrom, $sTable.oxpriceto as oxpriceto,"
-                    ." $sTable.oxicon as oxicon ";
+                    ." $sTable.oxicon as oxicon, $sTable.oxextlink as oxextlink ";
 
             $sFieldList.= ",not $sTable.".$oBaseObject->getSqlFieldName( 'oxactive' )." as remove";
 

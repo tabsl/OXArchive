@@ -35,6 +35,7 @@
             </td>
             <td class="edittext" width="250">
             <input type="text" class="editinput" size="50" maxlength="[{$edit->oxdeliveryset__oxtitle->fldmax_length}]" name="editval[oxdeliveryset__oxtitle]" value="[{$edit->oxdeliveryset__oxtitle->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_NAME" }]
             </td>
         </tr>
         [{ if $oxid != "-1"}]
@@ -44,6 +45,7 @@
             </td>
             <td class="edittext">
             <input class="edittext" type="checkbox" name="editval[oxdeliveryset__oxactive]" value='1' [{if $edit->oxdeliveryset__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
             </td>
         </tr>
         <tr>
@@ -53,6 +55,7 @@
             <td class="edittext">
             <input type="text" class="editinput" size="27" name="editval[oxdeliveryset__oxactivefrom]" value="[{$edit->oxdeliveryset__oxactivefrom|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]>([{ oxmultilang ident="GENERAL_FROM" }])<br>
             <input type="text" class="editinput" size="27" name="editval[oxdeliveryset__oxactiveto]" value="[{$edit->oxdeliveryset__oxactiveto|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]>([{ oxmultilang ident="GENERAL_TILL" }])
+            [{ oxinputhelp ident="HELP_GENERAL_ACTIVFROMTILL" }]
             </td>
         </tr>
         <tr>
@@ -61,6 +64,7 @@
             </td>
             <td class="edittext" width="250">
             <input type="text" class="editinput" size="5" maxlength="[{$edit->oxdeliveryset__oxpos->fldmax_length}]" name="editval[oxdeliveryset__oxpos]" value="[{$edit->oxdeliveryset__oxpos->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_DELIVERYSET_MAIN_POS" }]
             </td>
         </tr>
         <tr><td colspan="2">&nbsp;</td></tr>

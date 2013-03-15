@@ -4,8 +4,8 @@
   [{assign var="columnnames_oxprice" value="INC_SORT_GUESTBOOK_AUTHOR"|oxmultilangassign }]
   [{assign_adv var="columnnames" value="array
   (
-    'oxgbentries.oxcreate' => $columnnames_oxtitle,
-    'oxuser.oxusername' => $columnnames_oxprice
+    'oxgbentries.oxcreate' => '$columnnames_oxtitle',
+    'oxuser.oxusername' => '$columnnames_oxprice'
   )
   "}]
 

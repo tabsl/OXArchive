@@ -21,7 +21,6 @@
  * @version OXID eShop CE
  */
 
-
     /** @name database information */
         $this->dbHost = '<dbHost_ce>'; // database host name
         $this->dbName = '<dbName_ce>'; // database name
@@ -37,9 +36,12 @@
     // Template theme name, a directory in out/ folder containing all needed resources
     $this->sTheme = 'basic';
 
+    // Custom  theme, a directory in out/ folder containing only modified template files
+    $this->sCustomTheme = null;
+
     // Uncoment only for former (pre version 4) template compatibility
     // $this->blFormerTplSupport = true;
-    // $this->blFixedWidthLayout = 1;
+    // $this->blFixedWidthLayout = true;
 
     // UTF-8 mode in shop 0 - off, 1 - on
     $this->iUtfMode  = '<iUtfMode>';
@@ -68,17 +70,17 @@
     $this->iDebug = 0;
 
     // Log all modifications performed in Admin
-    $this->blLogChangesInAdmin = 0;
+    $this->blLogChangesInAdmin = false;
 
     // Force admin email
     $this->sAdminEmail = '';
 
     // in case session must be started on first user page visit (not only on
     // session required action) set this option value 1
-    $this->blForceSessionStart = 0;
+    $this->blForceSessionStart = false;
 
     // Use browser cookies to store session id (no sid parameter in URL)
-    $this->blSessionUseCookies = 1;
+    $this->blSessionUseCookies = true;
 
     // The domain that the cookie is available: array( _SHOP_ID_ => _DOMAIN_ );
     // check setcookie() documentation for more details @php.net

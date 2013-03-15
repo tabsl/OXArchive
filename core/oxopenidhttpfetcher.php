@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxsession.php 15261 2009-01-14 15:27:07Z vilma $
+ * $Id: oxopenidhttpfetcher.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 require_once "Auth/Yadis/HTTPFetcher.php";
@@ -95,8 +95,6 @@ class oxOpenIdHTTPFetcher extends Auth_Yadis_ParanoidHTTPFetcher
                         Auth_OpenID_USER_AGENT.' '.$curl_user_agent);
             curl_setopt($c, CURLOPT_TIMEOUT, $off);
             curl_setopt($c, CURLOPT_URL, $url);
-            curl_setopt($c, CURLOPT_RANGE,
-                        "0-".(1024 * Auth_OpenID_FETCHER_MAX_RESPONSE_KB));
 
             curl_exec($c);
 

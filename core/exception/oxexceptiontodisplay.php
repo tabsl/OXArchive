@@ -185,7 +185,7 @@ class oxExceptionToDisplay implements oxDisplayErrorInterface
      */
     public function __toString()
     {
-        $sRes = $this->getErrorClassType() . " (time: " . date('Y-m-d H:i:s') . "): " . $this->getOxMessage() . " \n Stack Trace: " . $this->getStackTrace() . "\n";
+        $sRes = $this->getErrorClassType() . " (time: " . date('Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime()) . "): " . $this->getOxMessage() . " \n Stack Trace: " . $this->getStackTrace() . "\n";
         foreach ( $this->_aValues as $key => $value ) {
             $sRes .= $key. " => ". $value . "\n";
         }

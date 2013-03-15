@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: voucherserie_main.php 17191 2009-03-13 12:21:00Z arvydas $
+ * $Id: voucherserie_main.php 23307 2009-10-16 10:33:03Z vilma $
  */
 
 /**
@@ -134,5 +134,39 @@ class VoucherSerie_Main extends oxAdminDetails
         // set oxid if inserted
         if ($soxId == "-1")
             oxSession::setVar("saved_oxid", $oVoucherSerie->oxvoucherseries__oxid->value);
+    }
+
+    /**
+     * Performs Voucherserie export to export file.
+     *
+     * @return null
+     */
+    public function export()
+    {
+        $oSerie = oxNew( "oxvoucherserie" );
+        $oSerie->load(oxConfig::getParameter("oxid"));
+
+        $oDb = oxDb::getDb();
+
+        $sSelect = "select oxvouchernr from oxvouchers where oxvoucherserieid = ".$oDb->quote( $oSerie->oxvoucherseries__oxid->value );
+        $rs = $oDb->execute($sSelect);
+
+        $sLine = "Gutschein\n";
+        while (!$rs->EOF) {
+            foreach ( $rs->fields as $field) {
+                $sLine .= $field/*.$myConfig->sCSVSign*/;
+            }
+            $sLine .= "\n";
+            $rs->moveNext();
+        }
+        $this->_aViewData["exportCompleted"] = true;
+
+        header("Pragma: public");
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        header("Expires: 0");
+        header("Content-Disposition: attachment; filename=vouchers.csv");
+        header("Content-Type: application/csv");
+        echo($sLine);
+        exit();
     }
 }

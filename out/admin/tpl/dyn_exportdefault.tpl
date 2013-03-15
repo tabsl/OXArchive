@@ -43,6 +43,7 @@
             [{/foreach}]
             </td>
             </select>
+            [{ oxinputhelp ident="HELP_GENERAL_CATEGORYSELECT" }]
         </tr>
         <tr>
             <td class="edittext" width="180" height="40">
@@ -50,6 +51,7 @@
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="39" maxlength="128" name="search" value="" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_SEARCHKEY" }]
             </td>
         </tr>
         <tr>
@@ -72,6 +74,7 @@
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="10" maxlength="10" name="sExportDelCost" value="0,00" [{ $readonly }]> &euro;
+            [{ oxinputhelp ident="HELP_GENERAL_EXPORTDELCOST" }]
             </td>
         </tr>-->
         <tr>
@@ -80,6 +83,7 @@
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="10" maxlength="10" name="sExportMinStock" value="1" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_EXPORTMINSTOCK" }]
             </td>
         </tr>
         <tr>
@@ -88,6 +92,7 @@
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="10" maxlength="10" name="sExportMinPrice" value="0" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_EXPORTMINPRICE" }]
             </td>
         </tr>
         <tr>
@@ -96,6 +101,7 @@
             </td>
             <td class="edittext">
             <input type="checkbox" name="blExportVars" value="true" checked [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_EXPOSTVARS" }]
             </td>
         </tr>
         <tr>
@@ -104,6 +110,7 @@
             </td>
             <td class="edittext">
             <input type="checkbox" name="blExportMainVars" value="true" checked [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_EXPORTMAINVARS" }]
             </td>
         </tr>
         <tr>
@@ -112,6 +119,7 @@
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="20" maxlength="10" name="sExportCampaign" value="" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_EXPORTCAMPAIGN" }]
             </td>
         </tr>
         <tr>
@@ -120,6 +128,7 @@
             </td>
             <td class="edittext">
             <input type="checkbox" name="blAppendCatToCampaign" value="true">
+            [{ oxinputhelp ident="HELP_DYNBASE_ADDCATTOCAMPAIGN" }]
             </td>
         </tr>
         </table>

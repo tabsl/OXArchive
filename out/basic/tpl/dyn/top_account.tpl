@@ -5,7 +5,7 @@
     </dt>
     <dd id="tm.account.dd" class="dropdown">
         [{strip}]
-        <ul id="account_menu" class="menue verticall">
+        <ul id="account_menu" class="menue vertical">
             <li><a href="[{ oxgetseourl ident=$oViewConf->getSslSelfLink()|cat:"cl=account_password" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_PASSWORD" }]</a></li>
             <li><a href="[{ oxgetseourl ident=$oViewConf->getSslSelfLink()|cat:"cl=account_user" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_ADDRESS" }]</a></li>
             <li><a href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_order" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_ORDERHISTORY" }]</a></li>

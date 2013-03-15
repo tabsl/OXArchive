@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdebugdb.php 22588 2009-09-23 16:22:22Z alfonsas $
+ * $Id: oxdebugdb.php 23366 2009-10-20 08:53:58Z arvydas $
  */
 
 /**
@@ -65,7 +65,7 @@ class oxDebugDb
     protected static function _isSkipped($sSql)
     {
         if ( !count(self::$_aSkipSqls ) ) {
-            $file = file_get_contents(realpath(dirname(__FILE__).'/..').'/oxdebugdb_skipped.sql');
+            $file = file_get_contents( oxConfig::getInstance()->getLogsDir() . 'oxdebugdb_skipped.sql' );
             $m = explode('-- -- ENTRY END', $file);
             foreach ( $m as $n ) {
                 if ( ( $n = self::_skipWhiteSpace( $n ) ) ) {
@@ -285,17 +285,11 @@ class oxDebugDb
     protected function _logToFile($aWarnings)
     {
         $oStr = getStr();
-        $s = "\n\n\n\n\n\n-- ".date("m-d  H:i:s")." --\n\n";
+        $sLogMsg = "\n\n\n\n\n\n-- ".date("m-d  H:i:s")." --\n\n";
         foreach ( $aWarnings as $w ) {
-            $s .= "{$w['check']}: {$w['time']} - ".$oStr->htmlentities($w['sql'])."\n\n";
-            $s .= $w['trace']."\n\n\n\n";
+            $sLogMsg .= "{$w['check']}: {$w['time']} - ".$oStr->htmlentities($w['sql'])."\n\n";
+            $sLogMsg .= $w['trace']."\n\n\n\n";
         }
-
-        if ( !( $f = fopen(realpath(dirname(__FILE__).'/..').'/oxdebugdb.txt', "a+" ) ) ) {
-            return;
-        }
-
-        fwrite( $f, $s );
-        fclose( $f );
+        oxUtils::getInstance()->writeToLog( $sLogMsg, 'oxdebugdb.txt' );
     }
 }

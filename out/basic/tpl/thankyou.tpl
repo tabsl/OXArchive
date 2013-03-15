@@ -31,7 +31,7 @@
   </div><br><br>
   [{/if}]
 
-  [{if ( $oView->getTrustedShopId()) || $oxcmp_shop->oxshops__oxadbutlerid->value ||
+  [{if ( $oView->getTrustedShopId()) || $iswebmiles || $oxcmp_shop->oxshops__oxadbutlerid->value ||
        $oxcmp_shop->oxshops__oxaffilinetid->value || $oxcmp_shop->oxshops__oxsuperclicksid->value ||
        $oxcmp_shop->oxshops__oxaffiliweltid->value || $oxcmp_shop->oxshops__oxaffili24id->value }]
 
@@ -80,7 +80,11 @@
           <!--Adbutler-->
           [{assign var="discountnetprice" value=$basket->getDiscountedNettoPrice()}]
           [{assign var="currencycovindex" value=$oView->getCurrencyCovIndex()}]
-          <img src="https://james.adbutler.de/lsgen.php?pid=[{$oxcmp_shop->oxshops__oxadbutlerid->value }]&amp;summe=[{ $discountnetprice * $currencycovindex |string_format:"%.2f"}]&amp;opts=[{$oxcmp_user->oxuser__oxlname->value }]&kdnr=[{$order->oxorder__oxordernr->value }]" WIDTH="1" HEIGHT="1">
+          <img src="https://www1.belboon.de/adtracking/sale/[{$oxcmp_shop->oxshops__oxadbutlerid->value }].gif/oc=[{$order->oxorder__oxordernr->value }]&sale=[{ $discountnetprice * $currencycovindex|string_format:"%.2f"}]" WIDTH="1" HEIGHT="1">
+          <object class="flash" type="application/x-shockwave-flash" data="http://www1.belboon.de/tracking/flash.swf" width="1" height="1" >
+            <param name="flashvars" value="pgmid=[{$oxcmp_shop->oxshops__oxadbutlerid->value }]&etype=sale&tparam=sale&evalue=[{ $discountnetprice * $currencycovindex|string_format:"%.2f"}]&oc=[{$order->oxorder__oxordernr->value }]">
+            <param name="movie" value="http://www1.belboon.de/tracking/flash.swf" />
+          </object>
           <!--Adbutler ende-->
         [{/if}]
 
@@ -126,13 +130,13 @@
 
 
 [{if $oView->showFinalStep()}]
-    [{if $oView->getAlsoBoughtThiesProducts()}]
+    [{if $oView->getAlsoBoughtTheseProducts()}]
 
       [{assign var="tmpListType" value=$oView->getListType()}]
       [{assign var="sListType" value=""}]
 
       <strong class="head2">[{ oxmultilang ident="THANKYOU_ALSOBOUGHT"}]</strong>
-      [{foreach from=$oView->getAlsoBoughtThiesProducts() item=actionproduct}]
+      [{foreach from=$oView->getAlsoBoughtTheseProducts() item=actionproduct}]
           [{include file="inc/product.tpl" product=$actionproduct size="small" testid="AlsoBought_"|cat:$actionproduct->oxarticles__oxid->value }]
       [{/foreach}]
 

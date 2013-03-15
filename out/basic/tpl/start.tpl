@@ -4,13 +4,13 @@
     [{include file="inc/admin_banner.tpl"}]
 [{/if}]
 
-<div class="wellcome">
+<div class="welcome">
     [{ oxcontent ident="oxstartwelcome" }]
 </div>
 
 [{if $oView->getTopArticleList() }]
   [{foreach from=$oView->getTopArticleList() item=actionproduct name=WeekArt}]
-    [{include file="inc/product.tpl" product=$actionproduct head="START_WEEKSPECIAL"|oxmultilangassign testid="WeekSpecial_"|cat:$actionproduct->oxarticles__oxid->value testHeader="WeekSpecial_`$smarty.foreach.WeekArt.iteration`"}]
+    [{include file="inc/product.tpl" product=$actionproduct showMainLink=true head="START_WEEKSPECIAL"|oxmultilangassign testid="WeekSpecial_"|cat:$actionproduct->oxarticles__oxid->value testHeader="WeekSpecial_`$smarty.foreach.WeekArt.iteration`"}]
   [{/foreach}]
 [{/if}]
 
@@ -18,14 +18,14 @@
   [{oxcontent ident="oxfirststart" field="oxtitle" assign="oxfirststart_title"}]
   [{oxcontent ident="oxfirststart" assign="oxfirststart_text"}]
   [{assign var="firstarticle" value=$oView->getFirstArticle()}]
-  [{include file="inc/product.tpl" size='big' class='topshop' head=$oxfirststart_title head_desc=$oxfirststart_text product=$firstarticle testid="FirstArticle_"|cat:$firstarticle->oxarticles__oxid->value testHeader=FirstArticle}]
+  [{include file="inc/product.tpl" size='big' showMainLink=true class='topshop' head=$oxfirststart_title head_desc=$oxfirststart_text product=$firstarticle testid="FirstArticle_"|cat:$firstarticle->oxarticles__oxid->value testHeader=FirstArticle}]
 [{/if}]
 
 [{if ($oView->getArticleList()|@count)>0 }]
   <strong id="test_LongRunHeader" class="head2">[{ oxmultilang ident="START_LONGRUNNINGHITS"}]</strong>
   [{if ($oView->getArticleList()|@count) is not even  }][{assign var="actionproduct_size" value="big"}][{/if}]
   [{foreach from=$oView->getArticleList() item=actionproduct}]
-      [{include file="inc/product.tpl" product=$actionproduct size=$actionproduct_size testid="LongRun_"|cat:$actionproduct->oxarticles__oxid->value }]
+      [{include file="inc/product.tpl" showMainLink=true product=$actionproduct size=$actionproduct_size testid="LongRun_"|cat:$actionproduct->oxarticles__oxid->value }]
       [{assign var="actionproduct_size" value=""}]
   [{/foreach}]
 [{/if}]
@@ -40,7 +40,7 @@
     [{/if}]
   </strong>
   [{foreach from=$oView->getNewestArticles() item=actionproduct}]
-      [{include file="inc/product.tpl" product=$actionproduct size="small" testid="FreshIn_"|cat:$actionproduct->oxarticles__oxid->value}]
+      [{include file="inc/product.tpl" showMainLink=true product=$actionproduct size="small" testid="FreshIn_"|cat:$actionproduct->oxarticles__oxid->value}]
   [{/foreach}]
 [{/if}]
 
@@ -52,7 +52,7 @@
           [{assign var="oCategory" value=$actionproduct->getCategory()}]
           [{assign var="actionproduct_title" value=$oCategory->oxcategories__oxtitle->value}]
           [{if $oCategory->getNrOfArticles() > 0}][{assign var="actionproduct_title" value=$actionproduct_title|cat:" ("|cat:$oCategory->getNrOfArticles()|cat:")"}][{/if}]
-          [{include file="inc/product.tpl" product=$actionproduct size=$actionproduct_size head=$actionproduct_title head_link=$oCategory->getLink() testid="CatArticle_"|cat:$actionproduct->oxarticles__oxid->value  testHeader="Category_`$smarty.foreach.CatArt.iteration`"}]
+          [{include file="inc/product.tpl" showMainLink=true product=$actionproduct size=$actionproduct_size head=$actionproduct_title head_link=$oCategory->getLink() testid="CatArticle_"|cat:$actionproduct->oxarticles__oxid->value  testHeader="Category_`$smarty.foreach.CatArt.iteration`"}]
           [{assign var="actionproduct_size" value=""}]
       [{/if}]
   [{/foreach}]

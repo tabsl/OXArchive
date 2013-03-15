@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcmp_cur.php 22399 2009-09-17 15:20:43Z rimvydas.paskevicius $
+ * $Id: oxcmp_cur.php 22820 2009-09-30 12:44:55Z rimvydas.paskevicius $
  */
 
 /**
@@ -81,15 +81,20 @@ class oxcmp_cur extends oxView
             // recalc basket
             $oBasket = $this->getSession()->getBasket();
 
-            //setting basket currency (M:825)
-            $oBasket->setBasketCurrency( $aCurrencies[$iCur] );
-
             $oBasket->onUpdate();
         }
 
         $iActCur = $myConfig->getShopCurrency();
         $this->aCurrencies = $myConfig->getCurrencyArray( $iActCur );
+
         $this->_oActCur     = $this->aCurrencies[$iActCur];
+
+        //setting basket currency (M:825)
+        if ( !isset( $oBasket ) ) {
+            $oBasket = $this->getSession()->getBasket();
+        }
+
+        $oBasket->setBasketCurrency( $this->_oActCur );
 
         $sClass = $this->getConfig()->getActiveView()->getClassName();
         $sURL  = $myConfig->getShopCurrentURL();

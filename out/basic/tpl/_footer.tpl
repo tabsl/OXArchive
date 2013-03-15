@@ -8,18 +8,18 @@
                 <a href="[{ $oCont->getLink() }]" rel="nofollow">[{ oxmultilang ident="INC_FOOTER_INCLTAXANDPLUSSHIPPING" }]</a>
             </div>
             <div class="right">
-                &copy; <a href="http://www.oxid-esales.com">[{ oxmultilang ident="INC_FOOTER_SOFTWAREFROMOXIDESALES" }]</a>
+                &copy; <a href="[{ oxmultilang ident="OXID_ESALES_URL" }]" title="[{ oxmultilang ident="OXID_ESALES_URL_TITLE" }]">[{ oxmultilang ident="INC_FOOTER_SOFTWAREFROMOXIDESALES" }]</a>
             </div>
             <div class="clear"></div>
         </div>
         <div class="bar shop">
-            <a id="test_link_footer_home" href="[{ oxgetseourl ident=$oViewConf->getHomeLink() }]" rel="nofollow">[{ oxmultilang ident="INC_FOOTER_HOME" }]</a> |
-            <a id="test_link_footer_contact" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=contact" }]" rel="nofollow">[{ oxmultilang ident="INC_FOOTER_CONTACT" }]</a> |
-            <a id="test_link_footer_help" href="[{ oxgetseourl ident=$oViewConf->getHelpLink() }]" rel="nofollow">[{ oxmultilang ident="INC_FOOTER_HELP" }]</a> |
-            <a id="test_link_footer_guestbook" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=guestbook" }]" rel="nofollow">[{ oxmultilang ident="INC_FOOTER_GUESTBOOK" }]</a> |
+            <a id="test_link_footer_home" href="[{ oxgetseourl ident=$oViewConf->getHomeLink() }]">[{ oxmultilang ident="INC_FOOTER_HOME" }]</a> |
+            <a id="test_link_footer_contact" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=contact" }]">[{ oxmultilang ident="INC_FOOTER_CONTACT" }]</a> |
+            <a id="test_link_footer_help" href="[{ oxgetseourl ident=$oViewConf->getHelpLink() }]">[{ oxmultilang ident="INC_FOOTER_HELP" }]</a> |
+            <a id="test_link_footer_guestbook" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=guestbook" }]">[{ oxmultilang ident="INC_FOOTER_GUESTBOOK" }]</a> |
             <a id="test_link_footer_links" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=links" }]">[{ oxmultilang ident="INC_FOOTER_LINKS" }]</a> |
             [{assign var="oCont" value=$oView->getContentByIdent("oximpressum") }]
-            <a id="test_link_footer_impressum" href="[{ $oCont->getLink() }]" rel="nofollow">[{ $oCont->oxcontents__oxtitle->value }]</a> |
+            <a id="test_link_footer_impressum" href="[{ $oCont->getLink() }]">[{ $oCont->oxcontents__oxtitle->value }]</a> |
             [{assign var="oCont" value=$oView->getContentByIdent("oxagb") }]
             <a id="test_link_footer_terms" href="[{ $oCont->getLink() }]" rel="nofollow">[{ $oCont->oxcontents__oxtitle->value }]</a> |
             <br>
@@ -40,7 +40,7 @@
 
         <div class="shopicons">
             <div class="left"><img src="[{$oViewConf->getImageUrl()}]cc.jpg" alt=""></div>
-            <div class="right"><a href="http://www.oxid-esales.com"><img src="[{$oViewConf->getImageUrl()}]oxid_powered.jpg" alt="[{ oxmultilang ident="INC_FOOTER_SOFTWAREANDSYSTEMBYOXID" }]" height="30" width="80"></a></div>
+            <div class="right"><a href="[{ oxmultilang ident="OXID_ESALES_URL" }]" title="[{ oxmultilang ident="OXID_ESALES_URL_TITLE" }]"><img src="[{$oViewConf->getImageUrl()}]oxid_powered.jpg" alt="[{ oxmultilang ident="INC_FOOTER_SOFTWAREANDSYSTEMBYOXID" }]" height="30" width="80"></a></div>
         </div>
 
         <div class="footertext">[{oxcontent ident="oxstdfooter"}]</div>

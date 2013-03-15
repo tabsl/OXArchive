@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxshoplist.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxsimplevariant.php 23500 2009-10-22 12:52:38Z rimvydas.paskevicius $
  */
 
 /**
@@ -27,7 +27,7 @@
  *
  * @package core
  */
-class oxSimpleVariant extends oxI18n
+class oxSimpleVariant extends oxI18n implements oxIUrl
 {
     /**
      * Use lazy loading for this item
@@ -49,6 +49,21 @@ class oxSimpleVariant extends oxI18n
      * @var oxArticle
      */
     protected $_oParent = null;
+
+    /**
+     * Details link
+     *
+     * @var string
+     */
+    protected $_sDetailLink = null;
+
+    /**
+     * User specified stardard article url (default is null)
+     *
+     * @var string
+     */
+    protected $_sStdLink = null;
+
 
     /**
      * Initializes instance
@@ -228,11 +243,111 @@ class oxSimpleVariant extends oxI18n
      */
     protected function _getParentPrice()
     {
-
         if (isset($this->_oParent->oxarticles__oxprice->value)) {
             return $this->_oParent->oxarticles__oxprice->value;
         }
 
         return 0;
+    }
+
+    /**
+     * Get link type
+     *
+     * @return int
+     */
+    public function getLinkType()
+    {
+        $oParent = $this->getParent();
+        if (!($oParent instanceof oxarticle)) {
+            return 0;
+        }
+
+        return $oParent->getLinkType();
+    }
+
+    /**
+     * Checks if article is assigned to category
+     *
+     * @param string $sCatNid category ID
+     *
+     * @return bool
+     */
+    public function inCategory( $sCatNid )
+    {
+        $oParent = $this->getParent();
+        if (!($oParent instanceof oxarticle)) {
+            return;
+        }
+
+        return $oParent->inCategory( $sCatNid );
+    }
+
+    /**
+     * Checks if article is assigned to price category $sCatNID
+     *
+     * @param string $sCatNid Price category ID
+     *
+     * @return bool
+     */
+    public function inPriceCategory( $sCatNid )
+    {
+        $oParent = $this->getParent();
+        if (!($oParent instanceof oxarticle)) {
+            return;
+        }
+
+        return $oParent->inPriceCategory( $sCatNid );
+    }
+
+    /**
+     * Gets article link
+     *
+     * @param int   $iLang   required language [optional]
+     * @param array $aParams additional params to use [optional]
+     *
+     * @return string
+     */
+    public function getStdLink( $iLang = null, $aParams = array() )
+    {
+        if ( $this->_sStdLink === null ) {
+            $oArticle = oxNew( "oxArticle" );
+            $oArticle->setId( $this->getId() );
+            $oArticle->setLinkType( $this->getLinkType() );
+            $this->_sStdLink = $oArticle->getStdLink( $iLang );
+        }
+
+        return $this->_sStdLink;
+    }
+
+    /**
+     * Gets article link
+     *
+     * @param int $iLang required language. optional
+     *
+     * @return string
+     */
+    public function getLink( $iLang = null )
+    {
+        if ( isset($iLang) ) {
+            $iLang = (int) $iLang;
+            if ($iLang == (int) $this->getLanguage() ) {
+                $iLang = null;
+            }
+        }
+        if ( $this->_sDetailLink === null || isset($iLang) ) {
+            if ( oxUtils::getInstance()->seoIsActive() ) {
+                $oxdetaillink = oxSeoEncoderArticle::getInstance()->getArticleUrl( $this, $iLang, $this->getLinkType() );
+            } else {
+                $oxdetaillink = $this->getStdLink( $iLang );
+            }
+
+            if ( isset($iLang) ) {
+                return $oxdetaillink;
+            } else {
+                $this->_sDetailLink = $oxdetaillink;
+            }
+        }
+
+        return $this->_sDetailLink;
     }
 }

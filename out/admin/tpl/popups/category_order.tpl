@@ -47,21 +47,18 @@
             return 'fnc=removecatorderarticle';
         }
 
+        // subscribing buttons
+        YAHOO.oxid.container1.oDeleteBtn = new YAHOO.widget.Button('deleteBtn');
+        YAHOO.oxid.container1.oSaveBtn   = new YAHOO.widget.Button('saveBtn');
+
         YAHOO.oxid.container1.onSuccessCalback = function( oResponse )
         {
-            if ( oResponse.responseText == "0" ) {
-                $('saveBtn').disabled = false;
-            } else {
-                $('saveBtn').disabled = true;
-            }
+            YAHOO.oxid.container1.oSaveBtn.set("disabled",oResponse.responseText != "0");
+
         }
         YAHOO.oxid.container2.onSuccessCalback = function( oResponse )
         {
-            if ( oResponse.responseText == "0" ) {
-                $('saveBtn').disabled = false;
-            } else {
-                $('saveBtn').disabled = true;
-            }
+            YAHOO.oxid.container1.oSaveBtn.set("disabled",oResponse.responseText != "0");
         }
         YAHOO.oxid.container2.onOrder = function()
         {
@@ -90,9 +87,9 @@
 
             YAHOO.util.Connect.asyncRequest( 'GET', '[{ $oViewConf->getAjaxLink() }]&cmpid=container2&container=category_order&fnc=remneworder&oxid=[{ $oxid }]', callback );
         };
-        // subscribint event listeners on buttons
-        $E.addListener( $('saveBtn'), "click", YAHOO.oxid.container2.saveOrder, $('saveBtn') );
-        $E.addListener( $('deleteBtn'), "click", YAHOO.oxid.container2.deleteOrder, $('deleteBtn') );
+        // subscribing event listeners on buttons
+        YAHOO.oxid.container1.oDeleteBtn.on("click", YAHOO.oxid.container2.deleteOrder);
+        YAHOO.oxid.container1.oSaveBtn.on("click", YAHOO.oxid.container2.saveOrder);
     }
     $E.onDOMReady( initAoc );
 </script>
@@ -114,7 +111,7 @@
         </tr>
         <tr>
             <td align="right"></td>
-            <td align="right">
+            <td align="left" class="oxid-aoc-actions">
               <input type="button" id="saveBtn" class="edittext" disabled value="[{ oxmultilang ident="CATEGORY_ORDER_NEWSORTSAVE" }]" [{$readonly}]>
               <input type="button" id="deleteBtn" class="edittext" value="[{ oxmultilang ident="CATEGORY_ORDER_DELETESORT" }]" [{$readonly}]>
             </td>

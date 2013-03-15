@@ -1,6 +1,6 @@
 [{assign var="template_title" value="RECOMMLIST_TITLE"|oxmultilangassign}]
 [{assign var="template_title" value=$template_title|cat:" - "|cat:$oView->getSearchForHtml()}]
-[{include file="_header.tpl" title=$template_title location=$oView->getTemplateLocation()}]
+[{include file="_header.tpl" title=$template_title tree_path=$oView->getTreePath()}]
 [{assign var="pageNavigation" value=$oView->getPageNavigation()}]
 
 [{if $oView->getActiveRecommList() }]
@@ -16,25 +16,23 @@
     <div class="box info">
       <div class="right">
           [{ if !$oxcmp_user}]
-            [{assign var="star_title" value="RECOMMLIST_LOGGIN"|oxmultilangassign }]
+            [{assign var="_star_title" value="RECOMMLIST_LOGGIN"|oxmultilangassign }]
           [{ elseif !$oView->canRate() }]
-            [{assign var="star_title" value="RECOMMLIST_ALREADYRATED"|oxmultilangassign }]
+            [{assign var="_star_title" value="RECOMMLIST_ALREADYRATED"|oxmultilangassign }]
           [{ else }]
-            [{assign var="star_title" value="RECOMMLIST_RATETHISLIST"|oxmultilangassign }]
+            [{assign var="_star_title" value="RECOMMLIST_RATETHISLIST"|oxmultilangassign }]
           [{/if}]
           [{math equation="x*y" x=20 y=$oView->getRatingValue() assign="currentRate" }]
           <ul id="star_rate_top" class="rating">
-            <li class="current_rate" style="width: [{$currentRate}]%;"><a title="[{$star_title}]"><b>1</b></a></li>
-            <li class="one"><a rel="nofollow" [{ if !$oxcmp_user}]href="[{ $_actvrecommlist->getLink()|oxaddparams:"fnc=showLogin"}]"[{ elseif $rate }]href="#review" onclick="showReview(1);"[{/if}] title="[{$star_title}]"><b>1</b></a></li>
-            <li class="two"><a rel="nofollow" [{ if !$oxcmp_user}]href="[{ $_actvrecommlist->getLink()|oxaddparams:"fnc=showLogin"}]"[{ elseif $rate }]href="#review" onclick="showReview(2);"[{/if}] title="[{$star_title}]"><b>2</b></a></li>
-            <li class="three"><a rel="nofollow" [{ if !$oxcmp_user}]href="[{ $_actvrecommlist->getLink()|oxaddparams:"fnc=showLogin"}]"[{ elseif $rate }]href="#review" onclick="showReview(3);"[{/if}] title="[{$star_title}]"><b>3</b></a></li>
-            <li class="four"><a rel="nofollow" [{ if !$oxcmp_user}]href="[{ $_actvrecommlist->getLink()|oxaddparams:"fnc=showLogin"}]"[{ elseif $rate }]href="#review" onclick="showReview(4);"[{/if}] title="[{$star_title}]"><b>4</b></a></li>
-            <li class="five"><a rel="nofollow" [{ if !$oxcmp_user}]href="[{ $_actvrecommlist->getLink()|oxaddparams:"fnc=showLogin"}]"[{ elseif $rate }]href="#review" onclick="showReview(5);"[{/if}] title="[{$star_title}]"><b>5</b></a></li>
+            <li class="current_rate" style="width: [{$currentRate}]%;"><a title="[{$_star_title}]"><b>1</b></a></li>
+            [{section name=star start=1 loop=6}]
+            <li class="s[{$smarty.section.star.index}]"><a rel="nofollow" [{ if !$oxcmp_user}]href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account" params="recommid="|cat:$_actvrecommlist->getId()|cat:"&amp;sourcecl="|cat:$oViewConf->getActiveClassName()|cat:$oViewConf->getNavUrlParams() }]"[{ elseif $rate }]href="#review" onclick="oxid.review.rate([{$smarty.section.star.index}])"[{/if}] title="[{$_star_title}]"><b>[{$smarty.section.star.index}]</b></a></li>
+            [{/section}]
           </ul>
           [{if $oView->getRatingCount()}]
-            <a id="star_rating_text" rel="nofollow" href="#review" onclick="showReview();" class="fs10 link2">[{$oView->getRatingCount()}] [{if $oView->getRatingCount() == 1}][{ oxmultilang ident="RECOMMLIST_RATINGREZULT" }][{else}][{ oxmultilang ident="RECOMMLIST_RATINGREZULTS" }] [{/if}]</a>
+            <a id="star_rating_text" rel="nofollow" href="#review" onclick="oxid.review.show();" class="fs10 link2">[{$oView->getRatingCount()}] [{if $oView->getRatingCount() == 1}][{ oxmultilang ident="RECOMMLIST_RATINGREZULT" }][{else}][{ oxmultilang ident="RECOMMLIST_RATINGREZULTS" }] [{/if}]</a>
           [{else}]
-            <a id="star_rating_text" rel="nofollow" href="#review" onclick="showReview();" class="fs10 link2">[{ oxmultilang ident="RECOMMLIST_NORATINGS" }]</a>
+            <a id="star_rating_text" rel="nofollow" href="#review" onclick="oxid.review.show();" class="fs10 link2">[{ oxmultilang ident="RECOMMLIST_NORATINGS" }]</a>
           [{/if}]
       </div>
 
@@ -64,13 +62,10 @@
                 [{ if $oView->canRate() }]
                 <input type="hidden" name="recommlistrating" value="0">
                 <ul id="star_rate" class="rating">
-                    <li id="current_rate" class="current_rate" style="width: 0px;"><a title="[{$star_title}]"><b>1</b></a></li>
-                    [{ assign var="__params" value="anid=`$product->oxarticles__oxnid->value`&amp;"|cat:$oViewConf->getNavUrlParams() }]
-                    <li class="one"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params=$__params }]" onclick="showReview(1);return false;" title="1 [{ oxmultilang ident="RECOMMLIST_STAR" }]"><b>1</b></a></li>
-                    <li class="two"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params=$__params }]" onclick="showReview(2);return false;" title="2 [{ oxmultilang ident="RECOMMLIST_STARS" }]"><b>2</b></a></li>
-                    <li class="three"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params=$__params }]" onclick="showReview(3);return false;" title="3 [{ oxmultilang ident="RECOMMLIST_STARS" }]"><b>3</b></a></li>
-                    <li class="four"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params=$__params }]" onclick="showReview(4);return false;" title="4 [{ oxmultilang ident="RECOMMLIST_STARS" }]"><b>4</b></a></li>
-                    <li class="five"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params=__params }]" onclick="showReview(5);return false;" title="5 [{ oxmultilang ident="RECOMMLIST_STARS" }]"><b>5</b></a></li>
+                    <li id="current_rate" class="current_rate" style="width: 0px;"><a title="[{$_star_title}]"><b>1</b></a></li>
+                    [{section name=star start=1 loop=6}]
+                    <li class="s[{$smarty.section.star.index}]"><a rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params="anid=`$product->oxarticles__oxnid->value`&amp;"|cat:$oViewConf->getNavUrlParams() }]" onclick="oxid.review.rate([{$smarty.section.star.index}]);return false;" title="[{$smarty.section.star.index}] [{if $smarty.section.star.index==1}][{ oxmultilang ident="RECOMMLIST_STAR" }][{else}][{ oxmultilang ident="RECOMMLIST_STARS" }][{/if}]"><b>[{$smarty.section.star.index}]</b></a></li>
+                    [{/section}]
                 </ul>
                 [{/if}]
                 [{ $oViewConf->getHiddenSid() }]
@@ -83,14 +78,14 @@
                 <span class="btn"><input id="test_reviewSave" type="submit" value="[{ oxmultilang ident="RECOMMLIST_SAVEREVIEW" }]" class="btn"></span>
             </div>
         </form>
-        <a id="write_new_review" rel="nofollow" class="fs10" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params="recommid=`$_actvrecommlist->oxrecommlists__oxid->value`&amp;"|cat:$oViewConf->getNavUrlParams() }]" onclick="showReview();return false;"><b>[{ oxmultilang ident="RECOMMLIST_WRITEREVIEW" }]</b></a>
+        <a id="write_new_review" rel="nofollow" class="fs10" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=review" params="recommid=`$_actvrecommlist->oxrecommlists__oxid->value`&amp;"|cat:$oViewConf->getNavUrlParams() }]" onclick="oxid.review.show();return false"><b>[{ oxmultilang ident="RECOMMLIST_WRITEREVIEW" }]</b></a>
       [{else}]
-        <a id="test_Reviews_login" rel="nofollow" href="[{ $_actvrecommlist->getLink()|oxaddparams:"fnc=showLogin"}]" class="fs10"><b>[{ oxmultilang ident="RECOMMLIST_LOGGINTOWRITEREVIEW" }]</b></a>
+        <a id="test_Reviews_login" rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account" params="recommid="|cat:$_actvrecommlist->getId()|cat:"&amp;sourcecl="|cat:$oViewConf->getActiveClassName()|cat:$oViewConf->getNavUrlParams() }]" class="fs10"><b>[{ oxmultilang ident="RECOMMLIST_LOGGINTOWRITEREVIEW" }]</b></a>
       [{/if}]
 
       [{if $oView->getReviews() }]
-       [{foreach from=$oView->getReviews() item=review name=ReviewsCounter}]
-        <dl class="review">
+        [{foreach from=$oView->getReviews() item=review name=ReviewsCounter}]
+          <dl class="review">
             <dt>
                 <span id="test_ReviewName_[{$smarty.foreach.ReviewsCounter.iteration}]" class="left"><b>[{ $review->oxuser__oxfname->value }]</b> [{ oxmultilang ident="RECOMMLIST_WRITES" }]</span>
                 <span id="test_ReviewTime_[{$smarty.foreach.ReviewsCounter.iteration}]" class="right param"><b>[{ oxmultilang ident="RECOMMLIST_TIME" }]</b>&nbsp;[{ $review->oxreviews__oxcreate->value|date_format:"%H:%M" }]</span>
@@ -100,9 +95,8 @@
             <dd id="test_ReviewText_[{$smarty.foreach.ReviewsCounter.iteration}]">
                 [{ $review->oxreviews__oxtext->value }]
             </dd>
-        </dl>
-
-       [{/foreach}]
+          </dl>
+        [{/foreach}]
       [{else}]
         <div class="dot_sep mid"></div>
         [{ oxmultilang ident="RECOMMLIST_REVIEWNOTAVAILABLE" }]

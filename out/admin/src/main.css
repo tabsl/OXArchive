@@ -158,5 +158,20 @@ ul.req li.group {border:none;float:left;font-weight:bold;width:32%;}
 ul.req li.coll {border:none;float:left;font-weight:bold;width:32%;}
 ul.req li.clear{clear:left;diplay:none;border:none;visibility:collapse;height:0px;padding:0;margin:0;display:block;line-height: 0;}
 
-.inputHelpBtn {display: inline; position: relative; padding-left: 16px; padding-right: 5px; margin-left: 5px; margin-left: 1px !ie; border: 1px solid #f00;}
-.inputHelpBtn a {display: block; position: absolute; left: 0px; top: 0px; top: 3px !ie; background: url(../img/help_button.gif) no-repeat; width: 16px; height: 16px; overflow: hidden;}
+/* Input fields help button and help text panel */
+.helpPanelText {display: none;}
+#helpTextContainer .yui-panel .bd {line-height: 120%;}
+.btnShowHelpPanel {background: url(bg/ico_help.gif) no-repeat; border:0 none; color:transparent; cursor:pointer; width:21px; height:20px;}
+
+td.edittext {white-space: nowrap; padding: 1px 0px 1px 5px; line-height: 110%;}
+.wrap {white-space: normal !important;}
+.nowrap {white-space: nowrap !important;}
+.varsell {vertical-align: top;}
+
+<!-- HELP POPUPS -->
+#helpPanel .warning_or_important_hint {color:#AC0000; font-weight:bold; }
+#helpPanel .navipath_or_inputname { font-weight:bold; }
+#helpPanel .userinput_or_code { font-family:"courier new",monospace; color:#265596; }
+#helpPanel .filename_filepath_or_italic { color:#5A5A5A; font-style:italic; font-weight:bold; }
+#helpPanel ul li { background-position: -4px top; }
+#helpPanel .bd a { background: url(bg/ico_link_arrow) no-repeat -3px; padding-left: 12px; text-decoration: underline; }

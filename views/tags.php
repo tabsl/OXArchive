@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: tags.php 16306 2009-02-05 10:28:05Z rimvydas.paskevicius $
+ * $Id: tags.php 23589 2009-10-26 10:44:06Z arvydas $
  */
 
 /**
@@ -82,5 +82,17 @@ class Tags extends oxUBase
      */
     public function getTitleSuffix()
     {
+    }
+
+    /**
+     * Returns title page suffix used in template
+     *
+     * @return string
+     */
+    public function getTitlePageSuffix()
+    {
+        if ( ( $iPage = $this->getActPage() ) ) {
+            return oxLang::getInstance()->translateString( 'INC_HEADER_TITLEPAGE' ). ( $iPage + 1 );
+        }
     }
 }

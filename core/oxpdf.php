@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxpdf.php 21092 2009-07-22 14:42:13Z vilma $
+ * $Id: oxpdf.php 23188 2009-10-13 06:59:38Z sarunas $
  */
 
 $myConfig = oxConfig::getInstance();
@@ -231,6 +231,9 @@ class oxPDF extends TCPDF
         $myConfig = oxConfig::getInstance();
         $unicode  = $myConfig->isUtf();
         $encoding = $unicode ? 'UTF-8' : oxLang::getInstance()->translateString( "charset" );
+        //#1161: Thin line and unknown characters on every pdf page 
+        //we use myorder::pdfFooter()
+        $this->setPrintFooter(false);
 
         parent::__construct( $orientation, $unit, $format, $unicode, $encoding, $diskcache );
     }

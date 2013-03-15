@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: shop_config.php 22487 2009-09-22 07:03:10Z arvydas $
+ * $Id: shop_config.php 22945 2009-10-05 15:40:36Z alfonsas $
  */
 
 /**
@@ -191,20 +191,18 @@ class Shop_Config extends oxAdminDetails
         }
 
         if ( is_array( $aConfArrs ) ) {
-            foreach ( $aConfArrs as $sVarName => $sVarVal ) {
+            foreach ( $aConfArrs as $sVarName => $aVarVal ) {
                 // home country multiple selectlist feature
-                if ( is_array( $sVarVal ) ) {
-                    $sValue = serialize($sVarVal);
-                } else {
-                    $sValue = serialize($this->_multilineToArray($sVarVal));
+                if ( !is_array( $aVarVal ) ) {
+                    $aVarVal = $this->_multilineToArray($aVarVal);
                 }
-                $myConfig->saveShopConfVar("arr", $sVarName, $sValue, $soxId);
+                $myConfig->saveShopConfVar("arr", $sVarName, $aVarVal, $soxId);
             }
         }
 
         if ( is_array( $aConfAarrs ) ) {
-            foreach ( $aConfAarrs as $sVarName => $sVarVal ) {
-                $myConfig->saveShopConfVar( "aarr", $sVarName, serialize( $this->_multilineToAarray( $sVarVal ) ), $soxId );
+            foreach ( $aConfAarrs as $sVarName => $aVarVal ) {
+                $myConfig->saveShopConfVar( "aarr", $sVarName, $this->_multilineToAarray( $aVarVal ) , $soxId );
             }
         }
     }

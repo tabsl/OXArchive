@@ -22,6 +22,7 @@
                 </td>
                 <td class="edittext">
                 <input type="text" class="editinput" style="width:100%" size="120" maxlength="[{$edit->oxnewsletter__oxtitle->fldmax_length}]" name="editval[oxnewsletter__oxtitle]" value="[{$edit->oxnewsletter__oxtitle->value}]">
+                [{ oxinputhelp ident="HELP_GENERAL_TITLE" }]
                 </td>
               </tr>
               <tr>

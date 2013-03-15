@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxexceptionhandler.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxexceptionhandler.php 23366 2009-10-20 08:53:58Z arvydas $
  */
 
 /**
@@ -145,11 +145,8 @@ class oxExceptionHandler
     protected function _dealWithNoOxException( Exception $oEx )
     {
         if ( 0 != $this->_iDebug ) {
-            $f = fopen( $this->_sFileName, 'a' );
-            $sOut = date( 'Y-m-d H:i:s' ) . $oEx . "\n---------------------------------------------\n";
-            fputs( $f, $sOut );
-            fclose( $f );
-
+            $sLogMsg = date( 'Y-m-d H:i:s' ) . $oEx . "\n---------------------------------------------\n";
+            oxUtils::getInstance()->writeToLog( $sLogMsg, $this->getLogFileName() );
             if ( defined( 'OXID_PHP_UNIT' ) ) {
                 return;
             } elseif ( 0 != $this->_iDebug ) {

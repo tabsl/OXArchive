@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxopenid.php 15202 2009-01-13 20:03:30Z Vilma $
+ * $Id: oxopenid.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 $iOldErrorReproting = error_reporting();
 error_reporting($iOldErrorReproting & ~E_STRICT);

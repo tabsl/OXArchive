@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: gui.php 11861 2008-09-05 10:41:58Z arvydas $
+ * $Id: gui.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**

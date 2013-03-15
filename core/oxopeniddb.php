@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdb.php 14368 2008-11-26 07:36:13Z vilma $
+ * $Id: oxopeniddb.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 require_once 'Auth/OpenID/Interface.php';

@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: guestbookentry.php 18041 2009-04-09 12:23:18Z arvydas $
+ * $Id: guestbookentry.php 23173 2009-10-12 13:29:45Z sarunas $
  */
 
 /**
@@ -33,6 +33,12 @@ class GuestbookEntry extends GuestBook
      * @var string
      */
     protected $_sThisTemplate = 'guestbookentry.tpl';
+
+    /**
+     * Guestbook form id, prevents double entry submit
+     * @var string
+     */
+    protected $_sGbFormId = null;
 
     /**
      * Method applies validation to entry and saves it to DB.
@@ -66,20 +72,41 @@ class GuestbookEntry extends GuestBook
         }
 
         // flood protection
-
         $oEntrie = oxNew( 'oxgbentry' );
         if ( $oEntrie->floodProtection( $sShopId, $sUserId ) ) {
             oxUtilsView::getInstance()->addErrorToDisplay( 'GUESTBOOKENTRY_ERRMAXIMUMNOMBEREXCEEDED' );
             return 'guestbookentry';
         }
 
-        // here the guest book entry is saved
-        $oEntry = oxNew( 'oxgbentry' );
-        $oEntry->oxgbentries__oxshopid  = new oxField($sShopId);
-        $oEntry->oxgbentries__oxuserid  = new oxField($sUserId);
-        $oEntry->oxgbentries__oxcontent = new oxField($sReviewText);
-        $oEntry->save();
+        // double click protection
+        $sFormId = oxConfig::getParameter( "gbFormId" );
+        $sSessionFormId = oxSession::getVar( "gbSessionFormId" );
+        if ( $sFormId && $sFormId == $sSessionFormId ) {
+            // here the guest book entry is saved
+            $oEntry = oxNew( 'oxgbentry' );
+            $oEntry->oxgbentries__oxshopid  = new oxField($sShopId);
+            $oEntry->oxgbentries__oxuserid  = new oxField($sUserId);
+            $oEntry->oxgbentries__oxcontent = new oxField($sReviewText);
+            $oEntry->save();
+
+            // regenerating form id
+            $this->getFormId();
+        }
 
         return 'guestbook';
+    }
+
+    /**
+     * Guestbook form id getter (prevents double entry submit)
+     *
+     * @return string
+     */
+    public function getFormId()
+    {
+        if ( $this->_sGbFormId === null ) {
+            $this->_sGbFormId = oxUtilsObject::getInstance()->generateUId();
+            oxSession::setVar( 'gbSessionFormId', $this->_sGbFormId );
+        }
+        return $this->_sGbFormId;
     }
 }

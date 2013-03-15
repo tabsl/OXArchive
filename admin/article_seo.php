@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_seo.php 22624 2009-09-24 14:45:24Z rimvydas.paskevicius $
+ * $Id: article_seo.php 23380 2009-10-20 12:23:24Z arvydas $
  */
 
 /**
@@ -94,7 +94,7 @@ class Article_Seo extends Object_Seo
         $this->_aViewData["oTags"]           = $this->_getTagList( $oArticle );
         $this->_aViewData["sCatId"]          = $this->getSelectedCategoryId();
         $this->_aViewData["sCatType"]        = $this->_sActCatType;
-        $this->_aViewData["sCatLang"]        = $this->_iActCatLang;
+        $this->_aViewData["sCatLang"]        = $this->getActCategoryLang();
 
         return parent::render();
     }
@@ -110,7 +110,7 @@ class Article_Seo extends Object_Seo
         if ( $this->_sActCatType == 'oxtag' ) {
             $sObjectId = oxSeoEncoderArticle::getInstance()->getDynamicObjectId( $iShopId, $oObject->getStdTagLink( $this->getTag() ) );
             $sQ = "select * from oxseo where oxobjectid = ".$oDb->quote( $sObjectId ) . " and
-                   oxshopid = '{$iShopId}' and oxlang = {$this->_iActCatLang} ";
+                   oxshopid = '{$iShopId}' and oxlang = ".$this->getActCategoryLang();
         } else {
             $sParam = ( $sCat = $this->getSelectedCategoryId() ) ? " and oxparams = '$sCat' " : '';
             $sQ = "select * from oxseo where oxobjectid = ".$oDb->quote( $oObject->getId() ) . " and
@@ -126,25 +126,26 @@ class Article_Seo extends Object_Seo
      */
     protected function _getCategoryList( $oArticle )
     {
-        if ( $this->_oArtCategories === null ) {
-            $this->_oArtCategories = ( $oArticle ) ? oxSeoEncoderArticle::getInstance()->getSeoCategories( $oArticle ) : false;
-
-            // adding price categories
-            $sCatTable = "oxcategories";
+        if ( $this->_oArtCategories === null && $oArticle ) {
+            // adding categories
+            $sO2CView = getViewName( 'oxobject2category');
             $oDb = oxDb::getDb( true );
-            $sQ = "select oxid from $sCatTable where ( oxpricefrom != 0 || oxpriceto != 0 ) and ( oxpricefrom <= ".$oDb->quote( $oArticle->oxarticles__oxprice->value ) ." || oxpriceto >= ".$oDb->quote( $oArticle->oxarticles__oxprice->value ) ." ) ";
+            $sQ = "select oxobject2category.oxcatnid as oxid from $sO2CView as oxobject2category where oxobject2category.oxobjectid="
+                  . $oDb->quote( $oArticle->getId() ) . " union ".$oArticle->getSqlForPriceCategories('oxid');
+
+            $iLang = $this->getEditLang();
+            $this->_oArtCategories = oxNew( "oxList" );
             $rs = $oDb->execute( $sQ );
             if ( $rs != false && $rs->recordCount() > 0 ) {
                 while ( !$rs->EOF ) {
                     $oCat = oxNew('oxcategory');
-                    $oCat->setLanguage($iLang);
-                    if ( $oCat->load( $rs->fields['oxid'] ) ) {
-                        $this->_oArtCategories[] = $oCat;
+                    $oCat->setLanguage( $iLang );
+                    if ( $oCat->load( current( $rs->fields ) ) ) {
+                        $this->_oArtCategories->offsetSet( $oCat->getId(), $oCat );
                     }
                     $rs->moveNext();
                 }
             }
-
         }
 
         return $this->_oArtCategories;
@@ -237,7 +238,7 @@ class Article_Seo extends Object_Seo
                 $oArticle = $this->_getObject( oxConfig::getParameter( 'oxid' ) );
                 if ( ( $oList = $this->_getCategoryList( $oArticle ) ) && $oList->count() ) {
                     $this->_sActCatType = 'oxcategories';
-                    $this->_sActCatId   = $oList->current()->oxcategories__oxrootid->value;
+                    $this->_sActCatId   = $oList->current()->getId();
                 } elseif ( ( $oList = $this->_getVendorList( $oArticle ) ) && $oList->count() ) {
                     $this->_sActCatType = 'oxvendor';
                     $this->_sActCatId   = $oList->current()->getId();
@@ -331,7 +332,7 @@ class Article_Seo extends Object_Seo
             $sStdUrl = "index.php?cl=details&amp;anid=".$oObject->getId()."&amp;listtype=tag&amp;searchtag=".rawurlencode( $sTag );
             $sObjectId = md5( strtolower( $oObject->getShopId() . $sStdUrl ) );
             $sQ = "select oxseourl from oxseo where oxobjectid = ".$oDb->quote( $sObjectId )."
-                   and oxshopid = '{$iShopId}' and oxlang = {$this->_iActCatLang}";
+                   and oxshopid = '{$iShopId}' and oxlang = ".$this->getActCategoryLang();
         } else {
             $sQ = "select oxseourl from oxseo where oxobjectid = ".$oDb->quote( $oObject->getId() )."
                    and oxshopid = '{$iShopId}' and oxlang = {$this->_iEditLang}
@@ -350,9 +351,19 @@ class Article_Seo extends Object_Seo
     {
         $iLang = $this->_iEditLang;
         if ( $this->getTag() ) {
-            $iLang = (int) $this->_iActCatLang;
+            $iLang = $this->getActCategoryLang();
         }
         return $iLang;
+    }
+
+    /**
+     * Returns active edit language id
+     *
+     * @return int
+     */
+    public function getActCategoryLang()
+    {
+        return (int) $this->_iActCatLang;
     }
 
     /**
@@ -402,7 +413,7 @@ class Article_Seo extends Object_Seo
     {
         $oArticle = oxNew( 'oxarticle' );
         $oArticle->loadInLang( $this->_iEditLang, $sOxid );
-        $sStdLink = $oArticle->getLink();
+        $sStdLink = $oArticle->getStdLink();
 
         // adding vendor or manufacturer id
         switch ( $this->_sActCatType ) {

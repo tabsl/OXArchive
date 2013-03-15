@@ -17,7 +17,7 @@
   [{/if}]
 
   [{ if $oxcmp_shop->oxshops__oxinfoemail->value}]
-    [{ oxmultilang ident="CONTACT_EMAIL" }] <a href="mailto:[{ $oxcmp_shop->oxshops__oxinfoemail->value }]">[{ $oxcmp_shop->oxshops__oxinfoemail->value }]</a><br>
+    [{ oxmultilang ident="CONTACT_EMAIL" }] [{mailto address=$oxcmp_shop->oxshops__oxinfoemail->value encode="javascript"}]<br>
   [{/if}]
 </div>
 
@@ -37,10 +37,7 @@
         <tr>
           <td><label>[{ oxmultilang ident="CONTACT_TITLE" }]&nbsp;&nbsp;</label></td>
           <td>
-            <select name="editval[oxuser__oxsal]">
-              <option [{ if $editval.oxuser__oxsal == "CONTACT_MR"|oxmultilangassign}]SELECTED[{/if}]>[{ oxmultilang ident="CONTACT_MR" }]</option>
-              <option [{ if $editval.oxuser__oxsal == "CONTACT_MRS"|oxmultilangassign}]SELECTED[{/if}]>[{ oxmultilang ident="CONTACT_MRS" }]</option>
-            </select>
+            [{include file="inc/salutation.tpl" name="editval[oxuser__oxsal]" value=$editval.oxuser__oxsal }]
           </td>
         </tr>
         <tr>

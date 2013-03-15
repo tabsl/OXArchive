@@ -32,6 +32,7 @@
             </td>
             <td class="edittext">
             <input class="edittext" type="checkbox" name="editval[oxgroups__oxactive]" value='1' [{if $edit->oxgroups__oxactive->value == 1}]checked[{/if}] [{ $readonly }] [{ $disableSharedEdit }]>
+            [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
             </td>
         </tr>
         <tr>
@@ -40,6 +41,7 @@
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="25" maxlength="[{$edit->oxgroups__oxtitle->fldmax_length}]" name="editval[oxgroups__oxtitle]" value="[{$edit->oxgroups__oxtitle->value}]" [{ $readonly }] [{ $disableSharedEdit }]>
+            [{ oxinputhelp ident="HELP_GENERAL_NAME" }]
             </td>
         </tr>
         <tr>
