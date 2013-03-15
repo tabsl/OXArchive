@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxuserbasket.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxuserbasket.php 21478 2009-08-06 15:41:06Z tomas $
  */
 
 /**
@@ -303,4 +303,23 @@ class oxUserBasket extends oxBase
         }
         return $blDelete;
     }
+
+    /**
+     * Checks if user basket is visible for current user (public or own basket)
+     *
+     * @return bool
+     */
+    public function isVisible()
+    {
+        $oActivUser = $this->getConfig()->getUser();
+        $sActivUserId = null;
+        if ($oActivUser)
+            $sActivUserId = $oActivUser->getId();
+
+        $blIsVisible = (bool) ($this->oxuserbaskets__oxpublic->value) ||
+                              ($sActivUserId && ($this->oxuserbaskets__oxuserid->value == $sActivUserId));
+
+        return $blIsVisible;
+    }
+
 }

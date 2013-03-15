@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxpayment.php 20457 2009-06-25 13:21:33Z vilma $
+ * $Id: oxpayment.php 21594 2009-08-14 12:04:44Z rimvydas.paskevicius $
  */
 
 /**
@@ -166,7 +166,8 @@ class oxPayment extends oxI18n
      */
     public function getPaymentPrice( $oBasket )
     {
-        $dBasketPrice = $oBasket->getDiscountProductsPrice()->getBruttoSum();
+        //getting basket price with applied discounts and vouchers
+        $dBasketPrice = $oBasket->getPriceForPayment();
         $dPrice = $this->getPaymentValue( $dBasketPrice );
 
         // calculating total price

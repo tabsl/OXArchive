@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: payment.php 17247 2009-03-16 15:21:20Z arvydas $
+ * $Id: payment.php 21594 2009-08-14 12:04:44Z rimvydas.paskevicius $
  */
 
 /**
@@ -308,7 +308,10 @@ class Payment extends oxUBase
         $oPayment = oxNew( 'oxpayment' );
         $oPayment->load( $sPaymentId );
 
-        $blOK = $oPayment->isValidPayment( $aDynvalue, $myConfig->getShopId(), $oUser, $oBasket->getPrice()->getBruttoPrice(), $sShipSetId );
+        // getting basket price for payment calculation
+        $dBasketPrice = $oBasket->getPriceForPayment();
+
+        $blOK = $oPayment->isValidPayment( $aDynvalue, $myConfig->getShopId(), $oUser, $dBasketPrice, $sShipSetId );
 
         if ( $blOK ) {
             oxSession::setVar( 'paymentid', $sPaymentId );

@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: order.php 16306 2009-02-05 10:28:05Z rimvydas.paskevicius $
+ * $Id: order.php 21594 2009-08-14 12:04:44Z rimvydas.paskevicius $
  */
 
 /**
@@ -326,8 +326,12 @@ class Order extends oxUBase
             $sPaymentid = $oBasket->getPaymentId();
             $aDynvalue  = oxConfig::getParameter( 'dynvalue' );
             $oPayment   = oxNew( 'oxpayment' );
+
+            //getting basket price form payment
+            $dBasketPrice = $oBasket->getPriceForPayment();
+
             if ( $sPaymentid && $oPayment->load( $sPaymentid ) &&
-                $oPayment->isValidPayment( $aDynvalue, $this->getConfig()->getShopId(), $oUser, $oBasket->getPrice()->getBruttoPrice(), oxConfig::getParameter( 'sShipSet' ) ) ) {
+                $oPayment->isValidPayment( $aDynvalue, $this->getConfig()->getShopId(), $oUser, $dBasketPrice, oxConfig::getParameter( 'sShipSet' ) ) ) {
                 $this->_oPayment = $oPayment;
             }
         }

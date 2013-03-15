@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: wishlist.php 17016 2009-03-04 13:05:30Z vilma $
+ * $Id: wishlist.php 21480 2009-08-06 15:44:53Z tomas $
  */
 
 /**
@@ -142,7 +142,14 @@ class Wishlist extends oxUBase
 
             // passing wishlist information
             if ( $oUser = $this->getWishUser() ) {
-                $this->_oWishList = $oUser->getBasket( 'wishlist' )->getArticles();
+
+                $oWishlistBasket = $oUser->getBasket( 'wishlist' );
+                $this->_oWishList = $oWishlistBasket->getArticles();
+
+                if (!$oWishlistBasket->isVisible())
+                    $this->_oWishList = false;
+
+
             }
         }
         return $this->_oWishList;

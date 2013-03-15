@@ -19,7 +19,7 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 21145 2009-07-28 11:10:29Z vilma $
+ * $Id: lang.php 21618 2009-08-17 12:54:51Z philipp.grashoff $
  */
 
 $sLangName  = 'Deutsch';
@@ -90,6 +90,7 @@ $aLang = array(
 'GENERAL_ARTICLE_OXUNITNAME'                    => 'Einheit',
 'GENERAL_ARTICLE_OXUNITQUANTITY'                => 'Mengeneinheit',
 'GENERAL_ARTICLE_OXURLDESC'                     => 'URL Beschreibung',
+'GENERAL_ARTICLE_OXURLIMG'                      => 'Bild für externe URL',
 'GENERAL_ARTICLE_OXVAT'                         => 'Artikel Mwst.',
 'GENERAL_ARTICLE_OXTHUMB'                       => 'Vorschaubild',
 'GENERAL_ARTICLE_OXICON'                        => '',
@@ -126,6 +127,7 @@ $aLang = array(
 'GENERAL_ARTICLE_OXISSEARCH'                    => 'Kann gesucht werden',
 'GENERAL_ARTICLE_OXVARNAME'                     => 'Name der Variante',
 'GENERAL_ARTICLE_OXVARSELECT'                   => '',
+'GENERAL_ARTICLE_OXVARMINPRICE'                 => 'Niedrigster Variantenpreis',
 'GENERAL_ARTICLE_OXFOLDER'                      => 'Ordner',
 'GENERAL_ARTICLE_OXSUBCLASS'                    => 'intern',
 'GENERAL_ARTICLE_OXSORT'                        => 'Sortierung',
@@ -136,7 +138,8 @@ $aLang = array(
 'GENERAL_ARTICLE_OXREMINDAMOUNT'                => 'Zuwenig Lagerbestand Mindestmenge',
 'GENERAL_ARTICLE_OXAMITEMID'                    => '',
 'GENERAL_ARTICLE_OXAMTASKID'                    => '',
-'GENERAL_ARTICLE_OXVENDORID'                    => 'Hersteller ID',
+'GENERAL_ARTICLE_OXVENDORID'                    => 'Lieferant',
+'GENERAL_ARTICLE_OXMANUFACTURERID'              => 'Hersteller',
 'GENERAL_ARTICLE_OXVARCOUNT'                    => 'Varianten Anzahl',
 'GENERAL_ARTICLE_OXSHOPINCL'                    => 'Shop einschließen',
 'GENERAL_ARTICLE_OXSHOPEXCL'                    => 'Shop ausschließen',
@@ -1219,7 +1222,7 @@ $aLang = array(
 'SHOP_CONFIG_USENEGATIVESTOCK'                  => 'Negative Lagerbestände erlauben',
 'SHOP_CONFIG_WARNONSAMEARTNUMS'                 => 'Warnung ausgeben, wenn eine Artikelnummer mehrfach vorhanden ist',
 'SHOP_CONFIG_ZOOMIMAGESIZE'                     => 'Größe der Zoom-Bilder (Zoom 1-4) in Pixeln (Breite*Höhe)',
-'SHOP_CONFIG_DELETERATINGLOGS'                  => 'Anzahl der Tage, bis ein Benutzer einen Artikel erneut bewerten darf',
+'SHOP_CONFIG_DELETERATINGLOGS'                  => 'Wie lange Artikel-Bewertungen gespeichert werden (in Tagen)',
 'SHOP_CONFIG_RSSITEMSCOUNT'                     => 'Anzahl der Objekte, die in RSS Feeds angezeigt werden',
 'SHOP_CONFIG_RSSSELECTED'                       => 'Angezeigte RSS Feeds (Mehrfachauswahl mit gedrückter STRG-Taste)',
 'SHOP_CONFIG_RSSTOPSHOP'                        => 'Top of the Shop',

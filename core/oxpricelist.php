@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxpricelist.php 19886 2009-06-16 12:39:06Z alfonsas $
+ * $Id: oxpricelist.php 21461 2009-08-05 16:42:31Z tomas $
  */
 
 /**
@@ -36,6 +36,15 @@ class oxPriceList
      * @var array
      */
     protected $_aList = array();
+
+   /**
+     * Class constructor. The constructor is defined in order to be possible to call parent::__construct() in modules.
+     *
+     * @return null;
+     */
+	public function __construct()
+	{
+	}
 
     /**
      * Returns Brutto price sum

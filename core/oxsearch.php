@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxsearch.php 20457 2009-06-25 13:21:33Z vilma $l
+ * $Id: oxsearch.php 21522 2009-08-11 10:09:15Z tomas $l
  */
 
 /**
@@ -90,6 +90,7 @@ class oxSearch extends oxSuperCfg
         if ( $sSelect ) {
             $oArtList->selectString( $sSelect );
         }
+
         return $oArtList;
     }
 
@@ -187,32 +188,30 @@ class oxSearch extends oxSuperCfg
         $sSelectFields = $oArticle->getSelectFields();
 
         // longdesc field now is kept on different table
-        $sDescTable = '';
         $sDescJoin  = '';
         if ( is_array( $aSearchCols = $this->getConfig()->getConfigParam( 'aSearchCols' ) ) ) {
             if ( in_array( 'oxlongdesc', $aSearchCols ) || in_array( 'oxtags', $aSearchCols ) ) {
                 $sDescView  = getViewName( 'oxartextends' );
-                $sDescTable = ", {$sDescView} ";
-                $sDescJoin  = " {$sDescView}.oxid={$sArticleTable}.oxid and ";
+                $sDescJoin  = " LEFT JOIN {$sDescView} ON {$sArticleTable}.oxid={$sDescView}.oxid ";
             }
         }
 
         //select articles
-        $sSelect = "select {$sSelectFields} from {$sArticleTable} {$sDescTable} where {$sDescJoin} ";
+        $sSelect = "select {$sSelectFields} from {$sArticleTable} {$sDescJoin} where ";
 
         // must be additional conditions in select if searching in category
         if ( $sInitialSearchCat ) {
             $sCatView = getViewName( 'oxcategories' );
             $sSelectCat  = "select oxid from {$sCatView} where oxid = '{$sInitialSearchCat}' and (oxpricefrom != '0' or oxpriceto != 0)";
             if ( $oDb->getOne($sSelectCat) ) {
-                $sSelect = "select {$sSelectFields} from {$sArticleTable} {$sDescTable} " .
+                $sSelect = "select {$sSelectFields} from {$sArticleTable} $sDescJoin " .
                            "where {$sArticleTable}.oxid in ( select {$sArticleTable}.oxid as id from {$sArticleTable}, {$sO2CView} as oxobject2category, {$sCatView} as oxcategories " .
-                           "where (oxobject2category.oxcatnid='{$sInitialSearchCat}' and oxobject2category.oxobjectid={$sArticleTable}.oxid) or (oxcategories.oxid='{$sInitialSearchCat}' and {$sArticleTable}.oxprice >= oxcategories.oxpricefrom and  
-                            {$sArticleTable}.oxprice <= oxcategories.oxpriceto )) and {$sDescJoin} ";
+                           "where (oxobject2category.oxcatnid='{$sInitialSearchCat}' and oxobject2category.oxobjectid={$sArticleTable}.oxid) or (oxcategories.oxid='{$sInitialSearchCat}' and {$sArticleTable}.oxprice >= oxcategories.oxpricefrom and
+                            {$sArticleTable}.oxprice <= oxcategories.oxpriceto )) and ";
             } else {
-                $sSelect = "select {$sSelectFields} from {$sArticleTable}, {$sO2CView} as
-                            oxobject2category {$sDescTable} where oxobject2category.oxcatnid='{$sInitialSearchCat}' and
-                            oxobject2category.oxobjectid={$sArticleTable}.oxid and {$sDescJoin} ";
+                $sSelect = "select {$sSelectFields} from {$sO2CView} as
+                            oxobject2category, {$sArticleTable} {$sDescJoin} where oxobject2category.oxcatnid='{$sInitialSearchCat}' and
+                            oxobject2category.oxobjectid={$sArticleTable}.oxid and ";
             }
         }
 

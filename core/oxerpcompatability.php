@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerpcompatability.php 18054 2009-04-09 16:47:26Z arvydas $
+ * $Id: oxerpcompatability.php 21461 2009-08-05 16:42:31Z tomas $
  */
 
 /**
@@ -28,6 +28,16 @@
  */
 class oxERPCompatability
 {
+
+   /**
+     * Class constructor. The constructor is defined in order to be possible to call parent::__construct() in modules.
+     *
+     * @return null;
+     */
+	public function __construct()
+	{
+	}
+
     /**
      * Returns build revision number or false on read error.
      *

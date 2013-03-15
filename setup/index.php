@@ -19,7 +19,7 @@
  * @package setup
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: index.php 20950 2009-07-15 12:09:27Z rimvydas.paskevicius $
+ * $Id: index.php 21558 2009-08-12 13:44:42Z tomas $
  */
 
 
@@ -920,6 +920,12 @@ if ( $istep == $aSetupSteps['STEP_DB_CREATE'] ) {
         setMySqlCollation( 0 );
         convertConfigTableToUtf();
     }
+
+    $oConfk = new Conf();
+    $sQUtfMode = "insert into oxconfig (oxid, oxshopid, oxvarname, oxvartype, oxvarvalue)
+                                 values('$sIDIMU', '$sBaseShopId', 'iSetUtfMode', 'str', ENCODE( '".((int) isset( $aDB['iUtfMode'] ) ? $aDB['iUtfMode'] : 0 )."', '".$oConfk->sConfigKey."') )";
+
+    mysql_query($sQUtfMode);
 
     $iRedir2Step = $aSetupSteps['STEP_DIRS_INFO'];
     $sMessage = $aLang['STEP_3_2_CREATING_DATA'];

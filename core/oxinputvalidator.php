@@ -20,7 +20,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxinputvalidator.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxinputvalidator.php 21536 2009-08-11 16:35:04Z tomas $
  */
 
 /**
@@ -73,6 +73,15 @@ class oxInputValidator
                                            'lsktonr',
                                            'lsktoinhaber'
                                          );
+
+   /**
+     * Class constructor. The constructor is defined in order to be possible to call parent::__construct() in modules.
+     *
+     * @return null;
+     */
+	public function __construct()
+	{
+	}
 
     /**
      * Validates basket amount
@@ -160,7 +169,7 @@ class oxInputValidator
                     $aDynvalue['lsktonr'] = $sNewNum;
                 }
 
-                if ( preg_match( "/\d{8}/", $aDynvalue['lsblz'] ) && preg_match( "/\d{10}/", $aDynvalue['lsktonr'] ) ) {
+                if ( preg_match( "/^\d{5,8}$/", $aDynvalue['lsblz'] ) && preg_match( "/\d{10}/", $aDynvalue['lsktonr'] ) ) {
                     $blOK = true;
                 }
                 break;

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxseoencoder.php 21220 2009-07-31 12:38:23Z arvydas $
+ * $Id: oxseoencoder.php 21604 2009-08-14 16:06:01Z rimvydas.paskevicius $
  */
 
 /**
@@ -614,10 +614,13 @@ class oxSeoEncoder extends oxSuperCfg
 
         $oRs = $oDb->execute( $sQ );
         if ( $oRs && $oRs->recordCount() > 0 && !$oRs->EOF ) {
-
             if ( $oRs->fields['samestdurl'] && $oRs->fields['sameseourl'] && $oRs->fields['oxexpired'] ) {
                 // nothing was changed - setting expired status back to 0
-                return $oDb->execute( "update oxseo set oxexpired = 0 where oxtype = {$sType} and oxobjectid = {$sObjectId} and oxshopid = {$iShopId} and oxlang = {$iLang} limit 1" );
+                $sSql  = "update oxseo set oxexpired = 0 where oxtype = {$sType} and oxobjectid = {$sObjectId} and oxshopid = {$iShopId} and oxlang = {$iLang} ";
+                $sSql .= $sParams ? " and oxparams = " . $oDb->quote( $sParams ) : '';
+                $sSql .= " limit 1";
+
+                return $oDb->execute( $sSql );
             } elseif ( $oRs->fields['oxexpired'] && !$oRs->fields['oxfixed'] ) {
                 // copy to history
                 $this->_copyToHistory( $sObjectId, $iShopId, $iLang, $sType );

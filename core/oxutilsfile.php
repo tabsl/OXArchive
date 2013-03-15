@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutilsfile.php 21092 2009-07-22 14:42:13Z vilma $
+ * $Id: oxutilsfile.php 21470 2009-08-06 13:01:57Z rimvydas.paskevicius $
  */
 
 /**
@@ -550,8 +550,11 @@ class oxUtilsFile extends oxSuperCfg
         }
 
         //file exists ?
+        $iFileCounter = 0;
+        $sTempFileName = $sFileName;
         while (file_exists($sBasePath . "/" .$sUploadPath . "/" . $sFileName . "." . $sExt)) {
-            $sFileName .= "(1)";
+            $iFileCounter++;
+            $sFileName = $sTempFileName . "($iFileCounter)";
         }
 
         move_uploaded_file($aFileInfo['tmp_name'], $sBasePath . "/" .$sUploadPath . "/" . $sFileName . "." . $sExt);

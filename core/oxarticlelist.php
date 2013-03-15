@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxarticlelist.php 20654 2009-07-07 10:58:13Z sarunas $
+ * $Id: oxarticlelist.php 21579 2009-08-13 11:36:07Z tomas $
  */
 
 /**
@@ -448,19 +448,18 @@ class oxArticleList extends oxList
         if ( is_array( $aSearchCols = $this->getConfig()->getConfigParam( 'aSearchCols' ) ) ) {
             if ( in_array( 'oxlongdesc', $aSearchCols ) || in_array( 'oxtags', $aSearchCols ) ) {
                 $sDescView  = getViewName( 'oxartextends' );
-                $sDescTable = ", {$sDescView} ";
-                $sDescJoin  = " {$sDescView}.oxid={$sArticleTable}.oxid and ";
+                $sDescJoin  = " LEFT JOIN $sDescView ON {$sDescView}.oxid={$sArticleTable}.oxid ";
             }
         }
 
         // load the articles
-        $sSelect  =  "select $sArticleTable.oxid from $sArticleTable $sDescTable where $sDescJoin";
+        $sSelect  =  "select $sArticleTable.oxid from $sArticleTable $sDescJoin where ";
 
         // must be additional conditions in select if searching in category
         if ( $sSearchCat ) {
             $sO2CView = getViewName('oxobject2category');
-            $sSelect  = "select $sArticleTable.oxid from $sArticleTable, $sO2CView as oxobject2category $sDescTable ";
-            $sSelect .= "where oxobject2category.oxcatnid=$sSearchCat and oxobject2category.oxobjectid=$sArticleTable.oxid and $sDescJoin ";
+            $sSelect  = "select $sArticleTable.oxid from $sO2CView as oxobject2category, $sArticleTable $sDescJoin ";
+            $sSelect .= "where oxobject2category.oxcatnid=$sSearchCat and oxobject2category.oxobjectid=$sArticleTable.oxid and ";
         }
         $sSelect .= $this->getBaseObject()->getSqlActiveSnippet();
         $sSelect .= " and $sArticleTable.oxparentid = '' and $sArticleTable.oxissearch = 1 ";

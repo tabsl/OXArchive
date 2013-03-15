@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxsupercfg.php 19635 2009-06-05 16:51:09Z tomas $
+ * $Id: oxsupercfg.php 21460 2009-08-05 16:28:33Z tomas $
  */
 
 /**
@@ -87,6 +87,15 @@ class oxSuperCfg
 
         throw new oxSystemComponentException( "Function '$sMethod' does not exist or is not accessible! (" . get_class($this) . ")".PHP_EOL);
     }
+
+    /**
+     * Class constructor. The constructor is defined in order to be possible to call parent::__construct() in modules.
+     *
+     * @return null;
+     */
+	public function __construct()
+	{
+	}
 
     /**
      * oxConfig instance getter

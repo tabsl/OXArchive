@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdelivery.php 20615 2009-07-02 15:49:30Z arvydas $
+ * $Id: oxdelivery.php 21592 2009-08-14 10:22:24Z vilma $
  */
 
 /**
@@ -402,7 +402,8 @@ class oxDelivery extends oxI18n
         }
 
         $blForBasket = false;
-        if ( $blUse && $this->_checkDeliveryAmount($iAmount) ) {
+        //#M1130: Single article in Basket, checked as free shipping, is not buyable (step 3 no payments found) 
+        if ( $blUse && ( $this->_checkDeliveryAmount($iAmount) || $this->_blFreeShipping ) ) {
             $blForBasket = true;
         }
         return $blForBasket;

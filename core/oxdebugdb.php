@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdebugdb.php 18037 2009-04-09 12:20:55Z arvydas $
+ * $Id: oxdebugdb.php 21461 2009-08-05 16:42:31Z tomas $
  */
 
 /**
@@ -33,6 +33,15 @@ class oxDebugDb
      * @var array
      */
     private static $_aSkipSqls = array();
+
+   /**
+     * Class constructor. The constructor is defined in order to be possible to call parent::__construct() in modules.
+     *
+     * @return null;
+     */
+	public function __construct()
+	{
+	}
 
     /**
      * Removes special chars (' ', "\t", "\r", "\n") from passed string

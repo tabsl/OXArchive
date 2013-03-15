@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdeliverylist.php 19745 2009-06-10 10:43:24Z vilma $
+ * $Id: oxdeliverylist.php 21592 2009-08-14 10:22:24Z vilma $
  */
 
 /**
@@ -354,7 +354,6 @@ class oxDeliveryList extends oxList
         // loading delivery list to check if some of them fits
         $this->_getList( $oUser, $sDelCountry, $sDeliverySetId );
         foreach ( $this as $oDelivery ) {
-
             if ( $oDelivery->isForBasket( $oBasket ) ) {
                 $blHas = true;
                 break;

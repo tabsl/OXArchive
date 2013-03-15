@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxbasketitem.php 20973 2009-07-16 11:10:05Z arvydas $
+ * $Id: oxbasketitem.php 21488 2009-08-07 08:48:48Z vilma $
  */
 
 /**
@@ -718,7 +718,7 @@ class oxBasketItem extends oxSuperCfg
         // products title
         $this->_sTitle = $oArticle->oxarticles__oxtitle->value;
         if ( $oArticle->oxarticles__oxvarselect->value ) {
-            $this->_sTitle    .= ', '.$oArticle->oxarticles__oxvarselect->value;
+            $this->_sTitle     = $this->_sTitle. ', ' . $oArticle->oxarticles__oxvarselect->value;
             $this->_sVarSelect = $oArticle->oxarticles__oxvarselect->value;
         }
 

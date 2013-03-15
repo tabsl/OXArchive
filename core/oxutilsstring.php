@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutilsstring.php 21092 2009-07-22 14:42:13Z vilma $
+ * $Id: oxutilsstring.php 21461 2009-08-05 16:42:31Z tomas $
  */
 
 /**
@@ -33,6 +33,15 @@ class oxUtilsString
      * @var oxutils instance
      */
     private static $_instance = null;
+
+   /**
+     * Class constructor. The constructor is defined in order to be possible to call parent::__construct() in modules.
+     *
+     * @return null;
+     */
+	public function __construct()
+	{
+	}
 
     /**
      * Returns string manipulation utility instance

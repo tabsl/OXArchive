@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxvoucher.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxvoucher.php 21499 2009-08-07 13:49:56Z vilma $
  */
 
 /**
@@ -111,12 +111,13 @@ class oxVoucher extends oxBase
      *
      * @return null
      */
-    public function markAsUsed( $sOrderId, $sUserId )
+    public function markAsUsed( $sOrderId, $sUserId, $dDiscount )
     {
         //saving oxreserved field
         if ( $this->oxvouchers__oxid->value ) {
             $this->oxvouchers__oxorderid->setValue($sOrderId);
             $this->oxvouchers__oxuserid->setValue($sUserId);
+            $this->oxvouchers__oxdiscount->setValue($dDiscount);
             $this->oxvouchers__oxdateused->setValue(date( "Y-m-d", oxUtilsDate::getInstance()->getTime() ));
             $this->save();
         }

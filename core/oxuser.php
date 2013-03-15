@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxuser.php 20690 2009-07-09 10:46:21Z alfonsas $
+ * $Id: oxuser.php 21614 2009-08-17 11:46:51Z arvydas $
  */
 
 /**
@@ -968,7 +968,10 @@ class oxUser extends oxBase
         // 4. required fields
         $this->_checkRequiredFields( $aInvAddress, $aDelAddress );
 
-        // 5. vat id check.
+        // 5. country check
+        $this->_checkCountries( $aInvAddress, $aDelAddress );
+
+        // 6. vat id check.
             $this->_checkVatId( $aInvAddress );
     }
 
@@ -1775,6 +1778,38 @@ class oxUser extends oxBase
             $oEx = oxNew( 'oxUserException' );
             $oEx->setMessage('EXCEPTION_USER_PWDDONTMATCH');
             throw $oEx;
+        }
+    }
+
+    /**
+     * Checks if user defined countries (billing and delivery) are active
+     *
+     * @param array $aInvAddress billing address info
+     * @param array $aDelAddress delivery address info
+     *
+     * @throws oxInputException
+     */
+    protected function _checkCountries( $aInvAddress, $aDelAddress )
+    {
+        $sBillCtry = isset( $aInvAddress['oxuser__oxcountryid'] ) ? $aInvAddress['oxuser__oxcountryid'] : null;
+        $sDelCtry  = isset( $aDelAddress['oxaddress__oxcountryid'] ) ? $aDelAddress['oxaddress__oxcountryid'] : null;
+
+        if ( $sBillCtry || $sDelCtry ) {
+            $oDb = oxDb::getDb();
+
+            if ( ( $sBillCtry == $sDelCtry ) || ( !$sBillCtry && $sDelCtry ) || ( $sBillCtry && !$sDelCtry ) ) {
+                $sBillCtry = $sBillCtry ? $sBillCtry : $sDelCtry;
+                $sQ = "select oxactive from oxcountry where oxid = ".$oDb->quote( $sBillCtry )." ";
+            } else {
+                $sQ = "select ( select oxactive from oxcountry where oxid = ".$oDb->quote( $sBillCtry )." ) and
+                              ( select oxactive from oxcountry where oxid = ".$oDb->quote( $sDelCtry )." ) ";
+            }
+
+            if ( !$oDb->getOne( $sQ ) ) {
+                $oEx = oxNew( 'oxUserException' );
+                $oEx->setMessage('EXCEPTION_INPUT_NOTALLFIELDS' );
+                throw $oEx;
+            }
         }
     }
 

@@ -102,6 +102,15 @@ class oxSysRequirements
                                   'OXORDERID',
                                   'OXVOUCHERSERIEID');
 
+   /**
+     * Class constructor. The constructor is defined in order to be possible to call parent::__construct() in modules.
+     *
+     * @return null;
+     */
+	public function __construct()
+	{
+	}
+
     /**
      * Sets system required modules
      *

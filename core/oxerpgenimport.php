@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerpgenimport.php 18930 2009-05-11 13:37:34Z rimvydas.paskevicius $
+ * $Id: oxerpgenimport.php 21601 2009-08-14 13:36:52Z rimvydas.paskevicius $
  */
 
 /**
@@ -62,6 +62,18 @@ class oxErpGenImport extends oxErpCsv
      * @var bool
      */
     protected $_blCsvContainsHeader = null;
+
+    /**
+     * Csv file field terminator
+     * @var string
+     */
+    protected $_sDefaultStringTerminator = ";";
+
+    /**
+     * Csv file field encloser
+     * @var string
+     */
+    protected $_sDefaultStringEncloser = '"';
 
     /**
      * Only used for convenience in UNIT tests by doing so we avoid
@@ -346,7 +358,7 @@ class oxErpGenImport extends oxErpCsv
             $iRow = 0;
             $aRow = array();
 
-            while ( ($aRow = fgetcsv( $file, $iMaxLineLength, ";", '"') ) !== false ) {
+            while ( ($aRow = fgetcsv( $file, $iMaxLineLength, $this->_getCsvFieldsTerminator(), $this->_getCsvFieldsEncolser()) ) !== false ) {
 
                 $this->_aData[] = $aRow;
             }
@@ -372,4 +384,35 @@ class oxErpGenImport extends oxErpCsv
         return $this->_sReturn;
     }
 
+    /**
+     * Set csv field terminator symbol
+     *
+     * @return string
+     */
+    protected function _getCsvFieldsTerminator()
+    {
+        $myConfig = oxConfig::getInstance();
+
+        if ( $sChar = $myConfig->getConfigParam( 'sGiCsvFieldTerminator' ) ){
+            return $sChar;
+        } else {
+            return $this->_sDefaultStringTerminator;
+        }
+    }
+
+    /**
+     * Get csv field encloser symbol
+     *
+     * @return string
+     */
+    protected function _getCsvFieldsEncolser()
+    {
+        $myConfig = oxConfig::getInstance();
+
+        if ( $sChar = $myConfig->getConfigParam( 'sGiCsvFieldEncloser' ) ){
+            return $sChar;
+        } else {
+            return $this->_sDefaultStringEncloser;
+        }
+    }
 }
