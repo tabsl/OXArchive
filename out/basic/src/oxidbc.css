@@ -89,3 +89,6 @@ div.bar.copy{_overflow: hidden;}
 /* IE 6 top popup category menu fix */
 div.bar.categories ul.menue.verticall   li { _width: 1%; }
 div.bar.categories ul.menue.verticall   li a { _width: 100%; _padding-right: 0px; }
+
+/* IE popup content fix */
+#body.plain .boxhead,#body.plain .box { _display: block;}

@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcmp_utils.php 16748 2009-02-24 11:24:53Z vilma $
+ * $Id: oxcmp_utils.php 18919 2009-05-11 07:59:10Z arvydas $
  */
 
 /**
@@ -66,9 +66,11 @@ class oxcmp_utils extends oxView
         $aExport = array();
 
         $aClassVars = get_object_vars( $oProduct );
+        $oStr = getStr();
+
         // add all database fields
         while ( list( $sFieldName, ) = each( $aClassVars ) ) {
-            if ( strstr( $sFieldName, 'oxarticles' ) ) {
+            if ( $oStr->strstr( $sFieldName, 'oxarticles' ) ) {
                 $sName = str_replace( 'oxarticles__', '', $sFieldName );
                 $aExport[$sName] = $oProduct->$sFieldName->value;
             }
@@ -170,8 +172,8 @@ class oxcmp_utils extends oxView
             return; // we shouldnt call this if not logged in
         }
 
-        $sProductId = $sProductId ? $sProductId : oxConfig::getParameter( 'aid' );
         $sProductId = $sProductId ? $sProductId : oxConfig::getParameter( 'itmid' );
+        $sProductId = $sProductId ? $sProductId : oxConfig::getParameter( 'aid' );
         $dAmount    = isset( $dAmount ) ? $dAmount : oxConfig::getParameter( 'am' );
         $aSel       = $aSel ? $aSel : oxConfig::getParameter( 'sel' );
 
@@ -205,8 +207,8 @@ class oxcmp_utils extends oxView
             return; // we shouldnt call this if not logged in
         }
 
-        $sProductId = $sProductId ? $sProductId : oxConfig::getParameter( 'aid' );
         $sProductId = $sProductId ? $sProductId : oxConfig::getParameter( 'itmid' );
+        $sProductId = $sProductId ? $sProductId : oxConfig::getParameter( 'aid' );
         $dAmount    = isset( $dAmount ) ? $dAmount : oxConfig::getParameter( 'am' );
         $aSel       = $aSel ? $aSel : oxConfig::getParameter( 'sel' );
 

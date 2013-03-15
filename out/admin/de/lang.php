@@ -19,7 +19,7 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 18295 2009-04-16 15:09:12Z rimvydas.paskevicius $
+ * $Id: lang.php 18910 2009-05-08 14:24:06Z vilma $
  */
 
 $sLangName  = 'Deutsch';
@@ -317,6 +317,10 @@ $aLang = array(
 'ARTICLE_ATTRIBUTE_ITEMSSELLIST'                => 'Artikel hat diese Ausw.listen',
 'ARTICLE_ATTRIBUTE_ASSIGNATTRIBUTE'             => 'Attribute zuordnen',
 'ARTICLE_ATTRIBUTE_ASSIGNSELECTLIST'            => 'Auswahllisten zuordnen',
+'ARTICLE_BUNDLE_ASSIGNARTICLE'                  => 'Artikel zuordnen',
+'ARTICLE_BUNDLE_UNASSIGNARTICLE'                => 'Zuordnung löschen',
+'ARTICLE_BUNDLE_ASSIGNEDARTICLE'                => 'Artikel dazu:',
+'ARTICLE_BUNDLE_ALLITEMS'                       => 'Alle verfügbaren Artikel',
 'ARTICLE_CROSSSELLING_CROSSSELLING'             => 'Zugeordnete Crossselling-Artikel',
 'ARTICLE_CROSSSELLING_EXTRAS'                   => 'Zugeordnete Zubehör-Artikel',
 'ARTICLE_CROSSSELLING_ALLITEMS'                 => 'Alle verfügbaren Artikel',
@@ -839,6 +843,8 @@ $aLang = array(
 'LANGUAGE_BASESSLURL'                           => 'Basis SSL URL',
 'LANGUAGE_NOTRANSLATIONS_WARNING'               => 'Warnung: Es wurden keine Sprachdateien für die ausgewählte Sprache gefunden!',
 'LANGUAGE_NODBMULTILANGFIELDS_WARNING'          => 'Warnung: Es wurden keine Datenbankfelder für die ausgewählte Sprache gefunden!',
+'LANGUAGE_DELETINGMAINLANG_WARNING'             => '[tr]Warning: you can\'t delete main language (with ID = 0)!',
+'LANGUAGE_ALREADYEXISTS_ERROR'                  => '[tr]Error: language with such abbervation already exists!',
 'LOGIN_TITLE'                                   => 'OXID eShop Login',
 'LOGIN_ERROR'                                   => 'Fehler! Falscher Benutzername und/oder Passwort.',
 'LOGIN_NO_COOKIE_SUPPORT'                       => 'Fehler! Ihr Browser unterstützt keine Cookies.',
@@ -963,6 +969,7 @@ $aLang = array(
 'ORDER_SEARCH_FIELD_ARTID'                      => 'Artikel',
 'ORDER_SEARCH_FIELD_PAYMENT'                    => 'Zahlungsarten',
 'ORDER_LIST_YOUWANTTOSTORNO'                    => 'Wollen Sie diese Bestellung wirklich stornieren?',
+'ORDER_LIST_FOLDER_ALL'                         => 'alle',
 'ORDER_LIST_ORDERTIME'                          => 'Bestellzeit',
 'ORDER_LIST_PAID'                               => 'Bezahlt',
 'ORDER_LIST_CUSTOMER'                           => 'Kunde',
@@ -1047,6 +1054,9 @@ $aLang = array(
 'ORDER_PACKAGE_ORDERNR2'                        => 'Bestellt am',
 'ORDER_PACKAGE_MENUITEM'                        => 'Bestellungen',
 'ORDER_PACKAGE_MENUSUBITEM'                     => 'Packliste',
+'ORDERFOLDER_NEW'                               => 'Neu',
+'ORDERFOLDER_FINISHED'                          => 'Bearbeitet',
+'ORDERFOLDER_PROBLEMS'                          => 'Probleme',
 'PAGENAVISNIPPET_FROM'                          => 'von',
 'PAYMENT_COUNTRY_ALLCOUNTRIES'                  => 'Alle Länder',
 'PAYMENT_COUNTRY_SELCOUNTRIES'                  => 'Zugeordnete Länder',

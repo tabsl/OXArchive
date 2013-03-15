@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: tools_list.php 17644 2009-03-27 14:00:12Z arvydas $
+ * $Id: tools_list.php 18807 2009-05-05 14:57:36Z arvydas $
  */
 
 /**
@@ -71,6 +71,7 @@ class Tools_List extends oxAdminList
             $aQErrorNumbers  = array();
 
             if ( count( $aQueries) > 0) {
+                $blStop = false;
                 $oDB = oxDb::getDb();
                 $iQueriesCounter = 0;
                 for ($i=0;$i<count( $aQueries);$i++) {
@@ -86,18 +87,30 @@ class Tools_List extends oxAdminList
                             $sUpdateSQL = $oStr->substr( $sUpdateSQL, 0, ( $oStr->strlen( $sUpdateSQL)-1));
                         }
 
-                        $oDB->execute( $sUpdateSQL);
+                        try {
+                            $oDB->execute( $sUpdateSQL );
+                        } catch ( Exception $oExcp ) {
+                            // catching exception ...
+                            $blStop = true;
+                        }
 
                         $aQAffectedRows [$iQueriesCounter] = null;
                         $aQErrorMessages[$iQueriesCounter] = null;
                         $aQErrorNumbers [$iQueriesCounter] = null;
-                        if ( $iAffectedRows = $oDB->affected_Rows() !== false) {
+
+                        $iErrorNum = $oDB->ErrorNo();
+                        if ( $iAffectedRows = $oDB->affected_Rows() !== false && $iErrorNum == 0 ) {
                             $aQAffectedRows[$iQueriesCounter] =  $iAffectedRows;
                         } else {
-                            $aQErrorMessages[$iQueriesCounter] = htmlentities($oDB->errorMsg());
-                            $aQErrorNumbers[$iQueriesCounter]  = htmlentities($oDB->errorNo());
+                            $aQErrorMessages[$iQueriesCounter] = htmlentities( $oDB->errorMsg() );
+                            $aQErrorNumbers[$iQueriesCounter]  = htmlentities( $iErrorNum );
                         }
                         $iQueriesCounter++;
+
+                        // stopping on first error..
+                        if ( $blStop ) {
+                            break;
+                        }
                     }
                 }
             }

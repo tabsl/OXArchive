@@ -361,7 +361,7 @@ INSERT INTO `oxconfig` VALUES ('8563fba1baec678e2.44233324', 'oxbaseshop', 'iExp
 INSERT INTO `oxconfig` VALUES ('8563fba1baec6acc3.69139343', 'oxbaseshop', 'iImportNrofLines', 'str', 0x07c4b1);
 INSERT INTO `oxconfig` VALUES ('8563fba1baec6cce8.28843189', 'oxbaseshop', 'iImportTickerRefresh', 'str', 0x07);
 INSERT INTO `oxconfig` VALUES ('8563fba1baec6eaf2.01241384', 'oxbaseshop', 'iCntofMails', 'str', 0xb6c7);
-INSERT INTO `oxconfig` VALUES ('8563fba1baec73b00.28734905', 'oxbaseshop', 'aOrderfolder', 'aarr', 0x4dba852e754d5681a371fff5f6192073120d7739a70fd0e39371558fad9bc9f0c3b66e727c25fa3e0a690db0d556b71d7eeed4a6886c839a435935e4b4d0efb56982c5fd5969c1137a0405d6abe69e04dbb3ef798ad83c0efe7ef0);
+INSERT INTO `oxconfig` VALUES ('8563fba1baec73b00.28734905', 'oxbaseshop', 'aOrderfolder', 'aarr', 0x4dba852e754d56360c19978b3f1481d799910f7f100e9ee73438ded0565e1a5edadd7c2846da44546f068ea2903bf5953068bc0cde9838848b7b31b27787c304bab9fe83bde678242f3645cb050632af58ea55b47cb51d45d03e8bd7cb984b2c2cd0fce8b09f09a2d796f5d3faa7f0ddb6b45d4554b6a7521f75503cd75b0c);
 INSERT INTO `oxconfig` VALUES ('8563fba1c39367724.92308656', 'oxbaseshop', 'blCheckTemplates', 'bool', 0x93ea1218);
 INSERT INTO `oxconfig` VALUES ('8563fba1c3936a472.04220012', 'oxbaseshop', 'blTemplateCaching', 'bool', 0x93ea1218);
 INSERT INTO `oxconfig` VALUES ('8563fba1c3936e4e0.64567448', 'oxbaseshop', 'blLoadFullTree', 'bool', 0x7900fdf51e);
@@ -1060,7 +1060,8 @@ CREATE TABLE `oxobject2article` (
   `OXARTICLENID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXSORT` int(5) NOT NULL default '0',
   PRIMARY KEY  (`OXID`),
-  KEY `OXARTICLENID` (`OXARTICLENID`)
+  KEY `OXARTICLENID` (`OXARTICLENID`),
+  KEY `OXOBJECTID` (`OXOBJECTID`)
 ) TYPE=MyISAM;
 
 #
@@ -1520,9 +1521,6 @@ DROP TABLE IF EXISTS `oxshops`;
 CREATE TABLE `oxshops` (
   `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
   `OXACTIVE` tinyint(1) NOT NULL default '1',
-  `OXACTIVE_1` tinyint(1) NOT NULL default '1',
-  `OXACTIVE_2` tinyint(1) NOT NULL default '1',
-  `OXACTIVE_3` tinyint(1) NOT NULL default '1',
   `OXPRODUCTIVE` tinyint(1) NOT NULL default '0',
   `OXDEFCURRENCY` char(32) NOT NULL default '',
   `OXDEFLANGUAGE` int(11) NOT NULL default '0',
@@ -1599,7 +1597,7 @@ CREATE TABLE `oxshops` (
 # Data for table `oxshops`
 #
 
-INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 1, 1, 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Shop', '', '', 'online kaufen', 'buy online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'Ihre Info E-Mail Adresse', 'Ihre Bestell Reply E-Mail Adresse', 'Ihre Bestell E-Mail Adresse', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order from OXID eShop', 'Thank you for your registration in OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', 'Tragen Sie bitte hier Ihren SMTP Server ein', '', '', 'Ihr Firmenname', 'Musterstr. 10', '79098', 'Musterstadt', 'Deutschland', 'Volksbank Musterstadt', '1234567890', '900 1234567', 'DE651234567', '', '', 'Hans', 'Mustermann', '0800 1234567', '0800 1234567', 'www.meineshopurl.com', '8a142c3e60a535f16.78077188', '', '', '', '', '', '', '', 'CE', '4.1.1', 1, 1, 0, 0);
+INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Shop', '', '', 'online kaufen', 'buy online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'Ihre Info E-Mail Adresse', 'Ihre Bestell Reply E-Mail Adresse', 'Ihre Bestell E-Mail Adresse', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order from OXID eShop', 'Thank you for your registration in OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', 'Tragen Sie bitte hier Ihren SMTP Server ein', '', '', 'Ihr Firmenname', 'Musterstr. 10', '79098', 'Musterstadt', 'Deutschland', 'Volksbank Musterstadt', '1234567890', '900 1234567', 'DE651234567', '', '', 'Hans', 'Mustermann', '0800 1234567', '0800 1234567', 'www.meineshopurl.com', '8a142c3e60a535f16.78077188', '', '', '', '', '', '', '', 'CE', '4.1.2', 1, 1, 0, 0);
 
 #
 # Table structure for table `oxstatistics`

@@ -19,13 +19,8 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxorder.php 18372 2009-04-20 13:52:44Z arvydas $
+ * $Id: oxorder.php 18978 2009-05-12 15:45:00Z arvydas $
  */
-
-/**
- * Inlcudes PDF class.
- */
-require_once oxConfig::getInstance()->getConfigParam( 'sCoreDir' ) . 'fpdf/oxpdf.php';
 
 /**
  * Order manager.

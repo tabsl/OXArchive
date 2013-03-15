@@ -68,7 +68,7 @@
                                                    [{/if}]},
                                                   [{ /foreach }] ],
                                                 '[{ $oViewConf->getAjaxLink() }]cmpid=container1&container=attribute_order&oxid='+sOxid,
-                                                { selectionMode:'single' } // ?? this does not work somehow
+                                                { selectionMode:'single' }
                                                 )
                 //
                 YAHOO.oxid.container3._lastRecord = false;

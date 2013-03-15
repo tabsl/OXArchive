@@ -19,7 +19,7 @@
  * @package modules
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: myorder.php 17924 2009-04-07 07:57:43Z sarunas $
+ * $Id: myorder.php 18978 2009-05-12 15:45:00Z arvydas $
  */
 
 /**
@@ -711,6 +711,7 @@ class MyOrder extends MyOrder_parent
 
         // initiating pdf engine
         $oPdf = oxNew( 'oxPDF' );
+        $oPdf->setPrintHeader( false );
         $oPdf->open();
 
         // adding header
@@ -729,7 +730,7 @@ class MyOrder extends MyOrder_parent
         $this->pdfFooter( $oPdf );
 
         // outputting file to browser
-        $oPdf->output( $sFilename, true );
+        $oPdf->output( $sFilename, 'I' );
     }
 
 

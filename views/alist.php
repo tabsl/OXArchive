@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: alist.php 18038 2009-04-09 12:21:40Z arvydas $
+ * $Id: alist.php 18520 2009-04-24 08:10:19Z vilma $
  */
 
 /**
@@ -415,17 +415,9 @@ class aList extends oxUBase
             }
         }
 
-        $sKeywords = parent::_prepareMetaDescription( $sKeywords, -1, true );
-        $sKeywords = $this->_removeDuplicatedWords( $sKeywords );
-
-        // removing in admin defined strings
+        $sKeywords = parent::_prepareMetaDescription( $sKeywords, -1, false );
         $aSkipTags = $this->getConfig()->getConfigParam( 'aSkipTags' );
-        if ( is_array( $aSkipTags ) && $sKeywords ) {
-            foreach ( $aSkipTags as $sSkip ) {
-                $aPattern = array( '/\W'.$sSkip.'\W/i', '/^'.$sSkip.'\W/i', '/\"'.$sSkip.'$/i' );
-                $sKeywords  = preg_replace( $aPattern, '', $sKeywords );
-            }
-        }
+        $sKeywords = $this->_removeDuplicatedWords( $sKeywords, $aSkipTags );
 
         return trim( $sKeywords );
     }

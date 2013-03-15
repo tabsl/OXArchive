@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxsearch.php 17480 2009-03-20 12:33:16Z arvydas $l
+ * $Id: oxsearch.php 18825 2009-05-06 08:05:58Z vilma $l
  */
 
 /**
@@ -202,9 +202,18 @@ class oxSearch extends oxSuperCfg
 
         // must be additional conditions in select if searching in category
         if ( $sInitialSearchCat ) {
-            $sSelect = "select {$sSelectFields} from {$sArticleTable}, {$sO2CView} as
-                        oxobject2category {$sDescTable} where oxobject2category.oxcatnid='{$sInitialSearchCat}' and
-                        oxobject2category.oxobjectid={$sArticleTable}.oxid and {$sDescJoin} ";
+            $sCatView = getViewName( 'oxcategories' );
+            $sSelectCat  = "select oxid from {$sCatView} where oxid = '{$sInitialSearchCat}' and (oxpricefrom != '0' or oxpriceto != 0)";
+            if ( $oDb->getOne($sSelectCat) ) {
+                $sSelect = "select {$sSelectFields} from {$sArticleTable} {$sDescTable} " .
+                           "where {$sArticleTable}.oxid in ( select {$sArticleTable}.oxid as id from {$sArticleTable}, {$sO2CView} as oxobject2category, {$sCatView} as oxcategories " .
+                           "where (oxobject2category.oxcatnid='{$sInitialSearchCat}' and oxobject2category.oxobjectid={$sArticleTable}.oxid) or (oxcategories.oxid='{$sInitialSearchCat}' and {$sArticleTable}.oxprice >= oxcategories.oxpricefrom and  
+                            {$sArticleTable}.oxprice <= oxcategories.oxpriceto )) and {$sDescJoin} ";
+            } else {
+                $sSelect = "select {$sSelectFields} from {$sArticleTable}, {$sO2CView} as
+                            oxobject2category {$sDescTable} where oxobject2category.oxcatnid='{$sInitialSearchCat}' and
+                            oxobject2category.oxobjectid={$sArticleTable}.oxid and {$sDescJoin} ";
+           }
         }
 
         $sSelect .= $oArticle->getSqlActiveSnippet();

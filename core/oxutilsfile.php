@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutilsfile.php 18024 2009-04-09 11:29:24Z arvydas $
+ * $Id: oxutilsfile.php 18599 2009-04-28 11:07:50Z arvydas $
  */
 
 /**
@@ -132,6 +132,7 @@ class oxUtilsFile extends oxSuperCfg
      */
     public function copyDir( $sSourceDir, $sTargetDir )
     {
+        $oStr = getStr();
         $handle = opendir( $sSourceDir );
         while ( false !== ( $file = readdir( $handle ) ) ) {
             if ( $file != '.' && $file != '..' ) {
@@ -149,7 +150,7 @@ class oxUtilsFile extends oxSuperCfg
                     $sTargetFile = $sTargetDir.'/'.$file;
 
                     //do not copy files within dyn_images
-                    if ( !strstr( $sSourceDir, 'dyn_images' ) ||  $file == 'nopic.jpg' || $file == 'nopic_ico.jpg' ) {
+                    if ( !$oStr->strstr( $sSourceDir, 'dyn_images' ) ||  $file == 'nopic.jpg' || $file == 'nopic_ico.jpg' ) {
                         @copy( $sSourceFile, $sTargetFile );
                     }
                 }

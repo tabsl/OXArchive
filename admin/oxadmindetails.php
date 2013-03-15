@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxadmindetails.php 18288 2009-04-16 14:06:18Z arvydas $
+ * $Id: oxadmindetails.php 18599 2009-04-28 11:07:50Z arvydas $
  */
 
 /**
@@ -161,7 +161,7 @@ class oxAdminDetails extends oxAdminView
                             foreach ( $aCSS as $key => $sLine ) {
                                 $sLine = trim($sLine);
 
-                                if ( $sLine[0] == '.' && !strstr( $sLine, 'default' ) ) {
+                                if ( $sLine[0] == '.' && !$oStr->strstr( $sLine, 'default' ) ) {
                                     // found one tag
                                     $sTag = $oStr->substr( $sLine, 1);
                                     $iEnd = $oStr->strpos( $sTag, ' ' );

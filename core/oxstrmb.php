@@ -99,6 +99,10 @@ class oxStrMb
      */
     public function strstr( $sHaystack, $sNeedle )
     {
+        // additional check according to bug in PHP 5.2.0 version
+        if ( !$sHaystack ) {
+        	return false;
+        }
         return mb_strstr($sHaystack, $sNeedle, false, $this->_sEncoding);
     }
 

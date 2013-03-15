@@ -24,7 +24,7 @@
             </select>
           </form>
         [{/if}]
-      </li> 
+      </li>
     </ul>
 
     [{assign var='mh' value=0 }]
@@ -33,7 +33,7 @@
         [{assign var='mh' value=$mh+1 }]
         [{assign var='mn' value=0 }]
         <h2>
-            [{if $menuholder->getAttribute('url')}]<a href="[{ $menuholder->getAttribute('url')}]" target="basefrm" >[{/if}]
+            [{if $menuholder->getAttribute('url')}]<a href="[{ $shop->selflink }]?cl=navigation&amp;fnc=exturl&amp;url=[{ $menuholder->getAttribute('url')|escape:'url'}]" target="basefrm" >[{/if}]
             [{ oxmultilang ident=$menuholder->getAttribute('name')|default:$menuholder->getAttribute('id') noerror=true }]
             [{if $menuholder->getAttribute('url')}]</a>[{/if}]
         </h2>
@@ -66,7 +66,7 @@
                         [{/foreach}]
                     </ul>
                     [{/if}]
-                </li> 
+                </li>
             [{/if}]
             [{/foreach}]
           [{/strip}]
@@ -165,7 +165,7 @@
             }
         }
     }
-    
+
     function _navExtExp(mnid){
         var _mnli = document.getElementById(mnid);
         if(_mnli) {
@@ -175,7 +175,7 @@
             }
         }
     }
-    
+
     //-->
     </script>
 </body>

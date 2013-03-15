@@ -38,13 +38,6 @@ class oxSimpleVariant extends oxI18n
     protected $_blUseLazyLoading = true;
 
     /**
-     * Variant VAT
-     *
-     * @var double
-     */
-    protected $_dVat = null;
-
-    /**
      * Variant price
      *
      * @var oxPrice
@@ -96,8 +89,28 @@ class oxSimpleVariant extends oxI18n
         if (!$dPrice) {
             $dPrice = $this->_getParentPrice();
         }
+
         $this->_oPrice->setPrice($dPrice, $this->_dVat);
+
+        $this->_applyParentVat($this->_oPrice);
+
         return $this->_oPrice;
+    }
+
+    /**
+     * apply parent article VAT to given price
+     * 
+     * @param oxPrice $oPrice
+     * @return null
+     */
+    protected function _applyParentVat($oPrice)
+    {
+        $oParent = $this->getParent();
+        if (!($oParent instanceof oxarticle)) {
+            return;
+        }
+
+        $oParent->applyVats($oPrice);
     }
 
     /**
@@ -124,18 +137,6 @@ class oxSimpleVariant extends oxI18n
         } else {
             return null;
         }
-    }
-
-    /**
-     * Sets variant VAT
-     *
-     * @param double $dVat Custom VAT
-     *
-     * @return null
-     */
-    public function setVat($dVat)
-    {
-        $this->_dVat = $dVat;
     }
 
     /**

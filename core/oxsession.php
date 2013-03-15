@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxsession.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxsession.php 18599 2009-04-28 11:07:50Z arvydas $
  */
 
 
@@ -399,8 +399,8 @@ class oxSession extends oxSuperCfg
         }
 
         $blUseCookies = $myConfig->getConfigParam( 'blSessionUseCookies' ) || $this->isAdmin();
-
-        $sSeparator = strstr($url, "?") !== false ?  "&amp;" : "?";
+        $oStr = getStr();
+        $sSeparator = $oStr->strstr($url, "?") !== false ?  "&amp;" : "?";
 
         if ($blUseCookies && $this->_getCookieSid()) {
             //cookies are supported so we do nothing
@@ -556,7 +556,7 @@ class oxSession extends oxSuperCfg
     }
 
     /**
-     * Checks for mandatory cookie support. Return true if the check is succseful. 
+     * Checks for mandatory cookie support. Return true if the check is succseful.
      * False means some problem occured - user has no cookies, but they are required.
      *
      * @param string $sClass    class name

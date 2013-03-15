@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: review.php 18044 2009-04-09 12:25:33Z arvydas $
+ * $Id: review.php 18956 2009-05-12 08:55:26Z vilma $
  */
 
 /**
@@ -272,10 +272,6 @@ class Review extends oxUBase
      */
     protected function _allowDirectReview( $sUserId )
     {
-        if ( $sUserId == 'oxdefaultadmin' ) {
-            return false;
-        }
-
         $oUser = oxNew( 'oxuser' );
         if ( !$oUser->exists( $sUserId ) ) {
             return false;
@@ -294,7 +290,14 @@ class Review extends oxUBase
         if ( $this->_sReviewUserId === null ) {
             $this->_sReviewUserId = false;
 
-            $sReviewUserId = oxConfig::getParameter( 'reviewuserid' );
+            //review user from order email
+            if ( $sReviewUser = oxConfig::getParameter( 'reviewuser' ) ) {
+            	$oUser = oxNew( 'oxuser' );
+                $sReviewUserId = $oUser->getReviewUserId( $sReviewUser );
+            }
+            if ( !$sReviewUserId ) {
+                $sReviewUserId = oxConfig::getParameter( 'reviewuserid' );
+            }
             $oUser = $this->getUser();
             if (!$sReviewUserId && $oUser) {
                 $sReviewUserId = $oUser->getId();

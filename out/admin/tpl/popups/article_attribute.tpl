@@ -73,7 +73,7 @@
                 failure: YAHOO.oxid.container2.onFailure,
                 scope:   YAHOO.oxid.container2
             };
-            YAHOO.util.Connect.asyncRequest( 'GET', '[{ $oViewConf->getAjaxLink() }]&cmpid=container2&container=article_attribute&fnc=saveAttributeValue&oxid=[{ $oxid }]&attr_value='+$('attr_value').value+'&attr_oxid='+$('attr_oxid').value, callback );
+            YAHOO.util.Connect.asyncRequest( 'GET', '[{ $oViewConf->getAjaxLink() }]&cmpid=container2&container=article_attribute&fnc=saveAttributeValue&oxid=[{ $oxid }]&attr_value=' + encodeURIComponent( $('attr_value').value ) + '&attr_oxid=' + encodeURIComponent( $('attr_oxid').value ), callback );
 
         }
         // subscribint event listeners on buttons

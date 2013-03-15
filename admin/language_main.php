@@ -137,8 +137,17 @@ class Language_Main extends oxAdminDetails
         // if adding new language, setting lang id to abbervation
         if ( $sOxId == -1 ) {
             $sOxId = $aParams['abbr'];
+
+            if ( $this->_checkLangExists( $sOxId ) ) {
+                //language already exist, showing error and skipping saving
+                $oEx = new oxExceptionToDisplay();
+                $oEx->setMessage( 'LANGUAGE_ALREADYEXISTS_ERROR' );
+                oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
+                return;
+            }
+
             $this->_aLangData['params'][$sOxId]['baseId'] = $this->_getAvailableLangBaseId();
-             oxSession::setVar( "saved_oxid", $sOxId);
+            oxSession::setVar( "saved_oxid", $sOxId);
         }
 
         //updating language description
@@ -348,6 +357,10 @@ class Language_Main extends oxAdminDetails
         $iBaseId = $this->_aLangData['params'][$sOxId]['baseId'];
 
         $sDir = dirname( $myConfig->getLanguagePath( 'lang.php', 0, $iBaseId ) );
+            if ( !$sDir ) {
+                //additional check for former templates
+                $sDir = dirname( $myConfig->getLanguagePath( 'lang.txt', 0, $iBaseId ) );
+            }
 
         if ( empty($sDir) ) {
             $oEx = new oxExceptionToDisplay();
@@ -391,6 +404,25 @@ class Language_Main extends oxAdminDetails
             oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
         }
 
+    }
+
+    /**
+     * Check if language already exists
+     *
+     * @param string $sAbbr language abbervation
+
+     * @return bool
+     */
+    protected function _checkLangExists( $sAbbr )
+    {
+        $myConfig = $this->getConfig();
+        $aAbbrs = array_keys($this->_aLangData['lang']);
+
+        if ( in_array( $sAbbr, $aAbbrs ) ) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

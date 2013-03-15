@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutils.php 18345 2009-04-20 08:39:01Z rimvydas.paskevicius $
+ * $Id: oxutils.php 18582 2009-04-27 15:00:06Z arvydas $
  */
 
 /**
@@ -54,6 +54,15 @@ class oxUtils extends oxSuperCfg
      * @var string
      */
     protected $_sEmailTpl = "^([-!#\$%&'*+./0-9=?A-Z^_`a-z{|}~\177])+@([-!#\$%&'*+/0-9=?A-Z^_`a-z{|}~\177]+\\.)+[a-zA-Z]{2,6}\$";
+
+    /**
+     * Some files, like object structure should not be deleted, because thay are changed rarely
+     * and each regeneration eats additional page load time. This array keeps patterns of file
+     * names which should not be deleted on regular cache cleanup
+     *
+     * @var string
+     */
+    protected $_sPermanentCachePattern = "/c_fieldnames_/";
 
     /**
      * resturns a single instance of this class
@@ -529,20 +538,20 @@ class oxUtils extends oxSuperCfg
     }
 
     /**
-     * Resets oxFileCache and deletes all cache files
+     * Removes most files stored in cache (default 'tmp') folder. Some files
+     * e.g. table fiels names description, are left. Excluded cache file name
+     * patterns are defined in oxutils::_sPermanentCachePattern parameter
      *
      * @return null
-     *
      */
     public function oxResetFileCache()
     {
-        $aPathes = glob( $this->_getCacheFilePath( '*' ) );
+        $aPathes = glob( $this->_getCacheFilePath( null, true ) . '*' );
         if ( is_array( $aPathes ) ) {
+            // delete all the files, except cached tables fieldnames
+            $aPathes = preg_grep( $this->_sPermanentCachePattern, $aPathes, PREG_GREP_INVERT );
             foreach ( $aPathes as $sFilename ) {
-                // delete all the files, except cached tables fieldnames
-                if ( strpos($sFilename, "c_fieldnames_") === false ) {
-                    @unlink( $sFilename );
-                }
+                @unlink( $sFilename );
             }
         }
     }
@@ -1060,17 +1069,19 @@ class oxUtils extends oxSuperCfg
      * Returns full path (including file name) to cache file
      *
      * @param string $sCacheName cache file name
+     * @param bool   $blPathOnly if TRUE, name parameter will be ignored and only cache folder will be returned (default FALSE)
      *
      * @return string
      */
-    protected function _getCacheFilePath( $sCacheName )
+    protected function _getCacheFilePath( $sCacheName, $blPathOnly = false )
     {
         $sVersionPrefix = "";
 
 
             $sVersionPrefix = 'pe';
 
-        return $this->getConfig()->getConfigParam( 'sCompileDir' ) . "/ox{$sVersionPrefix}c_{$sCacheName}.txt";
+        $sPath = $this->getConfig()->getConfigParam( 'sCompileDir' );
+        return $blPathOnly ? "{$sPath}/" : "{$sPath}/ox{$sVersionPrefix}c_{$sCacheName}.txt";
     }
 
     /**

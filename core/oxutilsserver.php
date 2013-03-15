@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutilsserver.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxutilsserver.php 18948 2009-05-12 07:36:12Z arvydas $
  */
 
 /**
@@ -70,10 +70,11 @@ class oxUtilsServer extends oxSuperCfg
      * @param string $sValue  value
      * @param int    $iExpire expire time
      * @param string $sPath   The path on the server in which the cookie will be available on
+     * @param string $sDomain The domain that the cookie is available.
      *
      * @return bool
      */
-    public function setOxCookie( $sName, $sValue = "", $iExpire = 0, $sPath = '/' )
+    public function setOxCookie( $sName, $sValue = "", $iExpire = 0, $sPath = '/', $sDomain = null )
     {
         //TODO: since setcookie takes more than just 4 params..
         // would be nice to have it sending through https only, if in https mode
@@ -84,11 +85,46 @@ class oxUtilsServer extends oxSuperCfg
             // do NOT set cookies in php unit.
             return;
         }
-        if ( $sPath !== null ) {
-            return setcookie( $sName, $sValue, $iExpire, $sPath );
-        } else {
-            return setcookie( $sName, $sValue, $iExpire );
+
+        return setcookie( $sName, $sValue, $iExpire, $this->_getCookiePath( $sPath ), $this->_getCookieDomain( $sDomain ) );
+    }
+
+    /**
+     * Returns cookie path. If user did not set path, or set it to null, according to php
+     * documentation empty string will be returned, marking to skip argument
+     *
+     * @param string $sPath user defined cookie path
+     *
+     * @return string
+     */
+    protected function _getCookiePath( $sPath )
+    {
+        // from php doc: .. You may also replace an argument with an empty string ("") in order to skip that argument..
+        return $sPath ? $sPath : "";
+    }
+
+    /**
+     * Returns domain that cookie available. If user did not set domain, or set it to null, according to php
+     * documentation empty string will be returned, marking to skip argument. Additionally domain can be defined
+     * in config.inc.php file as "sCookieDomain" param. Please check cookie documentation for more details about
+     * current parameter
+     *
+     * @param string $sDomain the domain that the cookie is available.
+     *
+     * @return string
+     */
+    protected function _getCookieDomain( $sDomain )
+    {
+        $sDomain = $sDomain ? $sDomain : "";
+
+        // on special cases, like separate domain for SSL, cookies must be defined on domain specific path
+        // please have a look at
+        if ( !$sDomain ) {
+            $myConfig = $this->getConfig();
+            $sCookieDomain = $myConfig->getConfigParam( 'sCookieDomain' );
+            $sDomain = $sCookieDomain ? $sCookieDomain : "";
         }
+        return $sDomain;
     }
 
     /**

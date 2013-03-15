@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxubase.php 18438 2009-04-22 08:36:17Z vilma $
+ * $Id: oxubase.php 18520 2009-04-24 08:10:19Z vilma $
  */
 
 /**
@@ -1381,11 +1381,12 @@ class oxUBase extends oxView
      */
     protected function _prepareMetaKeyword( $sKeywords )
     {
-        $sString = $this->_prepareMetaDescription( $sKeywords, -1, true );
-        $sString = $this->_removeDuplicatedWords( $sString );
-        // removing in admin defined strings
+        $sString = $this->_prepareMetaDescription( $sKeywords, -1, false );
         $aSkipTags = $this->getConfig()->getConfigParam( 'aSkipTags' );
-        if ( is_array( $aSkipTags ) && $sString ) {
+        $sString = $this->_removeDuplicatedWords( $sString, $aSkipTags );
+        // removing in admin defined strings
+        
+        /*if ( is_array( $aSkipTags ) && $sString ) {
             $oStr = getStr();
             foreach ( $aSkipTags as $sSkip ) {
                 //$aPattern = array( '/\W'.$sSkip.'\W/iu', '/^'.$sSkip.'\W/iu', '/\"'.$sSkip.'$/iu' );
@@ -1393,18 +1394,19 @@ class oxUBase extends oxView
                 $aPattern = array( '/\s+'.$sSkip.'\,/i', '/^'.$sSkip.',\s+/i', '/\",\s+'.$sSkip.'$/i' );
                 $sString  = $oStr->preg_replace( $aPattern, '', $sString );
             }
-        }
+        }*/
         return trim( $sString );
     }
 
     /**
      * Removes duplicated words (not case sensitive)
      *
-     * @param mixed $aInput array of string or string
+     * @param mixed $aInput    array of string or string
+     * @param array $aSkipTags in admin defined strings
      *
      * @return string of words seperated by comma
      */
-    protected function _removeDuplicatedWords( $aInput )
+    protected function _removeDuplicatedWords( $aInput, $aSkipTags = array() )
     {
         $oStr = getStr();
         if ( is_array( $aInput ) ) {
@@ -1413,10 +1415,19 @@ class oxUBase extends oxView
             //is String
             $aStrings = $oStr->preg_split( "/[\s,]+/", $aInput );
         }
-        
+
+        if ( $sCount = count( $aSkipTags ) ) {
+            for ( $iNum = 0; $iNum < $sCount; $iNum++ ) {
+                $aSkipTags[$iNum] = $oStr->strtolower( $aSkipTags[$iNum] );
+            }
+        }
         $sCount = count($aStrings);
         for ( $iNum = 0; $iNum < $sCount; $iNum++ ) {
             $aStrings[$iNum] = $oStr->strtolower( $aStrings[$iNum] );
+            // removing in admin defined strings
+            if ( in_array( $aStrings[$iNum], $aSkipTags ) ) {
+            	unset( $aStrings[$iNum] );
+            }
         }
 
         // duplicates

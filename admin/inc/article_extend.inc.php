@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_extend.inc.php 17958 2009-04-07 14:29:36Z rimvydas.paskevicius $
+ * $Id: article_extend.inc.php 18928 2009-05-11 12:22:51Z vilma $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -60,7 +60,7 @@ class ajaxComponent extends ajaxListComponent
         } else {
             $sQAdd  = " from $sCategoriesTable where $sCategoriesTable.oxid not in ( ";
             $sQAdd .= " select $sCategoriesTable.oxid from $sO2CView left join $sCategoriesTable on $sCategoriesTable.oxid=$sO2CView.oxcatnid ";
-            $sQAdd .= " where $sO2CView.oxobjectid = '$sSynchOxid' and $sCategoriesTable.oxid is not null ) ";
+            $sQAdd .= " where $sO2CView.oxobjectid = '$sSynchOxid' and $sCategoriesTable.oxid is not null ) and $sCategoriesTable.oxpriceto = '0'";
         }
 
         return $sQAdd;

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerpgenimport.php 18088 2009-04-10 13:10:09Z rimvydas.paskevicius $
+ * $Id: oxerpgenimport.php 18930 2009-05-11 13:37:34Z rimvydas.paskevicius $
  */
 
 /**
@@ -150,10 +150,12 @@ class oxErpGenImport extends oxErpCsv
     {
         $aRet = array();
         $iIndex = 0;
+
         foreach ( $this->_aCsvFileFieldsOrder as $sValue ) {
             if ( !empty($sValue) ) {
-                $aRet[$sValue] = $aData[$iIndex++];
+                $aRet[$sValue] = $aData[$iIndex];
             }
+            $iIndex++;
         }
 
         return $aRet;

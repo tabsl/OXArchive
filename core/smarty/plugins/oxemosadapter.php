@@ -1,5 +1,5 @@
 <?php
-/*******************************************************************************
+/**
  * Copyright (c) 2004 - 2007 ECONDA GmbH Karlsruhe
  * All rights reserved.
  *
@@ -34,7 +34,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  $Id: oxemosadapter.php 17246 2009-03-16 15:18:58Z arvydas $
+ *  $Id: oxemosadapter.php 18483 2009-04-22 14:53:46Z arvydas $
  */
 
 
@@ -137,7 +137,7 @@ class oxEmosAdapter extends oxSuperCfg
     /**
      * Returns new emos controller object
      *
-     * @return
+     * @return emos
      */
     public function getEmos()
     {
@@ -162,6 +162,23 @@ class oxEmosAdapter extends oxSuperCfg
     }
 
     /**
+     * Returns formatted product title
+     *
+     * @param oxarticle $oProduct product which title must be prepared
+     *
+     * @return string
+     */
+    protected function _prepareProductTitle( $oProduct )
+    {
+        $sTitle = $oProduct->oxarticles__oxtitle->value;
+        if ( $oProduct->oxarticles__oxvarselect->value ) {
+            $sTitle .= " ".$oProduct->oxarticles__oxvarselect->value;
+        }
+
+        return $sTitle;
+    }
+
+    /**
      * Converts a oxarticle object to an EMOS_Item
      *
      * @param oxarticle $oProduct article to convert
@@ -174,10 +191,7 @@ class oxEmosAdapter extends oxSuperCfg
     {
         $oItem = $this->_getNewEmosItem();
         $oItem->productID   = ( isset( $oProduct->oxarticles__oxartnum->value ) && $oProduct->oxarticles__oxartnum->value ) ? $oProduct->oxarticles__oxartnum->value : $oProduct->getId();
-        $oItem->productName = $oProduct->oxarticles__oxtitle->value;
-        if ( $oProduct->oxarticles__oxvarselect->value ) {
-            $oItem->productName .= " ".$oProduct->oxarticles__oxvarselect->value;
-        }
+        $oItem->productName = $this->_prepareProductTitle( $oProduct );
 
         // #810A
         $oCur = $this->getConfig()->getActShopCurrencyObject();
@@ -192,7 +206,7 @@ class oxEmosAdapter extends oxSuperCfg
     /**
      * Returns page title
      *
-     * @param array $params parameters where product info is kept
+     * @param array $aParams parameters where product info is kept
      *
      * @return string
      */
@@ -228,7 +242,7 @@ class oxEmosAdapter extends oxSuperCfg
         if ( $this->_sEmosCatPath === null ) {
             $sCatPath = '';
             if ( ( $oActCatPath = $this->getConfig()->getActiveView()->getCatTreePath() ) ) {
-                foreach( $oActCatPath as $oCat ) {
+                foreach ( $oActCatPath as $oCat ) {
                     if ( $sCatPath ) {
                         $sCatPath .= '/';
                     }
@@ -310,7 +324,7 @@ class oxEmosAdapter extends oxSuperCfg
     /**
      * Builds JS code for current view tracking functionality
      *
-     * @param array  $params  plugin parameters
+     * @param array  $aParams plugin parameters
      * @param smarty $oSmarty template engine object
      *
      * @return string
@@ -414,11 +428,8 @@ class oxEmosAdapter extends oxSuperCfg
                 if ( $oProduct ) {
                     //$oEmos->addContent( 'Shop/'.$this->_getEmosCatPath().'/'.strip_tags( $oProduct->oxarticles__oxtitle->value ) );
                     //$sPath = $this->_getDeepestCategoryPath( $oProduct );
-                    $sPath = $this->_getEmosCatPath();
-                    $sTitle = $oProduct->oxarticles__oxtitle->value;
-                    if ( $oProduct->oxarticles__oxvarselect->value ) {
-                        $sTitle .= " ".$oProduct->oxarticles__oxvarselect->value;
-                    }
+                    $sPath  = $this->_getEmosCatPath();
+                    $sTitle = $this->_prepareProductTitle( $oProduct );
                     $oEmos->addContent( "Shop/{$sPath}/".strip_tags( $sTitle ) );
                     $oEmos->addDetailView( $this->_convProd2EmosItem( $oProduct, $sPath, 1 ) );
                 }
@@ -439,7 +450,7 @@ class oxEmosAdapter extends oxSuperCfg
                 $oEmos->addContent( 'Service/Wunschzettel' );
                 break;
             case 'contact':
-                if ( !$oCurrView->getContactSendStatus() ){
+                if ( !$oCurrView->getContactSendStatus() ) {
                     $oEmos->addContent( 'Service/Kontakt/Form' );
                     $oEmos->addContact( 'Kontakt' );
                 } else {
@@ -492,7 +503,7 @@ class oxEmosAdapter extends oxSuperCfg
                     } else {
                         $oEmos->addContent( 'Login/Formular/Logout' );
                     }
-                }else{
+                } else {
                     $oEmos->addContent( 'Login/Formular/Login' );
                 }
                 break;
@@ -547,11 +558,11 @@ class oxEmosAdapter extends oxSuperCfg
                 $iSuccess = oxConfig::getParameter( 'success' );
 
                 if ( $iError && $iError < 0 ) {
-                    $oEmos->addRegister( $oUser ? $oUser->getId() : 'NULL' , abs( $iError ) );
+                    $oEmos->addRegister( $oUser ? $oUser->getId() : 'NULL', abs( $iError ) );
                 }
 
                 if ( $iSuccess && $iSuccess > 0 && $oUser ) {
-                    $oEmos->addRegister( $oUser->getId() , 0 );
+                    $oEmos->addRegister( $oUser->getId(), 0 );
                 }
 
                 break;
@@ -580,10 +591,9 @@ class oxEmosAdapter extends oxSuperCfg
                             $sPath = $this->_getBasketProductCatPath( $oProduct );
                             $oEmos->removeFromBasket( $this->_convProd2EmosItem( $oProduct, $sPath, ( $aItemData['oldam'] - $aItemData['am'] ) ) );
                             $oEmos->appendPreScript($aItemData['oldam'].'->'.$aItemData['am'].':'.$oProduct->load( $aItemData['aid']));
-                        }
-                        else if( $aItemData['oldam'] < $aItemData['am'] && $oProduct->load( $aItemData['aid'] )) {
+                        } elseif ( $aItemData['oldam'] < $aItemData['am'] && $oProduct->load( $aItemData['aid'] )) {
                             $sPath = $this->_getBasketProductCatPath( $oProduct );
-                            $oEmos->addToBasket( $this->_convProd2EmosItem( $oProduct, $sPath , $aItemData['am'] -  $aItemData['oldam']) );
+                            $oEmos->addToBasket( $this->_convProd2EmosItem( $oProduct, $sPath, $aItemData['am'] -  $aItemData['oldam']) );
                         }
                     }
                     break;
@@ -595,7 +605,7 @@ class oxEmosAdapter extends oxSuperCfg
                             //ECONDA FIX always use the main category
                             //$sPath = $this->_getDeepestCategoryPath( $oProduct );
                             $sPath = $this->_getBasketProductCatPath( $oProduct );
-                            $oEmos->addToBasket( $this->_convProd2EmosItem( $oProduct, $sPath , $aItemData['am'] ) );
+                            $oEmos->addToBasket( $this->_convProd2EmosItem( $oProduct, $sPath, $aItemData['am'] ) );
                         }
                     }
                     break;

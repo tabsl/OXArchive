@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxuser.php 18025 2009-04-09 11:30:19Z arvydas $
+ * $Id: oxuser.php 18956 2009-05-12 08:55:26Z vilma $
  */
 
 /**
@@ -2207,5 +2207,31 @@ class oxUser extends oxBase
     {
         $sPassword= "openid_".substr( oxUtilsObject::getInstance()->generateUId(), 0, $iLength);
         return $sPassword;
+    }
+
+    /**
+     * Generates user password and username hash for review
+     *
+     * @param string $sUserId userid
+     *
+     * @return string
+     */
+    public function getReviewUserHash( $sUserId )
+    {
+        $sReviewUserHash = oxDb::getDb()->getOne('select md5(concat("oxid", oxpassword, oxusername )) from oxuser where oxid = "'.$sUserId.'"');
+        return $sReviewUserHash;
+    }
+
+    /**
+     * Gets from review user hash user id
+     *
+     * @param string $sReviewUserHash review user hash
+     *
+     * @return string
+     */
+    public function getReviewUserId( $sReviewUserHash )
+    {
+        $sUserId = oxDb::getDb()->getOne('select oxid from oxuser where md5(concat("oxid", oxpassword, oxusername )) = "'.$sReviewUserHash.'"');
+        return $sUserId;
     }
 }

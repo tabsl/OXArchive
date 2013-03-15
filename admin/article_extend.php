@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_extend.php 17479 2009-03-20 12:32:53Z arvydas $
+ * $Id: article_extend.php 18910 2009-05-08 14:24:06Z vilma $
  */
 
 /**
@@ -46,6 +46,8 @@ class Article_Extend extends oxAdminDetails
 
         $soxId = oxConfig::getParameter( 'oxid' );
         $sCatView = getViewName( 'oxcategories' );
+
+        $sChosenArtCat = $this->_getCategoryTree( "artcattree", oxConfig::getParameter( "artcat"));
 
         // all categories
         if ( $soxId != "-1" && isset( $soxId ) ) { // load object
@@ -77,71 +79,44 @@ class Article_Extend extends oxAdminDetails
             $sO2CView = getViewName('oxobject2category');
         }
 
-        if ( oxConfig::getParameter("aoc") ) {
-
-            $aColumns = array();
-            include_once 'inc/'.strtolower(__CLASS__).'.inc.php';
-            $this->_aViewData['oxajax'] = $aColumns;
-
-            return "popups/article_extend.tpl";
-        }
-
 
             $oDB = oxDb::GetDB();
             $myConfig = $this->getConfig();
             $suffix = ($this->_iEditLang)?"_$this->_iEditLang":"";
 
-            $aList = array();
-
-            $iArtCnt = $myConfig->getParameter( "iArtCnt");
-
-            // only load them when DB is small as it anyway makes no sense to display 1000 of e.g. 100.000
-            //if( $iArtCnt < $myConfig->getConfigParam( 'iMaxArticles' ) ) {
-
-            $oArt = new stdClass();
-            $oArt->oxarticles__oxid = new oxField("");
-            $oArt->oxarticles__oxartnum = new oxField("");
-            $oArt->oxarticles__oxtitle = new oxField(" -- ");
-            $aList[] = $oArt;
-
+            $sArticleTable = getViewName( 'oxarticles' );
+            $sSelect  = "select $sArticleTable.oxtitle$suffix, $sArticleTable.oxartnum, $sArticleTable.oxvarselect$suffix from $sArticleTable where 1 ";
             // #546
-            $blHideVariants = !$myConfig->getConfigParam( 'blVariantsSelection' );
-            $sHideVariants  = $blHideVariants?" where oxarticles.oxparentid = '' and ":" where ";
-            // FS#1780 V
-            $sHideItself    = "oxarticles.oxid != '$soxId' and ";
+            $sSelect .= $myConfig->getConfigParam( 'blVariantsSelection' )?'':" and $sArticleTable.oxparentid = '' ";
+            $sSelect .= " and $sArticleTable.oxid = '".$oArticle->oxarticles__oxbundleid->value."'";
 
-            $sSelect =  "select oxarticles.oxid, oxarticles.oxartnum, oxarticles.oxtitle$suffix, oxarticles.oxvarselect$suffix from oxarticles $sHideVariants ";
-            $sSelect .= "$sHideItself oxarticles.oxshopid = '".$myConfig->getShopId()."' order by oxartnum, oxtitle";
             $rs = $oDB->Execute( $sSelect);
             if ($rs != false && $rs->RecordCount() > 0) {
                 while (!$rs->EOF) {
-                    $oArt = new stdClass();    // #663
-                    $oArt->oxarticles__oxid = new oxField($rs->fields[0]);
-                    $oArt->oxarticles__oxnid = new oxField($rs->fields[0]);
-                    $oArt->oxarticles__oxartnum = new oxField($rs->fields[1]);
-                    $oArt->oxarticles__oxtitle = new oxField($rs->fields[2]);
-                    if ( !$oArt->oxarticles__oxtitle->value && !$blHideVariants)
-                        $oArt->oxarticles__oxtitle = new oxField($rs->fields[3]);
-                    if( $oArt->oxarticles__oxid->value == $oArticle->oxarticles__oxbundleid->value) {
-                        $oArt->selected = 1;
-                    } else {
-                        $oArt->selected = 0;
-                    }
-                    $aList[] = $oArt;
+                    $sArtNum = new oxField($rs->fields[1]);
+                    $sArtTitle = new oxField($rs->fields[0]." ".$rs->fields[2]);
                     $rs->MoveNext();
                 }
             }
-            /*
-            }
-            else
-            {
-                $oArt = new stdClass();
-                $oArt->oxarticles__oxid = new oxField("");
-                $oArt->oxarticles__oxartnum = new oxField("");
-                $oArt->oxarticles__oxtitle = new oxField(" not available,too many Articles ");
-                $aList[] = $oArt;
-            }*/
-            $this->_aViewData["arttree"] =  $aList;
+            $this->_aViewData['bundle_artnum'] = $sArtNum;
+            $this->_aViewData['bundle_title'] = $sArtTitle;
+
+
+        $aColumns = array();
+        $iAoc = oxConfig::getParameter("aoc");
+        if ( $iAoc == 1 ) {
+
+            include_once 'inc/'.strtolower(__CLASS__).'.inc.php';
+            $this->_aViewData['oxajax'] = $aColumns;
+
+            return "popups/article_extend.tpl";
+        } elseif ( $iAoc == 2 ) {
+
+            include_once 'inc/article_bundle.inc.php';
+            $this->_aViewData['oxajax'] = $aColumns;
+
+            return "popups/article_bundle.tpl";
+        }
 
         //load media files
         $this->_aViewData['aMediaUrls'] = $oArticle->getMediaUrls();

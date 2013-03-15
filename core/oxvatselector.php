@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxvatselector.php 17248 2009-03-16 15:22:07Z arvydas $
+ * $Id: oxvatselector.php 18924 2009-05-11 11:40:10Z sarunas $
  */
 
 /**
@@ -29,6 +29,28 @@
  */
 class oxVatSelector extends oxSuperCfg
 {
+
+
+    /**
+     * oxVatSelector instance
+     *
+     * @var oxVatSelector
+     */
+    protected static $_instance = null;
+
+    /**
+     * Returns singleton oxVatSelector object instance or create new if needed
+     *
+     * @return oxVatSelector
+     */
+    public static function getInstance()
+    {
+        if ( !self::$_instance instanceof oxVatSelector ) {
+                self::$_instance = oxNew('oxVatSelector');
+        }
+        return self::$_instance;
+    }
+
     /**
      * keeps loaded user Vats for later reusage
      *
@@ -174,4 +196,20 @@ class oxVatSelector extends oxSuperCfg
     {
         return $this->getArticleVat( $oArticle );
     }
+
+    /**
+     * get article user vat
+     *
+     * @param oxArticle article object
+     *
+     * @return double | false
+     */
+    public function getArticleUserVat(oxArticle $oArticle)
+    {
+        if ( ( $oUser = $oArticle->getArticleUser() ) ) {
+            return $this->getUserVat( $oUser );
+        }
+        return false;
+    }
+
 }

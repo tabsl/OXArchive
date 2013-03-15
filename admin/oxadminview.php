@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxadminview.php 18346 2009-04-20 08:39:52Z rimvydas.paskevicius $
+ * $Id: oxadminview.php 18853 2009-05-07 09:05:26Z arvydas $
  */
 
 /**
@@ -558,5 +558,17 @@ class oxAdminView extends oxView
         // resetting tag cache
         $oTagCloud = oxNew('oxtagcloud');
         $oTagCloud->resetTagCache();
+    }
+
+    /**
+     * Returns id which is used for product preview in shop during administration
+     *
+     * @return string
+     */
+    public function getPreviewId()
+    {
+        $sAdminSid = oxUtilsServer::getInstance()->getOxCookie( 'admin_sid' );
+        $oUser = $this->getUser();
+        return md5( $sAdminSid . $oUser->getId() . $oUser->oxuser__oxpassword->value . $oUser->oxuser__oxrights->value );
     }
 }

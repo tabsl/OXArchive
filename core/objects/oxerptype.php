@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype.php 18035 2009-04-09 12:18:28Z arvydas $
+ * $Id: oxerptype.php 18599 2009-04-28 11:07:50Z arvydas $
  */
 
 /**
@@ -228,7 +228,8 @@ class oxERPType
         }
 
         if ( $this->_blRestrictedByShopId ) {
-            if ( strstr( $sWhere, 'where')) {
+            $oStr = getStr();
+            if ( $oStr->strstr( $sWhere, 'where')) {
                 $sWhere .= ' and ';
             } else {
                 $sWhere .= ' where ';

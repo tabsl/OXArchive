@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_attribute.inc.php 17244 2009-03-16 15:17:48Z arvydas $
+ * $Id: article_attribute.inc.php 18560 2009-04-27 08:02:48Z arvydas $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -114,9 +114,12 @@ class ajaxComponent extends ajaxListComponent
     public function saveAttributeValue ()
     {
 
+        $soxId = oxConfig::getParameter( "oxid");
         $this->sAttributeOXID = oxConfig::getParameter( "attr_oxid");
         $sAttributeValue      = oxConfig::getParameter( "attr_value");
-        $soxId                = oxConfig::getParameter( "oxid");
+        if (!$this->getConfig()->isUtf()) {
+            $sAttributeValue = iconv( 'UTF-8', oxLang::getInstance()->translateString("charset"), $sAttributeValue );
+        }
 
         $oArticle = oxNew( "oxarticle" );
         if ( $oArticle->load( $soxId ) ) {

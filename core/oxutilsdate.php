@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutilsdate.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxutilsdate.php 18599 2009-04-28 11:07:50Z arvydas $
  */
 
 /**
@@ -72,7 +72,8 @@ class oxUtilsDate extends oxSuperCfg
             return null;
         }
 
-        if ( $blForceEnglishRet && strstr( $sDBDateIn, '-' ) ) {
+        $oStr = getStr();
+        if ( $blForceEnglishRet && $oStr->strstr( $sDBDateIn, '-' ) ) {
             return $sDBDateIn;
         }
 
@@ -97,7 +98,7 @@ class oxUtilsDate extends oxSuperCfg
         $aData = split( ' ', trim( $sDBDateIn ) );
 
         // preparing time array
-        $sTime = ( isset( $aData[1] ) && strstr( $aData[1], ':' ) )?$aData[1]:'';
+        $sTime = ( isset( $aData[1] ) && $oStr->strstr( $aData[1], ':' ) )?$aData[1]:'';
         $aTime = $sTime?explode( ':', $sTime ):array( 0, 0, 0 );
 
         // preparind date array
@@ -114,7 +115,7 @@ class oxUtilsDate extends oxSuperCfg
         if ( count( $aDate ) != 3 ) {
             return date( $sFormat );
         } else {
-            return $this->_processDate( $aTime, $aDate, strstr( $sDate, '.' ), $sFormat );
+            return $this->_processDate( $aTime, $aDate, $oStr->strstr( $sDate, '.' ), $sFormat );
         }
     }
 

@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: dynexportbase.php 17644 2009-03-27 14:00:12Z arvydas $
+ * $Id: dynexportbase.php 18628 2009-04-28 14:29:39Z arvydas $
  */
 
 /**
@@ -540,16 +540,21 @@ class DynExportBase extends oxAdminDetails
      */
     private function _generateTableCharSet($sMysqlVersion)
     {
-
-        $oDB = oxDb::getDb();
+        $oDB = oxDb::getDb(true);
 
         //if MySQL >= 4.1.0 set charsets and collations
         if (version_compare($sMysqlVersion, '4.1.0', '>=')>0) {
-                $rs = $oDB->execute("SHOW FULL COLUMNS FROM `oxarticles`");
-                $sMysqlCollation = $rs->fields[2];
-            $rs = $oDB->execute("SHOW VARIABLES LIKE 'character_set_connection'");
-            $sMysqlCharacterSet = $rs->fields[1];
-            if ($sMysqlCollation && $sMysqlCharacterSet) {
+            $sMysqlCharacterSet = null;
+            $sMysqlCollation = null;
+            $rs = $oDB->execute( "SHOW FULL COLUMNS FROM `oxarticles` WHERE field like 'OXID'" );
+            if ( isset( $rs->fields['Collation'] ) && ( $sMysqlCollation = $rs->fields['Collation'] ) ) {
+                $rs = $oDB->execute( "SHOW COLLATION LIKE '{$sMysqlCollation}'" );
+                if ( isset( $rs->fields['Charset'] ) ) {
+                    $sMysqlCharacterSet = $rs->fields['Charset'];
+                }
+            }
+
+            if ( $sMysqlCollation && $sMysqlCharacterSet ) {
                 $sTableCharset = "DEFAULT CHARACTER SET ".$sMysqlCharacterSet." COLLATE ".$sMysqlCollation;
             } else {
                 $sTableCharset = "";

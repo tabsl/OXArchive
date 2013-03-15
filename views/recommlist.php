@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: recommlist.php 18044 2009-04-09 12:25:33Z arvydas $
+ * $Id: recommlist.php 18934 2009-05-11 13:53:24Z vilma $
  */
 
 /**
@@ -245,7 +245,7 @@ class RecommList extends oxUBase
         }
 
         //save rating
-        if ( $dRating ) {
+        if ( $dRating && $sUserId ) {
             $oRating = oxNew( 'oxrating' );
             $blRate = $oRating->allowRating( $sUserId, 'oxrecommlist', $oRecommList->getId());
             if ( $blRate) {
@@ -260,7 +260,7 @@ class RecommList extends oxUBase
             }
         }
 
-        if ( $sReviewText ) {
+        if ( $sReviewText && $sUserId ) {
             $oReview = oxNew( 'oxreview' );
             $oReview->oxreviews__oxobjectid = new oxField($sRLId);
             $oReview->oxreviews__oxtype     = new oxField('oxrecommlist', oxField::T_RAW);

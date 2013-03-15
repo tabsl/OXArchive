@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxconfig.php 18242 2009-04-15 14:34:30Z sarunas $
+ * $Id: oxconfig.php 18789 2009-05-05 08:34:18Z arvydas $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -1045,7 +1045,7 @@ class oxConfig extends oxSuperCfg
      *
      * @return string
      */
-    public function getOutUrl( $blSSL = null , $blNativeImg = false, $blAdmin = null )
+    public function getOutUrl( $blSSL = null , $blAdmin = null, $blNativeImg = false )
     {
         $blSSL    = is_null($blSSL)?$this->isSsl():$blSSL;
         $blAdmin  = is_null($blAdmin)?$this->isAdmin():$blAdmin;

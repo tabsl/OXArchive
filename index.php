@@ -19,7 +19,7 @@
  * @package main
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: index.php 16605 2009-02-19 11:26:11Z sarunas $
+ * $Id: index.php 18893 2009-05-08 11:25:32Z sarunas $
  */
 
 // Setting error reporting mode
@@ -123,14 +123,16 @@ if (!isAdmin() && $iDebug && is_array($aProfileTimes)) {
     echo "<table cellspacing='10px' style='border: 1px solid #000'>";
     foreach ($aProfileTimes as $sKey => $sVal)
     {
-        echo "<tr><td style='border-bottom: 1px dotted #000;'>Profile $sKey: </td><td style='border-bottom: 1px dotted #000;'>" . round($sVal, 5) ."s</td>" ;
+        echo "<tr><td style='border-bottom: 1px dotted #000;min-width:300px;'>Profile $sKey: </td><td style='border-bottom: 1px dotted #000;min-width:100px;'>" . round($sVal, 5) ."s</td>" ;
         if ($iTotalTime) {
-            echo "<td style='border-bottom: 1px dotted #000;'>".round($sVal*100/$iTotalTime, 2)."%</td>";
+            echo "<td style='border-bottom: 1px dotted #000;min-width:100px;'>".round($sVal*100/$iTotalTime, 2)."%</td>";
         }
         if ($aExecutionCounts[$sKey]) {
-            echo " <td style='border-bottom: 1px dotted #000;'>" . $aExecutionCounts[$sKey] . " * " . round($sVal / $aExecutionCounts[$sKey],  5) . "s</td></tr>" . PHP_EOL;
+            echo " <td style='border-bottom: 1px dotted #000;min-width:50px;padding-right:30px;' align='right'>" . $aExecutionCounts[$sKey] .  "</td>"
+                 ."<td style='border-bottom: 1px dotted #000;min-width:15px; '>*</td>"
+                 ."<td style='border-bottom: 1px dotted #000;min-width:100px;'>" . round($sVal / $aExecutionCounts[$sKey],  5) . "s</td></tr>" . PHP_EOL;
         } else {
-            echo " <td style='border-bottom: 1px dotted #000;'> not stopped correctly! </td></tr>" . PHP_EOL;
+            echo " <td colspan=3 style='border-bottom: 1px dotted #000;min-width:100px;'> not stopped correctly! </td></tr>" . PHP_EOL;
         }
     }
     echo "</table>";

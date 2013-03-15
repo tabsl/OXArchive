@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxemail.php 18054 2009-04-09 16:47:26Z arvydas $
+ * $Id: oxemail.php 18956 2009-05-12 08:55:26Z vilma $
  */
 /**
  * Includes PHP mailer class.
@@ -320,16 +320,20 @@ class oxEmail extends phpmailer
         // setting some deprecated variables
         $oOrder->oDelSet = $oOrder->getDelSet();
 
+        $oUser = $oOrder->getUser();
         // create messages
         $smarty = oxUtilsView::getInstance()->getSmarty();
         $smarty->assign( "charset", oxLang::getInstance()->translateString("charset"));
         $smarty->assign( "order", $oOrder);
         $smarty->assign( "shop", $oShop );
         $smarty->assign( "oViewConf", $oShop );
-        $smarty->assign( "user", $oOrder->getUser() );
+        $smarty->assign( "user", $oUser );
         $smarty->assign( "currency", $myConfig->getActShopCurrencyObject() );
         $smarty->assign( "basket", $oOrder->getBasket() );
         $smarty->assign( "payment", $oOrder->getPayment() );
+        if ( $oUser ) {
+            $smarty->assign( "reviewuser", $oUser->getReviewUserHash($oUser->getId()) );
+        }
         $smarty->assign( "paymentinfo", $myConfig->getActiveShop() );
 
         //deprecated vars
@@ -357,9 +361,9 @@ class oxEmail extends phpmailer
             $this->setSubject( $oShop->oxshops__oxordersubject->value." (#".$oOrder->oxorder__oxordernr->value.")" );
         }
 
-        $sFullName = $oOrder->getUser()->oxuser__oxfname->value . " " . $oOrder->getUser()->oxuser__oxlname->value;
+        $sFullName = $oUser->oxuser__oxfname->value . " " . $oUser->oxuser__oxlname->value;
 
-        $this->setRecipient( $oOrder->getUser()->oxuser__oxusername->value, $sFullName );
+        $this->setRecipient( $oUser->oxuser__oxusername->value, $sFullName );
         $this->setReplyTo( $oShop->oxshops__oxorderemail->value, $oShop->oxshops__oxname->getRawValue() );
 
         $blSuccess = $this->send();

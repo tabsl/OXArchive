@@ -170,7 +170,7 @@
                 [{ oxmultilang ident="ORDER_OVERVIEW_INFOLDER" }]:&nbsp;
                 <select name="setfolder" class="folderselect" onChange="document.myedit.submit();" [{ $readonly }]>
                 [{foreach from=$afolder key=field item=color}]
-                <option value="[{ $field }]" [{ if $edit->oxorder__oxfolder->value == $field }]SELECTED[{/if}] style="color: [{ $color }];">[{ $field }]</option>
+                <option value="[{ $field }]" [{ if $edit->oxorder__oxfolder->value == $field || ($field|oxmultilangassign == $edit->oxorder__oxfolder->value)}]SELECTED[{/if}] style="color: [{ $color }];">[{ oxmultilang ident=$field noerror=true }]</option>
                 [{/foreach}]
                 </select>&nbsp;&nbsp;
                 </form>

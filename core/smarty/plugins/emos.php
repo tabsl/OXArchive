@@ -1,5 +1,5 @@
 <?php
-/*******************************************************************************
+/**
  * EMOS PHP Bib 2
  *
  * Copyright (c) 2004 - 2007 ECONDA GmbH Karlsruhe
@@ -36,15 +36,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: emos.php 17677 2009-03-30 15:19:39Z vilma $
+ * $Id: emos.php 18483 2009-04-22 14:53:46Z arvydas $
  */
 
 /**
  * PHP Helper Class to construct a ECONDA Monitor statement for the later
  * inclusion in a HTML/PHP Page.
  */
-class EMOS{
-
+class EMOS
+{
     /**
      * the EMOS statement consists of 3 parts
      * 1.   the inScript :<code><script type="text/javascript" src="emos2.js"></script>
@@ -113,121 +113,123 @@ class EMOS{
     /**
      * add compatibility function for php < 5.1
      *
+     * @param string $sStr string to decode
+     *
      * @return string
      */
-    public function htmlspecialchars_decode_php4( $str )
+    public function htmlspecialchars_decode_php4( $sStr )
     {
-        return strtr( $str, array_flip( get_html_translation_table( HTML_SPECIALCHARS ) ) );
+        return strtr( $sStr, array_flip( get_html_translation_table( HTML_SPECIALCHARS ) ) );
     }
 
     /**
      * Constructor
      * Sets the path to the emos2.js js-bib and prepares the later calls
      *
-     * @param $pathToFile The path to the js-bib (/opt/myjs)
-     * @param $scriptFileName If we want to have annother Filename than emos2.js you can set it here
+     * @param string $sPathToFile     The path to the js-bib (/opt/myjs)
+     * @param string $sScriptFileName If we want to have annother Filename than emos2.js you can set it here
      *
      * @return null
      */
-    public function __construct( $pathToFile = "", $scriptFileName = "emos2.js" )
+    public function __construct( $sPathToFile = "", $sScriptFileName = "emos2.js" )
     {
-        $this->pathToFile = $pathToFile;
-        $this->scriptFileName = $scriptFileName;
+        $this->pathToFile = $sPathToFile;
+        $this->scriptFileName = $sScriptFileName;
         $this->prepareInScript();
-
     }
 
     /**
      * formats data/values/params by eliminating named entities and xml-entities
      *
-     * @param EMOS_Item $item item to format its parameters
+     * @param EMOS_Item $oItem item to format its parameters
      *
      * @return null
      */
-    public function emos_ItemFormat( $item )
+    public function emos_ItemFormat( $oItem )
     {
-        $item->productID = $this->emos_DataFormat( $item->productID );
-        $item->productName = $this->emos_DataFormat( $item->productName );
-        $item->productGroup = $this->emos_DataFormat( $item->productGroup );
-        $item->variant1 = $this->emos_DataFormat( $item->variant1 );
-        $item->variant2 = $this->emos_DataFormat( $item->variant2 );
-        $item->variant3 = $this->emos_DataFormat( $item->variant3 );
-        return $item;
+        $oItem->productID = $this->emos_DataFormat( $oItem->productID );
+        $oItem->productName = $this->emos_DataFormat( $oItem->productName );
+        $oItem->productGroup = $this->emos_DataFormat( $oItem->productGroup );
+        $oItem->variant1 = $this->emos_DataFormat( $oItem->variant1 );
+        $oItem->variant2 = $this->emos_DataFormat( $oItem->variant2 );
+        $oItem->variant3 = $this->emos_DataFormat( $oItem->variant3 );
+
+        return $oItem;
     }
 
     /**
      * formats data/values/params by eliminating named entities and xml-entities
      *
-     * @param string $str data input to format
+     * @param string $sStr data input to format
      *
      * @return null
      */
-    public function emos_DataFormat( $str )
+    public function emos_DataFormat( $sStr )
     {
-        $str = urldecode($str);
+        $sStr = urldecode($sStr);
         //2007-05-10 Fix incompatibility with php4
         if ( function_exists('htmlspecialchars_decode' ) ) {
-            $str = htmlspecialchars_decode( $str, ENT_QUOTES );
+            $sStr = htmlspecialchars_decode( $sStr, ENT_QUOTES );
         } else {
-            $str = $this->htmlspecialchars_decode_php4( $str );
+            $sStr = $this->htmlspecialchars_decode_php4( $sStr );
         }
-        $str = getStr()->html_entity_decode( $str );
-        $str = strip_tags( $str );
-        $str = trim( $str );
+        $sStr = getStr()->html_entity_decode( $sStr );
+        $sStr = strip_tags( $sStr );
+        $sStr = trim( $sStr );
 
         //2007-05-10 replace translated &nbsp; with spaces
         $nbsp = chr(0xa0);
-        $str = str_replace( $nbsp, " ", $str );
-        $str = str_replace( "\"", "", $str );
-        $str = str_replace( "'", "", $str );
-        $str = str_replace( "%", "", $str );
-        $str = str_replace( ",", "", $str );
-        $str = str_replace( ";", "", $str );
+        $sStr = str_replace( $nbsp, " ", $sStr );
+        $sStr = str_replace( "\"", "", $sStr );
+        $sStr = str_replace( "'", "", $sStr );
+        $sStr = str_replace( "%", "", $sStr );
+        $sStr = str_replace( ",", "", $sStr );
+        $sStr = str_replace( ";", "", $sStr );
         /* remove unnecessary white spaces*/
         while ( true ) {
-            $str_temp = $str;
-            $str = str_replace( "  ", " ", $str );
+            $sStr_temp = $sStr;
+            $sStr = str_replace( "  ", " ", $sStr );
 
-            if ( $str == $str_temp ) {
+            if ( $sStr == $sStr_temp ) {
                 break;
             }
         }
-        $str = str_replace( " / ", "/", $str );
-        $str = str_replace( " /", "/", $str );
-        $str = str_replace( "/ ", "/", $str );
+        $sStr = str_replace( " / ", "/", $sStr );
+        $sStr = str_replace( " /", "/", $sStr );
+        $sStr = str_replace( "/ ", "/", $sStr );
 
-        $str = getStr()->substr( $str, 0, 254 );
-        $str = rawurlencode( $str );
-        return $str;
+        $sStr = getStr()->substr( $sStr, 0, 254 );
+        $sStr = rawurlencode( $sStr );
+        return $sStr;
     }
 
     /**
      * sets the 1st party session id
      *
-     * @param string $sid session id to set as parameter
+     * @param string $sSid session id to set as parameter
      *
      * @return null
      */
-    public function setSid( $sid = "" )
+    public function setSid( $sSid = "" )
     {
-        if ( $sid ) {
-            $this->emsid = $sid;
-            $this->appendPreScript( "<a name=\"emos_sid\" title=\"$sid\"></a>\n" );
+        if ( $sSid ) {
+            $this->emsid = $sSid;
+            $this->appendPreScript( "<a name=\"emos_sid\" title=\"$sSid\"></a>\n" );
         }
     }
 
     /**
      * set 1st party visitor id
      *
-     * @param string $vid
+     * @param string $sVid visitor id
      *
      * @return null
      */
-    public function setVid( $vid = "" )
+    public function setVid( $sVid = "" )
     {
-        if ( $vid ) {
-            $this->emvid = $vid;
-            $this->appendPreScript( "<a name=\"emos_vid\" title=\"$vid\"></a>" );
+        if ( $sVid ) {
+            $this->emvid = $sVid;
+            $this->appendPreScript( "<a name=\"emos_vid\" title=\"$sVid\"></a>" );
         }
     }
 
@@ -246,33 +248,37 @@ class EMOS{
     /**
      * Concatenates the current command and the $inScript
      *
-     * @param string $stringToAppend string to append
+     * @param string $sStringToAppend string to append
      *
      * @return null
      */
-    public function appendInScript( $stringToAppend )
+    public function appendInScript( $sStringToAppend )
     {
-        $this->inScript.= $stringToAppend;
+        $this->inScript.= $sStringToAppend;
     }
 
     /**
      * Concatenates the current command and the $proScript
      *
+     * @param string $sStringToAppend string to append
+     *
      * @return null
      */
-    public function appendPreScript( $stringToAppend )
+    public function appendPreScript( $sStringToAppend )
     {
-        $this->preScript.= $stringToAppend;
+        $this->preScript.= $sStringToAppend;
     }
 
     /**
      * Concatenates the current command and the $postScript
      *
+     * @param string $sStringToAppend string to append
+     *
      * @return null
      */
-    public function appendPostScript( $stringToAppend )
+    public function appendPostScript( $sStringToAppend )
     {
-        $this->postScript.= $stringToAppend;
+        $this->postScript.= $sStringToAppend;
     }
 
     /**
@@ -300,255 +306,256 @@ class EMOS{
     /**
      * constructs a emos anchor tag
      *
-     * @param string $title
-     * @param string $rel
-     * @param string $rev
+     * @param string $sTitle link name
+     * @param string $sRel   link rel value
+     * @param string $sRev   revision
      *
      * @return string
      */
-    public function getAnchorTag( $title = "", $rel = "", $rev = "" )
+    public function getAnchorTag( $sTitle = "", $sRel = "", $sRev = "" )
     {
-        $rel = $this->emos_DataFormat( $rel );
-        $rev = $this->emos_DataFormat( $rev );
+        $sRel = $this->emos_DataFormat( $sRel );
+        $sRev = $this->emos_DataFormat( $sRev );
         $anchor = "<a name=\"emos_name\" " .
-        "title=\"$title\" " .
-        "rel=\"$rel\" " .
-        "rev=\"$rev\"></a>$this->br";
+        "title=\"$sTitle\" " .
+        "rel=\"$sRel\" " .
+        "rev=\"$sRev\"></a>$this->br";
         return $anchor;
     }
 
     /**
      * adds a anchor tag for content tracking
-     * <a name="emos_name" title="content" rel="$content" rev=""></a>
+     * <a name="emos_name" title="content" rel="$sContent" rev=""></a>
      *
-     * @param string $content content to add
+     * @param string $sContent content to add
      *
      * @return null
      */
-    public function addContent( $content )
+    public function addContent( $sContent )
     {
-        $this->appendPreScript( $this->getAnchorTag( "content", $content ) );
+        $this->appendPreScript( $this->getAnchorTag( "content", $sContent ) );
     }
 
     /**
      * adds a anchor tag for orderprocess tracking
-     * <a name="emos_name" title="orderProcess" rel="$processStep" rev=""></a>
+     * <a name="emos_name" title="orderProcess" rel="$sProcessStep" rev=""></a>
      *
-     * @param string $processStep process step to add
+     * @param string $sProcessStep process step to add
      *
      * @return null
      */
-    public function addOrderProcess( $processStep )
+    public function addOrderProcess( $sProcessStep )
     {
-        $this->appendPreScript( $this->getAnchorTag( "orderProcess", $processStep ) );
+        $this->appendPreScript( $this->getAnchorTag( "orderProcess", $sProcessStep ) );
     }
 
     /**
      * adds a anchor tag for siteid tracking
-     * <a name="emos_name" title="siteid" rel="$siteid" rev=""></a>
+     * <a name="emos_name" title="siteid" rel="$sIiteId" rev=""></a>
      *
-     * @param string $siteid site id to add
+     * @param string $sIiteId site id to add
      *
      * @return null
      */
-    public function addSiteID( $siteid )
+    public function addSiteID( $sIiteId )
     {
-        $this->appendPreScript( $this->getAnchorTag( "siteid", $siteid ) );
+        $this->appendPreScript( $this->getAnchorTag( "siteid", $sIiteId ) );
     }
 
     /**
      * adds a anchor tag for language tracking
-     * <a name="emos_name" title="langid" rel="$langid" rev=""></a>
+     * <a name="emos_name" title="langid" rel="$sLangId" rev=""></a>
      *
-     * @param string $langid language id to add
+     * @param string $sLangId language id to add
      *
      * @return null
      */
-    public function addLangID( $langid )
+    public function addLangID( $sLangId )
     {
-        $this->appendPreScript( $this->getAnchorTag( "langid", $langid ) );
+        $this->appendPreScript( $this->getAnchorTag( "langid", $sLangId ) );
     }
 
     /**
      * adds a anchor tag for country tracking
-     * <a name="emos_name" title="countryid" rel="$countryid" rev=""></a>
+     * <a name="emos_name" title="countryid" rel="$sCountryId" rev=""></a>
      *
-     * @param string $countryid country id to add
+     * @param string $sCountryId country id to add
      *
      * @return null
      */
-    public function addCountryID( $countryid )
+    public function addCountryID( $sCountryId )
     {
-        $this->appendPreScript( $this->getAnchorTag( "countryid", $countryid ) );
+        $this->appendPreScript( $this->getAnchorTag( "countryid", $sCountryId ) );
     }
 
     /**
      * adds a Page ID to the current window (window.emosPageId)
      *
-     * @param string $pageID page id to add
+     * @param string $sPageId page id to add
      *
      * @return null
      */
-    public function addPageID( $pageID )
+    public function addPageID( $sPageId )
     {
-        $this->appendPreScript( "\n<script type=\"text/javascript\">\n window.emosPageId = '$pageID';\n</script>\n" );
+        $this->appendPreScript( "\n<script type=\"text/javascript\">\n window.emosPageId = '$sPageId';\n</script>\n" );
     }
+
     /**
      * adds a anchor tag for search tracking
-     * <a name="emos_name" title="search" rel="$queryString" rev="$numberOfHits"></a>
+     * <a name="emos_name" title="search" rel="$sQueryString" rev="$iNumberOfHits"></a>
      *
-     * @param string $queryString  query string
-     * @param int    $numberOfHits number of hits
+     * @param string $sQueryString  query string
+     * @param int    $iNumberOfHits number of hits
      *
      * @return null
      */
-    public function addSearch( $queryString, $numberOfHits )
+    public function addSearch( $sQueryString, $iNumberOfHits )
     {
-        $this->appendPreScript( $this->getAnchorTag( "search", $queryString, $numberOfHits ) );
+        $this->appendPreScript( $this->getAnchorTag( "search", $sQueryString, $iNumberOfHits ) );
     }
 
     /**
      * adds a anchor tag for registration tracking
      * The userid gets a md5() to fullfilll german datenschutzgesetz
-     * <a name="emos_name" title="register" rel="$userID" rev="$result"></a>
+     * <a name="emos_name" title="register" rel="$sUserId" rev="$sResult"></a>
      *
-     * @param string $userID user id
-     * @param string $result registration result
+     * @param string $sUserId user id
+     * @param string $sResult registration result
      *
      * @return null
      */
-    public function addRegister( $userID, $result )
+    public function addRegister( $sUserId, $sResult )
     {
-        $this->appendPreScript($this->getAnchorTag( "register", md5( $userID ), $result ) );
+        $this->appendPreScript($this->getAnchorTag( "register", md5( $sUserId ), $sResult ) );
     }
 
 
     /**
      * adds a anchor tag for login tracking
      * The userid gets a md5() to fullfilll german datenschutzgesetz
-     * <a name="emos_name" title="login" rel="$userID" rev="$result"></a>
+     * <a name="emos_name" title="login" rel="$sUserId" rev="$sResult"></a>
      *
-     * @param string $userID user id
-     * @param string $result login result
+     * @param string $sUserId user id
+     * @param string $sResult login result
      *
      * @return null
      */
-    public function addLogin( $userID, $result )
+    public function addLogin( $sUserId, $sResult )
     {
-        $this->appendPreScript( $this->getAnchorTag( "login", md5( $userID ), $result ) );
+        $this->appendPreScript( $this->getAnchorTag( "login", md5( $sUserId ), $sResult ) );
     }
 
     /**
      * adds a anchor tag for contact tracking
-     * <a name="emos_name" title="scontact" rel="$contactType" rev=""></a>
+     * <a name="emos_name" title="scontact" rel="$sContactType" rev=""></a>
      *
-     * @param string $contactType contant type
+     * @param string $sContactType contant type
      *
      * @return null
      */
-    public function addContact( $contactType )
+    public function addContact( $sContactType )
     {
-        $this->appendPreScript( $this->getAnchorTag( "scontact", $contactType ) );
+        $this->appendPreScript( $this->getAnchorTag( "scontact", $sContactType ) );
     }
 
     /**
      * adds a anchor tag for download tracking
-     * <a name="emos_name" title="download" rel="$downloadLabel" rev=""></a>
+     * <a name="emos_name" title="download" rel="$sDownloadLabel" rev=""></a>
      *
-     * @param string $downloadLabel download label
+     * @param string $sDownloadLabel download label
      *
      * @return null
      */
-    public function addDownload( $downloadLabel )
+    public function addDownload( $sDownloadLabel )
     {
-        $this->appendPreScript( $this->getAnchorTag( "download", $downloadLabel ) );
+        $this->appendPreScript( $this->getAnchorTag( "download", $sDownloadLabel ) );
     }
 
     /**
-     * constructs a emosECPageArray of given $event type
+     * constructs a emosECPageArray of given $sEvent type
      *
-     * @param EMOS_Item $item  a instance of class EMOS_Item
-     * @param string    $event Type of this event ("add","c_rmv","c_add")
+     * @param EMOS_Item $oItem  a instance of class EMOS_Item
+     * @param string    $sEvent Type of this event ("add","c_rmv","c_add")
      *
      * @return string
      */
-    public function getEmosECPageArray( $item, $event )
+    public function getEmosECPageArray( $oItem, $sEvent )
     {
-        $item = $this->emos_ItemFormat( $item );
+        $oItem = $this->emos_ItemFormat( $oItem );
         $out = "<script type=\"text/javascript\">$this->br" .
         "<!--$this->br" .
         "$this->tab var emosECPageArray = new Array();$this->br" .
-        "$this->tab emosECPageArray['event'] = '$event';$this->br" .
-        "$this->tab emosECPageArray['id'] = '$item->productID';$this->br" .
-        "$this->tab emosECPageArray['name'] = '$item->productName';$this->br" .
-        "$this->tab emosECPageArray['preis'] = '$item->price';$this->br" .
-        "$this->tab emosECPageArray['group'] = '$item->productGroup';$this->br" .
-        "$this->tab emosECPageArray['anzahl'] = '$item->quantity';$this->br" .
-        "$this->tab emosECPageArray['var1'] = '$item->variant1';$this->br" .
-        "$this->tab emosECPageArray['var2'] = '$item->variant2';$this->br" .
-        "$this->tab emosECPageArray['var3'] = '$item->variant3';$this->br" .
+        "$this->tab emosECPageArray['event'] = '$sEvent';$this->br" .
+        "$this->tab emosECPageArray['id'] = '$oItem->productID';$this->br" .
+        "$this->tab emosECPageArray['name'] = '$oItem->productName';$this->br" .
+        "$this->tab emosECPageArray['preis'] = '$oItem->price';$this->br" .
+        "$this->tab emosECPageArray['group'] = '$oItem->productGroup';$this->br" .
+        "$this->tab emosECPageArray['anzahl'] = '$oItem->quantity';$this->br" .
+        "$this->tab emosECPageArray['var1'] = '$oItem->variant1';$this->br" .
+        "$this->tab emosECPageArray['var2'] = '$oItem->variant2';$this->br" .
+        "$this->tab emosECPageArray['var3'] = '$oItem->variant3';$this->br" .
         "// -->$this->br" .
         "</script>$this->br";
         return $out;
     }
 
     /**
-     * constructs a emosBillingPageArray of given $event type
+     * constructs a emosBillingPageArray of given $sEvent type
      *
-     * @param string $billingID      billing id
-     * @param string $customerNumber customer number
-     * @param int    $total          total number
-     * @param string $country        customer country title
-     * @param string $cip            customer ip
-     * @param string $city           customer city title
+     * @param string $sBillingId      billing id
+     * @param string $sCustomerNumber customer number
+     * @param int    $iTotal          total number
+     * @param string $sCountry        customer country title
+     * @param string $sCip            customer ip
+     * @param string $sCity           customer city title
      *
      * @return null
      */
-    public function addEmosBillingPageArray( $billingID = "", $customerNumber = "", $total = 0, $country = "", $cip = "", $city = "" )
+    public function addEmosBillingPageArray( $sBillingId = "", $sCustomerNumber = "", $iTotal = 0, $sCountry = "", $sCip = "", $sCity = "" )
     {
-        $out = $this->getEmosBillingArray( $billingID, $customerNumber, $total, $country, $cip, $city, "emosBillingPageArray" );
+        $out = $this->getEmosBillingArray( $sBillingId, $sCustomerNumber, $iTotal, $sCountry, $sCip, $sCity, "emosBillingPageArray" );
         $this->appendPreScript( $out );
     }
 
     /**
      * gets a emosBillingArray for a given ArrayName
      *
-     * @param string $billingID      billing id
-     * @param string $customerNumber customer number
-     * @param int    $total          total number
-     * @param string $country        customer country title
-     * @param string $cip            customer ip
-     * @param string $city           customer city title
-     * @param string $arrayName      name of JS array
+     * @param string $sBillingId      billing id
+     * @param string $sCustomerNumber customer number
+     * @param int    $iTotal          total number
+     * @param string $sCountry        customer country title
+     * @param string $sCip            customer ip
+     * @param string $sCity           customer city title
+     * @param string $sArrayName      name of JS array
      *
      * @return string
      */
-    public function getEmosBillingArray( $billingID = "", $customerNumber = "", $total = 0, $country = "", $cip = "", $city = "", $arrayName = "" )
+    public function getEmosBillingArray( $sBillingId = "", $sCustomerNumber = "", $iTotal = 0, $sCountry = "", $sCip = "", $sCity = "", $sArrayName = "" )
     {
         /******************* prepare data *************************************/
         /* md5 the customer id to fullfill requirements of german datenschutzgeesetz */
-        $customerNumber = md5( $customerNumber );
+        $sCustomerNumber = md5( $sCustomerNumber );
 
-        $country = $this->emos_DataFormat( $country );
-        $cip = $this->emos_DataFormat( $cip) ;
-        $city = $this->emos_DataFormat( $city );
+        $sCountry = $this->emos_DataFormat( $sCountry );
+        $sCip = $this->emos_DataFormat( $sCip) ;
+        $sCity = $this->emos_DataFormat( $sCity );
 
         /* get a / separated location stzring for later drilldown */
         $ort = "";
-        if ( $country ) {
-            $ort .= "$country/";
+        if ( $sCountry ) {
+            $ort .= "$sCountry/";
         }
 
-        if ( $cip ) {
-            $ort .= substr( $cip, 0, 1 )."/".substr( $cip, 0, 2 )."/";
+        if ( $sCip ) {
+            $ort .= substr( $sCip, 0, 1 )."/".substr( $sCip, 0, 2 )."/";
         }
 
-        if ( $city ) {
-            $ort .= "$city/";
+        if ( $sCity ) {
+            $ort .= "$sCity/";
         }
 
-        if ( $cip ) {
-            $ort.=$cip;
+        if ( $sCip ) {
+            $ort.=$sCip;
         }
 
         /******************* get output** *************************************/
@@ -556,11 +563,11 @@ class EMOS{
         $out = "";
         $out .= "<script type=\"text/javascript\">$this->br" .
         "<!--$this->br" .
-        "$this->tab var $arrayName = new Array();$this->br" .
-        "$this->tab $arrayName" . "['0'] = '$billingID';$this->br" .
-        "$this->tab $arrayName" . "['1'] = '$customerNumber';$this->br" .
-        "$this->tab $arrayName" . "['2'] = '$ort';$this->br" .
-        "$this->tab $arrayName" . "['3'] = '$total';$this->br" .
+        "$this->tab var $sArrayName = new Array();$this->br" .
+        "$this->tab $sArrayName" . "['0'] = '$sBillingId';$this->br" .
+        "$this->tab $sArrayName" . "['1'] = '$sCustomerNumber';$this->br" .
+        "$this->tab $sArrayName" . "['2'] = '$ort';$this->br" .
+        "$this->tab $sArrayName" . "['3'] = '$iTotal';$this->br" .
         "// -->$this->br" .
         "</script>$this->br";
         return $out;
@@ -569,42 +576,42 @@ class EMOS{
     /**
      * adds a emosBasket Page Array to the preScript
      *
-     * @param array $basket basket items
+     * @param array $aBasket basket items
      *
      * @return null
      */
-    public function addEmosBasketPageArray( $basket )
+    public function addEmosBasketPageArray( $aBasket )
     {
-        $out = $this->getEmosBasketPageArray( $basket, "emosBasketPageArray" );
+        $out = $this->getEmosBasketPageArray( $aBasket, "emosBasketPageArray" );
         $this->appendPreScript( $out );
     }
 
     /**
      * returns a emosBasketArray of given Name
      *
-     * @param array  $basket    basket items
-     * @param atring $arrayName name of JS array
+     * @param array  $aBasket    basket items
+     * @param atring $sArrayName name of JS array
      *
      * @return string
      */
-    public function getEmosBasketPageArray( $basket, $arrayName )
+    public function getEmosBasketPageArray( $aBasket, $sArrayName )
     {
         $out = "<script type=\"text/javascript\">$this->br" .
         "<!--$this->br" .
-        "var $arrayName = new Array();$this->br";
+        "var $sArrayName = new Array();$this->br";
         $count = 0;
-        foreach( $basket as $item ) {
-            $item = $this->emos_ItemFormat( $item );
+        foreach ( $aBasket as $oItem ) {
+            $oItem = $this->emos_ItemFormat( $oItem );
             $out .= $this->br;
-            $out .= "$this->tab $arrayName"."[$count]=new Array();$this->br";
-            $out .= "$this->tab $arrayName"."[$count][0]='$item->productID';$this->br";
-            $out .= "$this->tab $arrayName"."[$count][1]='$item->productName';$this->br";
-            $out .= "$this->tab $arrayName"."[$count][2]='$item->price';$this->br";
-            $out .= "$this->tab $arrayName"."[$count][3]='$item->productGroup';$this->br";
-            $out .= "$this->tab $arrayName"."[$count][4]='$item->quantity';$this->br";
-            $out .= "$this->tab $arrayName"."[$count][5]='$item->variant1';$this->br";
-            $out .= "$this->tab $arrayName"."[$count][6]='$item->variant2';$this->br";
-            $out .= "$this->tab $arrayName"."[$count][7]='$item->variant3';$this->br";
+            $out .= "$this->tab $sArrayName"."[$count]=new Array();$this->br";
+            $out .= "$this->tab $sArrayName"."[$count][0]='$oItem->productID';$this->br";
+            $out .= "$this->tab $sArrayName"."[$count][1]='$oItem->productName';$this->br";
+            $out .= "$this->tab $sArrayName"."[$count][2]='$oItem->price';$this->br";
+            $out .= "$this->tab $sArrayName"."[$count][3]='$oItem->productGroup';$this->br";
+            $out .= "$this->tab $sArrayName"."[$count][4]='$oItem->quantity';$this->br";
+            $out .= "$this->tab $sArrayName"."[$count][5]='$oItem->variant1';$this->br";
+            $out .= "$this->tab $sArrayName"."[$count][6]='$oItem->variant2';$this->br";
+            $out .= "$this->tab $sArrayName"."[$count][7]='$oItem->variant3';$this->br";
             $count++;
         }
         $out .= "// -->$this->br" .
@@ -616,37 +623,37 @@ class EMOS{
     /**
      * adds a detailView to the preScript
      *
-     * @param EMOS_Item $item item to add to view
+     * @param EMOS_Item $oItem item to add to view
      *
      * @return null
      */
-    public function addDetailView( $item )
+    public function addDetailView( $oItem )
     {
-        $this->appendPreScript( $this->getEmosECPageArray( $item, "view" ) );
+        $this->appendPreScript( $this->getEmosECPageArray( $oItem, "view" ) );
     }
 
     /**
      * adds a removeFromBasket to the preScript
      *
-     * @param EMOS_Item $item item to remove from basket
+     * @param EMOS_Item $oItem item to remove from basket
      *
      * @return null
      */
-    public function removeFromBasket( $item )
+    public function removeFromBasket( $oItem )
     {
-        $this->appendPreScript( $this->getEmosECPageArray( $item, "c_rmv" ) );
+        $this->appendPreScript( $this->getEmosECPageArray( $oItem, "c_rmv" ) );
     }
 
     /**
      * adds a addToBasket to the preScript
      *
-     * @param EMOS_Item $item item to add to basket
+     * @param EMOS_Item $oItem item to add to basket
      *
      * @return null
      */
-    public function addToBasket( $item )
+    public function addToBasket( $oItem )
     {
-        $this->appendPreScript( $this->getEmosECPageArray( $item, "c_add" ) );
+        $this->appendPreScript( $this->getEmosECPageArray( $oItem, "c_add" ) );
     }
 
     /**
@@ -656,7 +663,7 @@ class EMOS{
      *
      * @return string
      */
-    public function getEmosCustomPageArray( $aListOfValues)
+    public function getEmosCustomPageArray( $aListOfValues )
     {
         $out = "<script type=\"text/javascript\">$this->br" .
         "<!--$this->br" .
@@ -675,20 +682,20 @@ class EMOS{
     /**
      * constructs a emosCustomPageArray with 8 Variables and shortcut
      *
-     * @param string $cType Type of this event - shortcut in config
-     * @param string  $cVar1 first variable of this custom event (optional)
-     * @param string  $cVar2 second variable of this custom event (optional)
-     * @param string  $cVar3 third variable of this custom event (optional)
-     * @param string  $cVar4 fourth variable of this custom event (optional)
-     * @param string  $cVar5 fifth variable of this custom event (optional)
-     * @param string  $cVar6 sixth variable of this custom event (optional)
-     * @param string  $cVar7 seventh variable of this custom event (optional)
-     * @param string  $cVar8 eighth variable of this custom event (optional)
-     * @param string  $cVar9 nineth variable of this custom event (optional)
-     * @param string  $cVar10 tenth variable of this custom event (optional)
-     * @param string  $cVar11 eleventh variable of this custom event (optional)
-     * @param string  $cVar12 twelveth variable of this custom event (optional)
-     * @param string  $cVar13 thirteenth variable of this custom event (optional)
+     * @param string $cType  Type of this event - shortcut in config
+     * @param string $cVar1  first variable of this custom event (optional)
+     * @param string $cVar2  second variable of this custom event (optional)
+     * @param string $cVar3  third variable of this custom event (optional)
+     * @param string $cVar4  fourth variable of this custom event (optional)
+     * @param string $cVar5  fifth variable of this custom event (optional)
+     * @param string $cVar6  sixth variable of this custom event (optional)
+     * @param string $cVar7  seventh variable of this custom event (optional)
+     * @param string $cVar8  eighth variable of this custom event (optional)
+     * @param string $cVar9  nineth variable of this custom event (optional)
+     * @param string $cVar10 tenth variable of this custom event (optional)
+     * @param string $cVar11 eleventh variable of this custom event (optional)
+     * @param string $cVar12 twelveth variable of this custom event (optional)
+     * @param string $cVar13 thirteenth variable of this custom event (optional)
      *
      * @return null
      */
@@ -753,81 +760,91 @@ class EMOS{
     }
 
     /**
+     * Returns string form event definition
      *
-     * @param EMOS_Item $item
-     * @param string    $event
+     * @param EMOS_Item $oItem  item used to freate event from it
+     * @param string    $sEvent event namet
      *
      * @return string
      */
-    public function getEmosECEvent( $item, $event )
+    public function getEmosECEvent( $oItem, $sEvent )
     {
-        $item = $this->emos_ItemFormat( $item );
-        $out = "emos_ecEvent('$event'," .
-        "'$item->productID'," .
-        "'$item->productName'," .
-        "'$item->price'," .
-        "'$item->productGroup'," .
-        "'$item->quantity'," .
-        "'$item->variant1'" .
-        "'$item->variant2'" .
-        "'$item->variant3');";
+        $oItem = $this->emos_ItemFormat( $oItem );
+        $out = "emos_ecEvent('$sEvent'," .
+        "'$oItem->productID'," .
+        "'$oItem->productName'," .
+        "'$oItem->price'," .
+        "'$oItem->productGroup'," .
+        "'$oItem->quantity'," .
+        "'$oItem->variant1'" .
+        "'$oItem->variant2'" .
+        "'$oItem->variant3');";
         return $out;
     }
 
     /**
-     * @param EMOS_Item $item viewable item
+     * Returns view event definition
+     *
+     * @param EMOS_Item $oItem viewable item
      *
      * @return string
      */
-    public function getEmosViewEvent( $item )
+    public function getEmosViewEvent( $oItem )
     {
-        return $this->getEmosECEvent( $item, "view" );
+        return $this->getEmosECEvent( $oItem, "view" );
     }
 
     /**
-     * @param EMOS_Item $item basket item added to basket
+     * Returns add to basket event definition
+     *
+     * @param EMOS_Item $oItem basket item added to basket
      *
      * @return string
      */
-    public function getEmosAddToBasketEvent( $item )
+    public function getEmosAddToBasketEvent( $oItem )
     {
-        return $this->getEmosECEvent( $item, "c_add" );
+        return $this->getEmosECEvent( $oItem, "c_add" );
     }
 
     /**
-     * @param EMOS_Item $item basket item to bark as removed
+     * Returns remove from basket event definition
+     *
+     * @param EMOS_Item $oItem basket item to bark as removed
      *
      * @return string
      */
-    public function getRemoveFromBasketEvent( $item )
+    public function getRemoveFromBasketEvent( $oItem )
     {
-        return $this->getEmosECEvent( $item, "c_rmv" );
+        return $this->getEmosECEvent( $oItem, "c_rmv" );
     }
 
     /**
-     * @param string $billingID      billing id
-     * @param string $customerNumber customer number
-     * @param int    $total          total number
-     * @param string $country        customer country title
-     * @param string $cip            customer ip
-     * @param string $city           customer city title
+     * Returns billing event array
+     *
+     * @param string $sBillingId      billing id
+     * @param string $sCustomerNumber customer number
+     * @param int    $iTotal          total number
+     * @param string $sCountry        customer country title
+     * @param string $sCip            customer ip
+     * @param string $sCity           customer city title
      *
      * @return string
      */
-    public function getEmosBillingEventArray( $billingID = "", $customerNumber = "", $total = 0, $country = "", $cip = "", $city = "" )
+    public function getEmosBillingEventArray( $sBillingId = "", $sCustomerNumber = "", $iTotal = 0, $sCountry = "", $sCip = "", $sCity = "" )
     {
-        return $this->getEmosBillingArray( $billingID, $customerNumber, $total, $country, $cip, $city, "emosBillingArray" );
+        return $this->getEmosBillingArray( $sBillingId, $sCustomerNumber, $iTotal, $sCountry, $sCip, $sCity, "emosBillingArray" );
     }
 
     /**
+     * Returns basket event array
      *
-     * @param array $basket basket items
+     * @param array $aBasket basket items
      *
      * @return string
      */
-    public function getEMOSBasketEventArray( $basket )
+    public function getEMOSBasketEventArray( $aBasket )
     {
-        return $this->getEmosBasketArray( $basket, "emosBasketArray" );
+        return $this->getEmosBasketArray( $aBasket, "emosBasketArray" );
     }
 }
 

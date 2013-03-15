@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_user.php 18033 2009-04-09 12:15:54Z arvydas $
+ * $Id: oxerptype_user.php 18599 2009-04-28 11:07:50Z arvydas $
  */
 
 require_once 'oxerptype.php';
@@ -144,9 +144,10 @@ class oxERPType_User extends oxERPType
     public function getSQL( $sWhere, $iLanguage = 0,$iShopID = 1)
     {
         $myConfig = oxConfig::getInstance();
+        $oStr = getStr();
 
         // add type 'user' for security reasons
-        if ( strstr( $sWhere, 'where' ) ) {
+        if ( $oStr->strstr( $sWhere, 'where' ) ) {
             $sWhere .= ' and ';
         } else {
             $sWhere .= ' where ';

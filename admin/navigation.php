@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: navigation.php 18346 2009-04-20 08:39:52Z rimvydas.paskevicius $
+ * $Id: navigation.php 18937 2009-05-11 14:18:53Z alfonsas $
  */
 
 /**
@@ -127,6 +127,49 @@ class Navigation extends oxAdminView
         }
 
         oxUtils::getInstance()->redirect( 'index.php' );
+    }
+
+    /**
+     * Caches external url file locally, adds <base> tag with original url to load images and other links correcly
+     *
+     * @return null
+     */
+    public function exturl()
+    {
+        $myOxUtlis         = oxUtils::getInstance();
+        $blLoadDynContents = $this->getConfig()->getConfigParam( 'blLoadDynContents' );
+        $sAllowedHost      = "http://admin.oxid-esales.com";
+
+        $sUrl = oxConfig::getParameter( "url");
+        if ( isset( $sUrl) || $sUrl ) {
+
+             // Limit external url's only allowed host
+            if( $blLoadDynContents && strpos($sUrl,$sAllowedHost) === 0 ) {
+
+                $sPath = $this->getConfig()->getConfigParam( 'sCompileDir' ) . "/".md5($sUrl).'.html';
+                $sBase = dirname($sUrl).'/';
+
+                if( $myOxUtlis->getRemoteCachePath($sUrl, $sPath) ) {
+
+                    // Get ceontent
+                    $sOutput = file_get_contents($sPath);
+
+                    // Fix base path
+                    $sOutput = preg_replace("/<\/head>/i", "<base href=\"{$sBase}\"></head>\n  <!-- OXID eShop {$sEdition}, Version {$sVersion}, Shopsystem (c) OXID eSales AG 2003 - {$sCurYear} - http://www.oxid-esales.com -->", $sOutput);
+
+                    // Fix self url's
+                    $sOutput = preg_replace("/href=\"#\"/i", 'href="javascript::void();"', $sOutput);
+
+                    die($sOutput);
+               }
+
+            }else{
+                // Caching not allowed, redirecting
+                header('Location: '.$sUrl);
+            }
+        }
+
+        die;
     }
 
     /**

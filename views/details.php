@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: details.php 18089 2009-04-10 13:18:52Z vilma $
+ * $Id: details.php 18934 2009-05-11 13:53:24Z vilma $
  */
 
 /**
@@ -503,7 +503,7 @@ class Details extends oxUBase
         $sUserId = oxSession::getVar( 'usr' );
 
         //save rating
-        if ( $dRating ) {
+        if ( $dRating && $sUserId ) {
             $oProduct = $this->getProduct();
 
             $oRating = oxNew( 'oxrating' );
@@ -520,7 +520,7 @@ class Details extends oxUBase
             }
         }
 
-        if ( $sReviewText ) {
+        if ( $sReviewText && $sUserId ) {
             $oReview = oxNew( 'oxreview' );
             $oReview->oxreviews__oxobjectid = new oxField($sArtId);
             $oReview->oxreviews__oxtype = new oxField('oxarticle', oxField::T_RAW);

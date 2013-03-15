@@ -219,11 +219,8 @@ window.onLoad = top.reloadEditFrame();
               [{ oxmultilang ident="ARTICLE_EXTEND_ARTEXTRA" }]
             </td>
             <td class="edittext">
-              <select name="editval[oxarticles__oxbundleid]" class="editinput" style="width:200px;" [{ $readonly }]>
-              [{foreach from=$arttree item=pcat}]
-              <option value="[{ $pcat->oxarticles__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxarticles__oxartnum->value }] [{ $pcat->oxarticles__oxtitle->value }]</option>
-              [{/foreach}]
-              </select>
+              [{ $bundle_artnum }] [{ $bundle_title|oxtruncate:21:"...":true }]
+              <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNARTICLES" }]" class="edittext" onclick="JavaScript:showDialog('?cl=article_extend&aoc=2&oxid=[{ $oxid }]');">
             </td>
           </tr>
           <tr>

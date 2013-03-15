@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_orderstatus.php 18033 2009-04-09 12:15:54Z arvydas $
+ * $Id: oxerptype_orderstatus.php 18599 2009-04-28 11:07:50Z arvydas $
  */
 
 require_once 'oxerptype.php';
@@ -59,7 +59,8 @@ class oxERPType_OrderStatus extends oxERPType
      */
     public function getSQL( $sWhere, $iLanguage = 0, $iShopID = 1)
     {
-        if ( strstr( $sWhere, 'where' ) ) {
+        $oStr = getStr();
+        if ( $oStr->strstr( $sWhere, 'where' ) ) {
             $sWhere .= ' and ';
         } else {
             $sWhere .= ' where ';

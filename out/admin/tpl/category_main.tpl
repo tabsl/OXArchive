@@ -44,6 +44,20 @@ function DeletePic( sField )
     oForm.submit();
 }
 
+function LockAssignment(obj)
+{   var aButton = document.myedit.assignArticle;
+    if ( aButton != null && obj != null )
+    {
+        if (obj.value > 0)
+        {
+            aButton.disabled = true;
+        }
+        else
+        {
+            aButton.disabled = false;
+        }
+    }
+}
 //-->
 </script>
 <!-- END add to *.css file -->
@@ -207,7 +221,7 @@ function DeletePic( sField )
             </td>
             <td class="edittext" colspan="2">
             <input type="text" class="editinput" size="5" maxlength="[{$edit->oxcategories__oxpricefrom->fldmax_length}]" name="editval[oxcategories__oxpricefrom]" value="[{$edit->oxcategories__oxpricefrom->value}]" [{$readonly}]>&nbsp;
-            <input type="text" class="editinput" size="5" maxlength="[{$edit->oxcategories__oxpriceto->fldmax_length}]" name="editval[oxcategories__oxpriceto]" value="[{$edit->oxcategories__oxpriceto->value}]" [{$readonly}]>
+            <input type="text" class="editinput" size="5" maxlength="[{$edit->oxcategories__oxpriceto->fldmax_length}]" name="editval[oxcategories__oxpriceto]" value="[{$edit->oxcategories__oxpriceto->value}]" onchange="JavaScript:LockAssignment(this);" onkeyup="JavaScript:LockAssignment(this);" onmouseout="JavaScript:LockAssignment(this);" [{$readonly}]>
             </td>
         </tr>
         <tr>
@@ -249,7 +263,7 @@ function DeletePic( sField )
     <td valign="top" class="edittext" align="left" width="50%">
     [{ if $oxid != "-1"}]
 
-        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNARTICLES" }]" class="edittext" onclick="JavaScript:showDialog('?cl=category_main&aoc=1&oxid=[{ $oxid }]');">
+        <input [{ $readonly }] type="button" name="assignArticle" value="[{ oxmultilang ident="GENERAL_ASSIGNARTICLES" }]" class="edittext" onclick="JavaScript:showDialog('?cl=category_main&aoc=1&oxid=[{ $oxid }]');" [{if $edit->oxcategories__oxpriceto->value > 0 }] disabled [{/if}]>
 
     [{ /if}]
     </td>

@@ -63,6 +63,14 @@ class Language_List extends oxAdminList
 
         $iBaseId = (int)$aLangData['params'][$sOxId]['baseId'];
 
+        // preventing deleting main language with base id = 0
+        if ( $iBaseId == 0 ) {
+            $oEx = new oxExceptionToDisplay();
+            $oEx->setMessage( 'LANGUAGE_DELETINGMAINLANG_WARNING' );
+            oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
+            return;
+        }
+
         // unsetting selected lang from languages arrays
         unset( $aLangData['params'][$sOxId] );
         unset( $aLangData['lang'][$sOxId] );
@@ -116,7 +124,7 @@ class Language_List extends oxAdminList
 
         foreach( $aLanguages as $sKey => $sValue ) {
             $sOxId = $sValue->oxid;
-            $aLanguages[$sKey]->active  = $aLangParams[$sOxId]["active"];
+            $aLanguages[$sKey]->active  = (!isset($aLangParams[$sOxId]["active"])) ? 1 : $aLangParams[$sOxId]["active"];
             $aLanguages[$sKey]->default = ($aLangParams[$sOxId]["baseId"] == $sDefaultLang) ? true : false;
             $aLanguages[$sKey]->sort   = $aLangParams[$sOxId]["sort"];
         }

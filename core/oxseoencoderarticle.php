@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxseoencoderarticle.php 18027 2009-04-09 11:32:17Z arvydas $
+ * $Id: oxseoencoderarticle.php 18514 2009-04-23 16:22:51Z arvydas $
  */
 
 /**
@@ -31,8 +31,17 @@ class oxSeoEncoderArticle extends oxSeoEncoder
 {
     /**
      * Singleton instance.
+     *
+     * @var oxSeoEncoderArticle
      */
     protected static $_instance = null;
+
+    /**
+     * Product parent title cache
+     *
+     * @var array
+     */
+    protected static $_aTitleCache = array();
 
     /**
      * Singleton method
@@ -127,15 +136,32 @@ class oxSeoEncoderArticle extends oxSeoEncoder
      */
     protected function _prepareArticleTitle( $oArticle )
     {
+        $sTitle = '';
+
         // create title part for uri
         if ( !( $sTitle = $oArticle->oxarticles__oxtitle->value ) ) {
-            $sTitle = $oArticle->oxarticles__oxartnum->value;
+            // taking parent article title
+            if ( ( $sParentId = $oArticle->oxarticles__oxparentid->value ) ) {
+
+                // looking in cache ..
+                if ( !isset( self::$_aTitleCache[$sParentId] ) ) {
+                    $sQ = "select oxtitle from oxarticles where oxid = '{$sParentId}'";
+                    self::$_aTitleCache[$sParentId] = oxDb::getDb()->getOne( $sQ );
+                }
+                $sTitle = self::$_aTitleCache[$sParentId];
+            }
         }
 
         // variant has varselect value
         if ( $oArticle->oxarticles__oxvarselect->value ) {
-            $sTitle .= ' ' . $oArticle->oxarticles__oxvarselect->value;
+            $sTitle .= ( $sTitle ? ' ' : '' ).$oArticle->oxarticles__oxvarselect->value . ' ';
         }
+
+        // in case nothing was found - looking for number
+        if ( !$sTitle ) {
+            $sTitle .= $oArticle->oxarticles__oxartnum->value;
+        }
+
         return $this->_prepareTitle( $sTitle . '.html' );
     }
 

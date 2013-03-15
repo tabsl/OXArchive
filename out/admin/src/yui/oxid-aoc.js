@@ -499,7 +499,6 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
         this.subscribe( 'rowClickEvent', this.onEventSelectRow );
         this.subscribe( 'rowMousedownEvent', this.onMouseDown );
 
-        this.set( 'selectionMode', 'standard' );
         YAHOO.util.DDM.mode = YAHOO.util.DDM.INTERSECT;
         me.dd = new YAHOO.util.DDProxy( this.elContainer+'_bg', 'aoc', { resizeFrame: false , centerFrame  :true} );
 

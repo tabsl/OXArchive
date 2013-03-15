@@ -167,7 +167,7 @@ class oxSysRequirements
         $sHost   = $_SERVER['HTTP_HOST'];
         $sScript = $_SERVER['SCRIPT_NAME'];
         if ( $sScript && $rFp = @fsockopen( $sHost, 80, $iErrNo, $sErrStr, 10 ) ) {
-            $sScript = str_replace( basename($sScript), '../admin/test/test.php', $sScript );
+            $sScript = str_replace( basename($sScript), '../admin/test.php', $sScript );
 
             $sReq  = "POST $sScript HTTP/1.1\r\n";
             $sReq .= "Host: $sHost\r\n";
@@ -396,7 +396,47 @@ class oxSysRequirements
      */
     public function checkZendOptimizer()
     {
-        return extension_loaded( 'Zend Optimizer' ) ? 2 : 0;
+        $iModStat = extension_loaded( 'Zend Optimizer' ) ? 2 : 0;
+        $sHost   = $_SERVER['HTTP_HOST'];
+        $sScript = $_SERVER['SCRIPT_NAME'];
+        if ( $iModStat > 0 && $sScript && $rFp = @fsockopen( $sHost, 80, $iErrNo, $sErrStr, 10 ) ) {
+            $sScript = str_replace( basename($sScript), '../admin/index.php', $sScript );
+
+            $sReq  = "POST $sScript HTTP/1.1\r\n";
+            $sReq .= "Host: $sHost\r\n";
+            $sReq .= "User-Agent: oxid setup\r\n";
+            $sReq .= "Content-Type: application/x-www-form-urlencoded\r\n";
+            $sReq .= "Content-Length: 0\r\n"; // empty post
+            $sReq .= "Connection: close\r\n\r\n";
+
+            $sOut = '';
+            fwrite( $rFp, $sReq );
+            while ( !feof( $rFp ) ) {
+                $sOut .= fgets( $rFp, 100 );
+            }
+
+            $iModStat = ( strpos( $sOut, 'Zend Optimizer not installed' ) !== false ) ? 0 : 2;
+            fclose( $rFp );
+        }
+        if ( $iModStat > 0 && $sScript && $rFp = @fsockopen( $sHost, 80, $iErrNo, $sErrStr, 10 ) ) {
+            $sScript = str_replace( basename($sScript), '../index.php', $sScript );
+
+            $sReq  = "POST $sScript HTTP/1.1\r\n";
+            $sReq .= "Host: $sHost\r\n";
+            $sReq .= "User-Agent: oxid setup\r\n";
+            $sReq .= "Content-Type: application/x-www-form-urlencoded\r\n";
+            $sReq .= "Content-Length: 0\r\n"; // empty post
+            $sReq .= "Connection: close\r\n\r\n";
+
+            $sOut = '';
+            fwrite( $rFp, $sReq );
+            while ( !feof( $rFp ) ) {
+                $sOut .= fgets( $rFp, 100 );
+            }
+            $iModStat = ( strpos( $sOut, 'Zend Optimizer not installed' ) !== false ) ? 0 : 2;
+            fclose( $rFp );
+        }
+        return $iModStat;
     }
 
     /**

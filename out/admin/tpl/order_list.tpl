@@ -101,9 +101,9 @@ window.onLoad = top.reloadEditFrame();
     <td valign="top" class="listfilter first" height="20">
         <div class="r1"><div class="b1">
         <select name="folder" class="folderselect" onChange="document.search.submit();">
-            <option value="-1" style="color: #000000;">alle</option>
+            <option value="-1" style="color: #000000;">[{ oxmultilang ident="ORDER_LIST_FOLDER_ALL" }]</option>
             [{foreach from=$afolder key=field item=color}]
-            <option value="[{ $field }]" [{ if $folder == $field }]SELECTED[{/if}] style="color: [{ $color }];">[{ $field }]</option>
+            <option value="[{ $field }]" [{ if $folder == $field }]SELECTED[{/if}] style="color: [{ $color }];">[{ oxmultilang ident=$field noerror=true }]</option>
             [{/foreach}]
         </select>
         <input class="listedit" type="text" size="15" maxlength="128" name="where[oxorder.oxorderdate]" value="[{ $where->oxorder__oxorderdate|oxformdate }]" [{include file="help.tpl" helpid=order_date}]>

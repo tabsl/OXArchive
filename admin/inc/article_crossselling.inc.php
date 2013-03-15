@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_crossselling.inc.php 17244 2009-03-16 15:17:48Z arvydas $
+ * $Id: article_crossselling.inc.php 18972 2009-05-12 13:14:18Z rimvydas.paskevicius $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -103,22 +103,6 @@ class ajaxComponent extends ajaxListComponent
         $sQAdd .= " and $sArticleTable.oxid != '".( $sSelId ? $sSelId: $sSynchSelId )."' ";
 
         return $sQAdd;
-    }
-
-    /**
-     * Adds filter SQL to current query
-     *
-     * @param string $sQ query to add filter condition
-     *
-     * @return string
-     */
-    protected function _addFilter( $sQ )
-    {
-        $sQ = parent::_addFilter( $sQ );
-        if ( !oxConfig::getParameter( 'oxid' ) ) {
-            $sQ .= ' group by '.getViewName( 'oxarticles' ).'.oxid ';
-        }
-        return $sQ;
     }
 
     /**

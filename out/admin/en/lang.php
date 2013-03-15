@@ -19,7 +19,7 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 18295 2009-04-16 15:09:12Z rimvydas.paskevicius $
+ * $Id: lang.php 18910 2009-05-08 14:24:06Z vilma $
  */
 
 /*
@@ -322,6 +322,10 @@ $aLang = array(
 'ARTICLE_ATTRIBUTE_ITEMSSELLIST'                => "Product's Selection Lists",
 'ARTICLE_ATTRIBUTE_ASSIGNATTRIBUTE'             => 'Assign Attributes',
 'ARTICLE_ATTRIBUTE_ASSIGNSELECTLIST'            => 'Assign Selection Lists',
+'ARTICLE_BUNDLE_ASSIGNARTICLE'                  => 'Assign Product',
+'ARTICLE_BUNDLE_UNASSIGNARTICLE'                => 'Unassign Product',
+'ARTICLE_BUNDLE_ASSIGNEDARTICLE'                => 'Bundled Product:',
+'ARTICLE_BUNDLE_ALLITEMS'                       => 'All available Products',
 'ARTICLE_CROSSSELLING_CROSSSELLING'             => 'Crossselling Products',
 'ARTICLE_CROSSSELLING_EXTRAS'                   => 'Accessories for Product',
 'ARTICLE_CROSSSELLING_ALLITEMS'                 => 'All available Products',
@@ -845,6 +849,8 @@ $aLang = array(
 'LANGUAGE_BASESSLURL'                           => 'Base SSL URL',
 'LANGUAGE_NOTRANSLATIONS_WARNING'               => 'Warning: No translations files were found in templates dir for selected language!',
 'LANGUAGE_NODBMULTILANGFIELDS_WARNING'          => 'Warning: No multilanguage DB fields were found for selected language!',
+'LANGUAGE_DELETINGMAINLANG_WARNING'             => 'Warning: you can\'t delete main language (with ID = 0)!',
+'LANGUAGE_ALREADYEXISTS_ERROR'                  => 'Error: language with such abbervation already exists!',
 'LOGIN_TITLE'                                   => 'OXID eSales Login',
 'LOGIN_ERROR'                                   => 'Error ! Incorrect User Name and/or Password !',
 'LOGIN_NO_COOKIE_SUPPORT'                       => 'Error! Your browser does not support cookies !',
@@ -969,6 +975,7 @@ $aLang = array(
 'ORDER_SEARCH_FIELD_ARTID'                      => 'Product',
 'ORDER_SEARCH_FIELD_PAYMENT'                    => 'Payment',
 'ORDER_LIST_YOUWANTTOSTORNO'                    => 'Do you really want to cancel this order ?',
+'ORDER_LIST_FOLDER_ALL'                         => 'all',
 'ORDER_LIST_ORDERTIME'                          => 'Order Time',
 'ORDER_LIST_PAID'                               => 'Payment Date',
 'ORDER_LIST_CUSTOMER'                           => 'Customer',
@@ -1053,6 +1060,9 @@ $aLang = array(
 'ORDER_PACKAGE_ORDERNR2'                        => 'Ordered on',
 'ORDER_PACKAGE_MENUITEM'                        => 'Orders',
 'ORDER_PACKAGE_MENUSUBITEM'                     => 'Packing List',
+'ORDERFOLDER_NEW'                               => 'New',
+'ORDERFOLDER_FINISHED'                          => 'Finished',
+'ORDERFOLDER_PROBLEMS'                          => 'Problems',
 'PAGENAVISNIPPET_FROM'                          => 'from',
 'PAYMENT_COUNTRY_ALLCOUNTRIES'                  => 'All Countries',
 'PAYMENT_COUNTRY_SELCOUNTRIES'                  => 'Assigned Countries',
@@ -1458,9 +1468,9 @@ $aLang = array(
 'VOUCHERSERIE_LIST_MENUSUBITEM'                 => 'Vochers',
 'VOUCHERSERIE_MAIN_GENERATERANDOM'              => 'Generate Random No',
 'VOUCHERSERIE_MAIN_MINORDERPRICE'               => 'Min. Order Sum',
-'VOUCHERSERIE_MAIN_ALLOWSAMESERIES'             => 'Valid with same serie ?',
-'VOUCHERSERIE_MAIN_ALLOWOTHERSERIES'            => 'Valid with different serie ?',
-'VOUCHERSERIE_MAIN_SAMESEROTHERORDER'           => 'Same serie, different order ?',
+'VOUCHERSERIE_MAIN_ALLOWSAMESERIES'             => 'Valid with same Series',
+'VOUCHERSERIE_MAIN_ALLOWOTHERSERIES'            => 'Valid with different Series',
+'VOUCHERSERIE_MAIN_SAMESEROTHERORDER'           => 'Valid with same Series, different Order',
 'VOUCHERSERIE_MAIN_NEWVOUCHER'                  => 'Create new Coupons',
 'VOUCHERSERIE_MAIN_RANDOMNUM'                   => 'Random Numbers',
 'VOUCHERSERIE_MAIN_VOUCHERNUM'                  => 'Coupon Number',

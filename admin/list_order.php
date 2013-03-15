@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: list_order.php 18354 2009-04-20 10:42:25Z arvydas $
+ * $Id: list_order.php 18898 2009-05-08 12:13:29Z arvydas $
  */
 
 /**
@@ -56,13 +56,16 @@ class List_Order extends Order_List
     }
 
     /**
-     * Adding shop check
+     * Adding folder check
      *
-     * @return null
+     * @param array  $aWhere  SQL condition array
+     * @param string $sqlFull SQL query string
+     *
+     * @return $sQ
      */
-    public function buildWhere()
+    public function _prepareWhereQuery( $aWhere, $sqlFull )
     {
-        return oxAdminList::buildWhere();
+        return oxAdminList::_prepareWhereQuery( $aWhere, $sqlFull );
     }
 
     /**

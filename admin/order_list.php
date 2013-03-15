@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: order_list.php 18342 2009-04-20 08:28:22Z arvydas $
+ * $Id: order_list.php 18765 2009-05-04 13:11:33Z vilma $
  */
 
 /**
@@ -83,27 +83,32 @@ class Order_List extends oxAdminList
     }
 
     /**
-     * Adding folder check. First display new orders
+     * Adding folder check
      *
-     * @return null
+     * @param array  $aWhere  SQL condition array
+     * @param string $sqlFull SQL query string
+     *
+     * @return $sQ
      */
-    public function buildWhere()
+    protected function _prepareWhereQuery( $aWhere, $sqlFull )
     {
+        $sQ = parent::_prepareWhereQuery( $aWhere, $sqlFull );
         $myConfig = $this->getConfig();
         $aFolders = $myConfig->getConfigParam( 'aOrderfolder' );
-
-        $this->_aWhere = parent::buildWhere();
-        if ( !is_array($this->_aWhere))
-            $this->_aWhere = array();
-
         $sFolder = oxConfig::getParameter( 'folder' );
+        //searchong for empty oxfolder fields
         if ( $sFolder && $sFolder != '-1' ) {
-            $this->_aWhere["oxorder.oxfolder"] = $sFolder;
+            $sQ .= " and ( oxorder.oxfolder = '".$sFolder."' ";
+            //deprecated check for old orders
+            $sQ .= "or oxorder.oxfolder = '".oxLang::getInstance()->translateString($sFolder)."')";
         } elseif ( !$sFolder && is_array( $aFolders ) ) {
             $aFolderNames = array_keys( $aFolders );
-            $this->_aWhere["oxorder.oxfolder"] = $aFolderNames[0];
+            $sQ .= " and ( oxorder.oxfolder = '".$aFolderNames[0]."' ";
+            //deprecated check for old orders
+            $sQ .= "or oxorder.oxfolder = '".oxLang::getInstance()->translateString($aFolderNames[0])."')";
         }
-        return $this->_aWhere;
+
+        return $sQ;
     }
 
     /**

@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: order_overview.php 17243 2009-03-16 15:16:57Z arvydas $
+ * $Id: order_overview.php 18765 2009-05-04 13:11:33Z vilma $
  */
 
     // DTAUS
@@ -71,6 +71,7 @@ class Order_Overview extends oxAdminDetails
         $this->_aViewData["ordertotalsum"] = $oLang->formatCurrency( $dSum, $oCur);
         $this->_aViewData["ordertotalcnt"] = $oOrder->getOrderCnt();
         $this->_aViewData["afolder"] = $myConfig->getConfigParam( 'aOrderfolder' );
+        $this->_aViewData["sfolder"] = $myConfig->getConfigParam( 'aOrderfolder' );
             $this->_aViewData["alangs"] = $oLang->getLanguageNames();
 
 

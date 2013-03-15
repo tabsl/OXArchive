@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxarticle.php 18378 2009-04-20 16:05:36Z tomas $
+ * $Id: oxarticle.php 18988 2009-05-13 07:49:23Z sarunas $
  */
 
 // defining supported link types
@@ -76,6 +76,13 @@ class oxArticle extends oxI18n
      * @var oxPrice
      */
     protected $_oPrice      = null;
+
+    /**
+     * caches article vat
+     *
+     * @var double | null
+     */
+    protected $_dArticleVat = null;
 
     /**
      * Persistent Parameter.
@@ -725,9 +732,16 @@ class oxArticle extends oxI18n
     {
 
         // admin preview mode
-        $myConfig = $this->getConfig();
-        if ( oxConfig::getParameter( 'preview' ) == 1 &&  $this->isAdmin()) {
-            return true;
+        $myConfig  = $this->getConfig();
+        if ( ( $sPrevId = oxConfig::getParameter( 'preview' ) ) &&
+             ( $sAdminSid = oxUtilsServer::getInstance()->getOxCookie( 'admin_sid' ) ) ) {
+
+            $oDb = oxDb::getDb();
+            $sPrevId   = $oDb->quote( $sPrevId );
+            $sAdminSid = $oDb->quote( $sAdminSid );
+            $sTable    = getViewName( 'oxuser' );
+
+            return (bool) $oDb->getOne( "select 1 from $sTable where MD5( CONCAT( {$sAdminSid}, {$sTable}.oxid, {$sTable}.oxpassword, {$sTable}.oxrights ) ) = $sPrevId" );
         }
 
         // active ?
@@ -1130,8 +1144,6 @@ class oxArticle extends oxI18n
         $oVariants->selectString( $sSelect);
         stopProfile("selectVariants");
 
-        //print_r($oVariants);
-
         if (!$oVariants->count()) {
             return array();
         }
@@ -1212,15 +1224,16 @@ class oxArticle extends oxI18n
             $sOXID = $this->oxarticles__oxparentid->value;
         }
 
+        $oStr = getStr();
         $sWhere   = $oCategory->getSqlActiveSnippet();
         $sSelect  = $this->_generateSearchStr( $sOXID );
-        $sSelect .= ( strstr( $sSelect, 'where' )?' and ':' where ') . $sWhere . " order by oxobject2category.oxtime ";
+        $sSelect .= ( $oStr->strstr( $sSelect, 'where' )?' and ':' where ') . $sWhere . " order by oxobject2category.oxtime ";
 
         // category not found ?
         if ( !$oCategory->assignRecord( $sSelect ) ) {
 
             $sSelect  = $this->_generateSearchStr( $sOXID, true );
-            $sSelect .= ( strstr( $sSelect, 'where' )?' and ':' where ') . $sWhere ;
+            $sSelect .= ( $oStr->strstr( $sSelect, 'where' )?' and ':' where ') . $sWhere ;
 
             // looking for price category
             if ( !$oCategory->assignRecord( $sSelect ) ) {
@@ -1445,7 +1458,7 @@ class oxArticle extends oxI18n
         $this->_oTPrice = oxNew( 'oxPrice' );
         $this->_oTPrice->setPrice( $this->oxarticles__oxtprice->value );
 
-        $this->_applyVat( $this->_oTPrice, oxNew( 'oxVatSelector' )->getArticleVat( $this ) );
+        $this->_applyVat( $this->_oTPrice, $this->getArticleVat() );
         $this->_applyCurrency( $this->_oTPrice );
 
         return $this->_oTPrice;
@@ -1538,7 +1551,7 @@ class oxArticle extends oxI18n
 
         // apply VAT only if configuration requires it
         if ( !$myConfig->getConfigParam( 'bl_perfCalcVatOnlyForBasketOrder' ) ) {
-            $this->_applyVAT( $this->_oPrice, oxNew('oxVatSelector')->getArticleVat( $this ) );
+            $this->_applyVAT( $this->_oPrice, $this->getArticleVat() );
         }
 
         // apply currency
@@ -1603,7 +1616,7 @@ class oxArticle extends oxI18n
         $oBasketPrice->setPrice( $dBasePrice );
 
         // apply VAT
-        $this->_applyVat( $oBasketPrice, oxNew('oxVatSelector')->getBasketItemVat( $this, $oBasket ) );
+        $this->_applyVat( $oBasketPrice, oxVatSelector::getInstance()->getBasketItemVat( $this, $oBasket ) );
 
         // apply currency
         $this->_applyCurrency( $oBasketPrice );
@@ -1781,12 +1794,13 @@ class oxArticle extends oxI18n
             $iActPicId = oxConfig::getParameter('actpicid');
         }
 
+        $oStr = getStr();
         $iCntr = 0;
         $iPicCount = $myConfig->getConfigParam( 'iPicCount' );
         for ( $i = 1; $i <= $iPicCount; $i++) {
             $sPicVal = $this->getPictureUrl( $i );
             $sIcoVal = $this->getIconUrl( $i );
-            if ( !strstr($sIcoVal, 'nopic_ico.jpg')) {
+            if ( !$oStr->strstr($sIcoVal, 'nopic_ico.jpg')) {
                 if ($iCntr) {
                     $blMorePic = true;
                 }
@@ -1804,7 +1818,7 @@ class oxArticle extends oxI18n
         $iZoomPicCount = $myConfig->getConfigParam( 'iZoomPicCount' );
         for ( $j = 1,$c = 1; $j <= $iZoomPicCount; $j++) {
             $sVal = $this->getZoomPictureUrl($j);
-            if ( !strstr($sVal, 'nopic.jpg')) {
+            if ( !$oStr->strstr($sVal, 'nopic.jpg')) {
                 if ($this->getConfig()->getConfigParam('blFormerTplSupport')) {
                     $sVal = $this->_sDynImageDir."/".$sVal;
                 }
@@ -1986,11 +2000,12 @@ class oxArticle extends oxI18n
             $this->oxarticles__oxlongdesc->setValue(str_replace( '&amp;nbsp;', '&nbsp;', $this->oxarticles__oxlongdesc->value ), oxField::T_RAW);
             $this->oxarticles__oxlongdesc->setValue(str_replace( '&amp;', '&', $this->oxarticles__oxlongdesc->value ), oxField::T_RAW);
             $this->oxarticles__oxlongdesc->setValue(str_replace( '&quot;', '"', $this->oxarticles__oxlongdesc->value ), oxField::T_RAW);
-            $blHasSmarty = strstr( $this->oxarticles__oxlongdesc->value, '[{' );
-            if ( $blHasSmarty && ($myConfig->getConfigParam( 'blExport' ) || !$this->isAdmin() ) && $myConfig->getConfigParam( 'bl_perfParseLongDescinSmarty' ) ) {
+            $oStr = getStr();
+            $blHasSmarty = $oStr->strstr( $this->oxarticles__oxlongdesc->value, '[{' );
+            $blHasPhp = $oStr->strstr( $this->oxarticles__oxlongdesc->value, '<?' );
+            if ( ( $blHasSmarty || $blHasPhp ) && ($myConfig->getConfigParam( 'blExport' ) || !$this->isAdmin() ) && $myConfig->getConfigParam( 'bl_perfParseLongDescinSmarty' ) ) {
                 $this->oxarticles__oxlongdesc->setValue(oxUtilsView::getInstance()->parseThroughSmarty( $this->oxarticles__oxlongdesc->value, $this->getId() ), oxField::T_RAW);
             }
-
         }
 
         return $this->oxarticles__oxlongdesc;
@@ -2716,7 +2731,7 @@ class oxArticle extends oxI18n
 
         $dArticleVat = null;
         if ( !$myConfig->getConfigParam( 'bl_perfCalcVatOnlyForBasketOrder' ) ) {
-            $dArticleVat = oxNew('oxVatSelector')->getArticleVat( $this );
+            $dArticleVat = $this->getArticleVat();
         }
 
         // trying to find lowest price value
@@ -2769,6 +2784,19 @@ class oxArticle extends oxI18n
     }
 
     /**
+     * retrieve article VAT (cached)
+     *
+     * @return double
+     */
+    public function getArticleVat()
+    {
+        if (!isset($this->_dArticleVat)) {
+            $this->_dArticleVat = oxVatSelector::getInstance()->getArticleVat( $this );
+        }
+        return $this->_dArticleVat;
+    }
+
+    /**
      * Applies VAT to article
      *
      * @param oxPrice $oPrice Price object
@@ -2780,12 +2808,22 @@ class oxArticle extends oxI18n
     {
         startProfile(__FUNCTION__);
         $oPrice->setVAT( $dVat );
-        if ( ( $oUser = $this->getArticleUser() ) ) {
-            if ( ( $dVat = oxNew( 'oxVatSelector' )->getUserVat( $oUser ) ) !== false ) {
-                $oPrice->setUserVat( $dVat );
-            }
+        if ( ($dVat = oxVatSelector::getInstance()->getArticleUserVat($this)) !== false ) {
+            $oPrice->setUserVat( $dVat );
         }
         stopProfile(__FUNCTION__);
+    }
+
+    /**
+     * apply article and article use
+     * 
+     * @param oxPrice $oPrice target price
+     */
+    public function applyVats( oxPrice $oPrice )
+    {
+        $this->_applyVAT($oPrice, 
+                         $this->getArticleVat()
+                        );
     }
 
     /**
@@ -3877,12 +3915,15 @@ class oxArticle extends oxI18n
      */
     protected function _onChangeUpdateMinVarPrice( $sParentID )
     {
-        $sQ = 'select min(oxprice) as varminprice from oxarticles where oxparentid = "'.$sParentID.'"';
-        //V #M378: Quicksorting after price in articlelist does not work correctly when parent article is not buyable
-        if ( !$this->isParentNotBuyable() || $this->oxarticles__oxvarcount->value == 0) {
+        //#M0000883 (Sarunas)
+        $sQ = 'select min(oxprice) as varminprice from oxarticles where '.$this->getSqlActiveSnippet(true).' and (oxparentid = "'.$sParentID.'"';
+        //#M0000886 (Sarunas)
+        if ( $this->getConfig()->getConfigParam( 'blVariantParentBuyable' ) ) {
             $sQ .= ' or oxid = "'.$sParentID.'"';
+        } else {
+            $sQ .= ' or (oxid = "'.$sParentID.'" and oxvarcount=0)';
         }
-
+        $sQ .= ')';
         $oDb = oxDb::getDb();
         $dVarMinPrice = $oDb->getOne($sQ);
         if ( $dVarMinPrice ) {

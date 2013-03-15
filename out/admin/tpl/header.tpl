@@ -20,7 +20,7 @@
     <div class="version">
         <b>
             [{$fulledition}]
-            [{$version}]
+            [{$version}]_[{$revision}]
         </b>
     </div>
 

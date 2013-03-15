@@ -720,6 +720,7 @@ function _groupExp(el) {
 
             <dl>
                 <dt>
+                    <input type=hidden name=confarrs[aRssSelected] value=''>
                     <select class="select" multiple name=confarrs[aRssSelected][] [{ $readonly}]>
                       [{if $confarrs.aRssSelected|is_array}]
                         <option value="oxrss_topshop"[{if in_array('oxrss_topshop', $confarrs.aRssSelected)}] selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_RSSTOPSHOP" }]</option>

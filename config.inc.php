@@ -99,3 +99,7 @@
     // Only for former templates: Fixed Shop Width
     $this->blFixedWidthLayout = 1;
 
+    // set this parameter when your shop runs on different subdomains in ssl/non ssl mode
+    // e.g. if you setup "ssl.shop.com"/"www.shop.com" - config value should be ".shop.com"
+    $this->sCookieDomain = null;
+

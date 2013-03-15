@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxlang.php 18182 2009-04-15 08:57:02Z tomas $
+ * $Id: oxlang.php 18973 2009-05-12 13:15:11Z vilma $
  */
 
 /**
@@ -545,6 +545,9 @@ class oxLang extends oxSuperCfg
             array_unshift($aLangFiles, $sDir."/lang.php");
 
             $aLangCache[$iLang] = array();
+            if (!$sDir) {
+            	return array();
+            }
             foreach ( $aLangFiles as $sLangFile ) {
                 require $sLangFile;
 

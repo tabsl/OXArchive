@@ -42,7 +42,12 @@
                WPro.editors[sIdent].prepareSubmission();
                textVal = cleanupLongDesc( WPro.editors[sIdent].getValue() );
             }
-        } catch(err) {}
+        } catch(err) {
+                var varEl = document.getElementById(sIdent);
+                if (varEl != null) {
+                    textVal = cleanupLongDesc( varEl.value );
+                }
+        }
 
         if (textVal == null) {
             var varName = 'editor_'+sIdent;

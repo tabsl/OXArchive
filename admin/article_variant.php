@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: article_variant.php 17243 2009-03-16 15:16:57Z arvydas $
+ * $Id: article_variant.php 18601 2009-04-28 11:24:29Z tomas $
  */
 
 /**
@@ -83,7 +83,7 @@ class Article_Variant extends oxAdminDetails
                 $this->_aViewData["parentarticle"] =  $oParentArticle;
                 $this->_aViewData["oxparentid"] =  $oArticle->oxarticles__oxparentid->value;
                 $this->_aViewData["issubvariant"] = 1;
-                // A. we do not support variants for variants, as this will broke all stock logics etc
+                // A. disable variant information editing for variant
                 $this->_aViewData["readonly"] = 1;
             }
             $this->_aViewData["editlanguage"] = $this->_iEditLang;

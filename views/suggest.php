@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: suggest.php 17481 2009-03-20 12:35:53Z arvydas $
+ * $Id: suggest.php 18680 2009-04-29 14:20:46Z vilma $
  */
 
 /**
@@ -234,6 +234,30 @@ class Suggest extends oxUBase
     public function getSuggestData()
     {
         return $this->_aSuggestData;
+    }
+
+    /**
+     * get link of current view
+     *
+     * @param int $iLang requested language
+     *
+     * @return string
+     */
+    public function getLink( $iLang = null )
+    {
+        $sLink = parent::getLink( $iLang );
+        
+        // active category
+        if ( $sVal = oxConfig::getParameter( 'cnid' ) ) {
+            $sLink .= ( ( strpos( $sLink, '?' ) === false ) ? '?' : '&amp;' ) . "cnid={$sVal}";
+        }
+
+        // active article
+        if ( $sVal= oxConfig::getParameter( 'anid' ) ) {
+            $sLink .= ( ( strpos( $sLink, '?' ) === false ) ? '?' : '&amp;' ) . "anid={$sVal}";
+        }
+
+        return $sLink;
     }
 
 }
