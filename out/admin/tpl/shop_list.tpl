@@ -74,7 +74,6 @@ function UpdateMain( sID)
     top.forceReloadingEditFrame();
 }
 
-
 window.onLoad = top.reloadEditFrame();
 
 //-->

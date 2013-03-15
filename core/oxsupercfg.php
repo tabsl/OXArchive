@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxsupercfg.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxsupercfg.php 19635 2009-06-05 16:51:09Z tomas $
  */
 
 /**
@@ -96,8 +96,8 @@ class oxSuperCfg
     public function getConfig()
     {
         if ( defined( 'OXID_PHP_UNIT' ) ) {
-            if ( isset( $this->unitCustMOD ) ) {
-                return $this->unitCustMOD;
+            if ( isset( $this->unitCustModConf ) ) {
+                return $this->unitCustModConf;
             }
             return oxConfig::getInstance();
         }
@@ -119,7 +119,7 @@ class oxSuperCfg
     public function setConfig( $oConfig )
     {
         if ( defined( 'OXID_PHP_UNIT' ) ) {
-            $this->unitCustMOD = $oConfig;
+            $this->unitCustModConf = $oConfig;
             return;
         }
 
@@ -134,8 +134,8 @@ class oxSuperCfg
     public function getSession()
     {
         if ( defined( 'OXID_PHP_UNIT' ) ) {
-            if ( isset( $this->unitCustMOD ) ) {
-                return $this->unitCustMOD;
+            if ( isset( $this->unitCustModSess ) ) {
+                return $this->unitCustModSess;
             }
             return oxSession::getInstance();
         }
@@ -157,7 +157,7 @@ class oxSuperCfg
     public function setSession( $oSession )
     {
         if ( defined( 'OXID_PHP_UNIT' ) ) {
-            $this->unitCustMOD = $oSession;
+            $this->unitCustModSess = $oSession;
             return;
         }
 

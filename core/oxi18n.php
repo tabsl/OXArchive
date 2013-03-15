@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxi18n.php 18599 2009-04-28 11:07:50Z arvydas $
+ * $Id: oxi18n.php 19761 2009-06-10 14:28:43Z arvydas $
  */
 
 /**
@@ -58,8 +58,9 @@ class oxI18n extends oxBase
     public function __construct()
     {
         parent::__construct();
+
         // set default language
-        $this->setLanguage();
+        //$this->setLanguage();
 
         //T2008-02-22
         //lets try to differentiate cache keys for oxI18n and oxBase
@@ -78,12 +79,7 @@ class oxI18n extends oxBase
      */
     public function setLanguage( $iLang = null )
     {
-        $myConfig = $this->getConfig();
-        if ( isset($iLang)) {
-            $this->_iLanguage = (int) $iLang;
-        } else {
-            $this->_iLanguage = (int) oxLang::getInstance()->getBaseLanguage();
-        }
+        $this->_iLanguage = (int) $iLang;
     }
 
     /**
@@ -93,6 +89,9 @@ class oxI18n extends oxBase
      */
     public function getLanguage()
     {
+        if ( $this->_iLanguage === null ) {
+            $this->_iLanguage = oxLang::getInstance()->getBaseLanguage();
+        }
         return $this->_iLanguage;
     }
 
@@ -163,7 +162,7 @@ class oxI18n extends oxBase
     {
         // set new lang to this object
         $this->setLanguage($iLanguage);
-        return parent::load( $sOxid);
+        return $this->load( $sOxid);
     }
 
     /**
@@ -185,20 +184,6 @@ class oxI18n extends oxBase
         if (!$sCacheKey) {
             $this->_sCacheKey = null;
         }
-    }
-
-    /**
-     * Loads object data from DB (object data ID is passed to method). Returns
-     * true on success. Object is loaded in current shop language.
-     *
-     * @param string $sOXID Object ID
-     *
-     * @return bool
-     */
-    public function load( $sOXID)
-    {
-        $this->setLanguage( oxLang::getInstance()->getBaseLanguage() );
-        return parent::load($sOXID);
     }
 
     /**
@@ -294,7 +279,7 @@ class oxI18n extends oxBase
      */
     public function getSqlFieldName($sField)
     {
-        $iLang = (int) $this->_iLanguage;
+        $iLang = $this->getLanguage();
         if ($iLang && $this->_blEmployMultilanguage && $this->isMultilingualField($sField)) {
             $sField .= "_" . $iLang;
         }

@@ -5,6 +5,10 @@
     <link rel="stylesheet" href="[{$shop->basetpldir}]nav.css">
     <link rel="stylesheet" href="[{$shop->basetpldir}]colors.css">
     <meta http-equiv="Content-Type" content="text/html; charset=[{$charset}]">
+    <script language="javascript">
+        //reloading list frame if needed
+        window.onLoad = top.reloadListEditFrames();
+    </script>
 </head>
 <body>
     <table>

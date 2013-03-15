@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: tag.php 18244 2009-04-15 14:49:32Z arvydas $
+ * $Id: tag.php 19631 2009-06-05 12:21:07Z arvydas $
  */
 
 /**
@@ -67,6 +67,13 @@ class Tag extends aList
     protected $_sTemplateLocation;
 
     /**
+     * Current view search engine indexing state
+     *
+     * @var int
+     */
+    protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXFOLLOW;
+
+    /**
      * Unsets SEO category, initiates tag view and calls parent::init();
      *
      * @return null
@@ -110,6 +117,16 @@ class Tag extends aList
         $this->_processListArticles();
 
         return $this->_sThisTemplate;
+    }
+
+    /**
+     * Returns product link type (OXARTICLE_LINKTYPE_TAG)
+     *
+     * @return int
+     */
+    protected function _getProductLinkType()
+    {
+        return OXARTICLE_LINKTYPE_TAG;
     }
 
     /**
@@ -204,19 +221,13 @@ class Tag extends aList
      *
      * @return string
      */
-    public function generatePageNavigation( )
+    public function generatePageNavigationUrl()
     {
-        return oxUBase::generatePageNavigation( );
-    }
-
-    /**
-     * Generates Url for page navigation
-     *
-     * @return string
-     */
-    public function generatePageNavigationUrl( )
-    {
-        return oxUBase::generatePageNavigationUrl( );
+        if ( ( oxUtils::getInstance()->seoIsActive() && ( $sTag = $this->getTag() ) ) ) {
+            return oxSeoEncoderTag::getInstance()->getTagUrl( $sTag, oxLang::getInstance()->getBaseLanguage() );
+        } else {
+            return oxUBase::generatePageNavigationUrl();
+        }
     }
 
     /**
@@ -230,7 +241,14 @@ class Tag extends aList
      */
     protected function _addPageNrParam( $sUrl, $iPage, $iLang = null)
     {
-        return oxUBase::_addPageNrParam( $sUrl, $iPage, $iLang );
+        if ( oxUtils::getInstance()->seoIsActive() && ( $sTag = $this->getTag() ) ) {
+            if ( $iPage ) { // only if page number > 0
+                $sUrl = oxSeoEncoderTag::getInstance()->getTagPageUrl( $sTag, $iPage, $iLang );
+            }
+        } else {
+            $sUrl = oxUBase::_addPageNrParam( $sUrl, $iPage, $iLang );
+        }
+        return $sUrl;
     }
 
     /**
@@ -295,20 +313,6 @@ class Tag extends aList
     }
 
     /**
-     * Template variable getter. Returns page navigation
-     *
-     * @return object
-     */
-    public function getPageNavigation()
-    {
-        if ( $this->_oPageNavigation === null ) {
-            $this->_oPageNavigation = false;
-            $this->_oPageNavigation = $this->generatePageNavigation();
-        }
-        return $this->_oPageNavigation;
-    }
-
-    /**
      * Template variable getter. Returns active search
      *
      * @return object
@@ -322,11 +326,12 @@ class Tag extends aList
      * Returns current view keywords seperated by comma
      * (calls parent::_collectMetaKeyword())
      *
-     * @param string $sKeywords data to use as keywords
+     * @param string $sKeywords               data to use as keywords
+     * @param bool   $blRemoveDuplicatedWords remove dublicated words
      *
      * @return string
      */
-    protected function _prepareMetaKeyword( $sKeywords )
+    protected function _prepareMetaKeyword( $sKeywords, $blRemoveDuplicatedWords = true )
     {
         return parent::_collectMetaKeyword( $sKeywords );
     }

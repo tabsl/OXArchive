@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutils.php 18582 2009-04-27 15:00:06Z arvydas $
+ * $Id: oxutils.php 19911 2009-06-16 21:12:28Z tomas $
  */
 
 /**
@@ -27,13 +27,12 @@
  */
 require_once getShopBasePath()."core/smarty/Smarty.class.php";
 
-/**
+/** 
  * general utils class, used as a singelton
  *
  */
 class oxUtils extends oxSuperCfg
 {
-
     /**
      * oxUtils class instance.
      *

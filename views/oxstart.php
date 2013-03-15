@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxstart.php 18431 2009-04-22 07:35:10Z alfonsas $
+ * $Id: oxstart.php 19910 2009-06-16 21:06:46Z tomas $
  */
 
 /**
@@ -109,7 +109,7 @@ class oxStart extends oxUBase
     }
 
     /**
-     * Unsets all session data.
+     * Finalizes the script.
      *
      * @return null
      */

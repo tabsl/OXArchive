@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxtagcloud.php 17928 2009-04-07 08:51:12Z tomas $
+ * $Id: oxtagcloud.php 19609 2009-06-04 07:33:12Z arvydas $
  */
 
 if (!defined('OXTAGCLOUD_MINFONT')) {
@@ -168,25 +168,24 @@ class oxTagCloud extends oxSuperCfg
 
         $iMaxHit = max( $aTags);
         $blSeoIsActive = $myUtils->seoIsActive();
-        if ( $blSeoIsActive) {
-            $oSeoEncoder = oxSeoEncoder::getInstance();
-        }
+        $oSeoEncoderTag = oxSeoEncoderTag::getInstance();
 
         $iLang = oxLang::getInstance()->getBaseLanguage();
         $sUrl = $this->getConfig()->getShopUrl();
         $oStr = getStr();
 
         $sTagCloud = false;
-        foreach ($aTags as $sTag => $sRelevance) {
-            $sLink = $sUrl."index.php?cl=tag&amp;searchtag=".rawurlencode($sTag)."&amp;lang=".$iLang;
-            if ( $blSeoIsActive) {
-                $sLink = $oSeoEncoder->getDynamicUrl( "index.php?cl=tag&amp;searchtag=".rawurlencode($sTag), "tag/$sTag/", $iLang );
+        foreach ( $aTags as $sTag => $sRelevance ) {
+            if ( $blSeoIsActive ) {
+                $sLink = $oSeoEncoderTag->getTagUrl( $sTag, $iLang );
+            } else {
+                $sLink = $sUrl . $oSeoEncoderTag->getStdTagUri( $sTag ) . "&amp;lang=" . $iLang;
             }
             $sTagCloud .= "<a style='font-size:". $this->_getFontSize($sRelevance, $iMaxHit) ."%;' href='$sLink'>".$oStr->htmlentities($sTag)."</a> ";
         }
 
-        if ($this->_sCacheKey && !$sArtId) {
-            $myUtils->toFileCache($sCacheKey, $sTagCloud);
+        if ( $this->_sCacheKey && !$sArtId ) {
+            $myUtils->toFileCache( $sCacheKey, $sTagCloud );
         }
 
         return $sTagCloud;

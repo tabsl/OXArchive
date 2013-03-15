@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxuserpayment.php 18025 2009-04-09 11:30:19Z arvydas $
+ * $Id: oxuserpayment.php 19539 2009-06-01 20:08:00Z alfonsas $
  */
 
 /**
@@ -243,7 +243,13 @@ class oxUserPayment extends oxBase
         }
 
         if ( !$this->_aDynValues ) {
-            $this->_aDynValues = oxUtils::getInstance()->assignValuesFromText( $this->oxuserpayments__oxvalue->value );
+
+            $sRawDynValue = null;
+            if( is_object($this->oxuserpayments__oxvalue) ) {
+               $sRawDynValue = $this->oxuserpayments__oxvalue->getRawValue();
+            }
+
+            $this->_aDynValues = oxUtils::getInstance()->assignValuesFromText( $sRawDynValue );
         }
         return $this->_aDynValues;
     }

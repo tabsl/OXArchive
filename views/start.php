@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: start.php 18045 2009-04-09 12:26:14Z arvydas $
+ * $Id: start.php 19384 2009-05-26 13:16:18Z rimvydas.paskevicius $
  */
 
 /**
@@ -224,10 +224,11 @@ class Start extends oxUBase
      * It happens if current view has no meta data defined in oxcontent table
      *
      * @param string $sKeywords data to use as keywords
+     * @param bool   $blRemoveDuplicatedWords remove dublicated words
      *
      * @return string
      */
-    protected function _prepareMetaKeyword( $sKeywords )
+    protected function _prepareMetaKeyword( $sKeywords, $blRemoveDuplicatedWords = true )
     {
         if ( !$sKeywords &&
             $this->getConfig()->getConfigParam( 'bl_perfLoadAktion' ) &&
@@ -235,7 +236,8 @@ class Start extends oxUBase
             $oDescField = $oArt->getArticleLongDesc();
             $sKeywords = $oDescField->value;
         }
-        return parent::_prepareMetaKeyword( $sKeywords );
+
+        return parent::_prepareMetaKeyword( $sKeywords, true );
     }
 
     /**

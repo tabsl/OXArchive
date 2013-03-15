@@ -124,7 +124,8 @@ class oxManufacturerList extends oxList
 
 
         //Create fake manufacturer root category
-        $this->_oRoot = oxManufacturer::getRootManufacturer();
+        $this->_oRoot = oxNew( "oxManufacturer" );
+        $this->_oRoot->load( "root" );
 
         //category fields
         $this->_addCategoryFields( $this->_oRoot );

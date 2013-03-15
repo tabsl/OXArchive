@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxseoencoder.php 18834 2009-05-06 10:51:53Z arvydas $
+ * $Id: oxseoencoder.php 19882 2009-06-16 11:59:04Z sarunas $
  */
 
 /**
@@ -36,6 +36,13 @@ class oxSeoEncoder extends oxSuperCfg
      * @var array
      */
     protected static $_aReservedWords = array( 'admin' );
+
+    /**
+     * cache for reserved path root node keys
+     *
+     * @var array
+     */
+    protected static $_aReservedEntryKeys = null;
 
     /**
      * SEO separator.
@@ -67,8 +74,17 @@ class oxSeoEncoder extends oxSuperCfg
 
     /**
      * Singleton instance.
+     *
+     * @var oxseoencoder
      */
     protected static $_instance = null;
+
+    /**
+     * Seo Urls cache
+     *
+     * @var array
+     */
+    protected $_aSeoCache = array();
 
     /**
      * Singleton method
@@ -80,7 +96,23 @@ class oxSeoEncoder extends oxSuperCfg
         if (!self::$_instance) {
             self::$_instance = oxNew("oxSeoEncoder");
         }
+
+        if ( defined( 'OXID_PHP_UNIT' ) ) {
+            // resetting cache
+            self::$_instance->_aSeoCache = array();
+        }
+
         return self::$_instance;
+    }
+
+    /**
+     * Resets seo cache (use in case you need forced reset)
+     *
+     * @return null
+     */
+    public function resetCache()
+    {
+        $this->_aSeoCache = array();
     }
 
     /**
@@ -159,6 +191,19 @@ class oxSeoEncoder extends oxSuperCfg
     }
 
     /**
+     * Generates dynamic url object id (calls oxseoencoder::_getStaticObjectId)
+     *
+     * @param int    $iShopId shop id
+     * @param string $sStdUrl standard (dynamic) url
+     *
+     * @return string
+     */
+    protected function _getDynamicObjectId( $iShopId, $sStdUrl )
+    {
+        return $this->_getStaticObjectId( $iShopId, $sStdUrl );
+    }
+
+    /**
      * Returns dynamic object SEO URI
      *
      * @param string $sStdUrl standart url
@@ -172,7 +217,7 @@ class oxSeoEncoder extends oxSuperCfg
         $iShopId = $this->getConfig()->getShopId();
 
         $sStdUrl   = $this->_trimUrl( $sStdUrl );
-        $sObjectId = md5( strtolower( $iShopId . $sStdUrl ) );
+        $sObjectId = $this->_getDynamicObjectId( $iShopId, $sStdUrl );
         $sSeoUrl   = $this->_prepareTitle( $sSeoUrl );
 
         //load details link from DB
@@ -206,7 +251,8 @@ class oxSeoEncoder extends oxSuperCfg
      */
     protected function _getFullUrl( $sSeoUrl, $iLang = null)
     {
-        return $this->getConfig()->getShopURL( $iLang ) . $sSeoUrl . $this->_getAddParams();
+        $sFullUrl = $this->getConfig()->getShopUrl( $iLang ) . $sSeoUrl . $this->_getAddParams();
+        return $this->getSession()->processUrl( $sFullUrl );
     }
 
     /**
@@ -235,8 +281,8 @@ class oxSeoEncoder extends oxSuperCfg
      */
     protected function _getStaticUri( $sStdUrl, $iShopId, $iLang )
     {
-        $sIdent  = md5( strtolower( $iShopId . $this->_trimUrl( $sStdUrl, $iLang ) ) );
-        return $this->_loadFromDb( 'static', $sIdent, $iLang );
+        $sStdUrl = $this->_trimUrl( $sStdUrl, $iLang );
+        return $this->_loadFromDb( 'static', $this->_getStaticObjectId( $iShopId, $sStdUrl ), $iLang );
     }
 
     /**
@@ -266,6 +312,15 @@ class oxSeoEncoder extends oxSuperCfg
                 $sConstEnd = '/';
             }
         }
+
+        // fix for not having url, which executes through /other/ script then seo decoder
+        $sAdd = ' ';
+        if ('/' != self::$_sSeparator) {
+            $sAdd = self::$_sSeparator . self::$_sPrefix;
+        } else {
+            $sAdd = '_' . self::$_sPrefix;
+        }
+        $sSeoUrl = preg_replace( "#^(/*)(".implode('|', $this->_getReservedEntryKeys()).")/#i" , "\$1\$2$sAdd/", $sSeoUrl );
 
         $sBaseSeoUrl = $sSeoUrl;
         if ( $sConstEnd && $oStr->substr( $sSeoUrl, 0 - $oStr->strlen( $sConstEnd ) ) == $sConstEnd ) {
@@ -337,6 +392,12 @@ class oxSeoEncoder extends oxSuperCfg
         }
         $sQ .= " limit 1";
 
+        // caching to avoid same queries..
+        $sIdent = md5($sQ);
+        if ( isset( $this->_aSeoCache[$sIdent] ) ) {
+            return $this->_aSeoCache[$sIdent];
+        }
+
         $sSeoUrl = false;
         $oRs = $oDb->execute( $sQ );
         if ( $oRs && $oRs->recordCount() > 0 && !$oRs->EOF ) {
@@ -350,8 +411,34 @@ class oxSeoEncoder extends oxSuperCfg
                 // if seo url is available and is valid
                 $sSeoUrl = $oRs->fields['oxseourl'];
             }
+
+            // store cache
+            $this->_aSeoCache[$sIdent] = $sSeoUrl;
         }
         return $sSeoUrl;
+    }
+
+    /**
+     * cached getter: check root directory php file names for them not to be in 1st part of seo url
+     * because then apache will execute that php file instead of url parser
+     *
+     * @return array
+     */
+    protected function _getReservedEntryKeys()
+    {
+        if (!isset(self::$_aReservedEntryKeys) && !is_array(self::$_aReservedEntryKeys)) {
+            $sDir = getShopBasePath();
+            self::$_aReservedEntryKeys = array();
+            foreach (glob("$sDir/*") as $file) {
+                if (preg_match('/^(.+)\.php[0-9]*$/i', basename($file), $m)) {
+                    self::$_aReservedEntryKeys[] = $m[0];
+                    self::$_aReservedEntryKeys[] = $m[1];
+                } elseif (is_dir($file)) {
+                    self::$_aReservedEntryKeys[] = basename($file);
+                }
+            }
+        }
+        return self::$_aReservedEntryKeys;
     }
 
     /**
@@ -432,7 +519,7 @@ class oxSeoEncoder extends oxSuperCfg
      *
      * @return void
      */
-    protected function _saveToDb( $sType, $sObjectId, $sStdUrl, $sSeoUrl, $iLang, $iShopId = null, $blFixed = 0, $sKeywords = '', $sDescription = '', $sParams = null )
+    protected function _saveToDb( $sType, $sObjectId, $sStdUrl, $sSeoUrl, $iLang, $iShopId = null, $blFixed = null, $sKeywords = false, $sDescription = false, $sParams = null )
     {
         $oDb = oxDb::getDb( true );
         if ( $iShopId === null ) {
@@ -441,7 +528,7 @@ class oxSeoEncoder extends oxSuperCfg
 
         $iShopId = $oDb->quote( $iShopId );
 
-        $sObjectId   = $oDb->quote( $sObjectId );
+        $sObjectId = $oDb->quote( $sObjectId );
         $sType = $oDb->quote( $sType );
 
         $iLang = (int) $iLang;
@@ -454,10 +541,12 @@ class oxSeoEncoder extends oxSuperCfg
         $sStdUrl = $oDb->quote( $sStdUrl );
         $sSeoUrl = $oDb->quote( $sSeoUrl );
 
-        $blFixed = (int) $blFixed;
         // transferring old url, thus current url will be regenerated
         $sQ  = "select oxfixed, oxexpired, ( oxstdurl like {$sStdUrl} and oxexpired != 2 ) as samestdurl, oxseourl like {$sSeoUrl} as sameseourl from oxseo where oxtype = {$sType} and oxobjectid = {$sObjectId} and oxshopid = {$iShopId} and oxlang = {$iLang} ";
-        $sQ .= $sParams?" and oxparams = '{$sParams}' " : '';
+        $sQ .= $sParams ? " and oxparams = " . $oDb->quote( $sParams ) : '';
+        $sQ .= ( $sKeywords !== false ) ? " and oxkeywords = " . $oDb->quote( $sKeywords ) . " " : '';
+        $sQ .= ( $sDescription !== false ) ? " and oxdescription = " . $oDb->quote( $sDescription ) . " " : '';
+        $sQ .= isset( $blFixed ) ? " and oxfixed = " . ( (int) $blFixed ) . " " : '';
         $sQ .= "limit 1";
 
         $oRs = $oDb->execute( $sQ );
@@ -472,11 +561,17 @@ class oxSeoEncoder extends oxSuperCfg
             }
         }
         $oStr = getStr();
-        $sKeywords = $sKeywords ? $oDb->quote( $oStr->htmlentities( $this->encodeString( strip_tags( $sKeywords ), false ) ) ) : false;
-        $sDescription = $sDescription ? $oDb->quote( $oStr->htmlentities( strip_tags( $sDescription ) ) ) : false;
+        if ( $sKeywords !== false ) {
+            $sKeywords = $oDb->quote( $oStr->htmlentities( $this->encodeString( strip_tags( $sKeywords ), false ) ) );
+        }
+
+        if ( $sDescription !== false ) {
+            $sDescription = $oDb->quote( $oStr->htmlentities( strip_tags( $sDescription ) ) );
+        }
 
         // inserting new or updating
         $sParams = $sParams ? $oDb->quote( $sParams ) :'""';
+        $blFixed = (int) $blFixed;
 
         $sQ  = "insert into oxseo
                     (oxobjectid, oxident, oxshopid, oxlang, oxstdurl, oxseourl, oxtype, oxfixed, oxexpired, oxkeywords, oxdescription, oxparams)
@@ -502,7 +597,6 @@ class oxSeoEncoder extends oxSuperCfg
     protected function _trimUrl( $sUrl, $iLang = null )
     {
         $sUrl = str_replace( $this->getConfig()->getShopURL( $iLang ), '', $sUrl );
-
         return preg_replace( '/(force_)?sid=[a-z0-9\.]+&?(amp;)?/i', '', $sUrl );
     }
 
@@ -639,9 +733,22 @@ class oxSeoEncoder extends oxSuperCfg
             }
         }
 
-        $this->_saveToDb( $sType, $oObject->getId(), $sStdUrl, $sSeoUrl, $iLang, $iShopId, (int) $blFixed, '', '', $sParams );
+        $this->_saveToDb( $sType, $oObject->getId(), $sStdUrl, $sSeoUrl, $iLang, $iShopId, (int) $blFixed, false, false, $sParams );
 
         return $sSeoUrl;
+    }
+
+    /**
+     * Generates static url object id
+     *
+     * @param int    $iShopId shop id
+     * @param string $sStdUrl standard (dynamic) url
+     *
+     * @return string
+     */
+    protected function _getStaticObjectId( $iShopId, $sStdUrl )
+    {
+        return md5( strtolower ( $iShopId . $sStdUrl ) );
     }
 
     /**
@@ -664,14 +771,14 @@ class oxSeoEncoder extends oxSuperCfg
         $sObjectId = $aStaticUrl['oxseo__oxobjectid'];
 
         if ( !$sObjectId || $sObjectId == '-1' ) {
-            $sObjectId = md5( strtolower ( $iShopId.$sStdUrl ) );
+            $sObjectId = $this->_getStaticObjectId( $iShopId, $sStdUrl );
         } else {
             // marking entry as needs to move to history
             $sOldObjectId = $sObjectId;
 
             // if std url does not match old
-            if ( md5( strtolower ( $iShopId.$sStdUrl ) ) != $sObjectId ) {
-                $sObjectId = md5( strtolower ( $iShopId.$sStdUrl ) );
+            if ( $this->_getStaticObjectId( $iShopId, $sStdUrl ) != $sObjectId ) {
+                $sObjectId = $this->_getStaticObjectId( $iShopId, $sStdUrl );
             }
         }
 

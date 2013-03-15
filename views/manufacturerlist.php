@@ -136,20 +136,13 @@ class ManufacturerList extends aList
     }
 
     /**
-     * Iterates through list articles and performs list view specific tasks:
-     *  - sets type of link whicn needs to be generated (Manufacturer link)
-     *  - appends link with Manufacturer list specific parameters
+     * Returns product link type (OXARTICLE_LINKTYPE_MANUFACTURER)
      *
-     * @return null
+     * @return int
      */
-    protected function _processListArticles()
+    protected function _getProductLinkType()
     {
-        if ( $aArtList = $this->getArticleList() ) {
-            foreach ( $aArtList as $oArticle ) {
-                // forcing to generate Manufacturer URLs by getLink
-                $oArticle->setLinkType( OXARTICLE_LINKTYPE_MANUFACTURER );
-            }
-        }
+        return OXARTICLE_LINKTYPE_MANUFACTURER;
     }
 
     /**
@@ -394,10 +387,11 @@ class ManufacturerList extends aList
      * Calls and returns result of parent:: _collectMetaKeyword();
      *
      * @param mixed $aCatPath category path
+     * @param bool  $blRemoveDuplicatedWords remove dublicated words
      *
      * @return string
      */
-    protected function _prepareMetaKeyword( $aCatPath )
+    protected function _prepareMetaKeyword( $aCatPath, $blRemoveDuplicatedWords = true )
     {
         return parent::_collectMetaKeyword( $aCatPath );
     }

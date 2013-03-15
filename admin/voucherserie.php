@@ -19,8 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * @copyright (C) OXID eSales AG 2003-2009
- * @version OXID eShop CE
+ * $Id: voucherserie.php 19178 2009-05-18 13:37:46Z arvydas $
  */
 
 /**

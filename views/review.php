@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: review.php 18956 2009-05-12 08:55:26Z vilma $
+ * $Id: review.php 19359 2009-05-25 14:30:41Z vilma $
  */
 
 /**
@@ -150,7 +150,8 @@ class Review extends oxUBase
             return $this->_sThisTemplate = $this->_sThisLoginTemplate;
         }
 
-        $this->_aViewData['reviewuserid'] = $this->getReviewUserId();
+        $sReviewUser = oxConfig::getParameter( 'reviewuser' );
+        $this->_aViewData['reviewuserid'] = ( !$sReviewUser ) ? oxConfig::getParameter( 'reviewuserid' ) : $sReviewUser;
 
         $this->_aViewData['reviews'] = $this->getReviews();
         $this->_aViewData['product'] = $this->getProduct();
@@ -291,13 +292,13 @@ class Review extends oxUBase
             $this->_sReviewUserId = false;
 
             //review user from order email
-            if ( $sReviewUser = oxConfig::getParameter( 'reviewuser' ) ) {
+            $sReviewUser = oxConfig::getParameter( 'reviewuser' );
+            $sReviewUser = ( !$sReviewUser ) ? oxConfig::getParameter( 'reviewuserid' ) : $sReviewUser;
+            if ( $sReviewUser ) {
             	$oUser = oxNew( 'oxuser' );
                 $sReviewUserId = $oUser->getReviewUserId( $sReviewUser );
             }
-            if ( !$sReviewUserId ) {
-                $sReviewUserId = oxConfig::getParameter( 'reviewuserid' );
-            }
+
             $oUser = $this->getUser();
             if (!$sReviewUserId && $oUser) {
                 $sReviewUserId = $oUser->getId();

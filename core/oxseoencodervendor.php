@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxseoencodervendor.php 17768 2009-04-02 10:52:12Z sarunas $
+ * $Id: oxseoencodervendor.php 19752 2009-06-10 13:01:01Z arvydas $
  */
 
 /**
@@ -31,8 +31,17 @@ class oxSeoEncoderVendor extends oxSeoEncoder
 {
     /**
      * Singleton instance.
+     *
+     * @var oxvendor
      */
     protected static $_instance = null;
+
+    /**
+     * Root vendor uri cache
+     *
+     * @var string
+     */
+    protected $_aRootVendorUri = null;
 
     /**
      * Singleton method
@@ -65,17 +74,18 @@ class oxSeoEncoderVendor extends oxSeoEncoder
 
             if ($iLang != $oVendor->getLanguage()) {
                 $sId = $oVendor->getId();
-                if ($sId == 'root') {
-                    $oVendor = oxVendor::getRootVendor( $iLang );
-                } else {
-                    $oVendor = oxNew('oxvendor');
-                    $oVendor->loadInLang($iLang, $sId);
-                }
+                $oVendor = oxNew('oxvendor');
+                $oVendor->loadInLang( $iLang, $sId );
             }
 
             $sSeoUrl = '';
             if ( $oVendor->getId() != 'root' ) {
-                $sSeoUrl .= $this->getVendorUri( oxVendor::getRootVendor( $iLang ), $iLang );
+                if ( !isset( $this->_aRootVendorUri[$iLang] ) ) {
+                    $oRootVendor = oxNew('oxvendor');
+                    $oRootVendor->loadInLang( $iLang, 'root' );
+                    $this->_aRootVendorUri[$iLang] = $this->getVendorUri( $oRootVendor, $iLang );
+                }
+                $sSeoUrl .= $this->_aRootVendorUri[$iLang];
             }
 
             $sSeoUrl .= $this->_prepareTitle( $oVendor->oxvendor__oxtitle->value .'/' );
