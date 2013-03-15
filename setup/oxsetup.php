@@ -1702,7 +1702,7 @@ class oxSetupView extends oxSetupCore
      */
     public function getReqInfoUrl( $sIdent, $blPrint = true )
     {
-        $oSysReq = new oxSysRequirements();
+        $oSysReq = getSystemReqCheck();
         $sUrl = $oSysReq->getReqInfoUrl($sIdent);
 
         return $blPrint ? print( $sUrl ) : $sUrl;

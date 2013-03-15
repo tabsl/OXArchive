@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: genexport_main.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: genexport_main.php 28929 2010-07-23 07:06:06Z vilma $
  */
 
 /**
@@ -33,14 +33,14 @@ class GenExport_Main extends DynExportBase
      *
      * @var string
      */
-    public $sClass_do   = "genExport_do";
+    public $sClassDo   = "genExport_do";
 
     /**
      * Export ui class name
      *
      * @var string
      */
-    public $sClass_main = "genExport_main";
+    public $sClassMain = "genExport_main";
 
     /**
      * Current class template name.

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 28669 2010-06-29 06:08:31Z vilma $
+ * @version   SVN: $Id: oxorder.php 28749 2010-07-01 12:36:41Z vilma $
  */
 
 /**
@@ -1025,7 +1025,7 @@ class oxOrder extends oxBase
             foreach ( $this->_aVoucherList as $sVoucherId => $oSimpleVoucher) {
                 $oVoucher = oxNew( 'oxvoucher' );
                 $oVoucher->load( $sVoucherId );
-                $oVoucher->markAsUsed( $this->oxorder__oxid->value, $oUser->oxuser__oxid->value, $oSimpleVoucher->fVoucherdiscount );
+                $oVoucher->markAsUsed( $this->oxorder__oxid->value, $oUser->oxuser__oxid->value, $oSimpleVoucher->dVoucherdiscount );
 
                 $this->_aVoucherList[$sVoucherId] = $oVoucher;
             }

@@ -30,7 +30,7 @@
         <table cellspacing="0" cellpadding="0" border="0">
         <form name="myedit" id="myedit" action="[{ $shop->selflink }]" target="dynexport_do">
         [{ $shop->hiddensid }]
-        <input type="hidden" name="cl" value="[{$sClass_do}]">
+        <input type="hidden" name="cl" value="[{$sClassDo}]">
         <input type="hidden" name="fnc" value="start">
         <tr>
             <td class="edittext" width="180" height="40" valign="top">
@@ -48,14 +48,14 @@
             [{ oxmultilang ident="GENERAL_SEARCHKEY" }]
             </td>
             <td class="edittext">
-			<input type="text" class="editinput" size="39" maxlength="128" name="search" value="" [{ $readonly }]>
+            <input type="text" class="editinput" size="39" maxlength="128" name="search" value="" [{ $readonly }]>
             </td>
         </tr>
         <tr>
             <td class="edittext" width="180" height="40">
             </td>
             <td class="edittext">
-			<input type="submit" class="edittext" style="width: 210px;" name="save" value="[{ oxmultilang ident="GENERAL_ESTART" }]" [{ $readonly }]>
+            <input type="submit" class="edittext" style="width: 210px;" name="save" value="[{ oxmultilang ident="GENERAL_ESTART" }]" [{ $readonly }]>
             </td>
         </tr>
         </table>
@@ -64,11 +64,11 @@
     <!-- Anfang rechte Seite -->
     <td valign="top" class="edittext" align="left">
         <!--
-		Bitte Land f&uuml;r Versandkosten w&auml;hlen : <br>
-		<select name="country" class="editinput" style="width: 210px;" [{ $readonly }]>
-		[{foreach from=$countrylist item=oCountry}]
-		<option value="[{ $oCountry->oxcountry__oxid->value }]">[{ $oCountry->oxcountry__oxtitle->value }]</option>
-		[{/foreach}]
+        Bitte Land f&uuml;r Versandkosten w&auml;hlen : <br>
+        <select name="country" class="editinput" style="width: 210px;" [{ $readonly }]>
+        [{foreach from=$countrylist item=oCountry}]
+        <option value="[{ $oCountry->oxcountry__oxid->value }]">[{ $oCountry->oxcountry__oxtitle->value }]</option>
+        [{/foreach}]
         -->
     </td>
     </form>

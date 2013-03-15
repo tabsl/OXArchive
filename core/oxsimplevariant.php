@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsimplevariant.php 28590 2010-06-23 11:03:50Z alfonsas $
+ * @version   SVN: $Id: oxsimplevariant.php 28935 2010-07-23 13:03:14Z sarunas $
  */
 
 /**
@@ -125,6 +125,21 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
 
     }
 
+
+    /**
+     * set given value to object's oxlongdesc - also prepare it (parse throug smarty)
+     * For simple variants to use less memory, this functionality is skipped - this
+     * function is empty. In order to have simplevariants with long descriptions,
+     * one should use a module, which overrides this method with long description
+     * setter.
+     *
+     * @param string $sDbValue value to set
+     *
+     * @return null
+     */
+    protected function _setLongDesc($sDbValue)
+    {
+    }
 
     /**
      * Implementing (fakeing) performance friendly method from oxArticle

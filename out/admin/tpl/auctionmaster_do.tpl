@@ -6,7 +6,7 @@
 
     <meta http-equiv="Content-Type" content="text/html; charset=[{$charset}]">
     [{if isset($refresh)}]
-    <META HTTP-EQUIV=Refresh CONTENT="[{$refresh}]; URL=[{$shop->selflink}]&cl=[{$sClass_do}]&iStart=[{ $iStart}]&fnc=run">
+    <META HTTP-EQUIV=Refresh CONTENT="[{$refresh}]; URL=[{$shop->selflink}]&cl=[{$sClassDo}]&iStart=[{ $iStart}]&fnc=run">
     [{/if}]
 </head>
 

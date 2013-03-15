@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: account_order.php 28610 2010-06-23 14:27:48Z arvydas $
+ * @version   SVN: $Id: account_order.php 28893 2010-07-20 13:29:11Z vilma $
  */
 
 /**
@@ -101,19 +101,19 @@ class Account_Order extends Account
     public function getOrderList()
     {
         if ( $this->_aOrderList === null ) {
-            $this->_aOrderList = false;
+            $this->_aOrderList = array();
 
             // Load user Orderlist
             if ( $oUser = $this->getUser() ) {
                 $iNrofCatArticles = (int) $this->getConfig()->getConfigParam( 'iNrofCatArticles' );
                 $iNrofCatArticles = $iNrofCatArticles?$iNrofCatArticles:1;
-                if ( $this->_iAllArtCnt = $oUser->getOrderCount() ) {
+                $this->_iAllArtCnt = $oUser->getOrderCount();
+                if ( $this->_iAllArtCnt && $this->_iAllArtCnt > 0 ) {
                     $this->_aOrderList = $oUser->getOrders( $iNrofCatArticles, $this->getActPage() );
                     $this->_iCntPages  = round( $this->_iAllArtCnt/$iNrofCatArticles + 0.49 );
                 }
             }
         }
-
         return $this->_aOrderList;
     }
 

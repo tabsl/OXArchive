@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: article_pictures.php 27751 2010-05-13 11:11:50Z rimvydas.paskevicius $
+ * @version   SVN: $Id: article_pictures.php 28928 2010-07-22 14:19:41Z arvydas $
  */
 
 /**
@@ -82,36 +82,25 @@ class Article_Pictures extends oxAdminDetails
         }
 
 
-        $soxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
-        $iPicCount = $this->getConfig()->getConfigParam( 'iPicCount' );
+        $soxId   = oxConfig::getParameter( "oxid");
+        $aParams = oxConfig::getParameter( "editval");
+        $aParams['oxarticles__oxshopid'] = oxSession::getVar( "actshop" );
 
         $oArticle = oxNew( "oxarticle");
-        $oArticle->load( $soxId);
+        $oArticle->load( $soxId );
 
-        // shopid
-        $aParams['oxarticles__oxshopid'] = oxSession::getVar( "actshop");
-        $myUtilsPic = oxUtilsPic::getInstance();
+        // deleting master and all related images
+        $aIndexes = $this->_getUploadedMasterPicIndexes();
+        $iMin = min( $aIndexes );
+        $iMin = $iMin < 1 ? 1 : $iMin;
 
-        // deleting master image and all generated images
-        $this->_deleteMasterPicture( $oArticle, $iIndex );
+        for ( $i = $iMin; $i <= $this->getConfig()->getConfigParam( 'iPicCount' ); $i++ ) {
+            $this->_resetMasterPicture( $oArticle, $iIndex, in_array( $i, $aIndexes ) );
+        }
 
         $oArticle->assign( $aParams );
         $oArticle = oxUtilsFile::getInstance()->processFiles( $oArticle );
-
-        // setting generated images amount and reseting other pictures fields
-        $this->_updateGeneratedPicsAmount( $oArticle );
-
-        // reseting upladed pictures oxzoom fields
-        $this->_cleanupZoomFields( $oArticle );
-
-        // reseting all generated pictures where master picture
-        // index is higher than lowest currently uploaded master picture index
-        $iFrom  = $this->_getMinUploadedMasterPicIndex();
-        for ( $i=$iFrom; $i<= $iPicCount; $i++ ) {
-            $this->_resetMasterPicture( $oArticle, $i );
-        }
-
+        $oArticle->updateAmountOfGeneratedPictures( $iMin - 1 );
         $oArticle->save();
     }
 
@@ -135,36 +124,30 @@ class Article_Pictures extends oxAdminDetails
             return;
         }
 
-        $sOxId  = oxConfig::getParameter( "oxid");
+        $sOxId  = oxConfig::getParameter( "oxid" );
         $iIndex = oxConfig::getParameter( "masterPicIndex" );
-        $iPicCount = $this->getConfig()->getConfigParam( 'iPicCount' );
 
         $oArticle = oxNew( "oxarticle" );
         $oArticle->load( $sOxId );
 
-        // deleting main icon
         if ( $iIndex == "ICO" ) {
+            // deleting main icon
             $this->_deleteMainIcon( $oArticle );
-        }
-
-        // deleting thumbnail
-        if ( $iIndex == "TH" ) {
+        } elseif ( $iIndex == "TH" ) {
+            // deleting thumbnail
             $this->_deleteThumbnail( $oArticle );
-        }
-
-        // deleting master picture
-        if ( (int)$iIndex > 0 ) {
-            $this->_deleteMasterPicture( $oArticle, $iIndex );
-
-            // reseting all generated pictures where master picture
-            // index is higher than currently deleted index
-            for ( $i=$iIndex+1; $i<= $iPicCount; $i++ ) {
-                $this->_resetMasterPicture( $oArticle, $i );
-            }
-
-            //updating amount of generated pictures
+        } else {
+            $iIndex = (int) $iIndex;
             if ( $iIndex > 0 ) {
-                $oArticle->updateAmountOfGeneratedPictures( $iIndex-1 );
+                // deleting master picture
+                $this->_resetMasterPicture( $oArticle, $iIndex, true );
+
+                // reseting others following master image
+                for ( $i = $iIndex + 1; $i <= $this->getConfig()->getConfigParam( 'iPicCount' ); $i++ ) {
+                    $this->_resetMasterPicture( $oArticle, $iIndex );
+                }
+
+                $oArticle->updateAmountOfGeneratedPictures( $iIndex - 1 );
             }
         }
 
@@ -175,20 +158,23 @@ class Article_Pictures extends oxAdminDetails
      * Deletes selected master picture and all pictures generated
      * from master picture
      *
-     * @param oxArticle $oArticle article object
-     * @param int       $iIndex   master picture index
+     * @param oxArticle $oArticle       article object
+     * @param int       $iIndex         master picture index
+     * @param bool      $blDeleteMaster if TRUE - deletes and unsets master image file
      *
      * @return null
      */
-    protected function _deleteMasterPicture( $oArticle, $iIndex )
+    protected function _resetMasterPicture( $oArticle, $iIndex, $blDeleteMaster = false )
     {
         if ( $oArticle->{"oxarticles__oxpic".$iIndex}->value ) {
 
             $oPicHandler = oxPictureHandler::getInstance();
-            $oPicHandler->deleteArticleMasterPicture( $oArticle, $iIndex );
+            $oPicHandler->deleteArticleMasterPicture( $oArticle, $iIndex, $blDeleteMaster );
 
-            //reseting master picture field
-            $oArticle->{"oxarticles__oxpic".$iIndex} = new oxField();
+            if ( $blDeleteMaster ) {
+                //reseting master picture field
+                $oArticle->{"oxarticles__oxpic".$iIndex} = new oxField();
+            }
 
             // cleaning oxzoom fields
             if ( isset( $oArticle->{"oxarticles__oxzoom".$iIndex} ) ) {
@@ -240,92 +226,30 @@ class Article_Pictures extends oxAdminDetails
     }
 
     /**
-     * Resets selected master picture. Deletes all pictures generated
-     * from master picture, but leaves master picture untouched.
+     * Returns uploaded master image indexes
      *
-     * @param oxArticle $oArticle article object
-     * @param int       $iIndex   master picture index
-     *
-     * @return null
+     * @return array
      */
-    protected function _resetMasterPicture( $oArticle, $iIndex )
+    protected function _getUploadedMasterPicIndexes()
     {
-        if ( $oArticle->{"oxarticles__oxpic".$iIndex}->value ) {
-
-            $oPicHandler = oxPictureHandler::getInstance();
-            $oPicHandler->deleteArticleMasterPicture( $oArticle, $iIndex, false );
-
-            // cleaning oxzoom fields
-            if ( isset( $oArticle->{"oxarticles__oxzoom".$iIndex} ) ) {
-                $oArticle->{"oxarticles__oxzoom".$iIndex} = new oxField();
-            }
-
-            if ( $iIndex == 1 ) {
-                $this->_cleanupCustomFields( $oArticle );
-            }
-        }
-    }
-
-
-    /**
-     * Update article already generated pictures amount
-     *
-     * @param oxArticle $oArticle article object
-     *
-     * @return null
-     */
-    protected function _updateGeneratedPicsAmount( $oArticle )
-    {
-        $iMinUploadedIndex = $this->_getMinUploadedMasterPicIndex();
-
-        if ( $iMinUploadedIndex > 0 && $iMinUploadedIndex <= $oArticle->oxarticles__oxpicsgenerated->value ) {
-            $oArticle->updateAmountOfGeneratedPictures( $iMinUploadedIndex-1 );
-        }
-    }
-
-    /**
-     * Get min uploaded master image index number.
-     *
-     * @return int
-     */
-    protected function _getMinUploadedMasterPicIndex()
-    {
+        $aIndexes = array();
         if ( isset( $_FILES['myfile']['name'] ) ) {
             $iIndex = $this->getConfig()->getConfigParam( 'iPicCount' );
             $oStr = getStr();
 
             while ( list( $sKey, $sValue ) = each( $_FILES['myfile']['name'] ) ) {
-                if ( !empty($sValue) ) {
+                if ( $sValue ) {
                     $oStr->preg_match( "/^M(\d+)/", $sKey, $aMatches );
-                    $iPicIndex = $aMatches[1];
-                    $iIndex = ( $iIndex > $iPicIndex ) ? $iPicIndex : $iIndex;
+                    $iPicIndex = isset( $aMatches[1] ) ? (int) $aMatches[1] : 1;
+                    $iPicIndex = ( $iPicIndex > $iIndex  ) ? $iIndex : $iPicIndex;
+                    if ( !in_array( $iPicIndex, $aIndexes ) ) {
+                        $aIndexes[] = $iPicIndex;
+                    }
                 }
             }
         }
 
-        return (int)$iIndex;
-    }
-
-    /**
-     * Cleans up article oxzoom fields for all uploaded pictures.
-     *
-     * @param oxArticle $oArticle article object
-     *
-     * @return null
-     */
-    protected function _cleanupZoomFields( $oArticle )
-    {
-        $myConfig  = $this->getConfig();
-        if ( isset( $_FILES['myfile']['name'] ) ) {
-            $iIndex = 0;
-
-            while ( list( $sKey, $sValue ) = each( $_FILES['myfile']['name'] ) ) {
-                if ( !empty($sValue) ) {
-                    $iIndex = $this->_getUploadedMasterPicIndex( $sKey );
-                    $oArticle->{"oxarticles__oxzoom".$iIndex} = new oxField();
-                }
-            }
-        }
+        return $aIndexes;
     }
 
     /**
@@ -350,23 +274,5 @@ class Article_Pictures extends oxAdminDetails
         if ( $sThumb == "nopic.jpg" ) {
             $oArticle->oxarticles__oxthumb = new oxField();
         }
-    }
-
-    /**
-     * Get uploaded master image index.
-     *
-     * @param string $sFileType image type
-     *
-     * @return int
-     */
-    protected function _getUploadedMasterPicIndex( $sFileType )
-    {
-        $iPicIndex = 0;
-
-        if ( getStr()->preg_match( "/^M(\d+)/", $sFileType, $aMatches ) ) {
-            $iPicIndex = $aMatches[1];
-        }
-
-        return (int) $iPicIndex;
     }
 }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasket.php 28590 2010-06-23 11:03:50Z alfonsas $
+ * @version   SVN: $Id: oxbasket.php 28768 2010-07-02 13:53:17Z vilma $
  */
 
 /**
@@ -953,6 +953,7 @@ class oxBasket extends oxSuperCfg
 
                         // collecting formatted for preview
                         $oStdVoucher->fVoucherdiscount = $oLang->formatCurrency( $dVoucherdiscount, $this->getBasketCurrency() );
+                        $oStdVoucher->dVoucherdiscount = $dVoucherdiscount;
 
                         // substracting voucher discount
                         $dPrice -= $dVoucherdiscount;
@@ -1044,7 +1045,7 @@ class oxBasket extends oxSuperCfg
                 $oStdDiscount->dDiscount = $dOldprice;
             }
 
-            if ($oStdDiscount->dDiscount > 0) {
+            if ($oStdDiscount->dDiscount != 0) {
                 $this->_aDiscounts[$oDiscount->getId()] = $oStdDiscount;
                 // substracting product price after discount
                 $dOldprice = $dOldprice - $oStdDiscount->dDiscount;
@@ -1789,7 +1790,7 @@ class oxBasket extends oxSuperCfg
     }
 
     /**
-     * Returns discount articles products price object
+     * Returns pricelist object of discounted products
      *
      * @return oxprice
      */
@@ -2361,6 +2362,10 @@ class oxBasket extends oxSuperCfg
     public function getPriceForPayment()
     {
         $dPrice = $this->getDiscountedProductsBruttoPrice();
+        //#1905 not discounted products should be included in payment amount calculation
+        if ( $oPriceList = $this->getNotDiscountProductsPrice() ) {
+            $dPrice += $oPriceList->getBruttoSum();
+        }
 
         // adding delivery price to final price
         if ( $oDeliveryPrice = $this->_aCosts['oxdelivery'] ) {
@@ -2632,6 +2637,16 @@ class oxBasket extends oxSuperCfg
             return $oProtection->getBruttoPrice();
         }
         return false;
+    }
+
+    /**
+     * Returns pricelist object of not discounted products
+     *
+     * @return oxprice
+     */
+    public function getNotDiscountProductsPrice()
+    {
+        return $this->_oNotDiscountedProductsPriceList;
     }
 
 }

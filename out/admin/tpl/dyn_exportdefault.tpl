@@ -30,7 +30,7 @@
         <table cellspacing="0" cellpadding="0" border="0">
         <form name="myedit" id="myedit" action="[{ $shop->selflink }]" target="dynexport_do" method="post">
         [{ $shop->hiddensid }]
-        <input type="hidden" name="cl" value="[{$sClass_do}]">
+        <input type="hidden" name="cl" value="[{$sClassDo}]">
         <input type="hidden" name="fnc" value="start">
         <tr>
             <td class="edittext" width="180" height="40" valign="top">

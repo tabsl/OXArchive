@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilspic.php 27124 2010-04-09 13:40:47Z arvydas $
+ * @version   SVN: $Id: oxutilspic.php 28939 2010-07-26 10:41:59Z arvydas $
  */
 
 /**
@@ -313,13 +313,15 @@ class oxUtilsPic extends oxSuperCfg
 
                 if ( !imageistruecolor( $hSourceImage ) ) {
                     $hDestinationImage = imagecreate( $iNewWidth, $iNewHeight );
+                    // fix for transparent images sets image to transparent
+                    $imgWhite = imagecolorallocate( $hDestinationImage, 255, 255, 255 );
+                    imagefill( $hDestinationImage, 0, 0, $imgWhite );
+                    imagecolortransparent( $hDestinationImage, $imgWhite );
+                    //end of fix
+                } else {
+                    imagealphablending( $hDestinationImage, false );
+                    imagesavealpha( $hDestinationImage, true );
                 }
-
-                // fix for transparent images sets image to transparent
-                $imgWhite = imagecolorallocate( $hDestinationImage, 255, 255, 255 );
-                imagefill( $hDestinationImage, 0, 0, $imgWhite );
-                imagecolortransparent( $hDestinationImage, $imgWhite );
-                //end of fix
 
                 if ( $this->_copyAlteredImage( $hDestinationImage, $hSourceImage, $iNewWidth, $iNewHeight, $aImageInfo, $sTarget, $iGdVer, $blDisableTouch ) ) {
                     imagepng( $hDestinationImage, $sTarget );

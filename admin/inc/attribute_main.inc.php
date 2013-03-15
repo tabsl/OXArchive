@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: attribute_main.inc.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: attribute_main.inc.php 28906 2010-07-21 11:06:47Z arvydas $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -97,11 +97,17 @@ class ajaxComponent extends ajaxListComponent
      */
     protected function _addFilter( $sQ )
     {
-        $sArtTable = getViewName('oxarticles');
         $sQ = parent::_addFilter( $sQ );
 
         // display variants or not ?
-        $sQ .= $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ? ' group by '.$sArtTable.'.oxid ' : '';
+        if ( $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ) {
+            $sQ .= ' group by '.getViewName( 'oxarticles' ).'.oxid ';
+
+            $oStr = getStr();
+            if ( $oStr->strpos( $sQ, "select count( * ) " ) === 0 ) {
+                $sQ = "select count( * ) from ( {$sQ} ) as _cnttable";
+            }
+        }
         return $sQ;
     }
 

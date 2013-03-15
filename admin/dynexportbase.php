@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: dynexportbase.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: dynexportbase.php 28929 2010-07-23 07:06:06Z vilma $
  */
 
 /**
@@ -42,14 +42,14 @@ class DynExportBase extends oxAdminDetails
      *
      * @var string
      */
-    public $sClass_do            = "";
+    public $sClassDo            = "";
 
     /**
      * Export ui class name
      *
      * @var string
      */
-    public $sClass_main          = "";
+    public $sClassMain          = "";
 
     /**
      * Export output folder
@@ -477,7 +477,7 @@ class DynExportBase extends oxAdminDetails
         $myConfig->setConfigParam( 'blExport', true );
         $blContinue = false;
 
-        if ( ( $oArticle = $this->_initArticle( $this->_getHeapTableName(), $iCnt ) ) ) {
+        if ( ( $oArticle = $this->_initArticle( $this->_getHeapTableName(), $iCnt, $blContinue ) ) ) {
             $blContinue = true;
             $oArticle = $this->_setCampaignDetailLink( $oArticle );
         }
@@ -828,12 +828,13 @@ class DynExportBase extends oxAdminDetails
     /**
      * initialize article
      *
-     * @param string $sHeapTable heap table name
-     * @param int    $iCnt       record number
+     * @param string $sHeapTable  heap table name
+     * @param int    $iCnt        record number
+     * @param bool   &$blContinue false is used to stop exporting
      *
      * @return object
      */
-    protected function _initArticle( $sHeapTable, $iCnt )
+    protected function _initArticle( $sHeapTable, $iCnt, & $blContinue )
     {
         $oRs = oxDb::getDb()->selectLimit( "select oxid from $sHeapTable", 1, $iCnt );
         if ( $oRs != false && $oRs->recordCount() > 0 ) {
@@ -841,7 +842,8 @@ class DynExportBase extends oxAdminDetails
             $oArticle->setLoadParentData( true );
 
             if ( $oArticle->load( $oRs->fields[0] ) ) {
-
+                // if article exists, do not stop export
+                $blContinue = true;
                 // check price
                 $dMinPrice = oxConfig::getParameter( "sExportMinPrice" );
                 if ( !isset( $dMinPrice ) || ( isset( $dMinPrice ) && ( $oArticle->brutPrice >= $dMinPrice ) ) ) {

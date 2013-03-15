@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsysrequirements.php 28451 2010-06-18 13:11:01Z arvydas $
+ * @version   SVN: $Id: oxsysrequirements.php 28925 2010-07-22 11:52:37Z sarunas $
  */
 
 /**
@@ -238,38 +238,45 @@ class oxSysRequirements
             return 0;
         }
 
-        $aPathsToCheck = array(
-                            "out/pictures{$sVerPrefix}/",
-                            "out/media/",
-                            "out/basic/src/",
-                            "log/",
-                            "tmp{$sVerPrefix}/"
-                            );
+        $sTheme = 'basic';
+        $sTmp = "$sPath/tmp$sVerPrefix/";
+        if (class_exists('oxConfig')) {
+            $sTheme  = oxConfig::getInstance()->getConfigParam('sTheme');
+            $sCfgTmp = oxConfig::getInstance()->getConfigParam('sCompileDir');
+            if (strpos($sCfgTmp, '<sCompileDir_') === false) {
+                $sTmp = $sCfgTmp;
+            }
+        }
 
+        $aPathsToCheck = array(
+                            $sPath."out/pictures{$sVerPrefix}/",
+                            $sPath."out/media/",
+                            $sPath."out/$sTheme/src/",
+                            $sPath."log/",
+                            $sTmp
+                            );
         $iModStat = 2;
         $sPathToCheck = reset( $aPathsToCheck );
         while ( $sPathToCheck ) {
-            $sFullPath = $sPath.$sPathToCheck;
-
             // missing file/folder?
-            if ( !file_exists( $sFullPath ) ) {
+            if ( !file_exists( $sPathToCheck ) ) {
                 $iModStat = 0;
                 break;
             }
 
-            if ( is_dir( $sFullPath ) ) {
+            if ( is_dir( $sPathToCheck ) ) {
                 // adding subfolders
-                $aSubF = glob( $sFullPath."*", GLOB_ONLYDIR );
+                $aSubF = glob( $sPathToCheck."*", GLOB_ONLYDIR );
                 if (is_array($aSubF)) {
                     foreach ( $aSubF as $sNewFolder ) {
-                        $aPathsToCheck[] = str_replace( $sPath, "", $sNewFolder ) . "/";
+                        $aPathsToCheck[] = $sNewFolder . "/";
                     }
                 }
             }
 
             // testing if file permissions >= $iMinPerm
             //if ( ( (int) substr( decoct( fileperms( $sFullPath ) ), 2 ) ) < $iMinPerm ) {
-            if ( !is_readable( $sFullPath ) || !is_writable( $sFullPath ) ) {
+            if ( !is_readable( $sPathToCheck ) || !is_writable( $sPathToCheck ) ) {
                 $iModStat = 0;
                 break;
             }

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_user.php 28592 2010-06-23 11:17:38Z arvydas $
+ * @version   SVN: $Id: oxcmp_user.php 28903 2010-07-21 08:23:28Z arvydas $
  */
 
 // defining login/logout states
@@ -134,22 +134,8 @@ class oxcmp_user extends oxView
      */
     public function render()
     {
-        $oConfig = $this->getConfig();
-        if ( $oConfig->getConfigParam( 'blPsLoginEnabled' ) ) {
-            // load session user
-            $oUser = $this->getUser();
-
-            // no session user
-            if ( !$oUser && !in_array( $this->getParent()->getClassName(), $this->_aAllowedClasses ) ) {
-                oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() . 'cl=account' );
-            }
-
-            if ( $oUser && !$oUser->isTermsAccepted() &&
-                 $oConfig->getConfigParam( 'blConfirmAGB' ) &&
-                 !in_array( $blRegister, $this->_aAllowedClasses ) ) {
-                oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() . 'cl=account&term=1' );
-            }
-        }
+        // checks if private sales allows further tasks
+        $this->_checkPsState();
 
         parent::render();
 
@@ -179,22 +165,38 @@ class oxcmp_user extends oxView
             $oParentView->addTplParam( 'lgn_usr', $sUser );
         }
 
-        /*
-        if ( $aDelAdressID = oxConfig::getParameter( 'deladrid' ) ) {
-            $oAddress = oxNew( 'oxaddress' );
-            $oAddress->load( $aDelAdressID );
-            $oParentView->setDelAddress( $oAddress );
-            $oParentView->addTplParam( 'delivadr', $oParentView->getDelAddress() );
-        }
-
-        // clicked on show address ?
-        if ( $blShowAddress = oxSession::getVar( 'blshowshipaddress' ) ) {
-            $oParentView->setShowShipAddress( 1 );
-            // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-            $oParentView->addTplParam( 'blshowshipaddress', 1 );
-        }*/
-
         return $this->getUser();
+    }
+
+    /**
+     * If private sales enabled, checks:
+     *  (1) if no session user and view can be accessed;
+     *  (2) session user is available and accepted terms version matches actual version.
+     * In case any condition is not satisfied redirects user to:
+     *  (1) login page;
+     *  (2) terms agreement page;
+     *
+     *  @return null
+     */
+    protected function _checkPsState()
+    {
+        $oConfig = $this->getConfig();
+        if ( $oConfig->getConfigParam( 'blPsLoginEnabled' ) ) {
+            // load session user
+            $oUser  = $this->getUser();
+            $sClass = $this->getParent()->getClassName();
+
+            // no session user
+            if ( !$oUser && !in_array( $sClass, $this->_aAllowedClasses ) ) {
+                oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() . 'cl=account' );
+            }
+
+            if ( $oUser && !$oUser->isTermsAccepted() &&
+                 $oConfig->getConfigParam( 'blConfirmAGB' ) &&
+                 !in_array( $sClass, $this->_aAllowedClasses ) ) {
+                oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() . 'cl=account&term=1' );
+            }
+        }
     }
 
     /**

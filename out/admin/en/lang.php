@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 28618 2010-06-25 08:13:55Z ralf.trapp $
+ * @version   SVN: $Id: lang.php 28788 2010-07-07 14:19:36Z vilma $
  */
 
 /*
@@ -1096,6 +1096,7 @@ $aLang = array(
 'ORDER_OVERVIEW_ORDERSUMTOTAL'                  => 'Sum Revenue TOTAL',
 'ORDER_OVERVIEW_PAYMENTTYPE'                    => 'Payment with',
 'ORDER_OVERVIEW_STORNO'                         => 'Order is canceled',
+'ORDER_OVERVIEW_PROTECTION'                     => 'Trusted Shops buyer protection',
 'ORDER_OVERVIEW_FROMORDERNUM'                   => 'start Order No.',
 'ORDER_OVERVIEW_TILLORDERNUM'                   => 'to Order No.',
 'ORDER_OVERVIEW_EXPORT'                         => 'Export',
@@ -1141,8 +1142,7 @@ $aLang = array(
 'ORDER_OVERVIEW_PDF_BANKCODE'                   => 'Routing No.: ',
 'ORDER_OVERVIEW_PDF_SELPAYMENT'                 => 'Payment Method: ',
 'ORDER_OVERVIEW_PDF_DELIVNOTE'                  => 'Delivery note nr.',
-'ORDER_OVERVIEW_PDF_PROTECTION'                 => 'Trusted Shops buyer protection',
-'ORDER_OVERVIEW_PROTECTION'                     => 'Trusted Shops buyer protection',
+'ORDER_OVERVIEW_PDF_TSPROTECTION'               => 'Trusted Shops buyer protection',
 'ORDER_PACKAGE_TITLE'                           => 'OXID PACKLIST',
 'ORDER_PACKAGE_SHOWPACKLIST'                    => 'Print Packing List',
 'ORDER_PACKAGE_PACKLIST'                        => 'P A C K A G E  L A B E L S',
