@@ -17,24 +17,13 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: index.php 34982 2011-04-27 13:55:51Z sarunas $
+ * @version   SVN: $Id: index.php 48443 2012-08-09 14:22:37Z linas.kukulskis $
  */
 
-
-if ( !function_exists( 'isAdmin' )) {
-
-    /**
-     * Returns true.
-     *
-     * @return bool
-     */
-    function isAdmin()
-    {
-        return true;
-    }
-}
+define( 'OX_IS_ADMIN', true );
+define( 'OX_ADMIN_DIR', basename(dirname(__FILE__)) );
 
 // Includes main index.php file
 require_once dirname(__FILE__)."/../index.php";

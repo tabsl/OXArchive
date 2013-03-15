@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxfield.php 28225 2010-06-08 12:32:23Z sarunas $
+ * @version   SVN: $Id: oxfield.php 48786 2012-08-17 10:20:42Z tomas $
  */
 
 /**
@@ -155,7 +155,7 @@ class oxField // extends oxSuperCfg
      */
     public function convertToFormattedDbDate()
     {
-        $this->setValue(oxUtilsDate::getInstance()->formatDBDate( $this->rawValue ), self::T_RAW);
+        $this->setValue(oxRegistry::get("oxUtilsDate")->formatDBDate( $this->rawValue ), self::T_RAW);
     }
 
     /**

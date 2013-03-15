@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   smarty_plugins
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: modifier.oxnumberformat.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: modifier.oxnumberformat.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 /**
@@ -35,11 +35,11 @@
  *
  * @return string
  */
-function smarty_modifier_oxnumberformat( $sFormat = "EUR@ 1.00@ ,@ .@ ¤@ 2", $sValue)
+function smarty_modifier_oxnumberformat( $sFormat = "EUR@ 1.00@ ,@ .@ ï¿½@ 2", $sValue = 0)
 {
     // logic copied from oxconfig::getCurrencyArray()
     $sCur = explode( "@", $sFormat);
-    $oCur           = new oxStdClass();
+    $oCur           = new stdClass();
     $oCur->id       = 0;
     $oCur->name     = @trim($sCur[0]);
     $oCur->rate     = @trim($sCur[1]);
@@ -53,5 +53,5 @@ function smarty_modifier_oxnumberformat( $sFormat = "EUR@ 1.00@ ,@ .@ ¤@ 2", $sV
         $oCur->side = @trim($sCur[6]);
     }
 
-    return oxLang::getInstance()->formatCurrency($sValue, $oCur);
+    return oxRegistry::getLang()->formatCurrency($sValue, $oCur);
 }

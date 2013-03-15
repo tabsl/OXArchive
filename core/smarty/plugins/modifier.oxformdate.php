@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   smarty_plugins
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: modifier.oxformdate.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: modifier.oxformdate.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 /**
@@ -46,7 +46,7 @@ function smarty_modifier_oxformdate( $oConvObject, $sFieldType = null, $blPassed
         $oConvObject->setValue($sValue);
     }
 
-    $myConfig = oxConfig::getInstance();
+    $myConfig = oxRegistry::getConfig();
 
     // if such format applies to this type of field - sets formatted value to passed object
     if ( !$myConfig->getConfigParam( 'blSkipFormatConversion' ) ) {

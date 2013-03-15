@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype_user.php 35231 2011-05-10 06:46:43Z sarunas $
+ * @version   SVN: $Id: oxerptype_user.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 require_once 'oxerptype.php';
@@ -53,7 +53,7 @@ class oxERPType_User extends oxERPType
      */
     public function getSQL( $sWhere, $iLanguage = 0,$iShopId = 1)
     {
-        $myConfig = oxConfig::getInstance();
+        $myConfig = oxRegistry::getConfig();
 
         // add type 'user' for security reasons
         if (strstr( $sWhere, 'where')) {
@@ -82,7 +82,7 @@ class oxERPType_User extends oxERPType
     {
             return;
         
-        $myConfig = oxConfig::getInstance();
+        $myConfig = oxRegistry::getConfig();
 
         if (!$myConfig->getConfigParam('blMallUsers')) {
             parent::checkWriteAccess($oObj, $aData);

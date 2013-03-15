@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsstring.php 28010 2010-05-28 09:23:10Z sarunas $
+ * @version   SVN: $Id: oxutilsstring.php 48869 2012-08-21 08:10:48Z tomas $
  */
 
 /**
@@ -46,25 +46,13 @@ class oxUtilsString
     /**
      * Returns string manipulation utility instance
      *
+     * @deprecated since v5.0 (2012-08-10); Use oxRegistry::get("oxUtilsString") instead.
+     *
      * @return oxUtilsString
      */
     public static function getInstance()
     {
-        // disable caching for test modules
-        if ( defined( 'OXID_PHP_UNIT' ) ) {
-            self::$_instance = modInstances::getMod( __CLASS__ );
-        }
-
-        if ( !self::$_instance instanceof oxUtilsString ) {
-
-
-            self::$_instance = oxNew( 'oxUtilsString' );
-
-            if ( defined( 'OXID_PHP_UNIT' ) ) {
-                modInstances::addMod( __CLASS__, self::$_instance);
-            }
-        }
-        return self::$_instance;
+        return oxRegistry::get("oxUtilsString");
     }
 
 

@@ -19,7 +19,7 @@
  * @package   smarty_plugins
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: function.oxcontent.php 41162 2012-01-11 12:16:05Z linas.kukulskis $
+ * @version   SVN: $Id: function.oxcontent.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 /**
@@ -39,7 +39,7 @@
  */
 function smarty_function_oxcontent( $params, &$smarty )
 {
-    $myConfig = oxConfig::getInstance();
+    $myConfig = oxRegistry::getConfig();
     $sText = $myConfig->getActiveShop()->oxshops__oxproductive->value ? null : "<b>content not found ! check ident(".$params['ident'].") !</b>";
     $smarty->oxidcache = new oxField($sText, oxField::T_RAW);
 
@@ -64,7 +64,7 @@ function smarty_function_oxcontent( $params, &$smarty )
             $sProp = 'oxcontents__'.$sField;
             $smarty->oxidcache = clone $oContent->$sProp;
             $smarty->compile_check  = true;
-            $sCacheId = oxLang::getInstance()->getBaseLanguage() . $myConfig->getShopId();
+            $sCacheId = oxRegistry::getLang()->getBaseLanguage() . $myConfig->getShopId();
             $sText = $smarty->fetch( "ox:".(string)$sIdent.(string)$sOxid.$sField.$sCacheId);
             $smarty->compile_check  = $myConfig->getConfigParam( 'blCheckTemplates' );
         }

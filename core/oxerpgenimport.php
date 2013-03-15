@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerpgenimport.php 35248 2011-05-10 06:47:23Z sarunas $
+ * @version   SVN: $Id: oxerpgenimport.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 /**
@@ -265,14 +265,15 @@ class oxErpGenImport extends oxErpCsv
      */
     public function init( $sUserName, $sPassword, $iShopID = 1, $iLanguage = 0)
     {
-        $myConfig = oxConfig::getInstance();
-        $mySession = oxSession::getInstance();
-        $oUser = oxUser::getAdminUser();
+        $myConfig = oxRegistry::getConfig();
+        $mySession = oxRegistry::getSession();
+        $oUser = oxNew('oxUser');
+        $oUser->loadAdminUser();
 
         if ( ( $oUser->oxuser__oxrights->value == "malladmin" || $oUser->oxuser__oxrights->value == $myConfig->getShopID()) ) {
             $this->_sSID        = $mySession->getId();
             $this->_blInit      = true;
-            $this->_iLanguage   = oxLang::getInstance()->getBaseLanguage();
+            $this->_iLanguage   = oxRegistry::getLang()->getBaseLanguage();
             $this->_sUserID     = $oUser->getId();
             //$mySession->freeze();
         } else {
@@ -341,8 +342,8 @@ class oxErpGenImport extends oxErpCsv
      */
     public function doImport($sPath = null, $sUserName = null, $sUserPassword = null, $sShopId = null, $sShopLanguage = null )
     {
-        $myConfig = oxConfig::getInstance();
-        $mySession = oxSession::getInstance();
+        $myConfig = oxRegistry::getConfig();
+        $mySession = oxRegistry::getSession();
 
         $this->_sReturn = "";
         $iMaxLineLength = 8192; //TODO change
@@ -395,8 +396,8 @@ class oxErpGenImport extends oxErpCsv
      */
     protected function _getCsvFieldsTerminator()
     {
-        $myConfig = oxConfig::getInstance();
-        // deprecated
+        $myConfig = oxRegistry::getConfig();
+
         $sChar = $myConfig->getConfigParam( 'sGiCsvFieldTerminator' );
 
         if ( !$sChar ) {
@@ -415,7 +416,7 @@ class oxErpGenImport extends oxErpCsv
      */
     protected function _getCsvFieldsEncolser()
     {
-        $myConfig = oxConfig::getInstance();
+        $myConfig = oxRegistry::getConfig();
 
         if ( $sChar = $myConfig->getConfigParam( 'sGiCsvFieldEncloser' ) ) {
             return $sChar;

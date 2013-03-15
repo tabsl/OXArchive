@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxoutofstockexception.php 40167 2011-11-23 14:38:23Z ramunas.skarbalius $
+ * @version   SVN: $Id: oxoutofstockexception.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 /**
@@ -130,7 +130,7 @@ class oxOutOfStockException extends oxArticleException
     {
         // in case destination not set, overriding default error message
         if ( !$sDestination ) {
-            $this->message = oxLang::getInstance()->translateString( $this->getMessage() ) . " " . $this->getRemainingAmount();
+            $this->message = oxRegistry::getLang()->translateString( $this->getMessage() ) . " " . $this->getRemainingAmount();
         }
     }
 }

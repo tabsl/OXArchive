@@ -49,7 +49,7 @@ class oxTheme extends oxSuperCfg
      */
     public function load($sOXID)
     {
-        $sFilePath = $this->getConfig()->getOutDir().$sOXID."/theme.php";
+        $sFilePath = $this->getConfig()->getViewsDir().$sOXID."/theme.php";
         if ( file_exists( $sFilePath ) && is_readable( $sFilePath ) ) {
             $aTheme = array();
             include $sFilePath;

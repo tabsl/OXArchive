@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdbmetadatahandler.php 43719 2012-04-11 07:07:20Z linas.kukulskis $
+ * @version   SVN: $Id: oxdbmetadatahandler.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 /**
@@ -141,7 +141,7 @@ class oxDbMetaDataHandler extends oxSuperCfg
     public function getAllMultiTables($sTable)
     {
         $aMLTables = array();
-        foreach (array_keys(oxLang::getInstance()->getLanguageIds()) as $iLangId) {
+        foreach (array_keys(oxRegistry::getLang()->getLanguageIds()) as $iLangId) {
             $sLangTableName = getLangTableName($sTable, $iLangId );
             if ($sTable != $sLangTableName && !in_array($sLangTableName, $aMLTables)) {
                 $aMLTables[] = $sLangTableName;

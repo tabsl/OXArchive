@@ -256,7 +256,7 @@ class oxLegacyDb extends oxSuperCfg
      */
     public function qstr( $sValue )
     {
-        return $this->getDb()->qstr( $sValue );
+        return $this->getDb( false )->qstr( $sValue );
     }
 
     /**
@@ -268,7 +268,7 @@ class oxLegacyDb extends oxSuperCfg
      */
     public function quote( $sValue )
     {
-        return $this->getDb()->quote( $sValue );
+        return $this->getDb( false )->quote( $sValue );
     }
 
     /**
@@ -280,7 +280,7 @@ class oxLegacyDb extends oxSuperCfg
      */
     public function metaColumns( $sTable )
     {
-        return $this->getDb()->MetaColumns( $sTable );
+        return $this->getDb( false )->MetaColumns( $sTable );
     }
 
     /**
@@ -293,7 +293,7 @@ class oxLegacyDb extends oxSuperCfg
      */
     public function metaColumnNames( $sTable, $blNumIndexes=false )
     {
-        return $this->getDb()->MetaColumnNames( $sTable, $numIndexes );
+        return $this->getDb( false )->MetaColumnNames( $sTable, $numIndexes );
     }
 
     /**

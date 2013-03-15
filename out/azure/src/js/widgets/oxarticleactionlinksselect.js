@@ -16,7 +16,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   out
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: oxarticleactionlinksselect.js 35529 2011-05-23 07:31:20Z vilma $
  */
@@ -72,10 +72,10 @@
 
             //if user comes first time to details shows action links box
             //and sets to cookie, not to show it later
-            if ($("#showLinksOnce").length > 0) {
+            if( !$.cookie("showlinksonce") ) {
                 $("ul.actionLinks").slideDown('normal').delay(2000).slideUp('normal', function(){
-                     document.cookie = "showlinksonce=1; path=/";
-                });
+                  });
+                $.cookie("showlinksonce", 1, { path: '/' });
             }
 
             $('select[id^=sellist]').change (function() {

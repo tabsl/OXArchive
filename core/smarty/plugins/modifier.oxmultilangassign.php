@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   smarty_plugins
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: modifier.oxmultilangassign.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: modifier.oxmultilangassign.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 /**
@@ -39,7 +39,7 @@ function smarty_modifier_oxmultilangassign( $sIdent )
         $sIdent = 'IDENT MISSING';
     }
 
-    $oLang = oxLang::getInstance();
+    $oLang = oxRegistry::getLang();
     $iLang = $oLang->getTplLanguage();
 
     if ( !isset( $iLang ) ) {
@@ -50,7 +50,7 @@ function smarty_modifier_oxmultilangassign( $sIdent )
     }
 
     try {
-        $sTranslation = $oLang->translateString( $sIdent, $iLang, isAdmin() );
+        $sTranslation = $oLang->translateString( $sIdent, $iLang, $oLang->isAdmin() );
     } catch ( oxLanguageException $oEx ) {
         // is thrown in debug mode and has to be caught here, as smarty hangs otherwise!
     }

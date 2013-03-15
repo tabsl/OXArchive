@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   smarty_plugins
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: block.oxhasrights.php 40727 2011-12-21 12:01:42Z mindaugas.rimgaila $
+ * @version   SVN: $Id: block.oxhasrights.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 /**

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilspic.php 51021 2012-10-29 07:42:11Z aurimas.gladutis $
+ * @version   SVN: $Id: oxutilspic.php 48869 2012-08-21 08:10:48Z tomas $
  */
 
 /**
@@ -49,25 +49,13 @@ class oxUtilsPic extends oxSuperCfg
     /**
      * Returns image utils instance
      *
+     * @deprecated since v5.0 (2012-08-10); Use oxRegistry::get("oxUtilsPic") instead
+     *
      * @return oxUtilsPic
      */
     public static function getInstance()
     {
-        // disable caching for test modules
-        if ( defined( 'OXID_PHP_UNIT' ) ) {
-            self::$_instance = modInstances::getMod( __CLASS__ );
-        }
-
-        if ( !self::$_instance instanceof oxUtilsPic ) {
-
-
-            self::$_instance = oxNew( 'oxUtilsPic' );
-
-            if ( defined( 'OXID_PHP_UNIT' ) ) {
-                modInstances::addMod( __CLASS__, self::$_instance);
-            }
-        }
-        return self::$_instance;
+        return oxRegistry::get("oxUtilsPic");
     }
 
 
@@ -141,11 +129,8 @@ class oxUtilsPic extends oxSuperCfg
             if ( !$myConfig->getConfigParam( 'sAltImageUrl' ) ) {
                 // deleting various size generated images
                 $sGenPath = str_replace( '/master/', '/generated/', $sAbsDynImageDir );
-                $aFiles = glob( "{$sGenPath}*/{$sPicName}" );
-                if ( is_array($aFiles) ) {
-                    foreach ( $aFiles as $sFile ) {
-                        $blDeleted = unlink( $sFile );
-                    }
+                foreach ( glob( "{$sGenPath}*/{$sPicName}" ) as $sFile ) {
+                    $blDeleted = unlink( $sFile );
                 }
             }
         }
@@ -194,7 +179,7 @@ class oxUtilsPic extends oxSuperCfg
         if ( isset( $oObject->{$sPic} ) &&
              ( $_FILES['myfile']['size'][$sPicType.'@'.$sPic] > 0 || $aParams[$sPic] != $oObject->{$sPic}->value ) ) {
 
-            $sImgDir = $sAbsDynImageDir . oxUtilsFile::getInstance()->getImageDirByType($sPicType);
+            $sImgDir = $sAbsDynImageDir . oxRegistry::get("oxUtilsFile")->getImageDirByType($sPicType);
             $blDelete = $this->safePictureDelete($oObject->{$sPic}->value, $sImgDir, $sPicTable, $sPicField );
         }
 

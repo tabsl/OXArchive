@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerpbase.php 43726 2012-04-11 07:27:01Z linas.kukulskis $
+ * @version   SVN: $Id: oxerpbase.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 /**
@@ -193,13 +193,13 @@ abstract class oxERPBase
     {
         ini_set('session.use_cookies', 0);
         $_COOKIE = array('admin_sid' => false);
-        $myConfig = oxConfig::getInstance();
+        $myConfig = oxRegistry::getConfig();
         $myConfig->setConfigParam( 'blForceSessionStart', 1 );
         $myConfig->setConfigParam( 'blSessionUseCookies', 0);
         $myConfig->setConfigParam( 'blAdmin', 1 );
         $myConfig->setAdminMode( true );
 
-        $mySession = oxSession::getInstance();
+        $mySession = oxRegistry::getSession();
         @$mySession->start();
 
 
@@ -252,10 +252,10 @@ abstract class oxERPBase
         }
         $_COOKIE = array('admin_sid' => $sSessionID);
         // start session
-        $myConfig = oxConfig::getInstance();
+        $myConfig = oxRegistry::getConfig();
         $myConfig->setConfigParam( 'blAdmin', 1 );
         $myConfig->setAdminMode( true );
-        $mySession = oxSession::getInstance();
+        $mySession = oxRegistry::getSession();
 
         // change session if needed
         if ($sSessionID != session_id()) {
@@ -350,7 +350,7 @@ abstract class oxERPBase
     {
         global $ADODB_FETCH_MODE;
 
-        $myConfig = oxConfig::getInstance();
+        $myConfig = oxRegistry::getConfig();
         // prepare
         $oType   = $this->_getInstanceOfType($sType);
         //$sSQL    = $oType->getSQL($sWhere, $this->_iLanguage, $this->_iShopID);
@@ -476,7 +476,7 @@ abstract class oxERPBase
      */
     protected function _checkAccess($oType, $blWrite, $sOxid = null)
     {
-        $myConfig = oxConfig::getInstance();
+        $myConfig = oxRegistry::getConfig();
         static $aAccessCache;
 
         if (!$this->_blInit) {
@@ -547,7 +547,7 @@ abstract class oxERPBase
      */
     protected function _save(oxERPType &$oType, $aData, $blAllowCustomShopId = false)
     {
-        $myConfig = oxConfig::getInstance();
+        $myConfig = oxRegistry::getConfig();
 
         // check rights
         $sOxid = null;
@@ -568,7 +568,7 @@ abstract class oxERPBase
      */
     protected static function _checkShopVersion()
     {
-        $myConfig = oxConfig::getInstance();
+        $myConfig = oxRegistry::getConfig();
         if ( method_exists($myConfig, 'getSerial') ) {
             if ($myConfig->getSerial() instanceof oxSerial) {
                 return;

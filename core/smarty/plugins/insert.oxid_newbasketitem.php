@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   smarty_plugins
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: insert.oxid_newbasketitem.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: insert.oxid_newbasketitem.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 /**
@@ -38,7 +38,7 @@
  */
 function smarty_insert_oxid_newbasketitem($params, &$smarty)
 {
-    $myConfig  = oxConfig::getInstance();
+    $myConfig  = oxRegistry::getConfig();
 
     $aTypes = array('0' => 'none','1' => 'message', '2' =>'popup', '3' =>'basket');
     $iType  = $myConfig->getConfigParam( 'iNewBasketItemMessage' );
@@ -56,7 +56,7 @@ function smarty_insert_oxid_newbasketitem($params, &$smarty)
 
     //fetching article data
     $oNewItem = oxSession::getVar( '_newitem' );
-    $oBasket  = oxSession::getInstance()->getBasket();
+    $oBasket  = oxRegistry::getSession()->getBasket();
 
     if ( $oNewItem ) {
         // loading article object here because on some system passing article by session couses problems

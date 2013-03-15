@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxexception.php 32880 2011-02-03 11:45:17Z sarunas $
+ * @version   SVN: $Id: oxexception.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 /**
@@ -145,7 +145,7 @@ class oxException extends Exception
         //We are most likely are already dealing with an exception so making sure no other exceptions interfere
         try {
             $sLogMsg = $this->getString() . "\n---------------------------------------------\n";
-            oxUtils::getInstance()->writeToLog( $sLogMsg, $this->getLogFileName() );
+            oxRegistry::getUtils()->writeToLog( $sLogMsg, $this->getLogFileName() );
         } catch (Exception $e) {
         }
     }

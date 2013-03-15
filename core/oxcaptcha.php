@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcaptcha.php 52486 2012-11-27 15:37:13Z aurimas.gladutis $
+ * @version   SVN: $Id: oxcaptcha.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 /**
@@ -90,9 +90,7 @@ class oxCaptcha extends oxSuperCfg
         // if session is started - storing captcha info here
         if ( $this->getSession()->isSessionStarted() ) {
             $sHash = oxUtilsObject::getInstance()->generateUID();
-            $aHash = oxSession::getVar( "aCaptchaHash" );
-            $aHash[$sHash] = array( $sTextHash => $iTime );
-            oxSession::setVar( "aCaptchaHash", $aHash );
+            oxSession::setVar( "aCaptchaHash", array( $sHash => array( $sTextHash => $iTime ) ) );
         } else {
             $oDb = oxDb::getDb();
             $sQ = "insert into oxcaptcha ( oxhash, oxtime ) values ( '{$sTextHash}', '{$iTime}' )";
@@ -127,7 +125,7 @@ class oxCaptcha extends oxSuperCfg
     public function getImageUrl()
     {
         $sUrl = $this->getConfig()->getCoreUtilsURL() . "verificationimg.php?e_mac=";
-        $sUrl .= oxUtils::getInstance()->strMan( $this->getText() );
+        $sUrl .= oxRegistry::getUtils()->strMan( $this->getText() );
 
         return $sUrl;
     }
@@ -156,12 +154,7 @@ class oxCaptcha extends oxSuperCfg
         $blPass = null;
         if ( ( $aHash = oxSession::getVar( "aCaptchaHash" ) ) ) {
             $blPass = ( isset( $aHash[$sMacHash][$sHash] ) && $aHash[$sMacHash][$sHash] >= $iTime ) ? true : false;
-            unset( $aHash[$sMacHash] );
-            if ( !empty( $aHash ) ) {
-                oxSession::setVar( "aCaptchaHash", $aHash );
-            } else {
-                oxSession::deleteVar( "aCaptchaHash" );
-            }
+            oxSession::deleteVar( "aCaptchaHash" );
         }
         return $blPass;
     }

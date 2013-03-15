@@ -22,6 +22,8 @@
  * @version   SVN: $Id: oxutilspic.php 32881 2011-02-03 11:45:36Z sarunas $
  */
 
+require_once dirname(__FILE__) . "/../bootstrap.php";
+
 // Checks if base path getter does not exist
 if ( !function_exists( "getShopBasePath" ) ) {
     /**
@@ -65,7 +67,7 @@ if ( !function_exists( "getConfig" ) ) {
         include_once getShopBasePath() . 'core/oxfunctions.php';
 
         // initializes singleton config class
-        return oxConfig::getInstance();
+        return oxRegistry::getConfig();
     }
 }
 

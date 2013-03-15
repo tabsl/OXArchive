@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsdate.php 27809 2010-05-19 12:30:58Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxutilsdate.php 48869 2012-08-21 08:10:48Z tomas $
  */
 
 /**
@@ -37,23 +37,13 @@ class oxUtilsDate extends oxSuperCfg
     /**
      * Returns object instance
      *
+     * @deprecated since v5.0 (2012-08-10); Please use oxRegistry::get("oxUtilsDate") instead.
+     *
      * @return oxUtilsDate
      */
     public static function getInstance()
     {
-        // disable caching for test modules
-        if ( defined( 'OXID_PHP_UNIT' ) ) {
-            self::$_instance = modInstances::getMod( __CLASS__ );
-        }
-
-        if ( !self::$_instance instanceof oxUtilsDate ) {
-            self::$_instance = oxNew( 'oxUtilsDate' );
-
-            if ( defined( 'OXID_PHP_UNIT' ) ) {
-                modInstances::addMod( __CLASS__, self::$_instance);
-            }
-        }
-        return self::$_instance;
+        return oxRegistry::get("oxUtilsDate");
     }
 
     /**
@@ -107,9 +97,9 @@ class oxUtilsDate extends oxSuperCfg
 
         // choosing format..
         if ( $sTime ) {
-            $sFormat = $blForceEnglishRet ? 'Y-m-d H:i:s' : oxLang::getInstance()->translateString( 'fullDateFormat' );
+            $sFormat = $blForceEnglishRet ? 'Y-m-d H:i:s' : oxRegistry::getLang()->translateString( 'fullDateFormat' );
         } else {
-            $sFormat = $blForceEnglishRet ? 'Y-m-d' : oxLang::getInstance()->translateString( 'simpleDateFormat' );
+            $sFormat = $blForceEnglishRet ? 'Y-m-d' : oxRegistry::getLang()->translateString( 'simpleDateFormat' );
         }
 
         if ( count( $aDate ) != 3 ) {

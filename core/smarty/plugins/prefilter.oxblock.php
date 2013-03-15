@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   smarty_plugins
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id$
  */
@@ -39,9 +39,9 @@ function smarty_prefilter_oxblock($sSource, &$oSmartyCompiler)
     if (strpos($oSmartyCompiler->_version, 'Smarty3') === 0) {
         $blUseSmarty3 = true;
     }
-    $blDebugTemplateBlocks = (bool)oxConfig::getInstance()->getConfigParam('blDebugTemplateBlocks');
+    $blDebugTemplateBlocks = (bool)oxRegistry::getConfig()->getConfigParam('blDebugTemplateBlocks');
 
-    $aBlocks = oxUtilsView::getInstance()->getTemplateBlocks($oSmartyCompiler->_current_file);
+    $aBlocks = oxRegistry::get("oxUtilsView")->getTemplateBlocks($oSmartyCompiler->_current_file);
 
     $iLimit = 500;
 
@@ -62,7 +62,7 @@ function smarty_prefilter_oxblock($sSource, &$oSmartyCompiler)
             $sAppend .= '[{/__smartyblock__}]';
         }
         if ($blDebugTemplateBlocks) {
-            $sTplDir = trim(oxConfig::getInstance()->getConfigParam('_sTemplateDir'), '/\\');
+            $sTplDir = trim(oxRegistry::getConfig()->getConfigParam('_sTemplateDir'), '/\\');
             $sFile = str_replace(array('\\', '//'), '/', $oSmartyCompiler->_current_file);
             if (preg_match('@/'.preg_quote($sTplDir, '@').'/(.*)$@', $sFile, $m)) {
                 $sFile = $m[1];

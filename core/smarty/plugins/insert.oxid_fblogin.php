@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   smarty_plugins
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: insert.oxid_newbasketitem.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
@@ -38,7 +38,7 @@
  */
 function smarty_insert_oxid_fblogin($params, &$smarty)
 {
-    $myConfig  = oxConfig::getInstance();
+    $myConfig  = oxRegistry::getConfig();
     $oView = $myConfig->getActiveView();
 
     if ( !$myConfig->getConfigParam( "bl_showFbConnect") ) {
@@ -47,7 +47,7 @@ function smarty_insert_oxid_fblogin($params, &$smarty)
 
     // user logged in using facebook account so showing additional
     // popup about connecting facebook user id to existing shop account
-    $oFb = oxFb::getInstance();
+    $oFb = oxRegistry::get("oxFb");
 
     if ( $oFb->isConnected() && $oFb->getUser() ) {
 

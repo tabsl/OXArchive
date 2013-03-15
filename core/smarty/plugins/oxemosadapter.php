@@ -34,14 +34,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  $Id: oxemosadapter.php 52841 2012-12-12 12:13:11Z linas.kukulskis $
+ *  $Id: oxemosadapter.php 50060 2012-10-03 12:35:05Z tomas $
  */
 
 
 /**
  * Includes emos script formatter class
  */
-require_once oxConfig::getInstance()->getConfigParam( 'sCoreDir' ) . 'smarty/plugins/emos.php';
+require_once oxRegistry::getConfig()->getConfigParam( 'sCoreDir' ) . 'smarty/plugins/emos.php';
 
 /**
  * This class is a reference implementation of a PHP Function to include
@@ -74,16 +74,15 @@ class oxEmosAdapter extends oxSuperCfg
     private static $_instance = null;
 
     /**
-     * resturns a single instance of this class
+     * Return a single instance of this class
+     *
+     * @deprecated since v5.0 (2012-08-10); Use oxRegistry::get("oxEmosAdapter") instead.
      *
      * @return oxUtils
      */
     public static function getInstance()
     {
-        if ( !self::$_instance instanceof oxEmosAdapter ) {
-            self::$_instance = oxNew('oxEmosAdapter');
-        }
-        return self::$_instance;
+        return oxRegistry::get("oxEmosAdapter");
     }
 
     /**
@@ -125,7 +124,7 @@ class oxEmosAdapter extends oxSuperCfg
             $this->_oEmos->addPageId( $this->_getEmosPageId( $this->_getTplName() ) );
 
             // language id
-            $this->_oEmos->addLangId( oxLang::getInstance()->getBaseLanguage() );
+            $this->_oEmos->addLangId( oxRegistry::getLang()->getBaseLanguage() );
 
             // set site ID
             $this->_oEmos->addSiteId( $this->getConfig()->getShopId() );
@@ -136,12 +135,12 @@ class oxEmosAdapter extends oxSuperCfg
 
     /**
      * Checks whether shop is in utf, if not - iconv string for using with econda json_encode
-     *
+     * 
      * @param string $sContent
-     *
-     * @return string
+     * 
+     * @return string 
      */
-    protected function _convertToUtf( $sContent )
+    protected function _convertToUtf( $sContent ) 
     {
         $myConfig  = $this->getConfig();
         if ( !$myConfig->isUtf() ) {
@@ -180,9 +179,7 @@ class oxEmosAdapter extends oxSuperCfg
     protected function _convProd2EmosItem( $oProduct, $sCatPath = "NULL", $iQty = 1 )
     {
         $oItem = $this->_getNewEmosItem();
-
-        $sProductId = ( isset( $oProduct->oxarticles__oxartnum->value ) && $oProduct->oxarticles__oxartnum->value ) ? $oProduct->oxarticles__oxartnum->value : $oProduct->getId();
-        $oItem->productId   = $this->_convertToUtf( $sProductId );
+        $oItem->productId   = ( isset( $oProduct->oxarticles__oxartnum->value ) && $oProduct->oxarticles__oxartnum->value ) ? $oProduct->oxarticles__oxartnum->value : $oProduct->getId();
         $oItem->productName = $this->_prepareProductTitle( $oProduct );
 
         // #810A
@@ -191,8 +188,8 @@ class oxEmosAdapter extends oxSuperCfg
         $oItem->productGroup = "{$sCatPath}/{$this->_convertToUtf( $oProduct->oxarticles__oxtitle->value )}";
         $oItem->quantity     = $iQty;
         // #3452: Add brands to econda tracking
-        $oItem->variant1     = $oProduct->getVendor() ? $this->_convertToUtf( $oProduct->getVendor()->getTitle() ) : "NULL";
-        $oItem->variant2     = $oProduct->getManufacturer() ? $this->_convertToUtf( $oProduct->getManufacturer()->getTitle() ) : "NULL";
+        $oItem->variant1     = $oProduct->getVendor() ? $oProduct->getVendor()->getTitle() : "NULL";
+        $oItem->variant2     = $oProduct->getManufacturer() ? $oProduct->getManufacturer()->getTitle() : "NULL";
         $oItem->variant3     = $oProduct->getId();
 
         return $oItem;
@@ -207,7 +204,7 @@ class oxEmosAdapter extends oxSuperCfg
      */
     protected function _getEmosPageTitle( $aParams )
     {
-        return isset( $aParams['title'] ) ? $this->_convertToUtf( $aParams['title'] ) : null;
+        return isset( $aParams['title'] ) ? $aParams['title'] : null;
     }
 
     /**
@@ -232,7 +229,7 @@ class oxEmosAdapter extends oxSuperCfg
      *
      * @return string
      */
-    protected function _getEmosCatPath()
+    protected function _getEmosCatPath() 
     {
         // #4016: econda: json function returns null if title has an umlaut
         if ($this->_sEmosCatPath === null) {
@@ -279,7 +276,7 @@ class oxEmosAdapter extends oxSuperCfg
             }
         }
         $sCatPath = $this->_convertToUtf( $sCatPath );
-
+        
         return $sCatPath;
     }
 
@@ -402,12 +399,12 @@ class oxEmosAdapter extends oxSuperCfg
                 //ECONDA FIX use username (email address) instead of customer number
                 $oOrder  = $oCurrView->getOrder();
                 $oBasket = $oCurrView->getBasket();
-                $oEmos->addEmosBillingPageArray( $this->_convertToUtf($oOrder->oxorder__oxordernr->value),
-                                                 $this->_convertToUtf($oUser->oxuser__oxusername->value),
+                $oEmos->addEmosBillingPageArray( $oOrder->oxorder__oxordernr->value,
+                                                 $oUser->oxuser__oxusername->value,
                                                  $oBasket->getPrice()->getBruttoPrice() * ( 1 / $oCur->rate ),
-                                                 $this->_convertToUtf($oOrder->oxorder__oxbillcountry->value),
-                                                 $this->_convertToUtf($oOrder->oxorder__oxbillzip->value),
-                                                 $this->_convertToUtf($oOrder->oxorder__oxbillcity->value) );
+                                                 $oOrder->oxorder__oxbillcountry->value,
+                                                 $oOrder->oxorder__oxbillzip->value,
+                                                 $oOrder->oxorder__oxbillcity->value );
 
                 // get Basket Page Array
                 $aBasket = array();
@@ -460,7 +457,7 @@ class oxEmosAdapter extends oxSuperCfg
                 // #4042: Contact page is erroneously tracked as contact event
                 if ( $oCurrView->getContactSendStatus() ) {
                     $oEmos->addContent( 'Service/Kontakt/Success' );
-                    $oEmos->addContact( 'Kontakt' );
+                    $oEmos->addContact( 'Kontakt' );                    
                 }
                 else {
                     $oEmos->addContent( 'Service/Kontakt/Form' );

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   smarty_plugins
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: function.oxmultilang.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: function.oxmultilang.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 /**
@@ -38,10 +38,10 @@ function smarty_function_oxmultilang( $params, &$smarty )
 {
 
     startProfile("smarty_function_oxmultilang");
+    $oLang = oxRegistry::getLang();
     $sIdent  = isset( $params['ident'] ) ? $params['ident'] : 'IDENT MISSING';
     $iLang   = null;
-    $blAdmin = isAdmin();
-    $oLang = oxLang::getInstance();
+    $blAdmin = $oLang->isAdmin();
 
     if ( $blAdmin ) {
         $iLang = $oLang->getTplLanguage();

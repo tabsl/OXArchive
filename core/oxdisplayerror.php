@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdisplayerror.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxdisplayerror.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 /**
@@ -41,7 +41,7 @@ class oxDisplayError implements oxIDisplayError
      */
     public function getOxMessage()
     {
-        return oxLang::getInstance()->translateString( $this->_sMessage );
+        return oxRegistry::getLang()->translateString( $this->_sMessage );
     }
 
     /**

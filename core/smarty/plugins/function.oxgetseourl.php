@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   smarty_plugins
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: function.oxgetseourl.php 33731 2011-03-10 14:39:37Z arvydas.vapsva $
+ * @version   SVN: $Id: function.oxgetseourl.php 48768 2012-08-16 17:56:23Z tomas $
  */
 
 
@@ -59,14 +59,14 @@ function smarty_function_oxgetseourl( $params, &$smarty )
                 $sUrl = $oObject->getLink();
             }
         }
-    } elseif ( $sUrl && oxUtils::getInstance()->seoIsActive() ) {
+    } elseif ( $sUrl && oxRegistry::getUtils()->seoIsActive() ) {
         // if SEO is on ..
-        $oEncoder = oxSeoEncoder::getInstance();
+        $oEncoder = oxRegistry::get("oxSeoEncoder");
         if ( ( $sStaticUrl = $oEncoder->getStaticUrl( $sUrl ) ) ) {
             $sUrl = $sStaticUrl;
         } else {
             // in case language parameter is not added to url
-            $sUrl = oxUtilsUrl::getInstance()->processUrl( $sUrl );
+            $sUrl = oxRegistry::get("oxUtilsUrl")->processUrl( $sUrl );
         }
     }
 

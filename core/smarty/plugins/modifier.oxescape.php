@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   smarty_plugins
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: modifier.oxlower.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
@@ -42,6 +42,6 @@ require_once $smarty->_get_plugin_filepath( 'modifier', 'escape' );
  */
 function smarty_modifier_oxescape( $sString, $sEscType = 'html', $sCharSet = null )
 {
-    $sCharSet = $sCharSet ? $sCharSet : oxConfig::getInstance()->getActiveView()->getCharSet();
+    $sCharSet = $sCharSet ? $sCharSet : oxRegistry::getConfig()->getActiveView()->getCharSet();
     return smarty_modifier_escape( $sString, $sEscType, $sCharSet );
 }

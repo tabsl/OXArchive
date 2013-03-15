@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxexceptiontodisplay.php 32877 2011-02-03 09:25:45Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxexceptiontodisplay.php 48786 2012-08-17 10:20:42Z tomas $
  */
 
 /**
@@ -189,7 +189,7 @@ class oxExceptionToDisplay implements oxIDisplayError
         if ( $this->_blDebug ) {
             return $this;
         } else {
-             $sString = oxLang::getInstance()->translateString($this->_sMessage);
+             $sString = oxRegistry::getLang()->translateString($this->_sMessage);
 
              if ( !empty( $this->_aMessageArgs ) ) {
                  $sString = vsprintf( $sString, $this->_aMessageArgs );
@@ -206,7 +206,7 @@ class oxExceptionToDisplay implements oxIDisplayError
      */
     public function __toString()
     {
-        $sRes = $this->getErrorClassType() . " (time: " . date('Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime()) . "): " . $this->getOxMessage() . " \n Stack Trace: " . $this->getStackTrace() . "\n";
+        $sRes = $this->getErrorClassType() . " (time: " . date('Y-m-d H:i:s', oxRegistry::get("oxUtilsDate")->getTime()) . "): " . $this->getOxMessage() . " \n Stack Trace: " . $this->getStackTrace() . "\n";
         foreach ( $this->_aValues as $key => $value ) {
             $sRes .= $key. " => ". $value . "\n";
         }

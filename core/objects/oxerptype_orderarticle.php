@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype_orderarticle.php 35231 2011-05-10 06:46:43Z sarunas $
+ * @version   SVN: $Id: oxerptype_orderarticle.php 48727 2012-08-16 09:09:02Z tomas $
  */
 
 require_once 'oxerptype.php';
@@ -80,7 +80,7 @@ class oxERPType_OrderArticle extends oxERPType
     {
             return;
 
-        if ($oObj->oxorderarticles__oxordershopid->value != oxConfig::getInstance()->getShopId()) {
+        if ($oObj->oxorderarticles__oxordershopid->value != oxRegistry::getConfig()->getShopId()) {
             throw new Exception( oxERPBase::$ERROR_USER_NO_RIGHTS);
         }
 

@@ -52,7 +52,7 @@ require getShopBasePath() . 'modules/functions.php';
 require_once getShopBasePath() . 'core/oxfunctions.php';
 
 // initializes singleton config class
-$myConfig = oxConfig::getInstance();
+$myConfig = oxRegistry::getConfig();
 
 // executing maintenance tasks..
 oxNew( "oxmaintenance" )->execute();
