@@ -87,7 +87,7 @@ function ChangeDiscountType(oObj)
         </tr>
         <tr>
             <td class="edittext">
-            [{ oxmultilang ident="DISCOUNT_MAIN_PRICE" }]
+            [{ oxmultilang ident="DISCOUNT_MAIN_PRICE" }] ([{ $oActCur->sign }])
             </td>
             <td class="edittext">
             [{ oxmultilang ident="GENERAL_FROM" }] <input type="text" class="editinput" size="10" maxlength="[{$edit->oxdiscount__oxprice->fldmax_length}]" name="editval[oxdiscount__oxprice]" value="[{$edit->oxdiscount__oxprice->value}]" [{ $readonly }]>

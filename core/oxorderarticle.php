@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorderarticle.php 27234 2010-04-15 13:18:02Z arvydas $
+ * @version   SVN: $Id: oxorderarticle.php 28585 2010-06-23 09:23:38Z sarunas $
  */
 
 /**
@@ -169,8 +169,9 @@ class oxOrderArticle extends oxBase implements oxIArticle
      *
      * @return null
      */
-    public function updateArticleStock( $dAddAmount = null, $blAllowNegativeStock = null )
+    public function updateArticleStock( $dAddAmount, $blAllowNegativeStock = false )
     {
+        // TODO: use oxarticle reduceStock
         // decrement stock if there is any
         $oArticle = oxNew( 'oxarticle' );
         $oArticle->load( $this->oxorderarticles__oxartid->value );
@@ -197,7 +198,7 @@ class oxOrderArticle extends oxBase implements oxIArticle
      *
      * @return double
      */
-    protected function _getArtStock( $dAddAmount = null, $blAllowNegativeStock = null )
+    protected function _getArtStock( $dAddAmount = 0, $blAllowNegativeStock = false )
     {
         $oDb = oxDb::getDb();
 
@@ -689,7 +690,16 @@ class oxOrderArticle extends oxBase implements oxIArticle
        if ( ( $blSave = parent::save() ) && $this->isNewOrderItem() ) {
            $myConfig = $this->getConfig();
            if ( $myConfig->getConfigParam( 'blUseStock' ) ) {
-               $this->updateArticleStock( $this->oxorderarticles__oxamount->value * (-1), $myConfig->getConfigParam( 'blAllowNegativeStock' ) );
+               if ($myConfig->getConfigParam( 'blPsBasketReservationEnabled' )) {
+                   $this->getSession()
+                           ->getBasketReservations()
+                           ->commitArticleReservation(
+                                   $this->oxorderarticles__oxartid->value,
+                                   $this->oxorderarticles__oxamount->value
+                           );
+               } else {
+                   $this->updateArticleStock( $this->oxorderarticles__oxamount->value * (-1), $myConfig->getConfigParam( 'blAllowNegativeStock' ) );
+               }
            }
 
            // marking object as "non new" disable further stock changes

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxfunctions.php 27122 2010-04-09 13:39:58Z arvydas $
+ * @version   SVN: $Id: oxfunctions.php 28565 2010-06-22 16:50:26Z tomas $
  */
 
 /**
@@ -45,8 +45,8 @@ function oxAutoload( $sClass )
     //moreover even further method code could not execute without them
     $sBaseClassLocation = null;
     $aBaseClasses = array("oxutils", "oxsupercfg", "oxutilsobject", "oxconfig");
-    if (in_array(strtolower($sClass), $aBaseClasses)) {
-        $sFilename = getShopBasePath() ."core/" . strtolower($sClass) . ".php" ;
+    if (in_array($sClass, $aBaseClasses)) {
+        $sFilename = getShopBasePath() ."core/" . $sClass . ".php" ;
         include $sFilename;
         return;
     }
@@ -78,7 +78,7 @@ function oxAutoload( $sClass )
     }
 
     foreach ( $aClassDirs as $sDir ) {
-        $sFilename = $sDir . strtolower( $sClass ) . '.php';
+        $sFilename = $sDir .  $sClass . '.php';
         if ( file_exists( $sFilename ) ) {
             if (!isset($aClassPaths[$sClass])) {
                 $aClassPaths[$sClass] = $sFilename;

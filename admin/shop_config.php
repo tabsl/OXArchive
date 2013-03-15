@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_config.php 27133 2010-04-09 13:48:22Z arvydas $
+ * @version   SVN: $Id: shop_config.php 28589 2010-06-23 10:49:08Z vilma $
  */
 
 /**
@@ -31,7 +31,7 @@
 class Shop_Config extends oxAdminDetails
 {
     protected $_sThisTemplate = 'shop_config.tpl';
-    protected $_aSkipMultiline = array('aHomeCountry', 'iShopID_TrustedShops');
+    protected $_aSkipMultiline = array('aHomeCountry', 'iShopID_TrustedShops', 'aTsUser', 'aTsPassword');
 
     /**
      * Executes parent method parent::render(), passes shop configuration parameters
@@ -153,6 +153,9 @@ class Shop_Config extends oxAdminDetails
         }
 
         $this->_aViewData["countrylist"] = $oCountryList;
+
+        // checking if cUrl is enabled
+        $this->_aViewData["blCurlIsActive"] = ( !function_exists('curl_init') ) ? false : true;
 
         return $this->_sThisTemplate;
     }

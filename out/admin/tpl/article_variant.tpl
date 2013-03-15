@@ -145,7 +145,7 @@ function editThis( sID )
             <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_ACTIVE" }] </td>
             <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_CHOICE" }] </td>
             <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_ARTNUM" }]</td>
-            <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_PRICE" }]</td>
+            <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_PRICE" }] ([{ $oActCur->sign }])</td>
             <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_SORT" }]</td>
             <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_STOCK" }]</td>
             <td class="listheader" colspan="2">&nbsp;</td>

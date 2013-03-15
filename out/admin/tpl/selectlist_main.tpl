@@ -123,7 +123,7 @@ function onSelect_aField(){
                     <tr>
                         <td class="edittext" width="10">&nbsp;</td>
                         <td class="edittext" width="100">
-                            [{ oxmultilang ident="SELECTLIST_MAIN_ADDFIELD_PREIS" }]
+                            [{ oxmultilang ident="SELECTLIST_MAIN_ADDFIELD_PREIS" }] ([{ $oActCur->sign }])
                         </td>
                         <td class="edittext" align="right">
                             <input [{ $readonly }] type="text" class="edittext" id="EditAddPrice" name="sAddFieldPriceMod" value="" size="10" style="width: 50px;">

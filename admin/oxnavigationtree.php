@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxnavigationtree.php 27344 2010-04-26 13:10:18Z arvydas $
+ * @version   SVN: $Id: oxnavigationtree.php 28471 2010-06-19 12:50:54Z arvydas $
  */
 
 /**
@@ -378,7 +378,7 @@ class OxNavigationTree extends oxSuperCfg
     }
 
     /**
-     * Returns from oDomXML tree tabs DOMNodeList, which belongs to $sClass
+     * Returns from oDomXML tree tabs DOMNodeList, which belongs to $sId
      *
      * @param string $sId         class name
      * @param int    $iAct        current tab number

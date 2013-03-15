@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: help.php 26734 2010-03-22 13:08:22Z arvydas $
+ * @version   SVN: $Id: help.php 28177 2010-06-07 11:35:27Z arvydas $
  */
 
 /**
@@ -27,6 +27,8 @@
  * Arranges shop help information window, with help texts. (Help
  * text may be changed in file (shop directory) -> help ->
  * default.inc.tpl ). OXID eShop -> HELP.
+ *
+ * @deprecated this class is deprecated, help pages are now managed by CMS
  */
 class Help extends oxUBase
 {

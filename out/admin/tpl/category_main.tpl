@@ -126,7 +126,7 @@ function LockAssignment(obj)
             </td>
             <td class="edittext">
             <input id="oxthumb" type="text" class="editinput" size="42" maxlength="[{$edit->oxcategories__oxthumb->fldmax_length}]" name="editval[oxcategories__oxthumb]" value="[{$edit->oxcategories__oxthumb->value}]">
-            [{ oxinputhelp ident="HELP_CATEGORY_MAIN_THUMB" }]            
+            [{ oxinputhelp ident="HELP_CATEGORY_MAIN_THUMB" }]
             [{ if (!($edit->oxcategories__oxthumb->value=="nopic.jpg" || $edit->oxcategories__oxthumb->value=="" || $edit->oxcategories__oxthumb->value=="nopic_ico.jpg")) }]
             </td>
             <td class="edittext">
@@ -203,7 +203,7 @@ function LockAssignment(obj)
         </tr>
         <tr>
             <td class="edittext">
-            [{ oxmultilang ident="CATEGORY_MAIN_PRICEFROMTILL" }]
+            [{ oxmultilang ident="CATEGORY_MAIN_PRICEFROMTILL" }] ([{ $oActCur->sign }])
             </td>
             <td class="edittext" colspan="2">
             <input type="text" class="editinput" size="5" maxlength="[{$edit->oxcategories__oxpricefrom->fldmax_length}]" name="editval[oxcategories__oxpricefrom]" value="[{$edit->oxcategories__oxpricefrom->value}]" [{$readonly}]>&nbsp;

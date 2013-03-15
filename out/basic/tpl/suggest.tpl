@@ -88,7 +88,9 @@
       </div>
     </form>
     <div class="dot_sep mid"></div>
-    [{ oxmultilang ident="SUGGEST_ABOUTDATAPROTECTION" }]<br>
+    [{oxifcontent ident="oxsecurityinfo" object="oCont"}]
+    [{ oxmultilang ident="SUGGEST_ABOUTDATAPROTECTION" }] <a id="test_infoProtection" href="[{ $oCont->getLink() }]" rel="nofollow">[{ $oCont->oxcontents__oxtitle->value }]</a><br>
+    [{/oxifcontent}]
   </div>
 [{/if}]
 

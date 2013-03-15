@@ -133,7 +133,8 @@ a.pagenavigationactive {font-weight: bold;}
 .groupExp .exp a.rc b {background: url(bg/grouping.gif) no-repeat 0 -42px ;padding-left:15px;}
 .groupExp .exp dl {display:block;}
 .groupExp div.spacer {clear: both; height: 1px; overflow: hidden;}
-
+.groupExp .exp dl.rowexp {display:block;}
+.groupExp .exp dl.rowhide {display:none;}
 .groupExp dt .txt {width: 70px;}
 .groupExp dt .txtfield {width: 250px; height: 75px; margin: 0;}
 .groupExp dt .select {width: 130px;}
@@ -168,7 +169,7 @@ ul.req li.clear{clear:left;diplay:none;border:none;visibility:collapse;height:0p
 /* Input fields help button and help text panel */
 .helpPanelText {display: none;}
 #helpTextContainer .yui-panel .bd {line-height: 120%;}
-.btnShowHelpPanel {background: url(bg/ico_help.gif) no-repeat; border:0 none; color:transparent; cursor:pointer; width:21px; height:20px;}
+.btnShowHelpPanel {background: url(bg/ico_help.gif) no-repeat; border:0 none; color:transparent; cursor:pointer; width:21px; height:19px;}
 
 td.edittext {white-space: nowrap; padding: 1px 0px 1px 5px; line-height: 110%;}
 .wrap {white-space: normal !important;}

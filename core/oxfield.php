@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxfield.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxfield.php 28225 2010-06-08 12:32:23Z sarunas $
  */
 
 /**
@@ -124,7 +124,7 @@ class oxField // extends oxSuperCfg
                 if (is_string($this->rawValue)) {
                     $this->value = getStr()->htmlspecialchars( $this->rawValue );
                 } else {
-                    // TODO: call htmlentities for each (recursive ???)
+                    // TODO: call htmlentities for each value (recursively?)
                     $this->value = $this->rawValue;
                 }
                 if ($this->rawValue == $this->value) {
@@ -139,13 +139,13 @@ class oxField // extends oxSuperCfg
     }
 
     /**
-     * TODO: remove this
+     * Returns actual field value
      *
-     * @return unknown
+     * @return string
      */
     public function __toString()
     {
-        return $this->value;
+        return (string)$this->value;
     }
 
     /**

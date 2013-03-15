@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: payment.php 27229 2010-04-15 11:57:07Z arvydas $
+ * @version   SVN: $Id: payment.php 28585 2010-06-23 09:23:38Z sarunas $
  */
 
 /**
@@ -108,6 +108,12 @@ class Payment extends oxUBase
     protected $_blIsOrderStep = true;
 
     /**
+     * TS protection product array
+     * @var array
+     */
+    protected $_aTsProducts = null;
+
+    /**
      * Executes parent method parent::init().
      *
      * @return null
@@ -115,12 +121,7 @@ class Payment extends oxUBase
     public function init()
     {
         $this->_filterDynData();
-
         parent::init();
-
-        if ( ( $soxAddressId = oxConfig::getParameter( 'oxaddressid' ) ) ) {
-            oxSession::setVar( 'deladdrid', $soxAddressId );
-        }
     }
 
     /**
@@ -141,9 +142,13 @@ class Payment extends oxUBase
      */
     public function render()
     {
-        parent::render();
-
         $myConfig  = $this->getConfig();
+
+        if ($myConfig->getConfigParam( 'blPsBasketReservationEnabled' )) {
+            $this->getSession()->getBasketReservations()->renewExpiration();
+        }
+
+        parent::render();
 
         //if it happens that you are not in SSL
         //then forcing to HTTPS
@@ -160,8 +165,11 @@ class Payment extends oxUBase
 
         //additional check if we really really have a user now
         //and the basket is not empty
-        $oUser = $this->getUser();
         $oBasket = $this->getSession()->getBasket();
+        if ( $myConfig->getConfigParam( 'blPsBasketReservationEnabled' ) && (!$oBasket || ( $oBasket && !$oBasket->getProductsCount() )) ) {
+            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket' );
+        }
+        $oUser = $this->getUser();
         if ( !$oBasket || !$oUser || ( $oBasket && !$oBasket->getProductsCount() ) ) {
             oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=start' );
         }
@@ -267,8 +275,6 @@ class Payment extends oxUBase
      * Session variables:
      * <b>paymentid</b>, <b>dynvalue</b>, <b>payerror</b>
      *
-     * @todo    this function is called in templates, sure to be protected ?
-     *
      * @return  mixed
      */
     public function validatePayment()
@@ -314,6 +320,14 @@ class Payment extends oxUBase
         if ( $blOK ) {
             oxSession::setVar( 'paymentid', $sPaymentId );
             oxSession::setVar( 'dynvalue', $aDynvalue );
+            if ( oxConfig::getParameter( 'bltsprotection' ) ) {
+                $sTsProductId = oxConfig::getParameter( 'stsprotection' );
+                $oBasket->setTsProductId($sTsProductId);
+                oxSession::setVar( 'stsprotection', $sTsProductId );
+            } else {
+                oxSession::deleteVar( 'stsprotection' );
+                $oBasket->setTsProductId(null);
+            }
             $oBasket->setShipping($sShipSetId);
             oxSession::deleteVar( '_selected_paymentid' );
             return 'order';
@@ -323,6 +337,8 @@ class Payment extends oxUBase
             //#1308C - delete paymentid from session, and save selected it just for view
             oxSession::deleteVar( 'paymentid' );
             oxSession::setVar( '_selected_paymentid', $sPaymentId );
+            oxSession::deleteVar( 'stsprotection' );
+            $oBasket->setTsProductId(null);
             return;
         }
     }
@@ -617,6 +633,39 @@ class Payment extends oxUBase
         unset($_GET["dynvalue"]["kkyear"]);
         unset($_GET["dynvalue"]["kkpruef"]);
 
+    }
+
+    /**
+     * Template variable getter. Returns payment list count
+     *
+     * @return integer
+     */
+    public function getTsProtections()
+    {
+        if ( $this->_aTsProducts === null ) {
+            $oBasket = $this->getSession()->getBasket();
+            if ( $dPrice = $oBasket->getPrice()->getBruttoPrice() ) {
+                $oTsProtection = oxNew('oxtsprotection');
+                $this->_aTsProducts = $oTsProtection->getTsProducts($dPrice);
+            }
+        }
+        return $this->_aTsProducts;
+    }
+
+    /**
+     * Template variable getter. Returns payment list count
+     *
+     * @return integer
+     */
+    public function getCheckedTsProductId()
+    {
+        if ( $this->_sCheckedProductId === null ) {
+            $this->_sCheckedProductId = false;
+            if ( $sId = oxConfig::getParameter( 'stsprotection' ) ) {
+                $this->_sCheckedProductId = $sId;
+            }
+        }
+        return $this->_sCheckedProductId;
     }
 
 }

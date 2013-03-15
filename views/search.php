@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: search.php 26303 2010-03-04 16:11:37Z sarunas $
+ * @version   SVN: $Id: search.php 28473 2010-06-19 13:40:35Z arvydas $
  */
 
 /**
@@ -245,9 +245,13 @@ class Search extends oxUBase
     {
         $sAddDynParams = $this->getAddUrlParams();
         if ( $sAddDynParams && ( $aArtList = $this->getArticleList() ) ) {
+            $blSeo = oxUtils::getInstance()->seoIsActive();
             foreach ( $aArtList as $oArticle ) {
-                // appending sen and dynamic urls
-                $oArticle->appendStdLink( $sAddDynParams );
+                // appending std and dynamic urls
+                if ( !$blSeo ) {
+                    // only if seo is off..
+                    $oArticle->appendStdLink( $sAddDynParams );
+                }
                 $oArticle->appendLink( $sAddDynParams );
             }
         }

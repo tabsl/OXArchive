@@ -116,3 +116,56 @@
 
     // IP addresses for which session/cookie id match and user agent change checks are off
     $this->aTrustedIPs = array();
+
+    // disable using and loading the gmp extension for the OpenId library
+    // as using the dl() function causes problems with suhosin.
+    define('Auth_OpenID_BUGGY_GMP', true);
+
+    /**
+     * Works only if basket reservations feature is enabled in admin.
+     *
+     * The number specifies how many expired basket reservations are
+     * cleaned per one request (to the eShop).
+     * Cleaning a reservation basically means returning the reserved
+     * stock to the articles.
+     *
+     * Keeping this number too low may cause article stock being returned too
+     * slowly, while too high value may have spiking impact on the performance.
+     */
+    $this->iBasketReservationCleanPerRequest = 200;
+
+    // Trusted shops buyer protection wsdl url
+    $this->sTsProtectionUrl = "https://protection.trustedshops.com/ts/protectionservices/ApplicationRequestService?wsdl";
+    // This is only needed for testing during integration
+    $this->sTsTestProtectionUrl = "https://protection-qa.trustedshops.com/ts/protectionservices/ApplicationRequestService?wsdl";
+
+    $this->sTsProtectProducts = array( "TS080501_500_30_EUR"   => array( "netto" => "0.82", "amount" => "500" ),
+                                       "TS080501_1500_30_EUR"  => array( "netto" => "2.47", "amount" => "1500" ),
+                                       "TS080501_2500_30_EUR"  => array( "netto" => "4.12", "amount" => "2500" ),
+                                       "TS080501_5000_30_EUR"  => array( "netto" => "8.24", "amount" => "5000" ),
+                                       "TS080501_10000_30_EUR" => array( "netto" => "16.47", "amount" => "10000" ),
+                                       "TS080501_20000_30_EUR" => array( "netto" => "32.94", "amount" => "20000" )
+                                ); // Buyer protection products
+
+    // Trusted Shops Ratings login info
+    // Do not change credentials unless instructed otherwise by Trusted Shops!
+    $this->sTsUser = "oxid_esales";
+    $this->sTsPass = "V1AoGEXm";
+
+    // Trusted Shops Ratings configuration array
+    $this->aTsConfig = array( "blTestMode"   => false, // set TRUE to enable testing mode
+                              "sTsUrl"       => "https://www.trustedshops.com", // Trusted Shops Rating main url
+                              "sTsTestUrl"   => "https://qa.trustedshops.com",  // Trusted Shops Rating test url
+                              "sTsWidgetUri" => array( "bewertung/widget/widgets/%s.gif" ), // rating widget url
+                              "sTsInfoUri"   => array( "de" => "bewertung/info_%s.html",  // DE rating info url
+                                                       "en" => "buyerrating/info_%s.html" // EN rating info url
+                                                     ),
+                              "sTsRatingUri" => array( "de" => "bewertung/bewerten_%s.html", // DE rating url
+                                                       "en" => "buyerrating/rate_%s.html"    // EN rating url
+                                                     )
+                             );
+    // Trusted Shops Ratings service wsdl
+    $this->sTsServiceWsdl = "https://www.trustedshops.de/ts/services/TsRating?wsdl";
+
+    // Trusted Shops Ratings test service wsdl
+    $this->sTsServiceTestWsdl = "https://qa.trustedshops.de/ts/services/TsRating?wsdl";

@@ -1,9 +1,5 @@
 [{include file="_header.tpl" title=$template_title location="START_TITLE"|oxmultilangassign isStart=true}]
 
-[{if $oView->isDemoShop()}]
-    [{include file="inc/admin_banner.tpl"}]
-[{/if}]
-
 [{oxifcontent ident="oxstartwelcome" object="oCont"}]
 <div class="welcome">[{$oCont->oxcontents__oxcontent->value}]</div>
 [{/oxifcontent}]
@@ -22,6 +18,8 @@
   [{assign var="firstarticle" value=$oView->getFirstArticle()}]
   [{include file="inc/product.tpl" size='big' showMainLink=true class='topshop' head=$oxfirststart_title head_desc=$oxfirststart_text product=$firstarticle testid="FirstArticle_"|cat:$firstarticle->oxarticles__oxid->value testHeader=FirstArticle}]
 [{/if}]
+
+[{oxid_include_dynamic file="dyn/promotions.tpl"}]
 
 [{if ($oView->getArticleList()|@count)>0 }]
   <strong id="test_LongRunHeader" class="head2">[{ oxmultilang ident="START_LONGRUNNINGHITS"}]</strong>

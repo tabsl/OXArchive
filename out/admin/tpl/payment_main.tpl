@@ -48,7 +48,7 @@
         </tr>
         <tr>
             <td class="edittext">
-            [{ oxmultilang ident="PAYMENT_MAIN_ADDPRICE" }]
+            [{ oxmultilang ident="PAYMENT_MAIN_ADDPRICE" }] ([{ $oActCur->sign }])
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="15" maxlength="[{$edit->oxpayments__oxaddsum->fldmax_length}]" name="editval[oxpayments__oxaddsum]" value="[{$edit->oxpayments__oxaddsum->value }]" [{ $readonly }]>
@@ -71,7 +71,7 @@
         </tr>
         <tr>
             <td class="edittext">
-            [{ oxmultilang ident="PAYMENT_MAIN_AMOUNT" }]
+            [{ oxmultilang ident="PAYMENT_MAIN_AMOUNT" }] ([{ $oActCur->sign }])
             </td>
             <td class="edittext">
             [{ oxmultilang ident="PAYMENT_MAIN_FROM" }] <input type="text" class="editinput" size="5" maxlength="[{$edit->oxpayments__oxfromamount->fldmax_length}]" name="editval[oxpayments__oxfromamount]" value="[{$edit->oxpayments__oxfromamount->value}]" [{ $readonly }]>  [{ oxmultilang ident="PAYMENT_MAIN_TILL" }] <input type="text" class="editinput" size="5" maxlength="[{$edit->oxpayments__oxtoamount->fldmax_length}]" name="editval[oxpayments__oxtoamount]" value="[{$edit->oxpayments__oxtoamount->value}]" [{ $readonly }]>

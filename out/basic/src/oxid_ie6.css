@@ -60,7 +60,6 @@ dl.box, ul.menue li {z-index: 1000;}
 /* IE opacity */
 #mask.on { filter:Alpha(Opacity=70);}
 div.bar.links a.language.act img{filter:Alpha(Opacity=70);}
-#body #demoAdminLink {filter:Alpha(opacity=70);}
 
 /* IE6 iframe shim for select boxes */
 #mask.on iframe{visibility: visible;width:900px;height: 100%;width:100%;filter:mask();}

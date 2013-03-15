@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencodercontent.php 27759 2010-05-14 10:10:17Z arvydas $
+ * @version   SVN: $Id: oxseoencodercontent.php 28421 2010-06-18 08:54:27Z sarunas $
  */
 
 /**
@@ -110,7 +110,7 @@ class oxSeoEncoderContent extends oxSeoEncoder
             $sSeoUrl .= $this->_prepareTitle( $oCont->oxcontents__oxtitle->value ) . '/';
             $sSeoUrl  = $this->_processSeoUrl( $sSeoUrl, $oCont->getId(), $iLang );
 
-            $this->_saveToDb( 'oxcontent', $oCont->getId(), $oCont->getStdLink(), $sSeoUrl, $iLang );
+            $this->_saveToDb( 'oxcontent', $oCont->getId(), $oCont->getBaseStdLink($iLang), $sSeoUrl, $iLang );
         }
         return $sSeoUrl;
     }
@@ -142,8 +142,10 @@ class oxSeoEncoderContent extends oxSeoEncoder
      */
     public function onDeleteContent( $sId )
     {
-        $sIdQuoted = oxDb::getDb()->quote( $sId );
-        oxDb::getDb()->execute( "delete from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxcontent'" );
+        $oDb = oxDb::getDb();
+        $sIdQuoted = $oDb->quote($sId);
+        $oDb->execute("delete from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxcontent'");
+        $oDb->execute("delete from oxobject2seodata where oxobjectid = $sIdQuoted");
     }
 
     /**

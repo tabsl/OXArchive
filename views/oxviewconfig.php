@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxviewconfig.php 27755 2010-05-13 14:53:16Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxviewconfig.php 28588 2010-06-23 10:45:49Z rimvydas.paskevicius $
  */
 
 /**
@@ -51,6 +51,13 @@ class oxViewConfig extends oxSuperCfg
     protected $_aConfigParams = array();
 
     /**
+     * Help page link
+     *
+     * @return string
+     */
+    protected $_sHelpPageLink = null;
+
+    /**
      * Returns shops home link
      *
      * @return string
@@ -61,13 +68,20 @@ class oxViewConfig extends oxSuperCfg
             $myConfig = $this->getConfig();
             $myUtils  = oxUtils::getInstance();
             $oLang    = oxLang::getInstance();
+            $iLang = $oLang->getBaseLanguage();
 
             $sValue = null;
 
+            $blAddStartCl = $myUtils->seoIsActive() && ( $iLang != $myConfig->getConfigParam( 'sDefaultLang' ) );
 
-            $iLang = $oLang->getBaseLanguage();
-            if ( $myUtils->seoIsActive() && !$sValue && ( $iLang != $myConfig->getConfigParam( 'sDefaultLang' ) ) ) {
+
+            if ( $blAddStartCl ) {
                 $sValue = oxSeoEncoder::getInstance()->getStaticUrl( $this->getSelfLink() . 'cl=start', $iLang );
+                $sValue = oxUtilsUrl::getInstance()->appendUrl(
+                        $sValue,
+                        oxUtilsUrl::getInstance()->getBaseAddUrlParams()
+                    );
+                $sValue = getStr()->preg_replace('/(\?|&(amp;)?)$/', '', $sValue);
             }
 
             if ( !$sValue ) {
@@ -101,7 +115,7 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getLogoutLink()
     {
-        $sClass   = $this->getActiveClassName();
+        $sClass   = $this->getActionClassName();
         $sCatnid  = $this->getActCatId();
         $sTplName = $this->getActTplName();
 
@@ -110,6 +124,35 @@ class oxViewConfig extends oxSuperCfg
 
     /**
      * Returns shop help link
+     *
+     * @return string
+     */
+    public function getHelpPageLink()
+    {
+        if ( $this->_sHelpPageLink === null ) {
+            $oConfig  = $this->getConfig();
+            $sClass   = $this->getActiveClassName();
+            $sLangTag = oxLang::getInstance()->getLanguageTag();
+            $sLink    = false;
+            $sAddQ    = "oxshopid = '".$oConfig->getShopId()."' and oxactive{$sLangTag} = 1 and";
+
+            // checking if there is a custom content for help page
+            $sQ  = "select oxid from oxcontents where {$sAddQ} oxloadid = 'oxhelp".strtolower( $sClass )."' union ";
+            $sQ .= "select oxid from oxcontents where {$sAddQ} oxloadid = 'oxhelpdefault'";
+
+            if ( $sContentId = oxDb::getDb()->getOne( $sQ ) ) {
+                $oContent = oxNew( "oxcontent" );
+                $oContent->load( $sContentId );
+                $sLink = $oContent->getLink();
+            }
+
+            $this->_sHelpPageLink = $sLink ? $sLink : $this->getHelpLink();
+        }
+        return $this->_sHelpPageLink;
+    }
+
+    /**
+     * Returns dynamic shop help link
      *
      * @return string
      */
@@ -1083,4 +1126,207 @@ class oxViewConfig extends oxSuperCfg
 
         return $sRaToken;
     }
+
+
+    /**
+     * Returns name of a view class, which will be active for an action
+     * (given a generic fnc, e.g. logout)
+     *
+     * @return string
+     */
+    public function getActionClassName()
+    {
+        return $this->getConfig()->getActiveView()->getActionClassName();
+    }
+
+    /**
+     * Returns facebook application key value
+     *
+     * @return string
+     */
+    public function getFbAppId()
+    {
+        return $this->getConfig()->getConfigParam( 'sFbAppId' );
+    }
+
+    /**
+     * should basket timeout counter be shown?
+     *
+     * @return bool
+     */
+    public function getShowBasketTimeout()
+    {
+        return $this->getConfig()->getConfigParam( 'blPsBasketReservationEnabled' )
+            && ($this->getSession()->getBasketReservations()->getTimeLeft() > 0);
+    }
+
+    /**
+     * return the seconds left until basket expiration
+     *
+     * @return int
+     */
+    public function getBasketTimeLeft()
+    {
+        if (!isset($this->_dBasketTimeLeft)) {
+            $this->_dBasketTimeLeft = $this->getSession()->getBasketReservations()->getTimeLeft();
+        }
+        return $this->_dBasketTimeLeft;
+    }
+
+    /**
+     * Checks if Facebook connect is on. If yes, also checks if Facebook application id
+     * and secure key are entered in config table.
+     *
+     * @return bool
+     */
+    public function getShowFbConnect()
+    {
+        $myConfig = $this->getConfig();
+
+        if ( $myConfig->getConfigParam( 'bl_showFbConnect' ) ) {
+            if ( $myConfig->getConfigParam( "sFbAppId" ) && $myConfig->getConfigParam( "sFbSecretKey" ) ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns Trusted shops domain name (includes "http://")
+     *
+     * @return string
+     */
+    public function getTsDomain()
+    {
+        $sDomain = false;
+        $aTsConfig = $this->getConfig()->getConfigParam( "aTsConfig" );
+        if ( is_array( $aTsConfig ) ) {
+            $sDomain = $aTsConfig["blTestMode"] ? $aTsConfig["sTsTestUrl"] : $aTsConfig["sTsUrl"];
+        }
+        return $sDomain;
+    }
+
+    /**
+     * Returns Trusted Shops Widget image url
+     *
+     * @return string
+     */
+    public function getTsWidgetUrl()
+    {
+        $sUrl = false;
+        if ( $sTsId = $this->getTsId() ) {
+            $sTsUrl = $this->getTsDomain();
+
+            $aTsConfig = $this->getConfig()->getConfigParam( "aTsConfig" );
+            $sTsWidgetUri = isset( $aTsConfig["sTsWidgetUri"] ) ? current( $aTsConfig["sTsWidgetUri"] ) : false;
+
+            if ( $sTsUrl && $sTsWidgetUri ) {
+                //$sLocal = $this->getConfig()->getImageDir()."{$sTsId}.gif";
+                $sUrl = sprintf( "{$sTsUrl}/{$sTsWidgetUri}", $sTsId );
+                //if ( $sImgName = oxUtils::getInstance()->getRemoteCachePath( $sUrl, $sLocal ) ) {
+                //    $sUrl = $this->getImageUrl().basename( $sImgName );
+                //}
+            }
+        }
+
+        return $sUrl;
+    }
+
+    /**
+     * Trusted Shops widget info url
+     *
+     * @return string | bool
+     */
+    public function getTsInfoUrl()
+    {
+        $sUrl = false;
+        if ( $sTsId = $this->getTsId() ) {
+            $sTsUrl = $this->getTsDomain();
+
+            $sLangId = oxLang::getInstance()->getLanguageAbbr();
+            $aTsConfig = $this->getConfig()->getConfigParam( "aTsConfig" );
+            $sTsInfoUri = ( isset( $aTsConfig["sTsInfoUri"] ) && isset( $aTsConfig["sTsInfoUri"][$sLangId] ) ) ? $aTsConfig["sTsInfoUri"][$sLangId] : false;
+
+            if ( $sTsUrl && $sTsInfoUri ) {
+                $sUrl = sprintf( "{$sTsUrl}/{$sTsInfoUri}", $sTsId );
+            }
+        }
+
+        return $sUrl;
+    }
+
+    /**
+     * Trusted Shops ratings url
+     *
+     * @return string | bool
+     */
+    public function getTsRatingUrl()
+    {
+        $sUrl = false;
+        if ( $sTsId = $this->getTsId() ) {
+            $sTsUrl = $this->getTsDomain();
+
+            $sLangId = oxLang::getInstance()->getLanguageAbbr();
+            $aTsConfig = $this->getConfig()->getConfigParam( "aTsConfig" );
+            $sTsRateUri = ( isset( $aTsConfig["sTsRatingUri"] ) && isset( $aTsConfig["sTsRatingUri"][$sLangId] ) ) ? $aTsConfig["sTsRatingUri"][$sLangId] : false;
+
+            if ( $sTsUrl && $sTsRateUri ) {
+                $sUrl = sprintf( "{$sTsUrl}/{$sTsRateUri}", $sTsId );
+            }
+        }
+
+        return $sUrl;
+    }
+
+    /**
+     * Returns true if Trusted Shops feature is On
+     *
+     * @param string $sType type of element to check
+     *
+     * @return bool
+     */
+    public function showTs( $sType )
+    {
+        $blShow = false;
+        switch ( $sType ) {
+            case "WIDGET":
+                $blShow = (bool) $this->getConfig()->getConfigParam( "blTsWidget" );
+                break;
+            case "THANKYOU":
+                $blShow = (bool) $this->getConfig()->getConfigParam( "blTsThankyouReview" );
+                break;
+            case "ORDEREMAIL":
+                $blShow = (bool) $this->getConfig()->getConfigParam( "blTsOrderEmailReview" );
+                break;
+            case "ORDERCONFEMAIL":
+                $blShow = (bool) $this->getConfig()->getConfigParam( "blTsOrderSendEmailReview" );
+                break;
+        }
+        return $blShow;
+    }
+
+    /**
+     * Returns Trusted Shops id
+     *
+     * @return string
+     */
+    public function getTsId()
+    {
+        $sTsId = false;
+        $oConfig = $this->getConfig();
+        $aLangIds = $oConfig->getConfigParam( "aTsLangIds" );
+        $aActInfo = $oConfig->getConfigParam( "aTsActiveLangIds" );
+
+        // mapping with language id
+        $sLangId = oxLang::getInstance()->getLanguageAbbr();
+        if ( isset( $aActInfo[$sLangId] ) && $aActInfo[$sLangId] &&
+             isset( $aLangIds[$sLangId] ) && $aLangIds[$sLangId]
+           ) {
+            $sTsId = $aLangIds[$sLangId];
+        }
+
+        return $sTsId;
+    }
+
 }

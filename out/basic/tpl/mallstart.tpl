@@ -22,10 +22,6 @@
        [{ oxmultilang ident="MALLSTART_LOCATION" }]
     </div>
 
-    [{if $oView->isDemoShop()}]
-      [{ include file="inc/admin_banner.tpl" }]
-    [{/if}]
-
     <div class="welcomebox">
 
       [{oxifcontent ident="oxstartwelcome" object="oCont"}]
@@ -45,6 +41,10 @@
               [{/if}]
             [{/foreach}]
          </div>
+
+        [{if $oView->isDemoShop()}]
+          [{ include file="inc/admin_banner.tpl" }]
+        [{/if}]
     </div>
 
 

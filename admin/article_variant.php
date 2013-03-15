@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: article_variant.php 27008 2010-04-02 08:09:46Z arvydas $
+ * @version   SVN: $Id: article_variant.php 28061 2010-06-02 08:45:56Z michael.keiluweit $
  */
 
 /**
@@ -140,6 +140,7 @@ class Article_Variant extends oxAdminDetails
         }
 
         $oArticle = oxNew( "oxarticle");
+        
         /*
         //TODO: solve this from lazy loading point of view
         //acessing main fields for lazy loading mechnism to iniatialise them

@@ -235,11 +235,7 @@
     </tr>
 
     [{if $oxcmp_basket->getDiscounts() }]
-      <tr class="bsk_sep">
-        <td class="brd"></td>
-        <td colspan="6" class="line"></td>
-        <td></td>
-      </tr>
+      <tr class="bsk_sep"><td class="brd"></td><td colspan="6" class="line"></td><td></td></tr>
       [{foreach from=$oxcmp_basket->getDiscounts() item=oDiscount name=test_Discounts}]
        <tr class="sumrow">
          <td class="brd"></td>
@@ -262,7 +258,7 @@
       [{foreach from=$oxcmp_basket->getProductVats() item=VATitem key=key }]
        <tr class="sumrow">
          <td class="brd"></td>
-         <td colspan="5" class="sumdesc">[{ oxmultilang ident="BASKET_TAX1" }][{ $key }][{ oxmultilang ident="BASKET_TAX2" }]</td>
+         <td colspan="5" class="sumdesc">[{ oxmultilang ident="BASKET_TAX1" }] [{ $key }][{ oxmultilang ident="BASKET_TAX2" }]</td>
          <td id="test_basketVAT_[{$key}]" align="right">[{ $VATitem }]&nbsp;[{ $currency->sign }]</td>
          <td></td>
        </tr>
@@ -270,11 +266,7 @@
     [{/if }]
 
     [{if $oViewConf->getShowVouchers() && $oxcmp_basket->getVoucherDiscValue() }]
-      <tr class="bsk_sep">
-        <td class="brd"></td>
-        <td colspan="6" class="line"></td>
-        <td></td>
-      </tr>
+      <tr class="bsk_sep"><td class="brd"></td><td colspan="6" class="line"></td><td></td></tr>
       [{foreach from=$oxcmp_basket->getVouchers() item=sVoucher key=key name=Voucher}]
         <tr class="sumrow">
           <td class="brd"></td>
@@ -298,11 +290,7 @@
     [{/if }]
 
     [{if $oxcmp_basket->getDelCostNet() || $oxcmp_basket->getDelCostVat()}]
-    <tr class="bsk_sep">
-      <td class="brd"></td>
-      <td colspan="6" class="line"></td>
-      <td></td>
-    </tr>
+    <tr class="bsk_sep"><td class="brd"></td><td colspan="6" class="line"></td><td></td></tr>
     [{/if}]
 
     [{if $oxcmp_basket->getDelCostNet() }]
@@ -312,14 +300,14 @@
         <td id="test_basketDeliveryNet" align="right">[{ $oxcmp_basket->getDelCostNet() }]&nbsp;[{ $currency->sign }]</td>
         <td></td>
       </tr>
-    [{if $oxcmp_basket->getDelCostVat() }]
-      <tr class="sumrow">
-        <td class="brd"></td>
-        <td colspan="5" class="sumdesc">[{ oxmultilang ident="BASKET_PLUSTAX1" }] [{ $oxcmp_basket->getDelCostVatPercent() }][{ oxmultilang ident="BASKET_PLUSTAX2" }]</td>
-        <td id="test_basketDeliveryVAT" align="right">[{ $oxcmp_basket->getDelCostVat() }]&nbsp;[{ $currency->sign }]</td>
-        <td></td>
-      </tr>
-    [{/if }]
+      [{if $oxcmp_basket->getDelCostVat() }]
+        <tr class="sumrow">
+          <td class="brd"></td>
+          <td colspan="5" class="sumdesc">[{ oxmultilang ident="BASKET_PLUSTAX1" }] [{ $oxcmp_basket->getDelCostVatPercent() }][{ oxmultilang ident="BASKET_PLUSTAX2" }]</td>
+          <td id="test_basketDeliveryVAT" align="right">[{ $oxcmp_basket->getDelCostVat() }]&nbsp;[{ $currency->sign }]</td>
+          <td></td>
+        </tr>
+      [{/if }]
     [{/if }]
 
     [{if $oxcmp_basket->getPaymentCosts() }]
@@ -332,12 +320,29 @@
       [{if $oxcmp_basket->getPayCostVat() }]
         <tr class="sumrow">
           <td class="brd"></td>
-          <td colspan="5" class="sumdesc">[{ oxmultilang ident="BASKET_PAYMENTTAX1" }][{ $oxcmp_basket->getPayCostVatPercent() }][{ oxmultilang ident="BASKET_PAYMENTTAX2" }]</td>
+          <td colspan="5" class="sumdesc">[{ oxmultilang ident="BASKET_PAYMENTTAX1" }] [{ $oxcmp_basket->getPayCostVatPercent() }] [{ oxmultilang ident="BASKET_PAYMENTTAX2" }]</td>
           <td id="test_basketPaymentVAT" align="right">[{ $oxcmp_basket->getPayCostVat() }]&nbsp;[{ $currency->sign }]</td>
           <td></td>
         </tr>
       [{/if }]
     [{/if }]
+
+    [{ if $oxcmp_basket->getTsProtectionCosts() }]
+      <tr class="sumrow">
+        <td class="brd"></td>
+        <td colspan="5" class="sumdesc">[{ oxmultilang ident="BASKET_TSPROTECTION" }]</td>
+        <td id="test_basketTsProtectionNet" align="right">[{ $oxcmp_basket->getTsProtectionNet() }]&nbsp;[{ $currency->sign}]</td>
+        <td></td>
+      </tr>
+      [{ if $oxcmp_basket->getTsProtectionVat() }]
+        <tr class="sumrow">
+          <td class="brd"></td>
+          <td colspan="5" class="sumdesc">[{ oxmultilang ident="BASKET_TSPROTECTIONCHARGETAX1" }] [{ $oxcmp_basket->getTsProtectionVatPercent()}][{ oxmultilang ident="BASKET_TSPROTECTIONCHARGETAX2" }]</td>
+          <td id="test_basketTsProtectionVat" align="right">[{ $oxcmp_basket->getTsProtectionVat() }]&nbsp;[{ $currency->sign}]</td>
+          <td></td>
+        </tr>
+      [{/if}]
+    [{/if}]
 
     [{ if $oViewConf->getShowGiftWrapping() && $oxcmp_basket->getWrappCostNet() }]
         <tr class="sumrow">
@@ -355,11 +360,9 @@
         </tr>
       [{/if}]
     [{/if}]
-    <tr class="bsk_sep">
-      <td class="brd"></td>
-      <td colspan="6" class="line"></td>
-      <td></td>
-    </tr>
+
+    <tr class="bsk_sep"><td class="brd"></td><td colspan="6" class="line"></td><td></td></tr>
+
     <tr class="sumrow total">
       <td class="brd"></td>
       <td colspan="5" class="sumdesc"><b>[{ oxmultilang ident="BASKET_GRANDTOTAL" }]</b></td>

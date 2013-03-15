@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvoucher.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxvoucher.php 28204 2010-06-08 06:36:11Z michael.keiluweit $
  */
 
 /**
@@ -765,7 +765,7 @@ class oxVoucher extends oxBase
      *
      * @param string $sName name of variable to get
      *
-     * @return unknown
+     * @return string
      */
     public function __get( $sName )
     {

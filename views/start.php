@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: start.php 26310 2010-03-05 08:57:22Z rimvydas.paskevicius $
+ * @version   SVN: $Id: start.php 28209 2010-06-08 08:42:03Z arvydas $
  */
 
 /**
@@ -414,7 +414,7 @@ class Start extends oxUBase
     public function getCanonicalUrl()
     {
         if ( oxUtils::getInstance()->seoIsActive() && ( $oViewConf = $this->getViewConfig() ) ) {
-            return $oViewConf->getHomeLink();
+            return oxUtilsUrl::getInstance()->prepareCanonicalUrl( $oViewConf->getHomeLink() );
         }
     }
 }

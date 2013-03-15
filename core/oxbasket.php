@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasket.php 27873 2010-05-21 16:12:47Z tomas $
+ * @version   SVN: $Id: oxbasket.php 28590 2010-06-23 11:03:50Z alfonsas $
  */
 
 /**
@@ -231,6 +231,27 @@ class oxBasket extends oxSuperCfg
     protected $_blCalcDiscounts = true;
 
     /**
+     * Basket category id
+     *
+     * @var string
+     */
+    protected $_sBasketCategoryId = null;
+
+    /**
+     * Category change warning state
+     *
+     * @var bool
+     */
+    protected $_blShowCatChangeWarning = false;
+
+    /**
+     * Trusted shops protection product ID
+     *
+     * @var string
+     */
+    protected $_sTsProductId = null;
+
+    /**
      * Checks if configuration allows basket usage or if user agent is search engine
      *
      * @return bool
@@ -284,6 +305,16 @@ class oxBasket extends oxSuperCfg
         // enabled ?
         if ( !$this->isEnabled() )
             return null;
+
+        // basket exclude
+        if ( $this->getConfig()->getConfigParam( 'blBasketExcludeEnabled' ) ) {
+            if ( !$this->canAddProductToBasket( $sProductID ) ) {
+                $this->setCatChangeWarningState( true );
+                return null;
+            } else {
+                $this->setCatChangeWarningState( false );
+            }
+        }
 
         $sItemId = $this->getItemKey( $sProductID, $aSel, $aPersParam, $blBundle );
         if ( $sOldBasketItemId && ( strcmp( $sOldBasketItemId, $sItemId ) != 0 ) ) {
@@ -438,7 +469,22 @@ class oxBasket extends oxSuperCfg
      */
     public function removeItem( $sItemKey )
     {
+        if ($this->getConfig()->getConfigParam( 'blPsBasketReservationEnabled' )) {
+            if (isset($this->_aBasketContents[$sItemKey])) {
+                $sArticleId = $this->_aBasketContents[$sItemKey]->getProductId();
+                if ($sArticleId) {
+                    $this->getSession()
+                            ->getBasketReservations()
+                            ->discardArticleReservation($sArticleId);
+                }
+            }
+        }
         unset( $this->_aBasketContents[$sItemKey] );
+
+        // basket exclude
+        if ( !count($this->_aBasketContents) && $this->getConfig()->getConfigParam( 'blBasketExcludeEnabled' ) ) {
+            $this->setBasketRootCatId(null);
+        }
     }
 
     /**
@@ -848,6 +894,12 @@ class oxBasket extends oxSuperCfg
         if ( isset( $this->_aCosts['oxpayment'] ) ) {
             $this->_oPrice->add( $this->_aCosts['oxpayment']->getBruttoPrice() );
         }
+
+        // 2.6 add TS protection price
+        if ( isset( $this->_aCosts['oxtsprotection'] ) ) {
+            $this->_oPrice->add( $this->_aCosts['oxtsprotection']->getBruttoPrice() );
+        }
+
     }
 
     /**
@@ -1089,6 +1141,29 @@ class oxBasket extends oxSuperCfg
     }
 
     /**
+     * TS Protection cost calculation.
+     * Returns oxprice object.
+     *
+     * @return object oxPrice
+     */
+    protected function _calcTsProtectionCost()
+    {
+        // resetting values
+        $oProtectionPrice = oxNew( 'oxPrice' );
+        $oProtectionPrice->setBruttoPriceMode();
+
+        // payment
+        if ( ( $this->_sTsProductId = $this->getTsProductId() ) ) {
+
+            $oTsProtection = oxNew('oxtsprotection');
+            $oTsProduct = $oTsProtection->getTsProduct( $this->_sTsProductId );
+
+            $oProtectionPrice = $oTsProduct->oPrice;
+        }
+        return $oProtectionPrice;
+    }
+
+    /**
      * Sets basket additional costs
      *
      * @param string $sCostName additional costs
@@ -1133,6 +1208,11 @@ class oxBasket extends oxSuperCfg
         //  3. generate bundle items
         $this->_addBundles();
 
+        // reserve active basket
+        if ($this->getConfig()->getConfigParam( 'blPsBasketReservationEnabled' )) {
+            $this->getSession()->getBasketReservations()->reserveBasket($this);
+        }
+
         //  4. calculating item prices
         $this->_calcItemsPrice();
 
@@ -1157,6 +1237,9 @@ class oxBasket extends oxSuperCfg
 
         //  9.3: adding payment cost
         $this->setCost( 'oxpayment', $this->_calcPaymentCost() );
+
+        //  9.4: adding TS protection cost
+        $this->setCost( 'oxtsprotection', $this->_calcTsProtectionCost() );
 
         //  10. calculate total price
         $this->_calcTotalPrice();
@@ -1344,7 +1427,6 @@ class oxBasket extends oxSuperCfg
      */
     protected function _setDeprecatedValues()
     {
-        // remove this
         $this->dproductsprice    = $this->_oProductsPriceList->getBruttoSum(); // products brutto price
         $this->dproductsnetprice = $this->getDiscountedNettoPrice();  // products netto price();
 
@@ -1520,6 +1602,11 @@ class oxBasket extends oxSuperCfg
         if ( $oUser = $this->getBasketUser() ) {
             $oUser->getBasket( 'savedbasket' )->delete();
         }
+
+        // basket exclude
+        if ( $this->getConfig()->getConfigParam( 'blBasketExcludeEnabled' )) {
+            $this->setBasketRootCatId(null);
+        }
     }
 
     /**
@@ -1569,7 +1656,12 @@ class oxBasket extends oxSuperCfg
      */
     public function deleteBasket()
     {
+        $this->_aBasketContents = array();
         $this->getSession()->delBasket();
+
+        if ($this->getConfig()->getConfigParam( 'blPsBasketReservationEnabled' )) {
+            $this->getSession()->getBasketReservations()->discardReservations();
+        }
 
         // merging basket history
         if ( !$this->getConfig()->getConfigParam( 'blPerfNoBasketSaving' ) ) {
@@ -2340,4 +2432,206 @@ class oxBasket extends oxSuperCfg
 
         return $dArtStock;
     }
+
+    /**
+     * Checks if product can be added to basket
+     *
+     * @param string $sProductId product id
+     *
+     * @return bool
+     */
+    public function canAddProductToBasket( $sProductId )
+    {
+        $blCanAdd = null;
+
+        // if basket category is not set..
+        if ( $this->_sBasketCategoryId === null ) {
+            $oCat = null;
+
+            // request category
+            if ( $oView = $this->getConfig()->getActiveView() ) {
+                if ( $oCat = $oView->getActCategory() ) {
+                    if ( !$this->_isProductInRootCategory( $sProductId, $oCat->oxcategories__oxrootid->value ) ) {
+                        $oCat = null;
+                    } else {
+                        $blCanAdd = true;
+                    }
+                }
+            }
+
+            // product main category
+            if ( !$oCat ) {
+                $oProduct = oxNew( "oxarticle" );
+                if ( $oProduct->load( $sProductId ) ) {
+                    $oCat = $oProduct->getCategory();
+                }
+            }
+
+            // root category id
+            if ( $oCat ) {
+                $this->setBasketRootCatId($oCat->oxcategories__oxrootid->value);
+            }
+        }
+
+        // avoiding double check..
+        if ( $blCanAdd === null ) {
+            $blCanAdd = $this->_sBasketCategoryId ? $this->_isProductInRootCategory( $sProductId, $this->getBasketRootCatId() ) : true;
+        }
+
+        return $blCanAdd;
+    }
+
+    /**
+     * Checks if product is in root category
+     *
+     * @param string $sProductId product id
+     * @param string $sRootCatId root category id
+     *
+     * @return bool
+     */
+    protected function _isProductInRootCategory( $sProductId, $sRootCatId )
+    {
+        $sO2CTable = getViewName( 'oxobject2category' );
+        $sCatTable = getViewName( 'oxcategories' );
+
+        $oDb = oxDb::getDb();
+        $sParentId  = $oDb->getOne( "select oxparentid from oxarticles where oxid = ".$oDb->quote( $sProductId ) );
+        $sProductId = $sParentId ? $sParentId : $sProductId;
+
+        $sQ = "select 1 from {$sO2CTable}
+                 left join {$sCatTable} on {$sCatTable}.oxid = {$sO2CTable}.oxcatnid
+                 where {$sO2CTable}.oxobjectid = ".$oDb->quote( $sProductId )." and
+                       {$sCatTable}.oxrootid = ".$oDb->quote( $sRootCatId );
+
+        return (bool) $oDb->getOne( $sQ );
+    }
+
+    /**
+     * Set active basket root category
+     *
+     * @param string $sRoot Root category id
+     *
+     * @return null
+     */
+    public function setBasketRootCatId($sRoot)
+    {
+        $this->_sBasketCategoryId = $sRoot;
+    }
+
+    /**
+     * Get active basket root category
+     *
+     * @return string
+     */
+    public function getBasketRootCatId()
+    {
+        return $this->_sBasketCategoryId;
+    }
+
+    /**
+     * Sets category change warn state
+     *
+     * @param bool $blShow to show warning or not
+     *
+     * @return null
+     */
+    public function setCatChangeWarningState( $blShow )
+    {
+        $this->_blShowCatChangeWarning = $blShow;
+    }
+
+    /**
+     * Tells to show category change warning
+     *
+     * @return bool
+     */
+    public function showCatChangeWarning()
+    {
+        return $this->_blShowCatChangeWarning;
+    }
+
+    /**
+     * Trusted shops protection product ID setter
+     *
+     * @param string $sProductId product id
+     *
+     * @return null
+     */
+    public function setTsProductId( $sProductId )
+    {
+        $this->_sTsProductId = $sProductId;
+    }
+
+    /**
+     * Trusted shops protection product ID getter
+     *
+     * @return string
+     */
+    public function getTsProductId()
+    {
+        return $this->_sTsProductId;
+    }
+
+    /**
+     * Returns if exists formatted TS protection costs
+     *
+     * @return string | bool
+     */
+    public function getFTsProtectionCosts()
+    {
+        $oProtectionCost = $this->getCosts( 'oxtsprotection' );
+        if ( $oProtectionCost && $oProtectionCost->getBruttoPrice() ) {
+            return oxLang::getInstance()->formatCurrency( $oProtectionCost->getBruttoPrice(), $this->getBasketCurrency() );
+        }
+        return false;
+    }
+
+    /**
+     * Returns VAT of TS protection costs
+     *
+     * @return string | bool
+     */
+    public function getTsProtectionVatPercent()
+    {
+        return $this->getCosts( 'oxtsprotection' )->getVat();
+    }
+
+    /**
+     * Returns formatted VAT of TS protection costs
+     *
+     * @return string
+     */
+    public function getTsProtectionVat()
+    {
+        $dProtectionVAT = $this->getCosts( 'oxtsprotection' )->getVatValue();
+        if ( $dProtectionVAT > 0 ) {
+            return oxLang::getInstance()->formatCurrency( $dProtectionVAT, $this->getBasketCurrency() );
+        }
+        return false;
+    }
+
+    /**
+     * Returns formatted netto price of TS protection costs
+     *
+     * @return string
+     */
+    public function getTsProtectionNet()
+    {
+        return oxLang::getInstance()->formatCurrency( $this->getCosts( 'oxtsprotection' )->getNettoPrice(), $this->getBasketCurrency() );
+    }
+
+    /**
+     * Returns TS protection costs brutto value
+     *
+     * @return double
+     */
+    public function getTsProtectionCosts()
+    {
+        $oProtection = $this->getCosts( 'oxtsprotection' );
+        if ( $oProtection ) {
+            return $oProtection->getBruttoPrice();
+        }
+        return false;
+    }
+
 }

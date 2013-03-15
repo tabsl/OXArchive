@@ -97,6 +97,25 @@ function editThis( sID )
                   [{ oxinputhelp ident="HELP_ARTICLE_STOCK_DELIVERY" }]
                 </td>
               </tr>
+
+            <tr>
+              <td class="edittext">
+                [{ oxmultilang ident="ARTICLE_STOCK_DELTIME" }]
+              </td>
+              <td class="edittext">
+                [{ oxmultilang ident="ARTICLE_STOCK_MINDELTIME" }]&nbsp;<input type="text" class="editinput" size="3" maxlength="[{$edit->oxarticles__oxmindeltime->fldmax_length}]" name="editval[oxarticles__oxmindeltime]" value="[{$edit->oxarticles__oxmindeltime->value}]">
+
+                [{ oxmultilang ident="ARTICLE_STOCK_MAXDELTIME" }]&nbsp;<input type="text" class="editinput" size="3" maxlength="[{$edit->oxarticles__oxmaxdeltime->fldmax_width}]" name="editval[oxarticles__oxmaxdeltime]" value="[{$edit->oxarticles__oxmaxdeltime->value}]">
+
+                &nbsp;<select name="editval[oxarticles__oxdeltimeunit]" class="editinput">
+                <option value="DAY" [{ if $edit->oxarticles__oxdeltimeunit->value == "DAY" }]SELECTED[{/if}]>[{ oxmultilang ident="ARTICLE_STOCK_DAYS" }]</option>
+                <option value="WEEK" [{ if $edit->oxarticles__oxdeltimeunit->value == "WEEK" }]SELECTED[{/if}]>[{ oxmultilang ident="ARTICLE_STOCK_WEEKS" }]</option>
+                <option value="MONTH" [{ if $edit->oxarticles__oxdeltimeunit->value == "MONTH" }]SELECTED[{/if}]>[{ oxmultilang ident="ARTICLE_STOCK_MONTHS" }]</option>
+                </select>
+              [{ oxinputhelp ident="HELP_ARTICLE_STOCK_DELTIME" }]
+              </td>
+            </tr>
+
               <tr>
                 <td class="edittext wrap">
                   [{ oxmultilang ident="ARTICLE_STOCK_REMINDACTIV" }]
@@ -204,7 +223,7 @@ function editThis( sID )
                     </tr>
                     <tr>
                       <td class="edittext">
-                        [{ oxmultilang ident="ARTICLE_STOCK_AMOUNTPRICE_PRICE"}]
+                        [{ oxmultilang ident="ARTICLE_STOCK_AMOUNTPRICE_PRICE"}] ([{ $oActCur->sign }])
                       </td>
                       <td class="edittext" nowrap colspan=3>
                         <select  class="edittext" name="editval[pricetype]">

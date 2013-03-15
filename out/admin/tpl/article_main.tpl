@@ -215,7 +215,7 @@ window.onload = function ()
 
                 <tr>
                   <td class="edittext">
-                    [{ oxmultilang ident="ARTICLE_MAIN_PRICE" }]
+                    [{ oxmultilang ident="ARTICLE_MAIN_PRICE" }] ([{ $oActCur->sign }])
                   </td>
                   <td class="edittext">
                     <input type="text" class="editinput" size="8" maxlength="[{$edit->oxarticles__oxprice->fldmax_length}]" name="editval[oxarticles__oxprice]" value="[{$edit->oxarticles__oxprice->value}]" [{ $readonly }]>
@@ -226,7 +226,7 @@ window.onload = function ()
 
               <tr>
                 <td class="edittext">
-                [{ oxmultilang ident="ARTICLE_MAIN_ALDPRICE" }]
+                [{ oxmultilang ident="ARTICLE_MAIN_ALDPRICE" }] ([{ $oActCur->sign }])
                 </td>
                 <td class="edittext" nowrap>
                     [{ oxmultilang ident="ARTICLE_MAIN_PRICEA" }] <input type="text" class="editinput" size="4" maxlength="[{$edit->oxarticles__oxpricea->fldmax_length}]" name="editval[oxarticles__oxpricea]" value="[{$edit->oxarticles__oxpricea->value}]" [{ $readonly }]>

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 27751 2010-05-13 11:11:50Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxarticle.php 28590 2010-06-23 11:03:50Z alfonsas $
  */
 
 // defining supported link types
@@ -110,14 +110,14 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     protected $_blLoadVariants = true;
 
     /**
-     * Article variants
+     * Article variants without empty stock, not orderable flagged variants
      *
      * @var array
      */
     protected $_aVariants = null;
 
     /**
-     * Article variants without
+     * Article variants with empty stock, not orderable flagged variants
      *
      * @var array
      */
@@ -135,7 +135,6 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
 
     /**
      * $_blHasVariants is set to true if article has any variants.
-     * As an opposite to $_oVariantList this works even if variants are not active
      */
     protected $_blHasVariants = false;
 
@@ -143,17 +142,6 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      * $_blHasVariants is set to true if article has multidimensional variants.
      */
     protected $_blHasMdVariants = false;
-
-    /**
-     * Indicates how many variants this article has "on stock" (very large number for unlimited)
-     */
-    protected $_iVarStock = 0;
-
-    /**
-     * The list of article variants.
-     * @var object
-     */
-    protected $_oVariantList   = array();
 
     /**
      * If set true, then this object is on comparison list
@@ -214,7 +202,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     /**
      * Indicates whether the price is "Ab" price
      *
-     * @var unknown_type
+     * @var bool
      */
     protected $_blIsRangePrice = false;
 
@@ -516,7 +504,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
                 return $this->isOnComparisonList();
                 break;
             case 'oVariantlist' :
-                return $this->_oVariantList;
+                return $this->getVariants();
                 break;
             case 'fPricePerUnit' :
                 return $this->getPricePerUnit();
@@ -896,9 +884,14 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         }
 
         // stock flags
-        if ( $myConfig->getConfigParam( 'blUseStock' ) && $this->oxarticles__oxstockflag->value == 2 &&
-           ( $this->oxarticles__oxstock->value + $this->oxarticles__oxvarstock->value ) <= 0 ) {
-            return false;
+        if ( $myConfig->getConfigParam( 'blUseStock' ) && $this->oxarticles__oxstockflag->value == 2) {
+            $iOnStock = $this->oxarticles__oxstock->value + $this->oxarticles__oxvarstock->value;
+            if ($this->getConfig()->getConfigParam( 'blPsBasketReservationEnabled' )) {
+                $iOnStock += $this->getSession()->getBasketReservations()->getReservedAmount($this->getId());
+            }
+            if ( $iOnStock <= 0 ) {
+                return false;
+            }
         }
 
         return true;
@@ -1270,7 +1263,6 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             $oVariants->getBaseObject()->modifyCacheKey( '_variants' );
         }
 
-        $this->_iVarStock = $this->oxarticles__oxvarstock->value;
         if ( $this->_blHasVariants = $this->_hasAnyVariant( $blForceCoreTable ) ) {
 
             startProfile("selectVariants");
@@ -1893,6 +1885,31 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     }
 
     /**
+     * reduce article stock. return the affected amount
+     *
+     * @param double $dAmount              amount to reduce
+     * @param bool   $blAllowNegativeStock are negative stocks allowed?
+     *
+     * @return double
+     */
+    public function reduceStock($dAmount, $blAllowNegativeStock = false)
+    {
+        $this->beforeUpdate();
+
+        $iStockCount = $this->oxarticles__oxstock->value - $dAmount;
+        if (!$blAllowNegativeStock && ($iStockCount < 0)) {
+            $dAmount += $iStockCount;
+            $iStockCount = 0;
+        }
+        $this->oxarticles__oxstock = new oxField($iStockCount);
+
+        $oDb = oxDb::getDb();
+        $oDb->execute( 'update oxarticles set oxarticles.oxstock = '.$oDb->quote( $iStockCount ).' where oxarticles.oxid = '.$oDb->quote( $this->getId() ) );
+        $this->onChange( ACTION_UPDATE_STOCK );
+        return $dAmount;
+    }
+
+    /**
      * Recursive function. Updates quantity of sold articles.
      * Return true on success
      *
@@ -2155,15 +2172,12 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
                 return true;
             }
             if ( !$myConfig->getConfigParam( 'blAllowUnevenAmounts' ) ) {
-                //2007-09-04 MK this if is NEVER true, because upper return in if $iStockFlag == 1 or $iStockFlag == 4
-                /* if ( $iStockFlag == 1 || $iStockFlag == 4 ) {
-                    $iOnStock = ceil( $iOnStock );
-                 } else {*/
-                    $iOnStock = floor( $iOnStock );
-                //}
+                $iOnStock = floor( $iOnStock );
             }
         }
-
+        if ($this->getConfig()->getConfigParam( 'blPsBasketReservationEnabled' )) {
+            $iOnStock += $this->getSession()->getBasketReservations()->getReservedAmount($this->getId());
+        }
         if ( $iOnStock >= $dAmount ) {
             return true;
         } else {
@@ -2225,7 +2239,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      */
     protected function _setLongDesc($sDbValue)
     {
-        // TODO: eliminate code below
+        // TODO: the code below is redundant, optimize it, assignments should go smooth without conversions
         // hack, if editor screws up text, htmledit tends to do so
         $sDbValue = str_replace( '&amp;nbsp;', '&nbsp;', $sDbValue );
         $sDbValue = str_replace( '&amp;', '&', $sDbValue );
@@ -2545,7 +2559,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     /**
      * Return article media URL
      *
-     * @return unknown
+     * @return array
      */
     public function getMediaUrls()
     {
@@ -2741,11 +2755,14 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     /**
      * Returns variant lists of current product
      *
+     * @deprecated
+     * @see oxArticle::getVariants
+     *
      * @return object
      */
     public function getVariantList()
     {
-        return $this->_oVariantList;
+        return $this->getVariants();
     }
 
     /**
@@ -2826,7 +2843,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             $sPic = $iIndex . "/" . basename( $sIconName );
         }
 
-        return $this->getConfig()->getPictureUrl( $sPic, $this->isAdmin() );
+        return $this->getConfig()->getIconUrl( $sPic, $this->isAdmin() );
     }
 
     /**
@@ -3241,9 +3258,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      */
     public function applyVats( oxPrice $oPrice )
     {
-        $this->_applyVAT($oPrice,
-                         $this->getArticleVat()
-                        );
+        $this->_applyVAT($oPrice, $this->getArticleVat() );
     }
 
     /**
@@ -3541,7 +3556,6 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             $sArtID = $this->oxarticles__oxparentid->value;
         }
 
-        // echo( "TODO replace oxlist usage here _collectAmPriceList".PHP_EOL);
         $sArtID = mysql_real_escape_string($sArtID);
 
         //collecting assigned to article amount-price list
@@ -3712,18 +3726,6 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
                 }
 
             }
-        } elseif ( $this->oxarticles__oxid->value ) {
-            // I am not a variant but I might have some
-            //$this->_oVariantList = $this->getSimpleVariants();
-            startProfile("loadVariants");
-            $this->_oVariantList = $this->getVariants();
-            stopProfile("loadVariants");
-            // #1650M - article title with <br> tag
-            // htmlspecialchars parses only 5 characters, so i have stiped out '<' and '>'
-            /*
-            if ( !$this->isAdmin() ) {
-                $this->oxarticles__oxtitle->setValue(str_replace(array('&', "'", '"'), array('&amp;', '&#039;', '&quot;'), $this->oxarticles__oxtitle->value));
-            }*/
         }
         stopProfile('articleAssignParentInternal');
 
@@ -3862,12 +3864,18 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
 
 
         // stock
-        if ( $myConfig->getConfigParam( 'blUseStock' ) && $this->oxarticles__oxstock->value <= 0 && ($this->oxarticles__oxstockflag->value == 3 || $this->oxarticles__oxstockflag->value == 2)) {
-            $this->_blNotBuyable = true;
+        if ( $myConfig->getConfigParam( 'blUseStock' ) && ($this->oxarticles__oxstockflag->value == 3 || $this->oxarticles__oxstockflag->value == 2)) {
+            $iOnStock = $this->oxarticles__oxstock->value;
+            if ($this->getConfig()->getConfigParam( 'blPsBasketReservationEnabled' )) {
+                $iOnStock += $this->getSession()->getBasketReservations()->getReservedAmount($this->getId());
+            }
+            if ($iOnStock <= 0) {
+                $this->_blNotBuyable = true;
+            }
         }
 
         //exceptional handling for variant parent stock:
-        if ($this->_blNotBuyable && $this->_iVarStock) {
+        if ($this->_blNotBuyable && $this->oxarticles__oxvarstock->value ) {
             $this->_blNotBuyable = false;
             //but then at least setting notBuaybleParent to true
             $this->_blNotBuyableParent = true;
@@ -3881,7 +3889,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         }
 
         //setting to non buyable when variant list is empty (for example not loaded or inactive) and $this is non buyable parent
-        if ($this->_blNotBuyableParent && count($this->_oVariantList) == 0) {
+        if ($this->_blNotBuyableParent && count($this->getVariants()) == 0) {
             $this->_blNotBuyable = true;
         }
     }
@@ -4290,8 +4298,10 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             $aPrices[] = $this->getPrice()->getBruttoPrice();
         }
 
-        if (count($this->_oVariantList)) {
-            foreach ($this->_oVariantList as $sKey => $oVariant) {
+        $aVariants = $this->getVariants(false);
+
+        if (count($aVariants)) {
+            foreach ($aVariants as $sKey => $oVariant) {
                 $aPrices[] = $oVariant->getPrice()->getBruttoPrice();
             }
         }

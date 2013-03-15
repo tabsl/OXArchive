@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: details.php 26303 2010-03-04 16:11:37Z sarunas $
+ * @version   SVN: $Id: details.php 28209 2010-06-08 08:42:03Z arvydas $
  */
 
 /**
@@ -1328,9 +1328,11 @@ class Details extends oxUBase
         if ( ( $oProduct = $this->getProduct() ) ) {
             $oUtils = oxUtilsUrl::getInstance();
             if ( oxUtils::getInstance()->seoIsActive() ) {
-                return $oUtils->processUrl( $oProduct->getBaseSeoLink( $oProduct->getLanguage(), true ) );
+                $sUrl = $oUtils->prepareCanonicalUrl( $oProduct->getBaseSeoLink( $oProduct->getLanguage(), true ) );
+            } else {
+                $sUrl = $oUtils->prepareCanonicalUrl( $oProduct->getBaseStdLink( $oProduct->getLanguage() ) );
             }
-            return $oUtils->processUrl( $oProduct->getBaseStdLink( $oProduct->getLanguage()  ) );
+            return $sUrl;
         }
     }
 
@@ -1373,41 +1375,4 @@ class Details extends oxUBase
         $sSepartor = $this->getConfig()->getConfigParam("sTagSeparator");
         return $sSepartor;
     }
-
-    /**
-     * Returns seo parameter to filter meta data by it e.g. article
-     * meta data for active category
-     *
-     * @return string
-     */
-    protected function _getMetaSeoParam()
-    {
-        $sParam = null;
-        switch ( $this->getLinkType() ) {
-            case OXARTICLE_LINKTYPE_VENDOR:
-                $sParam = $this->getVendorId();
-                break;
-            case OXARTICLE_LINKTYPE_MANUFACTURER:
-                $sParam = $this->getManufacturerId();
-                break;
-            case OXARTICLE_LINKTYPE_TAG:
-                if ( ( $oTag = $this->getActTag() ) ) {
-                    $sParam = $oTag->sTag;
-                }
-                break;
-            case OXARTICLE_LINKTYPE_RECOMM:
-                if ( ( $oRecomm = $this->getActiveRecommList() ) ) {
-                    $sParam = $oRecomm->getId();
-                }
-                break;
-            default:
-                if ( ( $oCat = $this->getActCategory() ) ) {
-                    $sParam = $oCat->getId();
-                }
-                break;
-        }
-
-        return $sParam;
-    }
-
 }

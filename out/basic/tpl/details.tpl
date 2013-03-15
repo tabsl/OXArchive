@@ -194,6 +194,10 @@
         </div>
     [{/oxhasrights}]
 
+    [{if $product->isBuyable() }]
+        [{include file="inc/del_time.tpl"}]
+    [{/if}]
+
     [{if $product->oxarticles__oxweight->value }]
     <div id="test_product_weight" class="pperunit">
         ([{ oxmultilang ident="DETAILS_ARTWEIGHT" }] [{$product->oxarticles__oxweight->value}] [{ oxmultilang ident="DETAILS_ARTWEIGHTUNIT" }])
@@ -288,6 +292,11 @@
     </div>
 
     [{include file="inc/bookmarks.tpl"}]
+
+    [{ include file="inc/facebook/fb_share.tpl" }]
+    [{ include file="inc/facebook/fb_like.tpl" }]
+
+
 </div>
 </div>
 
@@ -307,7 +316,7 @@
         [{/oxhasrights}]
 
         <div class="question">
-            [{mailto extra='id="test_QuestionMail"' address=$product->oxarticles__oxquestionemail->value|default:$oxcmp_shop->oxshops__oxinfoemail->value subject='DETAILS_QUESTIONSSUBJECT'|oxmultilangassign|cat:" "|cat:$product->oxarticles__oxartnum->value text='DETAILS_QUESTIONS'|oxmultilangassign encode="javascript"}]
+            [{oxmailto extra='id="test_QuestionMail"' address=$product->oxarticles__oxquestionemail->value|default:$oxcmp_shop->oxshops__oxinfoemail->value subject='DETAILS_QUESTIONSSUBJECT'|oxmultilangassign|cat:" "|cat:$product->oxarticles__oxartnum->value text='DETAILS_QUESTIONS'|oxmultilangassign encode="javascript"}]
         </div>
     </div>
 
@@ -328,6 +337,12 @@
     </table>
 </div>
 [{/if}]
+
+[{include file="inc/facebook/fb_comments.tpl"}]
+
+[{include file="inc/facebook/fb_invite.tpl"}]
+
+[{include file="inc/facebook/fb_live_stream.tpl"}]
 
 [{include file="inc/media.tpl"}]
 
@@ -451,7 +466,6 @@
             [{oxid_include_dynamic file="dyn/formparams.tpl" }]
             <input type="hidden" name="fnc" value="savereview">
             <input type="hidden" name="cl" value="[{$oViewConf->getActiveClassName()}]">
-            <input type="hidden" name="reviewuserid" value="[{$oView->getReviewUserId()}]">
             <input type="hidden" name="anid" value="[{ $product->oxarticles__oxid->value }]">
             <textarea cols="102" rows="15" name="rvw_txt" class="fullsize"></textarea><br>
             <span class="btn"><input id="test_reviewSave" type="submit" value="[{ oxmultilang ident="DETAILS_SAVEREVIEW" }]" class="btn"></span>

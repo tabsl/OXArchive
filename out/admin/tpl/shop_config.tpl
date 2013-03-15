@@ -8,6 +8,30 @@ function _groupExp(el) {
     if (_cur.className == "exp") _cur.className = "";
       else _cur.className = "exp";
 }
+function showBasketReserved()
+{
+  if( document.getElementById('basketreserved').value == 1)
+  {
+    document.getElementById('basketreservedtime').className = 'rowexp';
+  }
+  else
+  {
+    document.getElementById('basketreservedtime').className = 'rowhide';
+  }
+}
+function showInvitations()
+{
+  if( document.getElementById('invitations').value == 1)
+  {
+    document.getElementById('pointsforinvitation').className = 'rowexp';
+    document.getElementById('pointsforregistration').className = 'rowexp';
+  }
+  else
+  {
+    document.getElementById('pointsforinvitation').className = 'rowhide';
+    document.getElementById('pointsforregistration').className = 'rowhide';
+  }
+}
 //-->
 </script>
 
@@ -647,6 +671,238 @@ function _groupExp(el) {
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_CNTOFNEWS" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+         </div>
+    </div>
+
+    <div class="groupExp">
+        <div>
+            <a href="#" onclick="_groupExp(this);return false;" class="rc"><b>[{ oxmultilang ident="SHOP_OPTIONS_GROUP_PRIVATESALES" }]</b></a>
+            <dl>
+                <dt>
+                    <select class="select" name=confstrs[blPsLoginEnabled] [{ $readonly }]>
+                        <option value="0"  [{if !$confstrs.blPsLoginEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_DISABLE" }]</option>
+                        <option value="1"  [{if $confstrs.blPsLoginEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_ENABLE" }]</option>
+                    </select>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_PSLOGIN" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_PSLOGIN" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <select class="select" name=confstrs[blBasketExcludeEnabled] [{ $readonly }]>
+                        <option value="0"  [{if !$confstrs.blBasketExcludeEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_DISABLE" }]</option>
+                        <option value="1"  [{if $confstrs.blBasketExcludeEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_ENABLE" }]</option>
+                    </select>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_BASKETEXCLUDE" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_BASKETEXCLUDE" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <select class="select" id="basketreserved" name=confstrs[blPsBasketReservationEnabled] onchange="javascript:showBasketReserved();" [{ $readonly }]>
+                        <option value="0"  [{if !$confstrs.blPsBasketReservationEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_DISABLE" }]</option>
+                        <option value="1"  [{if $confstrs.blPsBasketReservationEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_ENABLE" }]</option>
+                    </select>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_BASKETRESERVATION" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_BASKETRESERVATION" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl [{if !$confstrs.blPsBasketReservationEnabled }]class="rowhide"[{/if}] id="basketreservedtime">
+                <dt>
+                    <input type=text class="txt" style="width:70" name=confstrs[iPsBasketReservationTimeout] value="[{if $confstrs.iPsBasketReservationTimeout}][{$confstrs.iPsBasketReservationTimeout}][{else}]1200[{/if}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_BASKETRESERVATIONTIMEOUT" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_BASKETRESERVATIONTIMEOUT" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+         </div>
+    </div>
+
+    <div class="groupExp">
+        <div>
+            <a href="#" onclick="_groupExp(this);return false;" class="rc"><b>[{ oxmultilang ident="SHOP_OPTIONS_GROUP_INVITATIONS" }]</b></a>
+            <dl>
+                <dt>
+                    <select class="select" id="invitations" name=confstrs[blInvitationsEnabled] onchange="javascript:showInvitations();" [{ $readonly }]>
+                        <option value="0"  [{if !$confstrs.blInvitationsEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_DISABLE" }]</option>
+                        <option value="1"  [{if $confstrs.blInvitationsEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_ENABLE" }]</option>
+                    </select>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_INVITATION" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_INVITATION" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl [{if !$confstrs.blInvitationsEnabled }]class="rowhide"[{/if}] id="pointsforinvitation">
+                <dt>
+                    <input type=text class="txt" style="width:70" name=confstrs[dPointsForInvitation] value="[{$confstrs.dPointsForInvitation}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_POINTSFORINVITATION" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_POINTSFORINVITATION" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl [{if !$confstrs.blInvitationsEnabled }]class="rowhide"[{/if}] id="pointsforregistration">
+                <dt>
+                    <input type=text class="txt" style="width:70" name=confstrs[dPointsForRegistration] value="[{$confstrs.dPointsForRegistration}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_POINTSFORREGISTRATION" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_POINTSFORREGISTRATION" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+         </div>
+    </div>
+
+    <div class="groupExp">
+        <div>
+            <a href="#" onclick="_groupExp(this);return false;" class="rc"><b>[{ oxmultilang ident="SHOP_OPTIONS_GROUP_FACEBOOK" }]</b></a>
+
+            <dl>
+                <dt>
+                    <input type=text class="txt" style="width: 250px;" name=confstrs[sFbAppId] value="[{$confstrs.sFbAppId}]">
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOP_CONFIG_FACEBOOKAPPID" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_FACEBOOKAPPID" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <input type=text class="txt" style="width: 250px;" name=confstrs[sFbSecretKey] value="[{$confstrs.sFbSecretKey}]">
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOP_CONFIG_FBSECRETKEY" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_FBSECRETKEY" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <select class="select" id="fbconnect" name=confstrs[bl_showFbConnect] [{ $readonly }] [{if !$blCurlIsActive}]disabled[{/if}]>
+                        <option value="0"  [{if !$confstrs.bl_showFbConnect }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_DISABLE" }]</option>
+                        <option value="1"  [{if $confstrs.bl_showFbConnect }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_ENABLE" }]</option>
+                    </select>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_FACEBOOKCONNECT" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_FACEBOOKCONNECT" }]
+                    [{if !$blCurlIsActive}]
+                        <br><br>
+                        <span class="err">[{ oxmultilang ident="SHOP_CONFIG_FACEBOOKCONNECTDISABLED" }]</span>
+                    [{/if}]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <select class="select" name=confstrs[blFbCommentsEnabled] [{ $readonly }]>
+                        <option value="0"  [{if !$confstrs.blFbCommentsEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_DISABLE" }]</option>
+                        <option value="1"  [{if $confstrs.blFbCommentsEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_ENABLE" }]</option>
+                    </select>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_FBCOMMENTS" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_FBCOMMENTS" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <select class="select" name=confstrs[blFbFacepileEnabled] [{ $readonly }]>
+                        <option value="0"  [{if !$confstrs.blFbFacepileEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_DISABLE" }]</option>
+                        <option value="1"  [{if $confstrs.blFbFacepileEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_ENABLE" }]</option>
+                    </select>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_FBFACEPILE" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_FBFACEPILE" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <select class="select" name=confstrs[blFbLiveStreamEnabled] [{ $readonly }]>
+                        <option value="0"  [{if !$confstrs.blFbLiveStreamEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_DISABLE" }]</option>
+                        <option value="1"  [{if $confstrs.blFbLiveStreamEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_ENABLE" }]</option>
+                    </select>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_FBLIVESTREAM" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_FBLIVESTREAM" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <select class="select" name=confstrs[blFbInviteEnabled] [{ $readonly }]>
+                        <option value="0"  [{if !$confstrs.blFbInviteEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_DISABLE" }]</option>
+                        <option value="1"  [{if $confstrs.blFbInviteEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_ENABLE" }]</option>
+                    </select>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_FBINVITE" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_FBINVITE" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <select class="select" name=confstrs[blFbShareEnabled] [{ $readonly }]>
+                        <option value="0"  [{if !$confstrs.blFbShareEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_DISABLE" }]</option>
+                        <option value="1"  [{if $confstrs.blFbShareEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_ENABLE" }]</option>
+                    </select>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_FBSHARE" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_FBSHARE" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <select class="select" name=confstrs[blFbLikeEnabled] [{ $readonly }]>
+                        <option value="0"  [{if !$confstrs.blFbLikeEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_DISABLE" }]</option>
+                        <option value="1"  [{if $confstrs.blFbLikeEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_ENABLE" }]</option>
+                    </select>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_FBLIKE" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_FBLIKE" }]
                 </dd>
                 <div class="spacer"></div>
             </dl>

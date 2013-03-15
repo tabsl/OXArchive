@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: order_address.php 27023 2010-04-06 06:49:16Z arvydas $
+ * @version   SVN: $Id: order_address.php 28170 2010-06-07 08:29:37Z michael.keiluweit $
  */
 
 /**
@@ -79,7 +79,7 @@ class Order_Address extends oxAdminDetails
         $soxId      = oxConfig::getParameter( "oxid");
         $aParams    = oxConfig::getParameter( "editval");
 
-            // shopid ??? TODO
+            //TODO check if shop id is realy necessary at this place.
             $sShopID = oxSession::getVar( "actshop");
             $aParams['oxorder__oxshopid'] = $sShopID;
 

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 27620 2010-05-07 07:03:13Z sarunas $
+ * @version   SVN: $Id: oxconfig.php 28583 2010-06-23 09:12:44Z arvydas $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -1115,43 +1115,43 @@ class oxConfig extends oxSuperCfg
         }
 
         //test lang level ..
-        if ( !$sReturn && !$blAdmin && ( is_readable( $sAbsBase.$sPath ) || is_dir( realpath( $sAbsBase.$sPath ) ) ) ) {
+        if ( !$sReturn && !$blAdmin && is_readable( $sAbsBase.$sPath ) ) {
             $sReturn = $sBase . $sPath;
         }
 
         //test shop level ..
         $sPath = "$sTheme/$iShop/$sDir/$sFile";
-        if ( !$sReturn && !$blAdmin && ( is_readable( $sAbsBase.$sPath ) || is_dir( realpath( $sAbsBase.$sPath ) ) ) ) {
+        if ( !$sReturn && !$blAdmin && is_readable( $sAbsBase.$sPath ) ) {
             $sReturn = $sBase . $sPath;
         }
 
 
         //test theme language level ..
         $sPath = "$sTheme/$sLang/$sDir/$sFile";
-        if ( !$sReturn && $iLang !== false && ( is_readable( $sAbsBase.$sPath ) || is_dir( realpath( $sAbsBase.$sPath )) ) ) {
+        if ( !$sReturn && $iLang !== false && is_readable( $sAbsBase.$sPath ) ) {
             $sReturn = $sBase . $sPath;
         }
 
         //test theme level ..
         $sPath = "$sTheme/$sDir/$sFile";
-        if ( !$sReturn && ( is_readable( $sAbsBase.$sPath ) || is_dir( realpath( $sAbsBase.$sPath )) ) ) {
+        if ( !$sReturn && is_readable( $sAbsBase.$sPath ) ) {
             $sReturn = $sBase . $sPath;
         }
 
         //test out language level ..
         $sPath = "$sLang/$sDir/$sFile";
-        if ( !$sReturn &&  $iLang !== false && ( is_readable( $sAbsBase.$sPath ) || is_dir( realpath( $sAbsBase.$sPath )) ) ) {
+        if ( !$sReturn &&  $iLang !== false && is_readable( $sAbsBase.$sPath ) ) {
             $sReturn = $sBase . $sPath;
         }
 
         //test out level ..
         $sPath = "$sDir/$sFile";
-        if ( !$sReturn && ( is_readable( $sAbsBase.$sPath ) || is_dir( realpath( $sAbsBase.$sPath )) ) ) {
+        if ( !$sReturn && is_readable( $sAbsBase.$sPath ) ) {
             $sReturn = $sBase . $sPath;
         }
 
         if ( !$sReturn ) {
-            // TODO: log missing paths...
+            // TODO: implement logic to log missing paths
         }
 
         // to cache
@@ -1270,10 +1270,11 @@ class oxConfig extends oxSuperCfg
      * @param bool   $blSSL   Whether to force ssl
      * @param int    $iLang   Language
      * @param int    $iShopId Shop id
+     * @param string $sDefPic Default (nopic) image path ["0/nopic.jpg"]
      *
      * @return string
      */
-    public function getPictureUrl( $sFile, $blAdmin = false , $blSSL = null , $iLang = null, $iShopId = null )
+    public function getPictureUrl( $sFile, $blAdmin = false, $blSSL = null, $iLang = null, $iShopId = null, $sDefPic = "0/nopic.jpg" )
     {
         if ( $sAltUrl = $this->getConfigParam( 'sAltImageDir' ) ) {
 
@@ -1297,9 +1298,26 @@ class oxConfig extends oxSuperCfg
 
         //anything is better than empty name, because <img src=""> calls shop once more = x2 SLOW.
         if ( !$sUrl ) {
-            $sUrl = $this->getUrl( "0/nopic.jpg", $this->_sPictureDir, $blAdmin, $blSSL, $blNativeImg, $iLang, $iShopId );
+            $sUrl = $this->getUrl( $sDefPic, $this->_sPictureDir, $blAdmin, $blSSL, $blNativeImg, $iLang, $iShopId );
         }
         return $sUrl;
+    }
+
+    /**
+     * Finds and returns product, category icon file
+     *
+     * @param string $sFile   File name
+     * @param bool   $blAdmin Whether to force admin
+     * @param bool   $blSSL   Whether to force ssl
+     * @param int    $iLang   Language
+     * @param int    $iShopId Shop id
+     * @param string $sDefPic Default (nopic) image path ["icon/nopic_ico.jpg"]
+     *
+     * @return string
+     */
+    public function getIconUrl( $sFile, $blAdmin = false , $blSSL = null , $iLang = null, $iShopId = null, $sDefPic = "icon/nopic_ico.jpg" )
+    {
+        return $this->getPictureUrl( $sFile, $blAdmin, $blSSL, $iLang, $iShopId, $sDefPic );
     }
 
     /**
@@ -1728,7 +1746,7 @@ class oxConfig extends oxSuperCfg
     /**
      * Returns shops version number (eg. '4.0.0.0')
      *
-     * @return unknown
+     * @return string
      */
     public function getVersion()
     {

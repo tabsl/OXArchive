@@ -74,7 +74,6 @@
                 <input type="hidden" name="fnc" value="savereview">
                 <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
                 <input type="hidden" name="recommid" value="[{$_actvrecommlist->oxrecommlists__oxid->value}]">
-                <input type="hidden" name="reviewuserid" value="[{$oView->getReviewUserId()}]">
                 <textarea cols="102" rows="15" name="rvw_txt" class="fullsize"></textarea><br>
                 <span class="btn"><input id="test_reviewSave" type="submit" value="[{ oxmultilang ident="RECOMMLIST_SAVEREVIEW" }]" class="btn"></span>
             </div>

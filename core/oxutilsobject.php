@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsobject.php 25471 2010-02-01 14:35:11Z alfonsas $
+ * @version   SVN: $Id: oxutilsobject.php 28595 2010-06-23 11:45:44Z sarunas $
  */
 
 /**
@@ -44,7 +44,7 @@ class oxUtilsObject extends oxSuperCfg
     /**
      * The array of already initialised instances
      *
-     * @var unknown_type
+     * @var array
      */
     protected static $_aInstanceCache = array();
 
@@ -93,7 +93,6 @@ class oxUtilsObject extends oxSuperCfg
      */
     public function oxNew( $sClassName, $sParams = null )
     {
-
         $sClassName = strtolower( $sClassName );
         $sCacheKey  = ($sParams !== null )?$sClassName.md5( serialize( $sParams ) ):$sClassName;
 
@@ -204,6 +203,7 @@ class oxUtilsObject extends oxSuperCfg
      */
     public function getClassName( $sClassName )
     {
+
         $aModules = $this->getConfig()->getConfigParam( 'aModules' );
         if ( is_array( $aModules ) && array_key_exists( $sClassName, $aModules ) ) {
             //multiple inheritance implementation
@@ -274,27 +274,29 @@ class oxUtilsObject extends oxSuperCfg
             $sModule = str_replace(chr(0), '', $sModule);
 
             //get parent and module class names from sub/suboutput2
-            $sParentClass = basename($sParent);
             $sModuleClass = basename($sModule);
 
-            //P
-            //$sInitClass = "class ".$sModuleClass."_parent extends $sParentClass { function ".$sModuleClass."_parent(){ return ".$sParentClass."::".$sParentClass."();} }";
-            $sInitClass = "class ".$sModuleClass."_parent extends $sParentClass {}";
+            if ( !class_exists( $sModuleClass, false ) ) {
+                $sParentClass = basename($sParent);
+                //P
+                //$sInitClass = "class ".$sModuleClass."_parent extends $sParentClass { function ".$sModuleClass."_parent(){ return ".$sParentClass."::".$sParentClass."();} }";
+                $sInitClass = "class ".$sModuleClass."_parent extends $sParentClass {}";
 
-            //initializing middle class
-            if (!class_exists($sModuleClass."_parent", false)) {
-                eval($sInitClass);
-            }
-            $sParentPath = $myConfig->getConfigParam( 'sShopDir' )."/modules/".$sModule.".php";
+                //initializing middle class
+                if (!class_exists($sModuleClass."_parent", false)) {
+                    eval($sInitClass);
+                }
+                $sParentPath = $myConfig->getConfigParam( 'sShopDir' )."/modules/".$sModule.".php";
 
-            //including original file
-            if ( file_exists( $sParentPath ) ) {
-                include_once $sParentPath;
-            } elseif ( !class_exists( $sModuleClass ) ) {
-                //to avoid problems with unitest and only throw a exception if class does not exists MAFI
-                $oEx = new oxSystemComponentException();
-                $oEx->setMessage('EXCEPTION_SYSTEMCOMPONENT_CLASSNOTFOUND');
-                $oEx->setComponent($sModule);
+                //including original file
+                if ( file_exists( $sParentPath ) ) {
+                    include $sParentPath;
+                } elseif ( !class_exists( $sModuleClass ) ) {
+                    //to avoid problems with unitest and only throw a exception if class does not exists MAFI
+                    $oEx = new oxSystemComponentException();
+                    $oEx->setMessage('EXCEPTION_SYSTEMCOMPONENT_CLASSNOTFOUND');
+                    $oEx->setComponent($sModule);
+                }
             }
 
             $sParent = $sModule;

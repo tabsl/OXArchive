@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: account_order.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: account_order.php 28610 2010-06-23 14:27:48Z arvydas $
  */
 
 /**
@@ -32,6 +32,17 @@
  */
 class Account_Order extends Account
 {
+    /**
+     * Count of all articles in list.
+     * @var integer
+     */
+    protected $_iAllArtCnt = 0;
+
+    /**
+     * Number of possible pages.
+     * @var integer
+     */
+    protected $_iCntPages = null;
 
     /**
      * Current class template name.
@@ -94,7 +105,12 @@ class Account_Order extends Account
 
             // Load user Orderlist
             if ( $oUser = $this->getUser() ) {
-                $this->_aOrderList = $oUser->getOrders();
+                $iNrofCatArticles = (int) $this->getConfig()->getConfigParam( 'iNrofCatArticles' );
+                $iNrofCatArticles = $iNrofCatArticles?$iNrofCatArticles:1;
+                if ( $this->_iAllArtCnt = $oUser->getOrderCount() ) {
+                    $this->_aOrderList = $oUser->getOrders( $iNrofCatArticles, $this->getActPage() );
+                    $this->_iCntPages  = round( $this->_iAllArtCnt/$iNrofCatArticles + 0.49 );
+                }
             }
         }
 
@@ -120,5 +136,18 @@ class Account_Order extends Account
         }
 
         return $this->_aArticlesList;
+    }
+
+    /**
+     * Template variable getter. Returns page navigation
+     *
+     * @return object
+     */
+    public function getPageNavigation()
+    {
+        if ( $this->_oPageNavigation === null ) {
+            $this->_oPageNavigation = $this->generatePageNavigation();
+        }
+        return $this->_oPageNavigation;
     }
 }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasketitem.php 26770 2010-03-23 14:33:36Z sarunas $
+ * @version   SVN: $Id: oxbasketitem.php 28590 2010-06-23 11:03:50Z alfonsas $
  */
 
 /**
@@ -390,9 +390,7 @@ class oxBasketItem extends oxSuperCfg
      */
     public function getIconUrl()
     {
-        $sIconUrl = $this->getImageUrl() . $this->getIcon();
-
-        return $sIconUrl;
+        return $this->getConfig()->getIconUrl( $this->getIcon() );
     }
 
     /**

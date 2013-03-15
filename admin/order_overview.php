@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: order_overview.php 26796 2010-03-24 12:57:55Z arvydas $
+ * @version   SVN: $Id: order_overview.php 28479 2010-06-21 11:24:05Z vilma $
  */
 
     // DTAUS
@@ -46,6 +46,8 @@ class Order_Overview extends oxAdminDetails
         parent::render();
 
         $oOrder = oxNew( "oxorder" );
+        $oCur  = $myConfig->getActShopCurrencyObject();
+        $oLang = oxLang::getInstance();
 
         $soxId = oxConfig::getParameter( "oxid");
         if ( $soxId != "-1" && isset( $soxId)) {
@@ -58,11 +60,12 @@ class Order_Overview extends oxAdminDetails
             $this->_aViewData["giftCard"]      = $oOrder->getGiftCard();
             $this->_aViewData["paymentType"]   = $this->_getPaymentType( $oOrder );
             $this->_aViewData["deliveryType"]  = $oOrder->getDelSet();
+            if ( $oOrder->oxorder__oxtsprotectcosts->value ) {
+                $this->_aViewData["tsprotectcosts"]  = $oLang->formatCurrency( $oOrder->oxorder__oxtsprotectcosts->value, $oCur);
+            }
         }
 
         // orders today
-        $oLang = oxLang::getInstance();
-        $oCur  = $myConfig->getActShopCurrencyObject();
         $dSum  = $oOrder->getOrderSum(true);
         $this->_aViewData["ordersum"] = $oLang->formatCurrency($dSum, $oCur);
         $this->_aViewData["ordercnt"] = $oOrder->getOrderCnt(true);

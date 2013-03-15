@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: user.php 27760 2010-05-14 10:23:30Z vilma $
+ * @version   SVN: $Id: user.php 28585 2010-06-23 09:23:38Z sarunas $
  */
 
 /**
@@ -79,13 +79,25 @@ class User extends oxUBase
     /**
      * Loads customer basket object form session (oxsession::getBasket()),
      * passes action article/basket/country list to template engine. If
-     * available - loads user delivery address data (oxaddress). Returns
+     * available - loads user delivery address data (oxaddress). If user
+     * is connected using Facebook connect calls user::_fillFormWithFacebookData to
+     * prefill form data with data taken from user Facebook account. Returns
      * name template file to render user::_sThisTemplate.
      *
      * @return  string  $this->_sThisTemplate   current template file name
      */
     public function render()
     {
+        $myConfig  = $this->getConfig();
+        if ($myConfig->getConfigParam( 'blPsBasketReservationEnabled' )) {
+            $this->getSession()->getBasketReservations()->renewExpiration();
+        }
+
+        $oBasket = $this->getSession()->getBasket();
+        if ( $myConfig->getConfigParam( 'blPsBasketReservationEnabled' ) && (!$oBasket || ( $oBasket && !$oBasket->getProductsCount() )) ) {
+            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket' );
+        }
+
         parent::render();
 
         if ( $this->showShipAddress() && $oUser = $this->getUser()) {
@@ -106,6 +118,10 @@ class User extends oxUBase
         $this->_aViewData['blshownoregopt'] = $this->getShowNoRegOption();
 
         $this->_aViewData['aMustFillFields'] = $this->getMustFillFields();
+
+        if ( $myConfig->getConfigParam( "bl_showFbConnect" ) && !$this->getUser() ) {
+             $this->_fillFormWithFacebookData();
+        }
 
         return $this->_sThisTemplate;
     }
@@ -326,7 +342,6 @@ class User extends oxUBase
                 // user decided to use paymetn address as delivery
                 oxSession::setVar( 'blshowshipaddress', 0 );
                 // unsetting delivery address
-                oxSession::deleteVar( 'deladdrid' );
                 $this->_blShowShipAddress = false;
             }
         }
@@ -366,4 +381,30 @@ class User extends oxUBase
         return $this->_oDelAddress;
     }
 
+    /**
+     * Fills user form with date taken from Facebook
+     *
+     * @return null
+     */
+    protected function _fillFormWithFacebookData()
+    {
+        // Create our Application instance.
+        $oFacebook = oxFb::getInstance();
+
+        if ( $oFacebook->isConnected() ) {
+            $aMe  = $oFacebook->api('/me');
+
+            $aInvAdr = $this->_aViewData['invadr'];
+
+            if ( !$aInvAdr["oxuser__oxfname"] ) {
+                $aInvAdr["oxuser__oxfname"] = $aMe["first_name"];
+            }
+
+            if ( !$aInvAdr["oxuser__oxlname"] ) {
+                $aInvAdr["oxuser__oxlname"] = $aMe["last_name"];
+            }
+
+            $this->_aViewData['invadr'] = $aInvAdr;
+        }
+    }
 }

@@ -48,4 +48,15 @@ interface oxIUrl
      * @return string
      */
     public function getStdLink( $iLang = null, $aParams = array() );
+
+    /**
+     * Returns base dynamic url: e.g. shopurl/index.php?cl=details&anid=artid
+     *
+     * @param int  $iLang   language id
+     * @param bool $blAddId add current object id to url or not
+     * @param bool $blFull  return full including domain name [optional]
+     *
+     * @return string
+     */
+    public function getBaseStdLink( $iLang, $blAddId = true, $blFull = true );
 }

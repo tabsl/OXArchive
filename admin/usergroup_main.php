@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: usergroup_main.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: usergroup_main.php 28010 2010-05-28 09:23:10Z sarunas $
  */
 
 /**
@@ -55,8 +55,28 @@ class UserGroup_Main extends oxAdminDetails
         if ( $soxId != "-1" && isset( $soxId)) {
             // load object
             $oGroup = oxNew( "oxgroups" );
-            $oGroup->load( $soxId);
+            $oGroup->loadInLang( $this->_iEditLang, $soxId);
+
+            $oOtherLang = $oGroup->getAvailableInLangs();
+            if (!isset($oOtherLang[$this->_iEditLang])) {
+                // echo "language entry doesn't exist! using: ".key($oOtherLang);
+                $oGroup->loadInLang( key($oOtherLang), $soxId );
+            }
+
             $this->_aViewData["edit"] =  $oGroup;
+
+            // remove already created languages
+            $aLang = array_diff ( oxLang::getInstance()->getLanguageNames(), $oOtherLang );
+
+            if ( count( $aLang))
+                $this->_aViewData["posslang"] = $aLang;
+
+            foreach ( $oOtherLang as $id => $language) {
+                $oLang= new oxStdClass();
+                $oLang->sLangDesc = $language;
+                $oLang->selected = ($id == $this->_iEditLang);
+                $this->_aViewData["otherlang"][$id] = clone $oLang;
+            }
         }
         if ( oxConfig::getParameter("aoc") ) {
 
@@ -91,12 +111,24 @@ class UserGroup_Main extends oxAdminDetails
             $aParams['oxgroups__oxid'] = null;
         }
 
+        $oGroup->setLanguage( 0 );
         $oGroup->assign( $aParams);
+        $oGroup->setLanguage( $this->_iEditLang );
         $oGroup->save();
 
         // set oxid if inserted
         if ( $soxId == "-1" ) {
             oxSession::setVar( "saved_oxid", $oGroup->oxgroups__oxid->value );
         }
+    }
+
+    /**
+     * Saves changed selected group parameters in different language.
+     *
+     * @return null
+     */
+    public function saveinnlang()
+    {
+        $this->save();
     }
 }

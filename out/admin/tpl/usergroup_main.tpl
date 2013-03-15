@@ -48,6 +48,13 @@
             <td class="edittext">
             </td>
             <td class="edittext"><br>
+                [{include file="language_edit.tpl"}]
+            </td>
+        </tr>
+        <tr>
+            <td class="edittext">
+            </td>
+            <td class="edittext"><br>
             <input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="GENERAL_SAVE" }]" onClick="Javascript:document.myedit.fnc.value='save'"" [{ $readonly }] [{ $disableSharedEdit }]>
             </td>
         </tr>

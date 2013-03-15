@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcaptcha.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxcaptcha.php 28103 2010-06-02 14:24:32Z michael.keiluweit $
  */
 
 /**
@@ -32,9 +32,9 @@ class oxCaptcha extends oxSuperCfg
     /**
      * CAPTCHA length
      *
-     * @var unknown_type
+     * @var int
      */
-    protected $_dMacLength = 5;
+    protected $_iMacLength = 5;
 
     /**
      * Captcha text
@@ -58,7 +58,7 @@ class oxCaptcha extends oxSuperCfg
     public function getText()
     {
         if (!$this->_sText) {
-            for ( $i=0; $i < $this->_dMacLength; $i++ ) {
+            for ( $i=0; $i < $this->_iMacLength; $i++ ) {
                 $this->_sText .= strtolower($this->_sMacChars{ rand( 0, strlen($this->_sMacChars) - 1 ) });
             }
         }

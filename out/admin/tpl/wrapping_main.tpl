@@ -73,7 +73,7 @@ function DeletePic( sField )
         </tr>
         <tr>
             <td class="edittext">
-            [{ oxmultilang ident="GENERAL_PRICE" }]
+            [{ oxmultilang ident="GENERAL_PRICE" }] ([{ $oActCur->sign }])
             </td>
             <td class="edittext" colspan="2">
             <input type="text" class="editinput" size="10" maxlength="[{$edit->oxwrapping__oxprice->fldmax_length}]" name="editval[oxwrapping__oxprice]" value="[{$edit->oxwrapping__oxprice->value}]" [{ $readonly }]>

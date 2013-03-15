@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: language_main.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: language_main.php 28092 2010-06-02 14:00:36Z michael.keiluweit $
  */
 
 /**
@@ -241,7 +241,7 @@ class Language_Main extends oxAdminDetails
      * @param string $sOldId old ID
      * @param string $sNewId new ID
      *
-     * @return unknown_type
+     * @return null
      */
     protected function _updateAbbervation( $sOldId, $sNewId )
     {

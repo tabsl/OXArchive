@@ -29,20 +29,28 @@ window.onload = function ()
     <input type="hidden" name="actedit" value="[{ $actedit }]">
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="fnc" value="">
+    <input type="hidden" name="language" value="[{ $actlang }]">
+    <input type="hidden" name="editlanguage" value="[{ $actlang }]">
 
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
 <colgroup><col width="98%"><col width="2%"></colgroup>
 <tr class="listitem">
     <td valign="top" class="listfilter first" height="20" colspan="2">
         <div class="r1"><div class="b1">
-            <div class="find"><input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]"></div>
+            <div class="find">
+            <select name="changelang" class="editinput" onChange="Javascript:top.oxid.admin.changeLanguage();">
+            [{foreach from=$languages item=lang}]
+            <option value="[{ $lang->id }]" [{ if $lang->selected}]SELECTED[{/if}]>[{ $lang->name }]</option>
+            [{/foreach}]
+            </select>
+            <input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]"></div>
             <input class="listedit" type="text" size="60" maxlength="128" name="where[oxgroups.oxtitle]" value="[{ $where->oxgroups__oxtitle }]">
         </div></div>
     </td>
 </tr>
 
 <tr>
-    <td class="listheader first" height="15" colspan="2"><a href="Javascript:document.search.sort.value='oxgroups.oxtitle';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_NAME" }]</a></td>
+    <td class="listheader first" height="15" colspan="2"><a href="Javascript:document.search.sort.value='oxtitle';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_NAME" }]</a></td>
 </tr>
 
 [{assign var="blWhite" value=""}]

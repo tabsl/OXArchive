@@ -1,21 +1,5 @@
 var oxid = {
 
-    /* Show DIV */
-    showDiv: function (divID) {
-        var e = document.getElementById(divID);
-        if (!e) return false;
-        e.style.visibility = "visible";
-        e.style.display = "block";
-    },
-
-    /* Hide the DIV */
-    hideDiv: function (divID) {
-        var e = document.getElementById(divID);
-        if (!e) return false;
-        e.style.visibility ="hidden";
-        e.style.display ="none";
-    },
-
     // Generall navigation with timeout
     nav: {
 
@@ -49,6 +33,7 @@ var oxid = {
         },
 
         setclass : function(id,add) {
+            if (!id){return;}
             var el = document.getElementById(id);
             if( el ) {
                 if(add){
@@ -134,6 +119,7 @@ var oxid = {
     popup: {
         load : function(){ oxid.popup.setClass('wait','popup load on','on');},
         show : function(){ oxid.popup.setClass('popup','popup on','on');},
+        showFbMsg : function(){ oxid.popup.setClass('popup','popup on fbMsg','on');},
         hide : function(id){ oxid.popup.setClass(id?id:'popup','popup','');},
 
         setClass: function (id,pcl,mcl){
@@ -170,12 +156,21 @@ var oxid = {
         },
 
         addResizer : function(image_id,container_id,pw,ph){
-            var _el = document.getElementById(image_id);
-
+            var _pl, _el = document.getElementById(image_id);
             if(_el) {
                 _el.onload = function(e){
-                    if(this.tagName.toUpperCase() == 'IMG'){
-                        oxid.popup.resize(container_id, this.width+pw, this.height+ph);
+                    if(this.tagName.toUpperCase() == 'IMG') {
+                        if(this.width && this.height){
+                            oxid.popup.resize(container_id, this.width+pw, this.height+ph);
+                        }else{
+                            _pl = new Image();
+                            _pl.src = _el.src;
+                            _pl.onload = function(e) {
+                                oxid.popup.resize(container_id, this.width+pw, this.height+ph);
+                                _pl.onload = null;
+                                _pl = null;
+                            };
+                        }
                     }
                 };
             }
@@ -190,6 +185,7 @@ var oxid = {
             var _el = document.getElementById(id);
             var maxWidth = newWidth;
             var maxHeight = maxHeight;
+            var overflow = 'auto';
 
             if(_el) {
                 if( typeof( window.innerWidth ) == 'number' ) {
@@ -200,8 +196,11 @@ var oxid = {
                     maxHeight = document.documentElement.clientHeight;
                 }
 
+                if(newWidth < maxWidth && newHeight < maxHeight){ overflow = 'hidden';}
                 if(newWidth > maxWidth){ newWidth = maxWidth;}
                 if(newHeight > maxHeight){ newHeight = maxHeight;}
+
+                _el.style.overflow = overflow;
 
                 _el.style.width  = newWidth+'px';
                 _el.style.height = newHeight+'px';
@@ -519,7 +518,7 @@ var oxid = {
             //add event handler to country select (this is important for the first time)
             document.getElementById(countrySelectId).onchange = function() {
                 oxid.stateSelector.fillStates(countrySelectId, stateSelectId, divId, allStates, allStateIds, allCountryIds, statePromptString, selectedStateId);
-            }
+            };
 
             //remove all nodes
             if ( stateSelectObject.hasChildNodes() ) {
@@ -549,12 +548,7 @@ var oxid = {
              }
             }
 
-            if (states != null && states.length > 0) {
-              oxid.showDiv(divId);
-            } else {
-              oxid.hideDiv(divId);
-            }
-
+            oxid.showhideblock(divId, states != null && states.length > 0);
         }
     }
 };

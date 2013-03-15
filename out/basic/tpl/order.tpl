@@ -41,11 +41,8 @@
                       <tr>
                         <td><input id="test_OrderConfirmAGBTop" type="checkbox" class="chk" name="ord_agb" value="1"></td>
                         <td>
-                            [{oxifcontent ident="oxagb" object="oCont"}]
-                                [{oxmultilang ident="ORDER_IAGREETOTERMS1" }] <a id="test_OrderOpenAGBTop" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'agb_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ oxmultilang ident="ORDER_IAGREETOTERMS2" }]</a> [{ oxmultilang ident="ORDER_IAGREETOTERMS3" }],&nbsp;
-                            [{/oxifcontent}]
-                            [{oxifcontent ident="oxrightofwithdrawal" object="oCont"}]
-                                [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL1" }] <a id="test_OrderOpenWithdrawalTop" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'rightofwithdrawal_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ $oCont->oxcontents__oxtitle->value }]</a> [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL3" }]
+                            [{oxifcontent ident="oxrighttocancellegend" object="oContent"}]
+                              [{ $oContent->oxcontents__oxcontent->value }]
                             [{/oxifcontent}]
                         </td>
                       </tr>
@@ -179,11 +176,7 @@
         [{/if}]
         [{/foreach}]
 
-        <tr class="bsk_sep">
-          <td class="brd"></td>
-          <td colspan="7" class="line"></td>
-          <td></td>
-        </tr>
+        <tr class="bsk_sep"><td class="brd"></td><td colspan="7" class="line"></td><td></td></tr>
       <!--  basket items end  -->
       [{/foreach}]
 
@@ -195,48 +188,43 @@
           <td class="brd"></td>
           <td id="test_orderCardTitle" colspan="3"><b class="fs10">[{ oxmultilang ident="ORDER_GREETINGCARD" }] "[{ $oCard->oxwrapping__oxname->value }]"</b></td>
           <td id="test_orderCardPrice" align="right" class="orderprice">[{ $oCard->getFPrice() }]&nbsp;[{ $currency->sign }]</td>
-          <td class="font10"></td>
-          <td id="test_orderCardTotalPrice" align="right" class="orderprice">[{ $oCard->getFPrice() }]&nbsp;[{ $currency->sign }]</td>
           <td></td>
-          <td></td>
-        </tr>
-        <tr class="sumrow">
-          <td class="brd"></td>
-          <td colspan="3"><b class="fs10">[{ oxmultilang ident="ORDER_YOURMESSAGE" }]</b></td>
-          <td colspan="4"></td>
+          <td class="vat_order">[{if $oxcmp_basket->getWrappCostVat() }][{ $oxcmp_basket->getWrappCostVatPercent() }]%[{/if}]</td>
+          <td id="test_orderCardTotalPrice" align="right" class="totalprice">[{ $oCard->getFPrice() }]&nbsp;[{ $currency->sign }]</td>
           <td></td>
         </tr>
         <tr class="sumrow">
           <td class="brd"></td>
-          <td colspan="3"><div id="test_orderCardText" class="fs10">[{ $oxcmp_basket->getCardMessage()|nl2br }]</div></td>
-          <td colspan="4"></td>
+          <td colspan="7"><b class="fs10">[{ oxmultilang ident="ORDER_YOURMESSAGE" }]</b></td>
           <td></td>
         </tr>
-        <tr class="bsk_sep">
+        <tr class="sumrow">
           <td class="brd"></td>
-          <td colspan="7" class="line"></td>
+          <td colspan="7"><div id="test_orderCardText" class="fs10">[{ $oxcmp_basket->getCardMessage()|nl2br }]</div></td>
           <td></td>
         </tr>
+        <tr class="bsk_sep"><td class="brd"></td><td colspan="7" class="line"></td><td></td></tr>
       [{/if}]
       [{/if}]
 
       [{if !$oxcmp_basket->getDiscounts() }]
-          <tr class="sumrow">
-              <td class="brd"></td>
-              <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_TOTALNET" }]</td>
-              <td id="test_orderNetPrice" align="right">[{ $oxcmp_basket->getProductsNetPrice() }]&nbsp;[{ $currency->sign}]</td>
-              <td></td>
-          </tr>
+        <tr class="sumrow">
+          <td class="brd"></td>
+          <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_TOTALNET" }]</td>
+          <td id="test_orderNetPrice" align="right">[{ $oxcmp_basket->getProductsNetPrice() }]&nbsp;[{ $currency->sign}]</td>
+          <td></td>
+        </tr>
 
-          [{foreach from=$oxcmp_basket->getProductVats() item=VATitem key=key}]
-            <tr class="sumrow">
-              <td class="brd"></td>
-              <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_PLUSTAX1" }] [{ $key }][{ oxmultilang ident="ORDER_PLUSTAX2" }]</td>
-              <td id="test_orderVat_[{ $key }]" align="right">[{ $VATitem }]&nbsp;[{ $currency->sign}]</td>
-              <td></td>
-            </tr>
-          [{/foreach}]
+        [{foreach from=$oxcmp_basket->getProductVats() item=VATitem key=key}]
+          <tr class="sumrow">
+            <td class="brd"></td>
+            <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_PLUSTAX1" }] [{ $key }][{ oxmultilang ident="ORDER_PLUSTAX2" }]</td>
+            <td id="test_orderVat_[{ $key }]" align="right">[{ $VATitem }]&nbsp;[{ $currency->sign}]</td>
+            <td></td>
+          </tr>
+        [{/foreach}]
       [{/if}]
+
       <tr class="sumrow">
         <td class="brd"></td>
         <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_TOTALGROSS" }]</td>
@@ -245,11 +233,7 @@
       </tr>
 
       [{ if $oxcmp_basket->getDiscounts() }]
-        <tr class="bsk_sep">
-          <td class="brd"></td>
-          <td colspan="7" class="line"></td>
-          <td></td>
-        </tr>
+        <tr class="bsk_sep"><td class="brd"></td><td colspan="7" class="line"></td><td></td></tr>
         [{foreach from=$oxcmp_basket->getDiscounts() item=oDiscount name=orderDiscounts}]
         <tr class="sumrow">
           <td class="brd"></td>
@@ -281,11 +265,7 @@
       [{/if}]
 
       [{if $oViewConf->getShowVouchers() && $oxcmp_basket->getVoucherDiscValue() }]
-        <tr class="bsk_sep">
-          <td class="brd"></td>
-          <td colspan="7" class="line"></td>
-          <td></td>
-        </tr>
+        <tr class="bsk_sep"><td class="brd"></td><td colspan="7" class="line"></td><td></td></tr>
         [{foreach from=$oxcmp_basket->getVouchers() item=sVoucher key=key name=orderVouchers}]
           <tr>
             <td class="brd"></td>
@@ -298,18 +278,15 @@
           </tr>
         [{/foreach }]
       [{/if}]
-        <tr class="bsk_sep">
-          <td class="brd"></td>
-          <td colspan="7" class="line"></td>
-          <td></td>
-        </tr>
 
-        <tr class="sumrow">
-          <td class="brd"></td>
-          <td colspan="6" class="sumdesc">[{if $oxcmp_basket->getDelCostVat() }][{ oxmultilang ident="ORDER_SHIPPINGNET" }][{else}][{ oxmultilang ident="ORDER_SHIPPINGGROSS1" }][{/if}]</td>
-          <td id="test_orderShippingNet" align="right">[{ $oxcmp_basket->getDelCostNet() }]&nbsp;[{ $currency->sign}]</td>
-          <td></td>
-        </tr>
+      <tr class="bsk_sep"><td class="brd"></td><td colspan="7" class="line"></td><td></td></tr>
+      <tr class="sumrow">
+        <td class="brd"></td>
+        <td colspan="6" class="sumdesc">[{if $oxcmp_basket->getDelCostVat() }][{ oxmultilang ident="ORDER_SHIPPINGNET" }][{else}][{ oxmultilang ident="ORDER_SHIPPINGGROSS1" }][{/if}]</td>
+        <td id="test_orderShippingNet" align="right">[{ $oxcmp_basket->getDelCostNet() }]&nbsp;[{ $currency->sign}]</td>
+        <td></td>
+      </tr>
+
       [{if $oxcmp_basket->getDelCostVat()}]
         <tr class="sumrow">
           <td class="brd"></td>
@@ -319,14 +296,14 @@
         </tr>
       [{/if}]
 
-      [{ if $oxcmp_basket->getPaymentCosts() }]
+      [{if $oxcmp_basket->getPaymentCosts() }]
         <tr class="sumrow">
           <td class="brd"></td>
           <td colspan="6" class="sumdesc">[{if $oxcmp_basket->getPaymentCosts() >= 0 }][{ oxmultilang ident="ORDER_PAYMENT1" }][{else}][{ oxmultilang ident="ORDER_PAYMENT2" }][{/if}] [{ oxmultilang ident="ORDER_PAYMENT3" }]</td>
           <td id="test_orderPaymentNet" align="right">[{ $oxcmp_basket->getPayCostNet() }]&nbsp;[{ $currency->sign}]</td>
           <td></td>
         </tr>
-        [{ if $oxcmp_basket->getPayCostVat() }]
+        [{if $oxcmp_basket->getPayCostVat() }]
           <tr class="sumrow">
             <td class="brd"></td>
             <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_PAYMENTCHARGETAX1" }] [{ $oxcmp_basket->getPayCostVatPercent()}][{ oxmultilang ident="ORDER_PAYMENTCHARGETAX2" }]</td>
@@ -335,13 +312,31 @@
           </tr>
         [{/if}]
       [{/if}]
-      [{if $oViewConf->getShowGiftWrapping() && $oxcmp_basket->getWrappCostNet() }]
+
+      [{if $oxcmp_basket->getTsProtectionCosts() }]
+        <tr class="sumrow">
+          <td class="brd"></td>
+          <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_TSPROTECTION" }]</td>
+          <td id="test_orderTsProtectionNet" align="right">[{ $oxcmp_basket->getTsProtectionNet() }]&nbsp;[{ $currency->sign}]</td>
+          <td></td>
+        </tr>
+        [{if $oxcmp_basket->getTsProtectionVat() }]
           <tr class="sumrow">
             <td class="brd"></td>
-            <td colspan="6" class="sumdesc">[{if $oxcmp_basket->getWrappCostVat() }][{ oxmultilang ident="ORDER_WRAPPINGNET" }][{else}][{ oxmultilang ident="ORDER_WRAPPINGGROSS1" }][{/if}]</td>
-            <td id="test_orderWrappNet" align="right">[{ $oxcmp_basket->getWrappCostNet() }] [{ $currency->sign}]</td>
+            <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_TSPROTECTIONCHARGETAX1" }] [{ $oxcmp_basket->getTsProtectionVatPercent()}][{ oxmultilang ident="ORDER_TSPROTECTIONCHARGETAX2" }]</td>
+            <td id="test_orderTsProtectionVat" align="right">[{ $oxcmp_basket->getTsProtectionVat() }]&nbsp;[{ $currency->sign}]</td>
             <td></td>
           </tr>
+        [{/if}]
+      [{/if}]
+
+      [{if $oViewConf->getShowGiftWrapping() && $oxcmp_basket->getWrappCostNet() }]
+        <tr class="sumrow">
+          <td class="brd"></td>
+          <td colspan="6" class="sumdesc">[{if $oxcmp_basket->getWrappCostVat() }][{ oxmultilang ident="ORDER_WRAPPINGNET" }][{else}][{ oxmultilang ident="ORDER_WRAPPINGGROSS1" }][{/if}]</td>
+          <td id="test_orderWrappNet" align="right">[{ $oxcmp_basket->getWrappCostNet() }] [{ $currency->sign}]</td>
+          <td></td>
+        </tr>
         [{if $oxcmp_basket->getWrappCostVat() }]
           <tr class="sumrow">
             <td class="brd"></td>
@@ -350,13 +345,10 @@
             <td></td>
           </tr>
         [{/if}]
-
       [{/if}]
-        <tr class="bsk_sep">
-          <td class="brd"></td>
-          <td colspan="7" class="line"></td>
-          <td></td>
-        </tr>
+
+      <tr class="bsk_sep"><td class="brd"></td><td colspan="7" class="line"></td><td></td></tr>
+
       <tr class="sumrow total">
         <td class="brd"></td>
         <td colspan="6" class="sumdesc"><b>[{ oxmultilang ident="ORDER_GRANDTOTAL" }]</b></td>
@@ -516,23 +508,24 @@
                       <input id="test_OrderSubmitBottom" type="submit" value="[{ oxmultilang ident="ORDER_SUBMITORDER" }]">
                   </div>
 
-                  [{if $oView->isConfirmAGBActive()}]
+                  [{if $oView->isActive('PsLogin') }]
+                    <input type="hidden" name="ord_agb" value="1">
+                  [{else}]
+                    [{if $oView->isConfirmAGBActive()}]
                     <div class="termsconfirm">
                         <input type="hidden" name="ord_agb" value="0">
                         <table>
                           <tr>
                             <td><input id="test_OrderConfirmAGBBottom" type="checkbox" class="chk" name="ord_agb" value="1"></td>
                             <td>
-                                [{oxifcontent ident="oxagb" object="oCont"}]
-                                  [{oxmultilang ident="ORDER_IAGREETOTERMS1" }] <a id="test_OrderOpenAGBBottom" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'agb_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;" class="fontunderline">[{ oxmultilang ident="ORDER_IAGREETOTERMS2" }]</a> [{ oxmultilang ident="ORDER_IAGREETOTERMS3" }],&nbsp;
-                                [{/oxifcontent}]
-                                [{oxifcontent ident="oxrightofwithdrawal" object="oCont"}]
-                                  [{oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL1" }] <a id="test_OrderOpenWithdrawalBottom" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'rightofwithdrawal_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ $oCont->oxcontents__oxtitle->value }]</a> [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL3" }]
+                                [{oxifcontent ident="oxrighttocancellegend" object="oContent"}]
+                                  [{ $oContent->oxcontents__oxcontent->value }]
                                 [{/oxifcontent}]
                             </td>
                           </tr>
                         </table>
                     </div>
+                    [{/if}]
                   [{/if}]
 
               </div>

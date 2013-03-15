@@ -81,7 +81,7 @@ class oxCcValidator
             $sMonth = substr( $sDate, 0, 2 );
             $sDay   = date( "t", mktime( 11, 59, 59, $sMonth, 1, $sYears ) );
 
-            $iExpDate = mktime( 11, 59, 59, $sMonth, $sDay, $sYears );
+            $iExpDate = mktime( 23, 59, 59, $sMonth, $sDay, $sYears );
             if ( time() > $iExpDate  ) {
                 $blExpired = true;
             }

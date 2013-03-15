@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcategory.php 25755 2010-02-10 13:59:48Z sarunas $
+ * @version   SVN: $Id: oxcategory.php 28421 2010-06-18 08:54:27Z sarunas $
  */
 
 /**
@@ -147,7 +147,7 @@ class oxCategory extends oxI18n implements oxIUrl
      *
      * @param string $sName name of variable to get
      *
-     * @return unknown
+     * @return string
      */
     public function __get( $sName )
     {
@@ -598,6 +598,10 @@ class oxCategory extends oxI18n implements oxIUrl
      */
     public function getBaseStdLink( $iLang, $blAddId = true, $blFull = true )
     {
+        if ( isset( $this->oxcategories__oxextlink ) && $this->oxcategories__oxextlink->value ) {
+            return  $this->oxcategories__oxextlink->value;
+        }
+
         $sUrl = '';
         if ( $blFull ) {
             //always returns shop url, not admin
@@ -1047,7 +1051,7 @@ class oxCategory extends oxI18n implements oxIUrl
      */
     public function getIconUrl()
     {
-        return $this->getConfig()->getPictureUrl( 'icon/'.$this->oxcategories__oxicon->value );
+        return $this->getConfig()->getIconUrl( 'icon/'.$this->oxcategories__oxicon->value );
     }
 
     /**

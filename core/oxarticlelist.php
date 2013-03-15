@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxarticlelist.php 26828 2010-03-25 09:49:28Z sarunas $
+ * @version   SVN: SVN: $Id: oxarticlelist.php 28096 2010-06-02 14:05:19Z michael.keiluweit $
  */
 
 /**
@@ -44,7 +44,7 @@ class oxArticleList extends oxList
     /**
      * Set to true if Select Lists should be laoded
      *
-     * @var unknown_type
+     * @var bool
      */
     protected $_blLoadSelectLists = false;
 

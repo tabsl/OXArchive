@@ -83,7 +83,7 @@
           <b>[{ $basketitem->getFTotalPrice() }] [{ $currency->sign}]</b>
         </td>
         <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px; padding-top: 10px;" valign="top" align="right">
-          <a href="[{ $oViewConf->getBaseDir() }]index.php?shp=[{$shop->oxshops__oxid->value}]&amp;anid=[{ $basketproduct->oxarticles__oxid->value }]&amp;cl=review&amp;reviewuser=[{$reviewuser}]" style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px;" target="_blank">[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_REVIEW" }]</a>
+          <a href="[{ $oViewConf->getBaseDir() }]index.php?shp=[{$shop->oxshops__oxid->value}]&amp;anid=[{ $basketproduct->oxarticles__oxid->value }]&amp;cl=review&amp;reviewuserhash=[{$reviewuserhash}]" style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px;" target="_blank">[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_REVIEW" }]</a>
         </td>
       </tr>
     [{/foreach}]
@@ -276,6 +276,27 @@
               </tr>
             [{/if}]
           [{/if}]
+    
+          [{ if $basket->getTsProtectionCosts() }]
+            <tr>
+              <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px;" valign="top" align="right">
+                [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_TSPROTECTION" }]
+              </td>
+              <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px;" valign="top" align="right">
+                [{ $basket->getTsProtectionNet() }] [{ $currency->sign}]
+              </td>
+            </tr>
+            [{ if $basket->getTsProtectionVat() }]
+              <tr>
+                <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px;" valign="top" align="right">
+                  [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_TSPROTECTIONCHARGETAX1" }] [{ $basket->getTsProtectionVatPercent()}][{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_TSPROTECTIONCHARGETAX2" }]
+                </td>
+                <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px;" valign="top" align="right">
+                  [{ $basket->getTsProtectionVat() }]&nbsp;[{ $currency->sign}]
+                </td>
+              </tr>
+            [{/if}]
+          [{/if}]
 
           [{ if $oViewConf->getShowGiftWrapping() && $basket->dWrappingPrice }]
             [{if $basket->fWrappingVAT}]
@@ -365,6 +386,16 @@
   [{/if}]
 
   [{ oxcontent ident="oxuserorderemailend" }]
+
+  [{if $oViewConf->showTs("ORDEREMAIL") && $oViewConf->getTsId() }]
+  <br><br>
+  [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_TS_RATINGS_RATEUS" }]<br><br>
+  <a href="[{ $oViewConf->getTsRatingUrl() }]" target="_blank" title="[{ oxmultilang ident="TS_RATINGS_URL_TITLE" }]">
+    <img src="https://www.trustedshops.com/bewertung/widget/img/bewerten_de.gif" border="0" alt="[{ oxmultilang ident="TS_RATINGS_BUTTON_ALT" }]" align="middle">
+  </a>
+  [{/if}]
+
+
     <br><br>
     [{ oxcontent ident="oxemailfooter" }]
 

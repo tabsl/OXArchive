@@ -268,6 +268,27 @@
                 </tr>
               [{/if}]
             [{/if}]
+	
+	      [{ if $basket->getTsProtectionCosts() }]
+            <tr>
+              <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px;" valign="top" align="right">
+                [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_TSPROTECTION" }]
+              </td>
+              <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px;" valign="top" align="right">
+                [{ $basket->getTsProtectionNet() }] [{ $currency->sign}]
+              </td>
+	        </tr>
+	        [{ if $basket->getTsProtectionVat() }]
+              <tr>
+                <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px;" valign="top" align="right">
+                  [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_TSPROTECTIONCHARGETAX1" }] [{ $basket->getTsProtectionVatPercent()}][{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_TSPROTECTIONCHARGETAX2" }]
+                </td>
+                <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px;" valign="top" align="right">
+                  [{ $basket->getTsProtectionVat() }]&nbsp;[{ $currency->sign}]
+                </td>
+	          </tr>
+	        [{/if}]
+	      [{/if}]
 
             [{ if $oViewConf->getShowGiftWrapping() && $basket->dWrappingPrice }]
               [{if $basket->fWrappingVAT}]

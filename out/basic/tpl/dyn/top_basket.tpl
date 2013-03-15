@@ -1,7 +1,7 @@
 [{oxhasrights ident="TOBASKET"}]
 [{if $oxcmp_basket->getContents()}]
 [{assign var="currency" value=$oView->getActCurrency() }]
-<dl class="box basket">
+<dl id="top_basket" class="box basket">
     <dt id="tm.basket.dt">
         <a id="test_TopBasketHeader" rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getBasketLink() }]">[{ oxmultilang ident="INC_HEADER_CART" }]</a>
     </dt>
@@ -35,6 +35,27 @@
              <th>[{ oxmultilang ident="INC_CMP_BASKET_TOTALPRODUCTS" }]</th>
              <td id="test_TopBasketTotal">[{ $oxcmp_basket->getFProductsPrice()}] [{ $currency->sign}]</td>
           </tr>
+          [{if $oViewConf->getShowBasketTimeout()}]
+          <tr>
+              <th>[{ oxmultilang ident="INC_CMP_BASKET_TIMEOUT" }]</th>
+              <td class="countdown">[{$oViewConf->getBasketTimeLeft()|oxformattime}]</td>
+              [{oxscript include="jquery.min.js"}]
+              [{oxscript include="countdown.jquery.js"}]
+              [{oxscript add='$(document).ready(
+                  function(){
+                      $("#top_basket .countdown").countdown(
+                          function(count, element, container) {
+                              if (count <= 1) {
+                                  $("#top_basket").hide();
+                                  return $("");
+                              }
+                          }
+                      );
+                  }
+              );'
+              }]
+          </tr>
+          [{/if}]
          </table>
     </dd>
 </dl>

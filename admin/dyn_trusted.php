@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: dyn_trusted.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: dyn_trusted.php 28697 2010-06-29 11:09:58Z vilma $
  */
 
 
@@ -30,6 +30,8 @@
  */
 class dyn_trusted extends Shop_Config
 {
+    protected $_aTSPaymentIds = array('DIRECT_DEBIT','CREDIT_CARD','INVOICE','CASH_ON_DELIVERY','PREPAYMENT','CHEQUE','PAYBOX','PAYPAL','CASH_ON_PICKUP','FINANCING','LEASING','T_PAY','CLICKANDBUY','GIROPAY','GOOGLE_CHECKOUT','SHOP_CARD','DIRECT_E_BANKING','OTHER');
+
     /**
      * Creates shop object, passes shop data to Smarty engine and returns name of
      * template file "dyn_trusted.tpl".
@@ -40,14 +42,22 @@ class dyn_trusted extends Shop_Config
     {
         parent::render();
         $this->_aViewData['oxid'] = $this->getConfig()->getShopId();
-        $aIds = $this->_aViewData["confaarrs"]['iShopID_TrustedShops'];
+        $aConfStr = array();
+        $aConfBool = array();
+        $aIds     = $this->_aViewData["confaarrs"]['iShopID_TrustedShops'];
         // compability to old data
         if ( $aConfStrs = $this->_aViewData["str"]['iShopID_TrustedShops'] ) {
             $aIds = array( 0 => $aConfStrs );
         }
 
         $this->_aViewData["aShopID_TrustedShops"] = $aIds;
+        $this->_aViewData['aTsUser'] = $this->_aViewData["confaarrs"]['aTsUser'];
+        $this->_aViewData['aTsPassword'] = $this->_aViewData["confaarrs"]['aTsPassword'];
+        $this->_aViewData['tsTestMode'] = $this->_aViewData["confbools"]['tsTestMode'];
+        $this->_aViewData['tsSealActive'] = $this->_aViewData["confbools"]['tsSealActive'];
         $this->_aViewData["alllang"] = oxLang::getInstance()->getLanguageNames();
+        $this->_aViewData["shoppaymenttypes"] = $this->getPaymentTypes();
+        $this->_aViewData["tspaymenttypes"] = $this->_aTSPaymentIds;
 
         return "dyn_trusted.tpl";
     }
@@ -59,29 +69,48 @@ class dyn_trusted extends Shop_Config
      */
     public function save()
     {
-        $aConfStrs = oxConfig::getParameter( "aShopID_TrustedShops" );
+        $this->_saveTsPaymentId();
+
+        $aConfStr = oxConfig::getParameter( "aShopID_TrustedShops" );
         $blSave = true;
         $blNotEmpty = false;
-        foreach ( $aConfStrs as $sConfStrs ) {
+        foreach ( $aConfStr as $sKey => $sConfStrs ) {
             if ( $sConfStrs ) {
                 $blNotEmpty = true;
-                if ( strlen( $sConfStrs ) != 33 || substr( $sConfStrs, 0, 1 ) != 'X' ) {
+                $sConfStrs = trim($sConfStrs);
+                $oResults = $this->_checkTsId( $sConfStrs );
+                if ( $oResults && ($oResults->stateEnum == "PRODUCTION" || $oResults->stateEnum == "TEST")) {
+                    $sTsType[$sKey] = $oResults->typeEnum;
+                } else if ( $oResults && $oResults->stateEnum == "INTEGRATION" ) {
+                    $sErrorMessage = $oResults->stateEnum;
+                    $sTsType[$sKey] = $oResults->typeEnum;
+                } else {
+                    if ( $oResults ) {
+                        $sErrorMessage = $oResults->stateEnum;
+                    }
                     $blSave = false;
                 }
             }
         }
 
-        $aTSIds = array_filter( $aConfStrs );
+        $aTSIds = array_filter( $aConfStr );
         if ( $blNotEmpty && ( count( array_unique( $aTSIds ) ) < count( $aTSIds ) ) ) {
             $blSave = false;
         }
 
         if ( $blSave ) {
             $myConfig = $this->getConfig();
-            $myConfig->saveShopConfVar( "aarr", 'iShopID_TrustedShops', $aConfStrs, $myConfig->getShopId() );
+            $sShopId = $myConfig->getShopId();
+            $myConfig->saveShopConfVar( "aarr", 'iShopID_TrustedShops', $aConfStr, $sShopId );
+            $myConfig->saveShopConfVar( "aarr", 'aTsUser', oxConfig::getParameter( "aTsUser" ), $sShopId );
+            $myConfig->saveShopConfVar( "aarr", 'aTsPassword', oxConfig::getParameter( "aTsPassword" ), $sShopId );
+            $myConfig->saveShopConfVar( "bool", 'tsTestMode', oxConfig::getParameter( "tsTestMode" ), $sShopId );
+            $myConfig->saveShopConfVar( "bool", 'tsSealActive', oxConfig::getParameter( "tsSealActive" ), $sShopId );
+            $myConfig->saveShopConfVar( "aarr", 'tsSealType', $sTsType, $sShopId );
         } else {
             // displaying error..
             $this->_aViewData["errorsaving"] = 1;
+            $this->_aViewData["errormessage"] = $sErrorMessage;
             $this->_aViewData["aShopID_TrustedShops"] = null;
         }
     }
@@ -95,4 +124,61 @@ class dyn_trusted extends Shop_Config
     {
         return 'dyn_interface';
     }
+
+    /**
+     * Returns selected Payment Id
+     *
+     * @return object
+     */
+    public function getPaymentTypes()
+    {
+        if ( $this->_oPaymentTypes == null ) {
+
+            // all paymenttypes
+            $this->_oPaymentTypes = oxNew( "oxlist" );
+            $this->_oPaymentTypes->init( "oxpayment");
+            $oListObject = $this->_oPaymentTypes->getBaseObject();
+            $oListObject->setLanguage( oxLang::getInstance()->getObjectTplLanguage() );
+            $this->_oPaymentTypes->getList();
+        }
+        return $this->_oPaymentTypes;
+    }
+
+    /**
+     * Returns checked TS Id
+     *
+     * @param string $sConfStrs Trusted shop id
+     *
+     * @return object
+     */
+    protected function _checkTsId( $sConfStrs )
+    {
+        if ( strlen( $sConfStrs ) != 33 || substr( $sConfStrs, 0, 1 ) != 'X' ) {
+            $blSave = false;
+        }
+        $oTsProtection = oxNew("oxtsprotection");
+        $oResults = $oTsProtection->checkCertificate( $sConfStrs, oxConfig::getParameter( "tsTestMode" ) );
+        return $oResults;
+    }
+
+    /**
+     * Saves payment Id returned from trusted shops
+     *
+     * @return null
+     */
+    protected function _saveTsPaymentId()
+    {
+        $aPaymentIds = oxConfig::getParameter( "paymentids" );
+        
+        if ( $aPaymentIds ) {
+            foreach ( $aPaymentIds as $sShopPayId => $sTsPayId ) {
+                $aPayment = oxNew("oxpayment");
+                if ( $aPayment->load($sShopPayId) ) {
+                    $aPayment->oxpayments__oxtspaymentid = new oxField($sTsPayId);
+                    $aPayment->save();
+                }
+            }
+        }
+    }
+
 }

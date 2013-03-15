@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxi18n.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxi18n.php 28088 2010-06-02 13:47:31Z michael.keiluweit $
  */
 
 /**
@@ -340,7 +340,7 @@ class oxI18n extends oxBase
      * Returns the list of fields. This function is slower and its result is normally cached.
      * Basically we have 3 separate cases here:
      *  1. We are in admin so we need extended info for all fields (name, field length and field type)
-     *  2. Object is not lazy loaded so we will return all data fields as simple array, as we nede only names
+     *  2. Object is not lazy loaded so we will return all data fields as simple array, as we need only names
      *  3. Object is lazy loaded so we will return empty array as all fields are loaded on request (in __get()).
      *
      * @param bool $blForceFullStructure Whether to force loading of full data structure
@@ -350,7 +350,7 @@ class oxI18n extends oxBase
     protected function _getNonCachedFieldNames($blForceFullStructure = false)
     {
         //Tomas
-        //TODO: clean this
+        //TODO: this place could be optimized. please check what we can do.
         $aFields = parent::_getNonCachedFieldNames($blForceFullStructure);
 
         if (!$this->_blEmployMultilanguage) {

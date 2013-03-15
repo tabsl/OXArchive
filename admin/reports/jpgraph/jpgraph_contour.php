@@ -266,7 +266,7 @@ class Contour {
     /**
      * @param $aFlg
      * @param $aBW
-     * @return unknown_type
+     * @return null
      */
     function UseHighContrastColor($aFlg=true,$aBW=false) {
         $this->highcontrast = $aFlg;
@@ -471,7 +471,7 @@ class ContourPlot extends Plot {
 
     /**
      * @param $aFlg true if the legend should start with the lowest isobar on top
-     * @return unknown_type
+     * @return null
      */
     function Invertlegend($aFlg=true) {
         $this->invertLegend = $aFlg;

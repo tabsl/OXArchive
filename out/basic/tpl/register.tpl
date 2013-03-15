@@ -1,5 +1,11 @@
 [{assign var="template_title" value="REGISTER_MYACCOUNT"|oxmultilangassign}]
-[{include file="_header.tpl" title=$template_title location=$template_title}]
+[{if $oView->isActive('PsLogin') }]
+    [{include file="_header_plain.tpl" title=$template_title location=$template_title cssclass="body"}]
+    <div class="psLoginPlainBox">
+    [{include file="inc/error.tpl" Errorlist=$Errors.default}]
+[{else}]
+    [{include file="_header.tpl" title=$template_title location=$template_title}]
+[{/if}]
 
 <form action="[{ $oViewConf->getSslSelfLink() }]" name="order" method="post">
 
@@ -41,6 +47,21 @@
                     <span class="fs10">[{ oxmultilang ident="REGISTER_NEWSLETTER_MESSAGE" }]</span>
                 </td>
             </tr>
+            [{if $oView->isActive('PsLogin') }]
+            <tr class="td_sep">
+                <td>[{oxifcontent ident="oxagb" object="oCont"}]
+                                  [{oxmultilang ident="ORDER_IAGREETOTERMS1" }] <a id="test_OrderOpenAGBBottom" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'agb_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;" class="fontunderline">[{ oxmultilang ident="ORDER_IAGREETOTERMS2" }]</a> [{ oxmultilang ident="ORDER_IAGREETOTERMS3" }],&nbsp;
+                                [{/oxifcontent}]
+                                [{oxifcontent ident="oxrightofwithdrawal" object="oCont"}]
+                                  [{oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL1" }] <a id="test_OrderOpenWithdrawalBottom" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'rightofwithdrawal_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ $oCont->oxcontents__oxtitle->value }]</a> [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL3" }]
+                                [{/oxifcontent}]
+                </td>
+                <td>
+                    <input type="hidden" name="ord_agb" value="0">
+                    <input id="test_OrderConfirmAGBBottom" type="checkbox" class="chk" name="ord_agb" value="1">
+                </td>
+            </tr>
+            [{/if}]
             <tr class="th_sep">
                 <th colspan="2" class="mid">[{ oxmultilang ident="REGISTER_BILLINGADDRESS" }] <small>[{ oxmultilang ident="REGISTER_COMPLETEMARKEDFIELDS2" }]</small></th>
             </tr>
@@ -251,6 +272,10 @@
         <div class="right"><input type="submit" value="[{ oxmultilang ident="REGISTER_SEND" }]"></div>
     </div>
 </form>
-
-[{ insert name="oxid_tracker" title=$template_title }]
-[{include file="_footer.tpl" }]
+[{if $oView->isActive('PsLogin') }]
+    </div>
+    [{include file="_footer_plain.tpl" }]
+[{else}]
+    [{ insert name="oxid_tracker" title=$template_title }]
+    [{include file="_footer.tpl" }]
+[{/if}]

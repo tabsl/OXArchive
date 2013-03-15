@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsysrequirements.php 27693 2010-05-12 08:45:21Z sarunas $
+ * @version   SVN: $Id: oxsysrequirements.php 28451 2010-06-18 13:11:01Z arvydas $
  */
 
 /**
@@ -291,7 +291,11 @@ class oxSysRequirements
         $sHost   = $_SERVER['HTTP_HOST'];
         $sScript = $_SERVER['SCRIPT_NAME'];
         if ( $sScript && $rFp = @fsockopen( $sHost, 80, $iErrNo, $sErrStr, 10 ) ) {
-            $sScript = str_replace( basename($sScript), '../oxseo.php?mod_rewrite_module_is=off', $sScript );
+            if ( isAdmin() ) {
+                $sScript = oxConfig::getInstance()->getConfigParam( 'sShopURL' ).'oxseo.php?mod_rewrite_module_is=off';
+            } else {
+                $sScript = str_replace( basename( $sScript ), '../oxseo.php?mod_rewrite_module_is=off', $sScript );
+            }
 
             $sReq  = "POST $sScript HTTP/1.1\r\n";
             $sReq .= "Host: $sHost\r\n";
@@ -454,6 +458,9 @@ class oxSysRequirements
                 }
             } elseif (version_compare($sClientVersion, '5.0.36', '>=') && version_compare($sClientVersion, '5.0.38', '<')) {
                 // mantis#0001003: Problems with MySQL version 5.0.37
+                $iModStat = 0;
+            } elseif (version_compare($sClientVersion, '5.0.40', '>') && version_compare($sClientVersion, '5.0.42', '<')) {
+                // mantis#0001877: Exclude MySQL 5.0.41 from system requirements as not fitting
                 $iModStat = 0;
             }
             if (strpos($sClientVersion, 'mysqlnd') !== false) {

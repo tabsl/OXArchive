@@ -1,7 +1,7 @@
         <div class="clear"></div>
         </div>
 
-    <div id="footer">
+        <div id="footer">
         <div class="bar copy">
             <div class="left" id="delivery_link">
                 [{oxifcontent ident="oxdeliveryinfo" object="oCont"}]
@@ -16,7 +16,7 @@
         <div class="bar shop">
             <a id="test_link_footer_home" href="[{ $oViewConf->getHomeLink() }]">[{ oxmultilang ident="INC_FOOTER_HOME" }]</a> |
             <a id="test_link_footer_contact" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=contact" }]">[{ oxmultilang ident="INC_FOOTER_CONTACT" }]</a> |
-            <a id="test_link_footer_help" href="[{ oxgetseourl ident=$oViewConf->getHelpLink() }]">[{ oxmultilang ident="INC_FOOTER_HELP" }]</a> |
+            <a id="test_link_footer_help" href="[{ $oViewConf->getHelpPageLink() }]">[{ oxmultilang ident="INC_FOOTER_HELP" }]</a> |
             <a id="test_link_footer_guestbook" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=guestbook" }]">[{ oxmultilang ident="INC_FOOTER_GUESTBOOK" }]</a> |
             <a id="test_link_footer_links" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=links" }]">[{ oxmultilang ident="INC_FOOTER_LINKS" }]</a> |
             [{oxifcontent ident="oximpressum" object="oCont"}]
@@ -55,10 +55,20 @@
 </div>
 </div>
 <div id="mask"></div>
+
 [{if $popup}][{include file=$popup}][{/if}]
-<script type="text/javascript" src="[{ $oViewConf->getResourceUrl() }]oxid.js"></script>
 [{oxid_include_dynamic file="dyn/newbasketitem_popup.tpl"}]
-<script type="text/javascript">[{oxscript}][{oxid_include_dynamic file="dyn/oxscript.tpl" }]</script>
+
+[{if $oView->showFbConnectToAccountMsg()}]
+[{ insert name="oxid_fblogin"}]
+[{/if}]
+
+[{oxid_include_dynamic file="dyn/popup_scbasketexcl.tpl"}]
+[{oxscript include="oxid.js"}]
+
+[{ include file="inc/facebook/fb_init.tpl" }]
+
+[{oxscript}][{oxid_include_dynamic file="dyn/oxscript.tpl" }]
 <!--[if lt IE 7]><script type="text/javascript">oxid.popup.addShim();</script><![endif]-->
 </body>
 </html>

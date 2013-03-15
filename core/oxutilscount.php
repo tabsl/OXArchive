@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilscount.php 26828 2010-03-25 09:49:28Z sarunas $
+ * @version   SVN: $Id: oxutilscount.php 28606 2010-06-23 14:04:35Z tomas $
  */
 
 /**
@@ -108,6 +108,7 @@ class oxUtilsCount extends oxSuperCfg
         } else {
             $iCnt = $aCatData[$sCatId][$sActIdent];
         }
+
         return $iCnt;
     }
 
@@ -173,7 +174,7 @@ class oxUtilsCount extends oxSuperCfg
 
         // we use distinct if article is assigned to category twice
         $sQ = "SELECT count(*) FROM (
-                   SELECT count(*) FROM $sTable LEFT JOIN $sO2CView ON $sO2CView.oxobjectid=$sTable.oxid
+                   SELECT count(*) FROM $sO2CView LEFT JOIN $sTable ON $sO2CView.oxobjectid=$sTable.oxid
                        WHERE $sO2CView.oxcatnid = '".$sCatId."' AND
                              $sTable.oxparentid='' AND
                              ".$oArticle->getSqlActiveSnippet() ."

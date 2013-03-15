@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: order.php 26825 2010-03-25 09:24:44Z arvydas $
+ * @version   SVN: $Id: order.php 28585 2010-06-23 09:23:38Z sarunas $
  */
 
 /**
@@ -159,11 +159,18 @@ class order extends oxUBase
     public function render()
     {
         $myConfig = $this->getConfig();
+        $oBasket = $this->getBasket();
+        if ($myConfig->getConfigParam( 'blPsBasketReservationEnabled' )) {
+            
+            $this->getSession()->getBasketReservations()->renewExpiration();
+
+            if ( !$oBasket || ( $oBasket && !$oBasket->getProductsCount() )) {
+                oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=basket' );
+            }
+        }
 
         // can we proceed with ordering ?
-        $oBasket = $this->getBasket();
         $oUser = $this->getUser();
-
         if ( !$oBasket || !$oUser || ( $oBasket && !$oBasket->getProductsCount() ) ) {
             oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() );
         }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsession.php 27187 2010-04-13 12:11:49Z arvydas $
+ * @version   SVN: $Id: oxsession.php 28448 2010-06-18 12:52:09Z sarunas $
  */
 
 DEFINE('_DB_SESSION_HANDLER', getShopBasePath() . 'core/adodblite/session/adodb-session.php');
@@ -79,7 +79,7 @@ class oxSession extends oxSuperCfg
      * Indicates if setting of session id is executed in this script. After page transition
      * This needed to be checked as new session is not written in db until it is closed
      *
-     * @var unknown_type
+     * @var bool
      */
     protected $_blNewSession = false;
 
@@ -96,6 +96,13 @@ class oxSession extends oxSuperCfg
      * @var object
      */
     protected $_oBasket = null;
+
+    /**
+     * Basket reservations object
+     *
+     * @var object
+     */
+    protected $_oBasketReservations = null;
 
     /**
      * Array of Classes => methods, which requires forced cookies support
@@ -659,7 +666,7 @@ class oxSession extends oxSuperCfg
      */
     public function isSidNeeded( $sUrl = null )
     {
-        if ( $blUseCookies && $this->_getCookieSid() ) {
+        if ( $this->_getSessionUseCookies() && $this->_getCookieSid() ) {
             // switching from ssl to non ssl or vice versa?
             if ( ( strpos( $sUrl, "https:" ) === 0 && !$this->getConfig()->isSsl() ) ||
                  ( strpos( $sUrl, "http:" ) === 0 && $this->getConfig()->isSsl() ) ) {
@@ -754,12 +761,13 @@ class oxSession extends oxSuperCfg
 
     /**
      * Returns true if its not search engine and config option blForceSessionStart = 1/true
+     * or _GET parameter "su" (suggested user id) is set.
      *
      * @return bool
      */
     protected function _forceSessionStart()
     {
-        return ( !oxUtils::getInstance()->isSearchEngine() ) && ( ( bool ) $this->getConfig()->getConfigParam( 'blForceSessionStart' ) ) ;
+        return ( !oxUtils::getInstance()->isSearchEngine() ) && ( (( bool ) $this->getConfig()->getConfigParam( 'blForceSessionStart' )) || oxConfig::getParameter( "su" ) ) ;
     }
 
     /**
@@ -1046,5 +1054,18 @@ class oxSession extends oxSuperCfg
         $blValid = $sInputToken && $blTokenEqual;
 
         return $blValid;
+    }
+
+    /**
+     * return basket reservations handler object
+     * 
+     * @return oxBasketReservation
+     */
+    public function getBasketReservations()
+    {
+        if (!$this->_oBasketReservations) {
+            $this->_oBasketReservations = oxNew('oxBasketReservation');
+        }
+        return $this->_oBasketReservations;
     }
 }

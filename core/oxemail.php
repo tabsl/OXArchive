@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxemail.php 27195 2010-04-13 13:44:06Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxemail.php 28320 2010-06-14 08:51:25Z rimvydas.paskevicius $
  */
 /**
  * Includes PHP mailer class.
@@ -83,6 +83,20 @@ class oxEmail extends PHPMailer
      * @var string
      */
     protected $_sSuggestTemplatePlain = "email_suggest_plain.tpl";
+
+    /**
+     * Product suggest mail template
+     *
+     * @var string
+     */
+    protected $_sInviteTemplate = "email_invite_html.tpl";
+
+    /**
+     * Product suggest plain mail template
+     *
+     * @var string
+     */
+    protected $_sInviteTemplatePlain = "email_invite_plain.tpl";
 
     /**
      * Send order notification mail template
@@ -220,6 +234,13 @@ class oxEmail extends PHPMailer
     protected $_aAttachments = array();
 
     /**
+     * Smarty instance
+     *
+     * @var smarty
+     */
+    protected $_oSmarty = null;
+
+    /**
      * Class constructor.
      */
     public function __construct()
@@ -288,6 +309,20 @@ class oxEmail extends PHPMailer
     public function setConfig( $oConfig )
     {
         $this->_oConfig = $oConfig;
+    }
+
+
+    /**
+     * Smarty instance getter
+     *
+     * @return smarty
+     */
+    protected function _getSmarty()
+    {
+        if ( $this->_oSmarty === null ) {
+            $this->_oSmarty = oxUtilsView::getInstance()->getSmarty();
+        }
+        return $this->_oSmarty;
     }
 
     /**
@@ -448,7 +483,7 @@ class oxEmail extends PHPMailer
 
         $oUser = $oOrder->getOrderUser();
         // create messages
-        $oSmarty = oxUtilsView::getInstance()->getSmarty();
+        $oSmarty = $this->_getSmarty();
         $oSmarty->assign( "charset", oxLang::getInstance()->translateString("charset"));
         $oSmarty->assign( "order", $oOrder);
         $oSmarty->assign( "shop", $oShop );
@@ -459,7 +494,7 @@ class oxEmail extends PHPMailer
         $oSmarty->assign( "basket", $oOrder->getBasket() );
         $oSmarty->assign( "payment", $oOrder->getPayment() );
         if ( $oUser ) {
-            $oSmarty->assign( "reviewuser", $oUser->getReviewUserHash( $oUser->getId() ) );
+            $oSmarty->assign( "reviewuserhash", $oUser->getReviewUserHash( $oUser->getId() ) );
         }
         $oSmarty->assign( "paymentinfo", $myConfig->getActiveShop() );
 
@@ -539,7 +574,7 @@ class oxEmail extends PHPMailer
         $this->setSmtp( $oShop );
 
         // create messages
-        $oSmarty = oxUtilsView::getInstance()->getSmarty();
+        $oSmarty = $this->_getSmarty();
         $oSmarty->assign( "charset", $oLang->translateString("charset"));
         $oSmarty->assign( "order", $oOrder );
         $oSmarty->assign( "shop", $oShop );
@@ -606,6 +641,26 @@ class oxEmail extends PHPMailer
      *
      * @return bool
      */
+    public function sendRegisterConfirmEmail( $oUser, $sSubject = null )
+    {
+        // setting content ident
+        $oSmarty = $this->_getSmarty();
+        $oSmarty->assign( "contentident", "oxregisteraltemail" );
+        $oSmarty->assign( "contentplainident", "oxregisterplainaltemail" );
+
+        // sending email
+        return $this->sendRegisterEmail( $oUser, $sSubject );
+    }
+
+    /**
+     * Sets mailer additional settings and sends registration mail to user.
+     * Returns true on success.
+     *
+     * @param oxUser $oUser    user object
+     * @param string $sSubject user defined subject [optional]
+     *
+     * @return bool
+     */
     public function sendRegisterEmail( $oUser, $sSubject = null )
     {
         // add user defined stuff if there is any
@@ -618,7 +673,7 @@ class oxEmail extends PHPMailer
         $this->_setMailParams( $oShop );
 
         // create messages
-        $oSmarty = oxUtilsView::getInstance()->getSmarty();
+        $oSmarty = $this->_getSmarty();
         $oSmarty->assign( "charset", oxLang::getInstance()->translateString("charset") );
         $oSmarty->assign( "shop", $oShop );
         $oSmarty->assign( "oViewConf", $oShop );
@@ -683,7 +738,7 @@ class oxEmail extends PHPMailer
             $oUser = oxNew( 'oxuser' );
             if ( $oUser->load($sOxId) ) {
                 // create messages
-                $oSmarty = oxUtilsView::getInstance()->getSmarty();
+                $oSmarty = $this->_getSmarty();
                 $oSmarty->assign( "charset", oxLang::getInstance()->translateString("charset"));
                 $oSmarty->assign( "shop", $oShop );
                 $oSmarty->assign( "oViewConf", $oShop );
@@ -767,7 +822,7 @@ class oxEmail extends PHPMailer
         $this->_setMailParams( $oShop );
 
         // create messages
-        $oSmarty = oxUtilsView::getInstance()->getSmarty();
+        $oSmarty = $this->_getSmarty();
         $oSmarty->assign( "charset", $oLang->translateString("charset"));
         $oSmarty->assign( "shop", $oShop );
         $oSmarty->assign( "oViewConf", $oShop );
@@ -878,13 +933,23 @@ class oxEmail extends PHPMailer
         $this->setSMTP();
 
         // create messages
-        $oSmarty = oxUtilsView::getInstance()->getSmarty();
+        $oSmarty = $this->_getSmarty();
         $oSmarty->assign( "charset", oxLang::getInstance()->translateString("charset") );
         $oSmarty->assign( "shop", $oShop );
         $oSmarty->assign( "oViewConf", $oShop );
         $oSmarty->assign( "oView", $myConfig->getActiveView() );
         $oSmarty->assign( "userinfo", $oParams );
         $oSmarty->assign( "product", $oProduct );
+
+        $sArticleUrl = $oProduct->getLink();
+
+        //setting recommended user id
+        if ( $myConfig->getActiveView()->isActive('Invitations') && $oActiveUser = $oShop->getUser() ) {
+            $sArticleUrl  = oxUtilsUrl::getInstance()->appendParamSeparator( $sArticleUrl );
+            $sArticleUrl .= "su=" . $oActiveUser->getId();
+        }
+
+        $oSmarty->assign( "sArticleUrl", $sArticleUrl );
 
         $oOutputProcessor = oxNew( "oxoutput" );
         $aNewSmartyArray = $oOutputProcessor->processViewArray( $oSmarty->get_template_vars(), "oxemail" );
@@ -901,6 +966,75 @@ class oxEmail extends PHPMailer
         $this->setReplyTo( $oParams->send_email, $oParams->send_name );
 
         return $this->send();
+    }
+
+    /**
+     * Sets mailer additional settings and sends "InviteMail" mail to user.
+     * Returns true on success.
+     *
+     * @param object $oParams Mailing parameters object
+     *
+     * @return bool
+     */
+    public function sendInviteMail( $oParams )
+    {
+        $myConfig = $this->getConfig();
+
+        //sets language of shop
+        $iCurrLang = $myConfig->getActiveShop()->getLanguage();
+
+        // shop info
+        $oShop = $this->_getShop( $iCurrLang );
+
+        // mailer stuff
+        $this->setFrom( $oParams->send_email, $oParams->send_name );
+        $this->setSMTP();
+
+        // create messages
+        $oSmarty = oxUtilsView::getInstance()->getSmarty();
+        $oSmarty->assign( "charset", oxLang::getInstance()->translateString("charset") );
+        $oSmarty->assign( "shop", $oShop );
+        $oSmarty->assign( "oViewConf", $oShop );
+        $oSmarty->assign( "oView", $myConfig->getActiveView() );
+        $oSmarty->assign( "userinfo", $oParams );
+        $oSmarty->assign( "sShopUrl", $myConfig->getShopCurrentUrl() );
+
+        $sHomeUrl = $oShop->getHomeLink();
+
+        //setting recommended user id
+        if ( $myConfig->getActiveView()->isActive('Invitations') && $oActiveUser = $oShop->getUser() ) {
+            $sHomeUrl  = oxUtilsUrl::getInstance()->appendParamSeparator( $sHomeUrl );
+            $sHomeUrl .= "su=" . $oActiveUser->getId();
+        }
+
+        $oSmarty->assign( "sHomeUrl", $sHomeUrl );
+
+        $oOutputProcessor = oxNew( "oxoutput" );
+        $aNewSmartyArray = $oOutputProcessor->processViewArray( $oSmarty->get_template_vars(), "oxemail" );
+
+        foreach ( $aNewSmartyArray as $key => $val ) {
+            $oSmarty->assign( $key, $val );
+        }
+
+        $this->setBody( $oSmarty->fetch( $this->_sInviteTemplate ) );
+
+        $this->setAltBody( $oSmarty->fetch( $this->_sInviteTemplatePlain ) );
+        $this->setSubject( $oParams->send_subject );
+
+        if ( is_array($oParams->rec_email) && count($oParams->rec_email) > 0  ) {
+            foreach ( $oParams->rec_email as $sEmail ) {
+                if ( !empty( $sEmail ) ) {
+                    $this->setRecipient( $sEmail );
+                    $this->setReplyTo( $oParams->send_email, $oParams->send_name );
+                    $this->send();
+                    $this->clearAllRecipients();
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -929,7 +1063,7 @@ class oxEmail extends PHPMailer
 
         //create messages
         $oLang = oxLang::getInstance();
-        $oSmarty = oxUtilsView::getInstance()->getSmarty();
+        $oSmarty = $this->_getSmarty();
         $oSmarty->assign( "charset", $oLang->translateString("charset"));
         $oSmarty->assign( "shop", $oShop );
         $oSmarty->assign( "oViewConf", $oShop );
@@ -940,7 +1074,7 @@ class oxEmail extends PHPMailer
         //deprecated var
         $oSmarty->assign( "isreview", true);
         $oUser = oxNew( 'oxuser' );
-        $oSmarty->assign( "reviewuser", $oUser->getReviewUserHash($oOrder->oxorder__oxuserid->value) );
+        $oSmarty->assign( "reviewuserhash", $oUser->getReviewUserHash($oOrder->oxorder__oxuserid->value) );
 
         $oOutputProcessor = oxNew( "oxoutput" );
         $aNewSmartyArray = $oOutputProcessor->processViewArray( $oSmarty->get_template_vars(), "oxemail" );
@@ -1095,7 +1229,7 @@ class oxEmail extends PHPMailer
             $this->_setMailParams( $oShop );
             $oLang = oxLang::getInstance();
 
-            $oSmarty = oxUtilsView::getInstance()->getSmarty();
+            $oSmarty = $this->_getSmarty();
             $oSmarty->assign( "charset", $oLang->translateString( "charset" ) );
             $oSmarty->assign( "shop", $oShop );
             $oSmarty->assign( "oViewConf", $oShop );
@@ -1136,7 +1270,7 @@ class oxEmail extends PHPMailer
         $this->setSMTP();
 
         // create messages
-        $oSmarty = oxUtilsView::getInstance()->getSmarty();
+        $oSmarty = $this->_getSmarty();
         $oSmarty->assign( "charset", oxLang::getInstance()->translateString("charset") );
         $oSmarty->assign( "shop", $oShop );
         $oSmarty->assign( "oViewConf", $oShop );
@@ -1181,7 +1315,7 @@ class oxEmail extends PHPMailer
         $oLang = oxLang::getInstance();
 
         // create messages
-        $oSmarty = oxUtilsView::getInstance()->getSmarty();
+        $oSmarty = $this->_getSmarty();
         $oSmarty->assign( "shop", $oShop );
         $oSmarty->assign( "oViewConf", $oShop );
         $oSmarty->assign( "oView", $this->getConfig()->getActiveView() );

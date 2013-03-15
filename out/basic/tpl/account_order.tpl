@@ -2,6 +2,10 @@
 [{include file="_header.tpl" title=$template_title location="ACCOUNT_ORDER_LOCATION"|oxmultilangassign|cat:$template_title}]
 
 [{include file="inc/account_header.tpl" active_link=4 }]<br>
+
+<!-- page locator -->
+[{include file="inc/list_locator.tpl" pageNavigation=$oView->getPageNavigation()}]
+
 <strong class="boxhead" id="test_accOrderHistoryHeader">[{ $template_title }]</strong>
 <div class="box info">
   [{if count($oView->getOrderList()) > 0 }]
@@ -118,6 +122,9 @@
   [{/if }]
   [{if !$blShowLine }][{ oxmultilang ident="ACCOUNT_ORDER_EMPTYHISTORY" }][{/if }]
 </div>
+
+<!-- page locator -->
+[{include file="inc/list_locator.tpl"}]
 
 <div class="bar prevnext">
     <form action="[{ $oViewConf->getSelfActionLink() }]" name="order" method="post">

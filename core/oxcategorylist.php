@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcategorylist.php 27684 2010-05-11 14:17:11Z sarunas $
+ * @version   SVN: $Id: oxcategorylist.php 28204 2010-06-08 06:36:11Z michael.keiluweit $
  */
 
 
@@ -646,7 +646,7 @@ class oxCategoryList extends oxList
      *
      * @param string $sName variable name
      *
-     * @return unknown
+     * @return string
      */
     public function __get($sName)
     {

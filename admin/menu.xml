@@ -160,6 +160,7 @@
             </SUBMENU>
             <SUBMENU id="mxactions" cl="actions" list="actions_list">
                 <TAB id="tbclactions_main" cl="actions_main" />
+                <BTN id="actions_new" />
             </SUBMENU>
             <SUBMENU id="mxpricealarm" cl="admin_pricealarm" list="pricealarm_list">
                 <TAB id="tbclpricealarm_main" cl="pricealarm_main" />

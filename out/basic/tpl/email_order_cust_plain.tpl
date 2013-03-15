@@ -69,6 +69,12 @@
   [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_PAYMENTCHARGEVAT1" }] [{ $basket->fAddPaymentSumVATPercent}][{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_PAYMENTCHARGEVAT2" }] [{ $basket->fAddPaymentSumVAT }] [{ $currency->name}]
   [{/if}]
 [{/if}]
+[{ if $basket->getTsProtectionCosts() }]
+  [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_TSPROTECTIONCHARGETAX1" }] [{ $basket->getTsProtectionVatPercent()}][{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_TSPROTECTIONCHARGETAX2" }] [{ $basket->getTsProtectionVat() }] [{ $currency->name}]
+  [{ if $basket->getTsProtectionVat() }]
+  [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_TSPROTECTION" }] [{ $basket->getTsProtectionNet() }] [{ $currency->sign}]
+  [{/if}]
+[{/if}]
 
 [{ if $oViewConf->getShowGiftWrapping() && $basket->dWrappingPrice }]
   [{if $basket->fWrappingVAT}]
@@ -129,5 +135,10 @@
 [{/if}]
 
 [{ oxcontent ident="oxuserorderemailendplain" }]
+
+[{if $oViewConf->showTs("ORDEREMAIL") && $oViewConf->getTsId() }]
+[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_TS_RATINGS_RATEUS" }]
+[{ $oViewConf->getTsRatingUrl() }]
+[{/if}]
 
 [{ oxcontent ident="oxemailfooterplain" }]

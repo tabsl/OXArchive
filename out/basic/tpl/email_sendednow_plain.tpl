@@ -24,4 +24,9 @@
 
 [{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_YUORTEAM1" }] [{ $shop->oxshops__oxname->getRawValue() }] [{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_YUORTEAM2" }]
 
+[{if $oViewConf->showTs("ORDERCONFEMAIL") && $oViewConf->getTsId() }]
+[{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_TS_RATINGS_RATEUS" }]
+[{ $oViewConf->getTsRatingUrl() }]
+[{/if}]
+
 [{ oxcontent ident="oxemailfooterplain" }]

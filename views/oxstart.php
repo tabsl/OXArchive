@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxstart.php 26460 2010-03-10 14:22:54Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxstart.php 28204 2010-06-08 06:36:11Z michael.keiluweit $
  */
 
 /**
@@ -51,7 +51,7 @@ class oxStart extends oxUBase
     /**
      * Renders error screen
      *
-     * @return unknown
+     * @return string
      */
     public function render()
     {

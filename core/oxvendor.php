@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvendor.php 25755 2010-02-10 13:59:48Z sarunas $
+ * @version   SVN: $Id: oxvendor.php 27908 2010-05-25 14:54:30Z arvydas $
  */
 
 /**
@@ -365,7 +365,7 @@ class oxVendor extends oxI18n implements oxIUrl
      */
     public function getIconUrl()
     {
-        return $this->getConfig()->getPictureUrl( 'icon/'.$this->oxvendor__oxicon->value );
+        return $this->getConfig()->getIconUrl( 'icon/'.$this->oxvendor__oxicon->value );
     }
 
     /**

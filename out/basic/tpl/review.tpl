@@ -62,7 +62,7 @@
             [{if $product}]
             <input type="hidden" name="anid" value="[{ $product->oxarticles__oxid->value }]">
             [{/if}]
-            <input type="hidden" name="reviewuserid" value="[{$oView->getReviewUserId()}]">
+            <input type="hidden" name="reviewuserhash" value="[{$oView->getReviewUserHash()}]">
             <textarea cols="102" rows="15" name="rvw_txt" class="fullsize"></textarea><br>
             <span class="btn"><input type="submit" value="[{ oxmultilang ident="REVIEW_TOSAVEREVIEW" }]" class="btn"></span>
          </div>

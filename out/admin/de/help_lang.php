@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 27769 2010-05-17 08:21:10Z vilma $
+ * @version   SVN: $Id: help_lang.php 28678 2010-06-29 07:30:12Z ralf.trapp $
  */
 
 /**
@@ -40,15 +40,15 @@
 
 $aLang =  array(
 'charset'                                       =>  'ISO-8859-15',
-'HELP_SHOP_SYSTEM_OTHERCOUNTRYORDER'            =>  'Diese Einstellung beeinflusst das Verhalten des OXID eShops, wenn für ein Land, in das Benutzer bestellen wollen, keine Versandkosten definiert sind:<br />' .
+'HELP_SHOP_SYSTEM_OTHERCOUNTRYORDER'            =>  'Diese Einstellung beeinflusst das Verhalten des OXID eShops, wenn für ein Land, in das Benutzer bestellen wollen, keine Versandkosten definiert sind:<br>' .
                                                     '<ul><li>Wenn die Einstellung aktiv ist, erhalten diese Benutzer im Bestellprozess eine Meldung: Die Versandkosten werden ihnen nachträglich mitgeteilt, wenn Sie damit einverstanden ist. Sie können mit der Bestellung fortfahren.</li>' .
                                                     '<li>Wenn die Einstellung ausgeschaltet ist, können Benutzer aus Ländern, für die keine Versandkosten definiert sind, nicht bestellen.</li></ul>',
 
 'HELP_SHOP_SYSTEM_DISABLENAVBARS'               =>  'Wenn Sie diese Einstellung aktivieren, werden die meisten Navigationselemente im Bestellprozess ausgeblendet. Dadurch werden die Benutzer beim Bestellen nicht unnötig abgelenkt.',
 
-'HELP_SHOP_SYSTEM_DEFAULTIMAGEQUALITY'          =>  'Empfehlenswerte Einstellungen sind ca. 40-80:<br />' .
+'HELP_SHOP_SYSTEM_DEFAULTIMAGEQUALITY'          =>  'Empfehlenswerte Einstellungen sind ca. 40-80:<br>' .
                                                     '<ul><li>Unterhalb von ca. 40 werden deutliche Kompressionsartefakte sichtbar, und die Bilder wirken unscharf.</li>'.
-                                                    '<li>Oberhalb von ca. 80 kann man kaum eine Verbesserung der Bildqualität feststellen, während die Dateigröße enorm zunimmt.</li></ul><br />'.
+                                                    '<li>Oberhalb von ca. 80 kann man kaum eine Verbesserung der Bildqualität feststellen, während die Dateigröße enorm zunimmt.</li></ul><br>'.
                                                     'Die Standardeinstellung ist 75.',
 
 'HELP_SHOP_SYSTEM_SHOWVARIANTREVIEWS'           =>  'Diese Einstellung beeinflusst das Verhalten, wenn Varianten bewertet werden: Wenn die Einstellung aktiv ist, dann werden die Bewertungen der Varianten auch beim Vater-Artikel angezeigt.',
@@ -71,41 +71,41 @@ $aLang =  array(
 
 'HELP_SHOP_CACHE_LIFETIME'                      =>  'Hier können Sie einstellen, wie viele Sekunden die gecachten Inhalte maximal gespeichert werden, bevor sie erneut berechnet werden. Die Standardeinstellung sind 36000 Sekunden.',
 
-'HELP_SHOP_CACHE_CLASSES'                       =>  'Hier stellen Sie ein, welche View-Klassen gecached werden.<br /> Ändern Sie diese Einstellung nur, wenn Sie mit den Caching-Mechanismen gut vertraut sind!',
+'HELP_SHOP_CACHE_CLASSES'                       =>  'Hier stellen Sie ein, welche View-Klassen gecached werden.<br> Ändern Sie diese Einstellung nur, wenn Sie mit den Caching-Mechanismen gut vertraut sind!',
 
 
 
 'HELP_SHOP_CONFIG_TOPNAVILAYOUT'                =>  'Die Kategorien-Navigation wird normalerweise links angezeigt. Wenn Sie diese Einstellung aktivieren, wird die Kategorien-Navigation anstatt links oben angezeigt.',
 
-'HELP_SHOP_CONFIG_ORDEROPTINEMAIL'              =>  'Wenn Double-Opt-In aktiviert ist, erhalten die Benutzer eine E-Mail mit einem Bestätigungs-Link, wenn sie sich für den Newsletter registrieren. Erst, wenn sie diesen Link besuchen, sind sie für den Newsletter angemeldet.<br />' .
+'HELP_SHOP_CONFIG_ORDEROPTINEMAIL'              =>  'Wenn Double-Opt-In aktiviert ist, erhalten die Benutzer eine E-Mail mit einem Bestätigungs-Link, wenn sie sich für den Newsletter registrieren. Erst, wenn sie diesen Link besuchen, sind sie für den Newsletter angemeldet.<br>' .
                                                     'Double-Opt-In schützt vor Anmeldungen, die nicht gewollt sind. Ohne Double-Opt-In können beliebige E-Mail Adressen für den Newsletter angemeldet werden. Dies wird z. B. auch von Spam-Robotern gemacht. Durch Double-Opt-In kann der Besitzer der E-Mail Adresse bestätigen, dass er den Newsletter wirklich empfangen will.',
 
-'HELP_SHOP_CONFIG_BIDIRECTCROSS'                =>  'Durch Crossselling können zu einem Artikel passende Artikel angeboten werden. Crossselling-Artikel werden im eShop bei <span class="filename_filepath_or_italic">Kennen Sie schon?</span> angezeigt.<br />' .
+'HELP_SHOP_CONFIG_BIDIRECTCROSS'                =>  'Durch Crossselling können zu einem Artikel passende Artikel angeboten werden. Crossselling-Artikel werden im eShop bei <span class="filename_filepath_or_italic">Kennen Sie schon?</span> angezeigt.<br>' .
                                                     'Wenn z. B. einem Auto als Crossselling-Artikel Winterreifen zugeordnet sind, werden beim Auto die Winterreifen angezeigt. Wenn Bidirektionales Crossselling aktiviert ist, funktioniert Crossselling in beide Richtungen: bei den Winterreifen wird das Auto angezeigt.',
 
-'HELP_SHOP_CONFIG_ICONSIZE'                     =>  'Icons sind die kleinsten Bilder eines Artikels. Icons werden z. B. <br />' .
+'HELP_SHOP_CONFIG_ICONSIZE'                     =>  'Icons sind die kleinsten Bilder eines Artikels. Icons werden z. B. <br>' .
                                                     '<ul><li>im Warenkorb angezeigt.</li>' .
                                                     '<li>angezeigt, wenn Artikel in der rechten Leiste aufgelistet werden (z.B. bei den Aktionen <span class="filename_filepath_or_italic">Top of the Shop</span> und <span class="filename_filepath_or_italic">Schnäppchen</span>).</li></ul>' .
-                                                    'Damit das Design des eShops nicht durch zu große Icons gestört wird, werden zu große Icons automatisch verkleinert. Die maximale Größe können Sie hier eingeben.<br />' ,
+                                                    'Damit das Design des eShops nicht durch zu große Icons gestört wird, werden zu große Icons automatisch verkleinert. Die maximale Größe können Sie hier eingeben.<br>' ,
 
-'HELP_SHOP_CONFIG_THUMBNAILSIZE'                =>  'Thumbnails sind kleine Bilder eines Artikels. Thumbnails werden z. B. <br />' .
+'HELP_SHOP_CONFIG_THUMBNAILSIZE'                =>  'Thumbnails sind kleine Bilder eines Artikels. Thumbnails werden z. B. <br>' .
                                                     '<ul><li>in Artikellisten angezeigt. Artikellisten sind z. B. Kategorieansichten (alle Artikel in einer Kategorie werden aufgelistet) und die Suchergebnisse.</li>' .
                                                     '<li>in Aktionen angezeigt, die in der Mitte der Startseite angezeigt werden, z. B. <span class="filename_filepath_or_italic">Die Dauerbrenner</span> und <span class="filename_filepath_or_italic">Frisch eingetroffen!</span>.</li></ul>' .
                                                     'Damit das Design des eShops nicht durch zu große Thumbnails gestört wird, werden zu große Thumbnails automatisch verkleinert. Die maximale Größe können Sie hier eingeben.',
 
 'HELP_SHOP_CONFIG_STOCKONDEFAULTMESSAGE'        =>  'Bei jedem Artikel können Sie einrichten, welche Meldung den Benutzern angezeigt wird, wenn der Artikel auf Lager ist. ' .
-                                                    'Wenn diese Einstellung aktiv ist, wird den Benutzern auch dann eine Meldung angezeigt, wenn bei einem Artikel keine eigene Meldung hinterlegt ist. Dann die Standardmeldung <span class="filename_filepath_or_italic">sofort lieferbar</span> angezeigt.<br />' .
+                                                    'Wenn diese Einstellung aktiv ist, wird den Benutzern auch dann eine Meldung angezeigt, wenn bei einem Artikel keine eigene Meldung hinterlegt ist. Dann die Standardmeldung <span class="filename_filepath_or_italic">sofort lieferbar</span> angezeigt.<br>' .
                                                     'Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/meldungen-zu-den-lagerbestaenden-einrichten" target="_blank">Handbuch-Beitrag zu den Lagerbestandsmeldungen</a>.',
 
 'HELP_SHOP_CONFIG_STOCKOFFDEFAULTMESSAGE'       =>  'Bei jedem Artikel können Sie einrichten, welche Meldung den Benutzern angezeigt wird, wenn der Artikel nicht auf Lager ist. ' .
-                                                    'Wenn diese Einstellung aktiv ist, wird den Benutzern auch dann eine Meldung angezeigt, wenn bei einem Artikel keine eigene Meldung hinterlegt ist. Dann die Standardmeldung <span class="filename_filepath_or_italic">Dieser Artikel ist nicht auf Lager und muss erst nachbestellt werden</span> angezeigt.<br />' .
+                                                    'Wenn diese Einstellung aktiv ist, wird den Benutzern auch dann eine Meldung angezeigt, wenn bei einem Artikel keine eigene Meldung hinterlegt ist. Dann die Standardmeldung <span class="filename_filepath_or_italic">Dieser Artikel ist nicht auf Lager und muss erst nachbestellt werden</span> angezeigt.<br>' .
                                                     'Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/meldungen-zu-den-lagerbestaenden-einrichten" target="_blank">Handbuch-Beitrag zu den Lagerbestandsmeldungen</a>.',
 
-'HELP_SHOP_CONFIG_OVERRIDEZEROABCPRICES'        =>  'Sie können für bestimmte Benutzer spezielle Preise einrichten. Dadurch können Sie bei jedem Artikel A, B, und C-Preise eingeben. Wenn Benutzer z. B. in der Benutzergruppe Preis A sind, werden ihnen die A-Preise anstatt dem normalen Artikelpreis angezeigt.<br />' .
-                                                    'Wenn die Einstellung aktiv ist, wird diesen Benutzern der normale Artikelpreis angezeigt, wenn für den Artikel kein A, B oder C-Preis vorhanden ist.<br />' .
+'HELP_SHOP_CONFIG_OVERRIDEZEROABCPRICES'        =>  'Sie können für bestimmte Benutzer spezielle Preise einrichten. Dadurch können Sie bei jedem Artikel A, B, und C-Preise eingeben. Wenn Benutzer z. B. in der Benutzergruppe Preis A sind, werden ihnen die A-Preise anstatt dem normalen Artikelpreis angezeigt.<br>' .
+                                                    'Wenn die Einstellung aktiv ist, wird diesen Benutzern der normale Artikelpreis angezeigt, wenn für den Artikel kein A, B oder C-Preis vorhanden ist.<br>' .
                                                     'Sie sollten diese Einstellung aktivieren, wenn Sie A,B und C-Preise verwenden: Ansonsten wird den bestimmten Benutzern ein Preis von 0,00 angezeigt, wenn kein A,B oder C-Preis hinterlegt ist.',
 
-'HELP_SHOP_CONFIG_SEARCHFIELDS'                 =>  'Hier können Sie die Datenbankfelder der Artikel eingeben, in denen gesucht wird. Geben Sie pro Zeile nur ein Datenbankfeld ein.<br />' .
+'HELP_SHOP_CONFIG_SEARCHFIELDS'                 =>  'Hier können Sie die Datenbankfelder der Artikel eingeben, in denen gesucht wird. Geben Sie pro Zeile nur ein Datenbankfeld ein.<br>' .
                                                     'Die am häufigsten benötigten Einträge sind:' .
                                                     '<ul><li>oxtitle = Titel (Name) der Artikel</li>' .
                                                     '<li>oxshortdesc = Kurzbeschreibung der Artikel</li>' .
@@ -113,7 +113,7 @@ $aLang =  array(
                                                     '<li>oxartnum = Artikelnummern</li>' .
                                                     '<li>oxtags    = Stichworte, bei den Artikeln eingetragen sind</li></ul>',
 
-'HELP_SHOP_CONFIG_SORTFIELDS'                   =>  'Hier können Sie die Datenbankfelder der Artikel eingeben, nach denen Artikellisten sortiert werden können. Geben Sie pro Zeile nur ein Datenbankfeld ein.<br />' .
+'HELP_SHOP_CONFIG_SORTFIELDS'                   =>  'Hier können Sie die Datenbankfelder der Artikel eingeben, nach denen Artikellisten sortiert werden können. Geben Sie pro Zeile nur ein Datenbankfeld ein.<br>' .
                                                     'Die am häufigsten benötigten Einträge sind:' .
                                                     '<ul><li>oxtitle = Titel (Name) der Artikel</li>' .
                                                     '<li>oxprice = Preis der Artikel</li>' .
@@ -122,7 +122,7 @@ $aLang =  array(
                                                     '<li>oxrating = Die Bewertung der Artikel</li>' .
                                                     '<li>oxstock = Lagerbestand der Artikel</li></ul>',
 
-'HELP_SHOP_CONFIG_MUSTFILLFIELDS'                => 'Hier können Sie eingeben, welche Felder von Benutzern ausgefüllt werden müssen, wenn Sie sich registrieren. Sie müssen die entsprechenden Datenbankfelder angeben. Geben Sie pro Zeile nur ein Datenbankfeld ein.<br />' .
+'HELP_SHOP_CONFIG_MUSTFILLFIELDS'                => 'Hier können Sie eingeben, welche Felder von Benutzern ausgefüllt werden müssen, wenn Sie sich registrieren. Sie müssen die entsprechenden Datenbankfelder angeben. Geben Sie pro Zeile nur ein Datenbankfeld ein.<br>' .
                                                     'Die am häufigsten benötigten Einträge für die Benutzerdaten sind:' .
                                                     '<ul><li>oxuser__oxfname = Vorname</li>' .
                                                     '<li>oxuser__oxlname = Nachname</li>' .
@@ -131,7 +131,7 @@ $aLang =  array(
                                                     '<li>oxuser__oxzip = Postleitzahl</li>' .
                                                     '<li>oxuser__oxcity = Stadt</li>' .
                                                     '<li>oxuser__oxcountryid = Land</li>' .
-                                                    '<li>oxuser__oxfon = Telefonnummer</li></ul><br />' .
+                                                    '<li>oxuser__oxfon = Telefonnummer</li></ul><br>' .
                                                     'Sie können auch angeben, welche Felder ausgefüllt werden müssen, wenn Benutzer eine Lieferadresse eingeben. Die am häufigsten benötigten Einträge sind:' .
                                                     '<ul><li>oxaddress__oxfname = Vorname</li>' .
                                                     '<li>oxaddress__oxlname = Nachname</li>' .
@@ -142,7 +142,7 @@ $aLang =  array(
                                                     '<li>oxaddress__oxcountryid = Land</li>' .
                                                     '<li>oxaddress__oxfon = Telefonnummer</li></ul>',
 
-'HELP_SHOP_CONFIG_USENEGATIVESTOCK'             =>  'Mit <span class="navipath_or_inputname">Negative Lagerbestände erlauben</span> können Sie einstellen, welcher Lagerbestand berechnet wird, wenn ein Artikel ausverkauft ist:<br />' .
+'HELP_SHOP_CONFIG_USENEGATIVESTOCK'             =>  'Mit <span class="navipath_or_inputname">Negative Lagerbestände erlauben</span> können Sie einstellen, welcher Lagerbestand berechnet wird, wenn ein Artikel ausverkauft ist:<br>' .
                                                     '<ul><li>Wenn die Einstellung aktiv ist, werden negative Lagerbestände berechnet, wenn weitere Exemplare bestellt werden.</li>' .
                                                     '<li>Wenn die Einstellung nicht aktiv ist, fällt der Lagerbestand eines Artikels nie unter 0. Auch dann nicht, wenn der Artikel bereits ausverkauft ist und noch weitere Exemplare bestellt werden.</li></ul>',
 
@@ -151,12 +151,58 @@ $aLang =  array(
 'HELP_SHOP_CONFIG_LOAD_DYNAMIC_PAGES'           =>  'Wenn diese Einstellung aktiv ist, werden zusätzliche Informationen zu anderen OXID-Produkten im Administrationsbereich angezeigt, z. B. zu OXID eFire. Welche Informationen geladen werden, hängt vom Standort ihres eShops ab.',
 
 
-'HELP_SHOP_CONFIG_DELETERATINGLOGS'				=>	'Wenn Benutzer einen Artikel bewerten, können Sie den Artikel nicht erneut bewerten. Hier können Sie einstellen, dass die Benutzer nach einer bestimmten Anzahl von Tagen den Artikel erneut bewerten können.',
+'HELP_SHOP_CONFIG_DELETERATINGLOGS'             =>  'Wenn Benutzer einen Artikel bewerten, können Sie den Artikel nicht erneut bewerten. Hier können Sie einstellen, dass die Benutzer nach einer bestimmten Anzahl von Tagen den Artikel erneut bewerten können.',
 
-'HELP_SHOP_CONFIG_DISABLEONLINEVATIDCHECK'      =>  'Die Online UST-ID Prüfung wird immer ausgeführt, wenn ein Kunde aus dem Ausland (aber innerhalb der EU) eine Umsatzsteuer-ID beim bestellen angibt. Wenn die UST-ID gültig ist, wird für die Bestellung keine Umsatzsteuer berechnet.<br />'.
+'HELP_SHOP_CONFIG_DISABLEONLINEVATIDCHECK'      =>  'Die Online UST-ID Prüfung wird immer ausgeführt, wenn ein Kunde aus dem Ausland (aber innerhalb der EU) eine Umsatzsteuer-ID beim bestellen angibt. Wenn die UST-ID gültig ist, wird für die Bestellung keine Umsatzsteuer berechnet.<br>'.
                                                     'Wenn die Prüfung ausgeschaltet ist, wird immer die für das entsprechende Land eingestelle Umsatzsteuer berechnet.',
 
 'HELP_SHOP_CONFIG_ALTVATIDCHECKINTERFACEWSDL'   =>  'Hier können Sie eine alternative URL für die Online UST-ID Prüfung eingeben.',
+
+'HELP_SHOP_CONFIG_PSLOGIN'                      =>  'Transformiert Ihren Shop in einen Shop mit beschränktem Zugriff. Auf diese Weise erzeugen ' .
+                                                    'Sie Private Sales Communities mit geschlossenen Nutzergruppen.',
+
+'HELP_SHOP_CONFIG_BASKETEXCLUDE'                =>  'Ermöglicht es, Produkte aus ausschließlich einer Wurzelkategorie in den Warenkorb zu legen. ' .
+                                                    'Beim Wechsel der Wurzelkatgorie wird der Konsument gezwungen den Warenkorb zu erwerben oder ihn zu verwerfen.',
+
+'HELP_SHOP_CONFIG_BASKETRESERVATION'            =>  'Ist diese Option aktiviert, laufen Warenkörbe nach einer von Ihnen definierbaren Zeit ab.  <br><br>'.
+                                                    'Darüber hinaus schaltet diese Option die Produktreservierung ein, mit der die Lagerbestände der Produkte zunächst reserviert ' .
+                                                    'und erst bei Auflösung des Warenkorbs endgültig reduziert wird. Produkte aus abgelaufenen Warenkörben ' .
+                                                    'werden dem Lagerbestand wieder zugeschlagen.<br><br>'.
+                                                    'Für Produkte aus gekauften Warenkörben wird der Lagerbestand endgültig reduziert.',
+
+
+'HELP_SHOP_CONFIG_BASKETRESERVATIONTIMEOUT'     =>  'Nach der eingstellten Anzahl von Sekunden ohne Änderung am Warenkorb, wird der Warenkorb automatisch geleert ' .
+                                                    'und die darin enthaltenen Produkte dem Lagerbestand wieder zugeführt.',
+
+'HELP_SHOP_CONFIG_INVITATION'                   =>  'Mit Einladungen können Ihre Kunden weitere Freunde einladen sich zu registrieren und Bonuspunkte zu sammeln. ' .
+                                                    'Die Anzahl der gesammelten Bonuspunkte wird im jeweiligen Benutzerprofil gespeichert. Sie als Shopbetreiber können diese '.
+                                                    'Bonuspunkte dann je nach Ihrem Geschäftskonzept einsetzen.',
+
+'HELP_SHOP_CONFIG_POINTSFORINVITATION'          =>  'Anzahl Bonuspunkte, die der Einladende erhält, wenn ein Eingeladener sich aufgrund der Einladung registriert.',
+
+'HELP_SHOP_CONFIG_POINTSFORREGISTRATION'        =>  'Anzahl Bonuspunkte, die der Eingeladene erhält, der sich aufgrund der Einladung registriert.',
+
+'HELP_SHOP_CONFIG_SHOP_CONFIG_FACEBOOKAPPID'    =>  'Um Ihren eShop mit Facebook zu verbinden müssen Sie die Facebook \'Application ID\' angeben. ' .
+                                                    'Weitere Informationen finden Sie im ' .
+                                                    '<a href="http://wiki.oxidforge.org/Tutorials/Connecting_website_to_facebook" target="_blank" target="_blank">Tutorial</a>.',
+
+'HELP_SHOP_CONFIG_SHOP_CONFIG_FBSECRETKEY'      =>  'Um die Verbindung zwischen eShop und Facebook abzusichern, geben Sie den \'Secure Key\' hier ein. ' .
+                                                    'Weitere Informationen finden Sie im ' .
+                                                    '<a href="http://wiki.oxidforge.org/Tutorials/Connecting_website_to_facebook" target="_blank" target="_blank">Tutorial</a>.',
+
+'HELP_SHOP_CONFIG_FBCOMMENTS'                   =>  'Erlaubt den Shopbesuchern, Kommentare zu Produkten abzugeben.',
+
+'HELP_SHOP_CONFIG_FBFACEPILE'                   =>  'Zeigt Ihren Shopbesuchern wer von deren Freunden in Facebook ein Freund Ihres Shops ist.',
+
+'HELP_SHOP_CONFIG_FBLIVESTREAM'                 =>  'Lässt die Besucher Ihres Shops miteinander in Echtzeit über Produkte Ihres Shops diskutieren',
+
+'HELP_SHOP_CONFIG_FBINVITE'                     =>  'Erlaubt Ihren Besuchern, Freunde über Facebook einladen',
+
+'HELP_SHOP_CONFIG_FBSHARE'                      =>  'Zeigt Facebooks \'Share button\'.',
+
+'HELP_SHOP_CONFIG_FBLIKE'                       =>  'Zeigt Facebooks \'Like button\' mit dem die Besucher Ihres Shops in Facebook bekannt geben, dass Sie Ihren Shop mögen.',
+
+'HELP_SHOP_CONFIG_FACEBOOKCONNECT'              =>  'Facebook Connect anzeigen damit Anwender sich mit ihren Facebook-Profildaten im Shop anmelden können.',
 
 'HELP_SHOP_MALL_MALLMODE'                       =>  'Hier stellen Sie ein, was auf der Startseite dieses eShops angezeigt werden soll: '.
                                                     '<ul><li><span class="navipath_or_inputname">Shop-Auswahlseite</span>: Eine Seite wird angezeigt, auf der Kunden zwischen den verschiedenen Shops wählen können.</li>' .
@@ -190,35 +236,35 @@ $aLang =  array(
 
 'HELP_SHOP_PERF_LOADPRICE'                      =>  'Wenn Sie diese Einstellung ausschalten, werden die Artikelpreise nicht mehr berechnet und bei den Artikeln kein Preis mehr angezeigt.',
 
-'HELP_SHOP_PERF_PARSELONGDESCINSMARTY'          =>  'Wenn die Einstellung aktiv ist, werden die Beschreibungstexte von Artikeln und Kategorien mit Smarty ausgeführt: Dann können Sie Smarty-Tags in die Beschreibungstexte einbinden (z. B. Variablen ausgeben). <br />' .
+'HELP_SHOP_PERF_PARSELONGDESCINSMARTY'          =>  'Wenn die Einstellung aktiv ist, werden die Beschreibungstexte von Artikeln und Kategorien mit Smarty ausgeführt: Dann können Sie Smarty-Tags in die Beschreibungstexte einbinden (z. B. Variablen ausgeben). <br>' .
                                                     'Wenn die Einstellung nicht aktiv ist, werden die Beschreibungstexte so eingegeben, wie sie im Editor eingegeben werden.',
 
-'HELP_SHOP_PERF_LOADATTRIBUTES'                 =>  'Normalerweise werden die Attribute eines Artikels nur in der Detailansicht des Artikels geladen. Wenn die Einstellung aktiv ist, werden die Attribute immer zusammen mit dem Artikel geladen (z. B. wenn der Artikel in einem Suchergebnis vorkommt).<br />' .
+'HELP_SHOP_PERF_LOADATTRIBUTES'                 =>  'Normalerweise werden die Attribute eines Artikels nur in der Detailansicht des Artikels geladen. Wenn die Einstellung aktiv ist, werden die Attribute immer zusammen mit dem Artikel geladen (z. B. wenn der Artikel in einem Suchergebnis vorkommt).<br>' .
                                                     'Diese Einstellung kann nützlich sein, wenn Sie die Templates anpassen und die Attribute eines Artikels auch an anderen Stellen anzeigen möchten.',
 
 'HELP_SHOP_PERF_LOADSELECTLISTSINALIST'         =>  'Normalerweise werden Auswahllisten nur in der Detailansicht eines Artikels angezeigt. Wenn Sie die Einstellung aktivieren, werden die Auswahllisten auch in Artikellisten (z. B. Suchergebnisse, Kategorieansichten) angezeigt.',
 
-'HELP_SHOP_PERF_CHECKIFTPLCOMPILE'              =>  'Wenn diese Einstellung aktiv ist, überprüft der eShop bei jedem Aufruf, ob sich Templates geändert haben und berechnet die Ausgabe neu, falls Änderungen vorhanden sind. Aktivieren Sie die Einstellung, wenn Sie Templates anpassen, und deaktivieren Sie sie, wenn der eShop produktiv verwendet wird. <br />' .
+'HELP_SHOP_PERF_CHECKIFTPLCOMPILE'              =>  'Wenn diese Einstellung aktiv ist, überprüft der eShop bei jedem Aufruf, ob sich Templates geändert haben und berechnet die Ausgabe neu, falls Änderungen vorhanden sind. Aktivieren Sie die Einstellung, wenn Sie Templates anpassen, und deaktivieren Sie sie, wenn der eShop produktiv verwendet wird. <br>' .
                                                     'Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/hinweise-zum-templates-anpassen" target="_blank">Caching-Beitrag im Handbuch</a>.',
 
 'HELP_SHOP_PERF_CLEARCACHEONLOGOUT'             =>  'Normalerweise wird der komplette Cache geleert, sobald Änderungen im Administrationsbereich vorgenommen werden. Das kann zu eine verschlechterten Performance im Administrationsbereich führen. Wenn Sie die Einstellung aktivieren, wird der Cache nur geleert, wenn Sie sich aus dem Administrationsbereich ausloggen.',
 
 
 
-'HELP_SHOP_SEO_TITLEPREFIX'                     =>  'Jede einzelne Seite hat einen Titel. Er wird im Browser als Titel des Browser-Fensters angezeigt. Mit <span class="navipath_or_inputname">Titel Präfix</span> und <span class="navipath_or_inputname">Titel Suffix</span> haben Sie die Möglichkeit, vor und hinter jeden Seitentitel Text einzufügen:<br />' .
+'HELP_SHOP_SEO_TITLEPREFIX'                     =>  'Jede einzelne Seite hat einen Titel. Er wird im Browser als Titel des Browser-Fensters angezeigt. Mit <span class="navipath_or_inputname">Titel Präfix</span> und <span class="navipath_or_inputname">Titel Suffix</span> haben Sie die Möglichkeit, vor und hinter jeden Seitentitel Text einzufügen:<br>' .
                                                     '<ul><li>Geben Sie in <span class="navipath_or_inputname">Titel Präfix</span> den Text ein, der vor dem Titel erscheinen soll.</li>' .
                                                     '<li>Geben Sie in <span class="navipath_or_inputname">Titel Suffix</span> den Text ein, der hinter dem Titel erscheinen soll.</li></ul>',
 
-'HELP_SHOP_SEO_TITLESUFFIX'                     =>  'Jede einzelne Seite hat einen Titel. Er wird im Browser als Titel des Browser-Fensters angezeigt. Mit <span class="navipath_or_inputname">Titel Präfix</span> und <span class="navipath_or_inputname">Titel Suffix</span> haben Sie die Möglichkeit, vor und hinter jeden Seitentitel Text einzufügen:<br />' .
+'HELP_SHOP_SEO_TITLESUFFIX'                     =>  'Jede einzelne Seite hat einen Titel. Er wird im Browser als Titel des Browser-Fensters angezeigt. Mit <span class="navipath_or_inputname">Titel Präfix</span> und <span class="navipath_or_inputname">Titel Suffix</span> haben Sie die Möglichkeit, vor und hinter jeden Seitentitel Text einzufügen:<br>' .
                                                     '<ul><li>Geben Sie in <span class="navipath_or_inputname">Titel Präfix</span> den Text ein, der vor dem Titel erscheinen soll.</li>' .
                                                     '<li>Geben Sie in <span class="navipath_or_inputname">Titel Suffix</span> den Text ein, der hinter dem Titel erscheinen soll.</li></ul>',
 
-'HELP_SHOP_SEO_IDSSEPARATOR'                    =>  'Das Trennzeichen wird verwendet, wenn Kategorie- oder Artikelnamen aus mehreren Worten bestehen. Das Trennzeichen wird anstelle eines Leerzeichens in die URL eingefügt, z. B. www.ihronlineshop.de/Kategorie-aus-mehreren-Worten/Artikel-aus-mehreren-Worten.html<br />' .
+'HELP_SHOP_SEO_IDSSEPARATOR'                    =>  'Das Trennzeichen wird verwendet, wenn Kategorie- oder Artikelnamen aus mehreren Worten bestehen. Das Trennzeichen wird anstelle eines Leerzeichens in die URL eingefügt, z. B. www.ihronlineshop.de/Kategorie-aus-mehreren-Worten/Artikel-aus-mehreren-Worten.html<br>' .
                                                     'Wenn Sie kein Trennzeichen eingeben, wird der Bindestrich - als Trennzeichen verwendet.',
 
 'HELP_SHOP_SEO_SAFESEOPREF'                     =>  'Wenn mehrere Artikel den gleichen Namen haben und in der gleichen Kategorie sind, würden sie die gleiche SEO URL erhalten. Damit das nicht passiert, wird das SEO Suffix angehängt. Dadurch werden gleiche SEO URLs vermieden. Wenn Sie kein SEO Suffix angeben, wird <span class="filename_filepath_or_italic">oxid</span> als Standard verwendet.',
 
-'HELP_SHOP_SEO_REPLACECHARS'                    =>  'Bestimmte Sonderzeichen wie Umlaute (Ä,Ö,Ü) sollten in URLs nicht vorkommen, da Sie Probleme verursachen können. In dem Eingabefeld wird angegeben, mit welchen Zeichen die Sonderzeichen ersetzt werden. Die Syntax ist <code>Sonderzeichen => Ersatzzeichen</code>, z. B. <code>Ü => Ue</code>.<br />' .
+'HELP_SHOP_SEO_REPLACECHARS'                    =>  'Bestimmte Sonderzeichen wie Umlaute (Ä,Ö,Ü) sollten in URLs nicht vorkommen, da Sie Probleme verursachen können. In dem Eingabefeld wird angegeben, mit welchen Zeichen die Sonderzeichen ersetzt werden. Die Syntax ist <code>Sonderzeichen => Ersatzzeichen</code>, z. B. <code>Ü => Ue</code>.<br>' .
                                                     'Für die deutsche Sprache sind die Ersetzungen bereits eingetragen.',
 
 'HELP_SHOP_SEO_RESERVEDWORDS'                   =>  'Bestimmte URLs sind im eShop festgelegt, z.B. www.ihronlineshop.de/admin, um den Administrationsbereich zu öffnen. Wenn eine Kategorie <span class="filename_filepath_or_italic">admin</span> heißen würde, wäre die SEO URL zu dieser Kategorie ebenfalls www.ihronlineshop.de/admin - die Kategorie könnte nicht geöffnet werden. Deswegen wird an solche SEO URLs automatisch das SEO Suffix angehängt. Mit dem Eingabefeld können Sie einstellen, an welche SEO URLs das SEO Suffix automatisch angehängt werden soll.',
@@ -229,7 +275,7 @@ $aLang =  array(
 
 
 
-'HELP_SHOP_MAIN_PRODUCTIVE'                     =>  'So lange diese Einstellung <span class="warning_or_important_hint">nicht</span> aktiv ist, werden am unteren Ende jeder Seite Informationen zu Ladezeiten angezeigt. Außerdem werden Debug-Informationen angezeigt. Diese Informationen sind für Entwickler wichtig, wenn sie den OXID eShop anpassen.<br />' .
+'HELP_SHOP_MAIN_PRODUCTIVE'                     =>  'So lange diese Einstellung <span class="warning_or_important_hint">nicht</span> aktiv ist, werden am unteren Ende jeder Seite Informationen zu Ladezeiten angezeigt. Außerdem werden Debug-Informationen angezeigt. Diese Informationen sind für Entwickler wichtig, wenn sie den OXID eShop anpassen.<br>' .
                                                     '<span class="warning_or_important_hint">Aktivieren Sie diese Einstellung, bevor ihr eShop öffentlich zugänglich gemacht wird! Dadurch wird den Benutzern nur der eShop ohne die zusätzlichen Informationen angezeigt.</span>',
 
 'HELP_SHOP_MAIN_ACTIVE'                         =>  'Mit <span class="navipath_or_inputname">Aktiv</span> können Sie ihren kompletten eShop ein- und ausschalten. Wenn ihr eShop ausgeschaltet ist, wird Ihren Kunden eine Meldung angezeigt, dass der eShop vorübergehend offline ist. Das kann für Wartungsarbeiten am eShop nützlich sein.',
@@ -264,32 +310,32 @@ $aLang =  array(
 
 'HELP_ARTICLE_EXTEND_TEMPLATE'                  =>  'Sie können die Detailansicht des Artikels mit einem anderen Template anzeigen lassen. Tragen Sie dazu den Dateinamen des Templates ein, das verwendet werden soll. Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/bestimmte-artikel-oder-kategorien-mit-anderen-templates-anzeigen" target="_blank">eShop Handbuch</a>.',
 
-'HELP_ARTICLE_EXTEND_ISCONFIGURABLE'            =>  'Wenn der Artikel individualisierbar ist, wird den Kunden ein zusätzliches Eingabefeld auf der Detailseite des Artikels und im Warenkorb angezeigt. In dieses Eingabefeld können Kunden Text eingeben, um den Artikel zu individualisieren.<br /><br />'.
+'HELP_ARTICLE_EXTEND_ISCONFIGURABLE'            =>  'Wenn der Artikel individualisierbar ist, wird den Kunden ein zusätzliches Eingabefeld auf der Detailseite des Artikels und im Warenkorb angezeigt. In dieses Eingabefeld können Kunden Text eingeben, um den Artikel zu individualisieren.<br><br>'.
                                                     'Ein typisches Beispiel sind T-Shirts, die bedruckt werden können. In das Eingabefeld können Kunden den Text eingeben, mit dem ein T-Shirt bedruckt werden soll.',
 
 
 
-'HELP_ARTICLE_PICTURES_ICON'                    =>  'Icons sind die kleinsten Bilder eines Artikels, sie werden z. B. im Warenkorb verwendet. <br />'.
-                                                    'Wenn Sie ein Icon manuell hochladen, wird das automatisch erzeugte Icon überschrieben.<br />' .
-                                                    'Nach dem Upload wird der Dateiname des Bildes in Icon angezeigt. Solange noch kein Icon hochgeladen/automatisch generiert wurde, wird --- angezeigt.<br />' .
+'HELP_ARTICLE_PICTURES_ICON'                    =>  'Icons sind die kleinsten Bilder eines Artikels, sie werden z. B. im Warenkorb verwendet. <br>'.
+                                                    'Wenn Sie ein Icon manuell hochladen, wird das automatisch erzeugte Icon überschrieben.<br>' .
+                                                    'Nach dem Upload wird der Dateiname des Bildes in Icon angezeigt. Solange noch kein Icon hochgeladen/automatisch generiert wurde, wird --- angezeigt.<br>' .
                                                     'Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/artikelbilder-grundlagen" target="_blank">Artikelbilder-Kapitel des Handbuchs</a>.',
 
-'HELP_ARTICLE_PICTURES_THUMB'                   =>  'Thumbnails sind kleine Bilder eines Artikels, sie werden z. B. in der in Artikellisten verwendet. <br />' .
-                                                    'Wenn Sie ein Thumbnail manuell hochladen, wird das automatisch erzeugte Thumbnail überschrieben.<br />' .
-                                                    'Nach dem Upload wird der Dateiname des Bildes in Thumbnail angezeigt. Solange noch kein Thumbnail hochgeladen/automatisch generiert wurde, wird --- angezeigt.<br />' .
+'HELP_ARTICLE_PICTURES_THUMB'                   =>  'Thumbnails sind kleine Bilder eines Artikels, sie werden z. B. in der in Artikellisten verwendet. <br>' .
+                                                    'Wenn Sie ein Thumbnail manuell hochladen, wird das automatisch erzeugte Thumbnail überschrieben.<br>' .
+                                                    'Nach dem Upload wird der Dateiname des Bildes in Thumbnail angezeigt. Solange noch kein Thumbnail hochgeladen/automatisch generiert wurde, wird --- angezeigt.<br>' .
                                                     'Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/artikelbilder-grundlagen" target="_blank">Artikelbilder-Kapitel des Handbuchs</a>.',
 
-'HELP_ARTICLE_PICTURES_PIC1'                    =>  'Artikelbilder werden in der Detailansicht eines Artikels verwendet. Sie können bis zu 7 Artikelbilder pro Artikel hochladen. Nach dem Hochladen wird der Dateiname im jeweiligen Eingabefeld angezeigt. Wenn noch kein Bild hochgeladen wurde, wird --- angezeigt. <br />' .
-                                                    'Sie sollten ein Bild mit maximaler Auflösung hochladen. Danach wird aus diesem Bild automatisch das Artikelbild, Zoombild, Thumbnail und Icon generiert.<br />' .
+'HELP_ARTICLE_PICTURES_PIC1'                    =>  'Artikelbilder werden in der Detailansicht eines Artikels verwendet. Sie können bis zu 7 Artikelbilder pro Artikel hochladen. Nach dem Hochladen wird der Dateiname im jeweiligen Eingabefeld angezeigt. Wenn noch kein Bild hochgeladen wurde, wird --- angezeigt. <br>' .
+                                                    'Sie sollten ein Bild mit maximaler Auflösung hochladen. Danach wird aus diesem Bild automatisch das Artikelbild, Zoombild, Thumbnail und Icon generiert.<br>' .
                                                     'Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/artikelbilder-grundlagen" target="_blank">Artikelbilder-Kapitel des Handbuchs</a>.',
 
 'HELP_ARTICLE_PICTURES_ZOOM1'                   =>  'Zoom-Bilder sind extra große Artikelbilder, Die in der Detailansicht eines Artikels verlinkt werden. </br>' .
-                                                    'Zoom-Bilder können Sie bei <span class="navipath_or_inputname">Zoom X hochladen</span> hochladen. Bei <span class="navipath_or_inputname">Zoom X</span> wird nach dem Hochladen der Dateiname des Zoom-Bildes angezeigt, wenn noch kein Zoom-Bild hochgeladen wurde, wird <span class="userinput_or_code">nopic.jpg</span> angezeigt.<br />' .
+                                                    'Zoom-Bilder können Sie bei <span class="navipath_or_inputname">Zoom X hochladen</span> hochladen. Bei <span class="navipath_or_inputname">Zoom X</span> wird nach dem Hochladen der Dateiname des Zoom-Bildes angezeigt, wenn noch kein Zoom-Bild hochgeladen wurde, wird <span class="userinput_or_code">nopic.jpg</span> angezeigt.<br>' .
                                                     'Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/artikelbilder-grundlagen" target="_blank">Artikelbilder-Kapitel des Handbuchs</a>.',
 
 
 
-'HELP_ARTICLE_STOCK_STOCKFLAG'                  =>  'Hier können Sie einstellen, wie sich der eShop verhält, wenn der Artikel ausverkauft ist:<br />' .
+'HELP_ARTICLE_STOCK_STOCKFLAG'                  =>  'Hier können Sie einstellen, wie sich der eShop verhält, wenn der Artikel ausverkauft ist:<br>' .
                                                     '<ul><li>Standard: Der Artikel kann auch dann bestellt werden, wenn er ausverkauft ist.</li>' .
                                                     '<li>Fremdlager: Der Artikel kann immer gekauft werden und wird immer als <span class="filename_filepath_or_italic">auf Lager</span> angezeigt. (In einem Fremdlager kann der Lagerbestand nicht ermittelt werden. Deswegen wird der Artikel immer als auf Lager geführt).</li>' .
                                                     '<li>Wenn Ausverkauft offline: Der Artikel wird nicht angezeigt, wenn er ausverkauft ist.</li>' .
@@ -299,26 +345,26 @@ $aLang =  array(
 
 'HELP_ARTICLE_STOCK_DELIVERY'                   =>  'Hier können Sie eingeben, ab wann ein Artikel wieder lieferbar ist, wenn er ausverkauft ist. Das Format ist Jahr-Monat-Tag, z. B. 2008-10-21.',
 
-'HELP_ARTICLE_SEO_FIXED'						=>	'Sie können die SEO URLs vom eShop neu berechnen lassen. Eine Artikelseite bekommt z. B. eine neue SEO URL, wenn Sie den Titel des Artikels ändern. Die Einstellung <span class="navipath_or_inputname">URL fixiert</span> unterbindet das: Wenn sie aktiv ist, wird die alte SEO URL beibehalten und keine neue SEO URL berechnet.',
+'HELP_ARTICLE_SEO_FIXED'                        =>  'Sie können die SEO URLs vom eShop neu berechnen lassen. Eine Artikelseite bekommt z. B. eine neue SEO URL, wenn Sie den Titel des Artikels ändern. Die Einstellung <span class="navipath_or_inputname">URL fixiert</span> unterbindet das: Wenn sie aktiv ist, wird die alte SEO URL beibehalten und keine neue SEO URL berechnet.',
 
-'HELP_ARTICLE_SEO_KEYWORDS'						=>	'Diese Stichwörter werden in den HTML-Quelltext (Meta Keywords) eingebunden. Diese Information wird von Suchmaschinen ausgewertet. Hier können Sie passende Stichwörter zu dem Artikel eingeben. Wenn Sie nichts eingeben, werden die Stichwörter automatisch erzeugt.',
+'HELP_ARTICLE_SEO_KEYWORDS'                     =>  'Diese Stichwörter werden in den HTML-Quelltext (Meta Keywords) eingebunden. Diese Information wird von Suchmaschinen ausgewertet. Hier können Sie passende Stichwörter zu dem Artikel eingeben. Wenn Sie nichts eingeben, werden die Stichwörter automatisch erzeugt.',
 
-'HELP_ARTICLE_SEO_DESCRIPTION'					=>	'Dieser Beschreibungstext wird in den HTML-Quelltext (Meta Description) eingebunden. Dieser Text wird von vielen Suchmaschinen bei den Suchergebnissen angezeigt. Hier können Sie eine passende Beschreibung zu dem Artikel eingeben. Wenn Sie nichts eingeben, wird die Beschreibung automatisch erzeugt.',
+'HELP_ARTICLE_SEO_DESCRIPTION'                  =>  'Dieser Beschreibungstext wird in den HTML-Quelltext (Meta Description) eingebunden. Dieser Text wird von vielen Suchmaschinen bei den Suchergebnissen angezeigt. Hier können Sie eine passende Beschreibung zu dem Artikel eingeben. Wenn Sie nichts eingeben, wird die Beschreibung automatisch erzeugt.',
 
-'HELP_ARTICLE_SEO_ACTCAT'						=>	'Sie können für einen Artikel unterschiedliche SEO URLs festlegen: Für bestimmte Kategorien und für den Hersteller des Artikels. Mit <span class="navipath_or_inputname">Aktive Kategorie/Hersteller</span> können Sie wählen, welche SEO URL Sie anpassen möchten.',
+'HELP_ARTICLE_SEO_ACTCAT'                       =>  'Sie können für einen Artikel unterschiedliche SEO URLs festlegen: Für bestimmte Kategorien und für den Hersteller des Artikels. Mit <span class="navipath_or_inputname">Aktive Kategorie/Hersteller</span> können Sie wählen, welche SEO URL Sie anpassen möchten.',
 'HELP_ARTICLE_STOCK_STOCKTEXT'                  =>  'Hier können Sie eine Meldung eingeben, die beim Artikel angezeigt wird, falls der Artikel auf Lager ist. Weitere Informationen zu Lagerbestandsmeldungen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/meldungen-zu-den-lagerbestaenden-einrichten" target="_blank">eShop Handbuch</a>.',
 
 'HELP_ARTICLE_STOCK_NOSTOCKTEXT'                =>  'Hier können Sie eine Meldung eingeben, die beim Artikel angezeigt wird, falls der Artikel ausverkauft ist. Weitere Informationen zu Lagerbestandsmeldungen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/meldungen-zu-den-lagerbestaenden-einrichten" target="_blank">eShop Handbuch</a>.',
 
-'HELP_ARTICLE_STOCK_AMOUNTPRICE_AMOUNTFROM'     =>  'Mit <span class="navipath_or_inputname">Menge von/bis</span> stellen Sie ein, für welchen Mengenbereich der Staffelpreis gültig ist.<br />' .
+'HELP_ARTICLE_STOCK_AMOUNTPRICE_AMOUNTFROM'     =>  'Mit <span class="navipath_or_inputname">Menge von/bis</span> stellen Sie ein, für welchen Mengenbereich der Staffelpreis gültig ist.<br>' .
                                                     'Weitere Informationen zu Staffelpreisen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/staffelpreise-einrichten" target="_blank">OXID eShop Handbuch</a>.',
 
-'HELP_ARTICLE_STOCK_AMOUNTPRICE_PRICE'          =>  'Bei <span class="navipath_or_inputname">Preis </span>können Sie den Preis für die eingegebene Menge einstellen. Sie haben die Möglichkeit, den Preis absolut einzugeben oder prozentualen Rabatt einzurichten.<br /> ' .
+'HELP_ARTICLE_STOCK_AMOUNTPRICE_PRICE'          =>  'Bei <span class="navipath_or_inputname">Preis </span>können Sie den Preis für die eingegebene Menge einstellen. Sie haben die Möglichkeit, den Preis absolut einzugeben oder prozentualen Rabatt einzurichten.<br> ' .
                                                     'Weitere Informationen zu Staffelpreisen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/staffelpreise-einrichten" target="_blank">OXID eShop Handbuch</a>.',
 
 
 
-'HELP_ARTICLE_VARIANT_VARNAME'                  =>  'Bei <span class="navipath_or_inputname">Name der Auswahl</span> können Sie einstellen, wie die Auswahl zwischen den verschiedenen Varianten heißen soll, z. B. <span class="userinput_or_code">Farbe</span> oder <span class="userinput_or_code">Größe</span>.<br /> '.
+'HELP_ARTICLE_VARIANT_VARNAME'                  =>  'Bei <span class="navipath_or_inputname">Name der Auswahl</span> können Sie einstellen, wie die Auswahl zwischen den verschiedenen Varianten heißen soll, z. B. <span class="userinput_or_code">Farbe</span> oder <span class="userinput_or_code">Größe</span>.<br> '.
                                                     'Weitere Informationen zu Varianten finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/varianten-eines-artikels-anlegen" target="_blank">Varianten-Kapitel des Handbuchs</a>.',
 
 
@@ -335,22 +381,22 @@ $aLang =  array(
 
 'HELP_CATEGORY_MAIN_PRICEFROMTILL'              =>  'Mit <span class="navipath_or_inputname">Preis von/bis</span> können sie einstellen, dass in der Kategorie <span class="warning_or_important_hint">alle</span> Artikel angezeigt werden, die einen bestimmten Preis haben. Im ersten Eingabefeld wird die Untergrenze eingegeben, in das zweite Eingabefeld die Obergrenze. Dann werden in der Kategorie <span class="warning_or_important_hint">alle Artikel Ihres eShops</span> angezeigt, die einen entsprechenden Preis haben.',
 
-'HELP_CATEGORY_MAIN_DEFSORT'                    =>  'Mit <span class="navipath_or_inputname">Schnellsortierung</span> stellen Sie ein, wie die Artikel in der Kategorie sortiert werden. Mit <span class="navipath_or_inputname">asc</span> und <span class="navipath_or_inputname">desc</span> stellen Sie ein, ob auf- oder absteigend sortiert wird. <br />' .
+'HELP_CATEGORY_MAIN_DEFSORT'                    =>  'Mit <span class="navipath_or_inputname">Schnellsortierung</span> stellen Sie ein, wie die Artikel in der Kategorie sortiert werden. Mit <span class="navipath_or_inputname">asc</span> und <span class="navipath_or_inputname">desc</span> stellen Sie ein, ob auf- oder absteigend sortiert wird. <br>' .
                                                     'Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/artikel-sortieren" target="_blank">Handbuch-Eintrag zum Sortieren von Artikeln</a>.',
 
 'HELP_CATEGORY_MAIN_SORT'                       =>  'Mit <span class="navipath_or_inputname">Sortierung</span> können Sie festlegen, in welcher Reihenfolge die Kategorien angezeigt werden: Die Kategorie mit der kleinsten Zahl wird oben angezeigt, die Kategorie mit der größten Zahl unten.',
 
-'HELP_CATEGORY_MAIN_THUMB'                      =>  'Bei <span class="navipath_or_inputname">Bild</span> und <span class="navipath_or_inputname">Bild hochladen</span> können Sie ein Bild für die Kategorie hochladen, dieses Bild wird dann in der Kategorienansicht oben angezeigt. <br />' .
+'HELP_CATEGORY_MAIN_THUMB'                      =>  'Bei <span class="navipath_or_inputname">Bild</span> und <span class="navipath_or_inputname">Bild hochladen</span> können Sie ein Bild für die Kategorie hochladen, dieses Bild wird dann in der Kategorienansicht oben angezeigt. <br>' .
                                                     'Wählen Sie bei <span class="navipath_or_inputname">Bild hochladen</span> das entsprechende Bild aus. Wenn Sie auf Speichern klicken, wird das Bild hochgeladen. Nachdem das Bild hochgeladen ist, wird der Dateiname des Bildes in <span class="navipath_or_inputname">Bild</span> angezeigt.',
 
-'HELP_CATEGORY_MAIN_SKIPDISCOUNTS'             =>  'Wenn<span class="navipath_or_inputname"> Alle neg. Nachlässe ignorieren</span> aktiv ist, werden für alle Artikel in dieser Kategorie keine negativen Nachlässe berechnet.',
-'HELP_CATEGORY_SEO_FIXED'						=>	'Sie können die SEO URLs vom eShop neu berechnen lassen. Eine Kategorie bekommt z. B. eine neue SEO URL, wenn Sie den Titel der Kategorie ändern. Die Einstellung <span class="navipath_or_inputname">URL fixiert</span> unterbindet das: Wenn sie aktiv ist, wird die alte SEO URL beibehalten und keine neue SEO URL berechnet.',
+'HELP_CATEGORY_MAIN_SKIPDISCOUNTS'              =>  'Wenn<span class="navipath_or_inputname"> Alle neg. Nachlässe ignorieren</span> aktiv ist, werden für alle Artikel in dieser Kategorie keine negativen Nachlässe berechnet.',
+'HELP_CATEGORY_SEO_FIXED'                       =>  'Sie können die SEO URLs vom eShop neu berechnen lassen. Eine Kategorie bekommt z. B. eine neue SEO URL, wenn Sie den Titel der Kategorie ändern. Die Einstellung <span class="navipath_or_inputname">URL fixiert</span> unterbindet das: Wenn sie aktiv ist, wird die alte SEO URL beibehalten und keine neue SEO URL berechnet.',
 
-'HELP_CATEGORY_SEO_SHOWSUFFIX'					=>	'Diese Einstellung bestimmt, ob das Suffix für den Fenstertitel angezeigt wird, wenn die Kategorieseite im eShop aufgerufen wird. Das Titel Suffix können Sie unter <span class="navipath_or_inputname">Stammdaten -> Grundeinstellungen -> SEO -> Titel Suffix</span> einstellen.',
+'HELP_CATEGORY_SEO_SHOWSUFFIX'                  =>  'Diese Einstellung bestimmt, ob das Suffix für den Fenstertitel angezeigt wird, wenn die Kategorieseite im eShop aufgerufen wird. Das Titel Suffix können Sie unter <span class="navipath_or_inputname">Stammdaten -> Grundeinstellungen -> SEO -> Titel Suffix</span> einstellen.',
 
-'HELP_CATEGORY_SEO_KEYWORDS'					=>	'Diese Stichwörter werden in den HTML-Quelltext (Meta Keywords) eingebunden. Diese Information wird von Suchmaschinen ausgewertet. Hier können Sie passende Stichwörter zu der Kategorie eingeben. Wenn Sie nichts eingeben, werden die Stichwörter automatisch erzeugt.',
+'HELP_CATEGORY_SEO_KEYWORDS'                    =>  'Diese Stichwörter werden in den HTML-Quelltext (Meta Keywords) eingebunden. Diese Information wird von Suchmaschinen ausgewertet. Hier können Sie passende Stichwörter zu der Kategorie eingeben. Wenn Sie nichts eingeben, werden die Stichwörter automatisch erzeugt.',
 
-'HELP_CATEGORY_SEO_DESCRIPTION'					=>	'Dieser Beschreibungstext wird in den HTML-Quelltext (Meta Description) eingebunden. Dieser Text wird von vielen Suchmaschinen bei den Suchergebnissen angezeigt. Hier können Sie eine passende Beschreibung für die Kategorie eingeben. Wenn Sie nichts eingeben, wird die Beschreibung automatisch erzeugt.',
+'HELP_CATEGORY_SEO_DESCRIPTION'                 =>  'Dieser Beschreibungstext wird in den HTML-Quelltext (Meta Description) eingebunden. Dieser Text wird von vielen Suchmaschinen bei den Suchergebnissen angezeigt. Hier können Sie eine passende Beschreibung für die Kategorie eingeben. Wenn Sie nichts eingeben, wird die Beschreibung automatisch erzeugt.',
 
 'HELP_CONTENT_MAIN_SNIPPET'                     =>  'Wenn Sie <span class="navipath_or_inputname">Snippet</span> auswählen, können Sie die CMS-Seite in anderen Seiten mit Hilfe des Idents einbinden: <span class="userinput_or_code">[{ oxcontent ident=Ident_der_CMS_Seite }]</span>',
 
@@ -362,17 +408,17 @@ $aLang =  array(
 
 
 
-'HELP_CONTENT_SEO_FIXED'						=>	'Sie können die SEO URLs vom eShop neu berechnen lassen. Eine CMS-Seite bekommt z. B. eine neue SEO URL, wenn Sie den Titel der CMS-Seite ändern. Die Einstellung <span class="navipath_or_inputname">URL fixiert</span> unterbindet das: Wenn sie aktiv ist, wird die alte SEO URL beibehalten und keine neue SEO URL berechnet.',
+'HELP_CONTENT_SEO_FIXED'                        =>  'Sie können die SEO URLs vom eShop neu berechnen lassen. Eine CMS-Seite bekommt z. B. eine neue SEO URL, wenn Sie den Titel der CMS-Seite ändern. Die Einstellung <span class="navipath_or_inputname">URL fixiert</span> unterbindet das: Wenn sie aktiv ist, wird die alte SEO URL beibehalten und keine neue SEO URL berechnet.',
 
-'HELP_CONTENT_SEO_KEYWORDS'						=>	'Diese Stichwörter werden in den HTML-Quelltext (Meta Keywords) eingebunden. Diese Information wird von Suchmaschinen ausgewertet. Hier können Sie passende Stichwörter zu der CMS-Seite eingeben. Wenn Sie nichts eingeben, werden die Stichwörter automatisch erzeugt.',
+'HELP_CONTENT_SEO_KEYWORDS'                     =>  'Diese Stichwörter werden in den HTML-Quelltext (Meta Keywords) eingebunden. Diese Information wird von Suchmaschinen ausgewertet. Hier können Sie passende Stichwörter zu der CMS-Seite eingeben. Wenn Sie nichts eingeben, werden die Stichwörter automatisch erzeugt.',
 
-'HELP_CONTENT_SEO_DESCRIPTION'					=>	'Dieser Beschreibungstext wird in den HTML-Quelltext (Meta Description) eingebunden. Dieser Text wird von vielen Suchmaschinen bei den Suchergebnissen angezeigt. Hier können Sie eine passende Beschreibung für die CMS-Seite eingeben. Wenn Sie nichts eingeben, wird die Beschreibung automatisch erzeugt.',
-'HELP_DELIVERY_MAIN_COUNTRULES'                 =>  'Mit dieser Einstellung können Sie auswählen, wie oft der Preis Auf-/Abschlag berechnet wird:<br />' .
+'HELP_CONTENT_SEO_DESCRIPTION'                  =>  'Dieser Beschreibungstext wird in den HTML-Quelltext (Meta Description) eingebunden. Dieser Text wird von vielen Suchmaschinen bei den Suchergebnissen angezeigt. Hier können Sie eine passende Beschreibung für die CMS-Seite eingeben. Wenn Sie nichts eingeben, wird die Beschreibung automatisch erzeugt.',
+'HELP_DELIVERY_MAIN_COUNTRULES'                 =>  'Mit dieser Einstellung können Sie auswählen, wie oft der Preis Auf-/Abschlag berechnet wird:<br>' .
                                                     '<ul><li>Einmal pro Warenkorb: Der Preis wird einmal für die gesamte Bestellung berechnet.</li>' .
                                                     '<li>Einmal pro unterschiedlichem Artikel: Der Preis wird für jeden unterschiedlichen Artikel im Warenkorb einmal berechnet. Wie oft ein Artikel bestellt wird, ist dabei egal.</li>' .
                                                     '<li>Für jeden Artikel: Der Preis wird für jeden Artikel im Warenkorb berechnet.</li></ul>',
 
-'HELP_DELIVERY_MAIN_CONDITION'                  =>  'Mit <span class="navipath_or_inputname">Bedingung</span> können Sie einstellen, dass die Versandkostenregel nur für eine bestimmte Bedingung gültig ist. Sie können zwischen 4 Bedingungen wählen:<br />' .
+'HELP_DELIVERY_MAIN_CONDITION'                  =>  'Mit <span class="navipath_or_inputname">Bedingung</span> können Sie einstellen, dass die Versandkostenregel nur für eine bestimmte Bedingung gültig ist. Sie können zwischen 4 Bedingungen wählen:<br>' .
                                                     '<ul><li>Menge: Anzahl aller Artikel im Warenkorb.</li>' .
                                                     '<li>Größe: Die Gesamtgröße aller Artikel.</li>' .
                                                     '<li>Gewicht: Das Gesamtgewicht der Bestellung in Kilogramm.</li>' .
@@ -391,7 +437,7 @@ $aLang =  array(
 
 
 
-'HELP_DELIVERYSET_MAIN_POS'                     =>  'Mit <span class="navipath_or_inputname">Sortierung</span> können Sie einstellen, in welcher Reihenfolge die Versandarten den Benutzern angezeigt werden:<br />' .
+'HELP_DELIVERYSET_MAIN_POS'                     =>  'Mit <span class="navipath_or_inputname">Sortierung</span> können Sie einstellen, in welcher Reihenfolge die Versandarten den Benutzern angezeigt werden:<br>' .
                                                     '<ul><li>Die Versandart mit der niedrigsten Zahl wird ganz oben angezeigt.</li>' .
                                                     '<li>Die Versandart mit der höchsten Zahl wird ganz unten angezeigt.</li></ul>',
 
@@ -425,9 +471,9 @@ $aLang =  array(
 
 'HELP_GENIMPORT_REPEATIMPORT'                   =>  'Wenn Sie diese Einstellung aktivieren, wird nach erfolgreichem Import automatisch wieder Schritt 1 angezeigt, damit sie den nächsten Import machen können.',
 
+'HELP_LANGUAGE_DEFAULT'                         => 'Die Standardsprache wird verwendet, wenn OXID eShop die zu verwendete Sprache nicht anderweitig ermitteln kann: Die gewünschte Sprache ist nicht in der URL angegeben, kann nicht über den Browser ermittelt werden und ist nicht in der aktuellen Session gespeichert. Die Standardsprache kann deaktiviert, aber nicht gelöscht werden.',
 
-
-'HELP_PAYMENT_MAIN_SORT'                        =>  'Mit <span class="navipath_or_inputname">Sortierung</span> können Sie einstellen, in welcher Reihenfolge die Zahlungsarten den Benutzern angezeigt werden:<br />' .
+'HELP_PAYMENT_MAIN_SORT'                        =>  'Mit <span class="navipath_or_inputname">Sortierung</span> können Sie einstellen, in welcher Reihenfolge die Zahlungsarten den Benutzern angezeigt werden:<br>' .
                                                     '<ul><li>Die Zahlungsart mit der niedrigsten Zahl wird an erster Stelle angezeigt.</li>' .
                                                     '<li>Die Zahlungsart mit der höchsten Zahl wird an letzter Stelle angezeigt.</li></ul>',
 
@@ -435,7 +481,7 @@ $aLang =  array(
 
 'HELP_PAYMENT_MAIN_SELECTED'                    =>  'Mit <span class="navipath_or_inputname">Ausgewählt</span> können Sie bestimmen, welche Zahlungsart als Standard ausgewählt sein soll, wenn Benutzer im dritten Bestellschritt zwischen verschiedenen Zahlungsarten wählen können.',
 
-'HELP_PAYMENT_MAIN_AMOUNT'                      =>  'Mit <span class="navipath_or_inputname">Einkaufswert</span> können Sie einstellen, dass die Zahlungsart nur für bestimmte Einkaufswerte gültig ist. Mit den Feldern <span class="navipath_or_inputname">von</span> und <span class="navipath_or_inputname">bis</span> können Sie den Bereich einstellen.<br />' .
+'HELP_PAYMENT_MAIN_AMOUNT'                      =>  'Mit <span class="navipath_or_inputname">Einkaufswert</span> können Sie einstellen, dass die Zahlungsart nur für bestimmte Einkaufswerte gültig ist. Mit den Feldern <span class="navipath_or_inputname">von</span> und <span class="navipath_or_inputname">bis</span> können Sie den Bereich einstellen.<br>' .
                                                     'Wenn die Zahlungsart für jeden Einkaufswert gültig sein soll, müssen Sie eine Bedingung eingeben, die immer gültig ist: Geben sie in das Feld <span class="navipath_or_inputname">von</span> <span class="userinput_or_code">0</span> ein, in das Feld <span class="navipath_or_inputname">bis</span> <span class="userinput_or_code">999999999</span>.',
 
 'HELP_PAYMENT_MAIN_ADDPRICE'                    =>  'Bei <span class="navipath_or_inputname">Preis Auf-/Abschlag</span> wird der Preis für die Zahlungsart eingegeben. Die Preise können auf zwei verschiedene Arten angegeben werden:' .
@@ -448,7 +494,7 @@ $aLang =  array(
 
 'HELP_SELECTLIST_MAIN_TITLEIDENT'               =>  'Bei <span class="navipath_or_inputname">Arbeitstitel</span> können Sie einen zusätzlichen Titel eingeben, der den Benutzern Ihres eShops nicht angezeigt wird. Sie können den Arbeitstitel dazu verwenden, um ähnliche Auswahllisten zu unterscheiden (z. B. <span class="filename_filepath_or_italic">Größe für Hosen</span> und <span class="filename_filepath_or_italic">Größe für Hemden</span>).',
 
-'HELP_SELECTLIST_MAIN_FIELDS'                   =>  'In der Liste <span class="navipath_or_inputname">Felder</span> werden alle vorhandenen Ausführungen der Auswahlliste angezeigt. Mit den Eingabefeldern rechts neben <span class="navipath_or_inputname">Felder</span> können Sie neue Ausführungen anlegen.<br />' .
+'HELP_SELECTLIST_MAIN_FIELDS'                   =>  'In der Liste <span class="navipath_or_inputname">Felder</span> werden alle vorhandenen Ausführungen der Auswahlliste angezeigt. Mit den Eingabefeldern rechts neben <span class="navipath_or_inputname">Felder</span> können Sie neue Ausführungen anlegen.<br>' .
                                                     'Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/einfache-varianten-mit-auswahllisten-umsetzen" target="_blank">Auswahllisten-Kapitel im Handbuch</a>.',
 
 
@@ -463,7 +509,7 @@ $aLang =  array(
 
 'HELP_USER_EXTEND_EMAILFAILED'                  =>  'Wenn an die E-Mail Adresse des Benutzers keine E-Mails versendet werden können (z. B. weil die Adresse falsch eingetragen ist), dann setzen Sie hier das Häkchen. Dann werden dem Benutzer keine Newsletter mehr zugesendet. Andere E-Mails werden weiterhin versendet.',
 
-'HELP_USER_EXTEND_DISABLEAUTOGROUP'             =>  'Die Benutzer werden automatisch zu Benutzergruppen zugeordnet. Wenn Sie diese Einstellung aktivieren, wird dieser Benutzer nicht mehr automatisch zugeordnet. <br />' .
+'HELP_USER_EXTEND_DISABLEAUTOGROUP'             =>  'Die Benutzer werden automatisch zu Benutzergruppen zugeordnet. Wenn Sie diese Einstellung aktivieren, wird dieser Benutzer nicht mehr automatisch zugeordnet. <br>' .
                                                     'Die automatischen Benutzergruppen-Zuordnungen werden im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/automatische-benutzergruppen-zuordnungen" target="_blank">éntsprechenden Handbuch-Beitrag</a> aufgelistet.',
 
 'HELP_USER_EXTEND_BONI'                         =>  'Hier können Sie einen Zahlenwert für die Bonität des Benutzers eingeben. Mit der Bonität können Sie beeinflussen, welche Zahlungsarten dem Benutzer zur Verfügung stehen.',
@@ -474,13 +520,13 @@ $aLang =  array(
 
 
 
-'HELP_MANUFACTURER_SEO_FIXED'					=>	'Sie können die SEO URLs vom eShop neu berechnen lassen. Eine Herstellerseite bekommt z. B. eine neue SEO URL, wenn Sie den Titel des Herstellers ändern. Die Einstellung <span class="navipath_or_inputname">URL fixiert</span> unterbindet das: Wenn sie aktiv ist, wird die alte SEO URL beibehalten und keine neue SEO URL berechnet.',
+'HELP_MANUFACTURER_SEO_FIXED'                   =>  'Sie können die SEO URLs vom eShop neu berechnen lassen. Eine Herstellerseite bekommt z. B. eine neue SEO URL, wenn Sie den Titel des Herstellers ändern. Die Einstellung <span class="navipath_or_inputname">URL fixiert</span> unterbindet das: Wenn sie aktiv ist, wird die alte SEO URL beibehalten und keine neue SEO URL berechnet.',
 
-'HELP_MANUFACTURER_SEO_SHOWSUFFIX'				=>	'Diese Einstellung bestimmt, ob das Suffix für den Fenstertitel angezeigt wird, wenn die Herstellerseite im eShop aufgerufen wird. Das Titel Suffix können Sie unter <span class="navipath_or_inputname">Stammdaten -> Grundeinstellungen -> SEO -> Titel Suffix</span> einstellen.',
+'HELP_MANUFACTURER_SEO_SHOWSUFFIX'              =>  'Diese Einstellung bestimmt, ob das Suffix für den Fenstertitel angezeigt wird, wenn die Herstellerseite im eShop aufgerufen wird. Das Titel Suffix können Sie unter <span class="navipath_or_inputname">Stammdaten -> Grundeinstellungen -> SEO -> Titel Suffix</span> einstellen.',
 
-'HELP_MANUFACTURER_SEO_KEYWORDS'				=>	'Diese Stichwörter werden in den HTML-Quelltext (Meta Keywords) eingebunden. Diese Information wird von Suchmaschinen ausgewertet. Hier können Sie passende Stichwörter zu dem Hersteller eingeben. Wenn Sie nichts eingeben, werden die Stichwörter automatisch erzeugt.',
+'HELP_MANUFACTURER_SEO_KEYWORDS'                =>  'Diese Stichwörter werden in den HTML-Quelltext (Meta Keywords) eingebunden. Diese Information wird von Suchmaschinen ausgewertet. Hier können Sie passende Stichwörter zu dem Hersteller eingeben. Wenn Sie nichts eingeben, werden die Stichwörter automatisch erzeugt.',
 
-'HELP_MANUFACTURER_SEO_DESCRIPTION'				=>	'Dieser Beschreibungstext wird in den HTML-Quelltext (Meta Description) eingebunden. Dieser Text wird von vielen Suchmaschinen bei den Suchergebnissen angezeigt. Hier können Sie eine passende Beschreibung für den Hersteller eingeben. Wenn Sie nichts eingeben, wird die Beschreibung automatisch erzeugt.',
+'HELP_MANUFACTURER_SEO_DESCRIPTION'             =>  'Dieser Beschreibungstext wird in den HTML-Quelltext (Meta Description) eingebunden. Dieser Text wird von vielen Suchmaschinen bei den Suchergebnissen angezeigt. Hier können Sie eine passende Beschreibung für den Hersteller eingeben. Wenn Sie nichts eingeben, wird die Beschreibung automatisch erzeugt.',
 'HELP_VOUCHERSERIE_MAIN_DISCOUNT'               =>  'Bei <span class="navipath_or_inputname">Rabatt</span> stellen Sie ein, wie hoch der Rabatt des Gutscheins sein soll sein soll. Mit der Auswahlliste hinter dem Eingabefeld können Sie auswählen, ob der Rabatt absolut oder prozentual sein soll:' .
                                                     '<ul>' .
                                                     '<li><span class="userinput_or_code">abs</span>: Der Rabatt ist absolut, z. B. 5 Euro.</li>' .
@@ -500,4 +546,18 @@ $aLang =  array(
 
 
 'HELP_WRAPPING_MAIN_PICTURE'                    =>  'Bei <span class="navipath_or_inputname">Bild</span> und <span class="navipath_or_inputname">Bild hochladen</span> können Sie ein Bild für die Geschenkverpackung hochladen. Wählen Sie bei <span class="navipath_or_inputname">Bild hochladen</span> das Bild aus, das Sie hochladen möchten. Wenn Sie auf Speichern klicken, wird das Bild hochgeladen. Nachdem das Bild hochgeladen ist, wird der Dateiname des Bildes in <span class="navipath_or_inputname">Bild</span> angezeigt.',
+
+
+
+'HELP_DYN_TRUSTED_RATINGS_ID'                   => 'Sie erhalten Ihre Trusted Shops ID für die Kundenbewertungen per E-Mail in Ihrer Auftragsbestätigung von Trusted Shops. Soweit Sie bereits Mitglied bei Trusted Shops sind, verwenden Sie bitte Ihre bekannte Trusted Shops ID. Das grüne Licht zeigt Ihnen an, dass die Trusted Shops Kundenbewertung geprüft und aktiviert wurden, nachdem Sie die Eingabe gespeichert haben.',
+'HELP_DYN_TRUSTED_RATINGS_WIDGET'               => 'Aktivieren Sie diese Option, um das Bewertungs-Widget in Ihrem Shop anzuzeigen.',
+'HELP_DYN_TRUSTED_RATINGS_THANKYOU'             => 'Aktivieren Sie diese Option, um den Button "Bewerten Sie uns!" auf der Bestätigungsseite "Bestellung abgeschlossen" im direkten Anschluss an eine Bestellung anzuzeigen.',
+'HELP_DYN_TRUSTED_RATINGS_ORDEREMAIL'           => 'Aktivieren Sie diese Option, um den Button "Bewerten Sie uns!" in der Bestellbestätigungsmail im direkten Anschluss an eine Bestellung anzuzeigen.',
+'HELP_DYN_TRUSTED_RATINGS_ORDERSENDEMAIL'       => 'Aktivieren Sie diese Option, um den Button "Bewerten Sie uns!" in der Benachrichtigung "Bestellung wurde versandt" per E-Mail anzuzeigen.',
+'HELP_DYN_TRUSTED_TSID'                         => 'Trusted Shops ID des Online Shops',
+'HELP_DYN_TRUSTED_USER'                         => 'Ein Benutzername (wsUser) für den Trusted Shops Webservice ist erforderlich, wenn Sie Ihren Kunden den kostenpflichtigen Käuferschutz Trusted Shops Excellence anbieten. Der Käuferschutz Classic erfordert keine Eingabe eines Benutzernamens.',
+'HELP_DYN_TRUSTED_PASSWORD'                     => 'Ein Passwort (wsPasswort) für den Trusted Shops Webservice ist erforderlich, wenn Sie Ihren Kunden den kostenpflichtigen Käuferschutz Trusted Shops Excellence anbieten. Der Käuferschutz Classic erfordert keine Eingabe eines Passworts.',
+'HELP_DYN_TRUSTED_TESTMODUS'                    => 'Testumgebung ("Sandbox") einschalten. Nach Abschluss der Zertifizierung sendet Ihnen Ihr Ansprechpartner bei Trusted Shops die Zugangsdaten per E-Mail.',
+'HELP_DYN_TRUSTED_ACTIVE'                       => 'Aktivieren Sie diese Option, um das Trusted Shops Siegel im shop anzuzeigen.',
+'HELP_DYN_TRUSTED_TSPAYMENT'                    => 'Ordnen Sie den im Shop angebotenen Zahlungsarten die entsprechende Zahlungsart bei Trusted Shop zu.',
 );

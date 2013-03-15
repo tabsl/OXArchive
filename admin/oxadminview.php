@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadminview.php 27025 2010-04-06 06:53:48Z arvydas $
+ * @version   SVN: $Id: oxadminview.php 28466 2010-06-19 08:49:41Z arvydas $
  */
 
 /**
@@ -209,6 +209,9 @@ class oxAdminView extends oxView
         //$this->_aViewData['adminlang'] = isset( $iDynInterfaceLanguage )?$iDynInterfaceLanguage:$myConfig->getConfigParam( 'iAdminLanguage' );
         $this->_aViewData['adminlang'] = isset( $iDynInterfaceLanguage )?$iDynInterfaceLanguage:$oLang->getTplLanguage();
         $this->_aViewData['charset']   = $oLang->translateString( 'charset' );
+
+        //setting active currency object
+        $this->_aViewData["oActCur"] = $myConfig->getActShopCurrencyObject();
 
         return $oShop;
     }
@@ -424,16 +427,16 @@ class oxAdminView extends oxView
     /**
      * Reset output cache
      *
-     * @param bool $blForceResete if true, forces reset
+     * @param bool $blForceReset if true, forces reset
      *
      * @return null
      */
-    public function resetContentCache( $blForceResete = null )
+    public function resetContentCache( $blForceReset = null )
     {
         $blDeleteCacheOnLogout = $this->getConfig()->getConfigParam( 'blClearCacheOnLogout' );
 
 
-            if ( !$blDeleteCacheOnLogout  || $blForceResete ) {
+            if ( !$blDeleteCacheOnLogout  || $blForceReset ) {
                 oxUtils::getInstance()->oxResetFileCache();
             }
     }

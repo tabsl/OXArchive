@@ -20,14 +20,23 @@
               <li><a href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_recommlist" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_MYRECOMMLIST" }]</a></li>
             [{/if}]
 
+            [{if $oView->isConnectedWithFb()}]
+            <li><a href="javascript:;" rel="nofollow" onclick="FB.logout()">[{ oxmultilang ident="INC_ACCOUNT_HEADER_LOGOUT" }]</a></li>
+            [{else}]
             <li><a href="[{ $oViewConf->getLogoutLink() }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_LOGOUT" }]</a></li>
+            [{/if}]
+
         </ul>
         [{/strip}]
     </dd>
     <dd>
         [{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_LOGGEDINAS" }]<br>
         <b>[{ $oxcmp_user->oxuser__oxfname->value}] [{$oxcmp_user->oxuser__oxlname->value}]</b><br>
+        [{if $oView->isConnectedWithFb()}]
+        <fb:login-button size="small" autologoutlink="true" length="short">[{ oxmultilang ident="INC_HEADER_LOGOUT" }]</fb:login-button>
+        [{else}]
         <span class="btn"><a id="test_TopAccLogout" href="[{ $oViewConf->getLogoutLink() }]" rel="nofollow">[{ oxmultilang ident="INC_HEADER_LOGOUT" }]</a></span>
+        [{/if}]
     </dd>
 </dl>
 [{oxscript add="oxid.topnav('tm.account.dt','tm.account.dd');" }]

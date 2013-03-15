@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 27205 2010-04-14 12:32:25Z arvydas $
+ * @version   SVN: $Id: oxuser.php 28659 2010-06-28 13:32:01Z rimvydas.paskevicius $
  */
 
 /**
@@ -439,6 +439,7 @@ class oxUser extends oxBase
      */
     public function save()
     {
+        $myConfig  = oxConfig::getInstance();
 
         $blAddRemark = false;
         if ( $this->oxuser__oxpassword->value && $this->oxuser__oxregister->value < 1 ) {
@@ -453,6 +454,14 @@ class oxUser extends oxBase
         // processing birth date which came from output as array
         if ( is_array( $this->oxuser__oxbirthdate->value ) ) {
             $this->oxuser__oxbirthdate = new oxField($this->convertBirthday( $this->oxuser__oxbirthdate->value ), oxField::T_RAW);
+        }
+
+        // checking if user Facebook ID should be updated
+        if ( $myConfig->getConfigParam( "bl_showFbConnect" ) ) {
+            $oFb = oxFb::getInstance();
+            if ( $oFb->isConnected() && $oFb->getUser() ) {
+                 $this->oxuser__oxfbid = new oxField( $oFb->getUser() );
+            }
         }
 
         $blRet = parent::save();
@@ -606,13 +615,20 @@ class oxUser extends oxBase
     /**
      * Returns object with ordering information (order articles list).
      *
+     * @param int $iLimit how many entries to load
+     * @param int $iPage  which page to start
+     *
      * @return object
      */
-    public function getOrders()
+    public function getOrders( $iLimit = false, $iPage = 0 )
     {
         $myConfig = $this->getConfig();
         $oOrders = oxNew( 'oxlist' );
         $oOrders->init( 'oxorder' );
+
+        if ( $iLimit !== false ) {
+            $oOrders->setSqlLimit( $iLimit * $iPage, $iLimit );
+        }
 
         //P
         // Lists does not support loading from two tables, so orders
@@ -1361,6 +1377,20 @@ class oxUser extends oxBase
             }
         }
 
+        // Checking if user is connected via Facebook connect.
+        // If yes, trying to login user using user Facebook ID
+        if ( $myConfig->getConfigParam( "bl_showFbConnect") && !$sUserID && !$blAdmin ) {
+            $oFb = oxFb::getInstance();
+            if ( $oFb->isConnected() && $oFb->getUser() ) {
+                $sUserSelect = "oxuser.oxfbid = " . $oDB->quote( $oFb->getUser() );
+                $sShopSelect = "";
+
+
+                $sSelect =  "select oxid from oxuser where oxuser.oxactive = 1 and {$sUserSelect} {$sShopSelect} ";
+                $sUserID = $oDB->getOne( $sSelect );
+            }
+        }
+
         // checking user results
         if ( $sUserID ) {
             if ( $this->load( $sUserID ) ) {
@@ -1531,14 +1561,7 @@ class oxUser extends oxBase
             $this->oxuser__oxboni = new oxField($this->getBoni(), oxField::T_RAW);
         }
 
-        if ( $blInsert = parent::_insert() ) {
-            // setting customer number
-            if ( !$this->oxuser__oxcustnr->value || !$this->isAdmin() ) {
-                $this->_setRecordNumber( 'oxcustnr' );
-            }
-        }
-
-        return $blInsert;
+        return parent::_insert();
     }
 
     /**
@@ -2334,4 +2357,97 @@ class oxUser extends oxBase
         return $this->oxuser__oxstateid->value;
     }
 
+    /**
+     * Checks if user accepted latest shopping terms and conditions version
+     *
+     * @return bool
+     */
+    public function isTermsAccepted()
+    {
+        $sShopId = $this->getConfig()->getShopId();
+        $sUserId = $this->getId();
+        return (bool) oxDb::getDb()->getOne( "select 1 from oxacceptedterms where oxuserid='{$sUserId}' and oxshopid='{$sShopId}'" );
+    }
+
+    /**
+     * Writes terms acceptance info to db
+     *
+     * @return null
+     */
+    public function acceptTerms()
+    {
+        $sUserId  = $this->getId();
+        $sShopId  = $this->getConfig()->getShopId();
+        $sVersion = oxNew( "oxcontent" )->getTermsVersion();
+
+        oxDb::getDb()->execute( "replace oxacceptedterms set oxuserid='{$sUserId}', oxshopid='{$sShopId}', oxtermversion='{$sVersion}'" );
+    }
+
+    /**
+     * Assigns registration points for invited user and
+     * its inviter (calls oxUser::setInvitationCreditPoints())
+     *
+     * @param string $sUserId inviter user id
+     *
+     * @return bool
+     */
+    public function setCreditPointsForRegistrant( $sUserId )
+    {
+        $blSet   = false;
+        $iPoints = $this->getConfig()->getConfigParam( 'dPointsForRegistration' );
+        if ( $iPoints ) {
+            $this->oxuser__oxpoints = new oxField( $iPoints, oxField::T_RAW );
+            if ( $blSet = $this->save() ) {
+                $oDb = oxDb::getDb();
+
+                // updating users statistics
+                $oDb->execute( "UPDATE oxinvitations SET oxpending = '0', oxaccepted = '1' where oxuserid = ". $oDb->quote( $sUserId ) );
+
+                $oInvUser = oxNew( "oxuser" );
+                if ( $oInvUser->load( $sUserId ) ) {
+                    $blSet = $oInvUser->setCreditPointsForInviter();
+                }
+            }
+
+            oxSession::deleteVar( 'su' );
+        }
+
+        return $blSet;
+    }
+
+    /**
+     * Assigns credit points to inviter
+     *
+     * @return bool
+     */
+    public function setCreditPointsForInviter()
+    {
+        $blSet   = false;
+        $iPoints = $this->getConfig()->getConfigParam( 'dPointsForInvitation' );
+        if ( $iPoints ) {
+            $iNewPoints = $this->oxuser__oxpoints->value + $iPoints;
+            $this->oxuser__oxpoints = new oxField( $iNewPoints, oxField::T_RAW );
+            $blSet = $this->save();
+        }
+
+        return $blSet;
+    }
+
+    /**
+     * Updates user Facebook ID
+     *
+     * @return null
+     */
+    public function updateFbId()
+    {
+        $oFb = oxFb::getInstance();
+        $blRet = false;
+
+        if ( $oFb->isConnected() && $oFb->getUser() ) {
+             $this->oxuser__oxfbid = new oxField( $oFb->getUser() );
+             $blRet = $this->save();
+        }
+
+        return $blRet;
+    }
 }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdbmetadatahandler.php 26848 2010-03-25 15:08:28Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxdbmetadatahandler.php 28098 2010-06-02 14:17:28Z michael.keiluweit $
  */
 
 /**
@@ -30,19 +30,19 @@ class oxDbMetaDataHandler extends oxSuperCfg
 {
     /**
      *
-     * @var unknown_type
+     * @var array
      */
     protected $_aDbTablesFields = null;
 
     /**
      *
-     * @var unknown_type
+     * @var array
      */
     protected $_aTables = null;
 
     /**
      *
-     * @var unknown_type
+     * @var int
      */
     protected $_iCurrentMaxLangId;
 

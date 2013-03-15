@@ -130,7 +130,7 @@ function editThis( sID )
           </tr>
           <tr>
             <td class="edittext">
-              [{ oxmultilang ident="ARTICLE_EXTEND_BPRICE" }]
+              [{ oxmultilang ident="ARTICLE_EXTEND_BPRICE" }] ([{ $oActCur->sign }])
             </td>
             <td class="edittext">
               <input type="text" class="editinput" size="8" maxlength="[{$edit->oxarticles__oxbprice->fldmax_length}]" name="editval[oxarticles__oxbprice]" value="[{$edit->oxarticles__oxbprice->value}]" [{ $readonly }]>&nbsp;&nbsp;[{ oxmultilang ident="ARTICLE_EXTEND_TPRICE" }] <input type="text" class="editinput" size="8" maxlength="[{$edit->oxarticles__oxtprice->fldmax_length}]" name="editval[oxarticles__oxtprice]" value="[{$edit->oxarticles__oxtprice->value}]" [{ $readonly }]>

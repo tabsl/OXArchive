@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlanguageexception.php 25635 2010-02-04 21:29:50Z alfonsas $
+ * @version   SVN: $Id: oxlanguageexception.php 28204 2010-06-08 06:36:11Z michael.keiluweit $
  */
 
 /**
@@ -49,7 +49,7 @@ class oxLanguageException extends oxException
     /**
     * Get language constant
     *
-    * @return unknown
+    * @return string
     */
     public function getLangConstant()
     {

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: actions_list.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: actions_list.php 28470 2010-06-19 12:49:59Z arvydas $
  */
 
 /**
@@ -50,4 +50,55 @@ class Actions_List extends oxAdminList
      * @var string
      */
     protected $_sDefSort = 'oxactions.oxtitle';
+
+    /**
+     * Calls parent::render() and returns name of template to render
+     *
+     * @return string
+     */
+    public function render()
+    {
+        parent::render();
+
+        // passing display type back to view
+        $this->_aViewData["displaytype"] = oxConfig::getParameter( "displaytype" );
+
+        return $this->_sThisTemplate;
+    }
+
+    /**
+     * Adds active promotion check
+     *
+     * @param array  $aWhere  SQL condition array
+     * @param string $sqlFull SQL query string
+     *
+     * @return $sQ
+     */
+    protected function _prepareWhereQuery( $aWhere, $sqlFull )
+    {
+        $sQ = parent::_prepareWhereQuery( $aWhere, $sqlFull );
+        $sDisplayType = (int) oxConfig::getParameter( 'displaytype' );
+        $sTable = getViewName( "oxactions" );
+
+        //searchong for empty oxfolder fields
+        if ( $sDisplayType ) {
+
+            $sNow   = date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() );
+
+            switch ( $sDisplayType ) {
+                case 1: // active
+                    $sQ .= " and {$sTable}.oxactivefrom < '{$sNow}' and {$sTable}.oxactiveto > '{$sNow}' ";
+                    break;
+                case 2: // upcoming
+                    $sQ .= " and {$sTable}.oxactivefrom > '{$sNow}' ";
+                    break;
+                case 3: // expired
+                    $sQ .= " and {$sTable}.oxactiveto < '{$sNow}' and {$sTable}.oxactiveto != '0000-00-00 00:00:00' ";
+                    break;
+            }
+        }
+
+
+        return $sQ;
+    }
 }

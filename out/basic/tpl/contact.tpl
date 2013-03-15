@@ -17,7 +17,7 @@
   [{/if}]
 
   [{ if $oxcmp_shop->oxshops__oxinfoemail->value}]
-    [{ oxmultilang ident="CONTACT_EMAIL" }] [{mailto address=$oxcmp_shop->oxshops__oxinfoemail->value encode="javascript"}]<br>
+    [{ oxmultilang ident="CONTACT_EMAIL" }] [{oxmailto address=$oxcmp_shop->oxshops__oxinfoemail->value encode="javascript"}]<br>
   [{/if}]
 </div>
 

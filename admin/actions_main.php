@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: actions_main.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: actions_main.php 28344 2010-06-15 11:32:21Z sarunas $
  */
 
 /**
@@ -91,11 +91,39 @@ class Actions_Main extends oxAdminDetails
 
             return "popups/actions_main.tpl";
         }
+        
+        
+        if ( ( $oPromotion = $this->getViewDataElement( "edit" ) ) ) {
+            if ( $oPromotion->oxactions__oxtype->value == 2 ) {
+                $this->_aViewData["editor"] = $this->_generateTextEditor( "100%", 300, $oPromotion, "oxactions__oxlongdesc", "details.tpl.css" );
+
+                if ( $iAoc = oxConfig::getParameter( "oxscpromotionsaoc" ) ) {
+                    $sPopup = false;
+                    switch( $iAoc ) {
+                        /*case 1:
+                            $sPopup = 'oxscpromotions_products';
+                            break;*/
+                        case 2:
+                            $sPopup = 'actions_groups';
+                            break;
+                    }
+
+                    if ( $sPopup ) {
+                        $aColumns = array();
+                        include_once "inc/{$sPopup}.inc.php";
+                        $this->_aViewData['oxajax'] = $aColumns;
+                        return "popups/{$sPopup}.tpl";
+                    }
+                }
+            }
+        }
+                
         return "actions_main.tpl";
     }
 
+
     /**
-     * Saves article actionss.
+     * Saves Promotions
      *
      * @return mixed
      */
@@ -107,20 +135,29 @@ class Actions_Main extends oxAdminDetails
         $soxId   = oxConfig::getParameter( "oxid");
         $aParams = oxConfig::getParameter( "editval");
 
-        $oAction = oxNew( "oxactions" );
-        if ( $soxId != "-1" && $oAction->load( $soxId ) ) {
-
-            if ( !$aParams['oxactions__oxactive'] ) {
-                $aParams['oxactions__oxactive'] = 0;
-            }
-
-            $oAction->setLanguage( 0 );
-            $oAction->assign( $aParams );
-            $oAction->setLanguage( $this->_iEditLang );
-            $oAction = oxUtilsFile::getInstance()->processFiles( $oAction );
-            $oAction->save();
-            $this->_aViewData["updatelist"] = "1";
+        $oPromotion = oxNew( "oxactions" );
+        if ( $soxId != "-1" ) {
+            $oPromotion->load( $soxId );
+        } else {
+            $aParams['oxactions__oxid']   = null;
         }
+
+        if ( !$aParams['oxactions__oxactive'] ) {
+            $aParams['oxactions__oxactive'] = 0;
+        }
+
+        $oPromotion->setLanguage( 0 );
+        $oPromotion->assign( $aParams );
+        $oPromotion->setLanguage( $this->_iEditLang );
+        $oPromotion = oxUtilsFile::getInstance()->processFiles( $oPromotion );
+        $oPromotion->save();
+
+        // set oxid if inserted
+        if ( $soxId == "-1") {
+            oxSession::setVar( "saved_oxid", $oPromotion->getId() );
+        }
+
+        $this->_aViewData["updatelist"] = "1";
     }
 
     /**

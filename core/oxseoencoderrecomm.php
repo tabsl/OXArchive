@@ -75,13 +75,19 @@ class oxSeoEncoderRecomm extends oxSeoEncoder
             $myConfig = $this->getConfig();
 
             // fetching part of base url
-            $sSeoUrl = $this->_getStaticUri( $oRecomm->getBaseStdLink( $iLang, false ), $myConfig->getShopId(), $iLang ) . $this->_prepareTitle( $oRecomm->oxrecommlists__oxtitle->value );
+            $sSeoUrl = $this->_getStaticUri(
+                        $oRecomm->getBaseStdLink( $iLang, false ),
+                        $myConfig->getShopId(),
+                        $iLang
+                    )
+                    .
+                    $this->_prepareTitle( $oRecomm->oxrecommlists__oxtitle->value );
 
             // creating unique
             $sSeoUrl = $this->_processSeoUrl( $sSeoUrl, $oRecomm->getId(), $iLang );
 
             // inserting
-            $this->_saveToDb( 'dynamic', $oRecomm->getId(), $oRecomm->getStdLink( $iLang ), $sSeoUrl, $iLang, $myConfig->getShopId() );
+            $this->_saveToDb( 'dynamic', $oRecomm->getId(), $oRecomm->getBaseStdLink( $iLang ), $sSeoUrl, $iLang, $myConfig->getShopId() );
         }
 
         return $sSeoUrl;
@@ -118,7 +124,7 @@ class oxSeoEncoderRecomm extends oxSeoEncoder
         if (!isset($iLang)) {
             $iLang = oxLang::getInstance()->getBaseLanguage();
         }
-        $sStdUrl = $oRecomm->getStdLink( $iLang ) . '&amp;pgNr=' . $iPage;
+        $sStdUrl = $oRecomm->getBaseStdLink( $iLang ) . '&amp;pgNr=' . $iPage;
         $sParams = (int) ($iPage + 1);
 
         $sStdUrl = $this->_trimUrl( $sStdUrl, $iLang );

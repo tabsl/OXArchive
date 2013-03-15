@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oximex.php 27794 2010-05-18 13:52:47Z sarunas $
+ * @version   SVN: $Id: oximex.php 28090 2010-06-02 13:50:29Z michael.keiluweit $
  */
 
 /**
@@ -60,7 +60,7 @@ class oxImex extends oxBase
             while (!$rs->EOF) {
                 $oArticle = oxNew( "oxarticle" );
                 $blAdmin = $this->isAdmin();
-                // TODO: this workaround should be overworked
+                // TODO: this place could be optimized. please check what we can do.
                 $this->setAdminMode( false );
                 $oArticle->load( $rs->fields['OXID']);
                 $this->setAdminMode( $blAdmin );

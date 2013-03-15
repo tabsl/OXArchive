@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxmediaurl.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxmediaurl.php 27916 2010-05-26 06:49:19Z arvydas $
  */
 
 /**
@@ -69,14 +69,14 @@ class oxMediaUrl extends oxI18n
      *
      * @return string
      */
-    public function getHtmlLink($blNewPage = false)
+    public function getHtmlLink( $blNewPage = true )
     {
         $sUrl = $this->oxmediaurls__oxurl->value;
         $sDesc = $this->oxmediaurls__oxdesc->value;
 
-        $sForceBlank = $blNewPage?'target=_blank':'';
+        $sForceBlank = $blNewPage?' target="_blank"':'';
 
-        $sHtmlLink = "<a href='$sUrl' $sForceBlank >$sDesc</a>";
+        $sHtmlLink = "<a href=\"$sUrl\"{$sForceBlank}>$sDesc</a>";
         return $sHtmlLink;
     }
 

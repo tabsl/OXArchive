@@ -31,6 +31,18 @@
   </div><br><br>
   [{/if}]
 
+  [{if $oViewConf->showTs("THANKYOU") && $oViewConf->getTsId() }]
+  <strong class="boxhead">[{ oxmultilang ident="TS_RATINGS" }]</strong>
+  <div class="box info">
+    <div>
+      [{ oxmultilang ident="TS_RATINGS_RATEUS" }]
+      <a href="[{ $oViewConf->getTsRatingUrl() }]" target="_blank" title="[{ oxmultilang ident="TS_RATINGS_URL_TITLE" }]">
+        <img src="https://www.trustedshops.com/bewertung/widget/img/bewerten_de.gif" border="0" alt="[{ oxmultilang ident="TS_RATINGS_BUTTON_ALT" }]" align="middle">
+      </a>
+    </div>
+  </div>
+  [{/if}]
+
   [{if ( $oView->getTrustedShopId()) || $iswebmiles || $oxcmp_shop->oxshops__oxadbutlerid->value ||
        $oxcmp_shop->oxshops__oxaffilinetid->value || $oxcmp_shop->oxshops__oxsuperclicksid->value ||
        $oxcmp_shop->oxshops__oxaffiliweltid->value || $oxcmp_shop->oxshops__oxaffili24id->value }]
@@ -82,7 +94,7 @@
           <!--Affilinet-->
           [{assign var="discountnetprice" value=$basket->getDiscountedNettoPrice()}]
           [{assign var="currencycovindex" value=$oView->getCurrencyCovIndex()}]
-          <img src="https://partners.webmasterplan.com/registersale.asp?site=[{$oxcmp_shop->oxshops__oxaffilinetid->value }]&amp;order=[{$order->oxorder__oxordernr->value }]&amp;curr=eur&amp;price=[{$discountnetprice * $currencycovindex|string_format:"%.2f"}]" WIDTH="1" HEIGHT="1">
+          <img src="https://partners.webmasterplan.com/registersale.asp?site=[{$oxcmp_shop->oxshops__oxaffilinetid->value }]&amp;order=[{$order->oxorder__oxordernr->value }]&amp;curr=[{$order->oxorder__oxcurrency->value}]&amp;price=[{$discountnetprice * $currencycovindex|string_format:"%.2f"}]" WIDTH="1" HEIGHT="1">
           <!--Affilinet Ende-->
         [{/if}]
 

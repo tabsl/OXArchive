@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcountry.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxcountry.php 28204 2010-06-08 06:36:11Z michael.keiluweit $
  */
 
 
@@ -74,7 +74,7 @@ class oxCountry extends oxI18n
     /**
      * Returns current state list
      *
-     * @return unknown
+     * @return array
      */
     public function getStates()
     {

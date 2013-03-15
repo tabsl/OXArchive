@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: thankyou.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: thankyou.php 28010 2010-05-28 09:23:10Z sarunas $
  */
 
 /**
@@ -359,6 +359,17 @@ class Thankyou extends oxUBase
             $oCountry->load( $oOrder->oxorder__oxbillcountryid->value );
             return $oCountry->oxcountry__oxisoalpha3->value;
         }
+    }
+
+    /**
+     * Returns name of a view class, which will be active for an action
+     * (given a generic fnc, e.g. logout)
+     *
+     * @return string
+     */
+    public function getActionClassName()
+    {
+        return 'start';
     }
 
 }

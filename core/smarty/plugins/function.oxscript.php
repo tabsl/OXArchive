@@ -19,7 +19,7 @@
  * @package   smarty_plugins
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: function.oxscript.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: function.oxscript.php 28124 2010-06-03 11:27:00Z alfonsas $
  */
 
 /**
@@ -28,9 +28,12 @@
  * File: function.oxscript.php
  * Type: string, html
  * Name: oxscript
- * Purpose: Collect needed javascript calls, and execute them at he bottom of the page
- * add [{ oxscript add="oxid.popup.load" }] where you need to add stripts and
- * execute and  [{ oxscript }] where you need to output all collected script calls
+ * Purpose: Collect needed javascript includes and calls, but execute them at the bottom of the page.
+ *
+ * Add [{ oxscript add="oxid.popup.load" }] where you need to add stript calls.
+ * Add [{oxscript include="oxid.js"}] to include externall javascript file.
+ *
+ * Add [{ oxscript }] where you need to output all collected script includes and calls.
  * -------------------------------------------------------------
  *
  * @param array  $params  params
@@ -40,19 +43,33 @@
  */
 function smarty_function_oxscript($params, &$smarty)
 {
-    $myConfig = oxConfig::getInstance();
+    $myConfig  = oxConfig::getInstance();
+    $sSufix    = ($smarty->_tpl_vars["__oxid_include_dynamic"])?'_dynamic':'';
+    $sIncludes = 'includes'.$sSufix;
+    $sScripts  = 'scripts'.$sSufix;
 
-    $sVarname = 'scripts';
-    if ($smarty->_tpl_vars["__oxid_include_dynamic"]) {
-        $sVarname .= '_dynamic';
-    }
-
-    $sScript = $myConfig->getGlobalParameter($sVarname);
+    $sScript  = (string) $myConfig->getGlobalParameter($sScripts);
+    $aInclude = (array) $myConfig->getGlobalParameter($sIncludes);
+    $sOutput  = '';
 
     if ( $params['add'] ) {
-        $myConfig->setGlobalParameter($sVarname, $sScript.$params['add']);
-        return '';
+        $sScript .= $params['add'];
+        $myConfig->setGlobalParameter($sScripts, $sScript);
+
+    } elseif ( $params['include'] ) {
+        $sInclude = $params['include'];
+        $aInclude[] = $myConfig->getResourceUrl($sInclude);
+        $aInclude = array_unique($aInclude);
+        $myConfig->setGlobalParameter($sIncludes, $aInclude);
+
     } else {
-        return $sScript;
+        foreach ($aInclude as $sSrc) {
+            $sOutput .= '<script type="text/javascript" src="'.$sSrc.'"></script>'."\n";
+        }
+        if (strlen($sScript)) {
+            $sOutput .= '<script type="text/javascript">'.$sScript.'</script>';
+        }
     }
+
+    return $sOutput;
 }

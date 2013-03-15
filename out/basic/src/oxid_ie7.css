@@ -35,7 +35,6 @@ dl.box, ul.menue li {z-index: 1000;}
 /* IE opacity */
 #mask.on { filter:Alpha(Opacity=70);}
 div.bar.links a.language.act img{filter:Alpha(Opacity=70);}
-#body #demoAdminLink {filter:Alpha(opacity=70);}
 
 /* IE fixing problem with collspan when <td> has colspan and nonbreakable content doesn't fit in it */
 .showHideShippAddr {width: 543px; overflow: hidden;}

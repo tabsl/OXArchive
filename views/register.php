@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: register.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: register.php 28507 2010-06-21 15:03:38Z rimvydas.paskevicius $
  */
 
 /**
@@ -36,17 +36,24 @@ class Register extends User
     protected $_sThisTemplate = 'register.tpl';
 
     /**
-     * Order step marker
-     * @var bool
-     */
-    protected $_blIsOrderStep = false;
-
-    /**
      * Successful registration confirmation template
      *
      * @var string
      */
     protected $_sSuccessTemplate = 'register_success.tpl';
+
+    /**
+     * Successful Confirmation state template name
+     *
+     * @var string
+     */
+    protected $_sConfirmTemplate = 'register_confirm.tpl';
+
+    /**
+     * Order step marker
+     * @var bool
+     */
+    protected $_blIsOrderStep = false;
 
     /**
      * Current view search engine indexing state
@@ -66,18 +73,19 @@ class Register extends User
         parent::render();
 
         // checking registration status
-        if ( $this->getRegistrationStatus() ) {
-
+        if ( $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) && $this->isConfirmed() ) {
+            $sTemplate = $this->_sConfirmTemplate;
+        } elseif ( $this->getRegistrationStatus() ) {
             //for older templates
             $this->_aViewData['error']   = $this->getRegistrationError();
             $this->_aViewData['success'] = $this->getRegistrationStatus();
-
-            return $this->_sSuccessTemplate;
+            $sTemplate = $this->_sSuccessTemplate;
+        } else {
+            $this->_aViewData['aMustFillFields'] = $this->getMustFillFields();
+            $sTemplate = $this->_sThisTemplate;
         }
 
-        $this->_aViewData['aMustFillFields'] = $this->getMustFillFields();
-
-        return $this->_sThisTemplate;
+        return $sTemplate;
     }
 
     /**
@@ -150,6 +158,59 @@ class Register extends User
         }
 
         return false;
+    }
+
+    /**
+     * Registration confirmation functionality. If registration
+     * succeded - redirects to success page, if not - returns
+     * exception informing about expired confirmation link
+     *
+     * @return mixed
+     */
+    public function confirmRegistration()
+    {
+        $oUser = oxNew( 'oxuser' );
+        if ( $oUser->loadUserByUpdateId( $this->getUpdateId() ) ) {
+
+            // resetting update key parameter
+            $oUser->setUpdateKey( true );
+
+            // saving ..
+            $oUser->oxuser__oxactive = new oxField( 1 );
+            $oUser->save();
+
+            // forcing user login
+            oxSession::setVar( 'usr', $oUser->getId() );
+
+            // redirecting to confirmation page
+            return 'register?confirmstate=1';
+        } else {
+            // confirmation failed
+            oxUtilsView::getInstance()->addErrorToDisplay( 'REGISTER_ERRLINKEXPIRED', false, true );
+
+            // redirecting to confirmation page
+            return 'account';
+        }
+    }
+
+    /**
+     * Returns special id used for password update functionality
+     *
+     * @return string
+     */
+    public function getUpdateId()
+    {
+        return oxConfig::getParameter( 'uid' );
+    }
+
+    /**
+     * Returns confirmation state: "1" - success, "-1" - error
+     *
+     * @return int
+     */
+    public function isConfirmed()
+    {
+         return (bool) oxConfig::getParameter( "confirmstate" );
     }
 
 }

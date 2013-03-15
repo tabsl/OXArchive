@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_user.php 27823 2010-05-20 08:54:25Z tomas $
+ * @version   SVN: $Id: oxcmp_user.php 28592 2010-06-23 11:17:38Z arvydas $
  */
 
 // defining login/logout states
@@ -62,6 +62,43 @@ class oxcmp_user extends oxView
     protected $_iLoginStatus = null;
 
     /**
+     * Terms/conditions version number
+     *
+     * @var string
+     */
+    protected $_sTermsVer = null;
+
+    /**
+     * View classes accessible for not logged in customers
+     *
+     * @var array
+     */
+    protected $_aAllowedClasses = array(
+                                        'register',
+                                        'forgotpwd',
+                                        'content',
+                                        );
+
+    /**
+     * Billing address fields which should be taken raw (no encoding)
+     *
+     * @var array
+     */
+    protected $_aRawBillingFields = array( 'oxuser__oxcompany', 'oxuser__oxaddinfo', 'oxuser__oxfname',
+                                           'oxuser__oxlname', 'oxuser__oxstreet', 'oxuser__oxstreetnr',
+                                           'oxuser__oxcity', 'oxuser__oxfon', 'oxuser__oxfax',
+                                           'oxuser__oxmobfon', 'oxuser__oxprivfon' );
+
+    /**
+     * Shipping addresses fields which should be taken raw (no encoding)
+     *
+     * @var array
+     */
+    protected $_aRawShippingFields = array( 'oxaddress__oxcompany', 'oxaddress__oxaddinfo', 'oxaddress__oxfname',
+                                            'oxaddress__oxlname', 'oxaddress__oxcity', 'oxaddress__oxstreet',
+                                            'oxaddress__oxstreetnr', 'oxaddress__oxzip', 'oxaddress__oxfon',
+                                            'oxaddress__oxfax' );
+    /**
      * Sets oxcmp_oxuser::blIsComponent = true, fetches user error
      * code and sets it to default - 0. Executes parent::init().
      *
@@ -74,6 +111,11 @@ class oxcmp_user extends oxView
     {
         // load session user
         $this->_loadSessionUser();
+
+        if ( $this->getConfig()->getConfigParam( 'blInvitationsEnabled' ) ) {
+            // get invitor ID
+            $this->getInvitor();
+        }
 
         parent::init();
     }
@@ -92,6 +134,23 @@ class oxcmp_user extends oxView
      */
     public function render()
     {
+        $oConfig = $this->getConfig();
+        if ( $oConfig->getConfigParam( 'blPsLoginEnabled' ) ) {
+            // load session user
+            $oUser = $this->getUser();
+
+            // no session user
+            if ( !$oUser && !in_array( $this->getParent()->getClassName(), $this->_aAllowedClasses ) ) {
+                oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() . 'cl=account' );
+            }
+
+            if ( $oUser && !$oUser->isTermsAccepted() &&
+                 $oConfig->getConfigParam( 'blConfirmAGB' ) &&
+                 !in_array( $blRegister, $this->_aAllowedClasses ) ) {
+                oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() . 'cl=account&term=1' );
+            }
+        }
+
         parent::render();
 
         // dyn_group feature: if you specify a groupid in URL the user
@@ -158,7 +217,7 @@ class oxcmp_user extends oxView
             oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() . 'cl=content&tpl=user_blocked.tpl' );
         }
 
-        // TODO: we need todo something with this !!!
+        // TODO: move this to a proper place
         if ( $oUser->isLoadedFromCookie() ) {
 
             // #1678 R
@@ -191,6 +250,7 @@ class oxcmp_user extends oxView
         $sPassword = oxConfig::getParameter( 'lgn_pwd' );
         $sCookie   = oxConfig::getParameter( 'lgn_cook' );
         $sOpenId   = oxConfig::getParameter( 'lgn_openid' );
+        //$blFbLogin = oxConfig::getParameter( 'fblogin' );
 
         $this->setLoginStatus( USER_LOGIN_FAIL );
 
@@ -270,7 +330,30 @@ class oxcmp_user extends oxView
      */
     public function login_noredirect()
     {
+        if ( $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) && oxConfig::getParameter( 'ord_agb' ) &&
+             $this->getConfig()->getConfigParam( 'blConfirmAGB' ) && ( $oUser = $this->getUser() ) ) {
+            $oUser->acceptTerms();
+        } else {
+            $this->login();
+        }
+    }
+
+    /**
+     * Executes oxcmp_user::login() and updates logged in user Facebook User ID (if user was
+     * connected using Facebook Connect)
+     *
+     * @return null
+     */
+    public function login_updateFbId()
+    {
         $this->login();
+
+        if ( $oUser = $this->getUser() ) {
+            //updating user Facebook ID
+            if ( $oUser->updateFbId() ) {
+                oxSession::setVar( '_blFbUserIdUpdated', true );
+            }
+        }
     }
 
     /**
@@ -315,6 +398,10 @@ class oxcmp_user extends oxView
             // finalizing ..
             $this->_afterLogout();
 
+
+            if ( $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) ) {
+                return 'account';
+            }
 
             // redirecting if user logs out in SSL mode
             if ( oxConfig::getParameter('redirect') && $myConfig->getConfigParam( 'sSSLShopURL' ) ) {
@@ -391,7 +478,14 @@ class oxcmp_user extends oxView
             return;
         }
 
+        $blActiveLogin = $this->getConfig()->getConfigParam( 'blPsLoginEnabled' );
+
         $myConfig = $this->getConfig();
+        if ( $blActiveLogin && !oxConfig::getParameter( 'ord_agb' ) && $myConfig->getConfigParam( 'blConfirmAGB' ) ) {
+            oxUtilsView::getInstance()->addErrorToDisplay( 'ORDER_READANDCONFIRMTERMS', false, true );
+            return;
+        }
+
         $myUtils  = oxUtils::getInstance();
 
         // collecting values to check
@@ -403,8 +497,7 @@ class oxcmp_user extends oxView
         // second pass
         $sPassword2 = oxConfig::getParameter( 'lgn_pwd2' );
 
-        $aRawVal = array('oxuser__oxcompany', 'oxuser__oxaddinfo', 'oxuser__oxfname', 'oxuser__oxlname', 'oxuser__oxcity');
-        $aInvAdress = oxConfig::getParameter( 'invadr', $aRawVal );
+        $aInvAdress = oxConfig::getParameter( 'invadr', $this->_aRawBillingFields );
         $aDelAdress = $this->_getDelAddressData();
 
         $oUser = oxNew( 'oxuser' );
@@ -413,14 +506,26 @@ class oxcmp_user extends oxView
 
             $oUser->checkValues( $sUser, $sPassword, $sPassword2, $aInvAdress, $aDelAdress );
 
+            $iActState = $blActiveLogin ? 0 : 1;
+
             // setting values
             $oUser->oxuser__oxusername = new oxField($sUser, oxField::T_RAW);
             $oUser->setPassword( $sPassword );
-            $oUser->oxuser__oxactive   = new oxField(1, oxField::T_RAW);
+            $oUser->oxuser__oxactive   = new oxField( $iActState, oxField::T_RAW);
 
             $oUser->createUser();
             $oUser->load( $oUser->getId() );
             $oUser->changeUserData( $oUser->oxuser__oxusername->value, $sPassword, $sPassword, $aInvAdress, $aDelAdress );
+
+            if ( $blActiveLogin ) {
+                // accepting terms..
+                $oUser->acceptTerms();
+            }
+
+            if ( $this->getConfig()->getConfigParam( 'blInvitationsEnabled' ) && $sUserId = oxConfig::getParameter( "su" ) ) {
+                // setting registration credit points..
+                $oUser->setCreditPointsForRegistrant( $sUserId );
+            }
 
             // assigning to newsletter
             $blOptin = oxConfig::getParameter( 'blnewssubscribed' );
@@ -441,25 +546,31 @@ class oxcmp_user extends oxView
             return false;
         }
 
-        if ( !$sPassword ) {
-            oxSession::setVar( 'usr', $oUser->getId() );
-            $this->_afterLogin( $oUser );
-        } elseif ( $this->login() == 'user' ) {
-            return false;
-        }
+        if ( !$blActiveLogin ) {
+            if ( !$sPassword ) {
+                oxSession::setVar( 'usr', $oUser->getId() );
+                $this->_afterLogin( $oUser );
+            } elseif ( $this->login() == 'user' ) {
+                return false;
+            }
 
-        // order remark
-        //V #427: order remark for new users
-        $sOrderRemark = oxConfig::getParameter( 'order_remark', true );
-        if ( $sOrderRemark ) {
-            oxSession::setVar( 'ordrem', $sOrderRemark );
+            // order remark
+            //V #427: order remark for new users
+            $sOrderRemark = oxConfig::getParameter( 'order_remark', true );
+            if ( $sOrderRemark ) {
+                oxSession::setVar( 'ordrem', $sOrderRemark );
+            }
         }
 
         // send register eMail
         //TODO: move into user
         if ( (int) oxConfig::getParameter( 'option' ) == 3 ) {
             $oxEMail = oxNew( 'oxemail' );
-            $oxEMail->sendRegisterEmail( $oUser );
+            if ( $blActiveLogin ) {
+                $oxEMail->sendRegisterConfirmEmail( $oUser );
+            } else {
+                $oxEMail->sendRegisterEmail( $oUser );
+            }
         }
 
         // new registered
@@ -520,13 +631,9 @@ class oxcmp_user extends oxView
 
         // collecting values to check
         $aDelAdress = $this->_getDelAddressData();
-        // if user company name, user name and additional info has special chars
-        $aRawVal = array('oxuser__oxcompany', 'oxuser__oxaddinfo', 'oxuser__oxfname',
-                            'oxuser__oxlname', 'oxuser__oxstreet', 'oxuser__oxstreetnr',
-                            'oxuser__oxcity', 'oxuser__oxfon', 'oxuser__oxfax',
-                            'oxuser__oxmobfon', 'oxuser__oxprivfon');
 
-        $aInvAdress = oxConfig::getParameter( 'invadr', $aRawVal );
+        // if user company name, user name and additional info has special chars
+        $aInvAdress = oxConfig::getParameter( 'invadr', $this->_aRawBillingFields );
 
         $sUserName  = $oUser->oxuser__oxusername->value;
         $sPassword  = $sPassword2 = $oUser->oxuser__oxpassword->value;
@@ -575,12 +682,7 @@ class oxcmp_user extends oxView
     protected function _getDelAddressData()
     {
         // if user company name, user name and additional info has special chars
-        $aRawVal = array('oxaddress__oxcompany', 'oxaddress__oxaddinfo', 'oxaddress__oxfname',
-                         'oxaddress__oxlname', 'oxaddress__oxcity', 'oxaddress__oxstreet',
-                         'oxaddress__oxstreetnr', 'oxaddress__oxzip', 'oxaddress__oxfon',
-                         'oxaddress__oxfax');
-
-        $aDelAdress = $aDeladr = oxConfig::getParameter( 'deladr', $aRawVal );
+        $aDelAdress = $aDeladr = oxConfig::getParameter( 'deladr', $this->_aRawShippingFields );
 
         if ( is_array( $aDeladr ) ) {
             // checking if data is filled
@@ -641,9 +743,6 @@ class oxcmp_user extends oxView
         if ( $blHideAddress = oxConfig::getParameter( 'blhideshipaddress' ) ) {
             $blShowShipAddress = 0;
             $blShowIt = true;
-
-            // unsetting delivery address
-            oxSession::deleteVar( 'deladdrid' );
         } else {
 
             $blShowAddress = oxConfig::getParameter( 'blshowshipaddress' )? 1 : 0;
@@ -809,5 +908,18 @@ class oxcmp_user extends oxView
     public function getOpenId()
     {
         return oxNew( "oxOpenID" );
+    }
+
+    /**
+     * Returns invitor id
+     *
+     * @return null
+     */
+    public function getInvitor()
+    {
+        $sSu = oxSession::getVar( 'su' );
+        if ( !$sSu && ( $sSuNew = oxConfig::getParameter( 'su' ) ) ) {
+            oxSession::setVar( 'su', $sSuNew );
+        }
     }
 }

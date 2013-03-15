@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutils.php 27841 2010-05-20 18:49:33Z tomas $
+ * @version   SVN: $Id: oxutils.php 28566 2010-06-22 16:57:35Z tomas $
  */
 
 /**
@@ -76,6 +76,13 @@ class oxUtils extends oxSuperCfg
      * @var array
      */
     protected $_aFileCacheWritable = array();
+
+    /**
+     * Search engine indicator
+     *
+     * @var bool
+     */
+    protected $_blIsSe = null;
 
     /**
      * resturns a single instance of this class
@@ -280,6 +287,13 @@ class oxUtils extends oxSuperCfg
      */
     public function isSearchEngine( $sClient = null )
     {
+
+        if (!is_null($this->_blIsSe)) {
+            return $this->_blIsSe;
+        }
+
+        startProfile("isSearchEngine");
+
         $myConfig = $this->getConfig();
         $blIsSe   = false;
 
@@ -307,6 +321,10 @@ class oxUtils extends oxSuperCfg
                 $myConfig->setGlobalParameter( 'blIsSearchEngine', $blIsSe );
             }
         }
+
+        stopProfile("isSearchEngine");
+
+        $this->_blIsSe = $blIsSe;
 
         return $blIsSe;
     }
@@ -594,7 +612,10 @@ class oxUtils extends oxSuperCfg
 
             // read the file
             $sFilePath = $this->getCacheFilePath( $sKey );
-            if ( file_exists( $sFilePath ) && is_readable( $sFilePath ) ) {
+
+            $blFileExists = file_exists( $sFilePath ) && is_readable( $sFilePath );
+
+            if ( $blFileExists ) {
                 // read it
                 $sRes = file_get_contents( $sFilePath );
                 $sRes = $sRes ? unserialize( $sRes ) : null;
@@ -1004,7 +1025,7 @@ class oxUtils extends oxSuperCfg
      *
      * @return string
      *
-     * @todo rename function more closely to actual purpose (which I dont know!)
+     * @todo rename function more closely to actual purpose
      * @todo finish refactoring
      */
     protected function _fillExplodeArray( $aName, $dVat = null)

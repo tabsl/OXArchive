@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsimplevariant.php 27649 2010-05-10 09:03:07Z vilma $
+ * @version   SVN: $Id: oxsimplevariant.php 28590 2010-06-23 11:03:50Z alfonsas $
  */
 
 /**
@@ -56,6 +56,13 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
      * @var array
      */
     protected $_aStdUrls = array();
+
+    /**
+     * Stardard/dynamic article urls for languages
+     *
+     * @var array
+     */
+    protected $_aBaseStdUrls = array();
 
     /**
      * Seo article urls for languages
@@ -346,6 +353,27 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
             $blIn = $oParent->inPriceCategory( $sCatNid );
         }
         return $blIn;
+    }
+
+    /**
+     * Returns base dynamic url: shopurl/index.php?cl=details
+     *
+     * @param int  $iLang   language id
+     * @param bool $blAddId add current object id to url or not
+     * @param bool $blFull  return full including domain name [optional]
+     *
+     * @return string
+     */
+    public function getBaseStdLink( $iLang, $blAddId = true, $blFull = true )
+    {
+        if ( !isset( $this->_aBaseStdUrls[$iLang][$iLinkType] ) ) {
+            $oArticle = oxNew( "oxArticle" );
+            $oArticle->setId( $this->getId() );
+            $oArticle->setLinkType( $iLinkType );
+            $this->_aBaseStdUrls[$iLang][$iLinkType] = $oArticle->getBaseStdLink( $iLang, $blAddId, $blFull );
+        }
+
+        return $this->_aBaseStdUrls[$iLang][$iLinkType];
     }
 
     /**

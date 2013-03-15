@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: report_canceled_orders.php 27065 2010-04-06 15:21:25Z arvydas $
+ * @version   SVN: $Id: report_canceled_orders.php 28453 2010-06-18 14:04:26Z sarunas $
  */
 
 if ( !class_exists( 'report_canceled_orders' ) ) {
@@ -203,7 +203,7 @@ class Report_canceled_orders extends report_base
     /**
      * collects sessions what executed 'tobasket' function
      *
-     * @param string $sQ                      data query
+     * @param string $sSql                    data query
      * @param array  $aTempOrder              orders
      * @param array  $aTempExecOrdersSessions finished orders
      * @param array  $aTempPaymentSessions    payment sessions
@@ -213,9 +213,9 @@ class Report_canceled_orders extends report_base
      *
      * @return array
      */
-    protected function _collectToBasketSessions( $sQ, $aTempOrder, $aTempExecOrdersSessions, $aTempPaymentSessions, $aTempUserSessions, &$aDataX4, $blMonth = true )
+    protected function _collectToBasketSessions( $sSql, $aTempOrder, $aTempExecOrdersSessions, $aTempPaymentSessions, $aTempUserSessions, &$aDataX4, $blMonth = true )
     {
-        $rs = oxDb::getDb()->execute( $sSQL);
+        $rs = oxDb::getDb()->execute( $sSql);
         if ($rs != false && $rs->recordCount() > 0) {
             $iFirstWeekDay = $this->getConfig()->getConfigParam( 'iFirstWeekDay' );
             while (!$rs->EOF) {
@@ -234,15 +234,15 @@ class Report_canceled_orders extends report_base
     /**
      * Collects made orders
      *
-     * @param string $sQ       data query
+     * @param string $sSql     data query
      * @param array  &$aDataX5 data to fill
      * @param bool   $blMonth  if TRUE - for month, if FALSE - for week [true]
      *
      * @return array
      */
-    protected function _collectOrdersMade( $sQ, &$aDataX5, $blMonth = true )
+    protected function _collectOrdersMade( $sSql, &$aDataX5, $blMonth = true )
     {
-        $rs = oxDb::getDb()->execute( $sSQL );
+        $rs = oxDb::getDb()->execute( $sSql );
         if ( $rs != false && $rs->recordCount() > 0 ) {
             $iFirstWeekDay = $this->getConfig()->getConfigParam( 'iFirstWeekDay' );
             while (!$rs->EOF) {
@@ -328,7 +328,7 @@ class Report_canceled_orders extends report_base
 
         // collects sessions what executed 'user' class
         $sQ = "select oxtime, oxsessid from `oxlogs` where oxclass = 'user' and oxtime >= $sTimeFrom and oxtime <= $sTimeTo group by oxsessid";
-        $aTempUserSessions = $this->_collectUserSessions( $sQ, $aTempOrder, $aTempExecOrdersSessions, $aTempPaymentSessions, $aDataX2 );
+        $aTempUserSessions = $this->_collectUserSessionsForVisitorMonth( $sQ, $aTempOrder, $aTempExecOrdersSessions, $aTempPaymentSessions, $aDataX2 );
 
         // collects sessions what executed 'tobasket' function
         $sQ = "select oxtime, oxsessid from `oxlogs` where oxclass = 'basket' and oxtime >= $sTimeFrom and oxtime <= $sTimeTo group by oxsessid";
@@ -451,7 +451,7 @@ class Report_canceled_orders extends report_base
 
         // collects sessions what executed 'user' class
         $sQ = "select oxtime, oxsessid from `oxlogs` where oxclass = 'user' and oxtime >= $sTimeFrom and oxtime <= $sTimeTo group by oxsessid";
-        $aTempUserSessions = $this->_collectUserSessions( $sQ, $aTempOrder, $aTempExecOrdersSessions, $aTempPaymentSessions, $aDataX2, false );
+        $aTempUserSessions = $this->_collectUserSessionsForVisitorMonth( $sQ, $aTempOrder, $aTempExecOrdersSessions, $aTempPaymentSessions, $aDataX2, false );
 
         // collects sessions what executed 'tobasket' function
         $sQ = "select oxtime, oxsessid from `oxlogs` where oxclass = 'basket' and oxtime >= $sTimeFrom and oxtime <= $sTimeTo group by oxsessid";
@@ -459,7 +459,7 @@ class Report_canceled_orders extends report_base
 
         // orders made
         $sQ = "select oxorderdate from oxorder where oxorderdate >= $sTimeFrom and oxorderdate <= $sTimeTo order by oxorderdate";
-        $this->_collectOrdersMade( $sQ, &$aDataX5, false );
+        $this->_collectOrdersMade( $sQ, $aDataX5, false );
 
         header( "Content-type: image/png" );
 

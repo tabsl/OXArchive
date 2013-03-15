@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: article_seo.php 27759 2010-05-14 10:10:17Z arvydas $
+ * @version   SVN: $Id: article_seo.php 28010 2010-05-28 09:23:10Z sarunas $
  */
 
 /**
@@ -119,12 +119,23 @@ class Article_Seo extends Object_Seo
         $oDb = oxDb::getDb();
         if ( $this->getActCatType() == 'oxtag' ) {
             $sObjectId = $this->_getEncoder()->getDynamicObjectId( $iShopId, $oObject->getStdTagLink( $this->getTag() ) );
-            $sQ = "select * from oxseo where oxobjectid = ".$oDb->quote( $sObjectId ).
-                  " and oxshopid = '{$iShopId}' and oxlang = ".$this->getActCategoryLang();
+            $sQ = "select * from oxseo
+                   left join oxobject2seodata on
+                       oxobject2seodata.oxobjectid = ".$oDb->quote( $oObject->getId() ) . " and
+                       oxobject2seodata.oxshopid = oxseo.oxshopid and
+                       oxobject2seodata.oxlang = oxseo.oxlang
+                   where
+                       oxseo.oxobjectid = ".$oDb->quote( $sObjectId ) ."
+                       and oxseo.oxshopid = '{$iShopId}' and oxseo.oxlang = ".$this->getActCategoryLang();
         } else {
-            $sParam = ( $sCat = $this->getSelectedCategoryId() ) ? " and oxparams = '$sCat' " : '';
-            $sQ = "select * from oxseo where oxobjectid = ".$oDb->quote( $oObject->getId() ) .
-                  " and oxshopid = '{$iShopId}' and oxlang = {$iLang} {$sParam} ";
+            $sParam = ( $sCat = $this->getSelectedCategoryId() ) ? " and oxseo.oxparams = '$sCat' " : '';
+            $sQ = "select * from oxseo
+                   left join oxobject2seodata on
+                       oxobject2seodata.oxobjectid = oxseo.oxobjectid and
+                       oxobject2seodata.oxshopid = oxseo.oxshopid and
+                       oxobject2seodata.oxlang = oxseo.oxlang
+                    where oxseo.oxobjectid = ".$oDb->quote( $oObject->getId() ) . "
+                    and oxseo.oxshopid = '{$iShopId}' and oxseo.oxlang = {$iLang} {$sParam} ";
         }
         return $sQ;
     }
@@ -476,6 +487,16 @@ class Article_Seo extends Object_Seo
     }
 
     /**
+     * Returns alternative seo entry id
+     *
+     * @return null
+     */
+    protected function _getAltSeoEntryId()
+    {
+        return oxConfig::getParameter( 'oxid' );
+    }
+
+    /**
      * Returns seo entry ident
      *
      * @deprecated should be used object_seo::_getSeoEntryId()
@@ -593,15 +614,5 @@ class Article_Seo extends Object_Seo
     protected function _getEncoder()
     {
         return oxSeoEncoderArticle::getInstance();
-    }
-
-    /**
-     * Returns alternative seo entry id
-     *
-     * @return null
-     */
-    protected function _getAltSeoEntryId()
-    {
-        return oxConfig::getParameter( 'oxid' );
     }
 }

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 27792 2010-05-18 12:35:14Z sarunas $
+ * @version   SVN: $Id: oxubase.php 28315 2010-06-11 15:34:43Z arvydas $
  */
 
 /**
@@ -39,6 +39,18 @@ define( 'VIEW_INDEXSTATE_NOINDEXFOLLOW', 2 );   //  no index / follow
  */
 class oxUBase extends oxView
 {
+    /**
+     * Checks if feature is enabled
+     *
+     * @param string $sName feature name
+     *
+     * @return bool
+     */
+    public function isActive( $sName )
+    {
+        return $this->getConfig()->getConfigParam( "bl".$sName."Enabled" );
+    }
+
     /**
      * Array of component objects.
      *
@@ -604,7 +616,7 @@ class oxUBase extends oxView
 
             $this->_sViewId =  "ox|$iLang|$iCur";
 
-        return $this->_sViewId;
+        return $this->_sViewId."|".( (int) $this->_blForceNoIndex );
     }
 
 
@@ -1043,6 +1055,8 @@ class oxUBase extends oxView
      * Returns seo parameter to filter meta data by it e.g. article
      * meta data for active category
      *
+     * @deprecated not used any more
+     *
      * @return null
      */
     protected function _getMetaSeoParam()
@@ -1061,10 +1075,9 @@ class oxUBase extends oxView
         $sOxid  = $this->_getSeoObjectId();
         $iLang  = oxLang::getInstance()->getBaseLanguage();
         $sShop  = $this->getConfig()->getShopId();
-        $sParam = $this->_getMetaSeoParam();
 
         if ( $sOxid && oxUtils::getInstance()->seoIsActive() &&
-             ( $sKeywords = oxSeoEncoder::getInstance()->getMetaData( $sOxid, $sDataType, $sShop, $iLang, $sParam ) ) ) {
+             ( $sKeywords = oxSeoEncoder::getInstance()->getMetaData( $sOxid, $sDataType, $sShop, $iLang) ) ) {
             return $sKeywords;
         }
     }
@@ -1848,6 +1861,8 @@ class oxUBase extends oxView
 
     /**
      * Template variable getter. Returns review user id
+     *
+     * @deprecated this getter should not be used in forms, use oxUBase::getReviewUserHash() instead
      *
      * @return string
      */
@@ -2888,6 +2903,68 @@ class oxUBase extends oxView
             $this->getFormId();
         }
         return $this->_blCanAcceptFormData;
+    }
+
+    /**
+     * return last finished promotion list
+     *
+     * @return oxActionList
+     */
+    public function getPromoFinishedList()
+    {
+        if (isset($this->_oPromoFinishedList)) {
+            return $this->_oPromoFinishedList;
+        }
+        $this->_oPromoFinishedList = oxNew( 'oxActionList' );
+        $this->_oPromoFinishedList->loadFinishedByCount(2);
+        return $this->_oPromoFinishedList;
+    }
+
+    /**
+     * return current promotion list
+     *
+     * @return oxActionList
+     */
+    public function getPromoCurrentList()
+    {
+        if (isset($this->_oPromoCurrentList)) {
+            return $this->_oPromoCurrentList;
+        }
+        $this->_oPromoCurrentList = oxNew( 'oxActionList' );
+        $this->_oPromoCurrentList->loadCurrent();
+        return $this->_oPromoCurrentList;
+    }
+
+    /**
+     * return future promotion list
+     *
+     * @return oxActionList
+     */
+    public function getPromoFutureList()
+    {
+        if (isset($this->_oPromoFutureList)) {
+            return $this->_oPromoFutureList;
+        }
+        $this->_oPromoFutureList = oxNew( 'oxActionList' );
+        $this->_oPromoFutureList->loadFutureByCount(2);
+        return $this->_oPromoFutureList;
+    }
+
+    /**
+     * should promotions list be shown?
+     *
+     * @return bool
+     */
+    public function getShowPromotionList()
+    {
+        if (isset($this->_blShowPromotions)) {
+            return $this->_blShowPromotions;
+        }
+        $this->_blShowPromotions = false;
+        if (oxNew('oxActionList')->areAnyActivePromotions()) {
+            $this->_blShowPromotions = ( count( $this->getPromoFinishedList() ) + count( $this->getPromoCurrentList() ) + count( $this->getPromoFutureList() ) ) > 0;
+        }
+        return $this->_blShowPromotions;
     }
 
 }

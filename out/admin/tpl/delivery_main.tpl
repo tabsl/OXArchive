@@ -85,7 +85,7 @@
         </tr-->
         <tr>
             <td class="edittext" height="30">
-            [{ oxmultilang ident="DELIVERY_MAIN_PRICE" }]
+            [{ oxmultilang ident="DELIVERY_MAIN_PRICE" }] ([{ $oActCur->sign }])
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="15" maxlength="[{$edit->oxdelivery__oxaddsum->fldmax_length}]" name="editval[oxdelivery__oxaddsum]" value="[{$edit->oxdelivery__oxaddsum->value }]" [{ $readonly }]>

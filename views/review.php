@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: review.php 27824 2010-05-20 12:29:40Z vilma $
+ * @version   SVN: $Id: review.php 28010 2010-05-28 09:23:10Z sarunas $
  */
 
 /**
@@ -29,10 +29,10 @@
 class Review extends Details
 {
     /**
-     * Review user id
-     * @var string
+     * Review user object
+     * @var oxuser
      */
-    protected $_sReviewUserId = null;
+    protected $_oRevUser = null;
 
     /**
      * Active object ($_oProduct or $_oActiveRecommList)
@@ -153,38 +153,37 @@ class Review extends Details
     {
         oxUBase::render();
 
-        if ( !$this->_checkDirectReview( $this->getReviewUserId() ) ) {
-            return $this->_sThisTemplate = $this->_sThisLoginTemplate;
-        }
+        if ( ! ( $this->getReviewUser() ) ) {
+            $this->_sThisTemplate = $this->_sThisLoginTemplate;
+        } else {
 
-        $sReviewUser = oxConfig::getParameter( 'reviewuser' );
-        $this->_aViewData['reviewuserid'] = ( !$sReviewUser ) ? oxConfig::getParameter( 'reviewuserid' ) : $sReviewUser;
+            $this->_aViewData['reviewuserhash'] = $this->getReviewUserHash();
 
-        $this->_aViewData['reviews'] = $this->getReviews();
-        $this->_aViewData['product'] = $this->getProduct();
+            $this->_aViewData['reviews'] = $this->getReviews();
+            $this->_aViewData['product'] = $this->getProduct();
 
-        // loading product reviews
-        $this->_aViewData['crossselllist']     = $this->getCrossSelling();
-        $this->_aViewData['similarlist']       = $this->getSimilarProducts();
-        $this->_aViewData['similarrecommlist'] = $this->getRecommList();
+            // loading product reviews
+            $this->_aViewData['crossselllist']     = $this->getCrossSelling();
+            $this->_aViewData['similarlist']       = $this->getSimilarProducts();
+            $this->_aViewData['similarrecommlist'] = $this->getRecommList();
 
+            $this->_aViewData['actvrecommlist'] = $oActiveRecommList = $this->getActiveRecommList();
+            $this->_aViewData['itemList']       = $oList = $this->getActiveRecommItems();
 
-        $this->_aViewData['actvrecommlist'] = $oActiveRecommList = $this->getActiveRecommList();
-        $this->_aViewData['itemList']       = $oList = $this->getActiveRecommItems();
-
-        if ( $oActiveRecommList ) {
-            if ( $oList && $oList->count()) {
-                $this->_iAllArtCnt = $oActiveRecommList->getArtCount();
+            if ( $oActiveRecommList ) {
+                if ( $oList && $oList->count()) {
+                    $this->_iAllArtCnt = $oActiveRecommList->getArtCount();
+                }
+                // load only lists which we show on screen
+                $iNrofCatArticles = $this->getConfig()->getConfigParam( 'iNrofCatArticles' );
+                $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 10;
+                $this->_iCntPages  = round( $this->_iAllArtCnt / $iNrofCatArticles + 0.49 );
             }
-            // load only lists which we show on screen
-            $iNrofCatArticles = $this->getConfig()->getConfigParam( 'iNrofCatArticles' );
-            $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 10;
-            $this->_iCntPages  = round( $this->_iAllArtCnt / $iNrofCatArticles + 0.49 );
-        }
 
-        $this->_aViewData['pageNavigation'] = $this->getPageNavigation();
-        $this->_aViewData['rate'] = $this->canRate();
-        $this->_aViewData['success'] = $this->getReviewSendStatus();
+            $this->_aViewData['pageNavigation'] = $this->getPageNavigation();
+            $this->_aViewData['rate'] = $this->canRate();
+            $this->_aViewData['success'] = $this->getReviewSendStatus();
+        }
 
         return $this->_sThisTemplate;
     }
@@ -199,8 +198,7 @@ class Review extends Details
      */
     public function saveReview()
     {
-        $sReviewUserId = $this->getReviewUserId();
-        if ( $sReviewUserId && $this->canAcceptFormData() && $this->_checkDirectReview( $sReviewUserId ) ) {
+        if ( ( $oRevUser = $this->getReviewUser() ) && $this->canAcceptFormData() ) {
 
             if ( ( $oActObject = $this->_getActiveObject() ) && ( $sType = $this->_getActiveType() ) ) {
 
@@ -215,8 +213,8 @@ class Review extends Details
                 //save rating
                 if ( $dRating !== null && $dRating >= 0 && $dRating <= 5 ) {
                     $oRating = oxNew( 'oxrating' );
-                    if ( $oRating->allowRating( $sReviewUserId, $sType, $oActObject->getId() ) ) {
-                        $oRating->oxratings__oxuserid   = new oxField( $sReviewUserId );
+                    if ( $oRating->allowRating( $oRevUser->getId(), $sType, $oActObject->getId() ) ) {
+                        $oRating->oxratings__oxuserid   = new oxField( $oRevUser->getId() );
                         $oRating->oxratings__oxtype     = new oxField( $sType );
                         $oRating->oxratings__oxobjectid = new oxField( $oActObject->getId() );
                         $oRating->oxratings__oxrating   = new oxField( $dRating );
@@ -234,7 +232,7 @@ class Review extends Details
                     $oReview->oxreviews__oxtype     = new oxField( $sType );
                     $oReview->oxreviews__oxtext     = new oxField( $sReviewText, oxField::T_RAW );
                     $oReview->oxreviews__oxlang     = new oxField( oxLang::getInstance()->getBaseLanguage() );
-                    $oReview->oxreviews__oxuserid   = new oxField( $sReviewUserId );
+                    $oReview->oxreviews__oxuserid   = new oxField( $oRevUser->getId() );
                     $oReview->oxreviews__oxrating   = new oxField( ( $dRating !== null ) ? $dRating : null );
                     $oReview->save();
 
@@ -249,17 +247,13 @@ class Review extends Details
      *
      * @param string $sReviewUserId user to check
      *
+     * @deprecated not used any more
+     *
      * @return boolean
      */
     protected function _checkDirectReview( $sReviewUserId )
     {
-        $oUser = $this->getUser();
-        if ( $oUser && ( $sReviewUserId == $oUser->getId() ) ) {
-            $blAllow = true;
-        } else {
-            $blAllow = $this->_allowDirectReview( $sReviewUserId );
-        }
-        return $blAllow;
+        return ( bool ) $this->getReviewUser();
     }
 
     /**
@@ -268,12 +262,38 @@ class Review extends Details
      *
      * @param string $sUserId user id
      *
+     * @deprecated not used any more
+     *
      * @return bool
      */
     protected function _allowDirectReview( $sUserId )
     {
-        $oUser = oxNew( 'oxuser' );
-        return $oUser->exists( $sUserId );
+        return ( bool ) $this->getReviewUser();
+    }
+
+    /**
+     * Returns review user object
+     *
+     * @return oxuser
+     */
+    public function getReviewUser()
+    {
+        if ( $this->_oRevUser === null ) {
+            $this->_oRevUser = false;
+            $oUser = oxNew( "oxuser" );
+
+            if ( $sUserId = $oUser->getReviewUserId( $this->getReviewUserHash() ) ) {
+                // review user, by link or other source?
+                if ( $oUser->load( $sUserId ) ) {
+                    $this->_oRevUser = $oUser;
+                }
+            } elseif ( $oUser = $this->getUser() ) {
+                // session user?
+                $this->_oRevUser = $oUser;
+            }
+
+        }
+        return $this->_oRevUser;
     }
 
     /**
@@ -281,22 +301,25 @@ class Review extends Details
      *
      * @return string
      */
+    public function getReviewUserHash()
+    {
+        return oxConfig::getParameter( 'reviewuserhash' );
+    }
+
+    /**
+     * Template variable getter. Returns review user id
+     *
+     * @deprecated this getter should not be used in forms, use oxUBase::getReviewUserHash() instead
+     *
+     * @return string
+     */
     public function getReviewUserId()
     {
-        if ( $this->_sReviewUserId === null ) {
-            $this->_sReviewUserId = false;
-
-            //review user from order email
-            $sReviewUser = oxConfig::getParameter( 'reviewuser' );
-            $sReviewUser = ( !$sReviewUser ) ? oxConfig::getParameter( 'reviewuserid' ) : $sReviewUser;
-            if ( $sReviewUser ) {
-                $oUser = oxNew( 'oxuser' );
-                $this->_sReviewUserId = $sReviewUser;
-            } elseif ( ( $oUser = $this->getUser() ) ) {
-                $this->_sReviewUserId = $oUser->getId();
-            }
+        $sId = null;
+        if ( $oRevUser = $this->getReviewUser() ) {
+            $sId = $oRevUser->getId();
         }
-        return $this->_sReviewUserId;
+        return $sId;
     }
 
     /**
@@ -367,9 +390,9 @@ class Review extends Details
     {
         if ( $this->_blRate === null ) {
             $this->_blRate = false;
-            if ( ( $oActObject = $this->_getActiveObject() ) ) {
+            if ( ( $oActObject = $this->_getActiveObject() ) && ( $oRevUser = $this->getReviewUser() ) ) {
                 $oRating = oxNew( 'oxrating' );
-                $this->_blRate = $oRating->allowRating( $this->getReviewUserId(), $this->_getActiveType(), $oActObject->getId() );
+                $this->_blRate = $oRating->allowRating( $oRevUser->getId(), $this->_getActiveType(), $oActObject->getId() );
             }
         }
         return $this->_blRate;

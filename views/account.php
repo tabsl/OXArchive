@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: account.php 26146 2010-03-01 14:37:08Z arvydas $
+ * @version   SVN: $Id: account.php 28315 2010-06-11 15:34:43Z arvydas $
  */
 
 /**
@@ -92,6 +92,12 @@ class Account extends oxUBase
     protected $_sThisLoginTemplate = 'account_login.tpl';
 
     /**
+     * Alternative login template name.
+     * @var string
+     */
+    protected $_sThisAltLoginTemplate = 'account_login_alt.tpl';
+
+    /**
      * Current view search engine indexing state
      *
      * @var int
@@ -133,8 +139,8 @@ class Account extends oxUBase
         $this->_loadActions();
 
         //
-        if ( $sArtID = oxConfig::getParameter('aid') ) {
-            $this->_aViewData['aid'] = $this->getArticleId();
+        if ( $sArtId = $this->getArticleId() ) {
+            $this->_aViewData['aid'] = $sArtId;
             // #1834M - specialchar search
             $this->_aViewData['searchparam']        = $this->getSearchParam();
             $this->_aViewData['searchparamforhtml'] = $this->getSearchParamForHtml();
@@ -146,14 +152,37 @@ class Account extends oxUBase
 
         // is logged in ?
         $oUser = $this->getUser();
-        if ( !$oUser || $oUser->oxuser__oxpassword->value == '' ) {
-            return $this->_sThisTemplate = $this->_sThisLoginTemplate;
+        if ( !$oUser || ( $oUser && !$oUser->oxuser__oxpassword->value ) ||
+             ( $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) && $oUser && $this->confirmTerms() ) ) {
+            $this->_sThisTemplate = $this->_getLoginTemplate();
+        } else {
+            // calculating amount of orders made by user
+            $this->_aViewData['iordersmade'] = $this->getOrderCnt();
         }
 
-        // calculating amount of orders made by user
-        $this->_aViewData['iordersmade'] = $this->getOrderCnt();
-
         return $this->_sThisTemplate;
+    }
+
+    /**
+     * Returns login template name:
+     *  - if "login" feature is on returns $this->_sThisAltLoginTemplate
+     *  - else returns $this->_sThisLoginTemplate
+     *
+     * @return string
+     */
+    protected function _getLoginTemplate()
+    {
+        return $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) ? $this->_sThisAltLoginTemplate : $this->_sThisLoginTemplate;
+    }
+
+    /**
+     * Return the active article id
+     *
+     * @return string | bool
+     */
+    public function confirmTerms()
+    {
+        return oxConfig::getParameter( "term" );
     }
 
     /**
@@ -339,5 +368,4 @@ class Account extends oxUBase
         }
         return $this->_sListType;
     }
-
 }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerpcompatability.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxerpcompatability.php 28080 2010-06-02 12:26:07Z michael.keiluweit $
  */
 
 /**
@@ -52,7 +52,7 @@ class oxERPCompatability
         if (is_readable($sFile)) {
             return (int) trim(file_get_contents($sFile));
         }
-        // TODO: return newest (HEAD)
+        // TODO: return latest (HEAD)
         return 999999999; //13895;
     }
 

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: object_seo.php 27759 2010-05-14 10:10:17Z arvydas $
+ * @version   SVN: $Id: object_seo.php 28019 2010-05-31 08:07:40Z arvydas $
  */
 
 /**
@@ -57,15 +57,10 @@ class Object_Seo extends oxAdminDetails
             }
 
             // loading SEO part
+            $this->_getSeoUrl( $oObject );
             $sQ = $this->_getSeoDataSql( $oObject, $iShopId, $this->_iEditLang );
             $aSeoData = oxDb::getDb(true)->getArray( $sQ );
             $aSeoData = ( is_array( $aSeoData ) && isset( $aSeoData[0] ) )?$aSeoData[0]:array();
-
-            // setting default values if empty
-            if ( !isset( $aSeoData['OXSEOURL'] ) || !$aSeoData['OXSEOURL'] ||
-                 ( isset( $aSeoData['OXEXPIRED'] ) && $aSeoData['OXEXPIRED'] ) ) {
-                $aSeoData['OXSEOURL'] = $this->_getSeoUrl( $oObject );
-            }
 
             // passing to view
             $this->_aViewData['aSeoData'] = $aSeoData;
@@ -85,8 +80,14 @@ class Object_Seo extends oxAdminDetails
      */
     protected function _getSeoDataSql( $oObject, $iShopId, $iLang )
     {
-        return "select * from oxseo where oxobjectid = ".oxDb::getDb()->quote( $oObject->getId() )." and
-                oxshopid = '{$iShopId}' and oxlang = {$iLang} ";
+        return "select * from oxseo
+               left join oxobject2seodata on
+                   oxobject2seodata.oxobjectid = oxseo.oxobjectid and
+                   oxobject2seodata.oxshopid = oxseo.oxshopid and
+                   oxobject2seodata.oxlang = oxseo.oxlang
+               where
+                   oxseo.oxobjectid = ".oxDb::getDb()->quote( $oObject->getId() )." and
+                   oxseo.oxshopid = '{$iShopId}' and oxseo.oxlang = {$iLang} ";
     }
 
     /**
@@ -208,6 +209,15 @@ class Object_Seo extends oxAdminDetails
     }
 
     /**
+     * Returns alternative seo entry id
+     *
+     * @return null
+     */
+    protected function _getAltSeoEntryId()
+    {
+    }
+
+    /**
      * Returns seo entry ident
      *
      * @return string
@@ -247,14 +257,5 @@ class Object_Seo extends oxAdminDetails
     protected function _getEncoder()
     {
         return oxSeoEncoder::getInstance();
-    }
-
-    /**
-     * Returns alternative seo entry id
-     *
-     * @return null
-     */
-    protected function _getAltSeoEntryId()
-    {
     }
 }

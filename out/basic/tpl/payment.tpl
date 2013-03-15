@@ -49,7 +49,9 @@
     <br><div class="errorbox">[{ oxmultilang ident="PAYMENT_UNAVAILABLESHIPPING" }]</div>
   [{ elseif $iPayError == 5 }]
     <br><div class="errorbox">[{ oxmultilang ident="PAYMENT_UNAVAILABLEPAYMENT" }]</div>
-  [{ elseif $iPayError > 5 }]
+  [{ elseif $iPayError == 6 }]
+    <br><div class="errorbox">[{ oxmultilang ident="PAYMENT_UNAVAILABLETSPROTECTION" }]</div>
+  [{ elseif $iPayError > 6 }]
     <!--Add custom error message here-->
     <br><div class="errorbox">[{ oxmultilang ident="PAYMENT_UNAVAILABLEPAYMENT" }]</div>
   [{ elseif $iPayError == -1}]
@@ -212,8 +214,36 @@
                 [{/foreach}]
                 </table>
 
-                </div>
-
+            </div>
+            [{if $oView->getTSExcellenceId()}]
+		    <strong id="test_TsProtectionHeader" class="boxhead paymentboxhead">[{ oxmultilang ident="PAYMENT_TSPROTECTION" }]</strong>
+		    <div class="box info">
+		      <div class="etrustlogocol">
+		        <a href="https://www.trustedshops.com/shop/certificate.php?shop_id=[{$oView->getTSExcellenceId()}]" target="_blank">
+                  <img style="border:0px none;" src="[{$oViewConf->getImageUrl()}]/trustedshops_m.gif" title="[{ oxmultilang ident="INC_TRUSTEDSHOPS_ITEM_IMGTITLE" }]">
+                </a>
+		      </div>
+		      <div class="etrustdescocol">
+		        <input type="checkbox" name="bltsprotection" value="1" [{if $oView->getCheckedTsProductId()}]checked[{/if}]>
+		        [{assign var="aTsProtections" value=$oView->getTsProtections() }]
+		        [{if count($aTsProtections) > 1 }]
+                <select name="stsprotection">
+                  [{foreach from=$aTsProtections item=oTsProduct}]
+                    <option value="[{$oTsProduct->sTsId}]" [{if $oView->getCheckedTsProductId() == $oTsProduct->sTsId}]SELECTED[{/if}]>[{ oxmultilang ident="PAYMENT_TSPROTECTIONFOR" }] [{ $oTsProduct->iAmount }] [{ $currency->sign}] ([{ $oTsProduct->fPrice }] [{ $currency->sign}] [{ oxmultilang ident="PAYMENT_INCLUDEVAT" }]) </option>
+                  [{/foreach}]
+                </select>
+                [{else}]
+                    [{assign var="oTsProduct" value=$aTsProtections[0] }]
+                    <input type="hidden" name="stsprotection" value="[{$oTsProduct->sTsId}]">
+                    [{ oxmultilang ident="PAYMENT_TSPROTECTIONFOR" }] [{ $oTsProduct->iAmount }] [{ $currency->sign}] ([{ $oTsProduct->fPrice }] [{ $currency->sign}] [{ oxmultilang ident="PAYMENT_INCLUDEVAT" }]) 
+                [{/if}]
+              <br>
+              <br>
+                [{ oxmultilang ident="PAYMENT_TSPROTECTIONTEXT" }] <a href="http://www.trustedshops.com/shop/data_privacy.php?shop_id=[{$oView->getTSExcellenceId()}]" target="_blank">[{ oxmultilang ident="PAYMENT_TSPROTECTIONTEXT2" }]</a>
+                [{ oxmultilang ident="PAYMENT_TSPROTECTIONTEXT3" }] <a href="http://www.trustedshops.com/shop/protection_conditions.php?shop_id=[{$oView->getTSExcellenceId()}]" target="_blank">[{ oxmultilang ident="PAYMENT_TSPROTECTIONTEXT4" }]</a> [{ oxmultilang ident="PAYMENT_TSPROTECTIONTEXT5" }]
+              </div>
+		    </div>
+		    [{/if}]
                 [{if $oView->isLowOrderPrice()}]
                   <div class="bar prevnext order">
                     <div class="minorderprice">[{ oxmultilang ident="BASKET_MINORDERPRICE" }] [{ $oView->getMinOrderPrice() }] [{ $currency->sign }]</div>

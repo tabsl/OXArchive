@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxview.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxview.php 28697 2010-06-29 11:09:58Z vilma $
  */
 
 /**
@@ -103,6 +103,12 @@ class oxView extends oxSuperCfg
      * @var string
      */
     protected $_sTrustedShopId = null;
+
+    /**
+     * Trunsted shop id for excellence product
+     * @var string
+     */
+    protected $_sTSExcellenceId = null;
 
     /**
      * Active charset
@@ -568,27 +574,54 @@ class oxView extends oxSuperCfg
     }
 
     /**
-     * Returns shop id in trusted shops
+     * Returns shop id in classic trusted shops
      *
      * @return string
      */
     public function getTrustedShopId()
     {
-        if ( $this->_sTrustedShopId == null && ( $aTrustedShopIds = $this->getConfig()->getConfigParam( 'iShopID_TrustedShops' ) ) ) {
+        if ( $this->_sTrustedShopId == null ) {
             $this->_sTrustedShopId = false;
+            $oConfig = $this->getConfig();
+            $aTsType   = $oConfig->getConfigParam( 'tsSealType' );
+            $sTsActive = $oConfig->getConfigParam( 'tsSealActive' );
+            $aTrustedShopIds = $oConfig->getConfigParam( 'iShopID_TrustedShops' );
             $iLangId = (int) oxLang::getInstance()->getBaseLanguage();
-            // compatibility to old data
-            if ( !is_array( $aTrustedShopIds ) && $iLangId == 0 ) {
-                $this->_sTrustedShopId = $aTrustedShopIds;
-            }
-            if ( is_array( $aTrustedShopIds ) ) {
-                $this->_sTrustedShopId = $aTrustedShopIds[$iLangId];
-            }
-            if ( strlen( $this->_sTrustedShopId ) != 33 || substr( $this->_sTrustedShopId, 0, 1 ) != 'X' ) {
-                $this->_sTrustedShopId = false;
+            if ( $sTsActive && $aTrustedShopIds && $aTsType[$iLangId] == 'CLASSIC' ) {
+                // compatibility to old data
+                if ( !is_array( $aTrustedShopIds ) && $iLangId == 0 ) {
+                    $this->_sTrustedShopId = $aTrustedShopIds;
+                }
+                if ( is_array( $aTrustedShopIds ) ) {
+                    $this->_sTrustedShopId = $aTrustedShopIds[$iLangId];
+                }
+                if ( strlen( $this->_sTrustedShopId ) != 33 || substr( $this->_sTrustedShopId, 0, 1 ) != 'X' ) {
+                    $this->_sTrustedShopId = false;
+                }
             }
         }
         return $this->_sTrustedShopId;
+    }
+
+    /**
+     * Returns shop id in trusted shops if excellence product is ordered
+     *
+     * @return string
+     */
+    public function getTSExcellenceId()
+    {
+        if ( $this->_sTSExcellenceId == null ) {
+            $this->_sTSExcellenceId = false;
+            $oConfig   = $this->getConfig();
+            $aTsType   = $oConfig->getConfigParam( 'tsSealType' );
+            $sTsActive = $oConfig->getConfigParam( 'tsSealActive' );
+            $aTrustedShopIds = $oConfig->getConfigParam( 'iShopID_TrustedShops' );
+            $iLangId = (int) oxLang::getInstance()->getBaseLanguage();
+            if ( $sTsActive && $aTrustedShopIds && $aTsType[$iLangId] == 'EXCELLENCE' ) {
+                $this->_sTSExcellenceId = $aTrustedShopIds[$iLangId];
+            }
+        }
+        return $this->_sTSExcellenceId;
     }
 
     /**
@@ -800,5 +833,65 @@ class oxView extends oxSuperCfg
      */
     public function getErrorDestination()
     {
+    }
+
+    /**
+     * Returns name of a view class, which will be active for an action
+     * (given a generic fnc, e.g. logout)
+     *
+     * @return string
+     */
+    public function getActionClassName()
+    {
+        return $this->getClassName();
+    }
+
+    /**
+     * Checks if user is connected via Facebook connect
+     *
+     * @return bool
+     */
+    public function isConnectedWithFb()
+    {
+        $myConfig = $this->getConfig();
+
+        if ( $myConfig->getConfigParam( "bl_showFbConnect" ) ) {
+            $oFb = oxFb::getInstance();
+            return $oFb->isConnected();
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets get Facebook user id
+     *
+     * @return int
+     */
+    public function getFbUserId()
+    {
+        if ( $this->getConfig()->getConfigParam( "bl_showFbConnect" ) ) {
+            $oFb = oxFb::getInstance();
+            return $oFb->getUser();
+        }
+    }
+
+    /**
+     * Returns true if popup message about connecting your existing account
+     * to Facebook account must be shown
+     *
+     * @return bool
+     */
+    public function showFbConnectToAccountMsg()
+    {
+        if ( $this->getConfig()->getParameter( "fblogin" ) ) {
+            if ( !$this->getUser() || ($this->getUser() && oxSession::getVar( '_blFbUserIdUpdated' ) ) ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        return false;
     }
 }

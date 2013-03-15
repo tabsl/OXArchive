@@ -81,6 +81,14 @@
             </td>
         </tr>
         <tr>
+            <td class="edittext">
+            [{ oxmultilang ident="USER_EXTEND_CREDITPOINTS" }]
+            </td>
+            <td class="edittext">
+            [{$edit->oxuser__oxpoints->value}]
+            </td>
+        </tr>
+        <tr>
             <td class="edittext wrap">
             [{ oxmultilang ident="USER_EXTEND_DISABLEAUTOGROUP" }]
             </td>

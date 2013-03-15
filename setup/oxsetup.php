@@ -1135,6 +1135,29 @@ class OxSetupUtils extends oxSetupCore
     }
 
     /**
+     * Extracts install path
+     *
+     * @param string $aPath path info array
+     *
+     * @return string
+     */
+    protected function _extractPath( $aPath )
+    {
+        $sExtPath = '';
+        $blBuildPath = false;
+        for ( $i = count( $aPath ); $i > 0; $i-- ) {
+            $sDir = $aPath[$i-1];
+            if ( $blBuildPath ) {
+                $sExtPath = $sDir . '/' . $sExtPath;
+            }
+            if ( stristr( $sDir, "setup" ) ) {
+                $blBuildPath = true;
+            }
+        }
+        return $sExtPath;
+    }
+
+    /**
      * Returns path parameters for standard setup (non APS)
      *
      * @return array
@@ -1152,13 +1175,7 @@ class OxSetupUtils extends oxSetupCore
             $sFilepath = $_SERVER['SCRIPT_FILENAME'];
         }
 
-        $aTemp = preg_split( "/\\\|\//", $sFilepath );
-        foreach ( $aTemp as $sDir ) {
-            if ( stristr( $sDir, "setup" ) ) {
-                break;
-            }
-            $aParams['sShopDir'] .= str_replace('\\', '/', $sDir) . "/";
-        }
+        $aParams['sShopDir'] = str_replace( "\\", "/", $this->_extractPath( preg_split( "/\\\|\//", $sFilepath ) ) );
         $aParams['sCompileDir'] = $aParams['sShopDir'] . "tmp/";
 
         // try referer
@@ -1166,14 +1183,7 @@ class OxSetupUtils extends oxSetupCore
         if ( !isset( $sFilepath ) || !$sFilepath ) {
             $sFilepath = "http://" . @$_SERVER['HTTP_HOST'] . @$_SERVER['SCRIPT_NAME'];
         }
-
-        $aTemp = explode( "/", $sFilepath);
-        foreach ( $aTemp as $sDir) {
-            if ( stristr( $sDir, "setup" ) ) {
-                break;
-            }
-            $aParams['sShopURL'] .= $sDir . "/";
-        }
+        $aParams['sShopURL'] = ltrim( $this->_extractPath( explode( "/", $sFilepath) ), "/" );
 
         return $aParams;
     }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcontent.php 26406 2010-03-09 11:27:24Z alfonsas $
+ * @version   SVN: $Id: oxcontent.php 28277 2010-06-10 15:10:39Z arvydas $
  */
 
 /**
@@ -282,5 +282,35 @@ class oxContent extends oxI18n implements oxIUrl
             return true;
         }
         return false;
+    }
+
+    /**
+     * Save this Object to database, insert or update as needed.
+     *
+     * @return mixed
+     */
+    public function save()
+    {
+        $blSaved = parent::save();
+        if ( $blSaved && $this->oxcontents__oxloadid->value === 'oxagb' ) {
+            $sShopId  = $this->getConfig()->getShopId();
+            $sVersion = $this->oxcontents__oxtermversion->value;
+
+            // dropping expired..
+            oxDb::getDb()->execute( "delete from oxacceptedterms where oxshopid='{$sShopId}' and oxtermversion != '$sVersion'" );
+        }
+        return $blSaved;
+    }
+
+    /**
+     * Returns latest terms version id
+     *
+     * @return string
+     */
+    public function getTermsVersion()
+    {
+        if ( $this->loadByIdent( 'oxagb' ) ) {
+            return $this->oxcontents__oxtermversion->value;
+        }
     }
 }

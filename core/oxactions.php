@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxactions.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxactions.php 28344 2010-06-15 11:32:21Z sarunas $
  */
 
 /**
@@ -105,4 +105,114 @@ class oxActions extends oxI18n
 
         return parent::delete( $sOxId );
     }
+    
+    
+
+
+
+
+
+
+
+
+    /**
+     * return time left until finished
+     *
+     * @return int
+     */
+    public function getTimeLeft()
+    {
+        $iNow  = oxUtilsDate::getInstance()->getTime();
+        $iFrom = strtotime($this->oxactions__oxactiveto->value);
+        return $iFrom-$iNow;
+    }
+
+    /**
+     * return time left until start
+     *
+     * @return int
+     */
+    public function getTimeUntilStart()
+    {
+        $iNow  = oxUtilsDate::getInstance()->getTime();
+        $iFrom = strtotime($this->oxactions__oxactivefrom->value);
+        return $iFrom-$iNow;
+    }
+
+    /**
+     * start the promotion NOW!
+     *
+     * @return null
+     */
+    public function start()
+    {
+        $this->oxactions__oxactivefrom = new oxField(date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() ));
+        if ($this->oxactions__oxactiveto->value && ($this->oxactions__oxactiveto->value != '0000-00-00 00:00:00')) {
+            $iNow = oxUtilsDate::getInstance()->getTime();
+            $iTo  = strtotime($this->oxactions__oxactiveto->value);
+            if ($iNow > $iTo) {
+                $this->oxactions__oxactiveto = new oxField('0000-00-00 00:00:00');
+            }
+        }
+        $this->save();
+    }
+
+    /**
+     * stop the promotion NOW!
+     *
+     * @return null
+     */
+    public function stop()
+    {
+        $this->oxactions__oxactiveto = new oxField(date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() ));
+        $this->save();
+    }
+
+    /**
+     * check if this action is active
+     *
+     * @return bool
+     */
+    public function isRunning()
+    {
+        if (!($this->oxactions__oxactive->value
+                && $this->oxactions__oxtype->value == 2
+                && $this->oxactions__oxactivefrom->value != '0000-00-00 00:00:00'
+            )) {
+            return false;
+        }
+        $iNow = oxUtilsDate::getInstance()->getTime();
+        $iFrom = strtotime($this->oxactions__oxactivefrom->value);
+        if ($iNow < $iFrom) {
+            return false;
+        }
+
+        if ($this->oxactions__oxactiveto->value != '0000-00-00 00:00:00') {
+            $iTo = strtotime($this->oxactions__oxactiveto->value);
+            if ($iNow > $iTo) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    /**
+     * get long description, parsed through smarty
+     *
+     * @return string
+     */
+    public function getLongDesc()
+    {
+        $sDbValue = $this->oxactions__oxlongdesc->getRawValue();
+        $oStr = getStr();
+        $blHasSmarty = $oStr->strstr( $sDbValue, '[{' );
+        $blHasPhp = $oStr->strstr( $sDbValue, '<?' );
+        if ( $blHasSmarty || $blHasPhp) {
+            $sDbValue = oxUtilsView::getInstance()->parseThroughSmarty( $sDbValue, "promotion_".$this->getId() );
+        }
+        return $sDbValue;
+    }
+    
 }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: oxerptype.php 28094 2010-06-02 14:03:50Z michael.keiluweit $
  */
 
 /**
@@ -66,7 +66,7 @@ class oxERPType
     /**
      * If true a export will be restricted vias th oxshopid column of the table
      *
-     * @var unknown_type
+     * @var bool
      */
     protected $_blRestrictedByShopId = false;
 

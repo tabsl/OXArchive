@@ -19,6 +19,9 @@ ALTER TABLE `oxcountry` MODIFY `OXLONGDESC_2` varchar(255) NOT NULL;
 ALTER TABLE `oxcountry` MODIFY `OXLONGDESC_3` varchar(255) NOT NULL;
 
 ALTER TABLE `oxgroups` MODIFY `OXTITLE` varchar(128) NOT NULL default '';
+ALTER TABLE `oxgroups` MODIFY `OXTITLE_1` varchar(128) NOT NULL default '';
+ALTER TABLE `oxgroups` MODIFY `OXTITLE_2` varchar(128) NOT NULL default '';
+ALTER TABLE `oxgroups` MODIFY `OXTITLE_3` varchar(128) NOT NULL default '';
 
 ALTER TABLE `oxobject2attribute` MODIFY `OXVALUE_1` varchar(255) NOT NULL default '';
 ALTER TABLE `oxobject2attribute` MODIFY `OXVALUE_2` varchar(255) NOT NULL default '';

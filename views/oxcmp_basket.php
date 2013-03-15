@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_basket.php 26611 2010-03-17 12:02:26Z sarunas $
+ * @version   SVN: $Id: oxcmp_basket.php 28585 2010-06-23 09:23:38Z sarunas $
  */
 
 /**
@@ -55,6 +55,31 @@ class oxcmp_basket extends oxView
                                     );
 
     /**
+     * Initiates component.
+     *
+     * @return null
+     */
+    public function init()
+    {
+        $oConfig = $this->getConfig();
+        if ($oConfig->getConfigParam( 'blPsBasketReservationEnabled' )) {
+            if ($oReservations = $this->getSession()->getBasketReservations()) {
+                if (!$oReservations->getTimeLeft()) {
+                    if ( $oBasket = $this->getSession()->getBasket() ) {
+                        $oBasket->deleteBasket();
+                    }
+                }
+                $iLimit = (int) $oConfig->getConfigParam( 'iBasketReservationCleanPerRequest' );
+                if (!$iLimit) {
+                    $iLimit = 200;
+                }
+                $oReservations->discardUnusedReservations($iLimit);
+            }
+        }
+        return parent::init();
+    }
+
+    /**
      * Loads basket ($oBasket = $mySession->getBasket()), calls oBasket->calculateBasket,
      * executes parent::render() and returns basket object.
      *
@@ -65,6 +90,11 @@ class oxcmp_basket extends oxView
         // recalculating
         if ( $oBasket = $this->getSession()->getBasket() ) {
             $oBasket->calculateBasket( false );
+        }
+
+        // Basket exclude
+        if ( $this->getConfig()->getConfigParam( 'blBasketExcludeEnabled' ) ) {
+            $this->getParent()->addTplParam( 'scRootCatChanged', $this->isRootCatChanged() );
         }
 
         parent::render();
@@ -390,5 +420,52 @@ class oxcmp_basket extends oxView
         }
 
         oxSession::setVar( 'aLastcall', array( $sCallName => $aProducts ) );
+    }
+
+    /**
+     * Returns true if active root category was changed
+     *
+     * @return bool
+     */
+    public function isRootCatChanged()
+    {
+        // in Basket
+        $oBasket = $this->getSession()->getBasket();
+        if ( $oBasket->showCatChangeWarning() ) {
+            $oBasket->setCatChangeWarningState( false );
+            return true;
+        }
+
+        // in Category, only then category is empty ant not equal to default category
+        $sDefCat = oxConfig::getInstance()->getActiveShop()->oxshops__oxdefcat->value;
+        $sActCat = oxConfig::getParameter( 'cnid' );
+        $oActCat = oxnew('oxcategory');
+        if ($sActCat && $sActCat!=$sDefCat && $oActCat->load($sActCat) ) {
+            $sActRoot = $oActCat->oxcategories__oxrootid->value;
+            if ( $oBasket->getBasketRootCatId() && $sActRoot != $oBasket->getBasketRootCatId() ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Executes user choice:
+     *
+     * - if user clicked on "Proceed to checkout" - redirects to basket,
+     * - if clicked "Continue shopping" - clear basket
+     *
+     * @return mixed
+     */
+    public function executeuserchoice()
+    {
+        // redirect to basket
+        if ( oxConfig::getParameter( "tobasket" ) ) {
+            return "basket";
+        } else {
+            // clear basket
+            $this->getSession()->getBasket()->deleteBasket();
+        }
     }
 }

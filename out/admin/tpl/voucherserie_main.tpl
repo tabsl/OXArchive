@@ -12,7 +12,7 @@ function changeFnc( fncName )
 {
     var langvar = document.myedit.elements['fnc'];
     if (langvar != null )
-    	langvar.value = fncName;
+        langvar.value = fncName;
 }
 //-->
 </script>
@@ -143,13 +143,6 @@ function changeFnc( fncName )
             <input type="checkbox" name="editval[oxvoucherseries__oxcalculateonce]" value="1" [{if $edit->oxvoucherseries__oxcalculateonce->value}]checked[{/if}] [{ $readonly }]>
             </td>
         </tr>
-        <tr>
-            <td class="edittext">
-            </td>
-            <td class="edittext"><br>
-            <input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="GENERAL_SAVE" }]" [{ $readonly }]>
-            </td>
-        </tr>
         </table>
     </td>
     <td width="355" valign="top">
@@ -223,7 +216,7 @@ function changeFnc( fncName )
                     <input type="text" size="15" class="editinput" name="voucherAmount" value="0" [{ $readonly }]>
                     [{ oxinputhelp ident="HELP_GENERAL_SUM" }]
                 </td>
-            </tr>            
+            </tr>
         </table>
     </td>
     </tr>
