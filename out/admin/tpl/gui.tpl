@@ -160,7 +160,7 @@
     }
     </script>
 
-    <iframe id="gui-preview" name="preview" src="[{$sShopHomeLink}]" width="100%" height="99%" frameborder="no">
+    <iframe id="gui-preview" name="preview" src="[{$sShopHomeLink}]&amp;preview=[{$oView->getPreviewId()}]" width="100%" height="99%" frameborder="no">
 
 </body>
 </html>

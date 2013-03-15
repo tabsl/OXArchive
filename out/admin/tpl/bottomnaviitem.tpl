@@ -50,7 +50,7 @@
   <li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.new" href="#" onClick="Javascript:top.oxid.admin.editThis( -1 );return false" target="edit">[{ oxmultilang ident="TOOLTIPS_NEWARTICLE" }]</a> |</li>
   [{/if}]
 [{if $bottom_buttons->article_preview && $oxid != -1 }]
-<li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.preview" href="[{if $edit}][{$edit->getStdLink()}][{else}][{$shop->basedir}]?cl=details&anid=[{$oxid}][{/if}]&amp;preview=[{ $oView->getPreviewId() }]" target="new">[{ oxmultilang ident="TOOLTIPS_ARTICLEREVIEW" }]</a> |</li>
+<li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.preview" href="[{if $edit}][{$edit->getStdLink()}][{else}][{$shop->basedir}]?cl=details&anid=[{$oxid}][{/if}]&amp;preview=[{$oView->getPreviewId()}]" target="new">[{ oxmultilang ident="TOOLTIPS_ARTICLEREVIEW" }]</a> |</li>
 [{/if}]
 [{* attribute *}]
 [{if $bottom_buttons->attribute_new }]

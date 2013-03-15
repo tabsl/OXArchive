@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcategorylist.php 29612 2010-09-01 12:10:44Z vilma $
+ * @version   SVN: $Id: oxcategorylist.php 32762 2011-01-27 10:51:31Z sarunas $
  */
 
 
@@ -388,22 +388,31 @@ class oxCategoryList extends oxList
     {
         // Colect all items whitch must be remove
         $aRemoveList = array();
-        foreach ($this->_aArray as $oCat) {
+        foreach ($this->_aArray as $sId => $oCat) {
             if ($oCat->oxcategories__oxppremove->value) {
-                if (isset($aRemoveList[$oCat->oxcategories__oxrootid->value])) {
-                    $aRemoveRange = $aRemoveList[$oCat->oxcategories__oxrootid->value];
-                } else {
-                    $aRemoveRange = array();
+                if (!isset($aRemoveList[$oCat->oxcategories__oxrootid->value])) {
+                    $aRemoveList[$oCat->oxcategories__oxrootid->value] = array();
                 }
-                $aRemoveList[$oCat->oxcategories__oxrootid->value] = array_merge(range($oCat->oxcategories__oxleft->value, $oCat->oxcategories__oxright->value), $aRemoveRange);
+                $aRemoveList[$oCat->oxcategories__oxrootid->value][$oCat->oxcategories__oxleft->value] = $oCat->oxcategories__oxright->value;
+                unset( $this->_aArray[$sId] );
+            } else {
+                unset($oCat->oxcategories__oxppremove);
             }
-            unset($oCat->oxcategories__oxppremove);
         }
 
-        // Remove colected items from list.
-        foreach ($this->_aArray as $oCat) {
-            if (isset($aRemoveList[$oCat->oxcategories__oxrootid->value]) && in_array($oCat->oxcategories__oxleft->value, $aRemoveList[$oCat->oxcategories__oxrootid->value])) {
-                unset( $this->_aArray[$oCat->oxcategories__oxid->value] );
+        // Remove colected item's children from the list too (in the ranges).
+        foreach ($this->_aArray as $sId => $oCat) {
+            if (is_array($aRemoveList[$oCat->oxcategories__oxrootid->value])) {
+                foreach ($aRemoveList[$oCat->oxcategories__oxrootid->value] as $iLeft=>$iRight) {
+                    if (
+                            ($iLeft  <= $oCat->oxcategories__oxleft->value)
+                         && ($iRight >= $oCat->oxcategories__oxleft->value)
+                       ) {
+                        // this is a child in an inactive range (parent already gone)
+                        unset( $this->_aArray[$sId] );
+                        break 1;
+                    }
+                }
             }
         }
     }

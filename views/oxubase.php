@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 32617 2011-01-20 15:23:58Z sarunas $
+ * @version   SVN: $Id: oxubase.php 32734 2011-01-26 08:32:22Z arvydas.vapsva $
  */
 
 /**
@@ -234,6 +234,12 @@ class oxUBase extends oxView
      * @var object
      */
     protected $_oActCurrency = null;
+
+    /**
+     * Private sales on/off state
+     * @var bool
+     */
+    protected $_blEnabledPrivateSales = null;
 
     /**
      * Sign if any new component is added. On this case will be
@@ -2966,6 +2972,22 @@ class oxUBase extends oxView
             $this->_blShowPromotions = ( count( $this->getPromoFinishedList() ) + count( $this->getPromoCurrentList() ) + count( $this->getPromoFutureList() ) ) > 0;
         }
         return $this->_blShowPromotions;
+    }
+
+    /**
+     * Checks if private sales is on
+     *
+     * @return bool
+     */
+    public function isEnabledPrivateSales()
+    {
+        if ( $this->_blEnabledPrivateSales === null ) {
+            $this->_blEnabledPrivateSales = (bool) $this->getConfig()->getConfigParam( 'blPsLoginEnabled' );
+            if ( $this->_blEnabledPrivateSales && ( $blCanPreview = oxUtils::getInstance()->canPreview() ) !== null ) {
+                $this->_blEnabledPrivateSales = !$blCanPreview;
+            }
+        }
+        return $this->_blEnabledPrivateSales;
     }
 
 }

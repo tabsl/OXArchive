@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_user.php 32587 2011-01-20 10:35:07Z vilma $
+ * @version   SVN: $Id: oxcmp_user.php 32734 2011-01-26 08:32:22Z arvydas.vapsva $
  */
 
 // defining login/logout states
@@ -147,13 +147,6 @@ class oxcmp_user extends oxView
         }
 
         $oParentView = $this->getParent();
-        /*
-        if ( $blNewsReg = oxConfig::getParameter( 'blnewssubscribed' )) {
-            $oParentView->setNewsSubscribed( $blNewsReg );
-            // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-            $oParentView->addTplParam( 'blnewssubscribed', $oParentView->isNewsSubscribed() );
-        }*/
-
         if ( $aInvAdress = oxConfig::getParameter( 'invadr') ) {
             $oParentView->addTplParam( 'invadr', $aInvAdress );
         }
@@ -182,7 +175,7 @@ class oxcmp_user extends oxView
     protected function _checkPsState()
     {
         $oConfig = $this->getConfig();
-        if ( $oConfig->getConfigParam( 'blPsLoginEnabled' ) ) {
+        if ( $this->getParent()->isEnabledPrivateSales() ) {
             // load session user
             $oUser  = $this->getUser();
             $sClass = $this->getParent()->getClassName();
@@ -335,7 +328,7 @@ class oxcmp_user extends oxView
     {
         $blAgb = oxConfig::getParameter( 'ord_agb' );
         $oConfig = $this->getConfig();
-        if ( $oConfig->getConfigParam( 'blPsLoginEnabled' ) && $blAgb !== null &&
+        if ( $this->getParent()->isEnabledPrivateSales() && $blAgb !== null &&
              $oConfig->getConfigParam( 'blConfirmAGB' ) && ( $oUser = $this->getUser() ) ) {
             if ( $blAgb ) {
                 $oUser->acceptTerms();
@@ -406,7 +399,7 @@ class oxcmp_user extends oxView
             $this->_afterLogout();
 
 
-            if ( $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) ) {
+            if ( $this->getParent()->isEnabledPrivateSales() ) {
                 return 'account';
             }
 
@@ -485,7 +478,7 @@ class oxcmp_user extends oxView
             return;
         }
 
-        $blActiveLogin = $this->getConfig()->getConfigParam( 'blPsLoginEnabled' );
+        $blActiveLogin = $this->getParent()->isEnabledPrivateSales();
 
         $myConfig = $this->getConfig();
         if ( $blActiveLogin && !oxConfig::getParameter( 'ord_agb' ) && $myConfig->getConfigParam( 'blConfirmAGB' ) ) {

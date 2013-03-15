@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoder.php 31085 2010-11-23 08:06:31Z arvydas $
+ * @version   SVN: $Id: oxseoencoder.php 33228 2011-02-14 09:31:23Z arvydas.vapsva $
  */
 
 /**
@@ -204,7 +204,7 @@ class oxSeoEncoder extends oxSuperCfg
         // moving
         $sSub = "select $sObjectid, MD5( LOWER( oxseourl ) ), oxshopid, oxlang, now() from oxseo
                  where {$sType} oxobjectid = ".$oDb->quote( $sId )." and oxshopid = ".$oDb->quote( $iShopId )." and
-                 oxlang = {$iLang} limit 1";
+                 oxlang = {$iLang} and oxexpired = '1'";
         $sQ   = "replace oxseohistory ( oxobjectid, oxident, oxshopid, oxlang, oxinsert ) {$sSub}";
         $oDb->execute( $sQ );
     }

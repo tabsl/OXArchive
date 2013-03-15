@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_seo.php 32511 2011-01-14 13:54:24Z arvydas.vapsva $
+ * @version   SVN: $Id: shop_seo.php 32749 2011-01-26 09:19:36Z arvydas.vapsva $
  */
 
 /**
@@ -191,7 +191,7 @@ class Shop_Seo extends Shop_Config
                 // active shop id
                 $soxId = oxConfig::getParameter( 'oxid' );
                 $oDb = oxDb::getDb();
-                $oDb->execute( "delete from oxseo where oxobjectid = ".$oDb->quote( $sObjectid ) ." and oxshopid = ".$oDb->quote( $soxId ) );
+                $oDb->execute( "delete from oxseo where oxtype='static' and oxobjectid = ".$oDb->quote( $sObjectid ) ." and oxshopid = ".$oDb->quote( $soxId ) );
             }
         }
     }

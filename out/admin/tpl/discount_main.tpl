@@ -109,42 +109,29 @@ function ChangeDiscountType(oObj)
                 [{ oxinputhelp ident="HELP_DISCOUNT_MAIN_REBATE" }]
             </td>
         </tr>
-        <tr id="itmart" style="display: [{$itm_disp}];">
-            <td class="edittext" height="30">
+        <tr id="itmart"[{if $edit->oxdiscount__oxaddsumtype->value != "itm" }] style="display:none;"[{/if}]>
+          <td class="edittext">
             [{ oxmultilang ident="DISCOUNT_MAIN_EXTRA" }]
-            </td>
-
-            <td class="edittext">
-
-                <table cellspacing="0" cellpadding="0" border="0">
-                  <tr>
-                    <td class="edittext" valign="bottom">
-                      <select name="editval[oxdiscount__oxitmartid]" class="editinput" style="width:220px;" [{ $readonly }]>
-                      [{foreach from=$itmarttree item=pcat}]
-                        <option value="[{ $pcat->oxarticles__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxarticles__oxartnum->value }] [{ $pcat->oxarticles__oxtitle->value }]</option>
-                      [{/foreach}]
-                      </select>
-                    </td>
-                    <td class="edittext" valign="bottom">
-                      [{ oxmultilang ident="DISCOUNT_MAIN_MULTIPLY_DISCOUNT_AMOUNT" }]
-                      <input type="text" class="editinput" size="5" maxlength="[{$edit->oxdiscount__oxitmamount->fldmax_length}]" name="editval[oxdiscount__oxitmamount]" value="[{$edit->oxdiscount__oxitmamount->value}]" [{ $readonly }]>
-                       </td>
-                       <td class="edittext" valign="bottom">
-                      [{ oxmultilang ident="DISCOUNT_MAIN_MULTIPLY_DISCOUNT_ARTICLES" }]
-                      <input type="hidden" name="editval[oxdiscount__oxitmmultiple]" value="0">
-                      <input class="edittext" type="checkbox" name="editval[oxdiscount__oxitmmultiple]" value='1' [{if $edit->oxdiscount__oxitmmultiple->value == 1}]checked[{/if}] [{ $readonly }]>
-                       </td>
-                    <td class="edittext" valign="bottom">
-                         [{ oxmultilang ident="GENERAL_FROMCATEGORY" }]
-                      <select name="itmartcat" class="editinput" onChange="Javascript:document.myedit.fnc.value='save';document.myedit.submit();" [{ $readonly }]>
-                      [{foreach from=$artcattree->aList item=pcat}]
-                      <option value="[{ $pcat->oxcategories__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value }]</option>
-                      [{/foreach}]
-                      </select>
-                      [{ oxinputhelp ident="HELP_DISCOUNT_MAIN_EXTRA" }]
-                    </td>
-                  </tr>
-                </table>
+          </td>
+          <td class="edittext">
+            <table>
+              <tr>
+                <td>[{$oView->getItemDiscountProductTitle()}]</td>
+                <td>
+                  <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_CHANGEPRODUCT" }]" class="edittext" onclick="JavaScript:showDialog('&cl=discount_main&aoc=2&oxid=[{ $oxid }]');">
+                  [{ oxinputhelp ident="HELP_DISCOUNT_MAIN_EXTRA" }]
+                </td>
+              <tr>
+                <td>[{ oxmultilang ident="DISCOUNT_MAIN_MULTIPLY_DISCOUNT_AMOUNT" }]</td>
+                <td><input type="text" class="editinput" size="5" maxlength="[{$edit->oxdiscount__oxitmamount->fldmax_length}]" name="editval[oxdiscount__oxitmamount]" value="[{$edit->oxdiscount__oxitmamount->value}]" [{ $readonly }]></td>
+              <tr>
+                <td>[{ oxmultilang ident="DISCOUNT_MAIN_MULTIPLY_DISCOUNT_ARTICLES" }]</td>
+                <td>
+                  <input type="hidden" name="editval[oxdiscount__oxitmmultiple]" value="0">
+                  <input class="edittext" type="checkbox" name="editval[oxdiscount__oxitmmultiple]" value='1' [{if $edit->oxdiscount__oxitmmultiple->value == 1}]checked[{/if}] [{ $readonly }]>
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
         <tr>

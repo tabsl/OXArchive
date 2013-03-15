@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: category_main.php 26710 2010-03-20 15:12:20Z arvydas $
+ * @version   SVN: $Id: category_main.php 33223 2011-02-14 08:41:46Z linas.kukulskis $
  */
 
 /**
@@ -94,8 +94,7 @@ class Category_Main extends oxAdminDetails
         } else
             $this->_getCategoryTree( "cattree", "", "", true, $myConfig->getShopId());
 
-        $oArticle = oxNew( "oxarticle" );
-        $this->_aViewData["pwrsearchfields"] = $oArticle->getSearchableFields();
+        $this->_aViewData["sortableFields"] = $this->getSortableFields();
 
         if ( oxConfig::getParameter("aoc") ) {
 
@@ -106,6 +105,30 @@ class Category_Main extends oxAdminDetails
             return "popups/category_main.tpl";
         }
         return "category_main.tpl";
+    }
+    
+    /**
+     * Returns an array of article object DB fields, without multilanguage and unsortible fields.
+     *
+     * @return array
+     */
+    public function getSortableFields()
+    {
+        $aSkipFields = array( "OXID", "OXSHOPID", "OXPARENTID", "OXACTIVE", "OXSHORTDESC"
+            , "OXUNITNAME", "OXUNITQUANTITY", "OXEXTURL", "OXURLDESC", "OXURLIMG", "OXVAT" 
+            , "OXTHUMB", "OXPICSGENERATED", "OXPIC1", "OXPIC2", "OXPIC3", "OXPIC4", "OXPIC5"
+            , "OXPIC6", "OXPIC7", "OXPIC8", "OXPIC9", "OXPIC10", "OXPIC11", "OXPIC12", "OXSTOCKFLAG"
+            , "OXSTOCKTEXT", "OXNOSTOCKTEXT", "OXDELIVERY", "OXFILE", "OXSEARCHKEYS", "OXTEMPLATE"
+            , "OXQUESTIONEMAIL", "OXISSEARCH", "OXISCONFIGURABLE", "OXBUNDLEID", "OXFOLDER", "OXSUBCLASS"
+            , "OXSOLDAMOUNT", "OXREMINDACTIVE", "OXREMINDAMOUNT", "OXVENDORID", "OXMANUFACTURERID", "OXSKIPDISCOUNTS"
+            , "OXBLFIXEDPRICE", "OXICON", "OXVARSELECT", "OXAMITEMID", "OXAMTASKID", "OXPIXIEXPORT", "OXPIXIEXPORTED"        
+        );
+     
+        $oDbHandler = oxNew( "oxDbMetaDataHandler" );
+        $aFields = array_merge( $oDbHandler->getMultilangFields( 'oxarticles' ), $oDbHandler->getSinglelangFields( 'oxarticles', 0 ) ); 
+        $aFields = array_diff( $aFields, $aSkipFields );
+        
+        return $aFields;
     }
 
     /**

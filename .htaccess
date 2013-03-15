@@ -4,6 +4,9 @@ Options +FollowSymLinks
 RewriteEngine On
 RewriteBase /
 
+RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)
+RewriteRule .* - [F]
+
 RewriteCond %{REQUEST_URI} oxseo\.php$
 RewriteCond %{QUERY_STRING} mod_rewrite_module_is=off
 RewriteRule oxseo\.php$ oxseo.php?mod_rewrite_module_is=on [L]

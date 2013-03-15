@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 32612 2011-01-20 15:22:37Z sarunas $
+ * @version   SVN: $Id: oxarticle.php 33195 2011-02-11 08:45:38Z linas.kukulskis $
  */
 
 // defining supported link types
@@ -866,16 +866,8 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     {
 
         // admin preview mode
-        $myConfig  = $this->getConfig();
-        if ( ( $sPrevId = oxConfig::getParameter( 'preview' ) ) &&
-             ( $sAdminSid = oxUtilsServer::getInstance()->getOxCookie( 'admin_sid' ) ) ) {
-
-            $oDb = oxDb::getDb();
-            $sPrevId   = $oDb->quote( $sPrevId );
-            $sAdminSid = $oDb->quote( $sAdminSid );
-            $sTable    = getViewName( 'oxuser' );
-
-            return (bool) $oDb->getOne( "select 1 from $sTable where MD5( CONCAT( {$sAdminSid}, {$sTable}.oxid, {$sTable}.oxpassword, {$sTable}.oxrights ) ) = $sPrevId" );
+        if ( ( $blCanPreview = oxUtils::getInstance()->canPreview() ) !== null ) {
+            return $blCanPreview;
         }
 
         // active ?
@@ -888,7 +880,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         }
 
         // stock flags
-        if ( $myConfig->getConfigParam( 'blUseStock' ) && $this->oxarticles__oxstockflag->value == 2) {
+        if ( $this->getConfig()->getConfigParam( 'blUseStock' ) && $this->oxarticles__oxstockflag->value == 2) {
             $iOnStock = $this->oxarticles__oxstock->value + $this->oxarticles__oxvarstock->value;
             if ($this->getConfig()->getConfigParam( 'blPsBasketReservationEnabled' )) {
                 $iOnStock += $this->getSession()->getBasketReservations()->getReservedAmount($this->getId());

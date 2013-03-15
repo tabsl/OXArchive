@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlang.php 30538 2010-10-26 08:13:43Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxlang.php 33237 2011-02-14 13:58:44Z linas.kukulskis $
  */
 
 /**
@@ -533,8 +533,10 @@ class oxLang extends oxSuperCfg
     {
         $iLang = (int) $iLang;
 
+        $blAdmin = $this->isAdmin();
+
         // checking if this language is valid
-        $aLanguages = $this->getLanguageArray();
+        $aLanguages = $this->getLanguageArray(null, !$blAdmin);
 
         if ( !isset( $aLanguages[$iLang] ) && is_array( $aLanguages ) ) {
             $oLang = current( $aLanguages );

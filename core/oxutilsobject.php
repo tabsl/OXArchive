@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsobject.php 31053 2010-11-19 16:52:01Z arvydas $
+ * @version   SVN: $Id: oxutilsobject.php 32712 2011-01-25 16:17:25Z sarunas $
  */
 
 /**
@@ -334,7 +334,7 @@ class oxUtilsObject extends oxSuperCfg
 
                 //including original file
                 if ( file_exists( $sParentPath ) ) {
-                    include $sParentPath;
+                    include_once $sParentPath;
                 } elseif ( !class_exists( $sModuleClass ) ) {
                     //to avoid problems with unitest and only throw a exception if class does not exists MAFI
                     $oEx = new oxSystemComponentException();

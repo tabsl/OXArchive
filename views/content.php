@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: content.php 29274 2010-08-10 08:54:58Z arvydas $
+ * @version   SVN: $Id: content.php 32734 2011-01-26 08:32:22Z arvydas.vapsva $
  */
 
 /**
@@ -127,7 +127,7 @@ class Content extends oxUBase
     protected function _canShowContent( $sContentIdent )
     {
         $blCan = true;
-        if ( $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) &&
+        if ( $this->isEnabledPrivateSales() &&
              !$this->getUser() && !in_array( $sContentIdent, $this->_aPsAllowedContents ) ) {
             $blCan = false;
         }
@@ -197,7 +197,7 @@ class Content extends oxUBase
         $blPlain = (bool) oxConfig::getParameter( 'plain' );
         if ( $blPlain === false ) {
             $oUser = $this->getUser();
-            if ( $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) &&
+            if ( $this->isEnabledPrivateSales() &&
                  ( !$oUser || ( $oUser && !$oUser->isTermsAccepted() ) ) ) {
                 $blPlain = true;
             }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutils.php 31051 2010-11-19 16:02:53Z arvydas $
+ * @version   SVN: $Id: oxutils.php 32734 2011-01-26 08:32:22Z arvydas.vapsva $
  */
 
 /**
@@ -837,6 +837,38 @@ class oxUtils extends oxSuperCfg
             return $sLocal;
         }
         return false;
+    }
+
+    /**
+     * Checks if preview mode is ON
+     *
+     * @return bool
+     */
+    public function canPreview()
+    {
+        $blCan = null;
+        if ( ( $sPrevId = oxConfig::getParameter( 'preview' ) ) &&
+             ( $sAdminSid = oxUtilsServer::getInstance()->getOxCookie( 'admin_sid' ) ) ) {
+
+            $sTable = getViewName( 'oxuser' );
+            $sQ = "select 1 from $sTable where MD5( CONCAT( ?, {$sTable}.oxid, {$sTable}.oxpassword, {$sTable}.oxrights ) ) = ?";
+            $blCan = (bool) oxDb::getDb()->getOne( $sQ, array( $sAdminSid, $sPrevId ) );
+        }
+
+        return $blCan;
+    }
+
+    /**
+     * Returns id which is used for product preview in shop during administration
+     *
+     * @return string
+     */
+    public function getPreviewId()
+    {
+        $sAdminSid = oxUtilsServer::getInstance()->getOxCookie( 'admin_sid' );
+        if ( ( $oUser = $this->getUser() ) ) {
+            return md5( $sAdminSid . $oUser->getId() . $oUser->oxuser__oxpassword->value . $oUser->oxuser__oxrights->value );
+        }
     }
 
     /**

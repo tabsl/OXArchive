@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdbmetadatahandler.php 28098 2010-06-02 14:17:28Z michael.keiluweit $
+ * @version   SVN: $Id: oxdbmetadatahandler.php 33226 2011-02-14 09:24:41Z linas.kukulskis $
  */
 
 /**
@@ -264,6 +264,32 @@ class oxDbMetaDataHandler extends oxSuperCfg
         }
 
         return $aMultiLangFields;
+    }
+
+    /**
+     * Get single language fields
+     *
+     * @param string $sTableName table name
+     * @param int    $iLang      languane id
+     *
+     * @return array
+     */
+    public function getSinglelangFields( $sTableName, $iLang )
+    {
+        $aFields = $this->getFields( $sTableName );
+        $aSingleLangFields = array();
+
+        foreach ( $aFields as $sFieldName ) {
+            if ( preg_match("/(.+)_([0-9]+)$/", $sFieldName, $aMatches) ) {
+                if ($aMatches[2] == $iLang) {
+                    $aSingleLangFields[$aMatches[1]] = $sFieldName;
+                }
+            } else {
+                $aSingleLangFields[$sFieldName] = $sFieldName;
+            }
+        }
+
+        return $aSingleLangFields;
     }
 
     /**

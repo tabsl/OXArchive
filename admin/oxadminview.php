@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadminview.php 32511 2011-01-14 13:54:24Z arvydas.vapsva $
+ * @version   SVN: $Id: oxadminview.php 32734 2011-01-26 08:32:22Z arvydas.vapsva $
  */
 
 /**
@@ -624,8 +624,6 @@ class oxAdminView extends oxView
      */
     public function getPreviewId()
     {
-        $sAdminSid = oxUtilsServer::getInstance()->getOxCookie( 'admin_sid' );
-        $oUser = $this->getUser();
-        return md5( $sAdminSid . $oUser->getId() . $oUser->oxuser__oxpassword->value . $oUser->oxuser__oxrights->value );
+        return oxUtils::getInstance()->getPreviewId();
     }
 }

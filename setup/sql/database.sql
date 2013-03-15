@@ -14,7 +14,7 @@ CREATE TABLE `oxaccessoire2article` (
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
   KEY `OXARTICLENID` (`OXARTICLENID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxactions`
@@ -41,7 +41,7 @@ CREATE TABLE `oxactions` (
   PRIMARY KEY  (`OXID`),
   index(`oxsort`),
   index(`OXTYPE`, `OXACTIVE`, `OXACTIVETO`, `OXACTIVEFROM`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 
 #
@@ -99,7 +99,7 @@ CREATE TABLE `oxaddress` (
   `OXSAL` varchar(128) NOT NULL default '',
   PRIMARY KEY  (`OXID`),
   KEY `OXUSERID` (`OXUSERID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxadminlog`
@@ -111,7 +111,7 @@ CREATE TABLE `oxadminlog` (
   `OXDATE` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXSQL` text NOT NULL
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxarticles`
@@ -240,7 +240,7 @@ CREATE TABLE `oxarticles` (
   KEY `OXACTIVETO` (`OXACTIVETO`),
   KEY `OXVENDORID` (`OXVENDORID`),
   KEY `OXMANUFACTURERID` (`OXMANUFACTURERID`)
-)TYPE=InnoDB;
+)ENGINE=InnoDB;
 
 #
 # Table structure for table `oxartextends`
@@ -282,7 +282,7 @@ CREATE TABLE `oxattribute` (
   `OXTITLE_3` char(128) NOT NULL default '',
   `OXPOS` int(11) NOT NULL default '9999',
   PRIMARY KEY  (`OXID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxuserbaskets`
@@ -299,7 +299,7 @@ CREATE TABLE `oxuserbaskets` (
   `OXUPDATE` INT NOT NULL default 0,
   PRIMARY KEY  (`OXID`),
   index(`OXUPDATE`)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 #
 # Table structure for table `oxuserbasketitems`
@@ -317,7 +317,7 @@ CREATE TABLE `oxuserbasketitems` (
   PRIMARY KEY  (`OXID`),
   KEY `OXBASKETID` (`OXBASKETID`),
   KEY `OXARTID` (`OXARTID`)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 #
 # Table structure for table `oxcategories`
@@ -370,7 +370,7 @@ CREATE TABLE `oxcategories` (
    KEY `OXSHOPID` (`OXSHOPID`),
    KEY `OXSORT` (`OXSORT`),
    KEY `OXVAT` (`OXVAT`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxconfig`
@@ -387,7 +387,7 @@ CREATE TABLE `oxconfig` (
   PRIMARY KEY  (`OXID`),
   KEY `OXSHOPID` (`OXSHOPID`),
   KEY `OXVARNAME` (`OXVARNAME`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Data for table `oxconfig`
@@ -557,7 +557,7 @@ CREATE TABLE `oxcontents` (
   PRIMARY KEY  (`OXID`),
   UNIQUE KEY `OXLOADID` (`OXLOADID`),
   INDEX `cat_search` ( `OXTYPE` , `OXSHOPID` , `OXSNIPPET` , `OXCATID` )
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxcontents`
@@ -635,7 +635,7 @@ CREATE TABLE `oxcountry` (
   `OXVATSTATUS` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY  (`OXID`),
   KEY (`OXACTIVE`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Data for table `oxcountry`
@@ -915,7 +915,7 @@ CREATE TABLE `oxdelivery` (
   `OXFINALIZE` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`OXID`),
   KEY `OXSHOPID` (`OXSHOPID`)
-)  TYPE=MyISAM;
+)  ENGINE=MyISAM;
 
 #
 # Table structure for table `oxdiscount`
@@ -947,7 +947,7 @@ CREATE TABLE `oxdiscount` (
   KEY `OXACTIVE` (`OXACTIVE`),
   KEY `OXACTIVEFROM` (`OXACTIVEFROM`),
   KEY `OXACTIVETO` (`OXACTIVETO`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxgbentries`
@@ -965,7 +965,7 @@ CREATE TABLE `oxgbentries` (
   `OXVIEWED` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`OXID`),
   KEY (`OXUSERID`)
-) TYPE=MyISAM COMMENT='Guestbook`s entries';
+) ENGINE=MyISAM COMMENT='Guestbook`s entries';
 
 #
 # Table structure for table `oxgroups`
@@ -982,7 +982,7 @@ CREATE TABLE `oxgroups` (
   `OXTITLE_3` varchar(128) NOT NULL default '',
   PRIMARY KEY  (`OXID`),
   KEY `OXACTIVE` (`OXACTIVE`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Data for table `oxgroups`
@@ -1025,7 +1025,7 @@ CREATE TABLE `oxlinks` (
   KEY `OXSHOPID` (`OXSHOPID`),
   KEY `OXINSERT` (`OXINSERT`),
   KEY `OXACTIVE` (`OXACTIVE`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxlogs`
@@ -1043,7 +1043,7 @@ CREATE TABLE `oxlogs` (
   `OXCNID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXANID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXPARAMETER` varchar(64) NOT NULL default ''
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 #
 # Table structure for table `oxvouchers`
@@ -1123,7 +1123,7 @@ CREATE TABLE `oxnews` (
   KEY `OXACTIVE` (`OXACTIVE`),
   KEY `OXACTIVEFROM` (`OXACTIVEFROM`),
   KEY `OXACTIVETO` (`OXACTIVETO`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxnewsletter`
@@ -1138,7 +1138,7 @@ CREATE TABLE `oxnewsletter` (
   `OXTEMPLATE` mediumtext NOT NULL,
   `OXPLAINTEMPLATE` mediumtext NOT NULL,
   PRIMARY KEY  (`OXID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxobject2article`
@@ -1154,7 +1154,7 @@ CREATE TABLE `oxobject2article` (
   PRIMARY KEY  (`OXID`),
   KEY `OXARTICLENID` (`OXARTICLENID`),
   KEY `OXOBJECTID` (`OXOBJECTID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxobject2attribute`
@@ -1174,7 +1174,7 @@ CREATE TABLE `oxobject2attribute` (
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
   KEY `OXATTRID` (`OXATTRID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxobject2category`
@@ -1192,7 +1192,7 @@ CREATE TABLE `oxobject2category` (
   KEY ( `OXOBJECTID` ),
   KEY (`OXPOS`),
   KEY `OXMAINIDX` (`OXCATNID`,`OXOBJECTID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxobject2delivery`
@@ -1208,7 +1208,7 @@ CREATE TABLE `oxobject2delivery` (
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
   KEY `OXDELIVERYID` ( `OXDELIVERYID` , `OXTYPE` )
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxobject2discount`
@@ -1224,7 +1224,7 @@ CREATE TABLE `oxobject2discount` (
    PRIMARY KEY  (`OXID`),
    KEY `oxobjectid` (`OXOBJECTID`),
    KEY `oxdiscidx` (`OXDISCOUNTID`,`OXTYPE`)
-   ) TYPE=MyISAM;
+   ) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxobject2group`
@@ -1240,7 +1240,7 @@ CREATE TABLE `oxobject2group` (
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
   KEY `OXGROUPSID` (`OXGROUPSID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 INSERT INTO `oxobject2group` VALUES ('e913fdd8443ed43e1.51222316', 'oxbaseshop', 'oxdefaultadmin', 'oxidadmin');
 
@@ -1256,7 +1256,7 @@ CREATE TABLE `oxobject2payment` (
   `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXTYPE` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   PRIMARY KEY  (`OXID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxobject2selectlist`
@@ -1272,7 +1272,7 @@ CREATE TABLE `oxobject2selectlist` (
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
   KEY `OXSELNID` (`OXSELNID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxorder`
@@ -1355,7 +1355,7 @@ CREATE TABLE `oxorder` (
   `OXTSPROTECTCOSTS` double NOT NULL default '0',
   PRIMARY KEY  (`OXID`),
   KEY `MAINIDX` (`OXSHOPID`,`OXSTORNO`,`OXORDERDATE`)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 #
 # Table structure for table `oxorderarticles`
@@ -1411,7 +1411,7 @@ CREATE TABLE `oxorderarticles` (
   KEY `OXORDERID` (`OXORDERID`),
   KEY `OXARTID` (`OXARTID`),
   KEY `OXARTNUM` (`OXARTNUM`)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 #
 # Table structure for table `oxpayments`
@@ -1444,7 +1444,7 @@ CREATE TABLE `oxpayments` (
   `OXTSPAYMENTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   PRIMARY KEY  (`OXID`),
   KEY `OXACTIVE` (`OXACTIVE`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Data for table `oxpayments`
@@ -1474,7 +1474,7 @@ CREATE TABLE `oxprice2article` (
   PRIMARY KEY  (`OXID`),
   KEY `OXSHOPID` (`OXSHOPID`),
  KEY `OXARTID` (`OXARTID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxpricealarm`
@@ -1494,7 +1494,7 @@ CREATE TABLE `oxpricealarm` (
 `OXINSERT` datetime NOT NULL default '0000-00-00 00:00:00',
 `OXSENDED` datetime NOT NULL default '0000-00-00 00:00:00',
 PRIMARY KEY (`OXID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxrecommlists`
@@ -1512,7 +1512,7 @@ CREATE TABLE `oxrecommlists` (
   `OXRATINGCNT` int(11) NOT NULL default '0',
   `OXRATING` double NOT NULL default '0',
   PRIMARY KEY  (`OXID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxobject2list`
@@ -1529,7 +1529,7 @@ CREATE TABLE `oxobject2list` (
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
   KEY `OXLISTID` (`OXLISTID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxremark`
@@ -1547,7 +1547,7 @@ CREATE TABLE `oxremark` (
   PRIMARY KEY  (`OXID`),
   KEY `OXPARENTID` (`OXPARENTID`),
   KEY `OXTYPE` (`OXTYPE`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxratings`
@@ -1565,7 +1565,7 @@ CREATE TABLE `oxratings` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`OXID`),
   KEY `oxobjectsearch` (`OXTYPE`,`OXOBJECTID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxreviews`
@@ -1606,7 +1606,7 @@ CREATE TABLE `oxselectlist` (
   `OXTITLE_3` varchar(255) NOT NULL default '',
   `OXVALDESC_3` text NOT NULL,
   PRIMARY KEY  (`OXID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxshops`
@@ -1687,13 +1687,13 @@ CREATE TABLE `oxshops` (
   `OXSEOACTIVE_3` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY  (`OXID`),
   KEY `OXACTIVE` (`OXACTIVE`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Data for table `oxshops`
 #
 
-INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Store', '', '', 'online kaufen', 'purchase online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'info@myoxideshop.com', 'reply@myoxideshop.com', 'order@myoxideshop.com', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order at OXID eShop', 'Thank you for your registration at OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', '', '', '', 'Your Company Name', '2425 Maple Street', '9041', 'Any City, CA', 'United States', 'Bank of America', '1234567890', '900 1234567', '', '', '', 'John', 'Doe', '217-8918712', '217-8918713', 'www.myoxideshop.com', '', '', '', '', '', '', '', '', 'CE', '4.4.6', 1, 1, 0, 0);
+INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Store', '', '', 'online kaufen', 'purchase online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'info@myoxideshop.com', 'reply@myoxideshop.com', 'order@myoxideshop.com', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order at OXID eShop', 'Thank you for your registration at OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', '', '', '', 'Your Company Name', '2425 Maple Street', '9041', 'Any City, CA', 'United States', 'Bank of America', '1234567890', '900 1234567', '', '', '', 'John', 'Doe', '217-8918712', '217-8918713', 'www.myoxideshop.com', '', '', '', '', '', '', '', '', 'CE', '4.4.7', 1, 1, 0, 0);
 
 #
 # Table structure for table `oxstatistics`
@@ -1707,7 +1707,7 @@ CREATE TABLE `oxstatistics` (
   `OXTITLE` char(32) NOT NULL default '',
   `OXVALUE` text NOT NULL,
   PRIMARY KEY  (`OXID`)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 #
@@ -1758,7 +1758,7 @@ CREATE TABLE `oxuser` (
   KEY `OXCUSTNR` (`OXCUSTNR`),
   KEY `OXACTIVE` (`OXACTIVE`),
   KEY `OXLNAME` (`OXLNAME`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Data for table `oxuser`
@@ -1779,7 +1779,7 @@ CREATE TABLE `oxuserpayments` (
   `OXVALUE` blob NOT NULL,
   PRIMARY KEY  (`OXID`),
   KEY `OXUSERID` (`OXUSERID`)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 #
 # Table structure for table `oxactions2article`
@@ -1796,7 +1796,7 @@ CREATE TABLE `oxactions2article` (
   PRIMARY KEY  (`OXID`),
   KEY `OXMAINIDX` (`OXSHOPID`,`OXACTIONID`,`OXSORT`),
   KEY `OXARTID` (`OXARTID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxwrapping`
@@ -1819,7 +1819,7 @@ CREATE TABLE `oxwrapping` (
   `OXPIC` varchar(128) NOT NULL default '',
   `OXPRICE` double NOT NULL default '0',
   PRIMARY KEY  (`OXID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxdel2delset`
@@ -1833,7 +1833,7 @@ CREATE TABLE `oxdel2delset` (
   `OXDELSETID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   PRIMARY KEY  (`OXID`),
   KEY `OXDELID` (`OXDELID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxdeliveryset`
@@ -1854,7 +1854,7 @@ CREATE TABLE `oxdeliveryset` (
   `OXPOS` int(11) NOT NULL default '0',
   PRIMARY KEY  (`OXID`),
   KEY `OXSHOPID` (`OXSHOPID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Data for table `oxdeliveryset`
@@ -1875,7 +1875,7 @@ CREATE TABLE `oxcategory2attribute` (
   `OXSORT` INT( 11 ) NOT NULL DEFAULT '9999',
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxnewssubscribed`
@@ -1896,7 +1896,7 @@ CREATE TABLE `oxnewssubscribed` (
   `OXUNSUBSCRIBED` datetime NOT NULL default '0000-00-00 00:00:00',
   UNIQUE KEY `OXEMAIL` (`OXEMAIL`),
   KEY `OXUSERID` (`OXUSERID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Data for table `oxnewssubscribed`
@@ -1926,7 +1926,7 @@ CREATE TABLE `oxvendor` (
   `OXSHOWSUFFIX` tinyint(1) NOT NULL default '1',
   PRIMARY KEY  (`OXID`),
   KEY `OXACTIVE` (`OXACTIVE`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxmanufacturers`
@@ -1949,7 +1949,7 @@ CREATE TABLE `oxmanufacturers` (
   `OXSHORTDESC_3` char(255) NOT NULL default '',
   `OXSHOWSUFFIX` tinyint(1) NOT NULL default '1',
   PRIMARY KEY  (`OXID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `oxseo`
@@ -1972,7 +1972,7 @@ CREATE TABLE `oxseo` (
 PRIMARY KEY (`OXIDENT`, `OXSHOPID`, `OXLANG`),
 UNIQUE KEY search (`OXTYPE`, `OXOBJECTID`, `OXSHOPID`, `OXLANG`,`OXPARAMS`),
 KEY `OXOBJECTID` (`OXLANG`,`OXOBJECTID`,`OXSHOPID`)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 #
 # Data for table `oxseo`
@@ -2252,4 +2252,4 @@ CREATE TABLE `oxacceptedterms` (
   `OXTERMVERSION` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXACCEPTEDTIME` datetime NOT NULL default '0000-00-00 00:00:00',
   PRIMARY KEY (`OXUSERID`, `OXSHOPID`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;

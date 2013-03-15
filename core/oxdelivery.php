@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdelivery.php 29187 2010-07-30 13:01:22Z vilma $
+ * @version   SVN: $Id: oxdelivery.php 32997 2011-02-07 15:40:19Z arvydas.vapsva $
  */
 
 /**
@@ -364,14 +364,13 @@ class oxDelivery extends oxI18n
 
         // category & article check
         if ( $blHasCategories || $blHasArticles ) {
+            $blUse = false;
+
             $aDeliveryArticles   = $this->getArticles();
             $aDeliveryCategories = $this->getCategories();
 
             foreach ( $oBasket->getContents() as $oContent ) {
-                if ( !$blUse ) {
-                    break;
-                }
-                $blUse = false;
+
                 //V FS#1954 - load delivery for variants from parent article
                 $oArticle   = $oContent->getArticle(false);
                 $sProductId = $oArticle->getProductId();

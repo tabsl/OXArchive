@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account.php 32587 2011-01-20 10:35:07Z vilma $
+ * @version   SVN: $Id: account.php 32734 2011-01-26 08:32:22Z arvydas.vapsva $
  */
 
 /**
@@ -134,7 +134,6 @@ class Account extends oxUBase
         // performing redirect if needed
         $this->redirectAfterLogin();
 
-
         // loading actions
         $this->_loadActions();
 
@@ -153,7 +152,7 @@ class Account extends oxUBase
         // is logged in ?
         $oUser = $this->getUser();
         if ( !$oUser || ( $oUser && !$oUser->oxuser__oxpassword->value ) ||
-             ( $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) && $oUser && ( !$oUser->isTermsAccepted() || $this->confirmTerms() ) ) ) {
+             ( $this->isEnabledPrivateSales() && $oUser && ( !$oUser->isTermsAccepted() || $this->confirmTerms() ) ) ) {
             $this->_sThisTemplate = $this->_getLoginTemplate();
         } else {
             // calculating amount of orders made by user
@@ -172,7 +171,7 @@ class Account extends oxUBase
      */
     protected function _getLoginTemplate()
     {
-        return $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) ? $this->_sThisAltLoginTemplate : $this->_sThisLoginTemplate;
+        return $this->isEnabledPrivateSales() ? $this->_sThisAltLoginTemplate : $this->_sThisLoginTemplate;
     }
 
     /**
@@ -183,7 +182,7 @@ class Account extends oxUBase
     public function confirmTerms()
     {
         $blConfirm = oxConfig::getParameter( "term" );
-        if ( !$blConfirm && $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) ) {
+        if ( !$blConfirm && $this->isEnabledPrivateSales() ) {
             $oUser = $this->getUser();
             if ( $oUser && !$oUser->isTermsAccepted() ) {
                 $blConfirm = true;

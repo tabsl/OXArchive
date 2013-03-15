@@ -79,7 +79,6 @@ window.onload = function ()
             [{ oxinputhelp ident="HELP_LANGUAGE_DEFAULT" }]
             </td>
         </tr>
-        [{ if !$isMall }]
         <tr>
             <td class="edittext">
             [{ oxmultilang ident="LANGUAGE_BASEURL" }]
@@ -98,7 +97,6 @@ window.onload = function ()
             [{ oxinputhelp ident="HELP_LANGUAGE_BASESSLURL" }]
             </td>
         </tr>
-        [{/if}]
         [{if $oxid != -1}]
         <tr>
             <td class="edittext">
