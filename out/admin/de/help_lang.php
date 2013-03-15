@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 26630 2010-03-17 16:01:48Z rimvydas.paskevicius $
+ * @version   SVN: $Id: help_lang.php 27769 2010-05-17 08:21:10Z vilma $
  */
 
 /**
@@ -156,7 +156,7 @@ $aLang =  array(
 'HELP_SHOP_CONFIG_DISABLEONLINEVATIDCHECK'      =>  'Die Online UST-ID Prüfung wird immer ausgeführt, wenn ein Kunde aus dem Ausland (aber innerhalb der EU) eine Umsatzsteuer-ID beim bestellen angibt. Wenn die UST-ID gültig ist, wird für die Bestellung keine Umsatzsteuer berechnet.<br />'.
                                                     'Wenn die Prüfung ausgeschaltet ist, wird immer die für das entsprechende Land eingestelle Umsatzsteuer berechnet.',
 
-'HELP_SHOP_CONFIG_ALTVATIDCHECKINTERFACEWSDL'   =>  'Hier können Sie eine alternative URL für die Online UST-ID Prüfung eingeben. Wenn die Prüfung unter der normalen URL nicht erreichbar ist versucht der eShop, die Prüfung unter der hier eingetragenen URL zu erreichen.',
+'HELP_SHOP_CONFIG_ALTVATIDCHECKINTERFACEWSDL'   =>  'Hier können Sie eine alternative URL für die Online UST-ID Prüfung eingeben.',
 
 'HELP_SHOP_MALL_MALLMODE'                       =>  'Hier stellen Sie ein, was auf der Startseite dieses eShops angezeigt werden soll: '.
                                                     '<ul><li><span class="navipath_or_inputname">Shop-Auswahlseite</span>: Eine Seite wird angezeigt, auf der Kunden zwischen den verschiedenen Shops wählen können.</li>' .

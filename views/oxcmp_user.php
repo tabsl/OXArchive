@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_user.php 27207 2010-04-14 13:11:41Z vilma $
+ * @version   SVN: $Id: oxcmp_user.php 27823 2010-05-20 08:54:25Z tomas $
  */
 
 // defining login/logout states
@@ -161,10 +161,10 @@ class oxcmp_user extends oxView
         // TODO: we need todo something with this !!!
         if ( $oUser->isLoadedFromCookie() ) {
 
-                // #1678 R
-                if ( !$myConfig->getConfigParam( 'blPerfNoBasketSaving' ) ) {
-                    $myConfig->setGlobalParameter( 'blUserChanged', 1 );
-                }
+            // #1678 R
+            if ( !$myConfig->getConfigParam( 'blPerfNoBasketSaving' ) ) {
+                $myConfig->setGlobalParameter( 'blUserChanged', 1 );
+            }
 
             if ( $oBasket = $this->getSession()->getBasket() ) {
                 $oBasket->onUpdate();
@@ -253,10 +253,10 @@ class oxcmp_user extends oxView
             $oBasket->onUpdate();
         }
 
-            // #1678 R
-            if ( !$myConfig->getConfigParam( 'blPerfNoBasketSaving' ) ) {
-                $myConfig->setGlobalParameter( 'blUserChanged', 1);
-            }
+        // #1678 R
+        if ( !$myConfig->getConfigParam( 'blPerfNoBasketSaving' ) ) {
+            $myConfig->setGlobalParameter( 'blUserChanged', 1);
+        }
 
 
         return 'payment';
@@ -427,6 +427,7 @@ class oxcmp_user extends oxView
             $this->_blNewsSubscriptionStatus = $oUser->setNewsSubscription( $blOptin, $this->getConfig()->getConfigParam( 'blOrderOptInEmail' ) );
 
             $oUser->addToGroup( 'oxidnotyetordered' );
+            $oUser->addDynGroup( oxSession::getVar( 'dgr' ), $myConfig->getConfigParam( 'aDeniedDynGroups' ) );
             $oUser->logout();
 
         } catch ( oxUserException $oEx ) {

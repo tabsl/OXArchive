@@ -25,7 +25,7 @@
 <div class="box info">
   [{ if !$oView->getContactSendStatus() }]
     [{assign var="editval" value=$oView->getUserData() }]
-      <form action="[{ $oViewConf->getSelfActionLink() }]" method="post">
+      <form action="[{ $oViewConf->getSslSelfLink() }]" method="post">
         <div>
             [{ $oViewConf->getHiddenSid() }]
             <input type="hidden" name="fnc" value="send"/>

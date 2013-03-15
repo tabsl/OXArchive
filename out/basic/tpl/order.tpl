@@ -498,25 +498,6 @@
 
     </div>
 
-
-    <strong id="test_WithdrawalHeader" class="boxhead">[{ oxmultilang ident="ORDER_RIGHTOFWITHDRAWAL" }]</strong>
-    <div class="box info">
-
-        <p id="test_WithdrawalText">
-          [{ oxmultilang ident="ORDER_RIGHTOFWITHDRAWAL_TEXT" }]
-          [{ $oxcmp_shop->oxshops__oxcompany->value }], [{ $oxcmp_shop->oxshops__oxstreet->value }], [{ $oxcmp_shop->oxshops__oxzip->value }] [{$oxcmp_shop->oxshops__oxcity->value }], [{ $oxcmp_shop->oxshops__oxcountry->value }].
-          <br /><br />
-        </p>
-
-        [{oxifcontent ident="oxrightofwithdrawal" object="oCont"}]
-        <p>
-          [{ oxmultilang ident="ORDER_RIGHTOFWITHDRAWAL_MOREINFO1" }] <a id="test_OpenWithdrawal" rel="nofollow" href="[{ $oCont->getLink() }]" class="fontunderline">[{ $oCont->oxcontents__oxtitle->value }]</a>.
-        </p>
-        [{/oxifcontent}]
-
-    </div>
-
-
         [{if $oView->isLowOrderPrice() }]
           <div class="bar prevnext order">
             <div class="minorderprice">[{ oxmultilang ident="BASKET_MINORDERPRICE" }] [{ $oView->getMinOrderPrice() }] [{ $currency->sign }]</div>

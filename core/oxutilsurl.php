@@ -154,7 +154,7 @@ class oxUtilsUrl extends oxSuperCfg
 
         if ( count( $aAddParams ) ) {
             foreach ( $aAddParams as $sName => $sValue ) {
-                if ( isset( $sValue ) && !$oStr->preg_match("/\?(.*&(amp;)?)?$sName=/", $sUrl ) ) {
+                if ( isset( $sValue ) && !$oStr->preg_match("/\?(.*&(amp;)?)?".preg_quote( $sName )."=/", $sUrl ) ) {
                     $sUrl .= $sSep . $sName . "=" . $sValue;
                     $sSep = '&amp;';
                 }
@@ -176,7 +176,7 @@ class oxUtilsUrl extends oxSuperCfg
         $oStr = getStr();
         if ( is_array( $aParams ) ) {
             foreach ( $aParams as $sParam ) {
-                $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)'.$sParam.'=[a-z0-9\.]+&?(amp;)?/i', '\1', $sUrl );
+                $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)'.preg_quote( $sParam ).'=[a-z0-9\.]+&?(amp;)?/i', '\1', $sUrl );
             }
         } else {
             $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?).+/i', '\1', $sUrl );

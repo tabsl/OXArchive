@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: vendor_seo.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: vendor_seo.php 27759 2010-05-14 10:10:17Z arvydas $
  */
 
 /**
@@ -65,7 +65,7 @@ class Vendor_Seo extends Object_Seo
      */
     protected function _getSeoUrl( $oVendor )
     {
-        oxSeoEncoderVendor::getInstance()->getVendorUrl( $oVendor );
+        $this->_getEncoder()->getVendorUrl( $oVendor );
         return parent::_getSeoUrl( $oVendor );
     }
 
@@ -112,5 +112,15 @@ class Vendor_Seo extends Object_Seo
         }
 
         return parent::save();
+    }
+
+    /**
+     * Returns current object type seo encoder object
+     *
+     * @return oxSeoEncoderVendor
+     */
+    protected function _getEncoder()
+    {
+        return oxSeoEncoderVendor::getInstance();
     }
 }

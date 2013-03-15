@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdiscountlist.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxdiscountlist.php 27732 2010-05-12 14:21:52Z sarunas $
  */
 
 /**
@@ -251,7 +251,8 @@ class oxDiscountList extends oxList
     public function getBasketDiscounts( $oBasket, $oUser = null )
     {
         $aList = array();
-        foreach ( $this->_getList( $oUser ) as $oDiscount ) {
+        $oList = $this->_getList( $oUser );
+        foreach ( $oList->getArray() as $oDiscount ) {
             if ( $oDiscount->isForBasket( $oBasket ) ) {
                 $aList[$oDiscount->getId()] = $oDiscount;
             }

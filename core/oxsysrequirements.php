@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsysrequirements.php 27169 2010-04-12 15:40:12Z tomas $
+ * @version   SVN: $Id: oxsysrequirements.php 27693 2010-05-12 08:45:21Z sarunas $
  */
 
 /**
@@ -165,9 +165,8 @@ class oxSysRequirements
                                           'gd_info',
                                           'mb_string',
                                           'curl',
+                                          'bc_math',
                                       );
-
-                $aRequiredPHPExtensions[] = 'bc_math';
 
             $aRequiredPHPConfigs = array(
                                        'allow_url_fopen',

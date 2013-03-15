@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoderarticle.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxseoencoderarticle.php 27759 2010-05-14 10:10:17Z arvydas $
  */
 
 /**
@@ -109,6 +109,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
      */
     protected function _getArticleRecommUri( $oArticle, $iLang )
     {
+        $sSeoUri = null;
         if ( $oRecomm = $this->_getRecomm( $oArticle, $iLang ) ) {
             //load details link from DB
             if ( !( $sSeoUri = $this->_loadFromDb( 'oxarticle', $oArticle->getId(), $iLang, null, $oRecomm->getId(), true ) ) ) {
@@ -125,9 +126,8 @@ class oxSeoEncoderArticle extends oxSeoEncoder
                 $aStdParams = array( 'recommid' => $oRecomm->getId(), 'listtype' => $this->_getListType() );
                 $this->_saveToDb( 'oxarticle', $oArticle->getId(), $oArticle->getStdLink( $iLang, $aStdParams ), $sSeoUri, $iLang, null, 0, false, false, $oRecomm->getId() );
             }
-
-            return $sSeoUri;
         }
+        return $sSeoUri;
     }
 
     /**
@@ -140,10 +140,12 @@ class oxSeoEncoderArticle extends oxSeoEncoder
      */
     protected function _getRecomm( $oArticle, $iLang )
     {
+        $oList = null;
         $oView = $this->getConfig()->getActiveView();
         if ( $oView instanceof oxView ) {
-            return $oView->getActiveRecommList();
+            $oList = $oView->getActiveRecommList();
         }
+        return $oList;
     }
 
     /**
@@ -159,26 +161,27 @@ class oxSeoEncoderArticle extends oxSeoEncoder
     /**
      * Returns SEO uri for passed article and active tag
      *
-     * @param oxarticle $oArticle article object
-     * @param int       $iLang    language id
+     * @param oxarticle $oArticle     article object
+     * @param int       $iLang        language id
+     * @param bool      $blRegenerate if TRUE forces seo url regeneration
      *
      * @return string
      */
-    protected function _getArticleTagUri( $oArticle, $iLang )
+    protected function _getArticleTagUri( $oArticle, $iLang, $blRegenerate = false )
     {
+        $sSeoUri = null;
         if ( $sTag = $this->_getTag( $oArticle, $iLang ) ) {
             $iShopId = $this->getConfig()->getShopId();
             $sStdUrl = $oArticle->getStdTagLink( $sTag );
-            if ( !( $sSeoUri = $this->_loadFromDb( 'dynamic', $this->getDynamicObjectId( $iShopId, $sStdUrl ), $iLang ) ) ) {
-
+            if ( $blRegenerate || !( $sSeoUri = $this->_loadFromDb( 'dynamic', $this->getDynamicObjectId( $iShopId, $sStdUrl ), $iLang ) ) ) {
                 // generating new if not found
                 $sSeoUri  = oxSeoEncoderTag::getInstance()->getTagUri( $sTag, $iLang );
                 $sSeoUri .= $this->_prepareArticleTitle( $oArticle );
                 $sSeoUri  = $this->_processSeoUrl( $sSeoUri, $this->_getStaticObjectId( $iShopId, $sStdUrl ), $iLang );
                 $sSeoUri  = $this->_getDynamicUri( $sStdUrl, $sSeoUri, $iLang );
             }
-            return $sSeoUri;
         }
+        return $sSeoUri;
     }
 
     /**
@@ -191,10 +194,12 @@ class oxSeoEncoderArticle extends oxSeoEncoder
      */
     protected function _getTag( $oArticle, $iLang )
     {
+        $sTag = null;
         $oView = $this->getConfig()->getActiveView();
         if ( $oView instanceof oxView ) {
-            return $oView->getTag();
+            $sTag = $oView->getTag();
         }
+        return $sTag;
     }
 
     /**
@@ -230,12 +235,13 @@ class oxSeoEncoderArticle extends oxSeoEncoder
     /**
      * Returns SEO uri for passed article
      *
-     * @param oxarticle $oArticle article object
-     * @param int       $iLang    language id
+     * @param oxarticle $oArticle     article object
+     * @param int       $iLang        language id
+     * @param bool      $blRegenerate if TRUE forces seo url regeneration
      *
      * @return string
      */
-    protected function _getArticleUri( $oArticle, $iLang )
+    protected function _getArticleUri( $oArticle, $iLang, $blRegenerate = false )
     {
         startProfile(__FUNCTION__);
 
@@ -245,7 +251,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
         }
 
         //load details link from DB
-        if ( !( $sSeoUri = $this->_loadFromDb( 'oxarticle', $oArticle->getId(), $iLang, null, $sActCatId, true ) ) ) {
+        if ( $blRegenerate || !( $sSeoUri = $this->_loadFromDb( 'oxarticle', $oArticle->getId(), $iLang, null, $sActCatId, true ) ) ) {
             if ( $oActCat ) {
                 $blInCat = false;
                 if ( $oActCat->isPriceCategory() ) {
@@ -274,10 +280,12 @@ class oxSeoEncoderArticle extends oxSeoEncoder
      */
     protected function _getCategory( $oArticle, $iLang )
     {
+        $oCat = null;
         $oView = $this->getConfig()->getActiveView();
         if ( $oView instanceof oxview ) {
-            return $oView->getActCategory();
+            $oCat = $oView->getActCategory();
         }
+        return $oCat;
     }
 
     /**
@@ -366,18 +374,20 @@ class oxSeoEncoderArticle extends oxSeoEncoder
     /**
      * Returns vendor seo uri for current article
      *
-     * @param oxarticle $oArticle article object
-     * @param int       $iLang    language id
+     * @param oxarticle $oArticle     article object
+     * @param int       $iLang        language id
+     * @param bool      $blRegenerate if TRUE forces seo url regeneration
      *
      * @return string
      */
-    protected function _getArticleVendorUri( $oArticle, $iLang )
+    protected function _getArticleVendorUri( $oArticle, $iLang, $blRegenerate = false )
     {
         startProfile(__FUNCTION__);
 
+        $sSeoUri = null;
         if ( $oVendor = $this->_getVendor( $oArticle, $iLang ) ) {
             //load details link from DB
-            if ( !( $sSeoUri = $this->_loadFromDb( 'oxarticle', $oArticle->getId(), $iLang, null, $oVendor->getId(), true ) ) ) {
+            if ( $blRegenerate || !( $sSeoUri = $this->_loadFromDb( 'oxarticle', $oArticle->getId(), $iLang, null, $oVendor->getId(), true ) ) ) {
 
                 $oArticle = $this->_getProductForLang( $oArticle, $iLang );
 
@@ -393,8 +403,8 @@ class oxSeoEncoderArticle extends oxSeoEncoder
             }
 
             stopProfile(__FUNCTION__);
-            return $sSeoUri;
         }
+        return $sSeoUri;
     }
 
     /**
@@ -429,17 +439,19 @@ class oxSeoEncoderArticle extends oxSeoEncoder
     /**
      * Returns manufacturer seo uri for current article
      *
-     * @param oxarticle $oArticle article object
-     * @param int       $iLang    language id
+     * @param oxarticle $oArticle     article object
+     * @param int       $iLang        language id
+     * @param bool      $blRegenerate if TRUE forces seo url regeneration
      *
      * @return string
      */
-    protected function _getArticleManufacturerUri( $oArticle, $iLang )
+    protected function _getArticleManufacturerUri( $oArticle, $iLang, $blRegenerate = false )
     {
+        $sSeoUri = null;
         startProfile(__FUNCTION__);
         if ( $oManufacturer = $this->_getManufacturer( $oArticle, $iLang ) ) {
             //load details link from DB
-            if ( !( $sSeoUri = $this->_loadFromDb( 'oxarticle', $oArticle->getId(), $iLang, null, $oManufacturer->getId(), true ) ) ) {
+            if ( $blRegenerate || !( $sSeoUri = $this->_loadFromDb( 'oxarticle', $oArticle->getId(), $iLang, null, $oManufacturer->getId(), true ) ) ) {
 
                 $oArticle = $this->_getProductForLang( $oArticle, $iLang );
 
@@ -455,8 +467,8 @@ class oxSeoEncoderArticle extends oxSeoEncoder
             }
 
             stopProfile(__FUNCTION__);
-            return $sSeoUri;
         }
+        return $sSeoUri;
     }
 
     /**
@@ -558,5 +570,37 @@ class oxSeoEncoderArticle extends oxSeoEncoder
     {
         $sIdQuoted = oxDb::getDb()->quote($oArticle->getId());
         oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxarticle'");
+    }
+
+    /**
+     * Returns alternative uri used while updating seo
+     *
+     * @param string $sObjectId object id
+     * @param int    $iLang     language id
+     *
+     * @return string
+     */
+    protected function _getAltUri( $sObjectId, $iLang )
+    {
+        $sSeoUrl = null;
+        $oArticle = oxNew( "oxarticle" );
+        if ( $oArticle->loadInLang( $iLang, $sObjectId ) ) {
+            // choosing URI type to generate
+            switch( $this->_getListType() ) {
+                case 'vendor':
+                    $sSeoUrl = $this->_getArticleVendorUri( $oArticle, $iLang, true );
+                    break;
+                case 'manufacturer':
+                    $sSeoUrl = $this->_getArticleManufacturerUri( $oArticle, $iLang, true );
+                    break;
+                case 'tag':
+                    $sSeoUrl = $this->_getArticleTagUri( $oArticle, $iLang, true );
+                    break;
+                default:
+                    $sSeoUrl = $this->_getArticleUri( $oArticle, $iLang, true );
+                    break;
+            }
+        }
+        return $sSeoUrl;
     }
 }

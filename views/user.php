@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: user.php 26826 2010-03-25 09:25:31Z arvydas $
+ * @version   SVN: $Id: user.php 27760 2010-05-14 10:23:30Z vilma $
  */
 
 /**
@@ -268,7 +268,7 @@ class User extends oxUBase
         if ( $this->_blNewsSubscribed === null ) {
             $blNews = false;
             if ( ( $blNews = oxConfig::getParameter( 'blnewssubscribed' ) ) === null ) {
-                $blNews = true;
+                $blNews = false;
             }
             if ( ( $oUser = $this->getUser() ) ) {
                 $blNews = $oUser->getNewsSubscription()->getOptInStatus();

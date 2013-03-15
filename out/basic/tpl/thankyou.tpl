@@ -35,7 +35,7 @@
        $oxcmp_shop->oxshops__oxaffilinetid->value || $oxcmp_shop->oxshops__oxsuperclicksid->value ||
        $oxcmp_shop->oxshops__oxaffiliweltid->value || $oxcmp_shop->oxshops__oxaffili24id->value }]
 
-  <strong class="boxhead">[{ oxmultilang ident="THANKYOU_PARTNERFROM" }] [{ $oxcmp_shop->oxshops__oxname->value }]</strong>
+  <strong class="boxhead">[{ oxmultilang ident="THANKYOU_PARTNERFROM" }]</strong>
   <div class="box info">
       <div>
         [{if $oView->getTrustedShopId()}]
@@ -51,18 +51,7 @@
                   <div>
                       <input type="hidden" name="_charset_">
                       <input name="shop_id" type=hidden value="[{$oView->getTrustedShopId()}]">
-                      <input name="title" type=hidden value="[{ $order->oxorder__oxbillsal->value|oxmultilangsal }]">
                       <input name="email" type="hidden" value="[{ $oxcmp_user->oxuser__oxusername->value }]">
-                      <input name="first_name" type=hidden value="[{ $order->oxorder__oxbillfname->value }]">
-                      <input name="last_name" type=hidden value="[{ $order->oxorder__oxbilllname->value }]">
-                      <input name="street" type=hidden value="[{ $order->oxorder__oxbillstreet->value }]">
-                      <input name="state" type=hidden value="[{ $order->oxorder__oxbillstateid->value }]">
-                      <input name="zip" type=hidden value="[{ $order->oxorder__oxbillzip->value }]">
-                      <input name="city" type=hidden value="[{ $order->oxorder__oxillcity->value }]">
-                      <input name="country" type=hidden value="[{ $oView->getCountryISO3() }]">
-                      <input name="phone" type=hidden value="[{ $order->oxorder__oxbillfon->value }]">
-                      <input name="fax" type=hidden value="[{ $order->oxorder__oxbillfax->value }]">
-                      <input name="delivery" type=hidden value="">
                       <input name="amount" type=hidden value="[{ $order->getTotalOrderSum() }]">
                       <input name="curr" type=hidden value="[{ $order->oxorder__oxcurrency->value }]">
                       <input name="payment" type=hidden value="">

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsimplevariant.php 25755 2010-02-10 13:59:48Z sarunas $
+ * @version   SVN: $Id: oxsimplevariant.php 27649 2010-05-10 09:03:07Z vilma $
  */
 
 /**
@@ -65,6 +65,12 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
     protected $_aSeoUrls = array();
 
     /**
+     * user object
+     * @var oxUser
+     */
+    protected $_oUser = null;
+
+    /**
      * Initializes instance
      *
      */
@@ -98,6 +104,22 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
     }
 
     /**
+     * Assigns to oxarticle object some base parameters/values (such as
+     * detaillink, moredetaillink, etc).
+     *
+     * @param string $aRecord Array representing current field values
+     *
+     * @return null
+     */
+    public function assign( $aRecord)
+    {
+        // load object from database
+        parent::assign( $aRecord);
+
+    }
+
+
+    /**
      * Implementing (fakeing) performance friendly method from oxArticle
      *oxbase
      *
@@ -109,28 +131,64 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
     }
 
     /**
+     * Returns article user
+     *
+     * @return oxUser
+     */
+    public function getArticleUser()
+    {
+        if ( $this->_oUser === null ) {
+            $this->_oUser = $this->getUser();
+        }
+        return $this->_oUser;
+    }
+
+    /**
+     * get user Group A, B or C price, returns db price if user is not in groups
+     *
+     * @return double
+     */
+    protected function _getGroupPrice()
+    {
+        $dPrice = $this->oxarticles__oxprice->value;
+        if ( $oUser = $this->getArticleUser() ) {
+            if ( $oUser->inGroup( 'oxidpricea' ) ) {
+                $dPrice = $this->oxarticles__oxpricea->value;
+            } elseif ( $oUser->inGroup( 'oxidpriceb' ) ) {
+                $dPrice = $this->oxarticles__oxpriceb->value;
+            } elseif ( $oUser->inGroup( 'oxidpricec' ) ) {
+                $dPrice = $this->oxarticles__oxpricec->value;
+            }
+        }
+
+        // #1437/1436C - added config option, and check for zero A,B,C price values
+        if ( $this->getConfig()->getConfigParam( 'blOverrideZeroABCPrices' ) && (double) $dPrice == 0 ) {
+            $dPrice = $this->oxarticles__oxprice->value;
+        }
+
+        return $dPrice;
+    }
+
+    /**
      * Implementing (faking) performance friendly method from oxArticle
      *
      * @return oxPrice
      */
     public function getPrice()
     {
-        if (!is_null($this->_oPrice)) {
-            return $this->_oPrice;
+        if ( $this->_oPrice === null ) {
+            $this->_oPrice = oxNew( "oxPrice" );
+            if ( ( $dPrice = $this->_getGroupPrice() ) ) {
+                $this->_oPrice->setPrice( $dPrice, $this->_dVat );
+
+                $this->_applyParentVat( $this->_oPrice );
+                $this->_applyCurrency( $this->_oPrice );
+                // apply discounts
+                $this->_applyParentDiscounts($this->_oPrice);
+            } elseif ( ( $oParent = $this->getParent() ) ) {
+                $this->_oPrice = $oParent->getPrice();
+            }
         }
-
-        $this->_oPrice = oxNew("oxPrice");
-        $dPrice = $this->oxarticles__oxprice->value;
-        if (!$dPrice) {
-            $dPrice = $this->_getParentPrice();
-        }
-
-        $this->_oPrice->setPrice($dPrice, $this->_dVat);
-
-        $this->_applyParentVat($this->_oPrice);
-        $this->_applyCurrency($this->_oPrice);
-        // apply discounts
-        $this->_applyParentDiscounts($this->_oPrice);
 
         return $this->_oPrice;
     }
@@ -161,13 +219,9 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
      */
     protected function _applyParentDiscounts( $oPrice )
     {
-        $oParent = $this->getParent();
-        if (!($oParent instanceof oxarticle)) {
-            return;
+        if ( ( $oParent = $this->getParent() ) ) {
+            $oParent->applyDiscountsForVariant( $oPrice );
         }
-
-        $oParent->applyDiscountsForVariant( $oPrice );
-
     }
 
     /**
@@ -177,14 +231,11 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
      *
      * @return null
      */
-    protected function _applyParentVat($oPrice)
+    protected function _applyParentVat( $oPrice )
     {
-        $oParent = $this->getParent();
-        if (!($oParent instanceof oxarticle)) {
-            return;
+        if ( ( $oParent = $this->getParent() ) ) {
+            $oParent->applyVats($oPrice);
         }
-
-        $oParent->applyVats($oPrice);
     }
 
     /**
@@ -206,9 +257,11 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
      */
     public function getFPrice()
     {
+        $sPrice = null;
         if ( ( $oPrice = $this->getPrice() ) ) {
-            return oxLang::getInstance()->formatCurrency( $oPrice->getBruttoPrice() );
+            $sPrice = oxLang::getInstance()->formatCurrency( $oPrice->getBruttoPrice() );
         }
+        return $sPrice;
     }
 
     /**
@@ -236,15 +289,17 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
     /**
      * Returns parent price. Assuming variant parent has been assigned before function execution.
      *
+     * @deprecated should be used $this->_oParent->getPrice();
+     *
      * @return double
      */
     protected function _getParentPrice()
     {
+        $dPrice = 0;
         if (isset($this->_oParent->oxarticles__oxprice->value)) {
-            return $this->_oParent->oxarticles__oxprice->value;
+            $dPrice = $this->_oParent->oxarticles__oxprice->value;
         }
-
-        return 0;
+        return $dPrice;
     }
 
     /**
@@ -254,12 +309,11 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
      */
     public function getLinkType()
     {
-        $oParent = $this->getParent();
-        if (!($oParent instanceof oxarticle)) {
-            return 0;
+        $iLinkType = 0;
+        if ( ( $oParent = $this->getParent() ) ) {
+            $iLinkType = $oParent->getLinkType();
         }
-
-        return $oParent->getLinkType();
+        return $iLinkType;
     }
 
     /**
@@ -271,10 +325,11 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
      */
     public function inCategory( $sCatNid )
     {
-        $oParent = $this->getParent();
-        if ( ( $oParent instanceof oxarticle ) ) {
-            return $oParent->inCategory( $sCatNid );
+        $blIn = false;
+        if ( ( $oParent = $this->getParent() ) ) {
+            $blIn = $oParent->inCategory( $sCatNid );
         }
+        return $blIn;
     }
 
     /**
@@ -286,10 +341,11 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
      */
     public function inPriceCategory( $sCatNid )
     {
-        $oParent = $this->getParent();
-        if ( ( $oParent instanceof oxarticle ) ) {
-            return $oParent->inPriceCategory( $sCatNid );
+        $blIn = false;
+        if ( ( $oParent = $this->getParent() ) ) {
+            $blIn = $oParent->inPriceCategory( $sCatNid );
         }
+        return $blIn;
     }
 
     /**

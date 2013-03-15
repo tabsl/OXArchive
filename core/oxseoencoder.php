@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoder.php 27115 2010-04-09 13:35:42Z arvydas $
+ * @version   SVN: $Id: oxseoencoder.php 27759 2010-05-14 10:10:17Z arvydas $
  */
 
 /**
@@ -395,7 +395,7 @@ class oxSeoEncoder extends oxSuperCfg
         $sConstEnd = $this->_getUrlExtension();
         if ($sConstEnd === null) {
             $aMatched = array();
-            if ( $oStr->preg_match('/\.html?$/i', $sSeoUrl, $aMatched ) ) {
+            if ( $oStr->preg_match( '/\.html?$/i', $sSeoUrl, $aMatched ) ) {
                 $sConstEnd = $aMatched[0];
             } else {
                 if ($sSeoUrl{$oStr->strlen($sSeoUrl)-1} != '/') {
@@ -556,16 +556,16 @@ class oxSeoEncoder extends oxSuperCfg
      */
     protected function _getReservedEntryKeys()
     {
-        if (!isset(self::$_aReservedEntryKeys) && !is_array(self::$_aReservedEntryKeys)) {
+        if ( !isset( self::$_aReservedEntryKeys ) && !is_array( self::$_aReservedEntryKeys ) ) {
             $sDir = getShopBasePath();
             self::$_aReservedEntryKeys = array();
             $oStr = getStr();
-            foreach (glob("$sDir/*") as $file) {
-                if ( $oStr->preg_match('/^(.+)\.php[0-9]*$/i', basename($file), $m)) {
-                    self::$_aReservedEntryKeys[] = $m[0];
-                    self::$_aReservedEntryKeys[] = $m[1];
-                } elseif (is_dir($file)) {
-                    self::$_aReservedEntryKeys[] = basename($file);
+            foreach ( glob( "$sDir/*" ) as $sFile ) {
+                if ( $oStr->preg_match( '/^(.+)\.php[0-9]*$/i', basename( $sFile ), $aMatches ) ) {
+                    self::$_aReservedEntryKeys[] = preg_quote( $aMatches[0] );
+                    self::$_aReservedEntryKeys[] = preg_quote( $aMatches[1] );
+                } elseif ( is_dir( $sFile ) ) {
+                    self::$_aReservedEntryKeys[] = preg_quote( basename( $sFile ) );
                 }
             }
         }
@@ -592,9 +592,9 @@ class oxSeoEncoder extends oxSuperCfg
         $sPrefix    = self::$_sPrefix;
         // 'fixing' reserved words
         foreach ( self::$_aReservedWords as $sWord ) {
-            // this probably possible to do in one regexp
-            $sUri = $oStr->preg_replace( array( "/(\s$sWord)$/i", "/^($sWord\s)/i", "/(\s$sWord\s)/i", "/^($sWord)$/i",
-                                         "/(\/$sWord)$/i", "/^($sWord\/)/i", "/(\/$sWord\/)/i"),
+            $sWord = preg_quote( $sWord );
+            $sUri = $oStr->preg_replace( array( "/(\s{$sWord})$/i", "/^({$sWord}\s)/i", "/(\s{$sWord}\s)/i", "/^({$sWord})$/i",
+                                         "/(\/{$sWord})$/i", "/^({$sWord}\/)/i", "/(\/{$sWord}\/)/i"),
                                          " \$1{$sSeparator}{$sPrefix}{$sSeparator} ", $sUri );
         }
 
@@ -1041,13 +1041,26 @@ class oxSeoEncoder extends oxSuperCfg
      * @param string $sDescription seo description
      * @param string $sParams      additional seo params. optional (mostly used for db indexing)
      * @param bool   $blExclude    exclude language prefix while building seo url
+     * @param string $sAltObjectId alternative object id used while saving meta info (used to override object id when saving tags related info)
      *
      * @return null
      */
-    public function addSeoEntry( $sObjectId, $iShopId, $iLang, $sStdUrl, $sSeoUrl, $sType, $blFixed = 1, $sKeywords = '', $sDescription = '', $sParams = '', $blExclude = false )
+    public function addSeoEntry( $sObjectId, $iShopId, $iLang, $sStdUrl, $sSeoUrl, $sType, $blFixed = 1, $sKeywords = '', $sDescription = '', $sParams = '', $blExclude = false, $sAltObjectId = null )
     {
-        $sSeoUrl = $this->_processSeoUrl( $this->_prepareUri( $this->_trimUrl( $sSeoUrl ) ), $sObjectId, $iLang, $blExclude );
+        $sSeoUrl = $this->_processSeoUrl( $this->_prepareUri( $this->_trimUrl( $sSeoUrl ? $sSeoUrl : $this->_getAltUri( $sAltObjectId ? $sAltObjectId : $sObjectId, $iLang ) ) ), $sObjectId, $iLang, $blExclude );
         $this->_saveToDb( $sType, $sObjectId, $sStdUrl, $sSeoUrl, $iLang, $iShopId, $blFixed, $sKeywords, $sDescription, $sParams );
+    }
+
+    /**
+     * Returns alternative uri used while updating seo
+     *
+     * @param string $sObjectId object id
+     * @param int    $iLang     language id
+     *
+     * @return null
+     */
+    protected function _getAltUri( $sObjectId, $iLang )
+    {
     }
 
     /**

@@ -194,6 +194,12 @@
         </div>
     [{/oxhasrights}]
 
+    [{if $product->oxarticles__oxweight->value }]
+    <div id="test_product_weight" class="pperunit">
+        ([{ oxmultilang ident="DETAILS_ARTWEIGHT" }] [{$product->oxarticles__oxweight->value}] [{ oxmultilang ident="DETAILS_ARTWEIGHTUNIT" }])
+    </div>
+    [{/if}]
+
     [{if $product->getPricePerUnit()}]
     <div id="test_product_price_unit" class="pperunit">
         ([{$product->getPricePerUnit()}] [{ $currency->sign}]/[{$product->oxarticles__oxunitname->value}])

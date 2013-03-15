@@ -96,6 +96,8 @@
                 [{ if $oArticle->oxarticles__oxid->value && $oArticle->isVisible() }]</a>[{/if }]
               </td>
               <td align="right">
+                [{* Commented due to Trusted Shops precertification. Enable if needed *}]
+                [{*
                 [{oxhasrights ident="TOBASKET"}]
                 [{if $oArticle->isBuyable() }]
                   [{if $oArticle->oxarticles__oxid->value }]
@@ -103,6 +105,7 @@
                   [{/if }]
                 [{/if }]
                 [{/oxhasrights}]
+                *}]
               </td>
             </tr>
 

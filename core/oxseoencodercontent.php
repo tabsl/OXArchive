@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencodercontent.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxseoencodercontent.php 27759 2010-05-14 10:10:17Z arvydas $
  */
 
 /**
@@ -74,18 +74,19 @@ class oxSeoEncoderContent extends oxSeoEncoder
      * Returns SEO uri for content object. Includes parent category path info if
      * content is assigned to it
      *
-     * @param oxcontent $oCont content category object
-     * @param int       $iLang language
+     * @param oxcontent $oCont        content category object
+     * @param int       $iLang        language
+     * @param bool      $blRegenerate if TRUE forces seo url regeneration
      *
      * @return string
      */
-    protected function _getContentUri( $oCont, $iLang = null)
+    protected function _getContentUri( $oCont, $iLang = null, $blRegenerate = false )
     {
         if (!isset($iLang)) {
             $iLang = $oCont->getLanguage();
         }
         //load details link from DB
-        if ( !( $sSeoUrl = $this->_loadFromDb( 'oxcontent', $oCont->getId(), $iLang ) ) ) {
+        if ( $blRegenerate || !( $sSeoUrl = $this->_loadFromDb( 'oxcontent', $oCont->getId(), $iLang ) ) ) {
 
             if ( $iLang != $oCont->getLanguage() ) {
                 $sId = $oCont->getId();
@@ -139,9 +140,27 @@ class oxSeoEncoderContent extends oxSeoEncoder
      *
      * @return null
      */
-    public function onDeleteContent($sId)
+    public function onDeleteContent( $sId )
     {
-        $sIdQuoted = oxDb::getDb()->quote($sId);
-        oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxcontent'");
+        $sIdQuoted = oxDb::getDb()->quote( $sId );
+        oxDb::getDb()->execute( "delete from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxcontent'" );
+    }
+
+    /**
+     * Returns alternative uri used while updating seo
+     *
+     * @param string $sObjectId object id
+     * @param int    $iLang     language id
+     *
+     * @return string
+     */
+    protected function _getAltUri( $sObjectId, $iLang )
+    {
+        $sSeoUrl = null;
+        $oCont = oxNew( "oxcontent" );
+        if ( $oCont->loadInLang( $iLang, $sObjectId ) ) {
+            $sSeoUrl = $this->_getContentUri( $oCont, $iLang, true );
+        }
+        return $sSeoUrl;
     }
 }

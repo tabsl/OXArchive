@@ -10,7 +10,7 @@ INSERT INTO `oxconfig` VALUES ('226bb90adbc31fa02ae79ebfa302c656', 'oxbaseshop',
 
 #insert USD and set it as default currency
 DELETE FROM `oxconfig` WHERE oxvarname = 'aCurrencies';
-INSERT INTO `oxconfig` VALUES ('35fde3c68173705037dbebb32b06ac1d', 'oxbaseshop', 'aCurrencies', 'arr', 0x4dbace2972e14bf2cbd3a9a4e65502affef12a8b1770deee941ecabd1e9db4f031b4833877ea92decd25ad81b3c1d7b7fd7c9fb94be704c39da7cd91acedcf97b35abfee324973ba16c3ed9ad94305e9369f9ffe76a4c7f4998950c93dbb488bf1e9f45e26a98096b5b4e17a661fe6f94fb9dd4781c6a9747e2e8326061b46388974b3e352d90d0c853f71c0ae24db911fec255faa6a9135aca573);
+INSERT INTO `oxconfig` VALUES ('35fde3c68173705037dbebb32b06ac1d', 'oxbaseshop', 'aCurrencies', 'arr', 0x4dbace2972e14bf2cbd3a9a4e65502affef12a8b1770b083941ecabd1e9db4f031b4833877ea92decd25ad81b376d5b5ff7e9dbb493c076950a749885908c06042bec27e548e5abc3bac9a04ee9df3a51166abd619cacb7945c5fbae3fc5bbe8f414e94058b8d0d479bd832c9b53aab3d8dabf06568768e98211b486ffb45dcb1571b621d6d1f4055066982786cabecdd553aac23bbdcaf6c692f9b7c45e42004d);
 
 #USA as default country
 DELETE FROM `oxconfig` WHERE oxvarname = 'aHomeCountry';

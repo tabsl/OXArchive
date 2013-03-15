@@ -7,7 +7,7 @@
 <div class="box info">
   [{ oxcontent ident="oxnewstlerinfo" }]
   [{assign var="aRegParams" value=$oView->getRegParams()}]
-    <form action="[{ $oViewConf->getSelfActionLink() }]" method="post">
+    <form action="[{ $oViewConf->getSslSelfLink() }]" method="post">
       <div>
           [{ $oViewConf->getHiddenSid() }]
           <input type="hidden" name="fnc" value="send">

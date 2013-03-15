@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 27030 2010-04-06 07:05:43Z arvydas $
+ * @version   SVN: $Id: lang.php 27855 2010-05-21 11:08:42Z vilma $
  */
 
 
@@ -53,6 +53,7 @@ $aLang = array(
 'ACCOUNT_NEWSLETTER_NO'                           => "No",
 'ACCOUNT_NEWSLETTER_SAVE'                         => "Save",
 'ACCOUNT_NEWSLETTER_BACKTOSHOP'                   => "Back to Shop",
+'ACCOUNT_NEWSLETTER_MESSAGE'                      => "It's possible to cancel newsletter at any time.",
 'ACCOUNT_NOTICELIST_TITLE'                        => "My Wish List",
 'ACCOUNT_NOTICELIST_LOCATION'                     => "My Account / ",
 'ACCOUNT_NOTICELIST_MYWISHLIST'                   => "My Wish List",
@@ -342,6 +343,8 @@ $aLang = array(
 'DETAILS_SAVEREVIEW'                              => "Save rating and review",
 'DETAILS_STAR'                                    => "Star",
 'DETAILS_STARS'                                   => "Stars",
+'DETAILS_ARTWEIGHTUNIT'                           => "kg",
+'DETAILS_ARTWEIGHT'                               => "Weight:",
 'EMAIL_NEWSLETTEROPTIN_HTML_NEWSLETTER'           => "Newsletter",
 'EMAIL_NEWSLETTERDBOPTINMAIL_SUBJECT'             => "Newsletter",
 'EMAIL_ORDER_CUST_HTML_ORDERNOMBER'               =>"Order No.",
@@ -647,6 +650,8 @@ $aLang = array(
 'INC_PRODUCTITEM_NOWONLY'                         =>"now only",
 'INC_PRODUCTITEM_ADDTOCARD'                       =>"add to Cart",
 'INC_PRODUCTITEM_ARTNOMBER2'                      =>"Art.No.:",
+'INC_PRODUCTITEM_ARTWEIGHT'                       =>"Weight:",
+'INC_PRODUCTITEM_ARTWEIGHT2'                      =>"kg",
 'INC_PRODUCTITEM_MOREINFO2'                       =>"more Info",
 'INC_PRODUCTITEM_REMOVEFROMCOMPARELIST2'          =>"remove from compare list",
 'INC_PRODUCTITEM_COMPARE2'                        =>"compare",
@@ -683,6 +688,8 @@ $aLang = array(
 'INC_RIGHTITEM_HAVEPOUSEEN'                       =>"Have you seen ... ?",
 'INC_RIGHTITEM_CUSTOMERWHO'                       =>"Customer who bought this product also bought:",
 'INC_RIGHTLIST_ARTNOMBER'                         =>"Art.No.:",
+'INC_RIGHTLIST_ARTWEIGHT'                         =>"Weight:",
+'INC_RIGHTLIST_ARTWEIGHT2'                        =>"kg",
 'INC_RIGHTLIST_MOREINFO'                          =>"more Info",
 'INC_RIGHTLIST_REMOVEFROMCOMPARELIST'             =>"remove from compare list",
 'INC_RIGHTLIST_COMPARE'                           =>"compare",
@@ -717,6 +724,7 @@ $aLang = array(
 'INC_TRUSTEDSHOPS_ITEM_ALTTEXT'                   =>"More...",
 'INC_TRUSTEDSHOPS_ITEM_SEALOFAPPROVAL'            =>" is a certified online shop with Trusted Shops Buyer Protection. More...",
 'INC_TRUSTEDSHOPS_ITEM_LINK'                      =>"http://www.trustedshops.com/merchants/membership.html?shopsw=OXID&amp;et_cid=14&amp;et_lid=84",
+'INC_TRUSTEDSHOPS_ITEM_PROFILELINK'               =>"http://www.trustedshops.com/profile/",
 'INC_VENDORLEFTITEM_BYMARK'                       =>"by brand/manufacturer",
 'LINKS_TITLE'                                     => "Links",
 'LINKS_LINKS'                                     => "Links",
@@ -827,9 +835,9 @@ $aLang = array(
 'ORDER_IAGREETOTERMS1'                            => "I agree to the",
 'ORDER_IAGREETOTERMS2'                            => "Terms and Conditions",
 'ORDER_IAGREETOTERMS3'                            => "",
-'ORDER_IAGREETORIGHTOFWITHDRAWAL1'                => "I've read",
+'ORDER_IAGREETORIGHTOFWITHDRAWAL1'                => "I have been informed about my",
 'ORDER_IAGREETORIGHTOFWITHDRAWAL3'                => "",
-'ORDER_RIGHTOFWITHDRAWAL'                         => "Right of withdrawal",
+'ORDER_RIGHTOFWITHDRAWAL'                         => "Right to Cancel",
 'ORDER_RIGHTOFWITHDRAWAL_TEXT'                    => "Each consumer is allowed to revoke his/her contractual declaration in written form
                                                       (e.g. letter, fax, eMail) or by returning the delivered products within two weeks
                                                       without any indication of reasons. The time limit commences no earlier than with
@@ -928,6 +936,7 @@ $aLang = array(
 'REGISTER_PWD'                                    => "Password:",
 'REGISTER_CONFIRMPWD'                             => "Confirm Password:",
 'REGISTER_NEWSLETTER'                             => "Newsletter subscription",
+'REGISTER_NEWSLETTER_MESSAGE'                     => "It's possible to cancel newsletter at any time.",
 'REGISTER_BILLINGADDRESS'                         => "Billing Address",
 'REGISTER_COMPLETEMARKEDFIELDS2'                  => '(Please complete all fields marked with a <span class="req">*</span>)',
 'REGISTER_TITLE'                                  => "Title:",
@@ -1034,6 +1043,7 @@ $aLang = array(
 'SUGGEST_SEND'                                    => "Send",
 'SUGGEST_ABOUTDATAPROTECTION'                     => "About Data Protection: Your data is kept strictly confidential and will not be given to any third parties.",
 'SUGGEST_VERIFICATIONCODE'                        => "Verification code:",
+'SUGGEST_COMPLETEMARKEDFIELDS2'                   => 'Please complete all fields marked with a <span class="req">*</span>',
 'TAGS'                                            => "Tags",
 'TAGS_ADD'                                        => "Add tags",
 'TAGS_SEPARATEBY'                                 => "Separate by",
@@ -1054,7 +1064,7 @@ $aLang = array(
 'THANKYOU_BACKTOSHOP'                             => "Back to Shop",
 'THANKYOU_PREVIOUSORDER'                          => "Your previous Orders",
 'THANKYOU_ORDERHISTORY'                           => "Your Order History",
-'THANKYOU_PARTNERFROM'                            => "Partner from",
+'THANKYOU_PARTNERFROM'                            => "Trusted Shops Buyer Protection",
 'THANKYOU_GETBONUSPOINTS'                         => "Now! Get your bonus points for your purchase.",
 'THANKYOU_SELECTEDIPAYMENT'                       => 'You selected "iPayment" as your Payment Method.<br>Please enter all your payment data in the browser-window, which is going to be opened.<br><br>In case the iPayment browser-window doesn`t open automatically (e.g. because you deactivated Javascript in your browser), please click on the iPayment button below.',
 'THANKYOU_PAYWITHIPAYMENT'                        => "Make Payment",

@@ -32,7 +32,7 @@
       <td width="15"></td>
       <td valign="top" class="edittext">
 
-        <select name="rev_oxid" size="20" class="editinput" style="width:160px;" onChange="Javascript:document.myedit.submit();">
+        <select name="rev_oxid" size="15" class="editinput" style="width:160px;" onChange="Javascript:document.myedit.submit();">
         [{foreach from=$allreviews item=allitem}]
         <option value="[{ $allitem->oxreviews__oxid->value }]" [{ if $allitem->selected}]SELECTED[{/if}]>[{ $allitem->oxreviews__oxcreate|oxformdate }]</option>
         [{/foreach}]

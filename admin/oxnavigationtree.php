@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxnavigationtree.php 27134 2010-04-09 13:50:28Z arvydas $
+ * @version   SVN: $Id: oxnavigationtree.php 27344 2010-04-26 13:10:18Z arvydas $
  */
 
 /**
@@ -476,16 +476,31 @@ class OxNavigationTree extends oxSuperCfg
             $aFilesToLoad[] = "$sFullAdminDir/user.xml";
         }
 
-        // including module files
-        $sSourceDir = getShopBasePath() . 'modules';
-        $handle = opendir( $sSourceDir );
-        while ( false !== ( $sFile = readdir( $handle ) ) ) {
-            if ( $sFile != '.' && $sFile != '..') {
-                $sDir = "$sSourceDir/$sFile";
-                if ( is_dir( $sDir ) && file_exists( "$sDir/menu.xml" ) ) {
-                        $aFilesToLoad[] = "$sDir/menu.xml";
+        // including module menu files
+        $sPath = getShopBasePath();
+        $aPathsToCheck = array( 'modules/' );
+        $sPathToCheck  = reset( $aPathsToCheck );
+        while ( $sPathToCheck ) {
+            $sFullPath = $sPath.$sPathToCheck;
+
+            // missing file/folder?
+            if ( is_dir( $sFullPath ) ) {
+
+                // adding subfolders
+                $aSubF = glob( $sFullPath."*", GLOB_ONLYDIR );
+                if ( is_array( $aSubF ) ) {
+                    foreach ( $aSubF as $sNewFolder ) {
+                        $aPathsToCheck[] = str_replace( $sPath, "", $sNewFolder ) . "/";
+                    }
+                }
+
+                // including menu file
+                $sMenuFile = "{$sFullPath}menu.xml";
+                if ( file_exists( $sMenuFile ) && is_readable( $sMenuFile ) ) {
+                    $aFilesToLoad[] = $sMenuFile;
                 }
             }
+            $sPathToCheck = next( $aPathsToCheck );
         }
 
         $blLoadDynContents = $myConfig->getConfigParam( 'blLoadDynContents' );

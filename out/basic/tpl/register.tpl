@@ -38,6 +38,7 @@
                 <td>
                     <input type="hidden" name="blnewssubscribed" value="0">
                     <input type="checkbox"  name="blnewssubscribed" value="1" [{if $oView->isNewsSubscribed() }]checked[{/if}]>
+                    <span class="fs10">[{ oxmultilang ident="REGISTER_NEWSLETTER_MESSAGE" }]</span>
                 </td>
             </tr>
             <tr class="th_sep">

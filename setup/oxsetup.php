@@ -1512,7 +1512,7 @@ class oxSetupView extends oxSetupCore
      */
     public function getTitle()
     {
-        return $this->getText( $this->_sTitle );
+        return $this->getText( $this->_sTitle, false );
     }
 
     /**

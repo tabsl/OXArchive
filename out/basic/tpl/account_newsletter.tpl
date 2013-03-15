@@ -22,6 +22,8 @@
                 <option value="1"   [{if $oView->isNewsletter() }]selected[{/if }] >[{ oxmultilang ident="ACCOUNT_NEWSLETTER_YES" }]</option>
                 <option value="0"   [{if !$oView->isNewsletter() }]selected[{/if }] >[{ oxmultilang ident="ACCOUNT_NEWSLETTER_NO" }]</option>
               </select>
+              <br>
+              <span class="fs10">[{ oxmultilang ident="ACCOUNT_NEWSLETTER_MESSAGE" }]</span>
               <div class="dot_sep"></div>
               <div class="right">
                 <span class="btn"><input id="test_newsletterSettingsSave" type="submit" value="[{ oxmultilang ident="ACCOUNT_NEWSLETTER_SAVE" }]" class="btn"></span>

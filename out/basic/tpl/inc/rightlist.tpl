@@ -6,7 +6,11 @@
           <img src="[{$_product->getIconUrl()}]" alt="[{ $sRightListArtTitle|strip_tags }]">
       </a>
       <b><a id="test_[{$test_Type}]_Title_[{$_product->oxarticles__oxid->value}]" href="[{$_product->getMainLink()}]" class="arttitle">[{ $sRightListArtTitle|strip_tags }]</a></b>
-      <tt id="test_[{$test_Type}]_No_[{$_product->oxarticles__oxid->value}]">[{ oxmultilang ident="INC_RIGHTLIST_ARTNOMBER" }] [{ $_product->oxarticles__oxartnum->value }]</tt>
+      [{if $_product->oxarticles__oxweight->value }]
+            <tt id="test_[{$test_Type}]_No_[{$_product->oxarticles__oxid->value}]">[{ oxmultilang ident="INC_RIGHTLIST_ARTWEIGHT" }] [{ $_product->oxarticles__oxweight->value }] [{ oxmultilang ident="INC_RIGHTLIST_ARTWEIGHT2" }]</tt>
+      [{else}]
+            <tt id="test_[{$test_Type}]_No_[{$_product->oxarticles__oxid->value}]">[{ oxmultilang ident="INC_RIGHTLIST_ARTNOMBER" }] [{ $_product->oxarticles__oxartnum->value }]</tt>
+      [{/if}]
 
       <div class="actions">
           <a id="test_[{$test_Type}]_details_[{$_product->oxarticles__oxid->value}]" href="[{ $_product->getMainLink()}]" class="link">[{ oxmultilang ident="INC_PRODUCTITEM_MOREINFO" }]</a>

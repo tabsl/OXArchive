@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: review.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: review.php 27824 2010-05-20 12:29:40Z vilma $
  */
 
 /**
@@ -291,7 +291,7 @@ class Review extends Details
             $sReviewUser = ( !$sReviewUser ) ? oxConfig::getParameter( 'reviewuserid' ) : $sReviewUser;
             if ( $sReviewUser ) {
                 $oUser = oxNew( 'oxuser' );
-                $this->_sReviewUserId = $oUser->getReviewUserId( $sReviewUser );
+                $this->_sReviewUserId = $sReviewUser;
             } elseif ( ( $oUser = $this->getUser() ) ) {
                 $this->_sReviewUserId = $oUser->getId();
             }

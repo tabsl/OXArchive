@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcategorylist.php 25628 2010-02-04 17:13:43Z tomas $
+ * @version   SVN: $Id: oxcategorylist.php 27684 2010-05-11 14:17:11Z sarunas $
  */
 
 
@@ -367,7 +367,7 @@ class oxCategoryList extends oxList
     /**
      * Getter for active root category
      *
-     * @return oxcategory
+     * @return array of oxcategory
      */
     public function getClickRoot()
     {
@@ -481,7 +481,7 @@ class oxCategoryList extends oxList
             unset($aParents['oxrootid']);
         }
         foreach (array_keys($aParents) as $sParent) {
-            if (isset($this->_aArray[$sParentId])) {
+            if (isset($this->_aArray[$sParent])) {
                 $this->_aArray[$sParent]->sortSubCats();
             }
         }

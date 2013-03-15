@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencodercategory.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxseoencodercategory.php 27759 2010-05-14 10:10:17Z arvydas $
  */
 
 /**
@@ -122,12 +122,13 @@ class oxSeoEncoderCategory extends oxSeoEncoder
     /**
      * Returns SEO uri for passed category
      *
-     * @param oxcategory $oCat  category object
-     * @param int        $iLang language
+     * @param oxcategory $oCat         category object
+     * @param int        $iLang        language
+     * @param bool       $blRegenerate if TRUE forces seo url regeneration
      *
      * @return string
      */
-    public function getCategoryUri( $oCat, $iLang = null )
+    public function getCategoryUri( $oCat, $iLang = null, $blRegenerate = false  )
     {
         startProfile(__FUNCTION__);
         $sCatId = $oCat->getId();
@@ -266,11 +267,28 @@ class oxSeoEncoderCategory extends oxSeoEncoder
      *
      * @return null
      */
-    public function onDeleteCategory($oCategory)
+    public function onDeleteCategory( $oCategory )
     {
-        $sIdQuoted = oxDb::getDb()->quote($oCategory->getId());
-        oxDb::getDb()->execute("update oxseo, (select oxseourl from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxcategory') as test set oxseo.oxexpired=1 where oxseo.oxseourl like concat(test.oxseourl, '%') and (oxtype = 'oxcategory' or oxtype = 'oxarticle')");
-        oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxcategory'");
+        $sIdQuoted = oxDb::getDb()->quote( $oCategory->getId() );
+        oxDb::getDb()->execute( "update oxseo, (select oxseourl from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxcategory') as test set oxseo.oxexpired=1 where oxseo.oxseourl like concat(test.oxseourl, '%') and (oxtype = 'oxcategory' or oxtype = 'oxarticle')" );
+        oxDb::getDb()->execute( "delete from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxcategory'" );
     }
 
+    /**
+     * Returns alternative uri used while updating seo
+     *
+     * @param string $sObjectId object id
+     * @param int    $iLang     language id
+     *
+     * @return string
+     */
+    protected function _getAltUri( $sObjectId, $iLang )
+    {
+        $sSeoUrl = null;
+        $oCat = oxNew( "oxcategory" );
+        if ( $oCat->loadInLang( $iLang, $sObjectId ) ) {
+            $sSeoUrl = $this->getCategoryUri( $oCat, $iLang );
+        }
+        return $sSeoUrl;
+    }
 }

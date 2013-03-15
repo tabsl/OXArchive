@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadminlist.php 27134 2010-04-09 13:50:28Z arvydas $
+ * @version   SVN: $Id: oxadminlist.php 27816 2010-05-19 13:44:05Z sarunas $
  */
 
 /**
@@ -534,6 +534,12 @@ class oxAdminList extends oxAdminView
                     $sSqlBoolAction = ' and (';
 
                     foreach ( $aVal as $sVal) {
+                        // trying to search spec chars in search value
+                        // if found, add cleaned search value to search sql
+                        $sUml = $myUtilsString->prepareStrForSearch( $sVal );
+                        if ($sUml) {
+                            $sSqlBoolAction .= '(';
+                        }
 
                         $sFieldName = oxDb::getInstance()->escapeString( $sFieldName );
                         $sqlFull .= " {$sSqlBoolAction} {$sFieldName} ";
@@ -543,13 +549,11 @@ class oxAdminList extends oxAdminView
 
                         $sqlFull .= $this->_buildFilter( $sVal, $blIsSearchValue );
 
-                        // trying to search spec chars in search value
-                        // if found, add cleaned search value to search sql
-                        $sUml = $myUtilsString->prepareStrForSearch( $sVal );
                         if ( $sUml ) {
                             $sqlFull .= " or {$sFieldName} ";
 
                             $sqlFull .= $this->_buildFilter( $sUml, $blIsSearchValue );
+                            $sqlFull .= ')'; // end of OR section
                         }
                     }
 

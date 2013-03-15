@@ -60,7 +60,12 @@ function smarty_block_oxifcontent( $params, $content, &$smarty, &$repeat)
         }
         $repeat = $blLoaded;
     } else {
-        $content = oxUtilsView::getInstance()->parseThroughSmarty( $content, $sIdent.md5($content) );
+        $oStr = getStr();
+        $blHasSmarty = $oStr->strstr( $content, '[{' );
+        if ( $blHasSmarty  ) {
+            $content = oxUtilsView::getInstance()->parseThroughSmarty( $content, $sIdent.md5($content) );
+        }
+
         if ($sAssign) {
             $smarty->assign($sAssign, $content);
         } else {

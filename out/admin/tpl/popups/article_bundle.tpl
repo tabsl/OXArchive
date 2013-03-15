@@ -51,7 +51,7 @@
             var aSelRows= YAHOO.oxid.container1.getSelectedRows();
             if ( aSelRows.length ) {
                 oParam = YAHOO.oxid.container1.getRecord(aSelRows[0]);
-                sRequest = '&oxbundleid=' + oParam._oData._5;
+                sRequest = '&oxbundleid=' + oParam._oData._6;
             }
             YAHOO.util.Connect.asyncRequest( 'GET', '[{ $oViewConf->getAjaxLink() }]&cmpid=container1&container=article_bundle&fnc=addarticlebundle&oxid=[{ $oxid }]'+sRequest, callback );
 
@@ -75,8 +75,8 @@
 
         }
         // subscribint event listeners on buttons
-        $E.addListener( $('artcat'), "change", YAHOO.oxid.container1.filterCat, $('artcat') );   
-        $E.addListener( $('remBtn'), "click", YAHOO.oxid.container1.remBundle, $('remBtn') );   
+        $E.addListener( $('artcat'), "change", YAHOO.oxid.container1.filterCat, $('artcat') );
+        $E.addListener( $('remBtn'), "click", YAHOO.oxid.container1.remBundle, $('remBtn') );
         $E.addListener( $('saveBtn'), "click", YAHOO.oxid.container1.addBundle, $('saveBtn') );
     }
     $E.onDOMReady( initAoc );
@@ -103,7 +103,7 @@
         </tr>
         <tr>
             <td>
-                <input id="saveBtn" type="button" class="edittext oxid-aoc-button" value="[{ oxmultilang ident="ARTICLE_BUNDLE_ASSIGNARTICLE" }]"> 
+                <input id="saveBtn" type="button" class="edittext oxid-aoc-button" value="[{ oxmultilang ident="ARTICLE_BUNDLE_ASSIGNARTICLE" }]">
                 <input id="remBtn" type="button" class="edittext oxid-aoc-button" value="[{ oxmultilang ident="ARTICLE_BUNDLE_UNASSIGNARTICLE" }]" [{if !$bundle_artnum }] disabled [{/if}]>
             </td>
         </tr>

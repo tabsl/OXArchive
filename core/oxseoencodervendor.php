@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencodervendor.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxseoencodervendor.php 27759 2010-05-14 10:10:17Z arvydas $
  */
 
 /**
@@ -82,18 +82,19 @@ class oxSeoEncoderVendor extends oxSeoEncoder
     /**
      * Returns part of SEO url excluding path
      *
-     * @param oxVendor $oVendor vendor object
-     * @param int      $iLang   language
+     * @param oxVendor $oVendor      vendor object
+     * @param int      $iLang        language
+     * @param bool     $blRegenerate if TRUE forces seo url regeneration
      *
      * @return string
      */
-    public function getVendorUri( $oVendor, $iLang = null )
+    public function getVendorUri( $oVendor, $iLang = null, $blRegenerate = false  )
     {
         if (!isset($iLang)) {
             $iLang = $oVendor->getLanguage();
         }
         // load from db
-        if ( !( $sSeoUrl = $this->_loadFromDb( 'oxvendor', $oVendor->getId(), $iLang ) ) ) {
+        if ( $blRegenerate || !( $sSeoUrl = $this->_loadFromDb( 'oxvendor', $oVendor->getId(), $iLang ) ) ) {
 
             if ($iLang != $oVendor->getLanguage()) {
                 $sId = $oVendor->getId();
@@ -170,9 +171,27 @@ class oxSeoEncoderVendor extends oxSeoEncoder
      *
      * @return null
      */
-    public function onDeleteVendor($oVendor)
+    public function onDeleteVendor( $oVendor )
     {
-        $sIdQuoted = oxDb::getDb()->quote($oVendor->getId());
+        $sIdQuoted = oxDb::getDb()->quote( $oVendor->getId() );
         oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxvendor'");
+    }
+
+    /**
+     * Returns alternative uri used while updating seo
+     *
+     * @param string $sObjectId object id
+     * @param int    $iLang     language id
+     *
+     * @return string
+     */
+    protected function _getAltUri( $sObjectId, $iLang )
+    {
+        $sSeoUrl = null;
+        $oVendor = oxNew( "oxvendor" );
+        if ( $oVendor->loadInLang( $iLang, $sObjectId ) ) {
+            $sSeoUrl = $this->getVendorUri( $oVendor, $iLang, true );
+        }
+        return $sSeoUrl;
     }
 }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxtagcloud.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxtagcloud.php 27838 2010-05-20 18:45:47Z tomas $
  */
 
 if (!defined('OXTAGCLOUD_MINFONT')) {
@@ -196,11 +196,10 @@ class oxTagCloud extends oxSuperCfg
             // loading cloud info
             if ( $aCloudArray === null ) {
                 $aCloudArray = $this->getTags( $sProductId, $blExtended, $iLang );
-            }
-
-            // updating cache
-            if ( !$sProductId ) {
-                $myUtils->toFileCache( $sCacheIdent, $aCloudArray );
+                // updating cache
+                if ( !$sProductId ) {
+                    $myUtils->toFileCache( $sCacheIdent, $aCloudArray );
+                }
             }
 
             $this->_aCloudArray[$sCacheIdent] = $aCloudArray;

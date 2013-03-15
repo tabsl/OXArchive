@@ -1,4 +1,4 @@
-<form action="[{ $oViewConf->getSelfActionLink() }]" method="post">
+<form action="[{ $oViewConf->getSslSelfLink() }]" method="post">
   <div class="form">
       [{ $oViewConf->getHiddenSid() }]
       <input type="hidden" name="fnc" value="fill">

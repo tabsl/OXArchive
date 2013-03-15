@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: article_pictures.php 27134 2010-04-09 13:50:28Z arvydas $
+ * @version   SVN: $Id: article_pictures.php 27751 2010-05-13 11:11:50Z rimvydas.paskevicius $
  */
 
 /**
@@ -70,7 +70,16 @@ class Article_Pictures extends oxAdminDetails
      */
     public function save()
     {
-        $myConfig  = $this->getConfig();
+        $myConfig = $this->getConfig();
+
+        if ( $myConfig->isDemoShop() ) {
+            // disabling uploading pictures if this is demo shop
+            $oEx = new oxExceptionToDisplay();
+            $oEx->setMessage( 'ARTICLE_PICTURES_UPLOADISDISABLED' );
+            oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false );
+
+            return;
+        }
 
 
         $soxId      = oxConfig::getParameter( "oxid");
@@ -115,6 +124,17 @@ class Article_Pictures extends oxAdminDetails
      */
     public function deletePicture()
     {
+        $myConfig = $this->getConfig();
+
+        if ( $myConfig->isDemoShop() ) {
+            // disabling uploading pictures if this is demo shop
+            $oEx = new oxExceptionToDisplay();
+            $oEx->setMessage( 'ARTICLE_PICTURES_UPLOADISDISABLED' );
+            oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false );
+
+            return;
+        }
+
         $sOxId  = oxConfig::getParameter( "oxid");
         $iIndex = oxConfig::getParameter( "masterPicIndex" );
         $iPicCount = $this->getConfig()->getConfigParam( 'iPicCount' );

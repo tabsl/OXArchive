@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: category_seo.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: category_seo.php 27759 2010-05-14 10:10:17Z arvydas $
  */
 
 /**
@@ -68,8 +68,7 @@ class Category_Seo extends Object_Seo
      */
     protected function _getSeoUrl( $oCategory )
     {
-        oxSeoEncoderCategory::getInstance()->getCategoryUrl( $oCategory );
-
+        $this->_getEncoder()->getCategoryUrl( $oCategory );
         return parent::_getSeoUrl( $oCategory );
     }
 
@@ -97,10 +96,20 @@ class Category_Seo extends Object_Seo
                 $oCategory->oxcategories__oxshowsuffix = new oxField( (int) oxConfig::getParameter( 'blShowSuffix' ) );
                 $oCategory->save();
 
-                oxSeoEncoderCategory::getInstance()->markRelatedAsExpired( $oCategory );
+                $this->_getEncoder()->markRelatedAsExpired( $oCategory );
             }
         }
 
         return parent::save();
+    }
+
+    /**
+     * Returns current object type seo encoder object
+     *
+     * @return oxSeoEncoderCategory
+     */
+    protected function _getEncoder()
+    {
+        return oxSeoEncoderCategory::getInstance();
     }
 }

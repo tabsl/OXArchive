@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 26999 2010-04-01 12:41:33Z vilma $
+ * @version   SVN: $Id: oxorder.php 27810 2010-05-19 12:44:06Z vilma $
  */
 
 /**
@@ -873,6 +873,7 @@ class oxOrder extends oxBase
         $oUserpayment->oxuserpayments__oxpaymentsid = new oxField($sPaymentid, oxField::T_RAW);
         $oUserpayment->oxuserpayments__oxvalue      = new oxField(oxUtils::getInstance()->assignValuesToText( $aDynVal ), oxField::T_RAW);
         $oUserpayment->oxpayments__oxdesc           = clone $oPayment->oxpayments__oxdesc;
+        $oUserpayment->oxpayments__oxlongdesc       = clone $oPayment->oxpayments__oxlongdesc;
         $oUserpayment->setDynValues( $aPaymentDynValues );
         $oUserpayment->save();
 

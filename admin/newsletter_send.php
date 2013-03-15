@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: newsletter_send.php 26670 2010-03-19 10:10:38Z arvydas $
+ * @version   SVN: $Id: newsletter_send.php 27773 2010-05-17 12:26:37Z vilma $
  */
 
 /**
@@ -128,9 +128,10 @@ class Newsletter_Send extends oxAdminList
                 if ( $oNewsletter->send() ) {
                      // add user history
                     $oRemark = oxNew( "oxremark" );
-                    $oRemark->oxremark__oxtext     = new oxField( $oNewsletter->sPlainText );
+                    $oRemark->oxremark__oxtext     = new oxField( $oNewsletter->getPlainText() );
                     $oRemark->oxremark__oxparentid = new oxField( $sUserID );
                     $oRemark->oxremark__oxshopid   = new oxField( $sShopID );
+                    $oRemark->oxremark__oxtype     = new oxField( "n" );
                     $oRemark->save();
                     oxSession::setVar( "keepalive", "yes");
                 } else {

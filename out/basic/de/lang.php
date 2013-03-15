@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 27196 2010-04-13 13:59:06Z arvydas $
+ * @version   SVN: $Id: lang.php 27855 2010-05-21 11:08:42Z vilma $
  */
 
 
@@ -54,6 +54,7 @@ $aLang = array(
 'ACCOUNT_NEWSLETTER_NO'                           => "Nein",
 'ACCOUNT_NEWSLETTER_SAVE'                         => "Speichern",
 'ACCOUNT_NEWSLETTER_BACKTOSHOP'                   => "Zurück zum Shop",
+'ACCOUNT_NEWSLETTER_MESSAGE'                      => "Sie können den Newsletter jederzeit kostenlos abbestellen.",
 'ACCOUNT_NOTICELIST_TITLE'                        => "Mein Merkzettel",
 'ACCOUNT_NOTICELIST_LOCATION'                     => "Mein Konto / ",
 'ACCOUNT_NOTICELIST_MYWISHLIST'                   => "Mein Merkzettel",
@@ -343,6 +344,8 @@ $aLang = array(
 'DETAILS_SAVEREVIEW'                              => "Bewertung und Kommentar speichern",
 'DETAILS_STAR'                                    => "Stern",
 'DETAILS_STARS'                                   => "Sterne",
+'DETAILS_ARTWEIGHTUNIT'                           => "kg",
+'DETAILS_ARTWEIGHT'                               => "Gewicht:",
 'EMAIL_NEWSLETTEROPTIN_HTML_NEWSLETTER'           => "Newsletter",
 'EMAIL_NEWSLETTERDBOPTINMAIL_SUBJECT'             => "Newsletter",
 'EMAIL_ORDER_CUST_HTML_ORDERNOMBER'               =>"Bestellnr.",
@@ -648,6 +651,8 @@ $aLang = array(
 'INC_PRODUCTITEM_NOWONLY'                         =>"jetzt nur",
 'INC_PRODUCTITEM_ADDTOCARD'                       =>"in den Warenkorb",
 'INC_PRODUCTITEM_ARTNOMBER2'                      =>"Art.Nr.:",
+'INC_PRODUCTITEM_ARTWEIGHT'                       =>"Gewicht:",
+'INC_PRODUCTITEM_ARTWEIGHT2'                      =>"kg",
 'INC_PRODUCTITEM_MOREINFO2'                       =>"mehr Info",
 'INC_PRODUCTITEM_REMOVEFROMCOMPARELIST2'          =>"aus Vergl. entfernen",
 'INC_PRODUCTITEM_COMPARE2'                        =>"vergleichen",
@@ -684,6 +689,8 @@ $aLang = array(
 'INC_RIGHTITEM_HAVEPOUSEEN'                       =>"Kennen Sie schon... ?",
 'INC_RIGHTITEM_CUSTOMERWHO'                       =>"Kunden, die diesen Artikel gekauft haben, kauften auch:",
 'INC_RIGHTLIST_ARTNOMBER'                         =>"Art.Nr.:",
+'INC_RIGHTLIST_ARTWEIGHT'                         =>"Gewicht:",
+'INC_RIGHTLIST_ARTWEIGHT2'                        =>"kg",
 'INC_RIGHTLIST_MOREINFO'                          =>"mehr Info",
 'INC_RIGHTLIST_REMOVEFROMCOMPARELIST'             =>"aus Vergl. entfernen",
 'INC_RIGHTLIST_COMPARE'                           =>"vergleichen",
@@ -716,8 +723,9 @@ $aLang = array(
 'INC_STEPS_ITEM_LASTSTEP2'                        =>"Bestellung ausgeführt",
 'INC_TRUSTEDSHOPS_ITEM_IMGTITLE'                  =>"Klicken Sie auf das Gütesiegel, um die Gültigkeit zu prüfen!",
 'INC_TRUSTEDSHOPS_ITEM_ALTTEXT'                   =>"Mehr Informationen",
-'INC_TRUSTEDSHOPS_ITEM_SEALOFAPPROVAL'            =>" ist ein von Trusted Shops geprüfter Onlinehändlermit Gütesiegel und Käuferschutz. Mehr...",
+'INC_TRUSTEDSHOPS_ITEM_SEALOFAPPROVAL'            =>" ist ein von Trusted Shops geprüfter Onlinehändler mit Gütesiegel und Käuferschutz. Mehr...",
 'INC_TRUSTEDSHOPS_ITEM_LINK'                      =>"http://www.trustedshops.de/shopbetreiber/mitgliedschaft_partner.html?shopsw=OXID&amp;et_cid=14&amp;et_lid=84",
+'INC_TRUSTEDSHOPS_ITEM_PROFILELINK'               =>"http://www.trustedshops.de/profil/",
 'INC_VENDORLEFTITEM_BYMARK'                       =>"Nach Marke/Hersteller",
 'LINKS_TITLE'                                     => "Links",
 'LINKS_LINKS'                                     => "Links",
@@ -828,8 +836,8 @@ $aLang = array(
 'ORDER_IAGREETOTERMS1'                            => "Ich habe die",
 'ORDER_IAGREETOTERMS2'                            => "AGB",
 'ORDER_IAGREETOTERMS3'                            => "gelesen und erkläre mich mit ihnen einverstanden.",
-'ORDER_IAGREETORIGHTOFWITHDRAWAL1'                => "Die Informationen zum",
-'ORDER_IAGREETORIGHTOFWITHDRAWAL3'                => "habe ich gelesen.",
+'ORDER_IAGREETORIGHTOFWITHDRAWAL1'                => "Ich wurde über mein",
+'ORDER_IAGREETORIGHTOFWITHDRAWAL3'                => "informiert.",
 'ORDER_RIGHTOFWITHDRAWAL'                         => "Widerrufsrecht",
 'ORDER_RIGHTOFWITHDRAWAL_TEXT'                    => "Verbraucher können ihre Vertragserklärung innerhalb von zwei Wochen ohne Angabe von
                                                       Gründen in Textform (z. B. Brief, Fax, E-Mail) oder durch Rücksendung der Sache widerrufen.
@@ -928,6 +936,7 @@ $aLang = array(
 'REGISTER_PWD'                                    => "Passwort:",
 'REGISTER_CONFIRMPWD'                             => "Passwort wiederholen:",
 'REGISTER_NEWSLETTER'                             => "Newsletter abonnieren",
+'REGISTER_NEWSLETTER_MESSAGE'                     => "Sie können den Newsletter jederzeit kostenlos abbestellen.",
 'REGISTER_BILLINGADDRESS'                         => "Rechnungsadresse",
 'REGISTER_COMPLETEMARKEDFIELDS2'                  => '(Felder mit einem <span class="req">*</span> müssen ausgefüllt werden)',
 'REGISTER_TITLE'                                  => "Anrede:",
@@ -959,7 +968,7 @@ $aLang = array(
 'REGISTER_PZLCITY2'                               => "PLZ, Ort:",
 'REGISTER_ADDITIONALINFO2'                        => "zus. Info:",
 'REGISTER_COUNTRY2'                               => "Land:",
-'REGISTER_PHONE2'                                 => "Telefon",
+'REGISTER_PHONE2'                                 => "Telefon:",
 'REGISTER_FAX2'                                   => "Telefax:",
 'REGISTER_SEND'                                   => "Absenden",
 'REGISTER_DISABLESHIPPINGADDRESS'                 => "Hier klicken, um die Lieferadresse auszublenden",
@@ -1034,6 +1043,7 @@ $aLang = array(
 'SUGGEST_SEND'                                    => "Empfehlung abschicken",
 'SUGGEST_ABOUTDATAPROTECTION'                     => "Zum Datenschutz: Ihr Name und Ihre E-Mail-Adresse sowie der Name und die E-Mail-Adresse des Empfängers werden ausschließlich zu Übertragungszwecken verwendet und um den Adressaten über den Absender zu informieren, bzw. um im Fall eines Übertragungsfehlers eine Benachrichtigung übermitteln zu können.",
 'SUGGEST_VERIFICATIONCODE'                        => "Prüfcode:",
+'SUGGEST_COMPLETEMARKEDFIELDS2'                   => 'Felder mit einem <span class="req">*</span> müssen ausgefüllt werden',
 'TAGS'                                            => "Stichworte",
 'TAGS_ADD'                                        => "Stichwort hinzufügen",
 'TAGS_SEPARATEBY'                                 => "Tags mit folgenden Zeichen trennen",
@@ -1054,7 +1064,7 @@ $aLang = array(
 'THANKYOU_BACKTOSHOP'                             => "Weiter zum",
 'THANKYOU_PREVIOUSORDER'                          => "Ihre bereits getätigten Bestellungen",
 'THANKYOU_ORDERHISTORY'                           => "Zu Ihrer Bestellhistorie",
-'THANKYOU_PARTNERFROM'                            => "Partner von",
+'THANKYOU_PARTNERFROM'                            => "Trusted Shops Käuferschutz",
 'THANKYOU_GETBONUSPOINTS'                         => "Jetzt! Holen Sie sich für Ihren Einkauf Bonuspunkte.",
 'THANKYOU_SELECTEDIPAYMENT'                       => 'Sie haben als Zahlungsart "iPayment" gewählt.<br>Sie werden nun automatisch an iPayment weitergeleitet, wo Sie Ihre erforderlichen Daten für eine Bezahlung mit "iPayment" eingeben können.<br><br>Wenn dies nicht der Fall sein sollte, -z.B. wenn Sie Javascript deaktiviert haben- klicken Sie Bitte auf das folgende "iPayment"-Symbol,um den Vorgang manuell auszuführen.',
 'THANKYOU_PAYWITHIPAYMENT'                        => "Zahlung durchführen",
@@ -1089,7 +1099,7 @@ $aLang = array(
 'USER_OPENPERSONALACCOUNT6'                       => "- Bestellhistorie",
 'USER_OPENPERSONALACCOUNT7'                       => "- persönlicher Merkzettel",
 'USER_OPENPERSONALACCOUNT8'                       => "- persönliche Wunschliste",
-'USER_OPENPERSONALACCOUNT9'                       => "- Newsletter-Abo",
+'USER_OPENPERSONALACCOUNT9'                       => "- Newsletter-Verwaltung",
 'USER_OPENPERSONALACCOUNT10'                      => "- Sonder- und Rabattaktionen",
 'USER_LOGIN2'                                     => "Zur Anmeldung",
 'USER_NEXTSTEP'                                   => "Weiter zum nächsten Schritt",

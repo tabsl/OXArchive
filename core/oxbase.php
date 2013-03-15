@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbase.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxbase.php 27827 2010-05-20 13:38:01Z tomas $
  */
 
 /**
@@ -993,6 +993,10 @@ class oxBase extends oxSuperCfg
     {
         $myUtils = oxUtils::getInstance();
 
+        if (!$this->_sCoreTable) {
+            return array();
+        }
+
         //T2008-09-04
         //The cache here saves almost 7% of execution time
         //But it seems that oxeec_tbdsc_oxarticles.txt and oxeec_oxarticles_allfields.txt tmp files are identical.
@@ -1013,8 +1017,10 @@ class oxBase extends oxSuperCfg
 
         //returning simple array
         $aRet = array();
-        foreach ( $aMetaFields as $oVal ) {
-            $aRet[strtolower( $oVal->name )] = 0;
+        if (is_array($aMetaFields)) {
+            foreach ( $aMetaFields as $oVal ) {
+                $aRet[strtolower( $oVal->name )] = 0;
+            }
         }
 
         $myUtils->toFileCache( $sCacheKey, $aRet);

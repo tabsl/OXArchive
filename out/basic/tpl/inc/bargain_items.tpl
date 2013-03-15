@@ -4,12 +4,12 @@
       <a id="test_picBargain_[{$smarty.foreach.bargainList.iteration}]" href="[{$_product->getMainLink()}]" class="picture">
           <img src="[{$_product->getIconUrl()}]" alt="[{ $sBargainArtTitle|strip_tags }]">
       </a>
-      <b><a id="test_titleBargain_[{$smarty.foreach.bargainList.iteration}]" href="[{$_product->getMainLink()}]">[{ $sBargainArtTitle|strip_tags }]</a></b>
-      [{ if $_product->isBuyable() }]
-          <br>
-          <a id="test_orderBargain_[{$smarty.foreach.bargainList.iteration}]" href="[{$_product->getToBasketLink()}]&amp;am=1" class="link" onclick="oxid.popup.load();" rel="nofollow">
-              [{ oxmultilang ident="INC_RIGHTLIST_ORDERNOW" }]
-          </a>
+      <a id="test_titleBargain_[{$smarty.foreach.bargainList.iteration}]" href="[{$_product->getMainLink()}]" class="title">[{ $sBargainArtTitle|strip_tags }]</a>
+      [{oxhasrights ident="SHOWARTICLEPRICE"}]
+      [{if $_product->getFPrice()}]
+          [{assign var="currency" value=$oView->getActCurrency() }]
+          <b id="test_priceBargain_[{$smarty.foreach.bargainList.iteration}]">[{ $_product->getFPrice() }] [{ $currency->sign}]<a href="#delivery_link" rel="nofollow">*</a></b>
       [{/if}]
+      [{/oxhasrights}]
    </div>
   [{/foreach}]

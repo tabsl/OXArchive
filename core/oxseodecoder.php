@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseodecoder.php 27116 2010-04-09 13:36:14Z arvydas $
+ * @version   SVN: $Id: oxseodecoder.php 27807 2010-05-19 11:37:32Z sarunas $
  */
 
 /**
@@ -124,10 +124,37 @@ class oxSeoDecoder extends oxSuperCfg
             $oDb->execute( "update oxseohistory set oxhits = oxhits + 1 where oxident = " . $oDb->quote( $sKey ) . " and oxshopid = '{$iShopId}' limit 1" );
 
             // fetching new url
-            $sUrl = $oDb->getOne( "select oxseourl from oxseo where oxobjectid =  " . $oDb->quote( $oRs->fields['oxobjectid'] ) . " and oxlang =  " . $oDb->quote( $oRs->fields['oxlang'] ) . " and oxshopid = '{$iShopId}' order by oxparams " );
+            $sUrl = $this->_getSeoUrl($oRs->fields['oxobjectid'], $oRs->fields['oxlang'], $iShopId);
         }
 
         return $sUrl;
+    }
+
+    /**
+     * retrieve SEO url by its object id
+     * normally used for getting the redirect url from seo history
+     *
+     * @param string $sObjectId object id
+     * @param int    $iLang     language to fetch
+     * @param int    $iShopId   shop id
+     *
+     * @return string
+     */
+    protected function _getSeoUrl($sObjectId, $iLang, $iShopId)
+    {
+        $oDb = oxDb::getDb(true);
+        $aInfo = $oDb->getRow( "select oxseourl, oxtype from oxseo where oxobjectid =  " . $oDb->quote( $sObjectId ) . " and oxlang =  " . $oDb->quote( $iLang ) . " and oxshopid = " . $oDb->quote( $iShopId ) . " order by oxparams limit 1" );
+        if ('oxarticle' == $aInfo['oxtype']) {
+            $sMainCatId = $oDb->getOne( "select oxcatnid from ".getViewName( "oxobject2category" )." where oxobjectid = " . $oDb->quote( $sObjectId ) . " order by oxtime" );
+            if ($sMainCatId) {
+                $sUrl = $oDb->getOne( "select oxseourl from oxseo where oxobjectid =  " . $oDb->quote( $sObjectId ) . " and oxlang =  " . $oDb->quote( $iLang ) . " and oxshopid = " . $oDb->quote( $iShopId ) . " and oxparams = " . $oDb->quote( $sMainCatId ) );
+                if ($sUrl) {
+                    return $sUrl;
+                }
+            }
+        }
+
+        return $aInfo['oxseourl'];
     }
 
     /**

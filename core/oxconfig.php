@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 27083 2010-04-07 13:44:32Z arvydas $
+ * @version   SVN: $Id: oxconfig.php 27620 2010-05-07 07:03:13Z sarunas $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -690,7 +690,7 @@ class oxConfig extends oxSuperCfg
             $aHttpsServerVar = $myUtilsServer->getServerVar( 'HTTPS' );
 
             $this->_blIsSsl = ( isset( $aHttpsServerVar ) && ( $this->getConfigParam( 'sSSLShopURL' ) || $this->getConfigParam( 'sMallSSLShopURL' ) ) &&
-                         ( $aHttpsServerVar === 'on' || $aHttpsServerVar == '1' ) ); // 1&1 provides "1"
+                         ( $aHttpsServerVar === 'on' || $aHttpsServerVar == '1' ) ); // "1&1" hoster provides "1"
 
             //additional special handling for profihost customers
             if ( isset( $aServerVars['HTTP_X_FORWARDED_SERVER'] ) &&

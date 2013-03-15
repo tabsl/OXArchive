@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 26630 2010-03-17 16:01:48Z rimvydas.paskevicius $
+ * @version   SVN: $Id: help_lang.php 27769 2010-05-17 08:21:10Z vilma $
  */
 
 /**
@@ -155,7 +155,7 @@ $aLang =  array(
 'HELP_SHOP_CONFIG_DISABLEONLINEVATIDCHECK'      =>  'The online VAT ID check is executed if a customer from a foreign country inside the EU enters a VAT ID when ordering. If the VAT ID is valid, no VAT is calculated for this order.<br />'.
                                                     'If the check is disabled, the normal VAT for the according country is always calculated.',
 
-'HELP_SHOP_CONFIG_ALTVATIDCHECKINTERFACEWSDL'   =>  'Here you can enter an alternative URL for the online VAT ID check. If the online VAT ID check isn\'t reachable under the normal URL, the eShop tries to reach it using the URL given here.',
+'HELP_SHOP_CONFIG_ALTVATIDCHECKINTERFACEWSDL'   =>  'Here you can enter an alternative URL for the online VAT ID check.',
 
 'HELP_SHOP_MALL_MALLMODE'                       =>  'Here you can set what is shown as front page of this eShop:' .
                                                     '<ul><li><span class="navipath_or_inputname">Show shop selector</span>: A page where the different eShops can be selected is shown.</li>' .

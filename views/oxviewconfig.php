@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxviewconfig.php 27171 2010-04-12 15:41:49Z tomas $
+ * @version   SVN: $Id: oxviewconfig.php 27755 2010-05-13 14:53:16Z rimvydas.paskevicius $
  */
 
 /**
@@ -66,7 +66,7 @@ class oxViewConfig extends oxSuperCfg
 
 
             $iLang = $oLang->getBaseLanguage();
-            if ( $myUtils->seoIsActive() && !$sValue && $iLang ) {
+            if ( $myUtils->seoIsActive() && !$sValue && ( $iLang != $myConfig->getConfigParam( 'sDefaultLang' ) ) ) {
                 $sValue = oxSeoEncoder::getInstance()->getStaticUrl( $this->getSelfLink() . 'cl=start', $iLang );
             }
 

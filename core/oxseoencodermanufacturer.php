@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencodermanufacturer.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxseoencodermanufacturer.php 27759 2010-05-14 10:10:17Z arvydas $
  */
 
 /**
@@ -84,16 +84,17 @@ class oxSeoEncoderManufacturer extends oxSeoEncoder
      *
      * @param oxmanufacturer $oManufacturer manufacturer object
      * @param int            $iLang         language
+     * @param bool           $blRegenerate  if TRUE forces seo url regeneration
      *
      * @return string
      */
-    public function getManufacturerUri( $oManufacturer, $iLang = null )
+    public function getManufacturerUri( $oManufacturer, $iLang = null, $blRegenerate = false )
     {
         if (!isset($iLang)) {
             $iLang = $oManufacturer->getLanguage();
         }
         // load from db
-        if ( !( $sSeoUrl = $this->_loadFromDb( 'oxmanufacturer', $oManufacturer->getId(), $iLang ) ) ) {
+        if ( $blRegenerate || !( $sSeoUrl = $this->_loadFromDb( 'oxmanufacturer', $oManufacturer->getId(), $iLang ) ) ) {
 
             if ( $iLang != $oManufacturer->getLanguage() ) {
                 $sId = $oManufacturer->getId();
@@ -170,9 +171,27 @@ class oxSeoEncoderManufacturer extends oxSeoEncoder
      *
      * @return null
      */
-    public function onDeleteManufacturer($oManufacturer)
+    public function onDeleteManufacturer( $oManufacturer )
     {
-        $sIdQuoted = oxDb::getDb()->quote($oManufacturer->getId());
-        oxDb::getDb()->execute("delete from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxmanufacturers'");
+        $sIdQuoted = oxDb::getDb()->quote( $oManufacturer->getId() );
+        oxDb::getDb()->execute( "delete from oxseo where oxobjectid = $sIdQuoted and oxtype = 'oxmanufacturers'" );
+    }
+
+    /**
+     * Returns alternative uri used while updating seo
+     *
+     * @param string $sObjectId object id
+     * @param int    $iLang     language id
+     *
+     * @return string
+     */
+    protected function _getAltUri( $sObjectId, $iLang )
+    {
+        $sSeoUrl = null;
+        $oManufacturer = oxNew( "oxmanufacturer" );
+        if ( $oManufacturer->loadInLang( $iLang, $sObjectId ) ) {
+            $sSeoUrl = $this->getManufacturerUri( $oManufacturer, $iLang, true );
+        }
+        return $sSeoUrl;
     }
 }

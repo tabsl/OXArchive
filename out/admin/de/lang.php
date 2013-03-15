@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 27208 2010-04-14 13:19:10Z vilma $
+ * @version   SVN: $Id: lang.php 27833 2010-05-20 15:26:02Z tomas $
  */
 
 $sLangName  = 'Deutsch';
@@ -437,6 +437,7 @@ $aLang = array(
 'ARTICLE_PICTURES_ZOOM2'                        => 'Zoom 2',
 'ARTICLE_PICTURES_ZOOM3'                        => 'Zoom 3',
 'ARTICLE_PICTURES_ZOOM4'                        => 'Zoom 4',
+'ARTICLE_PICTURES_UPLOADISDISABLED'             => 'Dies ist demoshop. Das Hochladen/Löschen von Bildern wurde aus Sicherheitsgründen abgeschaltet.',
 'ARTICLE_REVIEW_DELETE'                         => 'Löschen',
 'ARTICLE_REVIEW_SAVE'                           => 'Speichern',
 'ARTICLE_REVIEW_ACTIVE'                         => 'Aktiv',

@@ -19,7 +19,7 @@
  * @package   modules
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: myorder.php 27135 2010-04-09 14:10:39Z arvydas $
+ * @version   SVN: $Id: myorder.php 27493 2010-05-03 08:17:16Z arvydas $
  */
 
 /**
@@ -197,7 +197,7 @@ class PdfArticleSummary extends PdfBlock
 
         // #345 - product VAT info
         $iCtr = 0;
-        foreach ( $this->_oData->getProductVats(false) as $iVat => $dVatPrice ) {
+        foreach ( $this->_oData->getVats() as $iVat => $dVatPrice ) {
             $iStartPos += 4 * $iCtr;
             $sVATSum = $oLang->formatCurrency( $dVatPrice, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
             $this->text( 45, $iStartPos + 8, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_ZZGLVAT' ).$iVat.$this->_oData->translate( 'ORDER_OVERVIEW_PDF_PERCENTSUM' ) );
@@ -259,7 +259,7 @@ class PdfArticleSummary extends PdfBlock
 
         // #345 - product VAT info
         $iCtr = 0;
-        foreach ( $this->_oData->getProductVats(false) as $iVat => $dVatPrice ) {
+        foreach ( $this->_oData->getVats() as $iVat => $dVatPrice ) {
             $iStartPos += 4 * $iCtr;
             $sVATSum = $oLang->formatCurrency( $dVatPrice, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
             $this->text( 45, $iStartPos + 12, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_ZZGLVAT' ).$iVat.$this->_oData->translate('ORDER_OVERVIEW_PDF_PERCENTSUM' ) );
@@ -564,6 +564,12 @@ class MyOrder extends MyOrder_parent
     protected $_oActShop = null;
 
     /**
+     * Order arctiles VAT's
+     * @var array
+     */
+    protected $_aVATs = array();
+
+    /**
      * Order currency object
      * @var object
      */
@@ -799,6 +805,8 @@ class MyOrder extends MyOrder_parent
             $this->_oArticles = $this->getOrderArticles(true);
         }
 
+        $oCurr = $this->getCurrency();
+
         // product list
         foreach ( $this->_oArticles as $key => $oOrderArt ) {
 
@@ -824,6 +832,15 @@ class MyOrder extends MyOrder_parent
 
             if ( $blShowPrice ) {
                 $oLang = oxLang::getInstance();
+
+                // calculating product VAT info
+                if ( !isset( $this->_aVATs[$oOrderArt->oxorderarticles__oxvat->value] ) ) {
+                    $this->_aVATs[$oOrderArt->oxorderarticles__oxvat->value] = 0;
+                }
+                // #M1434: VAT recalculation in admin (pdf) is wrong
+                if ( $oOrderArt->oxorderarticles__oxamount->value > 0 ) {
+                    $this->_aVATs[$oOrderArt->oxorderarticles__oxvat->value] += ( $oOrderArt->oxorderarticles__oxvatprice->value * $oCurr->rate );
+                }
 
                 // product VAT percent
                 $oPdf->text( 150 - $oPdf->getStringWidth( $oOrderArt->oxorderarticles__oxvat->value ), $iStartPos, $oOrderArt->oxorderarticles__oxvat->value );
@@ -1118,6 +1135,20 @@ class MyOrder extends MyOrder_parent
         }
 
         return $sValue;
+    }
+
+    /**
+     * Returns order articles VATS's
+     *
+     * @return array
+     */
+    public function getVats()
+    {
+        // for new orders
+        $aVats = $this->getProductVats( false );
+
+        // for older orders
+        return ( is_array( $aVats ) && count( $aVats ) ) ? $aVats : $this->_aVATs;
     }
 
     /**

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: article_seo.php 26705 2010-03-20 13:20:46Z arvydas $
+ * @version   SVN: $Id: article_seo.php 27759 2010-05-14 10:10:17Z arvydas $
  */
 
 /**
@@ -118,7 +118,7 @@ class Article_Seo extends Object_Seo
     {
         $oDb = oxDb::getDb();
         if ( $this->getActCatType() == 'oxtag' ) {
-            $sObjectId = oxSeoEncoderArticle::getInstance()->getDynamicObjectId( $iShopId, $oObject->getStdTagLink( $this->getTag() ) );
+            $sObjectId = $this->_getEncoder()->getDynamicObjectId( $iShopId, $oObject->getStdTagLink( $this->getTag() ) );
             $sQ = "select * from oxseo where oxobjectid = ".$oDb->quote( $sObjectId ).
                   " and oxshopid = '{$iShopId}' and oxlang = ".$this->getActCategoryLang();
         } else {
@@ -333,7 +333,7 @@ class Article_Seo extends Object_Seo
                 break;
         }
 
-        oxSeoEncoderArticle::getInstance()->getArticleUrl( $oArticle, $this->getEditLang(), $sType );
+        $this->_getEncoder()->getArticleUrl( $oArticle, $this->getEditLang(), $sType );
         return parent::_getSeoUrl( $oArticle );
     }
 
@@ -583,5 +583,25 @@ class Article_Seo extends Object_Seo
     public function getNoCatId()
     {
         return $this->_sNoCategoryId;
+    }
+
+    /**
+     * Returns current object type seo encoder object
+     *
+     * @return oxSeoEncoderCategory
+     */
+    protected function _getEncoder()
+    {
+        return oxSeoEncoderArticle::getInstance();
+    }
+
+    /**
+     * Returns alternative seo entry id
+     *
+     * @return null
+     */
+    protected function _getAltSeoEntryId()
+    {
+        return oxConfig::getParameter( 'oxid' );
     }
 }

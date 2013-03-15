@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsdate.php 25471 2010-02-01 14:35:11Z alfonsas $
+ * @version   SVN: $Id: oxutilsdate.php 27809 2010-05-19 12:30:58Z rimvydas.paskevicius $
  */
 
 /**
@@ -76,7 +76,7 @@ class oxUtilsDate extends oxSuperCfg
             return $sDBDateIn;
         }
 
-        if ( $sDBDateIn == '0000-00-00 00:00:00' || $sDBDateIn == '0000-00-00' ) {
+        if ( $this->isEmptyDate( $sDBDateIn ) && $sDBDateIn != '-' ) {
             return '-';
         } elseif ( $sDBDateIn == '-' ) {
             return '0000-00-00 00:00:00';
@@ -199,6 +199,30 @@ class oxUtilsDate extends oxSuperCfg
         } else {
             return date( $sFormat, mktime( $aTime[0], $aTime[1], $aTime[2], $aDate[1], $aDate[2], $aDate[0] ) );
         }
+    }
+
+    /**
+     * Checks if date string is empty date field. Empty string or string with
+     * all date values equal to 0 is treated as empty.
+     *
+     * @param array $sDate date or date time string
+     *
+     * @return bool
+     */
+    public function isEmptyDate( $sDate )
+    {
+        $blIsEmpty = true;
+
+        if ( !empty( $sDate ) ) {
+            $sDate = preg_replace("/[^0-9a-z]/i", "", $sDate);
+            if ( is_numeric( $sDate ) && $sDate == 0 ) {
+                $blIsEmpty = true;
+            } else {
+                $blIsEmpty = false;
+            }
+        }
+
+        return $blIsEmpty;
     }
 
 }

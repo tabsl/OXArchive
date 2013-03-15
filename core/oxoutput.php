@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxoutput.php 27255 2010-04-16 08:57:37Z arvydas $
+ * @version   SVN: $Id: oxoutput.php 27595 2010-05-06 10:52:07Z tomas $
  */
 
 /**
@@ -93,7 +93,7 @@ class oxOutput extends oxSuperCfg
         $sCurYear = date("Y");
 
         // Replacing only once per page
-        $sOutput = getStr()->preg_replace("/<\/head>/i", "</head>\n  <!-- OXID eShop {$sEdition}, Version {$sVersion}, Shopping Cart System (c) OXID eSales AG 2003 - {$sCurYear} - http://www.oxid-esales.com -->", ltrim($sOutput), 1);
+        $sOutput = str_ireplace("</head>", "</head>\n  <!-- OXID eShop {$sEdition}, Version {$sVersion}, Shopping Cart System (c) OXID eSales AG 2003 - {$sCurYear} - http://www.oxid-esales.com -->", ltrim($sOutput));
 
         return $sOutput;
     }

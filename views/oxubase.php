@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 27130 2010-04-09 13:44:30Z arvydas $
+ * @version   SVN: $Id: oxubase.php 27792 2010-05-18 12:35:14Z sarunas $
  */
 
 /**
@@ -2177,7 +2177,7 @@ class oxUBase extends oxView
     {
         $myConfig = $this->getConfig();
         $iMinOrderPrice = $myConfig->getConfigParam( 'iMinOrderPrice' );
-        if ( isset( $iMinOrderPrice ) && $iMinOrderPrice) {
+        if ( isset( $iMinOrderPrice ) && is_numeric($iMinOrderPrice)) {
             $oBasket = $this->getSession()->getBasket();
             if ( !$oBasket || ( $oBasket && !$oBasket->getProductsCount() ) ) {
                 return;

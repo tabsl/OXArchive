@@ -28,6 +28,8 @@ function editThis( sID )
 //-->
 </script>
 
+
+
 [{ if $readonly }]
     [{assign var="readonly" value="readonly disabled"}]
 [{else}]
@@ -108,8 +110,7 @@ function editThis( sID )
                     #[{$iIndex}]
                 </td>
                 <td class="text">
-                    [{assign var="sPicField" value="oxarticles__oxpic`$iIndex`"}]
-                    [{assign var="sPicFile" value=$edit->$sPicField->value|basename}]
+                    [{assign var="sPicFile" value=$edit->getPictureFieldValue("oxpic", $iIndex) }]
                     [{assign var="blPicUplodaded" value=true}]
 
                     [{if $sPicFile == "nopic.jpg" || $sPicFile == ""}]
@@ -160,7 +161,7 @@ function editThis( sID )
                     [{ oxinputhelp ident="HELP_ARTICLE_PICTURES_THUMB" }]
                 </td>
                 <td class="text">
-                    [{assign var="sThumbFile" value=$edit->oxarticles__oxthumb->value|basename}]
+                    [{assign var="sThumbFile" value=$edit->getPictureFieldValue("oxthumb")}]
                     [{if $sThumbFile == "nopic.jpg"  || $sThumbFile == "" }]
                     -------
                     [{else}]
@@ -184,7 +185,7 @@ function editThis( sID )
                     [{ oxinputhelp ident="HELP_ARTICLE_PICTURES_ICON" }]
                 </td>
                 <td class="text">
-                    [{assign var="sIconFile" value=$edit->oxarticles__oxicon->value|basename}]
+                    [{assign var="sIconFile" value=$edit->getPictureFieldValue("oxicon")}]
                     [{if "nopic_ico.jpg" == $sIconFile || "" == $sIconFile }]
                     -------
                     [{else}]

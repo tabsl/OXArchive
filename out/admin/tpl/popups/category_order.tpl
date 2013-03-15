@@ -53,12 +53,13 @@
 
         YAHOO.oxid.container1.onSuccessCalback = function( oResponse )
         {
-            YAHOO.oxid.container1.oSaveBtn.set("disabled",oResponse.responseText != "0");
+            YAHOO.oxid.container1.oSaveBtn.set("disabled", oResponse.responseText.indexOf("0") == -1);
 
         }
         YAHOO.oxid.container2.onSuccessCalback = function( oResponse )
         {
-            YAHOO.oxid.container1.oSaveBtn.set("disabled",oResponse.responseText != "0");
+            //YAHOO.oxid.container1.oSaveBtn.set("disabled",oResponse.responseText != "0");
+            YAHOO.oxid.container1.oSaveBtn.set("disabled", oResponse.responseText.indexOf("0") == -1);
         }
         YAHOO.oxid.container2.onOrder = function()
         {

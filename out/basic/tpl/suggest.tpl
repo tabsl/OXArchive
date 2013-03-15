@@ -14,7 +14,7 @@
     <br>
     <div class="dot_sep mid"></div>
 
-    <form action="[{ $oViewConf->getSelfActionLink() }]" method="post">
+    <form action="[{ $oViewConf->getSslSelfLink() }]" method="post">
       <div>
           [{ $oViewConf->getHiddenSid() }]
           [{ $oViewConf->getNavFormParams() }]
@@ -31,11 +31,11 @@
             </tr>
             <tr>
               <td>[{ oxmultilang ident="SUGGEST_RECIPIENTNAME" }]</td>
-              <td ><input type="text" name="editval[rec_name]" size=73 maxlength=73 value="[{$editval->rec_name}]" ></td>
+              <td ><input type="text" name="editval[rec_name]" size=73 maxlength=73 value="[{$editval->rec_name}]" >&nbsp;<span class="note">*</span></td>
             </tr>
             <tr>
               <td>[{ oxmultilang ident="SUGGEST_RECIPIENTEMAIL" }]</td>
-              <td><input type="text" name="editval[rec_email]" size=73 maxlength=73 value="[{$editval->rec_email}]" ></td>
+              <td><input type="text" name="editval[rec_email]" size=73 maxlength=73 value="[{$editval->rec_email}]" >&nbsp;<span class="note">*</span></td>
             </tr>
             <tr>
               <td><br></td>
@@ -47,20 +47,21 @@
             </tr>
             <tr>
               <td>[{ oxmultilang ident="SUGGEST_SENDERNAME" }]</td>
-              <td><input type="text" name="editval[send_name]" size=73 maxlength=73 value="[{$editval->send_name}]" ></td>
+              <td><input type="text" name="editval[send_name]" size=73 maxlength=73 value="[{$editval->send_name}]" >&nbsp;<span class="note">*</span></td>
             </tr>
             <tr>
               <td>[{ oxmultilang ident="SUGGEST_SENDEREMAIL" }]</td>
-              <td><input type="text" name="editval[send_email]" size=73 maxlength=73 value="[{$editval->send_email}]" ></td>
+              <td><input type="text" name="editval[send_email]" size=73 maxlength=73 value="[{$editval->send_email}]" >&nbsp;<span class="note">*</span></td>
             </tr>
             <tr>
               <td>[{ oxmultilang ident="SUGGEST_CAPTION" }]</td>
-              <td><input type="text" name="editval[send_subject]" size=73 maxlength=73 value="[{if $editval->send_subject}][{$editval->send_subject}][{else}][{ oxmultilang ident="SUGGEST_SUBJECT" }] [{ $product->oxarticles__oxtitle->value|strip_tags }][{/if}]" ></td>
+              <td><input type="text" name="editval[send_subject]" size=73 maxlength=73 value="[{if $editval->send_subject}][{$editval->send_subject}][{else}][{ oxmultilang ident="SUGGEST_SUBJECT" }] [{ $product->oxarticles__oxtitle->value|strip_tags }][{/if}]" >&nbsp;<span class="note">*</span></td>
             </tr>
             <tr>
               <td valign="top">[{ oxmultilang ident="SUGGEST_YOURMESSAGE" }]</td>
               <td>
                 <textarea cols="70" rows="8" name="editval[send_message]" >[{if $editval->send_message}][{$editval->send_message}][{else}][{ oxmultilang ident="SUGGEST_MESSAGE1" }] [{ $oxcmp_shop->oxshops__oxname->value }] [{ oxmultilang ident="SUGGEST_MESSAGE2" }][{/if}]</textarea>
+              &nbsp;<span class="note">*</span>
               </td>
             </tr>
             <tr>
@@ -74,6 +75,10 @@
                [{/if}]
                &nbsp;<input type="text" name="c_mac" value=""/>&nbsp;<span class="note">*</span>
               </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="fs10">[{ oxmultilang ident="SUGGEST_COMPLETEMARKEDFIELDS2" }]</td>
             </tr>
             <tr>
               <td></td>

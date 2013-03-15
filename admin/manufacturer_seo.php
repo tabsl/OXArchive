@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: manufacturer_seo.php 25640 2010-02-05 06:42:24Z alfonsas $
+ * @version   SVN: $Id: manufacturer_seo.php 27759 2010-05-14 10:10:17Z arvydas $
  */
 
 /**
@@ -63,7 +63,7 @@ class Manufacturer_Seo extends Object_Seo
      */
     protected function _getSeoUrl( $oManufacturer )
     {
-        oxSeoEncoderManufacturer::getInstance()->getManufacturerUrl( $oManufacturer );
+        $this->_getEncoder()->getManufacturerUrl( $oManufacturer );
         return parent::_getSeoUrl( $oManufacturer );
     }
 
@@ -94,5 +94,15 @@ class Manufacturer_Seo extends Object_Seo
         }
 
         return parent::save();
+    }
+
+    /**
+     * Returns current object type seo encoder object
+     *
+     * @return oxSeoEncoderManufacturer
+     */
+    protected function _getEncoder()
+    {
+        return oxSeoEncoderManufacturer::getInstance();
     }
 }

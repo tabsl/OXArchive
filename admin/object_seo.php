@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: object_seo.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: object_seo.php 27759 2010-05-14 10:10:17Z arvydas $
  */
 
 /**
@@ -173,7 +173,7 @@ class Object_Seo extends oxAdminDetails
                 $aSeoData['oxfixed'] = 0;
             }
 
-            $oEncoder = oxSeoEncoder::getInstance();
+            $oEncoder = $this->_getEncoder();
 
             // marking self and page links as expired
             $oEncoder->markAsExpired( $sOxid, $iShopId, 1, $this->getEditLang() );
@@ -181,7 +181,7 @@ class Object_Seo extends oxAdminDetails
             // saving
             $oEncoder->addSeoEntry( $sOxid, $iShopId, $this->getEditLang(), $this->_getStdUrl( $sOxid ),
                                     $aSeoData['oxseourl'], $this->_getSeoEntryType(), $aSeoData['oxfixed'],
-                                    trim( $aSeoData['oxkeywords'] ), trim( $aSeoData['oxdescription'] ), $this->processParam( $aSeoData['oxparams'] ), true );
+                                    trim( $aSeoData['oxkeywords'] ), trim( $aSeoData['oxdescription'] ), $this->processParam( $aSeoData['oxparams'] ), true, $this->_getAltSeoEntryId() );
         }
     }
 
@@ -237,5 +237,24 @@ class Object_Seo extends oxAdminDetails
     public function processParam( $sParam )
     {
         return $sParam;
+    }
+
+    /**
+     * Returns current object type seo encoder object
+     *
+     * @return oxSeoEncoder
+     */
+    protected function _getEncoder()
+    {
+        return oxSeoEncoder::getInstance();
+    }
+
+    /**
+     * Returns alternative seo entry id
+     *
+     * @return null
+     */
+    protected function _getAltSeoEntryId()
+    {
     }
 }

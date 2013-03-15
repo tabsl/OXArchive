@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 27211 2010-04-14 13:39:28Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxarticle.php 27751 2010-05-13 11:11:50Z rimvydas.paskevicius $
  */
 
 // defining supported link types
@@ -3641,44 +3641,22 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
                 return;
             }
 
-            //do not copy parent data for icons in case we have (need) own variant icon (in case variant thumbnail exists)
-            if ($sFieldName == "oxicon" && !$this->_isFieldEmpty("oxarticles__oxthumb") && $this->oxarticles__oxthumb->value != $oParentArticle->oxarticles__oxthumb->value && $this->getConfig()->getConfigParam( 'blAutoIcons' ) ) {
-                return ;
-            }
-
             //COPY THE VALUE
-            //replaced the code bellow with this two liner
-            //T2009-01-12
-            if ($this->_isFieldEmpty($sCopyFieldName) || in_array( $sCopyFieldName, $this->_aCopyParentField ) ) {
-                $this->$sCopyFieldName = clone $oParentArticle->$sCopyFieldName;
-            }
-
-
-            /*
-            //#1101S empty image fields (without nopic.jpg, nopic_ico.jpg) should be copied from parent too
-            if ( $this->$sCopyFieldName->value == 'nopic.jpg' || $this->$sCopyFieldName->value == 'nopic_ico.jpg' || ((stristr($sCopyFieldName, '_oxthumb') || stristr($sCopyFieldName, '_oxicon') || stristr($sCopyFieldName, '_oxpic') || stristr($sCopyFieldName, '_oxzoom') ) && $this->$sCopyFieldName->value == '')) {
-                // pictures
-                if ( $this->_blLoadParentData && $this->isAdmin() ) {
+            // assigning images from parent only if variant has no master image (#1807)
+            if ( stristr($sCopyFieldName, '_oxthumb') || stristr($sCopyFieldName, '_oxicon') ) {
+                if ( $this->_isFieldEmpty( $sCopyFieldName ) && !$this->_hasMasterImage( 1 ) ) {
                     $this->$sCopyFieldName = clone $oParentArticle->$sCopyFieldName;
-                } else {
-                    $aFile = explode( '/', $oParentArticle->$sCopyFieldName->value);
-                    $this->$sCopyFieldName->setValue(basename);
                 }
-            } elseif ( $this->$sCopyFieldName->value == '' ||
-                    $this->$sCopyFieldName->value == '0000-00-00 00:00:00' ||
-                    $this->$sCopyFieldName->value == '0000-00-00' ||
-                    ( in_array($sCopyFieldName, $aDoubleCopyFields) && $this->$sCopyFieldName->value == 0)
-                   ) {
+            } elseif ( stristr($sCopyFieldName, '_oxzoom') ) {
+                // for zoom images checking master image with specified index
+                $iIndex = (int) str_ireplace( "oxzoom", "", $sFieldName );
+                if ( $this->_isFieldEmpty( $sCopyFieldName ) && !$this->_hasMasterImage( $iIndex ) ) {
+                    $this->$sCopyFieldName = clone $oParentArticle->$sCopyFieldName;
+                }
+            } elseif ($this->_isFieldEmpty($sCopyFieldName) || in_array( $sCopyFieldName, $this->_aCopyParentField ) ) {
                 $this->$sCopyFieldName = clone $oParentArticle->$sCopyFieldName;
             }
 
-            //another fields which should be copied from parent if empty and not covered by above condition
-            $aCopyParentField = array('oxarticles__oxnonmaterial',
-                                      'oxarticles__oxfreeshipping',
-                                      'oxarticles__oxremindactive');
-            if (!$this->$sCopyFieldName->value && in_array($sCopyFieldName, $aCopyParentField)) {
-                $this->$sCopyFieldName = clone $oParentArticle->$sCopyFieldName;
-            }*/
         }
     }
 
@@ -4558,5 +4536,21 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         }
 
         return false;
+    }
+
+    /**
+     * Return article picture file name
+     *
+     * @param string $sFieldName article picture field name
+     * @param int    $iIndex     article picture index
+     *
+     * @return string
+     */
+    public function getPictureFieldValue( $sFieldName, $iIndex = null )
+    {
+        if ( $sFieldName ) {
+            $sFieldName = "oxarticles__" . $sFieldName . $iIndex;
+            return $this->$sFieldName->value;
+        }
     }
 }

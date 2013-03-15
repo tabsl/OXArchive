@@ -27,9 +27,9 @@
         $this->dbUser = '<dbUser_ce>'; // database user name
         $this->dbPwd  = '<dbPwd_ce>'; // database user password
         $this->dbType = 'mysql';
-        $this->sShopURL     = '<sShopURL_ce>';
-        $this->sSSLShopURL  = null;
-        $this->sAdminSSLURL = null;
+        $this->sShopURL     = '<sShopURL_ce>'; // eShop base url, required
+        $this->sSSLShopURL  = null;            // eShop SSL url, optional
+        $this->sAdminSSLURL = null;            // eShop Admin SSL url, optional
         $this->sShopDir     = '<sShopDir_ce>';
         $this->sCompileDir  = '<sCompileDir_ce>';
 

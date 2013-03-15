@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxnews.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxnews.php 27793 2010-05-18 13:32:24Z rimvydas.paskevicius $
  */
 
 /**
@@ -159,10 +159,16 @@ class oxNews extends oxI18n
      */
     protected function _insert()
     {
-        // setting insert time
-        $this->oxnews__oxdate = new oxField( date( 'Y-m-d' ) );
+        if ( !$this->oxnews__oxdate || oxUtilsDate::getInstance()->isEmptyDate( $this->oxnews__oxdate->value ) ) {
+            // if date field is empty, assigning current date
+            $this->oxnews__oxdate = new oxField( date( 'Y-m-d' ) );
+        } else {
+            $this->oxnews__oxdate = new oxField( oxUtilsDate::getInstance()->formatDBDate( $this->oxnews__oxdate->value, true ) );
+        }
+
         return parent::_insert();
     }
+
     /**
      * Sets data field value
      *

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsfile.php 27114 2010-04-09 13:35:02Z arvydas $
+ * @version   SVN: $Id: oxutilsfile.php 27797 2010-05-18 15:34:13Z rimvydas.paskevicius $
  */
 
 /**
@@ -394,7 +394,7 @@ class oxUtilsFile extends oxSuperCfg
                     $oUtilsPic->resizeImage( $sSource, $sIconTarget, $aSize[0], $aSize[1] );
                 }
 
-                $aSize = $this->_getImageSize( $sType, 1, 'aDetailImageSizes' );
+                $aSize = $this->_getImageSize( $sType, $iPicNum, 'aDetailImageSizes' );
                 break;
             case 'M':
             case 'WP':

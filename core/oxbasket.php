@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasket.php 26319 2010-03-05 09:58:47Z sarunas $
+ * @version   SVN: $Id: oxbasket.php 27873 2010-05-21 16:12:47Z tomas $
  */
 
 /**
@@ -349,10 +349,10 @@ class oxBasket extends oxSuperCfg
         //calling update method
         $this->onUpdate();
 
-            // updating basket history
-            if ( !$blBundle ) {
-                $this->_addItemToSavedBasket( $sProductID, $dAmount, $aSel, $blOverride );
-            }
+        // updating basket history
+        if ( !$blBundle ) {
+            $this->_addItemToSavedBasket( $sProductID, $dAmount, $aSel, $blOverride );
+        }
 
         if ( $oEx ) {
             throw $oEx;
@@ -988,11 +988,15 @@ class oxBasket extends oxSuperCfg
 
             // saving discount info
             $oStdDiscount->dDiscount = $oDiscount->getAbsValue( $dOldprice );
+            if ($dOldprice < $oStdDiscount->dDiscount) {
+                $oStdDiscount->dDiscount = $dOldprice;
+            }
 
-            $this->_aDiscounts[$oDiscount->getId()] = $oStdDiscount;
-
-            // substracting product price after discount
-            $dOldprice = $dOldprice - $oStdDiscount->dDiscount;
+            if ($oStdDiscount->dDiscount > 0) {
+                $this->_aDiscounts[$oDiscount->getId()] = $oStdDiscount;
+                // substracting product price after discount
+                $dOldprice = $dOldprice - $oStdDiscount->dDiscount;
+            }
         }
     }
 
@@ -1120,47 +1124,47 @@ class oxBasket extends oxSuperCfg
         $this->_oPrice = oxNew( 'oxprice' );
         $this->_oPrice->setBruttoPriceMode();
 
-            // 0. merging basket history
-            $this->_mergeSavedBasket();
+        //  1. merging basket history
+        $this->_mergeSavedBasket();
 
-        //  0. remove all bundles
+        //  2. remove all bundles
         $this->_clearBundles();
 
-        //  1. generate bundle items
+        //  3. generate bundle items
         $this->_addBundles();
 
-        //  2. calculating item prices
+        //  4. calculating item prices
         $this->_calcItemsPrice();
 
-        //  3. calculating/applying discounts
+        //  5. calculating/applying discounts
         $this->_calcBasketDiscount();
 
-        //  4. calculating basket total discount
+        //  6. calculating basket total discount
         $this->_calcBasketTotalDiscount();
 
-        //  5. check for vouchers
+        //  7. check for vouchers
         $this->_calcVoucherDiscount();
 
-        //  6. applies all discounts to pricelist
+        //  8. applies all discounts to pricelist
         $this->_applyDiscounts();
 
-        //  7. calculating additional costs:
-        //  7.1: delivery
+        //  9. calculating additional costs:
+        //  9.1: delivery
         $this->setCost( 'oxdelivery', $this->_calcDeliveryCost() );
 
-        //  7.2: adding wrapping costs
+        //  9.2: adding wrapping costs
         $this->setCost( 'oxwrapping', $this->_calcBasketWrapping() );
 
-        //  7.3: adding payment cost
+        //  9.3: adding payment cost
         $this->setCost( 'oxpayment', $this->_calcPaymentCost() );
 
-        //  8. calculate total price
+        //  10. calculate total price
         $this->_calcTotalPrice();
 
-        //  9. setting deprecated values
+        //  11. setting deprecated values
         $this->_setDeprecatedValues();
 
-        //  10.setting to up-to-date status
+        //  12.setting to up-to-date status
         $this->afterUpdate();
     }
 
@@ -1567,10 +1571,10 @@ class oxBasket extends oxSuperCfg
     {
         $this->getSession()->delBasket();
 
-            // merging basket history
-            if ( !$this->getConfig()->getConfigParam( 'blPerfNoBasketSaving' ) ) {
-                $this->_deleteSavedBasket();
-            }
+        // merging basket history
+        if ( !$this->getConfig()->getConfigParam( 'blPerfNoBasketSaving' ) ) {
+            $this->_deleteSavedBasket();
+        }
     }
 
     /**
@@ -2305,10 +2309,10 @@ class oxBasket extends oxSuperCfg
     public function isBelowMinOrderPrice()
     {
         $blIsBelowMinOrderPrice = false;
-        $dMinOrderPrice = oxPrice::getPriceInActCurrency( ( int ) $this->getConfig()->getConfigParam( 'iMinOrderPrice' ) );
-        if ( $dMinOrderPrice && $this->getProductsCount() &&
-             $dMinOrderPrice > $this->getDiscountedProductsBruttoPrice() ) {
-             $blIsBelowMinOrderPrice = true;
+        $sConfValue = $this->getConfig()->getConfigParam( 'iMinOrderPrice' );
+        if ( is_numeric($sConfValue) && $this->getProductsCount() ) {
+            $dMinOrderPrice = oxPrice::getPriceInActCurrency( ( int ) $sConfValue );
+            $blIsBelowMinOrderPrice = ($dMinOrderPrice > $this->getDiscountedProductsBruttoPrice());
         }
 
         return $blIsBelowMinOrderPrice;

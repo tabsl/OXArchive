@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oximex.php 26767 2010-03-23 13:36:51Z vilma $
+ * @version   SVN: $Id: oximex.php 27794 2010-05-18 13:52:47Z sarunas $
  */
 
 /**
@@ -274,6 +274,8 @@ class oxImex extends oxBase
 
         foreach ( $oOrderlist->arrayKeys() as $key ) {
             $oOrder = $oOrderlist[$key];
+            // Convert each amount of money with currency rate of the order
+            $dOrderCurRate = (double)$oOrder->oxorder__oxcurrate->value;
 
             $oUser = oxNew( "oxuser" );
             $oUser->load( $oOrder->oxorder__oxuserid->value );
@@ -366,7 +368,12 @@ class oxImex extends oxBase
                 }
                 $sExport .= "   </Produktname>$sNewLine";
                 $sExport .= "   <Rabatt>0.00</Rabatt>$sNewLine";
-                $sExport .= "   <Preis>".$this->internPrice($oOrderArt->oxorderarticles__oxbrutprice->value/$oOrderArt->oxorderarticles__oxamount->value)."</Preis>$sNewLine";
+
+                $dUnitPrice = $oOrderArt->oxorderarticles__oxbrutprice->value/$oOrderArt->oxorderarticles__oxamount->value;
+                if ($dOrderCurRate > 0) {
+                    $dUnitPrice /= $dOrderCurRate;
+                }
+                $sExport .= "   <Preis>".$this->internPrice($dUnitPrice)."</Preis>$sNewLine";
                 $sExport .= "   </Artikel>$sNewLine";
                 $sRet .= $sExport;
 
@@ -375,22 +382,20 @@ class oxImex extends oxBase
             }
 
             $dDiscount = $oOrder->oxorder__oxvoucherdiscount->value + $oOrder->oxorder__oxdiscount->value;
-            $sExport  = "<GesamtRabatt>".$this->internPrice( $dDiscount)."</GesamtRabatt>$sNewLine";
+            $dDelCost = $oOrder->oxorder__oxdelcost->value;
+            $dPaymentCost = $oOrder->oxorder__oxpaycost->value;
+            if ($dOrderCurRate > 0) {
+                $dDiscount /= $dOrderCurRate;
+                $dSumNetPrice /= $dOrderCurRate;
+                $dDelCost /= $dOrderCurRate;
+                $dSumBrutPrice /= $dOrderCurRate;
+                $dPaymentCost /= $dOrderCurRate;
+            }
+            $sExport  = "<GesamtRabatt>".$this->internPrice($dDiscount)."</GesamtRabatt>$sNewLine";
             $sExport .= "<GesamtNetto>".$this->internPrice($dSumNetPrice)."</GesamtNetto>$sNewLine";
-            $sExport .= "<Lieferkosten>".$this->internPrice($oOrder->oxorder__oxdelcost->value)."</Lieferkosten>$sNewLine";
-            $sExport .= "<Zahlungsartkosten>0.00</Zahlungsartkosten>$sNewLine";
+            $sExport .= "<Lieferkosten>".$this->internPrice($dDelCost)."</Lieferkosten>$sNewLine";
+            $sExport .= "<Zahlungsartkosten>".$this->internPrice($dPaymentCost)."</Zahlungsartkosten>$sNewLine";
             $sExport .= "<GesamtBrutto>".$this->internPrice($dSumBrutPrice)."</GesamtBrutto>$sNewLine";
-
-            $oUserpayment = oxNew( "oxuserpayment" );
-            $oUserpayment->load( $oOrder->oxorder__oxpaymentid->value);
-            $sPayment = $oUserpayment->oxuserpayments__oxvalue->value;
-            $sPayment = str_replace( "__", "", $sPayment);
-            $sPayment = str_replace( "@@", ",", $sPayment);
-
-            $oPayment = oxNew( "oxpayment" );
-            $oPayment->load( $oOrder->oxorder__oxpaymenttype->value);
-
-
             $sExport .= "<Bemerkung>".strip_tags( $oOrder->oxorder__oxremark->value)."</Bemerkung>$sNewLine";
             $sRet .= $sExport;
 

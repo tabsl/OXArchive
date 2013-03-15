@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutils.php 27113 2010-04-09 13:32:58Z arvydas $
+ * @version   SVN: $Id: oxutils.php 27841 2010-05-20 18:49:33Z tomas $
  */
 
 /**
@@ -69,6 +69,13 @@ class oxUtils extends oxSuperCfg
      * @var array
      */
     protected $_aFileCacheContents = array();
+
+    /**
+     * Content to be written to file cache
+     *
+     * @var array
+     */
+    protected $_aFileCacheWritable = array();
 
     /**
      * resturns a single instance of this class
@@ -468,46 +475,6 @@ class oxUtils extends oxSuperCfg
         }
     }
 
-
-    /**
-     * Adds contents to cache contents by given key. Returns true on success.
-     * All file caches are supposed to be written once by commitFileCache() method.
-     *
-     * @param string $sKey      Cache key
-     * @param mixed  $mContents Contents to cache
-     *
-     * @return bool
-     */
-    public function toFileCache($sKey, $mContents)
-    {
-        $sFilePath = $this->getCacheFilePath( $sKey );
-        $iCurTime = oxUtilsDate::getInstance()->getTime();
-
-        //T2009-05-26
-        //due to possible race conditions
-        //check if there are any other cache files already opened for writing by another process
-        //additionally perform the check for older (aged 40 or more secs) locked files
-        clearstatcache();
-        if (!isset($this->_aFileCacheContents[$sKey]) && file_exists($sFilePath) && (!filesize($sFilePath)) && abs($iCurTime - filectime($sFilePath) < 40) ) {
-            //then leave the cache to be dealt by another process and do nothing
-            return false;
-        }
-        //the above code ensures that $_aFileCacheContet is writen only in case cache file has not been started
-        //by another process
-        if (!isset($this->_aFileCacheContents[$sKey])) {
-            //start a blank file to inform other processes we are dealing with it.
-            $hFile = fopen($sFilePath, "w");
-            if ($hFile) {
-                fclose($hFile);
-            }
-            clearstatcache();
-        }
-
-        $this->_aFileCacheContents[$sKey] = $mContents;
-
-        return true;
-    }
-
     /**
      * Generates php file, which could later be loaded as include instead of paresed data.
      * Currenntly this method supports simple arrays only.
@@ -575,6 +542,45 @@ class oxUtils extends oxSuperCfg
     }
 
     /**
+     * Adds contents to cache contents by given key. Returns true on success.
+     * All file caches are supposed to be written once by commitFileCache() method.
+     *
+     * @param string $sKey      Cache key
+     * @param mixed  $mContents Contents to cache
+     *
+     * @return bool
+     */
+    public function toFileCache($sKey, $mContents)
+    {
+        $sFilePath = $this->getCacheFilePath( $sKey );
+        $iCurTime = oxUtilsDate::getInstance()->getTime();
+
+        //T2009-05-26
+        //due to possible race conditions
+        //check if there are any other cache files already opened for writing by another process
+        //additionally perform the check for older (aged 40 or more secs) locked files
+        clearstatcache();
+        if (!isset($this->_aFileCacheContents[$sKey]) && file_exists($sFilePath) && (!filesize($sFilePath)) && abs($iCurTime - filectime($sFilePath) < 40) ) {
+            //then leave the cache to be dealt by another process and do nothing
+            return false;
+        }
+        //the above code ensures that $mContents is writen only in case cache file has not been started
+        //by another process
+
+        //start a blank file to inform other processes we are dealing with it.
+        $hFile = fopen($sFilePath, "w");
+        if ($hFile) {
+            fclose($hFile);
+        }
+        clearstatcache();
+
+        $this->_aFileCacheWritable[$sKey] = $mContents;
+        $this->_aFileCacheContents[$sKey] = $mContents;
+
+        return true;
+    }
+
+    /**
      * Fetches contents from file cache.
      *
      * @param string $sKey Cache key
@@ -607,20 +613,20 @@ class oxUtils extends oxSuperCfg
      */
     public function commitFileCache()
     {
-        foreach ($this->_aFileCacheContents as $sKey => $mContents) {
+        foreach ($this->_aFileCacheWritable as $sKey => $mContents) {
+            startProfile("!__SAVING CACHE__! (warning)");
             $mContents = serialize($mContents);
             $sFilePath = $this->getCacheFilePath( $sKey );
-            //if ( is_writable($sFilePath))
-            // dodger: somehow is_writeable() always says no on windows machines
             $hFile = fopen( $sFilePath, "w");
             if ( $hFile) {
                 fwrite( $hFile, $mContents);
                 fclose( $hFile);
             }
+            stopProfile("!__SAVING CACHE__! (warning)");
         }
 
         //empty buffer
-        $this->_aFileCacheContents = array();
+        $this->_aFileCacheWritable = array();
         clearstatcache ();
     }
 
