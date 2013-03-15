@@ -775,7 +775,14 @@ class oxModule extends oxSuperCfg
                 $sType       = $aValue["type"];
                 $sValue      = is_null($oConfig->getConfigParam($sName))?$aValue["value"]:$oConfig->getConfigParam($sName);
                 $sGroup      = $aValue["group"];
-                $sConstrains = $aValue["constrains"]?$aValue["constrains"]:'';
+                
+                $sConstraints = "";
+                if ( $aValue["constraints"] ) {
+                    $sConstraints = $aValue["constraints"];
+                } elseif ( $aValue["constrains"] ) {
+                    $sConstraints = $aValue["constrains"];
+                }
+                
                 $iPosition   = $aValue["position"]?$aValue["position"]:1;
 
                 $oConfig->setConfigParam($sName, $sValue);
@@ -783,7 +790,7 @@ class oxModule extends oxSuperCfg
 
                 $sDeleteSql = "DELETE FROM `oxconfigdisplay` WHERE OXCFGMODULE=".$oDb->quote($sModule)." AND OXCFGVARNAME=".$oDb->quote($sName);
                 $sInsertSql = "INSERT INTO `oxconfigdisplay` (`OXID`, `OXCFGMODULE`, `OXCFGVARNAME`, `OXGROUPING`, `OXVARCONSTRAINT`, `OXPOS`) ".
-                              "VALUES ('{$sOxId}', ".$oDb->quote($sModule).", ".$oDb->quote($sName).", ".$oDb->quote($sGroup).", ".$oDb->quote($sConstrains).", ".$oDb->quote($iPosition).")";
+                              "VALUES ('{$sOxId}', ".$oDb->quote($sModule).", ".$oDb->quote($sName).", ".$oDb->quote($sGroup).", ".$oDb->quote($sConstraints).", ".$oDb->quote($iPosition).")";
 
                 $oDb->execute( $sDeleteSql );
                 $oDb->execute( $sInsertSql );

@@ -448,6 +448,7 @@ $aLang = array(
 'NEWSLETTER_SUBSCRIBE_CANCEL'                                 => "Subscribe/cancel Newsletter",
 'NEWSLETTER_SUBSCRIPTION'                                     => "Newsletter subscription",
 'NEWSLETTER_SUBSCRIPTION_2'                                   => "Newsletter subscription:",
+'NEWSLETTER_EMAIL_NOT_EXIST'                                  => 'Unknown e-mail address!',
 'NEWS_2'                                                      => "News:",
 'NEW_ADDRESS'                                                 => "New Address",
 'NEW_BASKET_ITEM_MSG'                                         => "New item was added to cart",

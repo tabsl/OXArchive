@@ -34,7 +34,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  $Id: oxemosadapter.php 43611 2012-04-06 14:35:55Z linas.kukulskis $
+ *  $Id: oxemosadapter.php 49000 2012-08-24 11:52:35Z tomas $
  */
 
 
@@ -135,6 +135,23 @@ class oxEmosAdapter extends oxSuperCfg
     }
 
     /**
+     * Checks whether shop is in utf, if not - iconv string for using with econda json_encode
+     * 
+     * @param string $sContent
+     * 
+     * @return string 
+     */
+    protected function _convertToUtf( $sContent ) 
+    {
+        $myConfig  = $this->getConfig();
+        if ( !$myConfig->isUtf() ) {
+            $sContent = iconv( oxLang::getInstance()->translateString( 'charset' ), 'UTF-8' , $sContent );
+        }
+        return $sContent;
+    }
+
+
+    /**
      * Returns formatted product title
      *
      * @param oxarticle $oProduct product which title must be prepared
@@ -147,7 +164,7 @@ class oxEmosAdapter extends oxSuperCfg
         if ( $oProduct->oxarticles__oxvarselect->value ) {
             $sTitle .= " ".$oProduct->oxarticles__oxvarselect->value;
         }
-
+        $sTitle = $this->_convertToUtf( $sTitle );
         return $sTitle;
     }
 
@@ -169,8 +186,11 @@ class oxEmosAdapter extends oxSuperCfg
         // #810A
         $oCur = $this->getConfig()->getActShopCurrencyObject();
         $oItem->price        = $oProduct->getPrice()->getBruttoPrice() * ( 1/$oCur->rate );
-        $oItem->productGroup = "{$sCatPath}/{$oProduct->oxarticles__oxtitle->value}";
+        $oItem->productGroup = "{$sCatPath}/{$this->_convertToUtf( $oProduct->oxarticles__oxtitle->value )}";
         $oItem->quantity     = $iQty;
+        // #3452: Add brands to econda tracking
+        $oItem->variant1     = $oProduct->getVendor() ? $oProduct->getVendor()->getTitle() : "NULL";
+        $oItem->variant2     = $oProduct->getManufacturer() ? $oProduct->getManufacturer()->getTitle() : "NULL";
         $oItem->variant3     = $oProduct->getId();
 
         return $oItem;
@@ -210,19 +230,18 @@ class oxEmosAdapter extends oxSuperCfg
      *
      * @return string
      */
-    protected function _getEmosCatPath()
+    protected function _getEmosCatPath() 
     {
-        if ( $this->_sEmosCatPath === null ) {
-            $sCatPath = '';
-            if ( ( $oActCatPath = $this->getConfig()->getActiveView()->getCatTreePath() ) ) {
-                foreach ( $oActCatPath as $oCat ) {
-                    if ( $sCatPath ) {
-                        $sCatPath .= '/';
+        // #4016: econda: json function returns null if title has an umlaut
+        if ($this->_sEmosCatPath === null) {
+            $aCatTitle = array();
+                if ( $aCatPath = $this->getConfig()->getActiveView()->getBreadCrumb() ) {
+                    foreach ($aCatPath as $aCatPathParts) {
+                        $aCatTitle[] = $aCatPathParts['title'];
                     }
-                    $sCatPath .= strip_tags( $oCat->oxcategories__oxtitle->value );
                 }
-            }
-            $this->_sEmosCatPath = ( $sCatPath ? $sCatPath : 'NULL' );
+            $this->_sEmosCatPath = ( count($aCatTitle) ? strip_tags(implode('/', $aCatTitle)) : 'NULL' );
+            $this->_sEmosCatPath = $this->_convertToUtf( $this->_sEmosCatPath );
         }
         return $this->_sEmosCatPath;
     }
@@ -257,6 +276,8 @@ class oxEmosAdapter extends oxSuperCfg
                 }
             }
         }
+        $sCatPath = $this->_convertToUtf( $sCatPath );
+        
         return $sCatPath;
     }
 
@@ -403,7 +424,8 @@ class oxEmosAdapter extends oxSuperCfg
                 if ( $oProduct ) {
                     //$oEmos->addContent( 'Shop/'.$this->_getEmosCatPath().'/'.strip_tags( $oProduct->oxarticles__oxtitle->value ) );
                     //$sPath = $this->_getDeepestCategoryPath( $oProduct );
-                    $sPath  = $this->_getEmosCatPath();
+                    // #1939: econda category broken after search
+                    $sPath = $this->_getBasketProductCatPath( $oProduct );
                     $sTitle = $this->_prepareProductTitle( $oProduct );
                     $oEmos->addContent( "Shop/{$sPath}/".strip_tags( $sTitle ) );
                     $oEmos->addDetailView( $this->_convProd2EmosItem( $oProduct, $sPath, 1 ) );
@@ -415,7 +437,9 @@ class oxEmosAdapter extends oxSuperCfg
                 if ( !$iPage ) {
                     //ECONDA FIX only track first search page, not the following pages
                     // #1184M - specialchar search
-                    $sSearchParamForLink = rawurlencode( oxConfig::getParameter( 'searchparam', true ) );
+                    //$sSearchParamForLink = rawurlencode( oxConfig::getParameter( 'searchparam', true ) );
+                    // #4018: The emospro.search string is URL-encoded forwarded to econda instead of URL-escaped
+                    $sSearchParamForLink =  oxConfig::getParameter( 'searchparam', true );
                     //$sOutput .= $oEmos->addSearch( $sSearchParamForLink, $oSmarty->_tpl_vars['d']->iArtCnt );
                     $iSearchCount = 0;
                     if (($oSmarty->_tpl_vars['oView']) && $oSmarty->_tpl_vars['oView']->getArticleCount()) {
@@ -431,8 +455,14 @@ class oxEmosAdapter extends oxSuperCfg
                 $oEmos->addContent( 'Service/Wunschzettel' );
                 break;
             case 'contact':
-                $oEmos->addContent( $oCurrView->getContactSendStatus() ? 'Service/Kontakt/Success' : 'Service/Kontakt/Form' );
-                $oEmos->addContact( 'Kontakt' );
+                // #4042: Contact page is erroneously tracked as contact event
+                if ( $oCurrView->getContactSendStatus() ) {
+                    $oEmos->addContent( 'Service/Kontakt/Success' );
+                    $oEmos->addContact( 'Kontakt' );                    
+                }
+                else {
+                    $oEmos->addContent( 'Service/Kontakt/Form' );
+                }
                 break;
             case 'help':
                 $oEmos->addContent( 'Service/Hilfe' );

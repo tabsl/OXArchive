@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasket.php 44167 2012-04-23 08:45:17Z linas.kukulskis $
+ * @version   SVN: $Id: oxbasket.php 48926 2012-08-22 13:42:31Z tomas $
  */
 
 /**
@@ -2730,9 +2730,16 @@ class oxBasket extends oxSuperCfg
     {
         $this->_blDownloadableProducts = false;
         foreach ( $this->_aBasketContents as $sItemKey => $oOrderArticle ) {
-            if ( $oOrderArticle->getArticle()->isDownloadable() ) {
-                $this->_blDownloadableProducts = true;
-                break;
+            //#4411 getArticle() might throw an Exception
+            try {
+                if ( $oOrderArticle->getArticle()->isDownloadable() ) {
+                    $this->_blDownloadableProducts = true;
+                    break;
+                }
+            } catch(Exception $oE) {
+                //#4411
+                //in case product in getArticle() is not available we get an exception
+                //there is nothing what we need to do here, just catch the exception and continue checking other products
             }
         }
 

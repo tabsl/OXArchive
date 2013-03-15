@@ -471,5 +471,12 @@ a#linkToUpdate {
 
 a#linkToUpdate:hover {
     color: #787878;
-} 
-
+}
+#tShopLicense {
+	float: left;
+}
+#tVersionInfo {
+	float: right;
+	width: 45%;
+    border-collapse: collapse;
+}

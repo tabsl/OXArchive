@@ -23,6 +23,11 @@
  */
 
 /**
+ * Metadata version
+ */
+$sMetadataVersion = '1.0';
+
+/**
  * Module information
  */
 $aModule = array(

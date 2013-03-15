@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_license.php 47523 2012-07-19 13:11:01Z arturas.sevcenko $
+ * @version   SVN: $Id: shop_license.php 48759 2012-08-16 14:48:45Z arturas.sevcenko $
  */
 
 /**
@@ -115,11 +115,14 @@ class Shop_License extends Shop_Config
     protected function _fetchCurVersionInfo( $sUrl )
     {
         $aParams = array("myversion" => $this->getConfig()->getVersion() );
+        $oLang = oxLang::getInstance();
+        $iLang = $oLang->getTplLanguage();
+        $sLang = $oLang->getLanguageAbbr( $iLang );
         
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $aParams);
-        curl_setopt($ch, CURLOPT_URL, $sUrl);
+        curl_setopt($ch, CURLOPT_URL, $sUrl . "/" . $sLang);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $sOutput = curl_exec($ch);
         curl_close($ch);

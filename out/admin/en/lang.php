@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 47361 2012-07-16 08:43:03Z juergen.busch $
+ * @version   SVN: $Id: lang.php 48831 2012-08-20 09:31:02Z juergen.busch $
  */
 
 /*
@@ -904,7 +904,7 @@ $aLang = array(
 'LANGUAGE_LANGUAGEID'                                      => 'Language ID',
 'LANGUAGE_BASEURL'                                         => 'Base URL',
 'LANGUAGE_BASESSLURL'                                      => 'Base SSL URL',
-'LANGUAGE_FRONTEND_NOTRANSLATIONS_WARNING'                 => 'Attention: No language files were found in selected theme or /out dir for selected language!',
+'LANGUAGE_FRONTEND_NOTRANSLATIONS_WARNING'                 => 'Attention: No language files were found in theme or /out dir for selected language!',
 'LANGUAGE_BACKEND_NOTRANSLATIONS_WARNING'                  => 'Attention: No language files were found in /admin dir for selected language!',
 'LANGUAGE_NOTRANSLATIONS_WARNING'                          => 'Attention: No language files were found in templates dir for selected language!',
 'LANGUAGE_ERROR_ADDING_MULTILANG_FIELDS'                   => 'Attention: Error occured while adding new multilanguage fields to tables!',

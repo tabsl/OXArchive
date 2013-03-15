@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxviewconfig.php 43904 2012-04-15 15:47:57Z alfonsas $
+ * @version   SVN: $Id: oxviewconfig.php 48990 2012-08-24 10:53:12Z tomas $
  */
 
 /**
@@ -128,7 +128,9 @@ class oxViewConfig extends oxSuperCfg
         $sTplName       = $this->getActTplName();
         $sSearchParam   = $this->getActSearchParam();
         $sSearchTag     = $this->getActSearchTag();
+        $sRecommId      = $this->getActRecommendationId();
         $sListType      = $this->getActListType();
+
 
 
         return $this->getConfig()->getShopHomeURL()
@@ -137,6 +139,7 @@ class oxViewConfig extends oxSuperCfg
             . ( $sArtnid ? "&amp;anid={$sArtnid}" : '' )
             . ( $sSearchParam ? "&amp;searchparam={$sSearchParam}" : '' )
             . ( $sSearchTag ? "&amp;searchtag={$sSearchTag}" : '' )
+            . ( $sRecommId ? "&amp;recommid={$sRecommId}" : '' )
             . ( $sListType ? "&amp;listtype={$sListType}" : '' )
             . "&amp;fnc=logout"
             . ( $sTplName ? "&amp;tpl=".basename( $sTplName ) : '' )
@@ -223,6 +226,16 @@ class oxViewConfig extends oxSuperCfg
     public function getActSearchTag()
     {
         return oxConfig::getParameter( 'searchtag' );
+    }
+
+    /**
+     * Returns active recommendation id parameter
+     *
+     * @return string
+     */
+    public function getActRecommendationId()
+    {
+        return oxConfig::getParameter( 'recommid' );
     }
 
     /**

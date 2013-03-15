@@ -21,8 +21,10 @@
 [{oxscript add="$( 'div.dropDown p' ).oxDropDown();"}]
 [{oxscript add="$( 'div.tabbedWidgetBox' ).tabs();"}]
 [{oxscript add="$( 'a.js-external' ).attr('target', '_blank');"}]
-[{oxscript add="$( '#reviewRating' ).oxRating({openReviewForm: false, hideReviewButton: false});"}]
-[{oxscript add="$( '#writeNewReview' ).oxReview();"}]
+[{if $oView->isReviewActive() }] 
+    [{oxscript add="$( '#reviewRating' ).oxRating({openReviewForm: false, hideReviewButton: false});"}]
+    [{oxscript add="$( '#writeNewReview' ).oxReview();"}]
+[{/if}]
 [{oxscript add="$( '#variants' ).oxArticleVariant();"}]
 [{include file="page/details/inc/productmain.tpl"}]
 

@@ -24,7 +24,7 @@
 
 
 
-        <table border="0" width="98%">
+        <table id="tShopLicense" border="0" width="45%">
           <tr>
             <td class="edittext">
             <br><strong>[{ oxmultilang ident="SHOP_LICENSE_VERSION" }]</strong>
@@ -37,13 +37,15 @@
                 [{/if}]
             </b>
             </td>
-            <td class="edittext">
-              <span>[{$aCurVersionInfo}]</span>
-            </td>
           </tr>
 
-
-
+        </table>
+        <table id="tVersionInfo" border="0">
+        <tr>
+            <td>
+                <span>[{$aCurVersionInfo}]</span>
+            </td>
+        </tr>
         </table>
 
 [{include file="bottomnaviitem.tpl"}]
