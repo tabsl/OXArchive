@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: gui.php 27013 2010-04-02 09:45:32Z alfonsas $
+ * @version   SVN: $Id: gui.php 32667 2011-01-21 15:30:34Z rimvydas.paskevicius $
  */
 
 /**
@@ -168,6 +168,8 @@ class Gui extends oxAdminView
             $this->_aViewData["user_styles"] = $aUserStyles;
 
             $this->_aViewData["sAddData"] = "stoken=".$this->getSession()->getSessionChallengeToken();
+            $this->_aViewData["sShopHomeLink"] = $this->getConfig()->getShopHomeURL();
+
 
             return $this->_sThisTemplate;
         } else {

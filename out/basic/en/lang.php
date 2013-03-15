@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 30408 2010-10-20 08:34:23Z linas.kukulskis $
+ * @version   SVN: $Id: lang.php 31354 2010-11-30 16:23:35Z linas.kukulskis $
  */
 
 
@@ -603,7 +603,7 @@ $aLang = array(
 'INC_DETAILS_LOCATOR_PREVIUOSPRODUCT'             =>"Previous Product",
 'INC_DETAILS_LOCATOR_NEXTPRODUCT'                 =>"Next Product",
 'INC_FOOTER_INCLTAXANDPLUSSHIPPING'               =>"* All prices incl. VAT, plus Shipping",
-'INC_FOOTER_SOFTWAREFROMOXIDESALES'               =>"Shop software from OXID eSales",
+'INC_FOOTER_SOFTWAREFROMOXIDESALES'               =>"Shopping cart software by OXID eSales AG",
 'INC_FOOTER_HOME'                                 =>"Home",
 'INC_FOOTER_CONTACT'                              =>"Contact",
 'INC_FOOTER_HELP'                                 =>"Help",
@@ -783,6 +783,7 @@ $aLang = array(
 'NEWSLETTER_COMPLETEMARKEDFIELEDS'                => 'Please complete all fields marked with a <span class="req">*</span>',
 'NEWSLETTER_SUBSCRIBE'                            => "Subscribe",
 'NEWSLETTER_UNSUBSCRIBE'                          => "Unsubscribe",
+'NEWSLETTER_EMAIL_NOT_EXIST'					  => "The specified eMail address is not subscribed to our newsletter.",
 'NEWSLETTER_THANKYOU'                             => "thank you for subscribing to our newsletter.",
 'NEWSLETTER_YOUHAVEBEENSENTCONFIRMATION'          => "You have just been sent a confirmation eMail, with which you can activate your subscription.",
 'NEWSLETTER_CONGRATULATIONS'                      => "Congratulations and Welcome!",

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxtagcloud.php 31304 2010-11-29 12:09:56Z alfonsas $
+ * @version   SVN: $Id: oxtagcloud.php 32612 2011-01-20 15:22:37Z sarunas $
  */
 
 if (!defined('OXTAGCLOUD_MINFONT')) {
@@ -94,7 +94,7 @@ class oxTagCloud extends oxSuperCfg
      *
      * @var array
      */
-    protected $_aMetaChars = array('+','-','>','<','(',')','~','*','"','\\');
+    protected $_aMetaChars = array('+','-','>','<','(',')','~','*','"','\'','\\');
 
     /**
      * Object constructor. Initializes separator.

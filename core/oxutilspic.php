@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilspic.php 28939 2010-07-26 10:41:59Z arvydas $
+ * @version   SVN: $Id: oxutilspic.php 31349 2010-11-30 16:03:36Z linas.kukulskis $
  */
 
 /**
@@ -32,7 +32,7 @@ class oxUtilsPic extends oxSuperCfg
      *
      * @var array
      */
-    protected $_aImageTypes = array("GIF" => IMAGETYPE_GIF, "JPG" => IMAGETYPE_JPEG, "PNG" => IMAGETYPE_PNG);
+    protected $_aImageTypes = array("GIF" => IMAGETYPE_GIF, "JPG" => IMAGETYPE_JPEG, "PNG" => IMAGETYPE_PNG, "JPEG" => IMAGETYPE_JPEG);
 
     /**
      * oxUtils class instance.
@@ -299,6 +299,7 @@ class oxUtilsPic extends oxSuperCfg
                     $blSuccess = $this->_resizeGif( $sSrc, $sTarget, $iNewWidth, $iNewHeight, $aImageInfo[0], $aImageInfo[1], $iGdVer, $blDisableTouch );
                 }
                 break;
+            case ( $this->_aImageTypes["JPEG"] ):
             case ( $this->_aImageTypes["JPG"] ):
                 $hSourceImage = imagecreatefromjpeg( $sSrc );
                 if ( $this->_copyAlteredImage( $hDestinationImage, $hSourceImage, $iNewWidth, $iNewHeight, $aImageInfo, $sTarget, $iGdVer, $blDisableTouch ) ) {

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 30413 2010-10-20 11:39:17Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxconfig.php 32614 2011-01-20 15:23:11Z sarunas $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -405,7 +405,7 @@ class oxConfig extends oxSuperCfg
             // load now
             $this->_loadVarsFromDb( $sShopID );
 
-            
+
         } catch ( oxConnectionException $oEx ) {
             $oEx->debugOut();
             if ( defined( 'OXID_PHP_UNIT' ) ) {
@@ -690,8 +690,14 @@ class oxConfig extends oxSuperCfg
             $aServerVars     = $myUtilsServer->getServerVar();
             $aHttpsServerVar = $myUtilsServer->getServerVar( 'HTTPS' );
 
-            $this->_blIsSsl = ( isset( $aHttpsServerVar ) && ( $this->getConfigParam( 'sSSLShopURL' ) || $this->getConfigParam( 'sMallSSLShopURL' ) ) &&
-                         ( $aHttpsServerVar === 'on' || $aHttpsServerVar == '1' ) ); // "1&1" hoster provides "1"
+            $this->_blIsSsl = false;
+            if (isset( $aHttpsServerVar ) && ($aHttpsServerVar === 'on' || $aHttpsServerVar == '1' )) {
+                // "1&1" hoster provides "1"
+                $this->_blIsSsl = ($this->getConfigParam('sSSLShopURL') || $this->getConfigParam('sMallSSLShopURL'));
+                if ($this->isAdmin() && !$this->_blIsSsl) {
+                    $this->_blIsSsl = $this->getConfigParam('sAdminSSLURL');
+                }
+            }
 
             //additional special handling for profihost customers
             if ( isset( $aServerVars['HTTP_X_FORWARDED_SERVER'] ) &&
@@ -816,15 +822,31 @@ class oxConfig extends oxSuperCfg
 
     /**
      * Returns SSL or non SSL shop URL without index.php depending on Mall
+     * affecting environment is admin mode and current ssl usage status
+     *
+     * @param bool $blAdmin if admin
      *
      * @return string
      */
-    public function getCurrentShopUrl()
+    public function getCurrentShopUrl($blAdmin = null)
     {
-        if ( $this->isSsl() ) {
-            return $this->getSslShopUrl();
+        if ($blAdmin===null) {
+            $blAdmin = $this->isAdmin();
         }
-        return $this->getShopUrl();
+        if ($blAdmin) {
+            if ($this->isSsl()) {
+
+                $sUrl = $this->getConfigParam( 'sAdminSSLURL' );
+                if ( !$sUrl ) {
+                    return $this->getSslShopUrl() . $this->getConfigParam( 'sAdminDir' ) . '/';
+                }
+                return $sUrl;
+            } else {
+                return $this->getShopUrl() . $this->getConfigParam( 'sAdminDir' ) . '/';
+            }
+        } else {
+            return $this->isSsl() ? $this->getSslShopUrl() : $this->getShopUrl();
+        }
     }
 
     /**
@@ -1048,7 +1070,14 @@ class oxConfig extends oxSuperCfg
         $blAdmin  = is_null($blAdmin)?$this->isAdmin():$blAdmin;
 
         if ( $blSSL ) {
-            $sUrl = ($blNativeImg && !$blAdmin )?$this->getSslShopUrl():$this->getConfigParam( 'sSSLShopURL');
+            if ($blNativeImg && !$blAdmin) {
+                $sUrl = $this->getSslShopUrl();
+            } else {
+                $sUrl = $this->getConfigParam('sSSLShopURL');
+                if (!$sUrl && $blAdmin) {
+                    $sUrl = $this->getConfigParam('sAdminSSLURL').'../';
+                }
+            }
         } else {
             $sUrl = ($blNativeImg && !$blAdmin )?$this->getShopUrl():$this->getConfigParam( 'sShopURL' );
         }

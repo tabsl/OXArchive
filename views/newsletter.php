@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: newsletter.php 27207 2010-04-14 13:11:41Z vilma $
+ * @version   SVN: $Id: newsletter.php 31354 2010-11-30 16:23:35Z linas.kukulskis $
  */
 
 /**
@@ -149,19 +149,31 @@ class Newsletter extends oxUBase
 
         $blUserLoaded = false;
 
-        // if such user does not exist and subscribe is on - creating it
-        if ( !$oUser->exists() && $blSubscribe ) {
-            $oUser->oxuser__oxactive    = new oxField(1, oxField::T_RAW);
-            $oUser->oxuser__oxrights    = new oxField('user', oxField::T_RAW);
-            $oUser->oxuser__oxshopid    = new oxField($this->getConfig()->getShopId(), oxField::T_RAW);
-            $oUser->oxuser__oxfname     = new oxField($aParams['oxuser__oxfname'], oxField::T_RAW);
-            $oUser->oxuser__oxlname     = new oxField($aParams['oxuser__oxlname'], oxField::T_RAW);
-            $oUser->oxuser__oxsal       = new oxField($aParams['oxuser__oxsal'], oxField::T_RAW);
-            $oUser->oxuser__oxcountryid = new oxField($aParams['oxuser__oxcountryid'], oxField::T_RAW);
-            $blUserLoaded = $oUser->save();
+        // if such user does not exist
+        if ( !$oUser->exists() ) {
+
+            // and subscribe is off - error, on - create
+            if ( !$blSubscribe ) {
+
+                oxUtilsView::getInstance()->addErrorToDisplay('NEWSLETTER_EMAIL_NOT_EXIST');
+                return;
+
+            } else {
+                $oUser->oxuser__oxactive    = new oxField(1, oxField::T_RAW);
+                $oUser->oxuser__oxrights    = new oxField('user', oxField::T_RAW);
+                $oUser->oxuser__oxshopid    = new oxField($this->getConfig()->getShopId(), oxField::T_RAW);
+                $oUser->oxuser__oxfname     = new oxField($aParams['oxuser__oxfname'], oxField::T_RAW);
+                $oUser->oxuser__oxlname     = new oxField($aParams['oxuser__oxlname'], oxField::T_RAW);
+                $oUser->oxuser__oxsal       = new oxField($aParams['oxuser__oxsal'], oxField::T_RAW);
+                $oUser->oxuser__oxcountryid = new oxField($aParams['oxuser__oxcountryid'], oxField::T_RAW);
+                $blUserLoaded = $oUser->save();
+            }
+
         } else {
             $blUserLoaded = $oUser->load( $oUser->getId() );
         }
+
+
 
         // if user was added/loaded successfully and subscribe is on - subscribing to newsletter
         if ( $blSubscribe && $blUserLoaded ) {

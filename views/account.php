@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account.php 28315 2010-06-11 15:34:43Z arvydas $
+ * @version   SVN: $Id: account.php 32587 2011-01-20 10:35:07Z vilma $
  */
 
 /**
@@ -153,7 +153,7 @@ class Account extends oxUBase
         // is logged in ?
         $oUser = $this->getUser();
         if ( !$oUser || ( $oUser && !$oUser->oxuser__oxpassword->value ) ||
-             ( $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) && $oUser && $this->confirmTerms() ) ) {
+             ( $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) && $oUser && ( !$oUser->isTermsAccepted() || $this->confirmTerms() ) ) ) {
             $this->_sThisTemplate = $this->_getLoginTemplate();
         } else {
             // calculating amount of orders made by user
@@ -182,7 +182,15 @@ class Account extends oxUBase
      */
     public function confirmTerms()
     {
-        return oxConfig::getParameter( "term" );
+        $blConfirm = oxConfig::getParameter( "term" );
+        if ( !$blConfirm && $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) ) {
+            $oUser = $this->getUser();
+            if ( $oUser && !$oUser->isTermsAccepted() ) {
+                $blConfirm = true;
+            }
+        }
+
+        return $blConfirm;
     }
 
     /**

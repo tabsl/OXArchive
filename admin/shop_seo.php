@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_seo.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: shop_seo.php 32511 2011-01-14 13:54:24Z arvydas.vapsva $
  */
 
 /**
@@ -176,7 +176,7 @@ class Shop_Seo extends Shop_Config
      */
     public function dropSeoIds()
     {
-        oxSeoEncoder::getInstance()->markAsExpired( null, $this->getConfig()->getShopId(), 1, null, 'oxtype != "static"' );
+        $this->resetSeoData( $this->getConfig()->getShopId() );
     }
 
     /**

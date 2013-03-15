@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
  * @version   SVN: $Id: oxdbmetadatahandler.php 23405 2009-10-20 15:29:03Z rimvydas.paskevicius $
  */
@@ -364,7 +364,7 @@ class oxPictureHandler extends oxSuperCfg
      */
     public function getIconName( $sFilename )
     {
-        $sIconName = getStr()->preg_replace( '/(\.jpg|\.gif|\.png)$/i', '_ico\\1', basename($sFilename) );
+        $sIconName = getStr()->preg_replace( '/(\.jpg|\.jpeg|\.gif|\.png)$/i', '_ico\\1', basename($sFilename) );
 
         return $sIconName;
     }
@@ -379,7 +379,7 @@ class oxPictureHandler extends oxSuperCfg
     public function getMainIconName( $sMasterImageFile )
     {
         $sMasterImageFile = $this->_getBaseMasterImageFileName( $sMasterImageFile );
-        $sIconName = getStr()->preg_replace( '/(\.jpg|\.gif|\.png)$/i', '_ico\\1', $sMasterImageFile );
+        $sIconName = getStr()->preg_replace( '/(\.jpg|\.jpeg|\.gif|\.png)$/i', '_ico\\1', $sMasterImageFile );
 
         return $sIconName;
     }
@@ -394,7 +394,7 @@ class oxPictureHandler extends oxSuperCfg
     public function getThumbName( $sMasterImageFile )
     {
         $sMasterImageFile = $this->_getBaseMasterImageFileName( $sMasterImageFile );
-        $sThumbName = getStr()->preg_replace( '/(\.jpg|\.gif|\.png)$/i', '_th\\1', $sMasterImageFile );
+        $sThumbName = getStr()->preg_replace( '/(\.jpg|\.jpeg|\.gif|\.png)$/i', '_th\\1', $sMasterImageFile );
 
         return $sThumbName;
     }
@@ -410,7 +410,8 @@ class oxPictureHandler extends oxSuperCfg
     public function getZoomName( $sMasterImageFile, $iIndex )
     {
         $sMasterImageFile = $this->_getBaseMasterImageFileName( $sMasterImageFile );
-        $sZoomName = getStr()->preg_replace( '/(\.jpg|\.gif|\.png)$/i', '_z'.$iIndex.'\\1', $sMasterImageFile );
+
+        $sZoomName = getStr()->preg_replace( '/(\.jpg|\.jpeg|\.gif|\.png)$/i', '_z'.$iIndex.'\\1', $sMasterImageFile );
 
         return $sZoomName;
     }
@@ -424,7 +425,7 @@ class oxPictureHandler extends oxSuperCfg
      */
     protected function _getBaseMasterImageFileName( $sMasterImageFile )
     {
-        $sMasterImageFile = getStr()->preg_replace( '/_p\d+(\.jpg|\.gif|\.png)$/i', '\\1', $sMasterImageFile );
+        $sMasterImageFile = getStr()->preg_replace( '/_p\d+(\.jpg|\.jpeg|\.gif|\.png)$/i', '\\1', $sMasterImageFile );
 
         return basename( $sMasterImageFile );
     }

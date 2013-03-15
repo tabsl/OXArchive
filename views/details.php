@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: details.php 30346 2010-10-15 14:13:28Z vilma $
+ * @version   SVN: $Id: details.php 32617 2011-01-20 15:23:58Z sarunas $
  */
 
 /**
@@ -755,7 +755,7 @@ class Details extends oxUBase
     public function getProduct()
     {
         $myConfig = $this->getConfig();
-        $myUtils  = oxUtils::getInstance();
+        $myUtils = oxUtils::getInstance();
 
         if ( $this->_oProduct === null ) {
 
@@ -777,7 +777,18 @@ class Details extends oxUBase
 
         // additional checks
         if ( !$this->_blIsInitialized ) {
+
+            $blContinue = true;
             if ( !$this->_oProduct->isVisible() ) {
+                $blContinue = false;
+            } elseif ( $this->_oProduct->oxarticles__oxparentid->value ) {
+                $oParent = $this->_getParentProduct( $this->_oProduct->oxarticles__oxparentid->value );
+                if ( !$oParent || !$oParent->isVisible() ) {
+                    $blContinue = false;
+                }
+            }
+
+            if ( !$blContinue ) {
                 $myUtils->redirect( $myConfig->getShopHomeURL() );
                 $myUtils->showMessageAndExit( '' );
             }

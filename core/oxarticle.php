@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 31159 2010-11-25 10:04:19Z sarunas $
+ * @version   SVN: $Id: oxarticle.php 32612 2011-01-20 15:22:37Z sarunas $
  */
 
 // defining supported link types
@@ -2529,6 +2529,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         $oTagCloud = oxNew('oxtagcloud');
         $oTagCloud->resetTagCache();
         $sTags = $oTagCloud->prepareTags($sTags);
+
         $sTags = mysql_real_escape_string($sTags);
 
         $sTagField = "oxtags".oxLang::getInstance()->getLanguageTag($this->getLanguage());
@@ -2546,7 +2547,6 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     public function addTag($sTag)
     {
         $oDb = oxDb::getDb();
-        $sTag = mysql_real_escape_string($sTag);
 
         $oTagCloud = oxNew('oxtagcloud');
         $oTagCloud->resetTagCache();
@@ -2560,6 +2560,9 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         } else {
             $sTailTag = $sTag;
         }
+
+        $sTag = mysql_real_escape_string($sTag);
+        $sTailTag = mysql_real_escape_string($sTailTag);
 
         $sQ = "insert into oxartextends (oxartextends.OXID, $sField) values ('".$this->getId()."', '{$sTag}')
                        ON DUPLICATE KEY update $sField = CONCAT(TRIM($sField), '$sTailTag') ";

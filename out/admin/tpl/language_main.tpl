@@ -45,11 +45,11 @@ window.onload = function ()
 
         <tr>
             <td class="edittext" width="120">
-            [{ oxmultilang ident="GENERAL_ACTIVE" }]
+            [{ oxmultilang ident="LANGUAGE_ACTIVE" }]
             </td>
             <td class="edittext">
             <input class="edittext" type="checkbox" name="editval[active]" value='1' [{if $edit.active == 1}]checked[{/if}] [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
+            [{ oxinputhelp ident="HELP_LANGUAGE_ACTIVE" }]
             </td>
         </tr>
         <tr>

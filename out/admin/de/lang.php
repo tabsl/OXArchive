@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 31242 2010-11-25 15:08:13Z linas.kukulskis $
+ * @version   SVN: $Id: lang.php 31373 2010-12-01 10:02:42Z linas.kukulskis $
  */
 
 $sLangName  = 'Deutsch';
@@ -913,6 +913,7 @@ $aLang = array(
 'GUI_TREE_ACTIVE_ICON'                          => 'Aktive Kategorie Icon',
 'GUI_TREE_ICON'                                 => 'Kategorie Icon',
 'GUI_VENDOR_TEXT'                               => 'Hersteller-Text',
+'LANGUAGE_ACTIVE'                               => 'Im Frontend aktiv',
 'LANGUAGE_LIST_MENUITEM'                        => 'Stammdaten',
 'LANGUAGE_LIST_MENUSUBITEM'                     => 'Sprachen',
 'LANGUAGE_ABBERVATION'                          => 'Sprachkürzel',

@@ -159,15 +159,19 @@
                     [{ $value->name}] :&nbsp;
                     </td>
                     <td class="edittext">
-                    [{ $value->value}]
+                       [{ $value->value}]
                     </td>
                 </tr>
                 [{/foreach}]
                 </table><br>
             [{/if}]
             [{if $edit->oxorder__oxremark->value}]
-            <b>[{ oxmultilang ident="GENERAL_REMARK" }]</b><br>
-            [{$edit->oxorder__oxremark->value}]<br><br>
+            <b>[{ oxmultilang ident="GENERAL_REMARK" }]</b>
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                    <td class="edittext wrap">[{$edit->oxorder__oxremark->value}]</td>
+                </tr>
+            </table>
             [{/if}]
         [{/if}]
         </td>

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 31242 2010-11-25 15:08:13Z linas.kukulskis $
+ * @version   SVN: $Id: help_lang.php 31375 2010-12-01 12:16:02Z linas.kukulskis $
  */
 
 /**
@@ -474,6 +474,8 @@ $aLang =  array(
 'HELP_GENIMPORT_REPEATIMPORT'                   =>  'Wenn Sie diese Einstellung aktivieren, wird nach erfolgreichem Import automatisch wieder Schritt 1 angezeigt, damit sie den nächsten Import machen können.',
 
 'HELP_LANGUAGE_DEFAULT'                         => 'Die Standardsprache wird verwendet, wenn OXID eShop die zu verwendete Sprache nicht anderweitig ermitteln kann: Die gewünschte Sprache ist nicht in der URL angegeben, kann nicht über den Browser ermittelt werden und ist nicht in der aktuellen Session gespeichert. Die Standardsprache kann deaktiviert, aber nicht gelöscht werden.',
+
+'HELP_LANGUAGE_ACTIVE'							=> 'Aktivieren Sie diese Einstellung, um die Sprache für das eShop Frontend zu aktivieren. Die Sprache ist stets im Admin verfügbar, selbst wenn sie für das Frontend inaktiv ist.',
 
 'HELP_PAYMENT_MAIN_SORT'                        =>  'Mit <span class="navipath_or_inputname">Sortierung</span> können Sie einstellen, in welcher Reihenfolge die Zahlungsarten den Benutzern angezeigt werden:<br>' .
                                                     '<ul><li>Die Zahlungsart mit der niedrigsten Zahl wird an erster Stelle angezeigt.</li>' .

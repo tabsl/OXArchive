@@ -80,7 +80,7 @@ function ThisDate( sID)
             [{ oxmultilang ident="GENERAL_DELIVERYCOST" }]
             </td>
             <td class="edittext">
-            <input type="text" class="editinput" size="15" maxlength="[{$edit->oxorder__oxdelcost->fldmax_length}]" name="editval[oxorder__oxdelcost]" value="[{$edit->oxorder__oxdelcost->value }]" [{ $readonly }]>
+            <input type="text" class="editinput" size="15" maxlength="[{$edit->oxorder__oxdelcost->fldmax_length}]" name="editval[oxorder__oxdelcost]" value="[{$edit->oxorder__oxdelcost->value }]" [{ $readonly }]> ([{ $edit->oxorder__oxcurrency->value }])
             [{ oxinputhelp ident="HELP_GENERAL_DELIVERYCOST" }]
             </td>
         </tr>
@@ -89,7 +89,7 @@ function ThisDate( sID)
             [{ oxmultilang ident="ORDER_MAIN_DISCOUNT" }]
             </td>
             <td class="edittext">
-            <input type="text" class="editinput" size="15" maxlength="[{$edit->oxorder__oxdiscount->fldmax_length}]" name="editval[oxorder__oxdiscount]" value="[{$edit->oxorder__oxdiscount->value }]" [{ $readonly }]>
+            <input type="text" class="editinput" size="15" maxlength="[{$edit->oxorder__oxdiscount->fldmax_length}]" name="editval[oxorder__oxdiscount]" value="[{$edit->oxorder__oxdiscount->value }]" [{ $readonly }]> ([{ $edit->oxorder__oxcurrency->value }])
             [{ oxinputhelp ident="HELP_ORDER_MAIN_DISCOUNT" }]
             </td>
         </tr>
@@ -99,7 +99,7 @@ function ThisDate( sID)
             </td>
             <td class="edittext">[{assign var=date value=$edit->oxorder__oxpaid->value|replace:"0000-00-00 00:00:00":""}]
                 <input type="text" class="editinput" size="25" name="editval[oxorder__oxpaid]" value="[{$edit->oxorder__oxpaid|oxformdate }]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]>&nbsp;<a href="Javascript:ThisDate('[{$sNowValue|oxformdate:'datetime':true}]');" class="edittext" [{if $readonly }]onclick="JavaScript:return false;"[{/if}]><u>[{ oxmultilang ident="ORDER_MAIN_CURRENT_DATE" }]</u></a>
-                [{ oxinputhelp ident="HELP_ORDER_MAIN_PAIDON" }] 			
+                [{ oxinputhelp ident="HELP_ORDER_MAIN_PAIDON" }]
             </td>
         </tr>
         <tr>

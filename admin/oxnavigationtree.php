@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxnavigationtree.php 28471 2010-06-19 12:50:54Z arvydas $
+ * @version   SVN: $Id: oxnavigationtree.php 32618 2011-01-20 15:24:18Z sarunas $
  */
 
 /**
@@ -88,7 +88,7 @@ class OxNavigationTree extends oxSuperCfg
      */
     protected function _addLinks( $oDom )
     {
-        $sURL   = $this->_getAdminUrl();
+        $sURL   = 'index.php?'; // session parameters will be included later (after cache processor)
         $oXPath = new DomXPath( $oDom );
 
         // building
@@ -136,7 +136,7 @@ class OxNavigationTree extends oxSuperCfg
         $myConfig = $this->getConfig();
         $myUtilsFile = oxUtilsFile::getInstance();
 
-        $sURL = $this->_getAdminUrl();
+        $sURL = 'index.php?'; // session parameters will be included later (after cache processor)
 
         $oXPath = new DomXPath( $oDom );
         $oNodeList = $oXPath->query( "//OXMENU[@type='dyn']/MAINMENU/SUBMENU" );
@@ -205,15 +205,15 @@ class OxNavigationTree extends oxSuperCfg
     protected function _sessionizeLocalUrls( $oDom )
     {
         $sURL = $this->_getAdminUrl();
-
         $oXPath = new DomXPath( $oDom );
-        $oNodeList = $oXPath->query( "//OXMENU/*[@url]" );
         $oStr = getStr();
-        foreach ( $oNodeList as $oNode ) {
-            $sLocalUrl = $oNode->getAttribute( 'url' );
-            if (strpos($sLocalUrl, 'index.php?') === 0) {
-                $sLocalUrl = $oStr->preg_replace('#^index.php\?#', $sURL, $sLocalUrl);
-                $oNode->setAttribute( 'url', $sLocalUrl );
+        foreach (array('url', 'link') as $sAttrType) {
+            foreach ( $oXPath->query( "//OXMENU//*[@$sAttrType]" ) as $oNode ) {
+                $sLocalUrl = $oNode->getAttribute( $sAttrType );
+                if (strpos($sLocalUrl, 'index.php?') === 0) {
+                    $sLocalUrl = $oStr->preg_replace('#^index.php\?#', $sURL, $sLocalUrl);
+                    $oNode->setAttribute( $sAttrType, $sLocalUrl );
+                }
             }
         }
     }
@@ -570,19 +570,19 @@ class OxNavigationTree extends oxSuperCfg
 
     /**
      * process cache contents and return the result
+     * deprecated, as cache files are cleared from session data, which is only added
+     * after loading the cache by _sessionizeLocalUrls()
      *
      * @param string $sCacheContents initial cached string
+     *
+     * @deprecated
+     * @see self::_sessionizeLocalUrls()
      *
      * @return string
      */
     protected function _processCachedFile($sCacheContents)
     {
-        $oStr = getStr();
-        $sNewUrl = htmlentities($this->_getAdminUrl());
-        $sTok    = preg_quote("stoken=", '@');
-        $sSearch = $oStr->preg_replace('@'.preg_quote($sTok, '@').'[A-Z0-9]+@i', "{$sTok}[A-Z0-9]+", preg_quote($sNewUrl, '@'));
-        return $oStr->preg_replace("@$sSearch@i", $sNewUrl, $sCacheContents);
-
+        return $sCacheContents;
     }
 
     /**
@@ -629,9 +629,6 @@ class OxNavigationTree extends oxSuperCfg
                     // adds links to dynamic parts
                     $this->_addDynLinks( $this->_oInitialDom );
 
-                    // add session params
-                    $this->_sessionizeLocalUrls( $this->_oInitialDom );
-
                     // writing to cache
                     $myOxUtlis->toFileCache( $sCacheName, $this->_oInitialDom->saveXML() );
                 } else {
@@ -640,6 +637,9 @@ class OxNavigationTree extends oxSuperCfg
                     $this->_oInitialDom->preserveWhiteSpace = false;
                     $this->_oInitialDom->loadXML( $sCacheContents );
                 }
+
+                // add session params
+                $this->_sessionizeLocalUrls( $this->_oInitialDom );
             }
         }
         return $this->_oInitialDom;

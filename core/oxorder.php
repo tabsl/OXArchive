@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 29541 2010-08-27 08:49:18Z tomas $
+ * @version   SVN: $Id: oxorder.php 32568 2011-01-18 16:32:21Z linas.kukulskis $
  */
 
 /**
@@ -766,10 +766,10 @@ class oxOrder extends oxBase
                 $oOrderArticle->setId();
 
                 $oOrderArticle->oxorderarticles__oxartnum     = clone $oProduct->oxarticles__oxartnum;
-                $oOrderArticle->oxorderarticles__oxselvariant = new oxField( trim( $sSelList.' '.$oProduct->oxarticles__oxvarselect->value ), oxField::T_RAW );
-                $oOrderArticle->oxorderarticles__oxshortdesc  = new oxField( $oProduct->oxarticles__oxshortdesc->value, oxField::T_RAW );
+                $oOrderArticle->oxorderarticles__oxselvariant = new oxField( trim( $sSelList.' '.$oProduct->oxarticles__oxvarselect->getRawValue() ), oxField::T_RAW );
+                $oOrderArticle->oxorderarticles__oxshortdesc  = new oxField( $oProduct->oxarticles__oxshortdesc->getRawValue(), oxField::T_RAW );
                 // #M974: duplicated entries for the name of variants in orders
-                $oOrderArticle->oxorderarticles__oxtitle      = new oxField( trim( $oProduct->oxarticles__oxtitle->value ), oxField::T_RAW );
+                $oOrderArticle->oxorderarticles__oxtitle      = new oxField( trim( $oProduct->oxarticles__oxtitle->getRawValue() ), oxField::T_RAW );
 
                 // copying persistent parameters ...
                 if ( !is_array( $aPersParams = $oProduct->getPersParams() ) ) {

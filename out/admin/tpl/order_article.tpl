@@ -121,9 +121,9 @@ function StornoThisArticle( sID)
         [{/if}]
     </td>
     <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxshortdesc->value|oxtruncate:20:""|strip_tags }]</td>
-    <td valign="top" class="[{ $listclass}]">[{ $listitem->fnetprice }]</td>
-    <td valign="top" class="[{ $listclass}]">[{ $listitem->fbrutprice }]</td>
-    <td valign="top" class="[{ $listclass}]">[{ $listitem->ftotbrutprice }]</td>
+    <td valign="top" class="[{ $listclass}]">[{ $listitem->fnetprice }] <small>[{ $edit->oxorder__oxcurrency->value }]</small></td>
+    <td valign="top" class="[{ $listclass}]">[{ $listitem->fbrutprice }] <small>[{ $edit->oxorder__oxcurrency->value }]</small></td>
+    <td valign="top" class="[{ $listclass}]">[{ $listitem->ftotbrutprice }] <small>[{ $edit->oxorder__oxcurrency->value }]</small></td>
     <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxvat->value}]</td>
     <td valign="top" class="[{ $listclass}]"><a href="Javascript:DeleteThisArticle('[{ $listitem->oxorderarticles__oxid->value }]');" class="delete" [{if $readonly }]onclick="JavaScript:return false;"[{/if}] [{include file="help.tpl" helpid=item_delete}]></a></td>
     <td valign="top" class="[{ $listclass}]"><a href="Javascript:StornoThisArticle('[{ $listitem->oxorderarticles__oxid->value }]');" class="pause" [{if $readonly }]onclick="JavaScript:return false;"[{/if}] [{include file="help.tpl" helpid=item_storno}]></a></td>

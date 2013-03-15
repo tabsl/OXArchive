@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxi18n.php 28088 2010-06-02 13:47:31Z michael.keiluweit $
+ * @version   SVN: $Id: oxi18n.php 32511 2011-01-14 13:54:24Z arvydas.vapsva $
  */
 
 /**
@@ -419,7 +419,7 @@ class oxI18n extends oxBase
         // if current object is managed by SEO and SEO is ON
         if ( $blRet && $this->_blIsSeoObject && $this->isAdmin() ) {
             // marks all object db entries as expired
-            oxSeoEncoder::getInstance()->markAsExpired( $this->getId() );
+            oxSeoEncoder::getInstance()->markAsExpired( $this->getId(), $this->getConfig()->getShopId(), 1, $this->getLanguage() );
         }
 
         return $blRet;

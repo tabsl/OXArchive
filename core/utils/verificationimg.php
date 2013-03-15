@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   utils
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
  * @version   SVN: $Id: verificationimg.php 30222 2010-10-11 08:48:17Z alfonsas $
  */

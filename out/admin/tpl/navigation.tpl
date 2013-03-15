@@ -25,14 +25,17 @@
         function selectShop( iShopId )
         {
             var oForm = document.getElementById( "search" );
-            if ( ! oForm.shp ) {
+
+            if ( oForm.shp === undefined ) {
                 // inserting new form element
                 var oInputElement = document.createElement( 'input' );
                 oInputElement.setAttribute( 'name', 'shp' );
                 oInputElement.setAttribute( 'type', 'hidden' );
+                oInputElement.setAttribute( 'value', iShopId );
                 oForm.appendChild( oInputElement );
+            } else {
+                oForm.shp.value = iShopId;
             }
-            oForm.shp.value = iShopId;
             oForm.submit();
         }
         [{/if}]

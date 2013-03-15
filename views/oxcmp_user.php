@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_user.php 28903 2010-07-21 08:23:28Z arvydas $
+ * @version   SVN: $Id: oxcmp_user.php 32587 2011-01-20 10:35:07Z vilma $
  */
 
 // defining login/logout states
@@ -77,6 +77,7 @@ class oxcmp_user extends oxView
                                         'register',
                                         'forgotpwd',
                                         'content',
+                                        'account',
                                         );
 
     /**
@@ -188,13 +189,13 @@ class oxcmp_user extends oxView
 
             // no session user
             if ( !$oUser && !in_array( $sClass, $this->_aAllowedClasses ) ) {
-                oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() . 'cl=account' );
+                oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() . 'cl=account', false );
             }
 
             if ( $oUser && !$oUser->isTermsAccepted() &&
                  $oConfig->getConfigParam( 'blConfirmAGB' ) &&
                  !in_array( $sClass, $this->_aAllowedClasses ) ) {
-                oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() . 'cl=account&term=1' );
+                oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() . 'cl=account&term=1', false );
             }
         }
     }
@@ -332,9 +333,13 @@ class oxcmp_user extends oxView
      */
     public function login_noredirect()
     {
-        if ( $this->getConfig()->getConfigParam( 'blPsLoginEnabled' ) && oxConfig::getParameter( 'ord_agb' ) &&
-             $this->getConfig()->getConfigParam( 'blConfirmAGB' ) && ( $oUser = $this->getUser() ) ) {
-            $oUser->acceptTerms();
+        $blAgb = oxConfig::getParameter( 'ord_agb' );
+        $oConfig = $this->getConfig();
+        if ( $oConfig->getConfigParam( 'blPsLoginEnabled' ) && $blAgb !== null &&
+             $oConfig->getConfigParam( 'blConfirmAGB' ) && ( $oUser = $this->getUser() ) ) {
+            if ( $blAgb ) {
+                $oUser->acceptTerms();
+            }
         } else {
             $this->login();
         }

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxview.php 28697 2010-06-29 11:09:58Z vilma $
+ * @version   SVN: $Id: oxview.php 32614 2011-01-20 15:23:11Z sarunas $
  */
 
 /**
@@ -494,8 +494,6 @@ class oxView extends oxSuperCfg
      */
     public function executeFunction( $sFunction )
     {
-        $sNewAction = null;
-
         // execute
         if ( $sFunction && !self::$_blExecuted ) {
             if ( method_exists( $this, $sFunction ) ) {
@@ -503,18 +501,20 @@ class oxView extends oxSuperCfg
 
                 $sNewAction = $this->$sFunction();
                 self::$_blExecuted = true;
-            }
 
-            // was not executed on any level ?
-            if ( !$this->_blIsComponent && !self::$_blExecuted ) {
-                $oEx = oxNew( 'oxSystemComponentException' );
-                $oEx->setMessage( 'EXCEPTION_SYSTEMCOMPONENT_FUNCTIONNOTFOUND' );
-                $oEx->setComponent( $sFunction );
-                throw $oEx;
+                if (isset($sNewAction)) {
+                    $this->_executeNewAction( $sNewAction );
+                }
+            } else {
+                // was not executed on any level ?
+                if ( !$this->_blIsComponent ) {
+                    $oEx = oxNew( 'oxSystemComponentException' );
+                    $oEx->setMessage( 'EXCEPTION_SYSTEMCOMPONENT_FUNCTIONNOTFOUND' );
+                    $oEx->setComponent( $sFunction );
+                    throw $oEx;
+                }
             }
         }
-
-        $this->_executeNewAction( $sNewAction );
     }
 
     /**
@@ -546,13 +546,7 @@ class oxView extends oxSuperCfg
             $sHeader .= ( $sPageParams )?"$sPageParams&":'';   // adding page params
             $sHeader .= $this->getSession()->sid();            // adding session Id
 
-            // choosing URL to redirect
-            $sUrl = $myConfig->isSsl()?$myConfig->getSslShopUrl():$myConfig->getShopUrl();
-
-            // different redirect URL in SEO mode
-            if ( $this->isAdmin() ) {
-                $sUrl .= $myConfig->getConfigParam( 'sAdminDir' ) . '/';
-            }
+            $sUrl = $myConfig->getCurrentShopUrl($this->isAdmin());
 
             $sUrl = "{$sUrl}index.php?{$sHeader}";
 

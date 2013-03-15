@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsserver.php 30509 2010-10-25 08:40:17Z vilma $
+ * @version   SVN: $Id: oxutilsserver.php 32614 2011-01-20 15:23:11Z sarunas $
  */
 
 /**
@@ -104,7 +104,15 @@ class oxUtilsServer extends oxSuperCfg
             return;
         }
 
-        return setcookie( $sName, $sValue, $iExpire, $this->_getCookiePath( $sPath ), $this->_getCookieDomain( $sDomain ) );
+        return setcookie(
+            $sName,
+            $sValue,
+            $iExpire,
+            $this->_getCookiePath( $sPath ),
+            $this->_getCookieDomain( $sDomain ),
+            oxConfig::getInstance()->isSsl(),
+            true
+        );
     }
 
     protected $_blSaveToSession = null;

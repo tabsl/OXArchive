@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2010
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadminview.php 30923 2010-11-12 15:52:01Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxadminview.php 32511 2011-01-14 13:54:24Z arvydas.vapsva $
  */
 
 /**
@@ -583,8 +583,11 @@ class oxAdminView extends oxView
      */
     public function resetSeoData( $sShopId )
     {
+        $aTypes = array( 'oxarticle', 'oxcategory', 'oxvendor', 'oxcontent', 'dynamic', 'oxmanufacturer' );
         $oEncoder = oxSeoEncoder::getInstance();
-        $oEncoder->markAsExpired( null, $sShopId );
+        foreach ( $aTypes as $sType ) {
+            $oEncoder->markAsExpired( null, $sShopId, 1, null, "oxtype = '{$sType}'" );
+        }
 
         // resetting tag cache
         $oTagCloud = oxNew('oxtagcloud');
@@ -608,8 +611,9 @@ class oxAdminView extends oxView
             $aArtIds = array($aArtIds);
         }
 
+        $sShopId = $this->getConfig()->getShopId();
         foreach ( $aArtIds as $sArtId ) {
-           oxSeoEncoder::getInstance()->markAsExpired( $sArtId );
+           oxSeoEncoder::getInstance()->markAsExpired( $sArtId, $sShopId, 1, null, "oxtype='oxarticle'" );
         }
     }
 
