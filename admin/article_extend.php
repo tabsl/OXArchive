@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_extend.php 38539 2011-09-05 09:04:22Z linas.kukulskis $
+ * @version   SVN: $Id: article_extend.php 39922 2011-11-14 08:41:13Z arvydas.vapsva $
  */
 
 /**
@@ -133,6 +133,7 @@ class Article_Extend extends oxAdminDetails
      */
     public function save()
     {
+        parent::save();
 
         $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");

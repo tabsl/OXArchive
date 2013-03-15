@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: user_address.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: user_address.php 39901 2011-11-14 08:36:07Z arvydas.vapsva $
  */
 
 /**
@@ -94,14 +94,17 @@ class User_Address extends oxAdminDetails
      */
     public function save()
     {
+        parent::save();
 
         if ( $this->_allowAdminEdit( $this->getEditObjectId() ) ) {
             $aParams = oxConfig::getParameter( "editval" );
+            $oAdress = oxNew( "oxaddress" );
             if ( isset( $aParams['oxaddress__oxid'] ) && $aParams['oxaddress__oxid'] == "-1" ) {
                 $aParams['oxaddress__oxid'] = null;
+            } else {
+                $oAdress->load( $aParams['oxaddress__oxid'] );
             }
 
-            $oAdress = oxNew( "oxaddress" );
             $oAdress->assign( $aParams );
             $oAdress->save();
 

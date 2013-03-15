@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: actions_main.php 33719 2011-03-10 08:40:42Z sarunas $
+ * @version   SVN: $Id: actions_main.php 39925 2011-11-14 08:48:24Z arvydas.vapsva $
  */
 
 /**
@@ -132,6 +132,8 @@ class Actions_Main extends oxAdminDetails
     {
         $myConfig  = $this->getConfig();
 
+
+        parent::save();
 
         $soxId   = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");

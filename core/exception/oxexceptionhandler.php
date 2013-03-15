@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxexceptionhandler.php 26572 2010-03-16 13:10:50Z tomas $
+ * @version   SVN: $Id: oxexceptionhandler.php 39821 2011-11-05 12:15:16Z arvydas.vapsva $
  */
 
 /**
@@ -128,7 +128,8 @@ class oxExceptionHandler
         }
 
         //simple safe redirect in productive mode
-        $this->_safeShopRedirectAndExit( "offline.html" );
+        $sShopUrl = oxConfig::getInstance()->getShopMainUrl();
+        $this->_safeShopRedirectAndExit( $sShopUrl . "offline.html" );
 
         //should not be reached
         return ;
@@ -154,8 +155,8 @@ class oxExceptionHandler
             }
         }
 
-        $this->_safeShopRedirectAndExit( 'offline.html' );
-
+        $sShopUrl = oxConfig::getInstance()->getShopMainUrl();
+        $this->_safeShopRedirectAndExit( $sShopUrl . "offline.html" );
     }
 
     /**
@@ -178,7 +179,7 @@ class oxExceptionHandler
         header("HTTP/1.1 500 Internal Server Error");
         header("Location: ".$sUrl);
         header("Connection: close");
-
+        exit();
     }
 
     /**

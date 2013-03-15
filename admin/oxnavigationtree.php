@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxnavigationtree.php 32885 2011-02-03 13:05:07Z sarunas $
+ * @version   SVN: $Id: oxnavigationtree.php 39646 2011-10-28 12:09:05Z arvydas.vapsva $
  */
 
 /**
@@ -44,6 +44,12 @@ class OxNavigationTree extends oxSuperCfg
      * @var string
      */
     protected $_sDynIncludeUrl = null;
+
+    /**
+     * Default EXPATH supported encodings
+     * @var array
+     */
+    protected $_aSupportedExpathXmlEncodings = array( 'utf-8', 'utf-16', 'iso-8859-1', 'us-ascii' );
 
     /**
      * Empty init method
@@ -117,9 +123,31 @@ class OxNavigationTree extends oxSuperCfg
      */
     protected function _loadFromFile( $sMenuFile, $oDom )
     {
+        $blMerge = false;
         $oDomFile = new DomDocument();
         $oDomFile->preserveWhiteSpace = false;
-        if ( @$oDomFile->load( $sMenuFile ) ) {
+        if ( !@$oDomFile->load( $sMenuFile ) ) {
+            $blMerge = true;
+        } elseif ( is_readable( $sMenuFile ) && ( $sXml = @file_get_contents( $sMenuFile ) ) ) {
+
+            // looking for non supported character encoding
+            if ( getStr()->preg_match( "/encoding\=(.*)\?\>/", $sXml, $aMatches ) !== 0 ) {
+               if ( isset( $aMatches[1] ) ) {
+                   $sCurrEncoding = trim( $aMatches[1], "\"" );
+                   if ( !in_array( strtolower( $sCurrEncoding ), $this->_aSupportedExpathXmlEncodings ) ) {
+                       $sXml = str_replace( $aMatches[1], "\"UTF-8\"", $sXml );
+                       $sXml = iconv( $sCurrEncoding, "UTF-8", $sXml );
+                   }
+               }
+            }
+
+            // load XML as string
+            if ( @$oDomFile->loadXml( $sXml ) ) {
+                $blMerge = true;
+            }
+        }
+
+        if ( $blMerge ) {
             $this->_merge( $oDomFile, $oDom );
         }
     }

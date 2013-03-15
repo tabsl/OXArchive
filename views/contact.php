@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: contact.php 36093 2011-06-08 14:59:33Z arvydas.vapsva $
+ * @version   SVN: $Id: contact.php 39524 2011-10-25 14:21:26Z arvydas.vapsva $
  */
 
 /**
@@ -82,14 +82,7 @@ class Contact extends oxUBase
      */
     public function send()
     {
-        // spam spider prevension
-        $sMac     = oxConfig::getParameter( 'c_mac' );
-        $sMacHash = oxConfig::getParameter( 'c_mach' );
-        $oCaptcha = $this->getCaptcha();
-
-        $aParams  = oxConfig::getParameter( 'editval' );
-        $sSubject = oxConfig::getParameter( 'c_subject' );
-        $sBody    = oxConfig::getParameter( 'c_message' );
+        $aParams = oxConfig::getParameter( 'editval' );
 
         // checking email address
         if ( !oxUtils::getInstance()->isValidEmail( $aParams['oxuser__oxusername'] ) ) {
@@ -97,20 +90,30 @@ class Contact extends oxUBase
             return false;
         }
 
+        // spam spider prevension
+        $sMac     = oxConfig::getParameter( 'c_mac' );
+        $sMacHash = oxConfig::getParameter( 'c_mach' );
+        $oCaptcha = $this->getCaptcha();
+
         if ( !$oCaptcha->pass( $sMac, $sMacHash ) ) {
             // even if there is no exception, use this as a default display method
             oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_INPUT_WRONGCAPTCHA' );
             return false;
         }
 
+        $sSubject = oxConfig::getParameter( 'c_subject' );
         if ( !$aParams['oxuser__oxfname'] || !$aParams['oxuser__oxlname'] || !$aParams['oxuser__oxusername'] || !$sSubject ) {
             // even if there is no exception, use this as a default display method
             oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_INPUT_NOTALLFIELDS' );
             return false;
         }
 
-        $sMessage  = oxLang::getInstance()->translateString( 'CONTACT_FROM' )." ".$aParams['oxuser__oxsal']." ".$aParams['oxuser__oxfname']." ".$aParams['oxuser__oxlname']."(".$aParams['oxuser__oxusername'].")<br /><br />";
-        $sMessage .= nl2br( $sBody );
+        $oLang = oxLang::getInstance();
+        $sMessage  = $oLang->translateString( 'CONTACT_FROM' ) . " " .
+                     $oLang->translateString( $aParams['oxuser__oxsal'] ) ." " .
+                     $aParams['oxuser__oxfname'] . " " .
+                     $aParams['oxuser__oxlname'] . "(" .$aParams['oxuser__oxusername'] . ")<br /><br />" .
+                     nl2br( oxConfig::getParameter( 'c_message' ) );
 
         $oEmail = oxNew( 'oxemail' );
         if ( $oEmail->sendContactMail( $aParams['oxuser__oxusername'], $sSubject, $sMessage ) ) {

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_main.php 38527 2011-09-05 07:05:36Z vilma $
+ * @version   SVN: $Id: article_main.php 39921 2011-11-14 08:41:04Z arvydas.vapsva $
  */
 
 /**
@@ -132,10 +132,11 @@ class Article_Main extends oxAdminDetails
      */
     public function save()
     {
+        parent::save();
+
         $myConfig = $this->getConfig();
         $soxId    = $this->getEditObjectId();
         $aParams  = oxConfig::getParameter( "editval" );
-
 
         // checkbox handling
         if ( !isset( $aParams['oxarticles__oxactive'] ) ) {

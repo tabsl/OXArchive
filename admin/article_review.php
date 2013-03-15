@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_review.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: article_review.php 39920 2011-11-14 08:40:43Z arvydas.vapsva $
  */
 
 /**
@@ -125,6 +125,7 @@ class Article_Review extends oxAdminDetails
      */
     public function save()
     {
+        parent::save();
 
         $aParams = oxConfig::getParameter( "editval");
         // checkbox handling

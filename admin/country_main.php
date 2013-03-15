@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: country_main.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: country_main.php 39914 2011-11-14 08:39:32Z arvydas.vapsva $
  */
 
 /**
@@ -89,6 +89,8 @@ class Country_Main extends oxAdminDetails
     {
         $myConfig  = $this->getConfig();
 
+
+        parent::save();
 
         $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval" );

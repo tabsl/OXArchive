@@ -164,7 +164,7 @@ function onSelect_aField(){
                     <tr>
                         <td class="edittext" width="10">&nbsp;</td>
                         <td class="edittext" colspan="2" align="right">
-                         <br /><input [{ $readonly }] type="submit" id="submit_delete" class="edittext" name="save" value="[{ oxmultilang ident="GENERAL_FIELDS_DELETE" }]" onClick="Javascript:document.myedit.fnc.value='delfields'"" [{ $readonly }] style="width: 100px;" DISABLED>
+                         <br /><input [{ $readonly }] type="submit" id="submit_delete" class="edittext" name="save" value="[{ oxmultilang ident="GENERAL_FIELDS_DELETE" }]" onClick="Javascript:document.myedit.fnc.value='delfields'"" [{ $readonly }] style="width: 150px;" DISABLED>
                         </td>
                     </tr>
                 </table>

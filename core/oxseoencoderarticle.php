@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoderarticle.php 39368 2011-10-13 14:16:23Z arvydas.vapsva $
+ * @version   SVN: $Id: oxseoencoderarticle.php 40048 2011-11-18 14:20:25Z linas.kukulskis $
  */
 
 /**
@@ -383,10 +383,21 @@ class oxSeoEncoderArticle extends oxSeoEncoder
         }
 
         $oDb = oxDb::getDb();
-        $sMainCatId = $oDb->getOne( "select oxcatnid from ".getViewName( "oxobject2category" )." where oxobjectid = ".$oDb->quote( $sArtId )." order by oxtime" );
+        // add manin category chaching;
+        $sQ = "select oxcatnid from ".getViewName( "oxobject2category" )." where oxobjectid = ".$oDb->quote( $sArtId )." order by oxtime";
+        $sIdent = md5( $sQ );
+
+        if ( ( $sMainCatId = $this->_loadFromCache( $sIdent ) ) === false ) {
+            $sMainCatId = $oDb->getOne( $sQ );
+            // storing in cache
+            $this->_saveInCache( $sIdent, $sMainCatId );
+        }
+
         if ( $sMainCatId ) {
             $oMainCat = oxNew( "oxcategory" );
-            $oMainCat->load( $sMainCatId );
+            if ( ! $oMainCat->load( $sMainCatId )) {
+                $oMainCat = null;
+            }
         }
 
         return $oMainCat;

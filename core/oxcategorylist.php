@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcategorylist.php 35662 2011-05-30 11:59:35Z arunas.paskevicius $
+ * @version   SVN: $Id: oxcategorylist.php 39708 2011-11-03 12:52:15Z arvydas.vapsva $
  */
 
 
@@ -400,8 +400,9 @@ class oxCategoryList extends oxList
 
         // Remove colected item's children from the list too (in the ranges).
         foreach ($this->_aArray as $sId => $oCat) {
-            if (is_array($aRemoveList[$oCat->oxcategories__oxrootid->value])) {
-                foreach ($aRemoveList[$oCat->oxcategories__oxrootid->value] as $iLeft=>$iRight) {
+            if ( isset( $aRemoveList[$oCat->oxcategories__oxrootid->value] ) &&
+                 is_array( $aRemoveList[$oCat->oxcategories__oxrootid->value] ) ) {
+                foreach ( $aRemoveList[$oCat->oxcategories__oxrootid->value] as $iLeft => $iRight ) {
                     if (
                             ($iLeft  <= $oCat->oxcategories__oxleft->value)
                          && ($iRight >= $oCat->oxcategories__oxleft->value)

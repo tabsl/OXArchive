@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_main.php 33570 2011-02-28 14:27:51Z vilma $
+ * @version   SVN: $Id: shop_main.php 39903 2011-11-14 08:36:27Z arvydas.vapsva $
  */
 
 
@@ -81,6 +81,7 @@ class Shop_Main extends oxAdminDetails
      */
     public function save()
     {
+        parent::save();
 
         $myConfig = $this->getConfig();
         $soxId = $this->getEditObjectId();

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: content_main.php 33474 2011-02-23 13:29:51Z arvydas.vapsva $
+ * @version   SVN: $Id: content_main.php 39915 2011-11-14 08:39:56Z arvydas.vapsva $
  */
 
 /**
@@ -103,8 +103,9 @@ class Content_Main extends oxAdminDetails
      */
     public function save()
     {
-        $myConfig = $this->getConfig();
+        parent::save();
 
+        $myConfig = $this->getConfig();
 
         $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");
@@ -170,8 +171,9 @@ class Content_Main extends oxAdminDetails
      */
     public function saveinnlang()
     {
-        $myConfig  = $this->getConfig();
+        parent::save();
 
+        $myConfig  = $this->getConfig();
 
         $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");

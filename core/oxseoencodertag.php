@@ -99,7 +99,7 @@ class oxSeoEncoderTag extends oxSeoEncoder
 
         $sStdUrl   = $this->_trimUrl( $sStdUrl );
         $sObjectId = $this->getDynamicObjectId( $iShopId, $sStdUrl );
-        $sSeoUrl   = $this->_prepareUri( $sSeoUrl );
+        $sSeoUrl   = $this->_prepareUri( $this->addLanguageParam( $sSeoUrl, $iLang ) );
 
         //load details link from DB
         $sOldSeoUrl = $this->_loadFromDb( 'dynamic', $sObjectId, $iLang );

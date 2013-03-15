@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdelivery.php 39186 2011-10-12 13:23:39Z arvydas.vapsva $
+ * @version   SVN: $Id: oxdelivery.php 39781 2011-11-05 08:56:15Z arvydas.vapsva $
  */
 
 /**
@@ -213,52 +213,56 @@ class oxDelivery extends oxI18n
     /**
      * Returns amount (total net price/weight/volume/Amount) on which delivery price is applied
      *
-     * @param object $oBasketItem basket item object
+     * @param oxBasketItem $oBasketItem basket item object
      *
      * @return double
      */
     public function getDeliveryAmount( $oBasketItem )
     {
-        $dAmount = 0;
+        $dAmount  = 0;
+        $oProduct = $oBasketItem->getArticle( false );
 
-        $blExclNonMaterial = $this->getConfig()->getConfigParam( 'blExclNonMaterialFromDelivery' );
-
-        $oProduct = $oBasketItem->getArticle(false);
         // mark free shipping products
-        if ( !$oProduct->oxarticles__oxfreeshipping->value &&
-              !( $oProduct->oxarticles__oxnonmaterial->value && $blExclNonMaterial ) ) {
+        if ( $oProduct->oxarticles__oxfreeshipping->value ) {
+            $this->_blFreeShipping = true;
+        } else {
 
-            $this->_blFreeShipping = false;
-        }
-        switch ( $this->oxdelivery__oxdeltype->value ) {
-            case 'p': // price
-                if ( $this->oxdelivery__oxfixed->value == 2 ) {
-                    $dAmount += $oBasketItem->getArticle()->getPrice()->getBruttoPrice();
-                } else {
-                    $dAmount += $oBasketItem->getPrice()->getBruttoPrice(); // price// currency conversion must allready be done in price class / $oCur->rate; // $oBasketItem->oPrice->getPrice() / $oCur->rate;
-                }
-                break;
-            case 'w': // weight
-                if ( $this->oxdelivery__oxfixed->value == 2 ) {
-                    $dAmount += $oBasketItem->getArticle()->oxarticles__oxweight->value;
-                } else {
-                    $dAmount += $oBasketItem->getWeight();
-                }
-                break;
-            case 's': // size
-                $dAmount += $oProduct->oxarticles__oxlength->value *
-                            $oProduct->oxarticles__oxwidth->value *
-                            $oProduct->oxarticles__oxheight->value;
-                if ( $this->oxdelivery__oxfixed->value < 2 ) {
-                    $dAmount *= $oBasketItem->getAmount();
-                }
-                break;
-            case 'a': // amount
-                $dAmount += $oBasketItem->getAmount();
-                break;
-        }
-        if ( $oBasketItem->getPrice() ) {
-            $this->_dPrice   += $oBasketItem->getPrice()->getBruttoPrice();
+            $blExclNonMaterial = $this->getConfig()->getConfigParam( 'blExclNonMaterialFromDelivery' );
+            if ( !( $oProduct->oxarticles__oxnonmaterial->value && $blExclNonMaterial ) ) {
+                $this->_blFreeShipping = false;
+            }
+
+            switch ( $this->oxdelivery__oxdeltype->value ) {
+                case 'p': // price
+                    if ( $this->oxdelivery__oxfixed->value == 2 ) {
+                        $dAmount += $oProduct->getPrice()->getBruttoPrice();
+                    } else {
+                        $dAmount += $oBasketItem->getPrice()->getBruttoPrice(); // price// currency conversion must allready be done in price class / $oCur->rate; // $oBasketItem->oPrice->getPrice() / $oCur->rate;
+                    }
+                    break;
+                case 'w': // weight
+                    if ( $this->oxdelivery__oxfixed->value == 2 ) {
+                        $dAmount += $oProduct->oxarticles__oxweight->value;
+                    } else {
+                        $dAmount += $oBasketItem->getWeight();
+                    }
+                    break;
+                case 's': // size
+                    $dAmount += $oProduct->oxarticles__oxlength->value *
+                                $oProduct->oxarticles__oxwidth->value *
+                                $oProduct->oxarticles__oxheight->value;
+                    if ( $this->oxdelivery__oxfixed->value < 2 ) {
+                        $dAmount *= $oBasketItem->getAmount();
+                    }
+                    break;
+                case 'a': // amount
+                    $dAmount += $oBasketItem->getAmount();
+                    break;
+            }
+
+            if ( $oBasketItem->getPrice() ) {
+                $this->_dPrice   += $oBasketItem->getPrice()->getBruttoPrice();
+            }
         }
 
         return $dAmount;

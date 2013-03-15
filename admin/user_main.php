@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: user_main.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: user_main.php 39899 2011-11-14 08:35:47Z arvydas.vapsva $
  */
 
 /**
@@ -128,6 +128,7 @@ class User_Main extends oxAdminDetails
      */
     public function save()
     {
+        parent::save();
 
         //allow admin information edit only for MALL admins
         $soxId = $this->getEditObjectId();

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: navigation.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
+ * @version   SVN: $Id: navigation.php 39928 2011-11-14 08:49:49Z arvydas.vapsva $
  */
  /**
  * Administrator GUI navigation manager class.
@@ -153,8 +153,8 @@ class Navigation extends oxAdminView
         }
 
         //reseting content cache if needed
-        if ( $blDeleteCache = $myConfig->getConfigParam('blClearCacheOnLogout' ) ) {
-            $this->resetContentCache($blDeleteCache);
+        if ( $myConfig->getConfigParam('blClearCacheOnLogout' ) ) {
+            $this->resetContentCache();
         }
 
         oxUtils::getInstance()->redirect( 'index.php', true, 302 );

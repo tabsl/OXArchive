@@ -261,9 +261,14 @@
             <td class="edittext">
             </td>
             <td class="edittext" valign="bottom"><br>
-            <b>[{ oxmultilang ident="GENERAL_SENDON" }]</b> <b>[{$edit->oxorder__oxsenddate|oxformdate:'datetime':true }]</b>
+            [{ if $oView->canResetShippingDate() }]
+                <b>[{ oxmultilang ident="GENERAL_SENDON" }]</b><b>[{$edit->oxorder__oxsenddate|oxformdate:'datetime':true }]</b>
+            [{else}]
+                <b>[{ oxmultilang ident="GENERAL_NOSENT" }]</b>
+            [{/if}]
             </td>
         </tr>
+        [{ if $oView->canResetShippingDate() }]
         <form name="resetorder" id="resetorder" action="[{ $oViewConf->getSelfLink() }]" method="post">
         [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="cl" value="order_overview">
@@ -278,7 +283,7 @@
             </td>
         </tr>
         </form>
-
+        [{/if}]
         </table>
         [{/if}]
         </td>

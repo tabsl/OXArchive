@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxview.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
+ * @version   SVN: $Id: oxview.php 39704 2011-11-03 12:48:07Z arvydas.vapsva $
  */
 
 /**
@@ -165,6 +165,13 @@ class oxView extends oxSuperCfg
      * @var bool
      */
     protected $_blIsCallForCache = false;
+
+    /**
+     * oxViewConfig instance
+     *
+     * @var oxViewConfig
+     */
+    protected $_oViewConf = null;
 
     /**
      * Initiates all components stored, executes oxview::addGlobalParams.

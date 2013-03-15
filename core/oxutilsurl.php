@@ -42,6 +42,12 @@ class oxUtilsUrl extends oxSuperCfg
     protected $_aAddUrlParams = null;
 
     /**
+     * Current shop hosts array
+     * @var array
+     */
+    protected $_aHosts = null;
+
+    /**
      * resturns a single instance of this class
      *
      * @return oxUtilsUrl
@@ -170,7 +176,7 @@ class oxUtilsUrl extends oxSuperCfg
     /**
      * Appends url with given parameters
      *
-     * @param atring $sUrl       url to append
+     * @param string $sUrl       url to append
      * @param array  $aAddParams parameters to append
      *
      * @return string
@@ -250,6 +256,84 @@ class oxUtilsUrl extends oxSuperCfg
     }
 
     /**
+     * Extracts host from given url and appends $aHosts with it
+     *
+     * @param string $sUrl    url to extract
+     * @param array  &$aHosts hosts array
+     *
+     * @return null
+     */
+    protected function _addHost( $sUrl, & $aHosts )
+    {
+        if ( $sUrl && ( $sHost = @parse_url( $sUrl, PHP_URL_HOST ) ) ) {
+            if ( !in_array( $sHost, $aHosts ) ) {
+                $aHosts[] = $sHost;
+            }
+        }
+    }
+
+    /**
+     * Collects and returns current shop hosts array
+     *
+     * @return array
+     */
+    protected function _getHosts()
+    {
+        if ( $this->_aHosts === null ) {
+            $this->_aHosts = array();
+            $oConfig = $this->getConfig();
+
+            // mall (ssl) url
+            $this->_addHost( $oConfig->getConfigParam( "sMallShopURL" ), $this->_aHosts );
+            $this->_addHost( $oConfig->getConfigParam( "sMallSSLShopURL" ), $this->_aHosts );
+
+            // language url
+            $this->_addHost( $oConfig->getConfigParam( 'aLanguageURLs' ), $this->_aHosts );
+            $this->_addHost( $oConfig->getConfigParam( 'aLanguageSSLURLs' ), $this->_aHosts );
+
+            if ( !count( $aHosts ) && !$oConfig->mustAddShopIdToRequest() ) {
+                // current url
+                $this->_addHost( $oConfig->getConfigParam( "sShopURL" ), $this->_aHosts );
+                $this->_addHost( $oConfig->getConfigParam( "sSSLShopURL" ), $this->_aHosts );
+            }
+
+            if ( $this->isAdmin() ) {
+                $this->_addHost( $oConfig->getConfigParam( "sAdminSSLURL" ), $this->_aHosts );
+            }
+        }
+
+        return $this->_aHosts;
+    }
+
+    /**
+     * Compares current URL to supplied string
+     *
+     * @param string $sUrl URL
+     *
+     * @return bool true if $sURL is equal to current page URL
+     */
+    public function isCurrentShopHost( $sUrl )
+    {
+        $blCurrent = false;
+        if ( $sUrl ) {
+            // host of given url
+            $sUrlHost = @parse_url( $sUrl, PHP_URL_HOST );
+
+            // configured hosts
+            $aHosts = $this->_getHosts();
+
+            foreach ( $aHosts as $sHost ) {
+                if ( $sHost === $sUrlHost ) {
+                    $blCurrent = true;
+                    break;
+                }
+            }
+        }
+
+        return $blCurrent;
+    }
+
+    /**
      * Seo url processor: adds various needed parameters, like currency, shop id
      *
      * @param string $sUrl url to process
@@ -258,9 +342,11 @@ class oxUtilsUrl extends oxSuperCfg
      */
     public function processSeoUrl( $sUrl )
     {
-        $ret = $this->getSession()->processUrl( $this->appendUrl( $sUrl, $this->getAddUrlParams() ) );
-        $ret = getStr()->preg_replace('/(\?|&(amp;)?)$/', '', $ret);
-        return $ret;
+
+        if ( !$this->isAdmin() ) {
+            $sUrl = $this->getSession()->processUrl( $this->appendUrl( $sUrl, $this->getAddUrlParams() ) );
+        }
+        return getStr()->preg_replace( '/(\?|&(amp;)?)$/', '', $sUrl );
     }
 
     /**

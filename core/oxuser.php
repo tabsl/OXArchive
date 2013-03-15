@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 39213 2011-10-12 13:37:14Z arvydas.vapsva $
+ * @version   SVN: $Id: oxuser.php 39674 2011-11-02 13:39:35Z arvydas.vapsva $
  */
 
 /**
@@ -1105,39 +1105,35 @@ class oxUser extends oxBase
 
         // user wants to get newsletter messages or no ?
         $oNewsSubscription = $this->getNewsSubscription();
-        if ( $blSubscribe && $oNewsSubscription->getOptInStatus() != 1 ) {
-            if ( !$blSendOptIn ) {
+        if ( $oNewsSubscription ) {
+            if ( $blSubscribe && ( $iOptInStatus = $oNewsSubscription->getOptInStatus() ) != 1 ) {
+                if ( !$blSendOptIn ) {
 
-                // double-opt-in check is disabled - assigning automatically
-                $this->addToGroup( 'oxidnewsletter' );
-                // and setting subscribed status
-                $oNewsSubscription->setOptInStatus( 1 );
-                $blSuccess = true;
-            } else {
-
-                $oNewsSubscription->setOptInStatus( 2 );
-
-                // double-opt-in check enabled - sending confirmation email and setting waiting status
-                if ( !$mySession->getVar( "blDBOptInMailAlreadyDone" ) ) {
-
-                    // sending double-opt-in mail
-                    $oEmail = oxNew( 'oxemail' );
-                    $blSuccess = $oEmail->sendNewsletterDBOptInMail( $this );
-
-                    if ( $blSuccess ) {
-                        //setting in seesion parameter to force sending email only once (#2033)
-                        oxSession::setVar( "blDBOptInMailAlreadyDone", true );
-                    }
-                } else {
-                    // mail already was sent, so just confirming that
+                    // double-opt-in check is disabled - assigning automatically
+                    $this->addToGroup( 'oxidnewsletter' );
+                    // and setting subscribed status
+                    $oNewsSubscription->setOptInStatus( 1 );
                     $blSuccess = true;
+                } else {
+
+                    // double-opt-in check enabled - sending confirmation email and setting waiting status
+                    if ( $iOptInStatus != 2 ) {
+                        // sending double-opt-in mail
+                        $oEmail = oxNew( 'oxemail' );
+                        $blSuccess = $oEmail->sendNewsletterDBOptInMail( $this );
+                    } else {
+                        // mail already was sent, so just confirming that
+                        $blSuccess = true;
+                    }
+
+                    $oNewsSubscription->setOptInStatus( 2 );
                 }
+            } elseif ( !$blSubscribe ) {
+                // removing user from newsletter subscribers
+                $this->removeFromGroup( 'oxidnewsletter' );
+                $oNewsSubscription->setOptInStatus( 0 );
+                $blSuccess = true;
             }
-        } elseif ( !$blSubscribe ) {
-            // removing user from newsletter subscribers
-            $this->removeFromGroup( 'oxidnewsletter' );
-            $oNewsSubscription->setOptInStatus( 0 );
-            $blSuccess = true;
         }
 
         return $blSuccess;

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: wrapping_main.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: wrapping_main.php 39895 2011-11-14 08:33:56Z arvydas.vapsva $
  */
 
 /**
@@ -78,7 +78,7 @@ class Wrapping_Main extends oxAdminDetails
      */
     public function save()
     {
-        $myConfig  = $this->getConfig();
+        parent::save();
 
         $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");
@@ -95,7 +95,7 @@ class Wrapping_Main extends oxAdminDetails
         if ( $soxId != "-1") {
             $oWrapping->loadInLang( $this->_iEditLang, $soxId );
                 // #1173M - not all pic are deleted, after article is removed
-                oxUtilsPic::getInstance()->overwritePic( $oWrapping, 'oxwrapping', 'oxpic', 'WP', '0', $aParams, $myConfig->getPictureDir(false) );
+                oxUtilsPic::getInstance()->overwritePic( $oWrapping, 'oxwrapping', 'oxpic', 'WP', '0', $aParams, $this->getConfig()->getPictureDir(false) );
         } else
             $aParams['oxwrapping__oxid'] = null;
         //$aParams = $oWrapping->ConvertNameArray2Idx( $aParams);

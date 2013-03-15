@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxarticlelist.php 39199 2011-10-12 13:28:02Z arvydas.vapsva $
+ * @version   SVN: SVN: $Id: oxarticlelist.php 40115 2011-11-22 11:39:48Z arvydas.vapsva $
  */
 
 /**
@@ -431,10 +431,8 @@ class oxArticleList extends oxList
             return $iArticleCount;
         }
 
-        $iTotalCount = oxUtilsCount::getInstance()->getCatArticleCount($sCatId);
         // this select is FAST so no need to hazzle here with getNrOfArticles()
-
-        return $iTotalCount;
+        return oxUtilsCount::getInstance()->getCatArticleCount( $sCatId );
     }
 
     /**
@@ -590,9 +588,7 @@ class oxArticleList extends oxList
             return $this->count();
         }
 
-        $iTotalCount = oxUtilsCount::getInstance()->getPriceCatArticleCount($oCategory->getId(), $dPriceFrom, $dPriceTo );
-
-        return $iTotalCount;
+        return oxUtilsCount::getInstance()->getPriceCatArticleCount( $oCategory->getId(), $dPriceFrom, $dPriceTo );
     }
 
     /**

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 39185 2011-10-12 13:23:02Z arvydas.vapsva $
+ * @version   SVN: $Id: oxconfig.php 40252 2011-11-24 10:03:34Z arvydas.vapsva $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -308,6 +308,15 @@ class oxConfig extends oxSuperCfg
      */
     public function getConfigParam( $sName )
     {
+        if ( defined( 'OXID_PHP_UNIT' ) ) {
+            if ( isset( modConfig::$unitMOD ) && is_object( modConfig::$unitMOD ) ) {
+                $sValue = modConfig::$unitMOD->getModConfigParam( $sName );
+                if ( $sValue !== null ) {
+                    return $sValue;
+                }
+            }
+        }
+
         if ( isset( $this->$sName ) ) {
             return $this->$sName;
         } elseif ( isset ( $this->_aConfigParams[$sName] ) ) {
@@ -1695,18 +1704,26 @@ class oxConfig extends oxSuperCfg
      *
      * @param string $sVarName Variable name
      * @param string $sShopId  Shop ID
+     * @param string $sModule  module identifier
      *
      * @return object - raw configuration value in DB
      */
-    public function getShopConfVar( $sVarName, $sShopId = null )
+    public function getShopConfVar( $sVarName, $sShopId = null, $sModule = '' )
     {
         if ( !$sShopId ) {
             $sShopId = $this->getShopId();
         }
 
+        if ( $sShopId === $this->getShopId() && ( !$sModule || $sModule == oxConfig::OXMODULE_THEME_PREFIX . $this->getConfigParam('sTheme') ) ) {
+            $sVarValue = $this->getConfigParam( $sVarName );
+            if ( $sVarValue !== null ) {
+                return $sVarValue;
+            }
+        }
+
         $oDb = oxDb::getDb(true);
-        $sQ  = "select oxvartype, ".$this->getDecodeValueQuery()." as oxvarvalue from oxconfig where oxshopid = '$sShopId' and oxvarname = ".$oDb->quote($sVarName);
-        $oRs = $oDb->Execute( $sQ );
+        $sQ  = "select oxvartype, ".$this->getDecodeValueQuery()." as oxvarvalue from oxconfig where oxshopid = '{$sShopId}' and oxmodule = '{$sModule}' and oxvarname = ".$oDb->quote($sVarName);
+        $oRs = $oDb->execute( $sQ );
 
         $sValue = null;
         if ( $oRs != false && $oRs->recordCount() > 0 ) {
@@ -1859,4 +1876,13 @@ class oxConfig extends oxSuperCfg
         return (bool) isset( $this->_aThemeConfigParams[$sName] );
     }
 
+    /**
+     * Returns  SSL or non SSL shop main URL without index.php
+     *
+     * @return string
+     */
+    public function getShopMainUrl()
+    {
+        return $this->isSsl() ? $this->getConfigParam( 'sSSLShopURL' ) : $this->getConfigParam( 'sShopURL' );
+    }
 }

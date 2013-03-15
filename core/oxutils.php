@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutils.php 38777 2011-09-15 12:23:51Z arvydas.vapsva $
+ * @version   SVN: $Id: oxutils.php 39709 2011-11-03 12:53:28Z arvydas.vapsva $
  */
 
 /**
@@ -1161,14 +1161,14 @@ class oxUtils extends oxSuperCfg
     protected function _fillExplodeArray( $aName, $dVat = null)
     {
         $myConfig = $this->getConfig();
-        $oObject = new OxstdClass();
+        $oObject = new oxStdClass();
         $aPrice = explode( '!P!', $aName[0]);
 
         if ( ( $myConfig->getConfigParam( 'bl_perfLoadSelectLists' ) && $myConfig->getConfigParam( 'bl_perfUseSelectlistPrice' ) && isset( $aPrice[0] ) && isset( $aPrice[1] ) ) || $this->isAdmin() ) {
 
             // yes, price is there
-            $oObject->price = $aPrice[1];
-            $aName[0] = $aPrice[0];
+            $oObject->price = isset( $aPrice[1] ) ? $aPrice[1] : 0;
+            $aName[0] = isset( $aPrice[0] ) ? $aPrice[0] : '';
 
             $iPercPos = getStr()->strpos( $oObject->price, '%' );
             if ( $iPercPos !== false ) {

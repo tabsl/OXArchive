@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: user_remark.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: user_remark.php 39932 2011-11-14 08:57:26Z arvydas.vapsva $
  */
 
 /**
@@ -82,6 +82,7 @@ class User_Remark extends oxAdminDetails
      */
     public function save()
     {
+        parent::save();
 
         $oRemark = oxNew( "oxremark" );
 

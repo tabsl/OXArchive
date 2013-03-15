@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: attribute_main.php 38544 2011-09-05 09:42:38Z arunas.paskevicius $
+ * @version   SVN: $Id: attribute_main.php 39918 2011-11-14 08:40:27Z arvydas.vapsva $
  */
 
 /**
@@ -44,13 +44,13 @@ class Attribute_Main extends oxAdminDetails
         $oAttr = oxNew( "oxattribute" );
         $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         $sArticleTable = getViewName('oxarticles');
-        
+
         // copy this tree for our article choose
         $sChosenArtCat = oxConfig::getParameter( "artcat");
         if ( $soxId != "-1" && isset( $soxId)) {
             // generating category tree for select list
             $sChosenArtCat = $this->_getCategoryTree( "artcattree", $sChosenArtCat, $soxId);
-            // load object            
+            // load object
             $oAttr->loadInLang( $this->_iEditLang, $soxId );
 
 
@@ -58,8 +58,8 @@ class Attribute_Main extends oxAdminDetails
             if (!isset($oOtherLang[$this->_iEditLang])) {
                 // echo "language entry doesn't exist! using: ".key($oOtherLang);
                 $oAttr->loadInLang( key($oOtherLang), $soxId );
-            }           
-            
+            }
+
             // remove already created languages
             $aLang = array_diff ( oxLang::getInstance()->getLanguageNames(), $oOtherLang);
             if ( count( $aLang))
@@ -72,9 +72,9 @@ class Attribute_Main extends oxAdminDetails
                 $this->_aViewData["otherlang"][$id] =  clone $oLang;
             }
         }
-        
+
         $this->_aViewData["edit"] =  $oAttr;
-        
+
         if ( oxConfig::getParameter("aoc") ) {
 
             $aColumns = array();
@@ -93,6 +93,7 @@ class Attribute_Main extends oxAdminDetails
      */
     public function save()
     {
+        parent::save();
 
         $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");
@@ -124,6 +125,7 @@ class Attribute_Main extends oxAdminDetails
      */
     public function saveinnlang()
     {
+        parent::save();
 
         $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdiscount.php 39244 2011-10-13 06:20:10Z arvydas.vapsva $
+ * @version   SVN: $Id: oxdiscount.php 39868 2011-11-09 15:09:45Z linas.kukulskis $
  */
 
 /**
@@ -48,6 +48,20 @@ class oxDiscount extends oxI18n
      * @var string
      */
     protected $_sBasketIdent = null;
+
+    /**
+     * Is discount for article or For category
+     *
+     * @var bool
+     */
+    protected $_blIsForArticleOrForCategory = null;
+
+    /**
+     * Is discount set for article, array index article id
+     *
+     * @var array
+     */
+    protected $_aHasArticleDiscounts = array();
 
     /**
      * Class constructor, initiates parent constructor (parent::oxBase()).
@@ -90,6 +104,7 @@ class oxDiscount extends oxI18n
      */
     public function isForArticle( $oArticle )
     {
+
         // item discounts may only be applied for basket
         if ( $this->oxdiscount__oxaddsumtype->value == 'itm' ) {
             return false;
@@ -106,32 +121,51 @@ class oxDiscount extends oxI18n
         $myDB = oxDb::getDb();
 
         $sDiscountIdQuoted = $myDB->quote($this->oxdiscount__oxid->value);
-        //check for global discount (no articles, no categories)
-        $sQ = "select 1 from oxobject2discount where oxdiscountid = $sDiscountIdQuoted and ( oxtype = 'oxarticles' or oxtype = 'oxcategories')";
-        if ( !$myDB->getOne( $sQ ) ) {
-            return true;
-        }
 
-        // check if this article is assigned
-        $sQ  = "select 1 from oxobject2discount where oxdiscountid = {$sDiscountIdQuoted} and oxtype = 'oxarticles' ";
-        $sQ .= $this->_getProductCheckQuery( $oArticle );
-        if ( $myDB->getOne( $sQ ) ) {
+        //check for global discount (no articles, no categories)
+        if ( $this->_blIsForArticleOrForCategory ) {
             return true;
-        } else {
-            // check if article is in some assigned category
-            $aCatIds = $oArticle->getCategoryIds();
-            if (!$aCatIds || !count($aCatIds)) {
-                // no categories are set for article, so no discounts from categories..
-                return false;
-            }
-            $sCatIds = "(".implode(",", oxDb::getInstance()->quoteArray($aCatIds)).")";
-            // getOne appends limit 1, so this one should be fast enough
-            $sQ = "select 1 from oxobject2discount where oxdiscountid = {$sDiscountIdQuoted} and oxobjectid in $sCatIds and oxtype = 'oxcategories'";
-            if ( $myDB->getOne( $sQ ) ) {
+        } elseif ( $this->_blIsForArticleOrForCategory === null ) {
+
+            $this->_blIsForArticleOrForCategory = false;
+            $sQ = "select 1 from oxobject2discount where oxdiscountid = $sDiscountIdQuoted and ( oxtype = 'oxarticles' or oxtype = 'oxcategories')";
+            if ( !$myDB->getOne( $sQ ) ) {
+                $this->_blIsForArticleOrForCategory = true;
                 return true;
             }
         }
-        return false;
+
+        $sArticleId = $oArticle->getProductId();
+
+        if ( !$this->_blIsForArticleAndForCategory && !isset($this->_aHasArticleDiscounts[ $sArticleId ] ) ) {
+
+            $this->_aHasArticleDiscounts[ $sArticleId ] = false ;
+
+            // check if this article is assigned
+            $sQ  = "select 1 from oxobject2discount where oxdiscountid = {$sDiscountIdQuoted} and oxtype = 'oxarticles' ";
+            $sQ .= $this->_getProductCheckQuery( $oArticle );
+
+            if ( $myDB->getOne( $sQ ) ) {
+                $this->_aHasArticleDiscounts[ $sArticleId ] = true;
+                return true;
+            } else {
+                // check if article is in some assigned category
+                $aCatIds = $oArticle->getCategoryIds();
+                if (!$aCatIds || !count($aCatIds)) {
+                    // no categories are set for article, so no discounts from categories..
+                    return false;
+                }
+                $sCatIds = "(".implode(",", oxDb::getInstance()->quoteArray($aCatIds)).")";
+                // getOne appends limit 1, so this one should be fast enough
+                $sQ = "select 1 from oxobject2discount where oxdiscountid = {$sDiscountIdQuoted} and oxobjectid in $sCatIds and oxtype = 'oxcategories'";
+                if ( $myDB->getOne( $sQ ) ) {
+                    $this->_aHasArticleDiscounts[ $sArticleId ] = true;
+                    return true;
+                }
+            }
+        }
+
+        return $this->_aHasArticleDiscounts[ $sArticleId ];
     }
 
     /**
@@ -335,8 +369,10 @@ class oxDiscount extends oxI18n
             $oDiscountPrice = oxNew( 'oxprice' );
             $oDiscountPrice->setBruttoPriceMode();
             $oDiscountPrice->setPrice( $oPrice->getBruttoPrice() / 100 * $this->oxdiscount__oxaddsum->value, $oPrice->getVat() );
-        }
 
+
+
+        }
         $oDiscountPrice->multiply( $dAmount * -1 );
         $oPrice->addPrice( $oDiscountPrice );
     }

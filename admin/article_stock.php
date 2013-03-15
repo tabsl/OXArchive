@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_stock.php 36127 2011-06-09 13:48:00Z vilma $
+ * @version   SVN: $Id: article_stock.php 39919 2011-11-14 08:40:35Z arvydas.vapsva $
  */
 
 /**
@@ -95,6 +95,7 @@ class Article_Stock extends oxAdminDetails
      */
     public function save()
     {
+        parent::save();
 
         $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");

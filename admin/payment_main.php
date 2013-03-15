@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: payment_main.php 34171 2011-04-04 07:07:20Z sarunas $
+ * @version   SVN: $Id: payment_main.php 39930 2011-11-14 08:55:04Z arvydas.vapsva $
  */
 
 /**
@@ -104,6 +104,8 @@ class Payment_Main extends oxAdminDetails
      */
     public function save()
     {
+
+        parent::save();
 
         $soxId = $this->getEditObjectId();
         $aParams    = oxConfig::getParameter( "editval");

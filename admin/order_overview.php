@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: order_overview.php 33467 2011-02-23 11:40:19Z arvydas.vapsva $
+ * @version   SVN: $Id: order_overview.php 40128 2011-11-22 13:48:49Z ramunas.skarbalius $
  */
 
 /**
@@ -270,6 +270,23 @@ class Order_Overview extends oxAdminDetails
             $sTable = getViewName( "oxorderarticles" );
             $sQ = "select count(oxid) from {$sTable} where oxorderid = ".$oDb->quote( $sOrderId )." and oxstorno = 0";
             $blCan = (bool) $oDb->getOne( $sQ );
+        }
+        return $blCan;
+    }
+
+    /**
+     * Get information about shipping status
+     *
+     * @return bool
+     */
+    public function canResetShippingDate()
+    {
+        $oOrder = oxNew( "oxorder" );
+        $blCan = false;
+        if ( $oOrder->load( $this->getEditObjectId() ) ) {
+            if ( $oOrder->oxorder__oxstorno->value == "0" && $oOrder->oxorder__oxsenddate->value>"1" ) {
+                $blCan = true;
+            }
         }
         return $blCan;
     }

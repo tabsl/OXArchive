@@ -19,19 +19,19 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: deliveryset_main.inc.php 39434 2011-10-18 13:05:34Z arvydas.vapsva $
+ * @version   SVN: $Id: deliveryset_main.inc.php 39617 2011-10-27 12:42:57Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
                                         array( 'oxtitle',      'oxdelivery', 1, 1, 0 ),
                                         array( 'oxaddsum',     'oxdelivery', 1, 0, 0 ),
-                                        array( 'oxaddsumtype', 'oxdelivery', 0, 0, 0 ),
+                                        array( 'oxaddsumtype', 'oxdelivery', 1, 0, 0 ),
                                         array( 'oxid',         'oxdelivery', 0, 0, 1 )
                                         ),
                      'container2' => array(
                                         array( 'oxtitle',      'oxdelivery', 1, 1, 0 ),
                                         array( 'oxaddsum',     'oxdelivery', 1, 0, 0 ),
-                                        array( 'oxaddsumtype', 'oxdelivery', 0, 0, 0 ),
+                                        array( 'oxaddsumtype', 'oxdelivery', 1, 0, 0 ),
                                         array( 'oxid',  'oxdel2delset', 0, 0, 1 )
                                         )
                     );

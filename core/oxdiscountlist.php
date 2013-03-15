@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdiscountlist.php 39215 2011-10-12 13:39:27Z arvydas.vapsva $
+ * @version   SVN: $Id: oxdiscountlist.php 40042 2011-11-18 12:39:04Z linas.kukulskis $
  */
 
 /**
@@ -49,6 +49,14 @@ class oxDiscountList extends oxList
      * @var bool
      */
     protected $_blReload = true;
+
+
+    /**
+    * If any shops category has "skip discounts" status this parameter value will be true
+    *
+    * @var bool
+    */
+    protected $_hasSkipDiscountCategories = null;
 
     /**
      * Class Constructor
@@ -349,5 +357,21 @@ class oxDiscountList extends oxList
             $dOldPrice = $dNewPrice;
         }
         return $aDiscLog;
+    }
+
+    /**
+     * Checks if any category has "skip discounts" status
+     *
+     * @return bool
+     */
+    public function hasSkipDiscountCategories()
+    {
+        if ( $this->_hasSkipDiscountCategories === null  || $this->_blReload ) {
+            $sViewName = getViewName( 'oxcategories' );
+            $sQ = "select 1 from {$sViewName} where {$sViewName}.oxactive = 1 and {$sViewName}.oxskipdiscounts = '1' ";
+
+            $this->_hasSkipDiscountCategories = (bool) oxDb::getDb()->getOne( $sQ );
+        }
+        return $this->_hasSkipDiscountCategories;
     }
 }

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxajax.php 39174 2011-10-12 13:11:26Z arvydas.vapsva $
+ * @version   SVN: $Id: oxajax.php 40034 2011-11-18 07:54:26Z arvydas.vapsva $
  */
 
 // shop path for includes
@@ -661,8 +661,6 @@ class ajaxListComponent extends oxSuperCfg
                 oxUtils::getInstance()->oxResetFileCache();
             }
     }
-
-
 
     /**
      * Resets counters values from cache. Resets price category articles, category articles,

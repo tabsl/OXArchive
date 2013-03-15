@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 39227 2011-10-12 14:07:32Z arvydas.vapsva $
+ * @version   SVN: $Id: oxarticle.php 40291 2011-11-28 11:29:56Z vilma $
  */
 
 // defining supported link types
@@ -1112,9 +1112,13 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     {
         $blHas = false;
         if ( ( $sId = $this->getId() ) ) {
-            $sArticleTable = $this->getViewName( $blForceCoreTable );
-            $oDb = oxDb::getDb();
-            $blHas = (bool) $oDb->getOne( "select 1 from $sArticleTable where oxparentid=".$oDb->quote( $sId ) );
+            if ( $this->oxarticles__oxshopid->value == $this->getConfig()->getShopId() ) {
+                $blHas = (bool) $this->oxarticles__oxvarcount->value;
+            } else {
+                $sArticleTable = $this->getViewName( $blForceCoreTable );
+                $blHas = (bool) oxDb::getDb()->getOne( "select 1 from $sArticleTable where oxparentid='{$sId}'" );
+            }
+
         }
         return $blHas;
     }
@@ -1677,18 +1681,26 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     public function skipDiscounts()
     {
         // allready loaded skip discounts config
-        if ( $this->_blSkipDiscounts !== null )
+        if ( $this->_blSkipDiscounts !== null ) {
             return $this->_blSkipDiscounts;
+        }
 
-        if ( $this->oxarticles__oxskipdiscounts->value )
+        if ( $this->oxarticles__oxskipdiscounts->value ) {
             return true;
+        }
 
-        $oDb = oxDb::getDb();
-        $sO2CView  = getViewName( 'oxobject2category', $this->getLanguage() );
-        $sViewName = getViewName( 'oxcategories', $this->getLanguage() );
-        $sSelect =  "select 1 from $sO2CView as $sO2CView left join {$sViewName} on {$sViewName}.oxid = $sO2CView.oxcatnid
-                     where $sO2CView.oxobjectid=".$oDb->quote( $this->getId() )." and {$sViewName}.oxactive = 1 and {$sViewName}.oxskipdiscounts = '1' ";
-        return $this->_blSkipDiscounts = ( $oDb->getOne($sSelect) == 1 );
+
+        $this->_blSkipDiscounts = false;
+        if ( oxDiscountList::getInstance()->hasSkipDiscountCategories() ) {
+
+            $oDb = oxDb::getDb();
+            $sO2CView  = getViewName( 'oxobject2category', $this->getLanguage() );
+            $sViewName = getViewName( 'oxcategories', $this->getLanguage() );
+            $sSelect =  "select 1 from $sO2CView as $sO2CView left join {$sViewName} on {$sViewName}.oxid = $sO2CView.oxcatnid
+                         where $sO2CView.oxobjectid=".$oDb->quote( $this->getId() )." and {$sViewName}.oxactive = 1 and {$sViewName}.oxskipdiscounts = '1' ";
+            $this->_blSkipDiscounts = ( $oDb->getOne($sSelect) == 1 );
+        }
+        return $this->_blSkipDiscounts;
     }
 
     /**
@@ -2219,7 +2231,6 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     public function getArticleLongDesc( $sOxid = null )
     {
         if ( $this->_oLongDesc === null ) {
-
             // initializing
             $this->_oLongDesc = new oxField();
 
@@ -2227,11 +2238,14 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             // choosing which to get..
             $sOxid = $sOxid === null ? $this->getId() : $sOxid;
             $sViewName = getViewName( 'oxartextends', $this->getLanguage() );
-            if ( ( $sDbValue = oxDb::getDb()->getOne( "select oxlongdesc from {$sViewName} where oxid = ?", array( $sOxid ) ) ) !== false ) {
+
+            $sDbValue = oxDb::getDb()->getOne( "select oxlongdesc from {$sViewName} where oxid = ?", array( $sOxid ) );
+            if ( $sDbValue !== false ) {
                 $this->_oLongDesc->setValue( $sDbValue, oxField::T_RAW );
+            } elseif ( $this->oxarticles__oxparentid->value ) {
+                $this->_oLongDesc->setValue( $this->getParentArticle()->getArticleLongDesc()->getRawValue(), oxField::T_RAW );
             }
         }
-
         return $this->_oLongDesc;
     }
 
@@ -2888,12 +2902,12 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      */
     public function getPriceFromPrefix()
     {
-        $sPricePrefics = '';
+        $sPricePrefix = '';
         if ( $this->_blIsRangePrice) {
-            $sPricePrefics = oxLang::getInstance()->translateString('priceFrom').' ';
+            $sPricePrefix = oxLang::getInstance()->translateString('priceFrom').' ';
         }
 
-        return $sPricePrefics;
+        return $sPricePrefix;
     }
 
     /**
@@ -3669,12 +3683,6 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             if ( !$this->isAdmin() || ( $this->_blLoadParentData && $this->isAdmin() ) ) {
                 foreach ( $this->_aFieldNames as $sFieldName => $sVal ) {
                     $this->_assignParentFieldValue( $sFieldName );
-                }
-
-                //assing long description
-                $sLongDesc = $this->getArticleLongDesc()->getRawValue();
-                if ( $sLongDesc === null || $sLongDesc == '' ) {
-                    $this->setArticleLongDesc( $this->getParentArticle()->getArticleLongDesc()->getRawValue() );
                 }
             }
         }

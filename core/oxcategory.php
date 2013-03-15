@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcategory.php 39226 2011-10-12 14:05:24Z arvydas.vapsva $
+ * @version   SVN: $Id: oxcategory.php 39706 2011-11-03 12:51:11Z arvydas.vapsva $
  */
 
 /**
@@ -1100,7 +1100,9 @@ class oxCategory extends oxI18n implements oxIUrl
      */
     public function getLongDesc()
     {
-        return oxUtilsView::getInstance()->parseThroughSmarty( $this->oxcategories__oxlongdesc->getRawValue(), $this->getId().$this->getLanguage() );
+        if ( isset( $this->oxcategories__oxlongdesc ) && $this->oxcategories__oxlongdesc instanceof oxField ) {
+           return oxUtilsView::getInstance()->parseThroughSmarty( $this->oxcategories__oxlongdesc->getRawValue(), $this->getId().$this->getLanguage() );
+        }
     }
 
     /**

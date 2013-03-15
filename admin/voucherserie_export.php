@@ -192,7 +192,7 @@ class VoucherSerie_Export extends VoucherSerie_Main
 
                 // writing header text
                 if ( $iStart == 0 ) {
-                    $this->write( "Gutschein" );
+                    $this->write( oxLang::getInstance()->translateString("VOUCHERSERIE_MAIN_VOUCHERSTATISTICS", oxLang::getInstance()->getTplLanguage(), true ));
                 }
             }
 

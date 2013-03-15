@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: vendor_main.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: vendor_main.php 39897 2011-11-14 08:35:23Z arvydas.vapsva $
  */
 
 /**
@@ -91,6 +91,7 @@ class Vendor_Main extends oxAdminDetails
      */
     public function save()
     {
+        parent::save();
 
         $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval" );

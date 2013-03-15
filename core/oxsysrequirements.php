@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsysrequirements.php 39223 2011-10-12 13:56:05Z arvydas.vapsva $
+ * @version   SVN: $Id: oxsysrequirements.php 40267 2011-11-24 14:33:49Z arvydas.vapsva $
  */
 
 /**
@@ -150,6 +150,41 @@ class oxSysRequirements
     }
 
     /**
+     * Only used for convenience in UNIT tests by doing so we avoid
+     * writing extended classes for testing protected or private methods
+     *
+     * @param string $sMethod Methods name
+     * @param array  $aArgs   Argument array
+     *
+     * @throws oxSystemComponentException Throws an exception if the called method does not exist or is not accessable in current class
+     *
+     * @return string
+     */
+    public function __call( $sMethod, $aArgs )
+    {
+        if ( defined( 'OXID_PHP_UNIT' ) ) {
+            if ( substr( $sMethod, 0, 4) == "UNIT" ) {
+                $sMethod = str_replace( "UNIT", "_", $sMethod );
+            }
+            if ( method_exists( $this, $sMethod)) {
+                return call_user_func_array( array( & $this, $sMethod ), $aArgs );
+            }
+        }
+
+        throw new oxSystemComponentException( "Function '$sMethod' does not exist or is not accessible! (" . get_class($this) . ")".PHP_EOL);
+    }
+
+    /**
+     * Returns config instance
+     *
+     * @return oxConfig
+     */
+    public function getConfig()
+    {
+        return oxConfig::getInstance();
+    }
+
+    /**
      * Sets system required modules
      *
      * @return array
@@ -267,7 +302,7 @@ class oxSysRequirements
 
         $sTmp = "$sPath/tmp$sVerPrefix/";
         if (class_exists('oxConfig')) {
-            $sCfgTmp = oxConfig::getInstance()->getConfigParam('sCompileDir');
+            $sCfgTmp = $this->getConfig()->getConfigParam('sCompileDir');
             if (strpos($sCfgTmp, '<sCompileDir_') === false) {
                 $sTmp = $sCfgTmp;
             }
@@ -321,7 +356,7 @@ class oxSysRequirements
      */
     protected function _getShopHostInfoFromConfig()
     {
-        $sShopURL = oxConfig::getInstance()->getConfigParam( 'sShopURL' );
+        $sShopURL = $this->getConfig()->getConfigParam( 'sShopURL' );
         if (preg_match('#^(https?://)?([^/:]+)(:([0-9]+))?(/.*)?$#i', $sShopURL, $m)) {
             $sHost = $m[2];
             $iPort = (int)$m[4];
@@ -718,7 +753,7 @@ class oxSysRequirements
      */
     public function checkCollation()
     {
-        $myConfig = oxConfig::getInstance();
+        $myConfig = $this->getConfig();
 
         $aCollations = array();
         $sCollation = '';
@@ -889,9 +924,7 @@ class oxSysRequirements
      */
     protected function _checkTemplateBlock($sTemplate, $sBlockName)
     {
-        $oConfig = oxConfig::getInstance();
-
-        $sTplFile = $oConfig->getTemplatePath($sTemplate, false);
+        $sTplFile = $this->getConfig()->getTemplatePath($sTemplate, false);
         if (!$sTplFile || !file_exists($sTplFile)) {
             return false;
         }
@@ -914,7 +947,7 @@ class oxSysRequirements
     {
         $oDb = oxDb::getDb( true );
         $aCache = array();
-        $oConfig = oxConfig::getInstance();
+        $oConfig = $this->getConfig();
 
         $sShpIdParam = $oDb->quote($oConfig->getShopId());
         $sSql = "select * from oxtplblocks where oxactive=1 and oxshopid=$sShpIdParam";

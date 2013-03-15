@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
+ * @version   SVN: $Id: account.php 39729 2011-11-03 14:40:37Z arvydas.vapsva $
  */
 
 /**
@@ -105,6 +105,20 @@ class Account extends oxUBase
      * @var int
      */
     protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXNOFOLLOW;
+
+    /**
+     * Start page meta description CMS ident
+     *
+     * @var string
+     */
+    protected $_sMetaDescriptionIdent = 'oxstartmetadescription';
+
+    /**
+     * Start page meta keywords CMS ident
+     *
+     * @var string
+     */
+    protected $_sMetaKeywordsIdent = 'oxstartmetakeywords';
 
     /**
      * Sign if to load and show top5articles action

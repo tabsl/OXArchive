@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsession.php 39214 2011-10-12 13:37:36Z arvydas.vapsva $
+ * @version   SVN: $Id: oxsession.php 39705 2011-11-03 12:48:44Z arvydas.vapsva $
  */
 
 DEFINE('_DB_SESSION_HANDLER', getShopBasePath() . 'core/adodblite/session/adodb-session.php');
@@ -348,7 +348,9 @@ class oxSession extends oxSuperCfg
 
         //cache limiter workaround for AOL browsers
         //as suggested at http://ilia.ws/archives/59-AOL-Browser-Woes.html
-        if (strpos($_SERVER['HTTP_USER_AGENT'], 'AOL') !== false ) {
+        if ( isset( $_SERVER['HTTP_USER_AGENT'] ) &&
+             strpos( $_SERVER['HTTP_USER_AGENT'], 'AOL' ) !== false ) {
+
             session_cache_limiter(false);
             header("Cache-Control: no-store, private, must-revalidate, proxy-revalidate, post-check=0, pre-check=0, max-age=0, s-maxage=0");
         }
@@ -1037,7 +1039,7 @@ class oxSession extends oxSuperCfg
             }
         }
 
-        return ($_SERVER['REQUEST_METHOD'] == 'POST');
+        return ( isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] == 'POST');
     }
 
     /**

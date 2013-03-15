@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: news_text.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: news_text.php 39909 2011-11-14 08:38:24Z arvydas.vapsva $
  */
 
 /**
@@ -75,8 +75,9 @@ class News_Text extends oxAdminDetails
      */
     public function save()
     {
-        $myConfig  = $this->getConfig();
+        parent::save();
 
+        $myConfig  = $this->getConfig();
 
         $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");

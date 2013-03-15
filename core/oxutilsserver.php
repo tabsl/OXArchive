@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsserver.php 32626 2011-01-20 16:25:45Z sarunas $
+ * @version   SVN: $Id: oxutilsserver.php 40106 2011-11-22 09:44:21Z arunas.paskevicius $
  */
 
 /**
@@ -110,7 +110,7 @@ class oxUtilsServer extends oxSuperCfg
             $iExpire,
             $this->_getCookiePath( $sPath ),
             $this->_getCookieDomain( $sDomain ),
-            oxConfig::getInstance()->isSsl(),
+            false,
             true
         );
     }
@@ -364,13 +364,9 @@ class oxUtilsServer extends oxSuperCfg
      */
     public function getUserCookie( $sShopId = null )
     {
-        $sShopId = ( !$sShopId ) ? parent::getConfig()->getShopID() : $sShopId;
-        if ( $this->_aUserCookie[$sShopId] !== null ) {
-            if ( !$this->_aUserCookie[$sShopId] ) {
-                // cookie has been deleted
-                return null;
-            }
-            return $this->_aUserCookie[$sShopId];
+        $sShopId = ( !$sShopId ) ? parent::getConfig()->getShopId() : $sShopId;
+        if ( array_key_exists( $sShopId, $this->_aUserCookie ) && $this->_aUserCookie[$sShopId] !== null ) {
+            return $this->_aUserCookie[$sShopId] ? $this->_aUserCookie[$sShopId] : null;
         }
 
         return $this->_aUserCookie[$sShopId] = $this->getOxCookie( 'oxid_'.$sShopId );

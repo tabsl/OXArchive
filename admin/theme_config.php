@@ -133,6 +133,7 @@ class Theme_Config extends Shop_Config
     {
         $myConfig = $this->getConfig();
 
+        oxAdminDetails::save();
 
         $sTheme  = $this->_sTheme = $this->getEditObjectId();
         $sShopId = $myConfig->getShopId();

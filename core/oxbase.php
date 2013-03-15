@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbase.php 39196 2011-10-12 13:27:23Z arvydas.vapsva $
+ * @version   SVN: $Id: oxbase.php 39713 2011-11-03 13:00:48Z arvydas.vapsva $
  */
 
 /**
@@ -208,11 +208,11 @@ class oxBase extends oxSuperCfg
         $this->$sName = $sValue;
         if ( $this->_blUseLazyLoading && strpos( $sName, $this->_sCoreTable . "__" ) === 0 ) {
             $sFieldName = str_replace( $this->_sCoreTable . "__", '', $sName );
-            if ($sFieldName != 'oxnid' && !$this->_aFieldNames[$sFieldName]) {
+            if ( $sFieldName != 'oxnid' && ( !isset( $this->_aFieldNames[$sFieldName] ) || !$this->_aFieldNames[$sFieldName] ) ) {
                 $aAllFields = $this->_getAllFields(true);
-                if (isset($aAllFields[strtolower($sFieldName)])) {
-                    $iFieldStatus = $this->_getFieldStatus($sFieldName);
-                    $this->_addField($sFieldName, $iFieldStatus);
+                if ( isset( $aAllFields[strtolower($sFieldName)] ) ) {
+                    $iFieldStatus = $this->_getFieldStatus( $sFieldName );
+                    $this->_addField( $sFieldName, $iFieldStatus );
                 }
             }
         }
@@ -1273,9 +1273,10 @@ class oxBase extends oxSuperCfg
      */
     protected function _getUpdateFieldValue( $sFieldName, $oField )
     {
+        $mValue = null;
         if ( $oField instanceof oxField ) {
             $mValue = $oField->getRawValue();
-        } else {
+        } elseif ( isset( $oField->value ) ) {
             $mValue = $oField->value;
         }
         // Sarunas. check if this field value is null AND it can be null according to table description

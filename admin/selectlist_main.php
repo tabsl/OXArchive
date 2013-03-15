@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: selectlist_main.php 33474 2011-02-23 13:29:51Z arvydas.vapsva $
+ * @version   SVN: $Id: selectlist_main.php 39934 2011-11-14 08:58:23Z arvydas.vapsva $
  */
 
 DEFINE("ERR_SUCCESS", 1);
@@ -121,6 +121,7 @@ class SelectList_Main extends oxAdminDetails
      */
     public function save()
     {
+        parent::save();
 
         $sOxId = $this->getEditObjectId();
         $aParams    = oxConfig::getParameter( "editval");
@@ -184,6 +185,8 @@ class SelectList_Main extends oxAdminDetails
         else
             $aParams['oxselectlist__oxid'] = null;
 
+
+        parent::save();
 
         //$aParams = $oObj->ConvertNameArray2Idx( $aParams);
         $oObj->setLanguage(0);

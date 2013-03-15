@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account_newsletter.php 35529 2011-05-23 07:31:20Z arunas.paskevicius $
+ * @version   SVN: $Id: account_newsletter.php 40060 2011-11-21 09:51:38Z arunas.paskevicius $
  */
 
 /**
@@ -107,19 +107,21 @@ class Account_Newsletter extends Account
         if ( !$oUser ) {
             return false;
         }
-
+        
         $oSubscription = $oUser->getNewsSubscription();
-        if ( ! ( $iStatus = oxConfig::getParameter( 'status' ) ) ) {
+        $iStatus = oxConfig::getParameter( 'status' );
+        
+        if ( $iStatus == 0 && $iStatus !== null ) {
             $oUser->removeFromGroup( 'oxidnewsletter' );
             $oSubscription->setOptInStatus( 0 );
             $this->_iSubscriptionStatus = -1;
-        } else {
+        }  if ( $iStatus == 1 ) {
             // assign user to newsletter group
             $oUser->addToGroup( 'oxidnewsletter' );
             $oSubscription->setOptInEmailStatus( 0 );
             $oSubscription->setOptInStatus( 1 );
             $this->_iSubscriptionStatus = 1;
-        }
+        } 
     }
 
     /**
@@ -142,15 +144,15 @@ class Account_Newsletter extends Account
     {
         $aPaths = array();
         $aPath = array();
-
+        $oUtils = oxUtilsUrl::getInstance();
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_MY_ACCOUNT', oxLang::getInstance()->getBaseLanguage(), false );
         $aPath['link']  = oxSeoEncoder::getInstance()->getStaticUrl( $this->getViewConfig()->getSelfLink() . 'cl=account' );
         $aPaths[] = $aPath;
 
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_NEWSLETTER_SETTINGS', oxLang::getInstance()->getBaseLanguage(), false );
-        $aPath['link']  = $this->getLink();
-        $aPaths[] = $aPath;
-
+        $aPath['link']  = $oUtils->cleanUrl( $this->getLink(), array( 'fnc' ));
+        $aPaths[] = $aPath;    
+        
         return $aPaths;
     }
 }

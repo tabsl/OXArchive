@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 39241 2011-10-12 15:18:03Z arvydas.vapsva $
+ * @version   SVN: $Id: oxorder.php 39711 2011-11-03 12:55:22Z arvydas.vapsva $
  */
 
 /**
@@ -531,6 +531,23 @@ class oxOrder extends oxBase
     }
 
     /**
+     * Converts string VAT representation into float e.g. 7,6 to 7.6
+     *
+     * @param string $sVat vat value
+     *
+     * @return float
+     */
+    protected function _convertVat( $sVat )
+    {
+        if ( strpos( $sVat, '.' ) < strpos( $sVat, ',' ) ) {
+            $sVat = str_replace( array( '.', ',' ), array( '', '.' ), $sVat );
+        } else {
+            $sVat = str_replace( ',', '', $sVat );
+        }
+        return (float) $sVat;
+    }
+
+    /**
      * Gathers and assigns to new oxorder object customer data, payment, delivery
      * and shipping info, customer odere remark, currency, voucher, language data.
      * Additionally stores general discount and wrapping. Sets order status to "error"
@@ -557,7 +574,7 @@ class oxOrder extends oxBase
         // copying discounted VAT info
         $iVatIndex = 1;
         foreach ( $oBasket->getProductVats(false) as $iVat => $dPrice ) {
-            $this->{"oxorder__oxartvat$iVatIndex"}      = new oxField($iVat, oxField::T_RAW);
+            $this->{"oxorder__oxartvat$iVatIndex"}      = new oxField( $this->_convertVat( $iVat ), oxField::T_RAW);
             $this->{"oxorder__oxartvatprice$iVatIndex"} = new oxField($dPrice, oxField::T_RAW);
             $iVatIndex ++;
         }
@@ -577,7 +594,7 @@ class oxOrder extends oxBase
         }
 
         // user remark
-        if ( $this->oxorder__oxremark->value === null ) {
+        if ( !isset( $this->oxorder__oxremark ) || $this->oxorder__oxremark->value === null ) {
             $this->oxorder__oxremark = new oxField(oxSession::getVar( 'ordrem' ), oxField::T_RAW);
         }
 

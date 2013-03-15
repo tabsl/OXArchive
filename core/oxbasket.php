@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasket.php 38550 2011-09-05 11:00:51Z arvydas.vapsva $
+ * @version   SVN: $Id: oxbasket.php 39707 2011-11-03 12:51:44Z arvydas.vapsva $
  */
 
 /**
@@ -1876,8 +1876,11 @@ class oxBasket extends oxSuperCfg
 
         $oUtils = oxUtils::getInstance();
         foreach ( $this->_aDiscountedVats as $sKey => $dVat ) {
+            if ( !isset( $aVats[$sKey] ) ) {
+                $aVats[$sKey] = 0;
+            }
             // add prices of the same discounts
-            $aVats[$sKey] += $oUtils->fRound( $dVat, $this->_oCurrency);
+            $aVats[$sKey] += $oUtils->fRound( $dVat, $this->_oCurrency );
         }
 
         if ( $blFormatCurrency ) {

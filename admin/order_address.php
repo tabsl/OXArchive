@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: order_address.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: order_address.php 39908 2011-11-14 08:37:54Z arvydas.vapsva $
  */
 
 /**
@@ -59,27 +59,76 @@ class Order_Address extends oxAdminDetails
     }
 
     /**
+     * Iterates through data array, checks if specified fields are filled
+     * in, cleanups not needed data
+     *
+     * @param array  $aData          data to process
+     * @param string $sTypeToProcess data type to process e.g. "oxorder__oxdel"
+     * @param array  $aIgnore        fields which must be ignored while processing
+     *
+     * @return null
+     */
+    protected function _processAddress( $aData, $sTypeToProcess, $aIgnore )
+    {
+        // empty address fields?
+        $blEmpty = true;
+
+        // here we will store names of fields which needs to be cleaned up
+        $aFields = array();
+
+        foreach ( $aData as $sName => $sValue ) {
+
+            // if field type matches..
+            if ( strpos( $sName, $sTypeToProcess ) !== false ) {
+
+                // storing which fields must be unset..
+                $aFields[] = $sName;
+
+                // ignoring whats need to be ignored and testing values
+                if ( !in_array( $sName, $aIgnore ) && $sValue ) {
+
+                    // something was found - means leaving as is..
+                    $blEmpty = false;
+                    break;
+                }
+            }
+        }
+
+        // cleanup if empty
+        if ( $blEmpty ) {
+            foreach ( $aFields as $sName ) {
+                $aData[$sName] = "";
+            }
+        }
+
+        return $aData;
+    }
+
+    /**
      * Saves ordering address information.
      *
      * @return string
      */
     public function save()
     {
+        parent::save();
 
         $soxId = $this->getEditObjectId();
-        $aParams    = oxConfig::getParameter( "editval");
+        $aParams = (array) oxConfig::getParameter( "editval");
 
             //TODO check if shop id is realy necessary at this place.
-            $sShopID = oxSession::getVar( "actshop");
+            $sShopID = oxSession::getVar( "actshop" );
             $aParams['oxorder__oxshopid'] = $sShopID;
 
         $oOrder = oxNew( "oxorder" );
-        if ( $soxId != "-1")
-            $oOrder->load( $soxId);
-        else
+        if ( $soxId != "-1") {
+            $oOrder->load( $soxId );
+        } else {
             $aParams['oxorder__oxid'] = null;
+        }
 
-        $oOrder->assign( $aParams);
+        $aParams = $this->_processAddress( $aParams, "oxorder__oxdel", array( "oxorder__oxdelsal" ) );
+        $oOrder->assign( $aParams );
         $oOrder->save();
 
         // set oxid if inserted
