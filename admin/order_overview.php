@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: order_overview.php 28479 2010-06-21 11:24:05Z vilma $
+ * @version   SVN: $Id: order_overview.php 30419 2010-10-20 12:53:57Z sarunas $
  */
 
     // DTAUS
@@ -177,6 +177,11 @@ class Order_Overview extends oxAdminDetails
         if ( count( $oOrderList ) ) {
             $oPayment = oxNew( "oxuserpayment" );
             $oShop = $this->getConfig()->getActiveShop();
+
+            $iOldErrorReproting = error_reporting();
+            // due to eregi_replace usage in DTAUS (and php5.3):
+            error_reporting($iOldErrorReproting & ~E_DEPRECATED);
+
             $oDtaus = new DTAUS( "L", $oShop->oxshops__oxcompany->value, str_replace( " ", "", $oShop->oxshops__oxbankcode->value), str_replace( " ", "", $oShop->oxshops__oxbanknumber->value ) );
 
             $oUtils = oxUtils::getInstance();
@@ -191,6 +196,7 @@ class Order_Overview extends oxAdminDetails
             $oUtils->setHeader( "Content-type: text/plain" );
             $oUtils->setHeader( "Cache-control: public" );
             $oUtils->showMessageAndExit( $oDtaus->create() );
+            error_reporting($iOldErrorReproting);
         }
     }
 

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxtagcloud.php 27838 2010-05-20 18:45:47Z tomas $
+ * @version   SVN: $Id: oxtagcloud.php 30339 2010-10-15 12:32:54Z rimvydas.paskevicius $
  */
 
 if (!defined('OXTAGCLOUD_MINFONT')) {
@@ -451,6 +451,26 @@ class oxTagCloud extends oxSuperCfg
 
     /**
      * Takes tag string and makes shorter tags longer by adding underscore.
+     *
+     * @param string $sTag given tag
+     *
+     * @return string
+     */
+    public function _fixTagLength( $sTag )
+    {
+        $oStr = getStr();
+        $sTag = trim( $sTag );
+        $iLen = $oStr->strlen( $sTag );
+            
+        if ( $iLen < OXTAGCLOUD_MINTAGLENGTH ) {
+            $sTag .= str_repeat( '_', OXTAGCLOUD_MINTAGLENGTH - $iLen );
+        } 
+
+        return $sTag;
+    }
+
+    /**
+     * Takes tags string, checks each tag length and makes shorter tags longer if needed.
      * This is needed for FULLTEXT index
      *
      * @param string $sTags given tag
@@ -462,11 +482,24 @@ class oxTagCloud extends oxSuperCfg
         $aTags = explode( $this->_sSeparator, $sTags );
         $sRes = '';
         $oStr = getStr();
+        
         foreach ( $aTags as $sTag ) {
-            $sTag = trim($sTag);
+            $sTag = trim( $sTag );
+            
             if ( ( $iLen = $oStr->strlen( $sTag ) ) ) {
                 if ( $iLen < OXTAGCLOUD_MINTAGLENGTH ) {
-                    $sTag .= str_repeat( '_', OXTAGCLOUD_MINTAGLENGTH - $iLen );
+                    $sTag = $this->_fixTagLength( $sTag );
+                } elseif ( $oStr->preg_match("/(\w|\d){1,".(OXTAGCLOUD_MINTAGLENGTH-1)."}\b/", $sTag) ) {
+                    // checked if there are words less than OXTAGCLOUD_MINTAGLENGTH
+                    // (e.g. bar-set) - if yes, adding "_" to each to short word end (#2147) 
+                    $aSplittedTags = explode( "-", $sTag );
+                    if ( is_array($aSplittedTags) ) {
+                        foreach ( $aSplittedTags as $sKey => $sValue ) {
+                            $aSplittedTags[$sKey] = $this->_fixTagLength( $sValue );
+                        }
+                        
+                        $sTag = implode( "-", $aSplittedTags );             
+                    }
                 }
 
                 $sRes .= trim($oStr->strtolower( $sTag )) . $this->_sSeparator;
@@ -483,19 +516,14 @@ class oxTagCloud extends oxSuperCfg
      *
      * @return string
      */
-    public function trimTags($sTags)
+    public function trimTags( $sTags )
     {
-        $aTags = explode($this->_sSeparator, $sTags);
-        $sRes = '';
+        $sTags = trim( $sTags );     
         $oStr = getStr();
-        foreach ( $aTags as $sTag ) {
-            $sTag = trim($sTag);
-            if ( $oStr->strlen( $sTag ) ) {
-                $sRes .= rtrim( trim($sTag), '_' ) . $this->_sSeparator;
-            }
-        }
-
-        return trim($sRes, $this->_sSeparator);
+        $sTags = $oStr->preg_replace( "/(\s*\,+\s*)+/", ",", $sTags );
+        $sTags = $oStr->preg_replace( "/([^_])_+(?=(,|-|$))/", "$1", $sTags );
+        
+        return trim( $sTags, $this->_sSeparator);
     }
 
     /**

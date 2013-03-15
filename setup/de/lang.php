@@ -19,7 +19,7 @@
  * @package   setup
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 26930 2010-03-29 13:30:53Z alfonsas $
+ * @version   SVN: $Id: lang.php 30393 2010-10-19 12:41:04Z vilma $
  */
 
 $aLang = array(
@@ -91,6 +91,8 @@ $aLang = array(
 'MOD_ZEND_PLATFORM_OR_SERVER'                     => 'Zend Platform oder Zend Server installiert',
 'MOD_MB_STRING'                                   => 'mbstring',
 'MOD_CURL'                                        => 'cURL',
+'MOD_OPEN_SSL'                                    => 'OpenSSL',
+'MOD_SOAP'                                        => 'SOAP',
 'MOD_UNICODE_SUPPORT'                             => 'UTF-8 Unterstützung',
 
 'STEP_0_ERROR_TEXT'                               => 'Ihr System erf&uuml;llt nicht alle n&ouml;tigen Systemvoraussetzungen',

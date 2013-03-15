@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 28697 2010-06-29 11:09:58Z vilma $
+ * @version   SVN: $Id: lang.php 30408 2010-10-20 08:34:23Z linas.kukulskis $
  */
 
 
@@ -189,7 +189,7 @@ $aLang = array(
 'ADD_RECOMM_ADDRECOMMLINK2'                       => "hier",
 'BASKET_EXCLUDE_HEAD'                             => "Hauptkategorie verändert",
 'BASKET_EXCLUDE_MSG'                              => "Verweigert aufgrund Shop Regeln",
-'BASKET_EXCLUDE_INFO'                             => "Sie können zur Kasse gehen und fertig bestellen.<br>Oder Sie können auch weiterhin, aber alle Inhalte Warenkorb wird geleert",
+'BASKET_EXCLUDE_INFO'                             => "Sie können zur Kasse gehen und ihre Bestellung abschliessen.<br>Oder Sie können weiter einkaufen, jedoch wird dann der Warenkorbinhalt geleert.",
 'BASKET_BASKET'                                   => "Warenkorb",
 'BASKET_EMPTYSHIPPINGCART'                        => "Der Warenkorb ist leer.",
 'BASKET_NEXTSTEP'                                 => "Weiter zum nächsten Schritt",

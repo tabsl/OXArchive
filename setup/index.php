@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package setup
+ * @link      http://www.oxid-esales.com
+ * @package   setup
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: index.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: index.php 30098 2010-10-05 11:17:16Z sarunas $
  */
 
 
@@ -28,6 +28,6 @@ error_reporting( ( E_ALL ^ E_NOTICE ) | E_STRICT );
 /**
  * Includes core setup file
  */
-include_once 'oxsetup.php';
+require_once 'oxsetup.php';
 $oDispatcher = new oxSetupDispatcher();
 $oDispatcher->run();

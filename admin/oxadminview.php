@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadminview.php 29933 2010-09-22 13:24:31Z vilma $
+ * @version   SVN: $Id: oxadminview.php 30237 2010-10-11 13:11:50Z vilma $
  */
 
 /**
@@ -186,22 +186,22 @@ class oxAdminView extends oxView
         $oShop = parent::addGlobalParams( $oShop );
 
         // override cause of admin dir
-        $sURL = $myConfig->getConfigParam( 'sShopURL' ). $myConfig->getConfigParam( 'sAdminDir' );
+        $sURL = $myConfig->getConfigParam( 'sShopURL' ). $myConfig->getConfigParam( 'sAdminDir' ) . "/";
 
         if ($myConfig->getConfigParam('sAdminSSLURL')) {
             $sURL = $myConfig->getConfigParam('sAdminSSLURL');
         }
 
         $oViewConf = $this->getViewConfig();
-        $oViewConf->setViewConfigParam( 'selflink', $mySession->url($sURL.'/index.php') );
-        $oViewConf->setViewConfigParam( 'ajaxlink', str_replace( '&amp;', '&', $mySession->url( $sURL.'/oxajax.php' ) ) );
+        $oViewConf->setViewConfigParam( 'selflink', $mySession->url($sURL.'index.php') );
+        $oViewConf->setViewConfigParam( 'ajaxlink', str_replace( '&amp;', '&', $mySession->url( $sURL.'oxajax.php' ) ) );
         $oViewConf->setViewConfigParam( 'sServiceUrl', $this->getServiceUrl() );
         $oViewConf->setViewConfigParam( 'blLoadDynContents', $myConfig->getConfigParam( 'blLoadDynContents' ) );
         $oViewConf->setViewConfigParam( 'sShopCountry', $myConfig->getConfigParam( 'sShopCountry' ) );
 
         if ( $sURL = $myConfig->getConfigParam( 'sAdminSSLURL') ) {
-            $oViewConf->setViewConfigParam( 'selflink', $mySession->url($sURL.'/index.php') );
-            $oViewConf->setViewConfigParam( 'ajaxlink', str_replace( '&amp;', '&', $mySession->url( $sURL.'/oxajax.php' ) ) );
+            $oViewConf->setViewConfigParam( 'selflink', $mySession->url($sURL.'index.php') );
+            $oViewConf->setViewConfigParam( 'ajaxlink', str_replace( '&amp;', '&', $mySession->url( $sURL.'oxajax.php' ) ) );
         }
 
         // set langugae in admin

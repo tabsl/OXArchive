@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsserver.php 29251 2010-08-06 12:41:44Z arvydas $
+ * @version   SVN: $Id: oxutilsserver.php 30509 2010-10-25 08:40:17Z vilma $
  */
 
 /**
@@ -95,7 +95,7 @@ class oxUtilsServer extends oxSuperCfg
         // or allowing only http access to cookie [no JS access - reduces XSS attack possibility]
         // ref: http://lt.php.net/manual/en/function.setcookie.php
 
-        if ( $blToSession ) {
+        if ( $blToSession && !$this->isAdmin() ) {
            $this->_saveSessionCookie( $sName, $sValue, $iExpire, $sPath, $sDomain );
         }
 

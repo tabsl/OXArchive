@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: navigation.php 29634 2010-09-02 12:54:46Z vilma $
+ * @version   SVN: $Id: navigation.php 30308 2010-10-13 14:59:26Z rimvydas.paskevicius $
  */
  /**
  * Administrator GUI navigation manager class.
@@ -231,8 +231,9 @@ class Navigation extends oxAdminView
             $aMessage['warning'] .= ((! empty($aMessage['warning']))?"<br>":'').oxLang::getInstance()->translateString('SETUP_DIRNOTDELETED_WARNING');
         }
 
-        // check if updateApp dir is deleted
-        if ( file_exists( $this->getConfig()->getConfigParam( 'sShopDir' ) . '/updateApp' ) ) {
+        // check if updateApp dir is deleted or empty
+        $sUpdateDir = $this->getConfig()->getConfigParam( 'sShopDir' ) . '/updateApp/';
+        if ( file_exists( $sUpdateDir ) && !(count(glob("$sUpdateDir/*")) === 0) ) {
             $aMessage['warning'] .= ((! empty($aMessage['warning']))?"<br>":'').oxLang::getInstance()->translateString('UPDATEAPP_DIRNOTDELETED_WARNING');
         }
 

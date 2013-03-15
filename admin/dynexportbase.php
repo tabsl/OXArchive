@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: dynexportbase.php 28929 2010-07-23 07:06:06Z vilma $
+ * @version   SVN: $Id: dynexportbase.php 30080 2010-10-04 11:23:36Z dainius.bigelis $
  */
 
 /**
@@ -892,3 +892,4 @@ class DynExportBase extends oxAdminDetails
         return 'dyn_interface';
     }
 }
+

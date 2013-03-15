@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxemail.php 29935 2010-09-22 22:34:57Z alfonsas $
+ * @version   SVN: $Id: oxemail.php 30093 2010-10-04 14:32:02Z rimvydas.paskevicius $
  */
 /**
  * Includes PHP mailer class.
@@ -348,13 +348,14 @@ class oxEmail extends PHPMailer
         }
 
         $this->_makeOutputProcessing();
-
+        
         // try to send mail via SMTP
         if ( $this->getMailer() == 'smtp' ) {
             $blRet = $this->_sendMail();
-
+ 
             // if sending failed, try to send via mail()
             if ( !$blRet ) {
+                $blSmtpSendFailed = true;
                 $this->setMailer( 'mail' );
                 $blRet = $this->_sendMail();
             }
@@ -364,7 +365,7 @@ class oxEmail extends PHPMailer
             $blRet = $this->_sendMail();
         }
 
-        if ( !$blRet ) {
+        if ( !$blRet || $blSmtpSendFailed ) {
             // failed sending, giving up, trying to send notification to shop owner
             $this->_sendMailErrorMsg();
         }

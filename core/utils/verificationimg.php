@@ -19,7 +19,7 @@
  * @package   utils
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: verificationimg.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: verificationimg.php 30222 2010-10-11 08:48:17Z alfonsas $
  */
 
 /**
@@ -29,14 +29,10 @@
  */
 function getShopBasePath()
 {
-    $sFilePath = dirname(__FILE__);        //file location [shoproot]/core/utils/verificationimg.hphp
-    // go up two dir levels (from /core/utils to shopdir)
-    for ($i = 0; $i < 2; $i++) {
-        $iPos = strrpos($sFilePath, DIRECTORY_SEPARATOR);
-        $sFilePath = substr($sFilePath, 0, $iPos);
-    }
-    return $sFilePath."/";
+    //file location [shoproot]/core/utils/verificationimg.php
+    return realpath(dirname(__FILE__).'/../..').'/';
 }
+
 
 
 /**
@@ -46,6 +42,7 @@ require_once getShopBasePath().'core/oxfunctions.php' ;
 
 // Including main ADODB include
 require_once getShopBasePath() . 'core/adodblite/adodb.inc.php';
+
 
 // #1428C - spam spider prevension
 if (isset($_GET['e_mac'])) {

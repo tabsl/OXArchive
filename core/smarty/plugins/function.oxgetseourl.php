@@ -19,7 +19,7 @@
  * @package   smarty_plugins
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: function.oxgetseourl.php 25755 2010-02-10 13:59:48Z sarunas $
+ * @version   SVN: $Id: function.oxgetseourl.php 30070 2010-09-30 15:55:06Z rimvydas.paskevicius $
  */
 
 
@@ -48,8 +48,17 @@ function smarty_function_oxgetseourl( $params, &$smarty )
         // special case for content type object when ident is provided
         if ( $sType == 'oxcontent' && $sIdent && $oObject->loadByIdent( $sIdent ) ) {
             $sUrl = $oObject->getLink();
-        } elseif ( $sOxid && $oObject->load( $sOxid ) ) {
-            $sUrl = $oObject->getLink();
+        } elseif ( $sOxid ) {
+            //minimising aricle object loading
+            if ( strtolower($sType) == "oxarticle") {
+                $oObject->disablePriceLoad( $oObject );
+                $oObject->setNoVariantLoading( true );
+                $oObject->oxarticles__oxlongdesc = null;
+            }
+
+            if ( $oObject->load( $sOxid ) ) {            
+                $sUrl = $oObject->getLink();
+            }
         }
     } elseif ( $sUrl && oxUtils::getInstance()->seoIsActive() ) {
         // if SEO is on ..

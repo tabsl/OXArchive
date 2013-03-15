@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 29656 2010-09-07 12:46:40Z vilma $
+ * @version   SVN: $Id: help_lang.php 30111 2010-10-05 14:45:38Z linas.kukulskis $
  */
 
 /**
@@ -294,7 +294,7 @@ $aLang =  array(
 
 'HELP_ARTICLE_MAIN_VAT'                         =>  'Hier können Sie für diesen Artikel einen speziellen Mehrwertsteuersatz eingeben (z. B: 7% für Lebensmittel).',
 
-'HELP_ARTICLE_MAIN_TAGS'                        =>  'Hier können Sie passende Stichworte zum Artikel eingeben. Aus diesen Stichworten wird die Tagcloud (Stichwortwolke) auf der Startseite generiert. Die einzelnen Stichworte werden mit Leerzeichen getrennt.',
+'HELP_ARTICLE_MAIN_TAGS'                        =>  'Hier können Sie passende Stichworte zum Artikel eingeben. Aus diesen Stichworten wird die Tagcloud (Stichwortwolke) auf der Startseite generiert. Tags werden durch Komma getrennt.',
 
 
 

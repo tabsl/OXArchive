@@ -1,8 +1,30 @@
 <?php
-     require_once "lang.php";
-?>
+/**
+ *    This file is part of OXID eShop Community Edition.
+ *
+ *    OXID eShop Community Edition is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    OXID eShop Community Edition is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @link      http://www.oxid-esales.com
+ * @package   setup
+ * @copyright (C) OXID eSales AG 2003-2010
+ * @version OXID eShop CE
+ * @version   SVN: $Id: dyn_content_notice.php 30098 2010-10-05 11:17:16Z sarunas $
+ */
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+require_once "lang.php";
+
+?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 
 <html>
 <head>

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsysrequirements.php 29902 2010-09-17 15:40:37Z sarunas $
+ * @version   SVN: $Id: oxsysrequirements.php 30393 2010-10-19 12:41:04Z vilma $
  */
 
 /**
@@ -117,6 +117,8 @@ class oxSysRequirements
     protected $_aInfoMap    = array( "php_version"        => "PHP_version_at_least_5.2.0",
                                      "lib_xml2"           => "LIB_XML2",
                                      "php_xml"            => "DOM",
+                                     "open_ssl"           => "OpenSSL",
+                                     "soap"               => "SOAP",
                                      "j_son"              => "JSON",
                                      "i_conv"             => "ICONV",
                                      "tokenizer"          => "Tokenizer",
@@ -166,6 +168,8 @@ class oxSysRequirements
                                           'mb_string',
                                           'curl',
                                           'bc_math',
+                                          'open_ssl',
+                                          'soap',
                                       );
 
             $aRequiredPHPConfigs = array(
@@ -502,6 +506,26 @@ class oxSysRequirements
     public function checkBcMath()
     {
         return extension_loaded( 'bcmath' ) ? 2 : 1;
+    }
+
+    /**
+     * Checks if openssl extension is loaded
+     *
+     * @return integer
+     */
+    public function checkOpenSsl()
+    {
+        return extension_loaded( 'openssl' ) ? 2 : 1;
+    }
+
+    /**
+     * Checks if SOAP extension is loaded
+     *
+     * @return integer
+     */
+    public function checkSoap()
+    {
+        return extension_loaded( 'soap' ) ? 2 : 1;
     }
 
     /**

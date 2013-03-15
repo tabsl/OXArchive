@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 29656 2010-09-07 12:46:40Z vilma $
+ * @version   SVN: $Id: help_lang.php 30111 2010-10-05 14:45:38Z linas.kukulskis $
  */
 
 /**
@@ -298,7 +298,7 @@ $aLang =  array(
 
 'HELP_ARTICLE_MAIN_VAT'                         =>  'Here you can enter a special VAT for this product. This VAT is used for this product in all later calculations (basket, order, invoice)',
 
-'HELP_ARTICLE_MAIN_TAGS'                        =>  'Here you can enter tags for the product. From these tags the tag cloud on the front page is generated. The tags are separated by a space.',
+'HELP_ARTICLE_MAIN_TAGS'                        =>  'Here you can enter tags for the product. From these tags the tag cloud on the front page is generated. The tags are separated by a comma.',
 
 
 

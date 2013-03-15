@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: tag.php 25542 2010-02-02 11:28:16Z alfonsas $
+ * @version   SVN: $Id: tag.php 30110 2010-10-05 14:33:36Z rimvydas.paskevicius $
  */
 
 /**
@@ -87,19 +87,25 @@ class Tag extends aList
         oxUBase::render();
 
         $myConfig = $this->getConfig();
+        
+        $oArticleList = $this->getArticleList();
 
-        // load vendor
-        $this->_aViewData['articlelist']       = $this->getArticleList();
+        //if no articles - showing 404 header (#2139)
+        if ( !$oArticleList || count( $oArticleList ) < 1 ) {
+            error_404_handler();
+        }
+
+        $this->_aViewData['articlelist']       = $oArticleList;
         $this->_aViewData['title']             = $this->getTitle();
         $this->_aViewData['template_location'] = $this->getTemplateLocation();
         $this->_aViewData['searchtag']         = $this->getTag();
 
         $this->_aViewData['pageNavigation']    = $this->getPageNavigation();
-        $this->_aViewData['actCategory']    = $this->getActiveCategory();
+        $this->_aViewData['actCategory']       = $this->getActiveCategory();
 
         // processing list articles
         $this->_processListArticles();
-
+        
         return $this->_sThisTemplate;
     }
 
@@ -129,18 +135,17 @@ class Tag extends aList
     }
 
     /**
-     * Loads and returns article list of active vendor.
+     * Loads and returns article list according active tag.
      *
-     * @param object $oVendor vendor object
+     * @param object $oCategory category object
      *
      * @return array
      */
-    protected function _loadArticles( $oVendor )
+    protected function _loadArticles( $oCategory )
     {
         // load only articles which we show on screen
         $iNrofCatArticles = (int) $this->getConfig()->getConfigParam( 'iNrofCatArticles' );
         $iNrofCatArticles = $iNrofCatArticles?$iNrofCatArticles:1;
-
         $oArtList = oxNew( 'oxarticlelist' );
         $oArtList->setSqlLimit( $iNrofCatArticles * $this->getActPage(), $iNrofCatArticles );
         $oArtList->setCustomSorting( $this->getSortingSql( 'oxtags' ) );
@@ -245,6 +250,7 @@ class Tag extends aList
                 $this->_aArticleList = $this->_loadArticles( null );
             }
         }
+        
         return $this->_aArticleList;
     }
 

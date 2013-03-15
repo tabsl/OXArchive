@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 29757 2010-09-07 15:02:08Z tomas $
+ * @version   SVN: $Id: oxarticle.php 30485 2010-10-22 11:02:12Z vilma $
  */
 
 // defining supported link types
@@ -533,8 +533,12 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
                 }
                 return;
                 break;
-            /*case 'oxarticles__oxnid':
-                return $this->getId();*/
+        }
+
+        //checking for zoom picture
+        if ( strpos($sName, "oxarticles__oxzoom") === 0 ) {
+            $this->_assignZoomPictureValues( $sName );
+            return $this->$sName;
         }
 
         $this->$sName = parent::__get($sName);
@@ -543,7 +547,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         }
 
         //checking for picture information
-        if ($sName == "oxarticles__oxthumb" || $sName == "oxarticles__oxicon" || (strpos($sName, "oxarticles__oxpic") === 0 && $sName != "oxarticles__oxpicsgenerated") || strpos($sName, "oxarticles__oxzoom") === 0) {
+        if ( $sName == "oxarticles__oxthumb" || $sName == "oxarticles__oxicon" || (strpos($sName, "oxarticles__oxpic") === 0 && $sName != "oxarticles__oxpicsgenerated") ) {
             $this->_assignPictureValues( $sName );
             return $this->$sName;
         }
@@ -2541,19 +2545,26 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      */
     public function addTag($sTag)
     {
+        $oDb = oxDb::getDb();
         $sTag = mysql_real_escape_string($sTag);
 
         $oTagCloud = oxNew('oxtagcloud');
         $oTagCloud->resetTagCache();
         $sTag = $oTagCloud->prepareTags($sTag);
         $sTagSeparator = $this->getConfig()->getConfigParam('sTagSeparator');
-        $sTailTag = $sTagSeparator.$sTag;
 
-        $sField = "oxartextends.OXTAGS".oxLang::getInstance()->getLanguageTag();
+        $sField = "oxartextends.OXTAGS" . oxLang::getInstance()->getLanguageTag();
+
+        if ( $oDb->getOne( "select $sField from oxartextends where oxartextends.OXID = '{$this->getId()}'" ) ) {
+            $sTailTag = $sTagSeparator . $sTag;
+        } else {
+            $sTailTag = $sTag;
+        }
+
         $sQ = "insert into oxartextends (oxartextends.OXID, $sField) values ('".$this->getId()."', '{$sTag}')
                        ON DUPLICATE KEY update $sField = CONCAT(TRIM($sField), '$sTailTag') ";
 
-        return oxDb::getDb()->Execute($sQ);
+        return $oDb->Execute($sQ);
     }
 
     /**
@@ -3663,14 +3674,17 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
                 }
             } elseif ( stristr($sCopyFieldName, '_oxzoom') ) {
                 // for zoom images checking master image with specified index
-                $iIndex = (int) str_ireplace( "oxzoom", "", $sFieldName );
-                if ( $this->_isFieldEmpty( $sCopyFieldName ) && !$this->_hasMasterImage( $iIndex ) ) {
+                // assign from parent only if no pictures to variant are added
+                $iIndex = (int) str_ireplace( "oxarticles__oxzoom", "", $sFieldName );
+                if ( $this->_isFieldEmpty( $sCopyFieldName ) && !$this->_hasMasterImage( $iIndex ) && !$this->_hasMasterImage( 1 ) ) {
                     $this->$sCopyFieldName = clone $oParentArticle->$sCopyFieldName;
                 }
+            } elseif ( stristr($sCopyFieldName, '_oxpicsgenerated') && $this->{$sCopyFieldName}->value == 0 ) {
+                // if no pics generated for variants, load all from
+                $this->$sCopyFieldName = clone $oParentArticle->$sCopyFieldName;
             } elseif ($this->_isFieldEmpty($sCopyFieldName) || in_array( $sCopyFieldName, $this->_aCopyParentField ) ) {
                 $this->$sCopyFieldName = clone $oParentArticle->$sCopyFieldName;
             }
-
         }
     }
 
@@ -3758,13 +3772,47 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         $this->_assignPictureValues( "oxarticles__oxthumb" );
 
         $iPicCount = $myConfig->getConfigParam( 'iPicCount' );
+
         for ( $i=1; $i<= $iPicCount; $i++ ) {
             $this->_assignPictureValues( "oxarticles__oxpic".$i );
         }
 
         if ( $iZoomPicCount = $myConfig->getConfigParam( 'iZoomPicCount' ) ) {
             for ( $i=1; $i<= $iZoomPicCount; $i++ ) {
-                $this->_assignPictureValues( "oxarticles__oxzoom".$i );
+                $this->_assignZoomPictureValues( "oxarticles__oxzoom".$i );
+            }
+        }
+    }
+
+    /**
+     * Assigns picture values to article.
+     *
+     * @param string $sName field name
+     *
+     * @return null
+     */
+    protected function _assignZoomPictureValues( $sName='' )
+    {
+        if ( $this->isAdmin() ) {
+            return;
+        }
+
+        $sFieldName = substr_replace( $sName, "", 0, 12);
+
+        $aAllFields = $this->_getAllFields( true );
+
+        if ( isset( $aAllFields[$sFieldName] ) ) {
+            $this->$sName = parent::__get( $sName );
+            $this->$sName->value;
+        }
+
+        $this->_assignParentFieldValue( $sName );
+
+        $iIndex = (int) str_ireplace( "oxzoom", "", $sFieldName );
+
+        if ( isset($this->_aFieldNames[$sFieldName]) || isset($this->_aFieldNames["oxpic".$iIndex]) ) {
+            if ( $iIndex > 0 ) {
+                $this->$sName = new oxField( 'z' . $iIndex.'/'.$this->_getZoomPictureName($iIndex) );
             }
         }
     }
@@ -3797,7 +3845,6 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         }
 
         $iPicCount = $myConfig->getConfigParam( 'iPicCount' );
-
         if ( strpos($sFieldName, "oxpic") === 0 && isset($this->_aFieldNames[$sFieldName] ) ) {
 
             $iIndex = (int) str_ireplace( "oxpic", "", $sFieldName );
@@ -3806,19 +3853,6 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
                 $this->$sName = new oxField( $iIndex . '/'.$this->_getPictureName($iIndex) );
                 $this->{$sName.'_ico'} = new oxField( $iIndex . '/'.$this->_getIconName($iIndex) );
                 return;
-            }
-        }
-
-        if ( strpos($sFieldName, "oxzoom") === 0 ) {
-
-            $iIndex = (int) str_ireplace( "oxzoom", "", $sFieldName );
-
-            // if oxzoom or oxpic field with same index is setted, loading field values
-            if ( isset($this->_aFieldNames[$sFieldName]) || isset($this->_aFieldNames["oxpic".$iIndex]) ) {
-                if ( $iIndex > 0 && $iIndex < $iPicCount ) {
-                    $this->$sName = new oxField( 'z' . $iIndex.'/'.$this->_getZoomPictureName($iIndex) );
-                    return;
-                }
             }
         }
     }
@@ -4509,7 +4543,11 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     public function updateAmountOfGeneratedPictures( $iTotalGenerated )
     {
         $this->oxarticles__oxpicsgenerated = new oxField( $iTotalGenerated );
-        $this->save();
+        $oDb = oxDb::getDb();
+        $sIdQuoted = $oDb->quote($this->getId());
+
+        $sQ = 'update oxarticles set oxpicsgenerated = '.$iTotalGenerated.' where oxid = '.$sIdQuoted;
+        $oDb->execute( $sQ );
     }
 
     /**
@@ -4541,6 +4579,9 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         $sPicName = basename($this->{"oxarticles__oxpic" . $iIndex}->value);
 
         if ( $sPicName == "nopic.jpg" ) {
+            return false;
+        }
+        if ( $this->isVariant() && $this->getParentArticle()->{"oxarticles__oxpic".$iIndex}->value == $this->{"oxarticles__oxpic".$iIndex}->value ) {
             return false;
         }
 

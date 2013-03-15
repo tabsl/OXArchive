@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 28697 2010-06-29 11:09:58Z vilma $
+ * @version   SVN: $Id: lang.php 30408 2010-10-20 08:34:23Z linas.kukulskis $
  */
 
 
@@ -189,7 +189,7 @@ $aLang = array(
 'ADD_RECOMM_ADDRECOMMLINK2'                       => "here",
 'BASKET_EXCLUDE_HEAD'                             => "Root category changed",
 'BASKET_EXCLUDE_MSG'                              => "Denied by shop rules.",
-'BASKET_EXCLUDE_INFO'                             => "You can proceed to checkout and finalize order.<br>Or you can continue, but all cart content will be emptied",
+'BASKET_EXCLUDE_INFO'                             => "You can proceed to checkout and finalize order.<br>Or you can continue shopping, but all cart content will be emptied.",
 'BASKET_BASKET'                                   => "View Cart",
 'BASKET_EMPTYSHIPPINGCART'                        => "The Shopping Cart is empty.",
 'BASKET_NEXTSTEP'                                 => "Continue to Next Step",

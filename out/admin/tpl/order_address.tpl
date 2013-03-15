@@ -23,7 +23,6 @@
 <table cellspacing="0" cellpadding="0" border="0"  width="98%">
 <tr>
     <td valign="top" class="edittext">
-
         <b>[{ oxmultilang ident="GENERAL_BILLADDRESS" }]</b><br>
         <br>
         <table cellspacing="0" cellpadding="0" border="0">
@@ -171,8 +170,10 @@
             [{ oxmultilang ident="GENERAL_BILLSAL" }]
             </td>
             <td class="edittext">
-            <input type="text" class="editinput" size="15" maxlength="[{$edit->oxorder__oxdelsal->fldmax_length}]" name="editval[oxorder__oxdelsal]" value="[{$edit->oxorder__oxdelsal->value }]" [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_BILLSAL" }]
+            	<select name="editval[oxorder__oxdelsal]" class="editinput" [{ $readonly }]>
+	                <option value="MR"  [{if $edit->oxorder__oxdelsal->value|lower  == "mr"  }]SELECTED[{/if}]>[{ oxmultilang ident="MR"  }]</option>
+	                <option value="MRS" [{if $edit->oxorder__oxdelsal->value|lower  == "mrs" }]SELECTED[{/if}]>[{ oxmultilang ident="MRS" }]</option>
+            	</select>
             </td>
         </tr>
         <tr>
