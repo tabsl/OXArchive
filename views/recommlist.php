@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: recommlist.php 26303 2010-03-04 16:11:37Z sarunas $
+ * @version   SVN: $Id: recommlist.php 31081 2010-11-23 07:55:44Z arvydas $
  */
 
 /**
@@ -557,7 +557,7 @@ class RecommList extends aList
         if ( oxUtils::getInstance()->seoIsActive() && ( $oRecomm = $this->getActiveRecommList() ) ) {
             if ( $iPage ) {
                 // only if page number > 0
-                $sUrl = oxSeoEncoderRecomm::getInstance()->getRecommPageUrl( $oRecomm, $iPage, $iLang, true );
+                $sUrl = $oRecomm->getBaseSeoLink( $iLang, $iPage );
             }
         } else {
             $sUrl = oxUBase::_addPageNrParam( $sUrl, $iPage, $iLang );

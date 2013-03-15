@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 30111 2010-10-05 14:45:38Z linas.kukulskis $
+ * @version   SVN: $Id: help_lang.php 31242 2010-11-25 15:08:13Z linas.kukulskis $
  */
 
 /**
@@ -203,6 +203,8 @@ $aLang =  array(
 'HELP_SHOP_CONFIG_FBLIKE'                       =>  'Zeigt Facebooks \'Like button\' mit dem die Besucher Ihres Shops in Facebook bekannt geben, dass Sie Ihren Shop mögen.',
 
 'HELP_SHOP_CONFIG_FACEBOOKCONNECT'              =>  'Facebook Connect anzeigen damit Anwender sich mit ihren Facebook-Profildaten im Shop anmelden können.',
+
+'HELP_SHOP_CONFIG_ATTENTION'                    => 'ACHTUNG! Üblicherweise ist in den Verträgen mit MasterCard und VISA die Speicherung der Daten ausdrücklich verboten.',
 
 'HELP_SHOP_MALL_MALLMODE'                       =>  'Hier stellen Sie ein, was auf der Startseite dieses eShops angezeigt werden soll: '.
                                                     '<ul><li><span class="navipath_or_inputname">Shop-Auswahlseite</span>: Eine Seite wird angezeigt, auf der Kunden zwischen den verschiedenen Shops wählen können.</li>' .

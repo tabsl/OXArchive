@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxfunctions.php 28565 2010-06-22 16:50:26Z tomas $
+ * @version   SVN: $Id: oxfunctions.php 30865 2010-11-12 07:29:37Z arvydas $
  */
 
 /**
@@ -272,16 +272,16 @@ function stopProfile( $sProfileName )
  * error message.
  *
  * @param string $sClassName Name of class
- * @param string $sParams    Parameters to object
  *
  * @throws oxSystemComponentException in case that class does not exists
  *
  * @return object
  */
-function oxNew( $sClassName, $sParams = null )
+function oxNew( $sClassName )
 {
     startProfile( 'oxNew' );
-    $oRes = oxUtilsObject::getInstance()->oxNew( $sClassName, $sParams );
+    $aArgs = func_get_args();
+    $oRes = call_user_func_array( array( oxUtilsObject::getInstance(), "oxNew" ), $aArgs );
     stopProfile( 'oxNew' );
     return $oRes;
 }

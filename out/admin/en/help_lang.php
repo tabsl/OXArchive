@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 30111 2010-10-05 14:45:38Z linas.kukulskis $
+ * @version   SVN: $Id: help_lang.php 31150 2010-11-25 08:18:37Z linas.kukulskis $
  */
 
 /**
@@ -208,6 +208,9 @@ $aLang =  array(
 'HELP_SHOP_CONFIG_FBLIKE'                       =>  'Enables users to make connections to your pages and share content back to their friends on Facebook with one click.',
 
 'HELP_SHOP_CONFIG_FACEBOOKCONNECT'              =>  'Show Facebook Connect box which allows users to log in into eShop using theirs Facebook accunt data.',
+
+
+'HELP_SHOP_CONFIG_ATTENTION'                         => 'Caution: Even if encryption is used, Credit Card contracts usually prohibit this strictly!',
 
 'HELP_SHOP_MALL_MALLMODE'                       =>  'Here you can set what is shown as front page of this eShop:' .
                                                     '<ul><li><span class="navipath_or_inputname">Show shop selector</span>: A page where the different eShops can be selected is shown.</li>' .

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsobject.php 28595 2010-06-23 11:45:44Z sarunas $
+ * @version   SVN: $Id: oxutilsobject.php 31053 2010-11-19 16:52:01Z arvydas $
  */
 
 /**
@@ -85,18 +85,21 @@ class oxUtilsObject extends oxSuperCfg
      * error message.
      *
      * @param string $sClassName Name of class
-     * @param string $sParams    Parameters to object
      *
      * @throws oxSystemComponentException in case that class does not exists
      *
      * @return object
      */
-    public function oxNew( $sClassName, $sParams = null )
+    public function oxNew( $sClassName )
     {
+        $aArgs = func_get_args();
+        array_shift( $aArgs );
+        $iArgCnt = count( $aArgs );
+        $blCacheObj = $iArgCnt < 2;
         $sClassName = strtolower( $sClassName );
-        $sCacheKey  = ($sParams !== null )?$sClassName.md5( serialize( $sParams ) ):$sClassName;
 
-        if ( !defined( 'OXID_PHP_UNIT' ) ) {
+        if ( !defined( 'OXID_PHP_UNIT' ) && $blCacheObj ) {
+            $sCacheKey  = ( $iArgCnt )?$sClassName.md5( serialize( $aArgs ) ):$sClassName;
             if ( isset( self::$_aInstanceCache[$sCacheKey] ) ) {
                 return clone self::$_aInstanceCache[$sCacheKey];
             }
@@ -119,17 +122,58 @@ class oxUtilsObject extends oxSuperCfg
             $this->_aClassNameCache[$sClassName] = $sActionClassName;
         }
 
-        if ( $sParams ) {
-            $oActionObject = new $sActionClassName( $sParams );
-        } else {
-            $oActionObject = new $sActionClassName();
-        }
-
-        if ( $oActionObject instanceof oxBase ) {
+        $oActionObject = $this->_getObject( $sActionClassName, $iArgCnt, $aArgs );
+        if ( $blCacheObj && $oActionObject instanceof oxBase ) {
             self::$_aInstanceCache[$sCacheKey] = clone $oActionObject;
         }
 
         return $oActionObject;
+    }
+
+    /**
+     * Creates object with dynamic constructor parameters.
+     * If parameter count > 5 - exception is thrown
+     *
+     * @param string $sClassName class name
+     * @param int    $iArgCnt    argument count
+     * @param array  $aParams    constructor parameters
+     *
+     * @throws oxSystemComponentException in case parameters count > 5
+     *
+     * @return mixed
+     */
+    protected function _getObject( $sClassName, $iArgCnt, $aParams )
+    {
+        // dynamic creation (if parameter count < 4) gives more performance for regular objects
+        switch( $iArgCnt ) {
+            case 0:
+                $oObj = new $sClassName();
+                break;
+            case 1:
+                $oObj = new $sClassName( $aParams[0] );
+                break;
+            case 2:
+                $oObj = new $sClassName( $aParams[0], $aParams[1] );
+                break;
+            case 3:
+                $oObj = new $sClassName( $aParams[0], $aParams[1], $aParams[2] );
+                break;
+            default:
+                try {
+                    // unlimited constructor arguments support
+                    $oRo = new ReflectionClass( $sClassName );
+                    $oObj = $oRo->newInstanceArgs( $aParams );
+                } catch ( ReflectionException $oRefExcp ) {
+                    // something went wrong?
+                    $oEx = new oxSystemComponentException();
+                    $oEx->setMessage( $oRefExcp->getMessage() );
+                    $oEx->setComponent( $sClassName );
+                    $oEx->debugOut();
+                    throw $oEx;
+                }
+        }
+
+        return $oObj;
     }
 
     /**

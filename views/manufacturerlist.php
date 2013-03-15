@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: manufacturerlist.php 26737 2010-03-22 14:04:23Z arvydas $
+ * @version   SVN: $Id: manufacturerlist.php 31083 2010-11-23 08:02:22Z arvydas $
  */
 
 /**
@@ -225,7 +225,7 @@ class ManufacturerList extends aList
         if ( oxUtils::getInstance()->seoIsActive() && ( $oManufacturer = $this->getActManufacturer() ) ) {
             if ( $iPage ) {
                 // only if page number > 0
-                $sUrl = oxSeoEncoderManufacturer::getInstance()->getManufacturerPageUrl( $oManufacturer, $iPage, $iLang );
+                $sUrl = $oManufacturer->getBaseSeoLink( $iLang, $iPage );
             }
         } else {
             $sUrl = parent::_addPageNrParam( $sUrl, $iPage, $iLang );

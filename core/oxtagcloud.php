@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxtagcloud.php 30339 2010-10-15 12:32:54Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxtagcloud.php 31304 2010-11-29 12:09:56Z alfonsas $
  */
 
 if (!defined('OXTAGCLOUD_MINFONT')) {
@@ -87,6 +87,14 @@ class oxTagCloud extends oxSuperCfg
      * @var string
      */
     protected $_sSeparator = ' ';
+
+    /**
+     * Meta characters.
+     * Array of meta chars used for FULLTEXT index.
+     *
+     * @var array
+     */
+    protected $_aMetaChars = array('+','-','>','<','(',')','~','*','"','\\');
 
     /**
      * Object constructor. Initializes separator.
@@ -219,13 +227,11 @@ class oxTagCloud extends oxSuperCfg
         $oSeoEncoderTag = oxSeoEncoderTag::getInstance();
         $iLang = $this->getLanguageId();
 
+        $sUrl = false;
         if ( oxUtils::getInstance()->seoIsActive() ) {
             $sUrl = $oSeoEncoderTag->getTagUrl( $sTag, $iLang );
-        } else {
-            $sUrl = $this->getConfig()->getShopUrl() . $oSeoEncoderTag->getStdTagUri( $sTag ) . "&amp;lang=" . $iLang;
         }
-
-        return $sUrl;
+        return $sUrl ? $sUrl : $this->getConfig()->getShopUrl() . $oSeoEncoderTag->getStdTagUri( $sTag ) . "&amp;lang=" . $iLang;
     }
 
     /**
@@ -405,11 +411,11 @@ class oxTagCloud extends oxSuperCfg
 
         $sTagCloud = false;
         foreach ( $aTags as $sTag => $sRelevance ) {
+            $sLink = false;
             if ( $blSeoIsActive ) {
                 $sLink = $oSeoEncoderTag->getTagUrl( $sTag, $iLang );
-            } else {
-                $sLink = $sUrl . $oSeoEncoderTag->getStdTagUri( $sTag ) . "&amp;lang=" . $iLang;
             }
+            $sLink = $sLink ? $sLink : $sUrl . $oSeoEncoderTag->getStdTagUri( $sTag ) . "&amp;lang=" . $iLang;
             $iFontSize = $this->_getFontSize( $sRelevance, $iMaxHit );
             $sTagCloud .= "<a style='font-size:". $iFontSize ."%;' class='tagitem_". $iFontSize . "' href='$sLink'>".$oStr->htmlentities($sTag)."</a> ";
         }
@@ -461,12 +467,32 @@ class oxTagCloud extends oxSuperCfg
         $oStr = getStr();
         $sTag = trim( $sTag );
         $iLen = $oStr->strlen( $sTag );
-            
+
         if ( $iLen < OXTAGCLOUD_MINTAGLENGTH ) {
             $sTag .= str_repeat( '_', OXTAGCLOUD_MINTAGLENGTH - $iLen );
-        } 
+        }
 
         return $sTag;
+    }
+
+    /**
+     * Strips any mysql FULLTEXT specific meta characters.
+     *
+     * @param string $sText given text
+     *
+     * @return string
+     */
+    public function stripMetaChars( $sText )
+    {
+        $oStr  = getStr();
+
+        // Remove meta chars
+        $sText = str_replace($this->_aMetaChars, ' ', $sText);
+
+        // Replace multiple spaces with single space
+        $sText = $oStr->preg_replace( "/\s+/", " ", trim( $sText ) );
+
+        return $sText;
     }
 
     /**
@@ -479,34 +505,23 @@ class oxTagCloud extends oxSuperCfg
      */
     public function prepareTags( $sTags )
     {
+        $sTags = $this->stripMetaChars($sTags);
         $aTags = explode( $this->_sSeparator, $sTags );
-        $sRes = '';
+        $aRes = array();
         $oStr = getStr();
-        
-        foreach ( $aTags as $sTag ) {
-            $sTag = trim( $sTag );
-            
-            if ( ( $iLen = $oStr->strlen( $sTag ) ) ) {
-                if ( $iLen < OXTAGCLOUD_MINTAGLENGTH ) {
-                    $sTag = $this->_fixTagLength( $sTag );
-                } elseif ( $oStr->preg_match("/(\w|\d){1,".(OXTAGCLOUD_MINTAGLENGTH-1)."}\b/", $sTag) ) {
-                    // checked if there are words less than OXTAGCLOUD_MINTAGLENGTH
-                    // (e.g. bar-set) - if yes, adding "_" to each to short word end (#2147) 
-                    $aSplittedTags = explode( "-", $sTag );
-                    if ( is_array($aSplittedTags) ) {
-                        foreach ( $aSplittedTags as $sKey => $sValue ) {
-                            $aSplittedTags[$sKey] = $this->_fixTagLength( $sValue );
-                        }
-                        
-                        $sTag = implode( "-", $aSplittedTags );             
-                    }
-                }
 
-                $sRes .= trim($oStr->strtolower( $sTag )) . $this->_sSeparator;
+        foreach ( $aTags as $sTag ) {
+            if ( ( $sTag = trim( $sTag ) ) ) {
+                $sRes = '';
+                $aMatches = explode(' ', $sTag);
+                foreach ( $aMatches as $iKey => $sMatch ) {
+                    $sRes .= $oStr->strtolower( $this->_fixTagLength($sMatch ) )." ";
+                }
+                $aRes[] = trim( $sRes );
             }
         }
 
-        return trim( $sRes, $this->_sSeparator);
+        return implode( $this->_sSeparator, $aRes );
     }
 
     /**
@@ -518,12 +533,22 @@ class oxTagCloud extends oxSuperCfg
      */
     public function trimTags( $sTags )
     {
-        $sTags = trim( $sTags );     
         $oStr = getStr();
-        $sTags = $oStr->preg_replace( "/(\s*\,+\s*)+/", ",", $sTags );
-        $sTags = $oStr->preg_replace( "/([^_])_+(?=(,|-|$))/", "$1", $sTags );
-        
-        return trim( $sTags, $this->_sSeparator);
+        $sTags = $oStr->preg_replace( "/(\s*\,+\s*)+/", ",", trim( $sTags ) );
+        $sRes = '';
+
+        if ( $oStr->preg_match_all( "/([\s\,\-]?)([^\s\,\-]+)([\s\,\-]?)/", $sTags, $aMatches ) ) {
+            foreach ( $aMatches[0] as $iKey => $sMatch ) {
+                $sProc = $aMatches[2][$iKey];
+                if ( $oStr->strlen( $sProc ) <= OXTAGCLOUD_MINTAGLENGTH ) {
+                    $sProc = rtrim( $sProc, "_" );
+
+                }
+                $sRes .= $aMatches[1][$iKey] . $sProc . $aMatches[3][$iKey];
+            }
+        }
+
+        return trim( $sRes, $this->_sSeparator );
     }
 
     /**

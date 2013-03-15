@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxstrmb.php 26366 2010-03-08 12:18:14Z arvydas $
+ * @version   SVN: $Id: oxstrmb.php 31131 2010-11-24 09:32:06Z arvydas $
  */
 
 /**
@@ -231,6 +231,22 @@ class oxStrMb
     public function preg_match($sPattern, $sSubject, &$aMatches = null, $iFlags = null, $iOffset = null)
     {
         return preg_match( $sPattern.'u', $sSubject, $aMatches, $iFlags, $iOffset);
+    }
+
+    /**
+     * PHP preg_match_all() function wrapper
+     *
+     * @param string $sPattern  pattern to search for, as a string
+     * @param string $sSubject  input string
+     * @param array  &$aMatches is filled with the results of search
+     * @param int    $iFlags    flags
+     * @param int    $iOffset   place from which to start the search
+     *
+     * @return string
+     */
+    public function preg_match_all($sPattern, $sSubject, &$aMatches = null, $iFlags = null, $iOffset = null)
+    {
+        return preg_match_all( $sPattern.'u', $sSubject, $aMatches, $iFlags, $iOffset);
     }
 
     /**

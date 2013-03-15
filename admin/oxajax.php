@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxajax.php 26584 2010-03-16 16:34:23Z arvydas $
+ * @version   SVN: $Id: oxajax.php 30923 2010-11-12 15:52:01Z rimvydas.paskevicius $
  */
 
 // shop path for includes
@@ -558,6 +558,10 @@ class ajaxListComponent extends oxSuperCfg
      */
     public function resetArtSeoUrl( $aArtIds )
     {
+        if ( empty( $aArtIds ) ) {
+            return;
+        }
+
         if ( !is_array( $aArtIds ) ) {
             $aArtIds = array( $aArtIds );
         }

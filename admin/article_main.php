@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: article_main.php 27808 2010-05-19 12:30:31Z sarunas $
+ * @version   SVN: $Id: article_main.php 31235 2010-11-25 13:53:04Z alfonsas $
  */
 
 /**
@@ -99,7 +99,8 @@ class Article_Main extends oxAdminDetails
             $this->_formJumpList($oArticle, $oParentArticle );
 
             //loading tags
-            $oArticle->tags = $oArticle->getTags();
+            $oTagCloud = oxNew("oxTagCloud");
+            $oArticle->tags = $oTagCloud->getTagTitle($oArticle->getTags());
 
             $aLang = array_diff (oxLang::getInstance()->getLanguageNames(), $oOtherLang);
             if ( count( $aLang))

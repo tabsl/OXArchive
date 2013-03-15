@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoder.php 28604 2010-06-23 13:39:50Z tomas $
+ * @version   SVN: $Id: oxseoencoder.php 31085 2010-11-23 08:06:31Z arvydas $
  */
 
 /**
@@ -333,8 +333,11 @@ class oxSeoEncoder extends oxSuperCfg
      */
     protected function _getFullUrl( $sSeoUrl, $iLang = null, $blSsl = false )
     {
-        $sFullUrl = ( $blSsl ? $this->getConfig()->getSslShopUrl( $iLang ) : $this->getConfig()->getShopUrl( $iLang ) ) . $sSeoUrl;
-        $sProcessedUrl =  oxUtilsUrl::getInstance()->processSeoUrl( $sFullUrl );
+        $sProcessedUrl = false;
+        if ( $sSeoUrl ) {
+            $sFullUrl = ( $blSsl ? $this->getConfig()->getSslShopUrl( $iLang ) : $this->getConfig()->getShopUrl( $iLang ) ) . $sSeoUrl;
+            $sProcessedUrl =  oxUtilsUrl::getInstance()->processSeoUrl( $sFullUrl );
+        }
         return $sProcessedUrl;
     }
 

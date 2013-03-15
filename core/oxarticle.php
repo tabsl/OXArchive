@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 30485 2010-10-22 11:02:12Z vilma $
+ * @version   SVN: $Id: oxarticle.php 31159 2010-11-25 10:04:19Z sarunas $
  */
 
 // defining supported link types
@@ -1170,26 +1170,20 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         }
 
         if ( !isset( self::$_aSelList[$sKey] ) ) {
+            $oDb = oxDb::getDb();
+            $sSLViewName = getViewName( 'oxselectlist' );
+
+            $sQ = "select {$sSLViewName}.* from oxobject2selectlist join {$sSLViewName} on $sSLViewName.oxid=oxobject2selectlist.oxselnid
+                   where oxobject2selectlist.oxobjectid=%s order by oxobject2selectlist.oxsort";
+
             // all selectlists this article has
             $oLists = oxNew( 'oxlist' );
-            $oLists->init('oxselectlist');
-            $sSLViewName = getViewName('oxselectlist');
-            $sSelect  = "select $sSLViewName.* from oxobject2selectlist left join $sSLViewName on $sSLViewName.oxid=oxobject2selectlist.oxselnid ";
-            $sSelect .= 'where oxobject2selectlist.oxobjectid=\''.$this->getId().'\' ';
-            //sorting
-            $sSelect .= ' order by oxobject2selectlist.oxsort';
-
-            $oLists->selectString( $sSelect );
+            $oLists->init( 'oxselectlist' );
+            $oLists->selectString( sprintf( $sQ, $oDb->quote( $this->getId() ) ) );
 
             //#1104S if this is variant ant it has no selectlists, trying with parent
-            if ( $this->oxarticles__oxparentid->value && $oLists->count() == 0 ) {
-                $sParentQuoted = oxDb::getDb()->quote($this->oxarticles__oxparentid->value);
-                //#1496C - select fixed ( * => $sSLViewName.*)
-                $sSelect  = "select $sSLViewName.* from oxobject2selectlist left join $sSLViewName on $sSLViewName.oxid=oxobject2selectlist.oxselnid ";
-                $sSelect .= "where oxobject2selectlist.oxobjectid=$sParentQuoted ";
-                //sorting
-                $sSelect .= ' order by oxobject2selectlist.oxsort';
-                $oLists->selectString( $sSelect);
+            if ( $oLists->count() == 0 && $this->oxarticles__oxparentid->value ) {
+                $oLists->selectString( sprintf( $sQ, $oDb->quote( $this->oxarticles__oxparentid->value ) ) );
             }
 
             $dVat = 0;
@@ -2526,14 +2520,20 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      */
     public function saveTags($sTags)
     {
-        $sTags = mysql_real_escape_string($sTags);
+        //do not allow derived update
+        if ( !$this->allowDerivedUpdate() ) {
+            return false;
+        }
+
+
         $oTagCloud = oxNew('oxtagcloud');
         $oTagCloud->resetTagCache();
         $sTags = $oTagCloud->prepareTags($sTags);
+        $sTags = mysql_real_escape_string($sTags);
+
         $sTagField = "oxtags".oxLang::getInstance()->getLanguageTag($this->getLanguage());
         $sQ = "update oxartextends set $sTagField = '$sTags'  where oxid = '".$this->getId()."'";
         return oxDb::getDb()->execute($sQ);
-
     }
 
     /**
@@ -4578,7 +4578,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     {
         $sPicName = basename($this->{"oxarticles__oxpic" . $iIndex}->value);
 
-        if ( $sPicName == "nopic.jpg" ) {
+        if ( $sPicName == "nopic.jpg" || $sPicName == "" ) {
             return false;
         }
         if ( $this->isVariant() && $this->getParentArticle()->{"oxarticles__oxpic".$iIndex}->value == $this->{"oxarticles__oxpic".$iIndex}->value ) {

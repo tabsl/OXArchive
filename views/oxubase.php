@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 29553 2010-08-27 14:48:10Z sarunas $
+ * @version   SVN: $Id: oxubase.php 31084 2010-11-23 08:03:36Z arvydas $
  */
 
 /**
@@ -2316,12 +2316,12 @@ class oxUBase extends oxView
             $this->_oActTag->sTag = $sTag = oxConfig::getParameter("searchtag", 1);
             $oSeoEncoderTag = oxSeoEncoderTag::getInstance();
 
+            $sLink = false;
             if ( oxUtils::getInstance()->seoIsActive() ) {
-                $this->_oActTag->link = $oSeoEncoderTag->getTagUrl( $sTag, oxLang::getInstance()->getBaseLanguage() );
-            } else {
-                $this->_oActTag->link = $this->getConfig()->getShopHomeURL().$oSeoEncoderTag->getStdTagUri( $sTag, false );
+                $sLink = $oSeoEncoderTag->getTagUrl( $sTag, oxLang::getInstance()->getBaseLanguage() );
             }
 
+            $this->_oActTag->link = $sLink ? $sLink : $this->getConfig()->getShopHomeURL().$oSeoEncoderTag->getStdTagUri( $sTag, false );
         }
         return $this->_oActTag;
     }

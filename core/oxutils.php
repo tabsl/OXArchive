@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutils.php 29167 2010-07-29 13:04:46Z arvydas $
+ * @version   SVN: $Id: oxutils.php 31051 2010-11-19 16:02:53Z arvydas $
  */
 
 /**
@@ -36,7 +36,7 @@ class oxUtils extends oxSuperCfg
     /**
      * oxUtils class instance.
      *
-     * @var oxutils* instance
+     * @var oxutils instance
      */
     private static $_instance = null;
 
@@ -68,14 +68,14 @@ class oxUtils extends oxSuperCfg
      *
      * @var array
      */
-    protected $_aFileCacheContents = array();
+    protected $_aLockedFileHandles = array();
 
     /**
-     * Content to be written to file cache
+     * Local cache
      *
      * @var array
      */
-    protected $_aFileCacheWritable = array();
+    protected $_aFileCacheContents = array();
 
     /**
      * Search engine indicator
@@ -502,42 +502,17 @@ class oxUtils extends oxSuperCfg
      *
      * @return null;
      */
-    public function toPhpFileCache($sKey, $mContents)
+    public function toPhpFileCache( $sKey, $mContents )
     {
-        $sFilePath = $this->getCacheFilePath( $sKey, false, 'php' );
-
-        if (!$sFilePath) {
-            return;
-        }
-
-        $sDate = date("Y-m-d H:i:s");
-        $sVarName = '$_aCacheContents';
-
         //only simple arrays are supported
-        if (!is_array($mContents))
-            return;
+        if ( is_array( $mContents ) && ( $sCachePath = $this->getCacheFilePath( $sKey, false, 'php' ) ) ) {
 
-        $sContents = "<?php ?>";
-        if (is_array($mContents)) {
-            $sContents  = "<?php\n//automatically generated file\n//$sDate\n\n$sVarName = array (\n";
-            foreach ($mContents as $sKey => $mVal) {
-                if (!is_numeric($mVal)) {
-                    $mVal = "'$mVal'";
-                }
-                if (!is_numeric($sKey)) {
-                    $sKey = "'$sKey'";
-                }
-                $sContents .= "  $sKey => $mVal,\n";
-            }
-            $sContents .= ");\n?>";
+            // setting meta
+            $this->setCacheMeta( $sKey, array( "serialize" => false, "cachepath" => $sCachePath ) );
+
+            // caching..
+            $this->toFileCache( $sKey, $mContents );
         }
-
-        $hFile = fopen( $sFilePath, "w");
-        if ( $hFile) {
-            fwrite( $hFile, $sContents);
-            fclose( $hFile);
-        }
-
     }
 
     /**
@@ -547,16 +522,37 @@ class oxUtils extends oxSuperCfg
      *
      * @return null;
      */
-    public function fromPhpFileCache($sKey)
+    public function fromPhpFileCache( $sKey )
     {
-        $sFilePath = $this->getCacheFilePath( $sKey, false, 'php' );
+        // setting meta
+        $this->setCacheMeta( $sKey, array( "include" => true, "cachepath" => $this->getCacheFilePath( $sKey, false, 'php' ) ) );
+        return $this->fromFileCache( $sKey );
+    }
 
-        if (file_exists($sFilePath)) {
-            include $sFilePath;
-            return $_aCacheContents;
-        }
+    /**
+     * If available returns cache meta data array
+     *
+     * @param string $sKey meta data/cache key
+     *
+     * @return mixed
+     */
+    public function getCacheMeta( $sKey )
+    {
+        return isset( $this->_aFileCacheMeta[$sKey] ) ? $this->_aFileCacheMeta[$sKey] : false;
+    }
 
-        return null;
+    /**
+     * Saves cache meta data (information)
+     *
+     * @param string $sKey  meta data/cache key
+     * @param array  $aMeta meta data array
+     *
+     * @return null
+     */
+    public function setCacheMeta( $sKey, $aMeta )
+    {
+        // cache meta data
+        $this->_aFileCacheMeta[$sKey] = $aMeta;
     }
 
     /**
@@ -568,34 +564,14 @@ class oxUtils extends oxSuperCfg
      *
      * @return bool
      */
-    public function toFileCache($sKey, $mContents)
+    public function toFileCache( $sKey, $mContents )
     {
-        $sFilePath = $this->getCacheFilePath( $sKey );
-        $iCurTime = oxUtilsDate::getInstance()->getTime();
-
-        //T2009-05-26
-        //due to possible race conditions
-        //check if there are any other cache files already opened for writing by another process
-        //additionally perform the check for older (aged 40 or more secs) locked files
-        clearstatcache();
-        if (!isset($this->_aFileCacheContents[$sKey]) && file_exists($sFilePath) && (!filesize($sFilePath)) && abs($iCurTime - filectime($sFilePath) < 40) ) {
-            //then leave the cache to be dealt by another process and do nothing
-            return false;
-        }
-        //the above code ensures that $mContents is writen only in case cache file has not been started
-        //by another process
-
-        //start a blank file to inform other processes we are dealing with it.
-        $hFile = fopen($sFilePath, "w");
-        if ($hFile) {
-            fclose($hFile);
-        }
-        clearstatcache();
-
-        $this->_aFileCacheWritable[$sKey] = $mContents;
         $this->_aFileCacheContents[$sKey] = $mContents;
+        $aMeta = $this->getCacheMeta( $sKey );
 
-        return true;
+        // looking for cache meta
+        $sCachePath = isset( $aMeta["cachepath"] ) ? $aMeta["cachepath"] : $this->getCacheFilePath( $sKey );
+        return ( bool ) $this->_lockFile( $sCachePath, $sKey );
     }
 
     /**
@@ -607,20 +583,25 @@ class oxUtils extends oxSuperCfg
      */
     public function fromFileCache( $sKey )
     {
-        if ( !isset( $this->_aFileCacheContents[$sKey] ) ) {
+        if ( !array_key_exists( $sKey, $this->_aFileCacheContents ) ) {
             $sRes = null;
 
-            // read the file
-            $sFilePath = $this->getCacheFilePath( $sKey );
+            $aMeta = $this->getCacheMeta( $sKey );
+            $blInclude  = isset( $aMeta["include"] ) ? $aMeta["include"] : false;
+            $sCachePath = isset( $aMeta["cachepath"] ) ? $aMeta["cachepath"] : $this->getCacheFilePath( $sKey );
 
-            $blFileExists = file_exists( $sFilePath ) && is_readable( $sFilePath );
+            // trying to lock
+            $this->_lockFile( $sCachePath, $sKey, LOCK_SH );
 
-            if ( $blFileExists ) {
-                // read it
-                $sRes = file_get_contents( $sFilePath );
-                $sRes = $sRes ? unserialize( $sRes ) : null;
+            clearstatcache();
+            if ( is_readable( $sCachePath ) ) {
+                $sRes = $blInclude ? $this->_includeFile( $sCachePath ) : $this->_readFile( $sCachePath );
             }
 
+            // release lock
+            $this->_releaseFile( $sKey, LOCK_SH );
+
+            // caching
             $this->_aFileCacheContents[$sKey] = $sRes;
         }
 
@@ -628,27 +609,160 @@ class oxUtils extends oxSuperCfg
     }
 
     /**
-     * Writes all cache contents to file at once. This method was introduced due to possible race conditions
+     * Reads and returns cache file contents
+     *
+     * @param string $sFilePath cache fiel path
+     *
+     * @return string
+     */
+    protected function _readFile( $sFilePath )
+    {
+        $sRes = file_get_contents( $sFilePath );
+        return $sRes ? unserialize( $sRes ) : null;
+    }
+
+    /**
+     * Includes cache file
+     *
+     * @param string $sFilePath cache fiel path
+     *
+     * @return mixed
+     */
+    protected function _includeFile( $sFilePath )
+    {
+        $_aCacheContents = null;
+        include $sFilePath;
+        return $_aCacheContents;
+    }
+
+    /**
+     * Serializes or writes php array for class file cache
+     *
+     * @param string $sKey      cache key
+     * @param mixed  $mContents cache data
+     *
+     * @return mixed
+     */
+    protected function _processCache( $sKey, $mContents )
+    {
+        // looking for cache meta
+        $aCacheMeta  = $this->getCacheMeta( $sKey );
+        $blSerialize = isset( $aCacheMeta["serialize"] ) ? $aCacheMeta["serialize"] : true;
+
+        if ( $blSerialize ) {
+            $mContents = serialize( $mContents );
+        } else {
+            $mContents = "<?php\n//automatically generated file\n//" . date( "Y-m-d H:i:s" ) . "\n\n\$_aCacheContents = " . var_export( $mContents, true ) . "\n?>";
+        }
+
+        return $mContents;
+    }
+
+    /**
+     * Writes all cache contents to file at once. This method was introduced due to possible
+     * race conditions. Cache is cleand up after commit
      *
      * @return null;
      */
     public function commitFileCache()
     {
-        foreach ($this->_aFileCacheWritable as $sKey => $mContents) {
+        if ( count( $this->_aLockedFileHandles[LOCK_EX] ) ) {
             startProfile("!__SAVING CACHE__! (warning)");
-            $mContents = serialize($mContents);
-            $sFilePath = $this->getCacheFilePath( $sKey );
-            $hFile = fopen( $sFilePath, "w");
-            if ( $hFile) {
-                fwrite( $hFile, $mContents);
-                fclose( $hFile);
+            foreach ( $this->_aLockedFileHandles[LOCK_EX] as $sKey => $rHandle ) {
+                if ( $rHandle !== false && isset( $this->_aFileCacheContents[$sKey] ) ) {
+
+                    // writing cache
+                    fwrite( $rHandle, $this->_processCache( $sKey, $this->_aFileCacheContents[$sKey] ) );
+
+                    // releasing locks
+                    $this->_releaseFile( $sKey );
+                }
             }
+
             stopProfile("!__SAVING CACHE__! (warning)");
+
+            //empty buffer
+            $this->_aFileCacheContents = array();
+        }
+    }
+
+    /**
+     * Locks cache file and returns its handle on success or false on failure
+     *
+     * @param string $sFilePath name of file to lock
+     * @param string $sIdent    lock identifier
+     * @param int    $iLockMode lock mode - LOCK_EX/LOCK_SH
+     *
+     * @return mixed lock file resource or false on error
+     */
+    protected function _lockFile( $sFilePath, $sIdent, $iLockMode = LOCK_EX )
+    {
+        $rHandle = isset( $this->_aLockedFileHandles[$iLockMode][$sIdent] ) ? $this->_aLockedFileHandles[$iLockMode][$sIdent] : null;
+        if ( $rHandle === null ) {
+
+            $blLocked = false;
+            $rHandle = @fopen( $sFilePath, "a+" );
+
+            if ( $rHandle !== false ) {
+
+                if ( flock( $rHandle, $iLockMode | LOCK_NB ) ) {
+                    if ( $iLockMode === LOCK_EX ) {
+                        // truncate file
+                        $blLocked = ftruncate( $rHandle, 0 );
+                    } else {
+                        // move to a start position
+                        $blLocked = fseek( $rHandle, 0 ) === 0;
+                    }
+                }
+
+                // on failure - closing and setting false..
+                if ( !$blLocked ) {
+                    fclose( $rHandle );
+                    $rHandle = false;
+                }
+            }
+
+            // in case system does not support file lockings
+            if ( !$blLocked && $iLockMode === LOCK_EX ) {
+
+                // clearing on first call
+                if ( count( $this->_aLockedFileHandles ) == 0 ) {
+                    clearstatcache();
+                }
+
+                // start a blank file to inform other processes we are dealing with it.
+                if (!( file_exists( $sFilePath ) && !filesize( $sFilePath ) && abs( time() - filectime( $sFilePath ) < 40 ) ) ) {
+                    $rHandle = @fopen( $sFilePath, "w" );
+                }
+            }
+
+            $this->_aLockedFileHandles[$iLockMode][$sIdent] = $rHandle;
         }
 
-        //empty buffer
-        $this->_aFileCacheWritable = array();
-        clearstatcache ();
+        return $rHandle;
+    }
+
+    /**
+     * Releases file lock and returns release state
+     *
+     * @param string $sIdent    lock ident
+     * @param int    $iLockMode lock mode
+     *
+     * @return bool
+     */
+    protected function _releaseFile( $sIdent, $iLockMode = LOCK_EX )
+    {
+        $blSuccess = true;
+        if ( isset( $this->_aLockedFileHandles[$iLockMode][$sIdent] ) &&
+             $this->_aLockedFileHandles[$iLockMode][$sIdent] !== false ) {
+
+             // release the lock and close file
+            $blSuccess = flock( $this->_aLockedFileHandles[$iLockMode][$sIdent], LOCK_UN ) &&
+                         fclose( $this->_aLockedFileHandles[$iLockMode][$sIdent] );
+            unset( $this->_aLockedFileHandles[$iLockMode][$sIdent] );
+        }
+
+        return $blSuccess;
     }
 
     /**

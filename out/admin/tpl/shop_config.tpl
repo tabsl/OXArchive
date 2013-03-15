@@ -411,7 +411,7 @@ function showInvitations()
                     [{ oxinputhelp ident="HELP_SHOP_CONFIG_STORECREDITCARDINFO" }]
                 </dt>
                 <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_STORECREDITCARDINFO" }]<br>[{ oxmultilang ident="SHOP_CONFIG_ATTENTION" }]
+                    [{ oxmultilang ident="SHOP_CONFIG_STORECREDITCARDINFO" }] [{ oxinputhelp ident="HELP_SHOP_CONFIG_ATTENTION" }]
                 </dd>
                 <div class="spacer"></div>
             </dl>

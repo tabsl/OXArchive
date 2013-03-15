@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasket.php 29541 2010-08-27 08:49:18Z tomas $
+ * @version   SVN: $Id: oxbasket.php 30585 2010-10-27 08:56:55Z arvydas $
  */
 
 /**
@@ -534,13 +534,15 @@ class oxBasket extends oxSuperCfg
 
             foreach ( $aDiscounts as $oDiscount ) {
 
-                //init array element
-                if ( !isset( $aBundles[$oDiscount->oxdiscount__oxitmartid->value] ) ) {
-                    $aBundles[$oDiscount->oxdiscount__oxitmartid->value] = 0;
+                $iAmnt = $oDiscount->getBundleAmount( $oBasketItem->getAmount() );
+                if ( $iAmnt ) {
+                    //init array element
+                    if ( !isset( $aBundles[$oDiscount->oxdiscount__oxitmartid->value] ) ) {
+                        $aBundles[$oDiscount->oxdiscount__oxitmartid->value] = 0;
+                    }
+
+                    $aBundles[$oDiscount->oxdiscount__oxitmartid->value] += $iAmnt;
                 }
-
-                $aBundles[$oDiscount->oxdiscount__oxitmartid->value] += $oDiscount->getBundleAmount( $oBasketItem->getAmount() );
-
             }
         }
 
@@ -629,12 +631,14 @@ class oxBasket extends oxSuperCfg
     protected function _addBundlesToBasket( $aBundles )
     {
         foreach ( $aBundles as $sBundleId => $dAmount ) {
-            try {
-                if ( $oBundleItem = $this->addToBasket( $sBundleId, $dAmount, null, null, true, true ) ) {
-                    $oBundleItem->setAsDiscountArticle( true );
+            if ( $dAmount ) {
+                try {
+                    if ( $oBundleItem = $this->addToBasket( $sBundleId, $dAmount, null, null, false, true ) ) {
+                        $oBundleItem->setAsDiscountArticle( true );
+                    }
+                } catch(oxArticleException $oEx) {
+                    // caught and ignored
                 }
-            } catch(oxArticleException $oEx) {
-                // caught and ignored
             }
         }
 

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: delivery_articles.inc.php 29962 2010-09-24 08:43:23Z tomas $
+ * @version   SVN: $Id: delivery_articles.inc.php 30670 2010-11-02 16:40:05Z arvydas $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -83,7 +83,7 @@ class ajaxComponent extends ajaxListComponent
 
         if ( $sSynchDelId && $sSynchDelId != $sDelId) {
             $sQAdd .= 'and '.$sArtTable.'.oxid not in ( ';
-            $sQAdd .= 'select '.$sArtTable.'.oxid from oxobject2delivery left join '.$sArtTable.' on '.$sArtTable.'.oxid=oxobject2delivery.oxobjectid ';
+            $sQAdd .= 'select oxobject2delivery.oxobjectid from oxobject2delivery ';
             $sQAdd .= 'where oxobject2delivery.oxdeliveryid = "'.$sSynchDelId.'" and oxobject2delivery.oxtype = "oxarticles" ) ';
         }
 
@@ -97,7 +97,7 @@ class ajaxComponent extends ajaxListComponent
      *
      * @return string
      */
-    protected function _addFilter( $sQ )
+    /*protected function _addFilter( $sQ )
     {
         $sArtTable = getViewName('oxarticles');
         $sQ = parent::_addFilter( $sQ );
@@ -105,7 +105,7 @@ class ajaxComponent extends ajaxListComponent
         // display variants or not ?
         $sQ .= $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ? ' group by '.$sArtTable.'.oxid ' : '';
         return $sQ;
-    }
+    }*/
 
     /**
      * Removes article from delivery configuration

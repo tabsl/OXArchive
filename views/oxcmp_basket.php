@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_basket.php 28585 2010-06-23 09:23:38Z sarunas $
+ * @version   SVN: $Id: oxcmp_basket.php 30898 2010-11-12 14:50:13Z vilma $
  */
 
 /**
@@ -35,6 +35,12 @@ class oxcmp_basket extends oxView
      * @var bool
      */
     protected $_blIsComponent = true;
+
+    /**
+     * Last call function name
+     * @var string
+     */
+    protected $_sLastCallFnc = null;
 
     /**
      * Parameters which are kept when redirecting after user
@@ -128,7 +134,7 @@ class oxcmp_basket extends oxView
         // adding articles
         if ( $aProducts = $this->_getItems( $sProductId, $dAmount, $aSel, $aPersParam, $blOverride ) ) {
 
-            $this->_setLastCall( 'tobasket', $aProducts, $this->getSession()->getBasket()->getBasketSummary() );
+            $this->_setLastCallFnc( 'tobasket' );
             $oBasketItem = $this->_addItems( $aProducts );
 
             // new basket item marker
@@ -193,8 +199,8 @@ class oxcmp_basket extends oxView
             // information that last call was changebasket
             $oBasket = $this->getSession()->getBasket();
             $oBasket->onUpdate();
-            $this->_setLastCall( 'changebasket', $aProducts, $oBasket->getBasketSummary() );
 
+            $this->_setLastCallFnc( 'changebasket' );
             $oBasketItem = $this->_addItems( $aProducts );
         }
 
@@ -230,11 +236,9 @@ class oxcmp_basket extends oxView
         // adding articles
         if ( $aProducts = $this->_getItems( $sProductId, $dAmount, $aSel, $aPersParam, $blOverride ) ) {
 
+            $this->_setLastCallFnc( 'tobasket' );
             $oBasketItem = $this->_addItems( $aProducts );
             $oBasketItem->setWishArticleId( oxConfig::getParameter( 'anid' ) );
-
-            // information that last call was tobasket
-            $this->_setLastCall( 'tobasket', $aProducts, $this->getSession()->getBasket()->getBasketSummary() );
 
             // fetching user info
             $oUser = $this->getUser();
@@ -365,11 +369,14 @@ class oxcmp_basket extends oxView
         $sErrorDest = $oActView->getErrorDestination();
 
         $oBasket = $this->getSession()->getBasket();
-        foreach ( $aProducts as $sProductId => $aProductInfo ) {
+        $oBasketInfo = $oBasket->getBasketSummary();
+
+        foreach ( $aProducts as $sAddProductId => $aProductInfo ) {
+
+            $sProductId = isset( $aProductInfo['aid'] ) ? $aProductInfo['aid'] : $sAddProductId;
 
             // collecting input
-
-            $sProductId = isset( $aProductInfo['aid'] ) ? $aProductInfo['aid'] : $sProductId;
+            $aProducts[$sAddProductId]['oldam'] = isset( $oBasketInfo->aArticles[$sProductId] ) ? $oBasketInfo->aArticles[$sProductId] : 0;
 
             $dAmount = isset( $aProductInfo['am'] )?$aProductInfo['am']:0;
             $aSelList = isset( $aProductInfo['sel'] )?$aProductInfo['sel']:null;
@@ -394,7 +401,14 @@ class oxcmp_basket extends oxView
             } catch ( oxNoArticleException $oEx ) {
                 //ignored, best solution F ?
             }
+            if ( !$oBasketItem ) {
+                $oInfo = $oBasket->getBasketSummary();
+                $aProducts[$sAddProductId]['am'] = isset( $oInfo->aArticles[$sProductId] ) ? $oInfo->aArticles[$sProductId] : 0;
+            }
         }
+
+        // information that last call was tobasket
+        $this->_setLastCall( $this->_getLastCallFnc(), $aProducts, $oBasketInfo );
 
         return $oBasketItem;
     }
@@ -410,16 +424,29 @@ class oxcmp_basket extends oxView
      */
     protected function _setLastCall( $sCallName, $aProductInfo, $aBasketInfo )
     {
-        $aProducts = array();
+        oxSession::setVar( 'aLastcall', array( $sCallName => $aProductInfo ) );
+    }
 
-        // collecting amounts info
-        foreach ( $aProductInfo as $sProdId => $aProdData ) {
-            $aProducts[$sProdId] = $aProdData;
-            // setting previous amount
-            $aProducts[$sProdId]['oldam'] = isset( $aBasketInfo->aArticles[$aProdData['aid']] ) ? $aBasketInfo->aArticles[$aProdData['aid']] : 0;
-        }
+    /**
+     * Setting last call function name (data used by econda)
+     *
+     * @param string $sCallName name of action ('tobasket', 'changebasket')
+     *
+     * @return null
+     */
+    protected function _setLastCallFnc( $sCallName )
+    {
+        $this->_sLastCallFnc = $sCallName;
+    }
 
-        oxSession::setVar( 'aLastcall', array( $sCallName => $aProducts ) );
+    /**
+     * Getting last call function name (data used by econda)
+     *
+     * @return string
+     */
+    protected function _getLastCallFnc()
+    {
+        return $this->_sLastCallFnc;
     }
 
     /**

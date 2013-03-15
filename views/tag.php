@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: tag.php 30110 2010-10-05 14:33:36Z rimvydas.paskevicius $
+ * @version   SVN: $Id: tag.php 31277 2010-11-26 13:20:08Z alfonsas $
  */
 
 /**
@@ -87,7 +87,7 @@ class Tag extends aList
         oxUBase::render();
 
         $myConfig = $this->getConfig();
-        
+
         $oArticleList = $this->getArticleList();
 
         //if no articles - showing 404 header (#2139)
@@ -105,7 +105,7 @@ class Tag extends aList
 
         // processing list articles
         $this->_processListArticles();
-        
+
         return $this->_sThisTemplate;
     }
 
@@ -211,9 +211,9 @@ class Tag extends aList
     public function generatePageNavigationUrl()
     {
         if ( ( oxUtils::getInstance()->seoIsActive() && ( $sTag = $this->getTag() ) ) ) {
-            return oxSeoEncoderTag::getInstance()->getTagUrl( $sTag, oxLang::getInstance()->getBaseLanguage() );
+            $sLink = oxSeoEncoderTag::getInstance()->getTagUrl( $sTag, oxLang::getInstance()->getBaseLanguage() );
         }
-        return oxUBase::generatePageNavigationUrl();
+        return $sLink ? $sLink : oxUBase::generatePageNavigationUrl();
     }
 
     /**
@@ -227,15 +227,15 @@ class Tag extends aList
      */
     protected function _addPageNrParam( $sUrl, $iPage, $iLang = null)
     {
-        if ( oxUtils::getInstance()->seoIsActive() && ( $sTag = $this->getTag() ) ) {
-            if ( $iPage ) {
+        $sSeoUrl = $blSeo = oxUtils::getInstance()->seoIsActive();
+        if ( $blSeo && ( $sTag = $this->getTag() ) ) {
+            if ( $iPage && ( $sSeoUrl = oxSeoEncoderTag::getInstance()->getTagPageUrl( $sTag, $iPage, $iLang ) ) ) {
                 // only if page number > 0
-                $sUrl = oxSeoEncoderTag::getInstance()->getTagPageUrl( $sTag, $iPage, $iLang );
+                $sUrl = $sSeoUrl;
             }
-        } else {
-            $sUrl = oxUBase::_addPageNrParam( $sUrl, $iPage, $iLang );
         }
-        return $sUrl;
+
+        return ( !$blSeo || !$sSeoUrl ) ? oxUBase::_addPageNrParam( $sUrl, $iPage, $iLang ) : $sUrl;
     }
 
     /**
@@ -250,7 +250,7 @@ class Tag extends aList
                 $this->_aArticleList = $this->_loadArticles( null );
             }
         }
-        
+
         return $this->_aArticleList;
     }
 
@@ -321,7 +321,7 @@ class Tag extends aList
 
             $aPath[1] = oxNew( "oxcategory" );
             $aPath[1]->setLink( false );
-            $aPath[1]->oxcategories__oxtitle = new oxField( $oStr->htmlspecialchars( $oStr->ucfirst( $sTag ) ) );
+            $aPath[1]->oxcategories__oxtitle = new oxField( $oStr->ucfirst( $sTag ) );
             return $aPath;
         }
     }

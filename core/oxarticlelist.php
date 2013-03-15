@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxarticlelist.php 30315 2010-10-14 15:06:23Z rimvydas.paskevicius $
+ * @version   SVN: SVN: $Id: oxarticlelist.php 31032 2010-11-18 09:35:33Z linas.kukulskis $
  */
 
 /**
@@ -62,11 +62,18 @@ class oxArticleList extends oxList
      *
      * @return null
      */
-    public function setCustomSorting( $sSorting)
+    public function setCustomSorting( $sSorting )
     {
-        // sorting for multilanguage fields
-        $aSorting = explode(" ", $sSorting);
-        $aSorting[0] = $this->getBaseObject()->getSqlFieldName($aSorting[0]);
+        $aSorting = explode( " ", $sSorting );
+
+        if ( strpos( $aSorting[0], "." ) ) {
+            $aSortElements = explode( ".", $aSorting[0] );
+            $aSortElements[1] = $this->getBaseObject()->getSqlFieldName( trim($aSortElements[1]) );
+            $aSorting[0] = implode( ".", $aSortElements );
+        } else {
+            $aSorting[0] = $this->getBaseObject()->getSqlFieldName( $aSorting[0] );
+        }
+
         $this->_sCustomSorting = implode( " ", $aSorting );
     }
 

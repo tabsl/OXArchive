@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoderarticle.php 28421 2010-06-18 08:54:27Z sarunas $
+ * @version   SVN: $Id: oxseoencoderarticle.php 31086 2010-11-23 08:07:20Z arvydas $
  */
 
 /**
@@ -124,7 +124,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
                 $sSeoUri = $this->_processSeoUrl( $sSeoUri . $sTitle, $oArticle->getId(), $iLang );
 
                 $aStdParams = array( 'recommid' => $oRecomm->getId(), 'listtype' => $this->_getListType() );
-                $this->_saveToDb( 
+                $this->_saveToDb(
                             'oxarticle',
                             $oArticle->getId(),
                             oxUtilsUrl::getInstance()->appendUrl(
@@ -187,10 +187,11 @@ class oxSeoEncoderArticle extends oxSeoEncoder
             $sStdUrl = $oArticle->getStdTagLink( $sTag );
             if ( $blRegenerate || !( $sSeoUri = $this->_loadFromDb( 'dynamic', $this->getDynamicObjectId( $iShopId, $sStdUrl ), $iLang ) ) ) {
                 // generating new if not found
-                $sSeoUri  = oxSeoEncoderTag::getInstance()->getTagUri( $sTag, $iLang );
-                $sSeoUri .= $this->_prepareArticleTitle( $oArticle );
-                $sSeoUri  = $this->_processSeoUrl( $sSeoUri, $this->_getStaticObjectId( $iShopId, $sStdUrl ), $iLang );
-                $sSeoUri  = $this->_getDynamicUri( $sStdUrl, $sSeoUri, $iLang );
+                if ( $sSeoUri = oxSeoEncoderTag::getInstance()->getTagUri( $sTag, $iLang, $oArticle->getId() ) ) {
+                    $sSeoUri .= $this->_prepareArticleTitle( $oArticle );
+                    $sSeoUri  = $this->_processSeoUrl( $sSeoUri, $this->_getStaticObjectId( $iShopId, $sStdUrl ), $iLang );
+                    $sSeoUri  = $this->_getDynamicUri( $sStdUrl, $sSeoUri, $iLang );
+                }
             }
         }
         return $sSeoUri;

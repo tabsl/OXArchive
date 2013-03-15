@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbase.php 28361 2010-06-16 07:55:08Z alfonsas $
+ * @version   SVN: $Id: oxbase.php 30586 2010-10-27 09:13:49Z arvydas $
  */
 
 /**
@@ -797,8 +797,9 @@ class oxBase extends oxSuperCfg
             return false;
         }
 
-        $oDB    = oxDb::getDb(true);
-        $sSelect= "select oxid from {$this->getViewName()} where {$this->_sExistKey} = ".$oDB->quote($sOXID);
+        $sViewName = $this->getViewName();
+        $oDB = oxDb::getDb( true );
+        $sSelect= "select {$this->_sExistKey} from {$sViewName} where {$this->_sExistKey} = ".$oDB->quote( $sOXID );
         return ( bool ) $oDB->getOne( $sSelect );
     }
 

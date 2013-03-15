@@ -84,7 +84,7 @@
 <script>
 function openExchange()
 {
-    [{assign var="blShowExchange" value=0}]
+    [{assign var="sExchangeUrl" value=false}]
     [{assign var="mn" value=1}]
     [{foreach from=$menustructure item=menuholder }]
       [{if $menuholder->nodeType == XML_ELEMENT_NODE && $menuholder->childNodes->length }]
@@ -92,7 +92,7 @@ function openExchange()
         [{foreach from=$menuholder->childNodes item=menuitem }]
           [{if $menuitem->nodeType == XML_ELEMENT_NODE && $menuitem->childNodes->length }]
             [{if $menuitem->getAttribute('id') == 'dyn_menu' && $menuitem->getAttribute('name') == 'mxoxexchange'}]
-            [{assign var="blShowExchange" value=1}]
+            [{assign var="sExchangeUrl" value=$menuitem->getAttribute('url')}]
 
             if ( top && top.navigation && top.navigation.adminnav ) {
                 var _sbli = top.navigation.adminnav.document.getElementById( 'nav-[{$mn}]-[{$smn}]' );
@@ -109,11 +109,11 @@ function openExchange()
     [{/foreach}]
 }
 </script>
-[{if $blShowExchange}]
+[{if $sExchangeUrl}]
 <tr>
   <td colspan="2"></td>
   <td colspan="3">
-    <a href="http://exchange.oxid-esales.com/" onclick="return openExchange();"><img border="0" src="[{$shop->imagedir}]/oxid-exchange-banner.jpg" target="_top"></a>
+    <a href="[{$sExchangeUrl}]" onclick="return openExchange();"><img border="0" src="[{$shop->imagedir}]/oxid-exchange-banner.jpg" target="_top"></a>
   </td>
 </tr>
 [{/if}]

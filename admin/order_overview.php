@@ -19,11 +19,8 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: order_overview.php 30419 2010-10-20 12:53:57Z sarunas $
+ * @version   SVN: $Id: order_overview.php 30860 2010-11-11 15:27:37Z arvydas $
  */
-
-    // DTAUS
-    require_once "dtaus/class.DTAUS.php";
 
 /**
  * Admin order overview manager.
@@ -175,29 +172,45 @@ class Order_Overview extends oxAdminDetails
 
         $oOrderList->selectString( $sSelect );
         if ( count( $oOrderList ) ) {
-            $oPayment = oxNew( "oxuserpayment" );
-            $oShop = $this->getConfig()->getActiveShop();
-
-            $iOldErrorReproting = error_reporting();
-            // due to eregi_replace usage in DTAUS (and php5.3):
-            error_reporting($iOldErrorReproting & ~E_DEPRECATED);
-
-            $oDtaus = new DTAUS( "L", $oShop->oxshops__oxcompany->value, str_replace( " ", "", $oShop->oxshops__oxbankcode->value), str_replace( " ", "", $oShop->oxshops__oxbanknumber->value ) );
-
+            $oUserPayment = oxNew( "oxuserpayment" );
             $oUtils = oxUtils::getInstance();
-            $oLang  = oxLang::getInstance();
+            $oShop  = $this->getConfig()->getActiveShop();
+
+            $sCompany   = $oShop->oxshops__oxcompany->value;
+            $sRoutingNr = $this->_cleanup( $oShop->oxshops__oxbankcode->value ) + 1 - 1;
+            $sAccountNr = $this->_cleanup( $oShop->oxshops__oxbanknumber->value );
+            $sSubject   = oxLang::getInstance()->translateString( "order" );
+
+            // can't be called with oxnew, as it only supports single constructor parameter
+            $oDtaus = oxNew( "oxDtausBuilder", $sCompany, $sRoutingNr, $sAccountNr );
             foreach ( $oOrderList as $oOrder ) {
-                $oPayment->load( $oOrder->oxorder__oxpaymentid->value );
-                $aDynValues = $oUtils->assignValuesFromText( $oPayment->oxuserpayments__oxvalue->value );
-                $oDtaus->addTransaktion( $aDynValues[3]->value, str_replace( " ", "", $aDynValues[1]->value ), str_replace( " ", "", $aDynValues[2]->value ), str_replace( ",", ".", $oOrder->ftotalorder), $oShop->oxshops__oxname->getRawValue(), $oLang->translateString( "order" )." ".$oOrder->oxorder__oxordernr->value, "" );
+                $oUserPayment->load( $oOrder->oxorder__oxpaymentid->value );
+                $aDynValues = $oUtils->assignValuesFromText( $oUserPayment->oxuserpayments__oxvalue->value );
+
+                $sCustName  = $aDynValues[3]->value;
+                $sRoutingNr = $this->_cleanup( $aDynValues[1]->value );
+                $sAccountNr = $this->_cleanup( $aDynValues[2]->value );
+
+                $oDtaus->add( $sCustName, $sRoutingNr, $sAccountNr, $oOrder->getTotalOrderSum(), array( $oShop->oxshops__oxname->getRawValue(), $sSubject . " " . $oOrder->oxorder__oxordernr->value ) );
             }
 
             $oUtils->setHeader( "Content-Disposition: attachment; filename=\"dtaus0.txt\"" );
             $oUtils->setHeader( "Content-type: text/plain" );
             $oUtils->setHeader( "Cache-control: public" );
             $oUtils->showMessageAndExit( $oDtaus->create() );
-            error_reporting($iOldErrorReproting);
         }
+    }
+
+    /**
+     * Removes white spaces from given string
+     *
+     * @param string $sValue value to clean
+     *
+     * @return string
+     */
+    protected function _cleanup( $sValue )
+    {
+        return str_replace( " ", "", $sValue );
     }
 
     /**

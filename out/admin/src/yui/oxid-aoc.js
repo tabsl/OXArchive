@@ -47,6 +47,15 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
      */
     this.viewResponse = {};
 
+
+    /**
+     * Request array
+     *
+     * @var array
+     */
+    this.aRequests = {};
+
+
     /**
      * Actual object copy
      *
@@ -237,11 +246,37 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
     {
         if ( me.evtCtr == evtCtr )
         {
-            me.evtCtr = 0;
-
             // initial scroll
             var iOffset = Math.round( ( $D.getY( me ._elScrollView ) - me.iScrollOffset ) / me.rowHeight );
             iOffset = Math.min( iOffset, 0 );
+
+            var iStartRecordIndex = iOffset * - 1;
+            var dataSize = me.viewSize * me.viewCount;
+
+            var page1 = Math.floor( iStartRecordIndex / dataSize );
+            var page2 = Math.floor( ( iStartRecordIndex + me.viewSize ) / dataSize );
+
+            var sRequest = me.getRequest( page1 * dataSize );
+            if ( page1 != page2 )
+                var sKey = sRequest + "initDataView_ff";
+            else {
+                var sKey = sRequest + "initDataView_fl";
+            }
+
+            if ( sKey in me.aRequests ) {
+                return;
+            }
+
+            // Do we need second page ?
+            if ( page1 != page2 ) {
+                sKey = me.getRequest(page2 * dataSize) + "me.initDataView_l";
+            }
+
+            if ( sKey in me.aRequests ) {
+                return;
+            }
+
+            me.evtCtr = 0;
             me.getPage( iOffset * - 1 );
         }
     };
@@ -265,29 +300,36 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
 
         me.iStartRecordIndex = Math.min( iStartRecordIndex, Math.max( ( me.totalRecords - me.viewSize ), 0 ) );
 
-        if ( page1 != page2 )
-            me.oDataSource.sendRequest( me.getRequest( page1 * dataSize), me.initDataView_ff, me );
-        else {
-            me.oDataSource.sendRequest( me.getRequest( page1 * dataSize), me.initDataView_fl, me );
+        var sRequest = me.getRequest( page1 * dataSize );
+        if ( page1 != page2 ) {
+            me.aRequests[sRequest + "initDataView_ff"] = 1;
+            me.oDataSource.sendRequest( sRequest, me.initDataView_ff, me );
+        } else {
+            me.aRequests[sRequest + "initDataView_fl"] = 1;
+            me.oDataSource.sendRequest( sRequest, me.initDataView_fl, me );
         }
+
+
 
         // Do we need second page ?
         if ( page1 != page2 ) {
-            me.oDataSource.sendRequest( me.getRequest(page2 * dataSize), me.initDataView_l, me );
+            var sRequest = me.getRequest( page2 * dataSize );
+            me.aRequests[sRequest + "initDataView_l"] = 1;
+            me.oDataSource.sendRequest( sRequest, me.initDataView_l, me );
         }
     };
 
     this.initDataView_fl = function( sRequest, oResponse )
     {
-        me.initDataView( sRequest, oResponse, 1, 1 );
+        me.initDataView( sRequest, oResponse, 1, 1, "initDataView_fl" );
     };
     this.initDataView_ff = function( sRequest, oResponse )
     {
-        me.initDataView( sRequest, oResponse, 1, 2 );
+        me.initDataView( sRequest, oResponse, 1, 2, "initDataView_ff" );
     };
     this.initDataView_l = function( sRequest, oResponse )
     {
-        me.initDataView( sRequest, oResponse, 2, 2 );
+        me.initDataView( sRequest, oResponse, 2, 2, "initDataView_l" );
     };
 
     /**
@@ -297,23 +339,26 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
      * @param string sRequest action request URL
      * @param object oResponse response object
      * @param int nr response page number
-     * @param int total total number of responses
+     * @param int    total total number of responses
+     * @param string request type
      *
      * @return null
      */
-    this.initDataView = function( sRequest, oResponse, nr, total )
+    this.initDataView = function( sRequest, oResponse, nr, total, sRequestType )
     {
         var page =  Math.floor( me.iStartRecordIndex / (me.viewSize * me.viewCount ) ) + ( nr - 1 );
 
-        // seems like there is a bug here, because data populated into table is wrong
-        // !! place to optimize !!!
-        for ( var i = 0; i<=me.viewSize*me.viewCount; i++ ) {
+        var cacheSize  = me.viewSize * me.viewCount;
+        var startIndex = me.iStartRecordIndex;
 
-            var ii = ( nr - 1 ) * me.viewSize+i;
+        if ( ( startIndex - cacheSize ) > 0 ) {
+            startIndex = startIndex - Math.floor( me.iStartRecordIndex / cacheSize ) * cacheSize;
+        }
 
-            if( ii >= me.iStartRecordIndex &&  ii < ( me.iStartRecordIndex+me.viewSize ) ) {
-                me.viewResponse.results[ii-me.iStartRecordIndex] = oResponse.results[i];
-            }
+        var iCnt = 0;
+        for ( var i = startIndex; i < startIndex + me.viewSize; i++ ) {
+            me.viewResponse.results[iCnt] = oResponse.results[i];
+            iCnt++;
         }
 
         if ( nr == total ) {
@@ -323,6 +368,12 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
 
             me.onDataReturnInitializeTable(sRequest, me.viewResponse);
         }
+
+        var sKey = sRequest + sRequestType;
+        if ( sKey in me.aRequests ) {
+            delete me.aRequests[sKey];
+        }
+
     };
 
     /**
@@ -1048,13 +1099,12 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
             if ( col.sortable != null )
                 blSortable = col.sortable;
 
-            aViewCols[iCtr] = { key: col.key,
-                                sortable: blSortable,
-                                resizeable: true,
-                                label: col.label,
-                                visible: col.visible,
-                                width: col.width,
-                                formatter: sFormatters };
+            col.sortable   = blSortable;
+            col.formatter  = sFormatters;
+            col.resizeable = true;
+
+            aViewCols[iCtr] = col;
+
             if (!col.visible) {
                 this.aColsTohide[iHiddenColCtr] = i;
                 iHiddenColCtr++;

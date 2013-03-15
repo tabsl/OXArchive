@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: alist.php 28209 2010-06-08 08:42:03Z arvydas $
+ * @version   SVN: $Id: alist.php 31082 2010-11-23 07:57:28Z arvydas $
  */
 
 /**
@@ -599,7 +599,7 @@ class aList extends oxUBase
         if ( oxUtils::getInstance()->seoIsActive() && ( $oCategory = $this->getActCategory() ) ) {
             if ( $iPage ) {
                 // only if page number > 0
-                $sUrl = oxSeoEncoderCategory::getInstance()->getCategoryPageUrl( $oCategory, $iPage, $iLang );
+                $sUrl = $oCategory->getBaseSeoLink( $iLang, $iPage );
             }
         } else {
             $sUrl = parent::_addPageNrParam( $sUrl, $iPage, $iLang );

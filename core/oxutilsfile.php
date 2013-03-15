@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsfile.php 29306 2010-08-11 13:59:55Z arvydas $
+ * @version   SVN: $Id: oxutilsfile.php 31281 2010-11-26 14:33:46Z linas.kukulskis $
  */
 
 /**
@@ -270,6 +270,7 @@ class oxUtilsFile extends oxSuperCfg
         if ( $sValue ) {
             // add type to name
             $aFilename = explode( ".", $sValue );
+
             $sFileType = trim( $aFilename[count( $aFilename )-1] );
 
             if ( isset( $sFileType ) ) {
@@ -449,11 +450,15 @@ class oxUtilsFile extends oxSuperCfg
      */
     protected function _moveImage( $sSource, $sTarget )
     {
+
+
         $blDone = false;
 
         if ( $sSource === $sTarget ) {
             $blDone = true;
         } else {
+
+
             $blDone = move_uploaded_file( $sSource, $sTarget );
         }
 
@@ -516,14 +521,10 @@ class oxUtilsFile extends oxSuperCfg
                 // checking file type and building final file name
                 if ( $sSource && ( $sValue = $this->_prepareImageName( $sValue, $sType, $blDemo, $sImagePath, $blUnique ) ) ) {
 
-                    // such file exists?
-                    if ( !$blUnique && file_exists( $sImagePath . $sValue ) ) {
-                        continue;
-                    }
-
                     // moving to tmp folder for processing as safe mode or spec. open_basedir setup
                     // usually does not allow file modification in php's temp folder
                     $sProcessPath = $sTmpFolder . basename( $sSource );
+
                     if ( $sProcessPath ) {
 
                         if ( $blUseMasterImage ) {

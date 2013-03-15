@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 29582 2010-08-30 17:27:29Z tomas $
+ * @version   SVN: $Id: oxuser.php 31066 2010-11-22 13:16:38Z arvydas $
  */
 
 /**
@@ -1454,30 +1454,28 @@ class oxUser extends oxBase
      */
     protected function _ldapLogin( $sUser, $sPassword, $sShopID, $sShopSelect)
     {
-        include "oxldap.php";
-        $myConfig = $this->getConfig();
-        $oDb = oxDb::getDb();
-        //$throws oxConnectionException
-        $aLDAPParams = $myConfig->getConfigParam( 'aLDAPParams' );
-        $oLDAP = new oxLDAP( $aLDAPParams['HOST'], $aLDAPParams['PORT'] );
+        $aLDAPParams = $this->getConfig()->getConfigParam( 'aLDAPParams' );
+        $oLDAP = oxNew( "oxLDAP", $aLDAPParams['HOST'], $aLDAPParams['PORT'] );
+
         // maybe this is LDAP user but supplied email Address instead of LDAP login
-        $sLDAPKey = $oDb->getOne("select oxldapkey from oxuser where oxuser.oxactive = 1 and oxuser.oxusername = ".$oDb->quote($sUser)." $sShopSelect");
+        $oDb = oxDb::getDb();
+        $sLDAPKey = $oDb->getOne( "select oxldapkey from oxuser where oxuser.oxactive = 1 and oxuser.oxusername = ".$oDb->quote( $sUser )." $sShopSelect");
         if ( isset( $sLDAPKey) && $sLDAPKey) {
             $sUser = $sLDAPKey;
         }
 
         //$throws oxConnectionException
-        $oLDAP->login( $sUser, $sPassword, $aLDAPParams['USERQUERY'], $aLDAPParams['BASEDN'], $aLDAPParams['FILTER']);
+        $oLDAP->login( $sUser, $sPassword, $aLDAPParams['USERQUERY'], $aLDAPParams['BASEDN'], $aLDAPParams['FILTER'] );
 
         $aData = $oLDAP->mapData($aLDAPParams['DATAMAP']);
         if ( isset( $aData['OXUSERNAME']) && $aData['OXUSERNAME']) {
             // login successful
 
             // check if user is already in database
-            $sSelect =  "select oxid from oxuser where oxuser.oxusername = ".$oDb->quote($aData['OXUSERNAME'])." $sShopSelect";
-            $sOXID = $oDb->getOne( $sSelect);
+            $sSelect =  "select oxid from oxuser where oxuser.oxusername = ".$oDb->quote( $aData['OXUSERNAME'] )." $sShopSelect";
+            $sOXID = $oDb->getOne( $sSelect );
 
-            if ( !isset( $sOXID) || !$sOXID) {
+            if ( !isset( $sOXID ) || !$sOXID ) {
                 // we need to create a new user
                 //$oUser->oxuser__oxid->setValue($oUser->setId());
                 $this->setId();
@@ -1485,13 +1483,13 @@ class oxUser extends oxBase
                 // map all user data fields
                 foreach ( $aData as $fldname => $value) {
                     $sField = "oxuser__".strtolower( $fldname);
-                    $this->$sField->setValue($aData[$fldname]);
+                    $this->$sField = new oxField( $aData[$fldname] );
                 }
 
-                $this->oxuser__oxactive->setValue(1);
-                $this->oxuser__oxshopid->setValue($sShopID);
-                $this->oxuser__oxldapkey->setValue($sUser);
-                $this->oxuser__oxrights->setValue("user");
+                $this->oxuser__oxactive  = new oxField( 1 );
+                $this->oxuser__oxshopid  = new oxField( $sShopID );
+                $this->oxuser__oxldapkey = new oxField( $sUser );
+                $this->oxuser__oxrights  = new oxField( "user" );
                 $this->setPassword( "ldap user" );
 
                 $this->save();
