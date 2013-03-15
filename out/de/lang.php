@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: lang.php 28697 2010-06-29 11:09:58Z vilma $
  */
@@ -613,7 +613,7 @@ $aLang = array(
 'SUBJECT'                                                     => "Betreff:",
 'SUBMIT'                                                      => "Absenden",
 'SUBMIT_COUPON'                                               => "Gutschein absenden",
-'SUBMIT_ORDER'                                                => "Bestellung absenden",
+'SUBMIT_ORDER'                                                => "Kostenpflichtig Bestellen",
 'SUBSCRIBE'                                                   => "Abonnieren",
 'SUBSCRIBE_NEWSLETTER'                                        => "Newsletter abonnieren:",
 'SUBSCRIBE_NEWSLETTER_MESSAGE'                                => "Sie können den Newsletter jederzeit kostenlos abbestellen.",

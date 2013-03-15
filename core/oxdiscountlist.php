@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdiscountlist.php 40042 2011-11-18 12:39:04Z linas.kukulskis $
+ * @version   SVN: $Id: oxdiscountlist.php 43062 2012-03-21 09:14:58Z tomas $
  */
 
 /**
@@ -340,12 +340,15 @@ class oxDiscountList extends oxList
     {
         $aDiscLog = array();
         reset( $aDiscounts );
+        //#3587
+        $oPrice->multiply($dAmount);
 
         // price object to correctly perform calculations
         $dOldPrice = $oPrice->getBruttoPrice();
 
         while (list( , $oDiscount ) = each( $aDiscounts ) ) {
-            $oDiscount->applyDiscount( $oPrice );
+            //#3587
+            $oDiscount->applyDiscount( $oPrice, $dAmount );
             $dNewPrice = $oPrice->getBruttoPrice();
 
             if ( !isset( $aDiscLog[$oDiscount->getId()] ) ) {
@@ -353,12 +356,15 @@ class oxDiscountList extends oxList
             }
 
             $aDiscLog[$oDiscount->getId()]->dDiscount += $dOldPrice - $dNewPrice;
-            $aDiscLog[$oDiscount->getId()]->dDiscount *= $dAmount;
+            ////#3587
+            //$aDiscLog[$oDiscount->getId()]->dDiscount *= $dAmount;
             $dOldPrice = $dNewPrice;
         }
+        ////#3587
+        $oPrice->divide($dAmount);
+
         return $aDiscLog;
     }
-
     /**
      * Checks if any category has "skip discounts" status
      *

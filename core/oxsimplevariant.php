@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsimplevariant.php 41730 2012-01-24 13:36:30Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxsimplevariant.php 42692 2012-03-12 08:03:34Z saulius.stasiukaitis $
  */
 
 /**
@@ -199,6 +199,12 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
      */
     public function getPrice()
     {
+        $myConfig = $this->getConfig();
+        // 0002030 No need to return price if it disabled for better performance.
+        if ( !$myConfig->getConfigParam( 'bl_perfLoadPrice' ) ) {
+            return;
+        }
+
         if ( $this->_oPrice === null ) {
             $this->_oPrice = oxNew( "oxPrice" );
             if ( ( $dPrice = $this->_getGroupPrice() ) ) {

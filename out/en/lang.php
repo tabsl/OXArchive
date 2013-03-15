@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: lang.php 28697 2010-06-29 11:09:58Z vilma $
  */
@@ -613,7 +613,7 @@ $aLang = array(
 'SUBJECT'                                                     => "Subject:",
 'SUBMIT'                                                      => "Submit",
 'SUBMIT_COUPON'                                               => "Submit Coupon",
-'SUBMIT_ORDER'                                                => "Submit Order",
+'SUBMIT_ORDER'                                                => "Purchase",
 'SUBSCRIBE'                                                   => "Subscribe",
 'SUBSCRIBE_NEWSLETTER'                                        => "Subscribe Newsletter:",
 'SUBSCRIBE_NEWSLETTER_MESSAGE'                                => "It's possible to cancel newsletter at any time.",

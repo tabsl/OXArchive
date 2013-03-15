@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdbmetadatahandler.php 38187 2011-08-17 08:06:12Z linas.kukulskis $
+ * @version   SVN: $Id: oxdbmetadatahandler.php 43044 2012-03-20 15:23:49Z linas.kukulskis $
  */
 
 /**
@@ -99,6 +99,7 @@ class oxDbMetaDataHandler extends oxSuperCfg
 
         if ( is_array($aTableFields) ) {
             $sFieldName = strtoupper( $sFieldName );
+            $aTableFields = array_map('strtoupper', $aTableFields);
             if ( in_array( $sFieldName, $aTableFields ) ) {
                 return true;
             }

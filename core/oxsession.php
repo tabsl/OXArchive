@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsession.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
+ * @version   SVN: $Id: oxsession.php 43009 2012-03-19 12:20:26Z mindaugas.rimgaila $
  */
 
 DEFINE('_DB_SESSION_HANDLER', getShopBasePath() . 'core/adodblite/session/adodb-session.php');
@@ -913,7 +913,7 @@ class oxSession extends oxSuperCfg
     {
         $blSwapped = false;
         $myConfig  = $this->getConfig();
-        $sCurrUrl  = $myConfig->isSsl() ? $myConfig->getSslShopUrl( 0 ) : $myConfig->getShopUrl( 0 );
+        $sCurrUrl  = $myConfig->isSsl() ? $myConfig->getSslShopUrl() : $myConfig->getShopUrl();
 
         $blSessCookieSetOnce = false;
         if ( isset( $aSessCookieSetOnce[$sCurrUrl] ) ) {

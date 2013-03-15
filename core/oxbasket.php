@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasket.php 42145 2012-02-10 09:44:54Z arvydas.vapsva $
+ * @version   SVN: $Id: oxbasket.php 43062 2012-03-21 09:14:58Z tomas $
  */
 
 /**
@@ -532,16 +532,15 @@ class oxBasket extends oxSuperCfg
      * Returns array of bundled discount articles
      *
      * @param object $oBasketItem basket item object
+     * @param array  $aBundles    array of found bundles
      *
      * @return array
      */
-    protected function _getItemBundles( $oBasketItem )
+    protected function _getItemBundles( $oBasketItem, $aBundles = array() )
     {
         if ( $oBasketItem->isBundle() ) {
             return array();
         }
-
-        $aBundles = array();
 
         // does this object still exists ?
         if ( $oArticle = $oBasketItem->getArticle() ) {
@@ -556,7 +555,11 @@ class oxBasket extends oxSuperCfg
                         $aBundles[$oDiscount->oxdiscount__oxitmartid->value] = 0;
                     }
 
-                    $aBundles[$oDiscount->oxdiscount__oxitmartid->value] += $iAmnt;
+                    if ($oDiscount->oxdiscount__oxitmmultiple->value) {
+                        $aBundles[$oDiscount->oxdiscount__oxitmartid->value] += $iAmnt;
+                    } else {
+                        $aBundles[$oDiscount->oxdiscount__oxitmartid->value] = $iAmnt;
+                    }
                 }
             }
         }
@@ -567,11 +570,12 @@ class oxBasket extends oxSuperCfg
     /**
      * Returns array of bundled discount articles for whole basket
      *
+     * @param array $aBundles array of found bundles
+     *
      * @return array
      */
-    protected function _getBasketBundles()
+    protected function _getBasketBundles( $aBundles = array() )
     {
-        $aBundles = array();
         $aDiscounts = oxDiscountList::getInstance()->getBasketBundleDiscounts( $this, $this->getBasketUser() );
 
         // calculating amount of non bundled/discount items
@@ -603,23 +607,22 @@ class oxBasket extends oxSuperCfg
      */
     protected function _addBundles()
     {
+        $aBundles = array();
         // iterating through articles and binding bundles
         foreach ( $this->_aBasketContents as $key => $oBasketItem ) {
             try {
                 // adding discount type bundles
                 if ( !$oBasketItem->isDiscountArticle() && !$oBasketItem->isBundle() ) {
-                    $aBundles = $this->_getItemBundles( $oBasketItem );
+                    $aBundles = $this->_getItemBundles( $oBasketItem, $aBundles );
                 } else {
                     continue;
                 }
 
-                $this->_addBundlesToBasket( $aBundles );
-
                     // adding item type bundles
-                    $aBundles = $this->_getArticleBundles( $oBasketItem );
+                    $aArtBundles = $this->_getArticleBundles( $oBasketItem );
 
                     // adding bundles to basket
-                    $this->_addBundlesToBasket( $aBundles );
+                    $this->_addBundlesToBasket( $aArtBundles );
             } catch ( oxNoArticleException $oEx ) {
                 $this->removeItem( $key );
                 oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
@@ -630,10 +633,12 @@ class oxBasket extends oxSuperCfg
         }
 
         // adding global basket bundles
-        if ( $aBundles = $this->_getBasketBundles() ) {
+        $aBundles = $this->_getBasketBundles( $aBundles );
+
+        // adding all bundles to basket
+        if ( $aBundles ) {
             $this->_addBundlesToBasket( $aBundles );
         }
-
     }
 
     /**
@@ -695,7 +700,9 @@ class oxBasket extends oxSuperCfg
                 $oBasketPrice->setBruttoPriceMode();
                 if ( !$oArticle->skipDiscounts() && $this->canCalcDiscounts() ) {
                     // apply basket type discounts
-                    $aItemDiscounts = $oDiscountList->applyBasketDiscounts( $oBasketPrice, $oDiscountList->getBasketItemDiscounts( $oArticle, $this, $this->getBasketUser() ), $oBasketItem->getAmount() );
+                    //#3857 added clone in order not to influence the price
+                    $aItemDiscounts = $oDiscountList->applyBasketDiscounts( clone $oBasketPrice, $oDiscountList->getBasketItemDiscounts( $oArticle, $this, $this->getBasketUser() ), $oBasketItem->getAmount() );
+
                     if ( is_array($this->_aItemDiscounts) && is_array($aItemDiscounts) ) {
                         $this->_aItemDiscounts = $this->_mergeDiscounts( $this->_aItemDiscounts, $aItemDiscounts);
                     }
@@ -868,6 +875,8 @@ class oxBasket extends oxSuperCfg
         // 2. substract discounts
         if ( $dprice ) {
 
+            /*
+            //#3857 this section is not needed as $this->_aItemDiscounts is part of $this->_aDiscounts
             // 2.1 applying basket item discounts
             foreach ( $this->_aItemDiscounts as $oDiscount ) {
 
@@ -876,7 +885,7 @@ class oxBasket extends oxSuperCfg
                     continue;
                 }
                 $this->_oPrice->subtract( $oDiscount->dDiscount );
-            }
+            }*/
 
             // 2.2 applying basket discounts
             $this->_oPrice->subtract( $this->_oTotalDiscount->getBruttoPrice() );
@@ -1070,6 +1079,9 @@ class oxBasket extends oxSuperCfg
         if ( $this->_oTotalDiscount === null || ( $this->_blUpdateNeeded && !$this->isAdmin() ) ) {
             $this->_oTotalDiscount = oxNew( 'oxPrice' );
             $this->_oTotalDiscount->setBruttoPriceMode();
+
+            //#3857 merging item discounts to aDiscounts and later to oTotalDiscount
+            $this->_aDiscounts = array_merge($this->_aItemDiscounts, $this->_aDiscounts);
 
             if ( is_array($this->_aDiscounts) ) {
                 foreach ( $this->_aDiscounts as $oDiscount ) {
@@ -1606,9 +1618,7 @@ class oxBasket extends oxSuperCfg
         }
 
         // merging basket history
-        if ( !$this->getConfig()->getConfigParam( 'blPerfNoBasketSaving' ) ) {
-            $this->_deleteSavedBasket();
-        }
+        $this->_deleteSavedBasket();
     }
 
     /**
@@ -1986,7 +1996,9 @@ class oxBasket extends oxSuperCfg
             return null;
         }
 
-        return array_merge($this->_aItemDiscounts, $this->_aDiscounts);
+        //#3857 this section is not needed as $this->_aItemDiscounts is part of $this->_aDiscounts already
+        //return array_merge($this->_aItemDiscounts, $this->_aDiscounts);
+        return $this->_aDiscounts;
     }
 
     /**

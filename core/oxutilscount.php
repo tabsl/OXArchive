@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilscount.php 39208 2011-10-12 13:31:26Z arvydas.vapsva $
+ * @version   SVN: $Id: oxutilscount.php 42580 2012-03-01 16:02:59Z tomas $
  */
 
 /**
@@ -251,15 +251,15 @@ class oxUtilsCount extends oxSuperCfg
      * Saves and returns Manufacturers category article count into cache
      *
      * @param array  $aCache    Category cache data
-     * @param string $sCatId    Unique Manufacturer category ident
-     * @param string $sActIdent Manufacturer category ID
+     * @param string $sMnfId    Unique Manufacturer ident
+     * @param string $sActIdent Unique user context ID
      *
      * @return int
      */
-    public function setManufacturerArticleCount( $aCache, $sCatId, $sActIdent )
+    public function setManufacturerArticleCount( $aCache, $sMnfId, $sActIdent )
     {
         // if Manufacturer/category name is 'root', skip counting
-        if ( $sCatId == 'root' ) {
+        if ( $sMnfId == 'root' ) {
             return 0;
         }
 
@@ -268,15 +268,16 @@ class oxUtilsCount extends oxSuperCfg
         $sManTable = getViewName('oxmanufacturers');
 
         // select each Manufacturer articles count
-        $sQ = "select oxmanufacturers.oxid, count($sArtTable.oxid) from $sManTable as oxmanufacturers left outer join $sArtTable on $sArtTable.oxmanufacturerid=oxmanufacturers.oxid and $sArtTable.oxparentid = '' and ".$oArticle->getSqlActiveSnippet()." group by oxmanufacturers.oxid";
-        $aDbResult = oxDb::getDb()->getAssoc( $sQ );
+        //#3485
+        $sQ = "select count($sArtTable.oxid) from $sArtTable where $sArtTable.oxparentid = '' and oxmanufacturerid = '$sMnfId' and ".$oArticle->getSqlActiveSnippet();
 
-        foreach ( $aDbResult as $sKey => $sValue ) {
-            $aCache[$sKey][$sActIdent] = (int) $sValue;
-        }
+        $iValue = oxDb::getDb()->getOne( $sQ );
+
+        $aCache[$sMnfId][$sActIdent] = (int) $iValue;
 
         $this->_setManufacturerCache( $aCache );
-        return $aCache[$sCatId][$sActIdent];
+
+        return $aCache[$sMnfId][$sActIdent];
     }
 
     /**

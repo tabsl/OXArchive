@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 41769 2012-01-26 08:36:49Z alfonsas $
+ * @version   SVN: $Id: oxconfig.php 43085 2012-03-22 12:44:08Z mindaugas.rimgaila $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -342,6 +342,19 @@ class oxConfig extends oxSuperCfg
     }
 
     /**
+     * Parse SEO url parameters.
+     *
+     * @return null
+     */
+    protected function _processSeoCall()
+    {
+        // TODO: refactor shop bootstrap and parse url params as soon as possible
+        if (isSearchEngineUrl()) {
+            oxNew('oxSeoDecoder')->processSeoCall();
+        }
+    }
+
+    /**
      * Starts session manager
      *
      * @return null
@@ -418,7 +431,7 @@ class oxConfig extends oxSuperCfg
 
             // load now
             $this->_loadVarsFromDb( $sShopID );
-            
+
             // loading theme config options
             $this->_loadVarsFromDb( $sShopID, null, oxConfig::OXMODULE_THEME_PREFIX . $this->getConfigParam('sTheme') );
 
@@ -427,6 +440,8 @@ class oxConfig extends oxSuperCfg
                 $this->_loadVarsFromDb( $sShopID, null, oxConfig::OXMODULE_THEME_PREFIX . $this->getConfigParam('sCustomTheme') );
             }
 
+
+            $this->_processSeoCall();
 
             //starting up the session
             $this->getSession()->start();
@@ -442,6 +457,8 @@ class oxConfig extends oxSuperCfg
                 header( "Connection: close");
             }
         } catch ( oxCookieException $oEx ) {
+
+            $this->_processSeoCall();
 
             //starting up the session
             $this->getSession()->start();
@@ -733,7 +750,7 @@ class oxConfig extends oxSuperCfg
             $aHttpsServerVar = $myUtilsServer->getServerVar( 'HTTPS' );
 
             $this->_blIsSsl = false;
-            if (isset( $aHttpsServerVar ) && ($aHttpsServerVar === 'on' || $aHttpsServerVar == '1' )) {
+            if (isset( $aHttpsServerVar ) && ($aHttpsServerVar === 'on' || $aHttpsServerVar === 'ON' || $aHttpsServerVar == '1' )) {
                 // "1&1" hoster provides "1"
                 $this->_blIsSsl = ($this->getConfigParam('sSSLShopURL') || $this->getConfigParam('sMallSSLShopURL'));
                 if ($this->isAdmin() && !$this->_blIsSsl) {

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxemail.php 38337 2011-08-23 07:52:59Z arvydas.vapsva $
+ * @version   SVN: $Id: oxemail.php 42546 2012-02-29 16:14:53Z saulius.stasiukaitis $
  */
 /**
  * Includes PHP mailer class.
@@ -575,8 +575,8 @@ class oxEmail extends PHPMailer
         $this->setUser( $oUser );
 
         // send confirmation to shop owner
-        $sFullName = $oUser->oxuser__oxfname->getRawValue() . " " . $oUser->oxuser__oxlname->getRawValue();
-        $this->setFrom( $oUser->oxuser__oxusername->value, $sFullName );
+        // send not pretending from order user, as different email domain rise spam filters
+        $this->setFrom( $oShop->oxshops__oxowneremail->value );
 
         $oLang = oxLang::getInstance();
         $iOrderLang = $oLang->getObjectTplLanguage();
@@ -613,6 +613,7 @@ class oxEmail extends PHPMailer
         $this->setRecipient( $oShop->oxshops__oxowneremail->value, $oLang->translateString("order") );
 
         if ( $oUser->oxuser__oxusername->value != "admin" )
+            $sFullName = $oUser->oxuser__oxfname->getRawValue() . " " . $oUser->oxuser__oxlname->getRawValue();
             $this->setReplyTo( $oUser->oxuser__oxusername->value, $sFullName );
 
         $blSuccess = $this->send();
@@ -907,7 +908,8 @@ class oxEmail extends PHPMailer
         }
 
         // mailer stuff
-        $this->setFrom( $oParams->send_email, $oParams->send_name );
+        // send not pretending from suggesting user, as different email domain rise spam filters
+        $this->setFrom( $oShop->oxshops__oxinfoemail->value );
         $this->setSMTP();
 
         // create messages

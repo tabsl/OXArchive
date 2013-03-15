@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvoucher.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
+ * @version   SVN: $Id: oxvoucher.php 42606 2012-03-05 07:53:55Z saulius.stasiukaitis $
  */
 
 /**
@@ -84,6 +84,7 @@ class oxVoucher extends oxBase
                 }
             }
             $sQ .= "( {$sViewName}.oxorderid is NULL || {$sViewName}.oxorderid = '' ) ";
+            $sQ .= " and ( {$sViewName}.oxdateused is NULL || {$sViewName}.oxdateused = 0 ) ";
 
             //voucher timeout for 3 hours
             if ( $blCheckavalability ) {
@@ -416,7 +417,7 @@ class oxVoucher extends oxBase
             $myDB = oxDb::getDb();
             $sSelect  = 'select count(*) from '.$this->getViewName().' where oxuserid = '. $myDB->quote( $oUser->oxuser__oxid->value ) . ' and ';
             $sSelect .= 'oxvoucherserieid = ' . $myDB->quote( $this->oxvouchers__oxvoucherserieid->value ) . ' and ';
-            $sSelect .= 'oxorderid is not NULL and oxorderid != "" ';
+            $sSelect .= '((oxorderid is not NULL and oxorderid != "") or (oxdateused is not NULL and oxdateused != 0)) ';
 
             if ( $myDB->getOne( $sSelect )) {
                 $oEx = oxNew( 'oxVoucherException' );

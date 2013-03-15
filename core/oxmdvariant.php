@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: oxmdvariant.php 20503 2009-10-15 14:54:11Z tomas $
  */
@@ -286,6 +286,12 @@ class oxMdVariant extends oxSuperCfg
      */
     public function getFPrice()
     {
+        $myConfig = $this->getConfig();
+        // 0002030 No need to return price if it disabled for better performance.
+        if ( !$myConfig->getConfigParam( 'bl_perfLoadPrice' ) ) {
+            return;
+        }
+
         if ($this->_sFPrice)
             return $this->_sFPrice;
 

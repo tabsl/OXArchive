@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoder.php 42280 2012-02-15 13:00:56Z arvydas.vapsva $
+ * @version   SVN: $Id: oxseoencoder.php 42841 2012-03-14 09:08:36Z linas.kukulskis $
  */
 
 /**
@@ -393,16 +393,21 @@ class oxSeoEncoder extends oxSuperCfg
         if ( !isset( self::$_aFixedCache[$sType][$sShopId][$sId][$iLang] ) ) {
             $oDb = oxDb::getDb( true );
 
-            $sQ = "select oxfixed from oxseo where oxtype = ".$oDb->quote( $sType )."
-                   and oxobjectid = ".$oDb->quote( $sId ) ." and oxshopid = ".$oDb->quote( $iShopId )." and oxlang = '{$iLang}'";
+            $sQ = "SELECT `oxfixed`
+                FROM `oxseo`
+                WHERE `oxtype` = ".$oDb->quote( $sType )."
+                   AND `oxobjectid` = ".$oDb->quote( $sId ) ."
+                   AND `oxshopid` = ".$oDb->quote( $iShopId )."
+                   AND `oxlang` = '{$iLang}'";
 
-            $sParams = $sParams ? $oDb->quote( $sParams ) : "''";
-            if ( $sParams && $blStrictParamsCheck ) {
-                $sQ .= " and oxparams = {$sParams}";
-            } else {
-                $sQ .= " order by oxparams = {$sParams} desc";
+
+            if ( $sParams ) {
+                $sQ .= " AND `oxparams` = '{$sParams}'";
+            } elseif ( ! $blStrictParamsCheck ) {
+                $sQ .= " ORDER BY `oxparams` ASC" ;
             }
-            $sQ .= " limit 1";
+
+            $sQ .= " LIMIT 1";
 
             self::$_aFixedCache[$sType][$sShopId][$sId][$iLang] = (bool) $oDb->getOne( $sQ );
         }
@@ -437,7 +442,7 @@ class oxSeoEncoder extends oxSuperCfg
     }
 
     /**
-     * Loads seo tada from cache for active view (in non admin mode)
+     * Loads seo dada from cache for active view (in non admin mode)
      *
      * @param string $sCacheIdent cache identifier
      * @param string $sType       object type
@@ -454,7 +459,7 @@ class oxSeoEncoder extends oxSuperCfg
         $sCacheKey = $this->_getCacheKey( $sType, $iLang, $iShopId, $sParams );
         $sCache = false;
 
-        if ( $sCacheKey && !isset( $sCacheKey, self::$_aCache ) ) {
+        if ( $sCacheKey && !isset( self::$_aCache[$sCacheKey] ) ) {
             self::$_aCache[$sCacheKey] = oxUtils::getInstance()->fromFileCache( $sCacheKey );
         }
 
@@ -515,24 +520,32 @@ class oxSeoEncoder extends oxSuperCfg
 
         $iLang = (int) $iLang;
 
-        $oDb = oxDb::getDb( true );
-        $sQ = "select oxfixed, oxseourl, oxexpired, oxtype from oxseo where oxtype = ".$oDb->quote( $sType )."
-               and oxobjectid = ".$oDb->quote( $sId ) ." and oxshopid = ".$oDb->quote( $iShopId )." and oxlang = '{$iLang}'";
+        $sQ = "
+            SELECT
+                `oxfixed`,
+                `oxseourl`,
+                `oxexpired`,
+                `oxtype`
+            FROM `oxseo`
+            WHERE `oxtype` = ".oxDb::getDb()->quote( $sType )."
+               AND `oxobjectid` = ".oxDb::getDb()->quote( $sId ) ."
+               AND `oxshopid` = ".oxDb::getDb()->quote( $iShopId )."
+               AND `oxlang` = '{$iLang}'";
 
-        $sParams = $sParams ? $sParams : '';
-        if ( $sParams && $blStrictParamsCheck ) {
-            $sQ .= " and oxparams = '{$sParams}'";
-        } else {
-            $sQ .= " order by oxparams = '{$sParams}' desc";
+        if ( $sParams ) {
+            $sQ .= " AND `oxparams` = '{$sParams}'";
+        } elseif ( ! $blStrictParamsCheck) {
+            $sQ .= " ORDER BY `oxparams` ASC" ;
         }
-        $sQ .= " limit 1";
+
+        $sQ .= " LIMIT 1";
 
         // caching to avoid same queries..
         $sIdent = md5( $sQ );
 
         // looking in cache
         if ( ( $sSeoUrl = $this->_loadFromCache( $sIdent, $sType, $iLang, $iShopId, $sParams ) ) === false ) {
-
+            $oDb = oxDb::getDb( true );
             $oRs = $oDb->execute( $sQ );
             if ( $oRs && $oRs->recordCount() > 0 && !$oRs->EOF ) {
                 // moving expired static urls to history ..
@@ -824,6 +837,7 @@ class oxSeoEncoder extends oxSuperCfg
                 $sString = str_replace( array_keys( $aReplaceChars ), array_values( $aReplaceChars ), $sString );
             }
         }
+
 
         // special chars
         $aReplaceWhat = array( '&amp;', '&quot;', '&#039;', '&lt;', '&gt;' );

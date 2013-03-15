@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_user.php 40139 2011-11-22 15:07:05Z arunas.paskevicius $
+ * @version   SVN: $Id: oxcmp_user.php 42869 2012-03-14 14:31:06Z vilma $
  */
 
 // defining login/logout states
@@ -188,12 +188,14 @@ class oxcmp_user extends oxView
         }
 
         // TODO: move this to a proper place
-        if ( $oUser->isLoadedFromCookie() ) {
+        if ( $oUser->isLoadedFromCookie() && !$myConfig->getConfigParam( 'blPerfNoBasketSaving' )) {
 
             // #1678 R
+            // @deprecated since 2012-03-14 in version 4.5.8. This parameter will not be used anymore
             if ( !$myConfig->getConfigParam( 'blPerfNoBasketSaving' ) ) {
                 $myConfig->setGlobalParameter( 'blUserChanged', 1 );
             }
+            // @end deprecated
 
             if ( $oBasket = $this->getSession()->getBasket() ) {
                 $oBasket->load();
@@ -283,9 +285,11 @@ class oxcmp_user extends oxView
         }
 
         // #1678 R
+        // @deprecated since 2012-03-14 in version 4.5.8. This parameter will not be used anymore
         if ( !$myConfig->getConfigParam( 'blPerfNoBasketSaving' ) ) {
             $myConfig->setGlobalParameter( 'blUserChanged', 1);
         }
+        // @end deprecated
 
 
         return 'payment';

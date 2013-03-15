@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: genexport_do.php 28929 2010-07-23 07:06:06Z vilma $
  */
@@ -152,6 +152,9 @@ class VoucherSerie_Export extends VoucherSerie_Main
         } else {
             // file is open
             $iStart = oxConfig::getParameter("iStart");
+            if (!$iStart) {
+                ftruncate($this->fpFile, 0);
+            }
 
             if ( ( $iExportedItems = $this->exportVouchers( $iStart ) ) === false ) {
                 // end reached

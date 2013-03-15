@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 41876 2012-01-30 10:15:28Z mindaugas.rimgaila $
+ * @version   SVN: $Id: lang.php 42703 2012-03-12 10:47:50Z juergen.busch $
  */
 
 /*
@@ -101,7 +101,7 @@ $aLang = array(
 'GENERAL_ARTICLE_OXTHUMB'                                  => 'Preview Picture',
 'GENERAL_ARTICLE_OXICON'                                   => 'Icon',
 'GENERAL_ARTICLE_OXPICSGENERATED'                          => 'Pictures generated',
-'GENERAL_ARTICLE_PICTURES'                                 => 'Article pictures',
+'GENERAL_ARTICLE_PICTURES'                                 => 'Product pictures',
 'GENERAL_ARTICLE_OXPIC1'                                   => 'Picture1',
 'GENERAL_ARTICLE_OXPIC2'                                   => 'Picture2',
 'GENERAL_ARTICLE_OXPIC3'                                   => 'Picture3',
@@ -776,7 +776,7 @@ $aLang = array(
 'EXCEPTION_UNSPECIFIED_PARENT_VERSIONS'                    => 'Compatible parent theme versions not specified',
 'EXCEPTION_PARENT_VERSION_MISMATCH'                        => 'Parent theme version is not compatible',
 'EXCEPTION_PARENT_THEME_NOT_FOUND'                         => 'Cannot find parent theme',
-
+'NO_PICTURES_CHANGES'                                      => 'No pictures changes',
 'THEME_AUTHOR'                                             => 'Author',
 'THEME_VERSION'                                            => 'Version',
 'THEME_ACTIVATE'                                           => 'Activate',

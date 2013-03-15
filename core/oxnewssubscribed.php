@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxnewssubscribed.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxnewssubscribed.php 42893 2012-03-15 07:23:24Z saulius.stasiukaitis $
  */
 
 /**
@@ -36,6 +36,13 @@ class oxNewsSubscribed extends oxBase
      * @var bool
      */
     protected $_blWasSubscribed = false;
+
+    /**
+     * Subscription marker. Marks that newsletter was subscribed but wasn't confirmed.
+     *
+     * @var bool
+     */
+    protected $_blWasPreSubscribed = false;
 
     /**
      * Current class name
@@ -68,8 +75,10 @@ class oxNewsSubscribed extends oxBase
     {
         $blRet = parent::load( $oxId );
 
-        if ( $this->oxnewssubscribed__oxdboptin->value == 1) {
+        if ( $this->oxnewssubscribed__oxdboptin->value == 1 ) {
             $this->_blWasSubscribed = true;
+        } elseif ( $this->oxnewssubscribed__oxdboptin->value == 2 ) {
+            $this->_blWasPreSubscribed = true;
         }
 
         return $blRet;
@@ -124,9 +133,16 @@ class oxNewsSubscribed extends oxBase
      */
     protected function _update()
     {
-        if ( $this->_blWasSubscribed && !$this->oxnewssubscribed__oxdboptin->value ) {
+        if ( ( $this->_blWasSubscribed || $this->_blWasPreSubscribed ) && !$this->oxnewssubscribed__oxdboptin->value ) {
             // set unsubscription date
             $this->oxnewssubscribed__oxunsubscribed->setValue(date( 'Y-m-d H:i:s' ));
+            // 0001974 Same object can be called many times without requiring to renew date.
+            // If so happens, it would have _aSkipSaveFields set to skip date field. So need to check and
+            // release if _aSkipSaveFields are set for field oxunsubscribed.
+            $aSkipSaveFieldsKeys = array_keys( $this->_aSkipSaveFields, 'oxunsubscribed' );
+            foreach ( $aSkipSaveFieldsKeys as $iSkipSaveFieldKey ) {
+                unset ( $this->_aSkipSaveFields[ $iSkipSaveFieldKey ] );
+            }
         } else {
             // don't update date
             $this->_aSkipSaveFields[] = 'oxunsubscribed';
@@ -179,6 +195,19 @@ class oxNewsSubscribed extends oxBase
     {
         $this->oxnewssubscribed__oxemailfailed = new oxField($iStatus, oxField::T_RAW);
         $this->save();
+    }
+
+    /**
+     * Check if was ever unsubscribed by unsubscribed field.
+     * 
+     * @return bool
+     */
+    public function wasUnsubscribed()
+    {
+        if ( '0000-00-00 00:00:00' != $this->oxnewssubscribed__oxunsubscribed ) {
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsobject.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
+ * @version   SVN: $Id: oxutilsobject.php 42947 2012-03-16 14:04:15Z linas.kukulskis $
  */
 
 /**
@@ -249,19 +249,25 @@ class oxUtilsObject extends oxSuperCfg
     {
 
         $aModules = $this->getConfig()->getConfigParam( 'aModules' );
-        if ( is_array( $aModules ) && array_key_exists( $sClassName, $aModules ) ) {
-            //multiple inheritance implementation
-            //in case we have multiple modules:
-            //like oxoutput => sub/suboutput1&sub/suboutput2&sub/suboutput3
-            $aClassChain = explode( "&", $aModules[$sClassName] );
 
-            $sParent = $sClassName;
+        if ( is_array( $aModules ) ) {
 
-            //security: just preventing string termination
-            $sParent = str_replace(chr(0), '', $sParent);
+            $aModules = array_change_key_case( $aModules );
 
-            //building middle classes if needed
-            $sClassName = $this->_makeSafeModuleClassParents( $aClassChain, $sParent );
+            if ( array_key_exists( $sClassName, $aModules ) ) {
+                //multiple inheritance implementation
+                //in case we have multiple modules:
+                //like oxoutput => sub/suboutput1&sub/suboutput2&sub/suboutput3
+                $aClassChain = explode( "&", $aModules[$sClassName] );
+
+                $sParent = $sClassName;
+
+                //security: just preventing string termination
+                $sParent = str_replace(chr(0), '', $sParent);
+
+                //building middle classes if needed
+                $sClassName = $this->_makeSafeModuleClassParents( $aClassChain, $sParent );
+            }
         }
 
         // check if there is a path, if yes, remove it

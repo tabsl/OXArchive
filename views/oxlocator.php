@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlocator.php 36078 2011-06-08 12:45:12Z arunas.paskevicius $
+ * @version   SVN: $Id: oxlocator.php 42782 2012-03-13 14:30:25Z vilma $
  */
 
 /**
@@ -349,8 +349,12 @@ class oxLocator extends oxSuperCfg
             $oTag->iCntOfProd  = $oIdList->count();
             $oTag->iProductPos = $this->_getProductPos( $oCurrArticle, $oIdList, $oLocatorTarget );
 
-            $sPageNr = $this->_getPageNumber( $iPage );
-            $oTag->toListLink  = $this->_makeLink( $oTag->link, $sPageNr );
+            if ( oxUtils::getInstance()->seoIsActive() ) {
+                $oTag->toListLink  = oxSeoEncoderTag::getInstance()->getTagPageUrl( $oTag->sTag, $iPage );
+            } else {
+                $sPageNr = $this->_getPageNumber( $iPage );
+                $oTag->toListLink  = $this->_makeLink( $oTag->link, $sPageNr );
+            }
 
             $sAddSearch = '';
             // setting parameters when seo is Off

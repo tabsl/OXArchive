@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 41881 2012-01-30 12:34:50Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxuser.php 42869 2012-03-14 14:31:06Z vilma $
  */
 
 /**
@@ -1294,7 +1294,7 @@ class oxUser extends oxBase
      */
     protected function _loadSavedUserBasketAfterLogin()
     {
-        if ( !$this->isAdmin() ) {
+        if ( !$this->isAdmin() && !$this->getConfig()->getConfigParam( 'blPerfNoBasketSaving' )) {
             //load basket from the database
             try {
                 if ( $oBasket = $this->getSession()->getBasket() ) {

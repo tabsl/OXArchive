@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsysrequirements.php 40950 2012-01-04 12:55:53Z linas.kukulskis $
+ * @version   SVN: $Id: oxsysrequirements.php 42554 2012-03-01 07:40:25Z saulius.stasiukaitis $
  */
 
 /**
@@ -378,6 +378,33 @@ class oxSysRequirements
 
     /**
      * returns host, port, base dir, ssl information as assotiative array, false on error
+     * takes this info from eShop config.inc.php (via oxConfig class)
+     *
+     * @return array
+     */
+    protected function _getShopSSLHostInfoFromConfig()
+    {    	
+        $sSSLShopURL = $this->getConfig()->getConfigParam( 'sSSLShopURL' );
+        if (preg_match('#^(https?://)?([^/:]+)(:([0-9]+))?(/.*)?$#i', $sSSLShopURL, $m)) {
+            $sHost = $m[2];
+            $iPort = (int)$m[4];
+            $blSsl = (strtolower($m[1])=='https://');
+            if (!$iPort) {
+                $iPort = $blSsl?443:80;
+            }
+            $sScript = rtrim($m[5], '/').'/';
+            return array(
+                    'host'=>$sHost,
+                    'port'=>$iPort,
+                    'dir'=>$sScript,
+                    'ssl'=>$blSsl,
+            );
+        }
+        return false;
+    }
+
+    /**
+     * returns host, port, base dir, ssl information as assotiative array, false on error
      * takes this info from _SERVER variable
      *
      * @return array
@@ -415,14 +442,60 @@ class oxSysRequirements
     }
 
     /**
-     * Checks if mod_rewrite extension is loaded
+     * returns host, port, current script, ssl information as assotiative array, false on error
+     * Takes ssl address from config so important only in admin.
+     *
+     * @return array
+     */
+    protected function _getShopSSLHostInfo()
+    {
+        if ( isAdmin() ) {
+            return $this->_getShopSSLHostInfoFromConfig();
+        }
+        return false;
+    }
+
+    /**
+     * Checks if mod_rewrite extension is loaded.
+     * Checks for all address.
      *
      * @return integer
      */
     public function checkModRewrite()
     {
         $iModStat = null;
-        if ( ($aHostInfo = $this->_getShopHostInfo()) && $rFp = @fsockopen( ($aHostInfo['ssl']?'ssl://':'').$aHostInfo['host'], $aHostInfo['port'], $iErrNo, $sErrStr, 10 ) ) {
+        $aHostInfo = $this->_getShopHostInfo();        
+        $iModStat = $this->_checkModRewrite( $aHostInfo );        
+        
+        $aSSLHostInfo = $this->_getShopSSLHostInfo();       
+        // Don't need to check if mod status is already failed.
+        if ( 0 != $iModStat && $aSSLHostInfo ) {
+            $iSSLModStat = $this->_checkModRewrite( $aSSLHostInfo );
+
+            // Send if failed, even if couldn't check another
+            if ( 0 == $iSSLModStat ) {
+                return 0;
+            } elseif ( 1 == $iSSLModStat || 1 == $iModStat ) {
+                return 1;
+            }
+            
+            return min( $iModStat, $iSSLModStat );
+        }
+        
+        return $iModStat;
+    }
+
+    /**
+     * Checks if mod_rewrite extension is loaded.
+     * Checks for one address.
+     *
+     * @param array $aHostInfo host info to open socket
+     *
+     * @return integer
+     */
+    protected function _checkModRewrite($aHostInfo)
+    {
+        if ( $rFp = @fsockopen( ($aHostInfo['ssl']?'ssl://':'').$aHostInfo['host'], $aHostInfo['port'], $iErrNo, $sErrStr, 10 ) ) {
             $sReq  = "POST {$aHostInfo['dir']}oxseo.php?mod_rewrite_module_is=off HTTP/1.1\r\n";
             $sReq .= "Host: {$aHostInfo['host']}\r\n";
             $sReq .= "User-Agent: OXID eShop setup\r\n";
@@ -446,7 +519,7 @@ class oxSysRequirements
                 $iModStat = -1;
             }
         }
-        return $iModStat;
+        return $iModStat;    	
     }
 
     /**

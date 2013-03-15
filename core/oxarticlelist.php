@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxarticlelist.php 42173 2012-02-13 07:13:39Z linas.kukulskis $
+ * @version   SVN: SVN: $Id: oxarticlelist.php 42779 2012-03-13 14:12:36Z vilma $
  */
 
 /**
@@ -149,13 +149,15 @@ class oxArticleList extends oxList
 
         $aHistoryArticles = array_values( $aHistoryArticles );
         $this->loadIds( $aHistoryArticles );
-        $this->_sortByIds( $aHistoryArticles );
+        $this->sortByIds( $aHistoryArticles );
     }
 
     /**
      * sort this list by given order.
      *
      * @param array $aIds ordered ids
+     *
+     * @depricated since v4.5.9 (2012-03-13); _sortByIds - become public method
      *
      * @return null
      */
@@ -166,7 +168,20 @@ class oxArticleList extends oxList
     }
 
     /**
-     * callback function only used from _sortByIds
+     * sort this list by given order.
+     *
+     * @param array $aIds ordered ids
+     *
+     * @return null
+     */
+    protected function sortByIds($aIds)
+    {
+        $this->_aOrderMap = array_flip($aIds);
+        uksort($this->_aArray, array($this, '_sortByOrderMapCallback'));
+    }
+
+    /**
+     * callback function only used from sortByIds
      *
      * @param string $key1 1st key
      * @param string $key2 2nd key
@@ -425,8 +440,7 @@ class oxArticleList extends oxList
         // #1970C - if any filters are used, we can not use cached category article count
         $iArticleCount = null;
         if ( $aSessionFilter) {
-            $oRet = oxDb::getDb()->execute( $sSelect );
-            $iArticleCount = $oRet->recordCount();
+            $iArticleCount = oxDb::getDb()->getOne( $this->_getCategoryCountSelect( $sCatId, $aSessionFilter ) );
         }
 
         if ($iLimit = (int) $iLimit) {
@@ -718,7 +732,7 @@ class oxArticleList extends oxList
         $sTag = $oTagHandler->prepareTags( $sTag );
 
         $sQ = "select {$sViewName}.oxid from {$sViewName} inner join {$sArticleTable} on ".
-              "{$sArticleTable}.oxid = {$sViewName}.oxid where {$sArticleTable}.oxissearch = 1 and ".
+              "{$sArticleTable}.oxid = {$sViewName}.oxid where {$sArticleTable}.oxparentid = '' and {$sArticleTable}.oxissearch = 1 and ".
               "match ( {$sViewName}.oxtags ) ".
               "against( ".oxDb::getDb()->quote( "\"".$sTag."\"" )." IN BOOLEAN MODE )";
 
@@ -932,6 +946,38 @@ class oxArticleList extends oxList
                     ON $sArticleTable.oxid = oc.oxobjectid
                     WHERE ".$this->getBaseObject()->getSqlActiveSnippet()." and $sArticleTable.oxparentid = ''
                     and oc.oxcatnid = ".$oDb->quote($sCatId)." $sFilterSql GROUP BY oc.oxcatnid, oc.oxobjectid ORDER BY $sSorting oc.oxpos, oc.oxobjectid ";
+
+        return $sSelect;
+    }
+
+    /**
+     * Creates SQL Statement to load Articles Count, etc.
+     *
+     * @param string $sCatId         Category tree ID
+     * @param array  $aSessionFilter Like array ( catid => array( attrid => value,...))
+     *
+     * @return string SQL
+     */
+    protected function _getCategoryCountSelect( $sCatId, $aSessionFilter )
+    {
+        $sArticleTable = getViewName( 'oxarticles' );
+        $sO2CView      = getViewName( 'oxobject2category' );
+
+
+        // ----------------------------------
+        // filtering ?
+        $sFilterSql = '';
+        $iLang = oxLang::getInstance()->getBaseLanguage();
+        if ( $aSessionFilter && isset( $aSessionFilter[$sCatId][$iLang] ) ) {
+            $sFilterSql = $this->_getFilterSql($sCatId, $aSessionFilter[$sCatId][$iLang]);
+        }
+
+        $oDb = oxDb::getDb();
+
+        $sSelect = "SELECT COUNT(*) FROM $sO2CView as oc left join $sArticleTable
+                    ON $sArticleTable.oxid = oc.oxobjectid
+                    WHERE ".$this->getBaseObject()->getSqlActiveSnippet()." and $sArticleTable.oxparentid = ''
+                    and oc.oxcatnid = ".$oDb->quote($sCatId)." $sFilterSql ";
 
         return $sSelect;
     }

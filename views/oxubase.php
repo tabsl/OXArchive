@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 42291 2012-02-15 14:50:54Z linas.kukulskis $
+ * @version   SVN: $Id: oxubase.php 42678 2012-03-09 13:48:13Z linas.kukulskis $
  */
 
 /**
@@ -1074,6 +1074,7 @@ class oxUBase extends oxView
     public function prepareSortColumns()
     {
         $aSortColumns = $this->getConfig()->getConfigParam( 'aSortCols' );
+        $aSortDir = array( 'desc', 'asc' );
         if ( count( $aSortColumns ) > 0 ) {
 
             $this->_blActiveSorting = true;
@@ -1085,7 +1086,8 @@ class oxUBase extends oxView
             $sSortBy  = oxConfig::getParameter( $this->getSortOrderByParameterName() );
             $sSortDir = oxConfig::getParameter( $this->getSortOrderParameterName() );
 
-            if ( !$sSortBy && $aSorting = $this->getSorting( $sCnid ) ) {
+            $oStr = getStr();
+            if ( (!$sSortBy || !in_array( $oStr->strtolower($sSortBy), $aSortColumns) || !in_array( $oStr->strtolower($sSortDir), $aSortDir) ) && $aSorting = $this->getSorting( $sCnid ) ) {
                 $sSortBy  = $aSorting['sortby'];
                 $sSortDir = $aSorting['sortdir'];
             }
