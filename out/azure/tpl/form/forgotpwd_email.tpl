@@ -23,4 +23,6 @@
   </ul>
 </form>
 [{ oxmultilang ident="PAGE_ACCOUNT_FORGOTPWD_AFTERCLICK" }]<br><br>
-[{ oxcontent ident="oxforgotpwd" }]
+[{oxifcontent ident="oxforgotpwd" object="oCont"}]
+    [{ $oCont->oxcontents__oxcontent->value }]
+[{/oxifcontent}]

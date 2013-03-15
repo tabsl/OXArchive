@@ -244,3 +244,7 @@ a.viewAllHover span {
 a.rss:hover {
     text-decoration: none;
 }
+
+#sidebar .tree li.exp>a>i span, #sidebar .tree li.active>a>i span {
+    bottom: -13px;
+}

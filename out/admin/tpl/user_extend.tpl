@@ -24,80 +24,82 @@
     <td width="15"></td>
     <td valign="top" class="edittext">
         <table cellspacing="0" cellpadding="0" border="0">
-        <tr>
-            <td class="edittext" width="120">
-            [{ oxmultilang ident="USER_EXTEND_PRIVATFON" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="25" maxlength="[{$edit->oxuser__oxprivfon->fldmax_length}]" name="editval[oxuser__oxprivfon]" value="[{$edit->oxuser__oxprivfon->value}]" [{ $readonly}]>
-            [{ oxinputhelp ident="HELP_USER_EXTEND_PRIVATFON" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="USER_EXTEND_MOBILFON" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="25" maxlength="[{$edit->oxuser__oxmobfon->fldmax_length}]" name="editval[oxuser__oxmobfon]" value="[{$edit->oxuser__oxmobfon->value}]" [{ $readonly}]>
-            [{ oxinputhelp ident="HELP_USER_EXTEND_MOBILFON" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="USER_EXTEND_NEWSLETTER" }]
-            </td>
-            <td class="edittext">
-                <input type="hidden" name="editnews" value='0'>
-                <input class="edittext" type="checkbox" name="editnews" value='1' [{if $edit->sDBOptin == 1}]checked[{/if}] [{ $readonly}]>
-                [{ oxinputhelp ident="HELP_USER_EXTEND_NEWSLETTER" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="USER_EXTEND_EMAILFAILED" }]
-            </td>
-            <td class="edittext">
-                <input type="hidden" name="emailfailed" value='0'>
-                <input class="edittext" type="checkbox" name="emailfailed" value='1' [{if $edit->sEmailFailed == 1}]checked[{/if}] [{ $readonly}]>
-                [{ oxinputhelp ident="HELP_USER_EXTEND_EMAILFAILED" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="USER_EXTEND_BONI" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="25" maxlength="[{$edit->oxuser__oxboni->fldmax_length}]" name="editval[oxuser__oxboni]" value="[{$edit->oxuser__oxboni->value}]" [{ $readonly}]>
-            [{ oxinputhelp ident="HELP_USER_EXTEND_BONI" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="GENERAL_URL" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="25" maxlength="[{$edit->oxuser__oxurl->fldmax_length}]" name="editval[oxuser__oxurl]" value="[{$edit->oxuser__oxurl->value}]" [{ $readonly}]>
-            [{ oxinputhelp ident="HELP_GENERAL_URL" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="USER_EXTEND_CREDITPOINTS" }]
-            </td>
-            <td class="edittext">
-            [{$edit->oxuser__oxpoints->value}]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext wrap">
-            [{ oxmultilang ident="USER_EXTEND_DISABLEAUTOGROUP" }]
-            </td>
-            <td class="edittext">
-             <input type="hidden" name="editval[oxuser__oxdisableautogrp]" value='0'>
-            <input class="edittext" type="checkbox" name="editval[oxuser__oxdisableautogrp]" value='1' [{if $edit->oxuser__oxdisableautogrp->value == 1}]checked[{/if}] [{ $readonly}]>
-            [{ oxinputhelp ident="HELP_USER_EXTEND_DISABLEAUTOGROUP" }]
-            </td>
-        </tr>
+        [{block name="admin_user_extend_form"}]
+            <tr>
+                <td class="edittext" width="120">
+                [{ oxmultilang ident="USER_EXTEND_PRIVATFON" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="25" maxlength="[{$edit->oxuser__oxprivfon->fldmax_length}]" name="editval[oxuser__oxprivfon]" value="[{$edit->oxuser__oxprivfon->value}]" [{ $readonly}]>
+                [{ oxinputhelp ident="HELP_USER_EXTEND_PRIVATFON" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="USER_EXTEND_MOBILFON" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="25" maxlength="[{$edit->oxuser__oxmobfon->fldmax_length}]" name="editval[oxuser__oxmobfon]" value="[{$edit->oxuser__oxmobfon->value}]" [{ $readonly}]>
+                [{ oxinputhelp ident="HELP_USER_EXTEND_MOBILFON" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="USER_EXTEND_NEWSLETTER" }]
+                </td>
+                <td class="edittext">
+                    <input type="hidden" name="editnews" value='0'>
+                    <input class="edittext" type="checkbox" name="editnews" value='1' [{if $edit->sDBOptin == 1}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_USER_EXTEND_NEWSLETTER" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="USER_EXTEND_EMAILFAILED" }]
+                </td>
+                <td class="edittext">
+                    <input type="hidden" name="emailfailed" value='0'>
+                    <input class="edittext" type="checkbox" name="emailfailed" value='1' [{if $edit->sEmailFailed == 1}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_USER_EXTEND_EMAILFAILED" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="USER_EXTEND_BONI" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="25" maxlength="[{$edit->oxuser__oxboni->fldmax_length}]" name="editval[oxuser__oxboni]" value="[{$edit->oxuser__oxboni->value}]" [{ $readonly}]>
+                [{ oxinputhelp ident="HELP_USER_EXTEND_BONI" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="GENERAL_URL" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="25" maxlength="[{$edit->oxuser__oxurl->fldmax_length}]" name="editval[oxuser__oxurl]" value="[{$edit->oxuser__oxurl->value}]" [{ $readonly}]>
+                [{ oxinputhelp ident="HELP_GENERAL_URL" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="USER_EXTEND_CREDITPOINTS" }]
+                </td>
+                <td class="edittext">
+                [{$edit->oxuser__oxpoints->value}]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext wrap">
+                [{ oxmultilang ident="USER_EXTEND_DISABLEAUTOGROUP" }]
+                </td>
+                <td class="edittext">
+                 <input type="hidden" name="editval[oxuser__oxdisableautogrp]" value='0'>
+                <input class="edittext" type="checkbox" name="editval[oxuser__oxdisableautogrp]" value='1' [{if $edit->oxuser__oxdisableautogrp->value == 1}]checked[{/if}] [{ $readonly}]>
+                [{ oxinputhelp ident="HELP_USER_EXTEND_DISABLEAUTOGROUP" }]
+                </td>
+            </tr>
+        [{/block}]
         <tr>
             <td class="edittext">
             </td>

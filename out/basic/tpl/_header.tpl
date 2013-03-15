@@ -13,17 +13,17 @@
     [{/if}]
     [{if $oView->getMetaDescription()}]<meta name="description" content="[{$oView->getMetaDescription()}]">[{/if}]
     [{if $oView->getMetaKeywords()}]<meta name="keywords" content="[{$oView->getMetaKeywords()}]">[{/if}]
-    [{if $oViewConf->getFbAppId()}]        
-        [{if $oViewConf->getActiveClassName() == 'details' }]   
-            <meta property="og:type" content="product">            
+    [{if $oViewConf->getFbAppId()}]
+        [{if $oViewConf->getActiveClassName() == 'details' }]
+            <meta property="og:type" content="product">
             <meta property="og:image" content="[{$oView->getActPicture()}]">
             <meta property="og:url" content="[{$oView->getCanonicalUrl()}]">
-	        <meta property="og:site_name" content="[{$oViewConf->getCurrentHomeDir()}]">
-	        <meta property="fb:app_id" content="[{$oViewConf->getFbAppId()}]">
+            <meta property="og:site_name" content="[{$oViewConf->getCurrentHomeDir()}]">
+            <meta property="fb:app_id" content="[{$oViewConf->getFbAppId()}]">
             <meta property="og:title" content="[{ $_titleprefix }][{if $title&& $_titleprefix }] | [{/if}][{$title|strip_tags}][{if $_titlesuffix}] | [{$_titlesuffix}][{/if}][{if $titlepagesuffix}] | [{$titlepagesuffix}][{/if}]">
-        [{/if}] 
+        [{/if}]
     [{/if}]
-    
+
     [{assign var="canonical_url" value=$oView->getCanonicalUrl()}]
     [{if $canonical_url }]<link rel="canonical" href="[{ $canonical_url }]">[{/if}]
     <link rel="shortcut icon" href="[{ $oViewConf->getImageUrl() }]favicon.ico">
@@ -219,7 +219,7 @@
 
                 [{if $iCatCnt <= $oView->getTopNavigationCatCnt()}]
                 <li>
-                    <a id="root[{$iCatCnt}]" href="[{$ocat->getLink()}]" [{if $ocat->expanded}]class="exp"[{/if}]>[{$ocat->oxcategories__oxtitle->value}] [{ if $ocat->getNrOfArticles() > 0}] ([{$ocat->getNrOfArticles()}])[{/if}] </a>
+                    <a id="root[{$iCatCnt}]" href="[{$ocat->getLink()}]" [{if $ocat->expanded}]class="exp"[{/if}]>[{$ocat->oxcategories__oxtitle->value}] [{if $oView->showCategoryArticlesCount() && $ocat->getNrOfArticles() > 0}] ([{$ocat->getNrOfArticles()}])[{/if}] </a>
                     [{if $ocat->getSubCats()}]
                     [{strip}]
                     <ul class="menue vertical dropdown">
@@ -230,7 +230,7 @@
                             [{/foreach}]
                         [{/if}]
                         [{if $osubcat->getIsVisible() }]
-                            <li><a id="test_Top_root[{ $iCatCnt }]_SubCat_[{$smarty.foreach.SubCat.iteration}]" href="[{$osubcat->getLink()}]">[{$osubcat->oxcategories__oxtitle->value}] [{ if $osubcat->getNrOfArticles() > 0}] ([{$osubcat->getNrOfArticles()}])[{/if}] </a></li>
+                            <li><a id="test_Top_root[{ $iCatCnt }]_SubCat_[{$smarty.foreach.SubCat.iteration}]" href="[{$osubcat->getLink()}]">[{$osubcat->oxcategories__oxtitle->value}] [{if $oView->showCategoryArticlesCount() && $osubcat->getNrOfArticles() > 0}] ([{$osubcat->getNrOfArticles()}])[{/if}] </a></li>
                         [{/if}]
                     [{/foreach}]
                     </ul>
@@ -256,7 +256,7 @@
                             <li><a href="[{$omorecont->getLink()}]">[{$omorecont->oxcontents__oxtitle->value}] </a></li>
                             [{/foreach}]
                         [{/if}]
-                        <li><a id="test_Top_RootMore_MoreCat_[{$smarty.foreach.more.iteration}]" href="[{$omorecat->getLink()}]">[{$omorecat->oxcategories__oxtitle->value}] [{ if $omorecat->getNrOfArticles() > 0}] ([{$omorecat->getNrOfArticles()}])[{/if}] </a></li>
+                        <li><a id="test_Top_RootMore_MoreCat_[{$smarty.foreach.more.iteration}]" href="[{$omorecat->getLink()}]">[{$omorecat->oxcategories__oxtitle->value}] [{if $oView->showCategoryArticlesCount() && $omorecat->getNrOfArticles() > 0}] ([{$omorecat->getNrOfArticles()}])[{/if}] </a></li>
                       [{/if}]
                     [{/foreach}]
                     </ul>

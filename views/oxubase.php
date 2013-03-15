@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 51387 2012-11-06 09:11:01Z andrius.silgalis $
+ * @version   SVN: $Id: oxubase.php 44342 2012-04-25 10:59:43Z linas.kukulskis $
  */
 
 /**
@@ -1187,7 +1187,7 @@ class oxUBase extends oxView
             $oContent = oxNew( 'oxcontent' );
             if ( $oContent->loadByIdent( $sMetaIdent ) &&
                  $oContent->oxcontents__oxactive->value ) {
-                return getStr()->strip_tags( $oContent->oxcontents__oxcontent->value );
+                return strip_tags( $oContent->oxcontents__oxcontent->value );
             }
         }
     }
@@ -1492,7 +1492,7 @@ class oxUBase extends oxView
             // decoding html entities
             $sMeta = $oStr->html_entity_decode( $sMeta );
             // stripping HTML tags
-            $sMeta = $oStr->strip_tags( $sMeta );
+            $sMeta = strip_tags( $sMeta );
 
             // removing some special chars
             $sMeta = $oStr->cleanStr( $sMeta );
@@ -1507,7 +1507,6 @@ class oxUBase extends oxView
             $aPattern = array( "/,[\s\+\-\*]*,/", "/\s+,/" );
             $sMeta = $oStr->preg_replace( $aPattern, ',', $sMeta );
             $sMeta = oxUtilsString::getInstance()->minimizeTruncateString( $sMeta, $iLength );
-            $sMeta = $oStr->htmlspecialchars( $sMeta );
 
             return trim( $sMeta );
         }
@@ -1726,19 +1725,19 @@ class oxUBase extends oxView
                     $sRet .= "&amp;searchparam={$sSearchParamForLink}";
                 }
 
-                if ( ( $sVar = oxConfig::getParameter( 'searchcnid', true ) ) ) {
+                if ( ( $sVar = oxConfig::getParameter( 'searchcnid' ) ) ) {
                     $sRet .= '&amp;searchcnid='.rawurlencode( rawurldecode( $sVar ) );
                 }
-                if ( ( $sVar = oxConfig::getParameter( 'searchvendor', true ) ) ) {
+                if ( ( $sVar = oxConfig::getParameter( 'searchvendor' ) ) ) {
                     $sRet .= '&amp;searchvendor='.rawurlencode( rawurldecode( $sVar ) );
                 }
-                if ( ( $sVar = oxConfig::getParameter( 'searchmanufacturer', true ) ) ) {
+                if ( ( $sVar = oxConfig::getParameter( 'searchmanufacturer' ) ) ) {
                     $sRet .= '&amp;searchmanufacturer='.rawurlencode( rawurldecode( $sVar ) );
                 }
                 break;
             case 'tag':
                 $sRet .= "&amp;listtype={$sListType}";
-                if ( $sParam = rawurlencode( oxConfig::getParameter( 'searchtag', true ) ) ) {
+                if ( $sParam = rawurlencode( oxConfig::getParameter( 'searchtag', 1 ) ) ) {
                     $sRet .= "&amp;searchtag={$sParam}";
                 }
                 break;
@@ -3136,7 +3135,8 @@ class oxUBase extends oxView
     {
         if ( $this->_aDeliveryAddress == null ) {
             $aAddress = oxConfig::getParameter( 'deladr');
-            if ( $aAddress ) {
+            //do not show deladr if address was reloaded
+            if ( $aAddress && !oxConfig::getParameter( 'reloadaddress' )) {
                 $this->_aDeliveryAddress = $aAddress;
             }
         }
@@ -3258,18 +3258,25 @@ class oxUBase extends oxView
      *
      * @return boolean
      */
-    public function isFbWidgetWisible()
+    public function isFbWidgetVisible()
     {
         if ( $this->_blFbWidgetsOn === null ) {
             $oUtils = oxUtilsServer::getInstance();
 
             // reading ..
             $this->_blFbWidgetsOn = (bool) $oUtils->getOxCookie( "fbwidgetson" );
-
-            // .. and setting back
-            $oUtils->setOxCookie( "fbwidgetson", $this->_blFbWidgetsOn ? 1 : 0 );
         }
         return $this->_blFbWidgetsOn;
+    }
+
+    /**
+     * Checks if downloadable files are turned on
+     *
+     * @return bool
+     */
+    public function isEnabledDownloadableFiles()
+    {
+        return (bool) $this->getConfig()->getConfigParam( "blEnableDownloads" );
     }
 
     /**
@@ -3279,6 +3286,39 @@ class oxUBase extends oxView
      */
     public function showRememberMe()
     {
-        return (bool)$this->getConfig()->getConfigParam('blShowRememberMe');
+        return (bool) $this->getConfig()->getConfigParam('blShowRememberMe');
     }
+
+    /**
+     * Returns true if articles shown in shop with VAT.
+     * Checks users VAT and options.
+     *
+     * @return boolean
+     */
+    public function isVatIncluded()
+    {
+        $blResult = true;
+        $oUser = $this->getUser();
+        $oVatSelector = oxNew( 'oxVatSelector' );
+        $oConfig = $this->getConfig();
+
+        if ( $oConfig->getConfigParam( 'blEnterNetPrice' ) && $oConfig->getConfigParam( 'bl_perfCalcVatOnlyForBasketOrder' ) ) {
+            $blResult = false;
+        } elseif ( $oUser && !$oVatSelector->getUserVat( $oUser ) ) {
+            $blResult = false;
+        }
+
+        return $blResult;
+    }
+
+    /**
+     * Returns true if price calculation is activated
+     *
+     * @return boolean
+     */
+    public function isPriceCalculated()
+    {
+        return (bool) $this->getConfig()->getConfigParam( 'bl_perfLoadPrice' );
+    }
+
 }

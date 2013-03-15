@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: voucherserie_groups.inc.php 39178 2011-10-12 13:15:27Z arvydas.vapsva $
+ * @version   SVN: $Id: voucherserie_groups.inc.php 39300 2011-10-13 08:34:14Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,  visible, multilanguage, ident

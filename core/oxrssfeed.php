@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxrssfeed.php 45469 2012-05-21 10:51:35Z vaidas.matulevicius $
+ * @version   SVN: $Id: oxrssfeed.php 43092 2012-03-22 13:07:15Z linas.kukulskis $
  */
 
 /**
@@ -194,22 +194,25 @@ class oxRssFeed extends oxSuperCfg
             $oItem->title                   = strip_tags($oArticle->oxarticles__oxtitle->value . $sPrice);
             $oItem->guid     = $oItem->link = $myUtilsUrl->prepareUrlForNoSession($oArticle->getLink());
             $oItem->isGuidPermalink         = true;
-            //$oItem->description             = $oArticle->getArticleLongDesc()->value; //oxarticles__oxshortdesc->value;
-            if ( oxConfig::getInstance()->getConfigParam( 'bl_perfParseLongDescinSmarty' ) ) {
-                $oItem->description         = $oArticle->getLongDesc();
-            } else {
-                $oItem->description         = $oArticle->getArticleLongDesc()->value;//$oArticle->getLongDescription()->value;
-            }
-            
+            $oItem->description             = $oArticle->getLongDescription()->value; //oxarticles__oxshortdesc->value;
             if (trim(str_replace('&nbsp;', '', (strip_tags($oItem->description)))) == '') {
                 $oItem->description             = $oArticle->oxarticles__oxshortdesc->value;
             }
 
             $oItem->description = trim($oItem->description);
-            if ($sIcon = $oArticle->getIconUrl()) {
-                $oItem->description = "<img src='$sIcon' border=0 align='left' hspace=5>".$oItem->description;
+            if ( $sThumb = $oArticle->getThumbnailUrl() ) {
+                $oItem->description = "<img src='$sThumb' border=0 align='left' hspace=5>".$oItem->description;
             }
             $oItem->description = $oStr->htmlspecialchars( $oItem->description );
+
+            if ( $oArticle->oxarticles__oxtimestamp->value ) {
+                list($date, $time) = explode(' ', $oArticle->oxarticles__oxtimestamp->value);
+                $date              = explode('-', $date);
+                $time              = explode(':', $time);
+                $oItem->date = date( 'D, d M Y H:i:s O', mktime($time[0], $time[1], $time[2], $date[1], $date[2], $date[0]) );
+            } else {
+                $oItem->date = date( 'D, d M Y H:i:s O', time() );
+            }
 
             $aItems[] = $oItem;
         }

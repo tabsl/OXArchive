@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasketitem.php 44113 2012-04-20 11:52:27Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxbasketitem.php 44105 2012-04-20 07:12:12Z mindaugas.rimgaila $
  */
 
 /**
@@ -363,6 +363,7 @@ class oxBasketItem extends oxSuperCfg
             $oEx->setArticleNr( $oArticle->oxarticles__oxartnum->value );
             $oEx->setProductId( $oArticle->getProductId() );
             $oEx->setRemainingAmount( $this->_dAmount );
+            $oEx->setBasketIndex( $sItemKey );
             throw $oEx;
         }
     }
@@ -390,6 +391,8 @@ class oxBasketItem extends oxSuperCfg
 
     /**
      * Getter which returns image path according to SSL mode
+     *
+     * @deprecated since 2011.11.07 not used any more, call getIconUrl() instead
      *
      * @return string
      */
@@ -558,6 +561,8 @@ class oxBasketItem extends oxSuperCfg
 
     /**
      * Returns product icon URL
+     *
+     * @deprecated 2011.11.07 not used any more, call getIconUrl() instead
      *
      * @return string
      */

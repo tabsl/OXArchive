@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_review.php 39920 2011-11-14 08:40:43Z arvydas.vapsva $
+ * @version   SVN: $Id: article_review.php 40737 2011-12-21 13:35:01Z linas.kukulskis $
  */
 
 /**
@@ -149,7 +149,19 @@ class Article_Review extends oxAdminDetails
 
         $sRevoxId = oxConfig::getParameter( "rev_oxid" );
         $oReview  = oxNew( "oxreview" );
-        $oReview->load( $sRevoxId);
+        $oReview->load( $sRevoxId );
         $oReview->delete();
+
+        // recalculating article average rating
+        $oRating = oxNew( "oxRating" );
+        $sArticleId = $this->getEditObjectId();
+
+        $oArticle = oxNew( 'oxArticle' );
+        $oArticle->load( $sArticleId );
+
+        $oArticle->setRatingAverage( $oRating->getRatingAverage( $sArticleId, 'oxarticle' ) );
+        $oArticle->setRatingCount( $oRating->getRatingCount( $sArticleId, 'oxarticle' ) );
+        $oArticle->save();
+
     }
 }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxattributelist.php 44372 2012-04-25 13:18:05Z linas.kukulskis $
+ * @version   SVN: $Id: oxattributelist.php 44400 2012-04-25 18:41:04Z vilma $
  */
 
 /**
@@ -53,7 +53,7 @@ class oxAttributeList extends oxList
         }
 
         foreach ($aIds as $iKey => $sVal) {
-            $aIds[$iKey] = mysql_real_escape_string($sVal);
+            $aIds[$iKey] = oxDb::getInstance()->escapeString($sVal);
         }
 
         $sAttrViewName = getViewName( 'oxattribute' );
@@ -74,10 +74,10 @@ class oxAttributeList extends oxList
      *
      * @return array $aAttributes
      */
-    protected function _createAttributeListFromSql( $sSelect)
+    protected function _createAttributeListFromSql( $sSelect )
     {
         $aAttributes = array();
-        $rs = oxDb::getDb()->execute( $sSelect);
+        $rs = oxDb::getDb()->select( $sSelect );
         if ($rs != false && $rs->recordCount() > 0) {
             while (!$rs->EOF) {
                 if ( !isset( $aAttributes[$rs->fields[0]])) {
@@ -105,6 +105,7 @@ class oxAttributeList extends oxList
     public function loadAttributes( $sArtId )
     {
         if ( $sArtId ) {
+
             $sAttrViewName = getViewName( 'oxattribute' );
             $sViewName     = getViewName( 'oxobject2attribute' );
 
@@ -154,8 +155,7 @@ class oxAttributeList extends oxList
                        "WHERE att.oxid = o2a.oxattrid AND c2a.oxobjectid = $sActCatQuoted AND c2a.oxattrid = att.oxid AND o2a.oxvalue !='' AND o2a.oxobjectid IN ($sArtIds) ".
                        "ORDER BY c2a.oxsort , att.oxpos, att.oxtitle, o2a.oxvalue";
 
-
-            $rs = $oDb->execute( $sSelect );
+            $rs = $oDb->select( $sSelect );
 
             if ( $rs != false && $rs->recordCount() > 0 ) {
                 while ( !$rs->EOF && list( $sAttId, $sAttTitle, $sAttValue ) = $rs->fields ) {

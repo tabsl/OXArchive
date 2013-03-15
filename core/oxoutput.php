@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxoutput.php 34141 2011-04-01 14:59:12Z sarunas $
+ * @version   SVN: $Id: oxoutput.php 42683 2012-03-09 15:02:19Z vilma $
  */
 
 /**
@@ -113,16 +113,18 @@ class oxOutput extends oxSuperCfg
     final public function addVersionTags( $sOutput )
     {
         // DISPLAY IT
-        $sVersion = $this->getConfig()->getVersion();
-        $sEdition = $this->getConfig()->getFullEdition();
-        $sCurYear = date("Y");
+        $sVersion  = $this->getConfig()->getVersion();
+        $sEdition  = $this->getConfig()->getFullEdition();
+        $sCurYear  = date("Y");
+        $sShopMode = "";
 
         // SHOW ONLY MAJOR VERSION NUMBER
         $aVersion = explode('.', $sVersion);
         $sMajorVersion = reset($aVersion);
 
+
         // Replacing only once per page
-        $sOutput = str_ireplace("</head>", "</head>\n  <!-- OXID eShop {$sEdition}, Version {$sMajorVersion}, Shopping Cart System (c) OXID eSales AG 2003 - {$sCurYear} - http://www.oxid-esales.com -->", ltrim($sOutput));
+        $sOutput = str_ireplace("</head>", "</head>\n  <!-- OXID eShop {$sEdition}, Version {$sMajorVersion}{$sShopMode}, Shopping Cart System (c) OXID eSales AG 2003 - {$sCurYear} - http://www.oxid-esales.com -->", ltrim($sOutput));
 
         return $sOutput;
     }

@@ -40,62 +40,68 @@ function DeletePic( sField )
 <input type="hidden" name="starget" value="">
 <input type="hidden" name="editval[oxactions__oxlongdesc]" value="">
 
+[{if $edit->oxactions__oxtype->value == 3 && $oViewConf->isAltImageServerConfigured() }]
+     <div class="warning">[{ oxmultilang ident="ALTERNATIVE_IMAGE_SERVER_NOTE" }] [{ oxinputhelp ident="HELP_ALTERNATIVE_IMAGE_SERVER_NOTE" }]</div>
+[{/if}]
+
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
 
 <tr>
     <td valign="top" class="edittext" style="padding-right: 20px;">
         <table cellspacing="0" cellpadding="0" border="0">
-        <tr>
-            <td class="edittext" width="120">
-            [{ oxmultilang ident="GENERAL_NAME" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="32" maxlength="[{$edit->oxactions__oxtitle->fldmax_length}]" name="editval[oxactions__oxtitle]" value="[{$edit->oxactions__oxtitle->value}]" [{ $readonly }] [{ $disableSharedEdit }]>
-            [{ oxinputhelp ident="HELP_GENERAL_NAME" }]
-            </td>
-        </tr>
+        [{block name="admin_actions_main_form"}]
+            <tr>
+                <td class="edittext" width="120">
+                [{ oxmultilang ident="GENERAL_NAME" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="32" maxlength="[{$edit->oxactions__oxtitle->fldmax_length}]" name="editval[oxactions__oxtitle]" value="[{$edit->oxactions__oxtitle->value}]" [{ $readonly }] [{ $disableSharedEdit }]>
+                [{ oxinputhelp ident="HELP_GENERAL_NAME" }]
+                </td>
+            </tr>
 
-        <tr>
-          <td class="edittext" width="120">
-            [{ oxmultilang ident="GENERAL_ACTIVE" }]
-          </td>
-          <td class="edittext">
-            <input class="edittext" type="checkbox" name="editval[oxactions__oxactive]" value='1' [{if $edit->oxactions__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
-          </td>
-        </tr>
-        [{ if $edit->oxactions__oxtype->value != 2 }]
-        <tr>
-          <td class="edittext">
-              <br>
-              &nbsp;&nbsp;[{ oxmultilang ident="GENERAL_OR" }]
-          </td>
-        </tr>
-        [{/if}]
-        <tr>
-          <td class="edittext">
-              [{ if $edit->oxactions__oxtype->value != 2 }][{ oxmultilang ident="GENERAL_ACTIVE" }][{/if}]&nbsp;
-          </td>
-          <td class="edittext" align="right">
-           [{ oxmultilang ident="GENERAL_FROM" }] <input type="text" class="editinput" size="27" name="editval[oxactions__oxactivefrom]" value="[{$edit->oxactions__oxactivefrom|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]><br>
-           [{ oxmultilang ident="GENERAL_TILL" }] <input type="text" class="editinput" size="27" name="editval[oxactions__oxactiveto]" value="[{$edit->oxactions__oxactiveto|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]>
-          [{ if $edit->oxactions__oxtype->value != 2 }][{ oxinputhelp ident="HELP_GENERAL_ACTIVFROMTILL" }][{/if}]
-          </td>
-        </tr>
-        [{ if $oxid == "-1" }]
-        <tr>
-            <td class="edittext">
-          [{ oxmultilang ident="GENERAL_TYPE" }]&nbsp;
-            </td>
-          <td class="edittext">
-            <select class="editinput" name="editval[oxactions__oxtype]">
-              <option value="1">[{ oxmultilang ident="PROMOTIONS_MAIN_TYPE_ACTION" }]</option>
-              <option value="2">[{ oxmultilang ident="PROMOTIONS_MAIN_TYPE_PROMO" }]</option>
-              <option value="3">[{ oxmultilang ident="PROMOTIONS_MAIN_TYPE_BANNER" }]</option>
-            </select>
-          </td>
-        </tr>
-        [{ /if}]
+            <tr>
+              <td class="edittext" width="120">
+                [{ oxmultilang ident="GENERAL_ACTIVE" }]
+              </td>
+              <td class="edittext">
+                <input class="edittext" type="checkbox" name="editval[oxactions__oxactive]" value='1' [{if $edit->oxactions__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
+              </td>
+            </tr>
+            [{ if $edit->oxactions__oxtype->value != 2 }]
+            <tr>
+              <td class="edittext">
+                  <br>
+                  &nbsp;&nbsp;[{ oxmultilang ident="GENERAL_OR" }]
+              </td>
+            </tr>
+            [{/if}]
+            <tr>
+              <td class="edittext">
+                  [{ if $edit->oxactions__oxtype->value != 2 }][{ oxmultilang ident="GENERAL_ACTIVE" }][{/if}]&nbsp;
+              </td>
+              <td class="edittext" align="right">
+               [{ oxmultilang ident="GENERAL_FROM" }] <input type="text" class="editinput" size="27" name="editval[oxactions__oxactivefrom]" value="[{$edit->oxactions__oxactivefrom|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]><br>
+               [{ oxmultilang ident="GENERAL_TILL" }] <input type="text" class="editinput" size="27" name="editval[oxactions__oxactiveto]" value="[{$edit->oxactions__oxactiveto|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]>
+              [{ if $edit->oxactions__oxtype->value != 2 }][{ oxinputhelp ident="HELP_GENERAL_ACTIVFROMTILL" }][{/if}]
+              </td>
+            </tr>
+            [{ if $oxid == "-1" }]
+            <tr>
+                <td class="edittext">
+              [{ oxmultilang ident="GENERAL_TYPE" }]&nbsp;
+                </td>
+              <td class="edittext">
+                <select class="editinput" name="editval[oxactions__oxtype]">
+                  <option value="1">[{ oxmultilang ident="PROMOTIONS_MAIN_TYPE_ACTION" }]</option>
+                  <option value="2">[{ oxmultilang ident="PROMOTIONS_MAIN_TYPE_PROMO" }]</option>
+                  <option value="3">[{ oxmultilang ident="PROMOTIONS_MAIN_TYPE_BANNER" }]</option>
+                </select>
+              </td>
+            </tr>
+            [{ /if}]
+        [{/block}]
         <tr>
             <td class="edittext">
             </td>
@@ -153,83 +159,86 @@ function DeletePic( sField )
         <td valign="top" class="edittext" align="left" style="width:100%;padding-left:5px;padding-bottom:10px;">
             <table cellspacing="0" cellpadding="0" border="0">
                 [{ if $edit->oxactions__oxtype->value == 2 }]
-                <!-- Promotions editor -->
-                <tr>
-                    <td class="edittext" width="100%" colspan="2">
-                        [{ $editor }]
-                    </td>
-                </tr>
+                    [{block name="admin_actions_main_editor"}]
+                        <!-- Promotions editor -->
+                        <tr>
+                            <td class="edittext" width="100%" colspan="2">
+                                [{ $editor }]
+                            </td>
+                        </tr>
+                    [{/block}]
                 [{/if}]
 
                 [{ if $edit->oxactions__oxtype->value == 3 }]
                 <!-- Banners picture upload and link -->
                 <tr>
                     <td class="edittext">
-
                         <table cellspacing="0" cellpadding="0" width="100%" border="0" class="listTable">
-                          <colgroup>
-                              <col width="1%" nowrap>
-                              <col width="1%" nowrap>
-                              <col width="98%">
-                          </colgroup>
-                          <tr>
-                              <th colspan="5" valign="top">
-                                 [{ oxmultilang ident="PROMOTIONS_BANNER_PICTUREANDLINK" }]
-                                 [{ oxinputhelp ident="HELP_PROMOTIONS_BANNER_PICTUREANDLINK" }]
-                              </th>
-                          </tr>
+                          [{block name="admin_actions_main_product"}]
+                              <colgroup>
+                                  <col width="1%" nowrap>
+                                  <col width="1%" nowrap>
+                                  <col width="98%">
+                              </colgroup>
+                              <tr>
+                                  <th colspan="5" valign="top">
+                                     [{ oxmultilang ident="PROMOTIONS_BANNER_PICTUREANDLINK" }]
+                                     [{ oxinputhelp ident="HELP_PROMOTIONS_BANNER_PICTUREANDLINK" }]
+                                  </th>
+                              </tr>
 
-                          <tr>
-                            <td class="text">
-                                <b>[{ oxmultilang ident="PROMOTIONS_BANNER_PICTUREUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}]):</b>
-                            </td>
-                            <td class="edittext">
-                                <input class="editinput" name="myfile[PROMO@oxactions__oxpic]" type="file" size="26"[{$readonly_fields}]>
-                                <input id="oxpic" type="hidden" maxlength="[{$edit->oxactions__oxpic->fldmax_length}]" name="editval[oxactions__oxpic]" value="[{$edit->oxactions__oxpic->value}]" readonly>
-                            </td>
-                            <td nowrap="nowrap">
-                                [{ if (!($edit->oxactions__oxpic->value=="nopic.jpg" || $edit->oxactions__oxpic->value=="")) && !$readonly }]
-                                    <div style="display: inline-block;">
-                                        <a href="Javascript:DeletePic('oxpic');" class="deleteText"><span class="ico"></span><span style="float: left;>">[{ oxmultilang ident="GENERAL_DELETE" }]</span></a>
-                                    </div>
-                                [{/if}]
-                            </td>
-                          </tr>
-
-                          [{assign var="_oArticle" value=$edit->getBannerArticle()}]
-
-                          <tr>
-                            <td class="text">
-                                <b>[{ oxmultilang ident="PROMOTIONS_BANNER_LINK" }]:</b>
-                            </td>
-                            <td class="text">
-                                <input type="text" class="editinput" size="43" name="editval[oxactions__oxlink]" value="[{$edit->oxactions__oxlink->value}]" [{ $readonly }]>
-                            </td>
-                            <td nowrap="nowrap">
-                                [{ if $edit->oxactions__oxlink->value }]
-                                    <div style="display: inline-block;">
-                                        <a href="[{$edit->getBannerLink()}]" class="zoomText" target="_blank"><span class="ico"></span><span style="float: left;>">[{ oxmultilang ident="ARTICLE_PICTURES_PREVIEW" }]</span></a>
-                                    </div>
-                                [{/if}]
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <td class="text">
-                                <b>[{ oxmultilang ident="PROMOTIONS_BANNER_ASSIGNEDARTICLE" }]:</b>
-                            </td>
-                            <td class="text" colspan="2">
-                                <b>
-                                    <span id="assignedArticleTitle">
-                                    [{if $_oArticle}]
-                                        [{$_oArticle->oxarticles__oxartnum->value}] [{$_oArticle->oxarticles__oxtitle->value}]
-                                    [{else}]
-                                        ---
+                              <tr>
+                                <td class="text">
+                                    <b>[{ oxmultilang ident="PROMOTIONS_BANNER_PICTUREUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}]):</b>
+                                </td>
+                                <td class="edittext">
+                                    <input class="editinput" name="myfile[PROMO@oxactions__oxpic]" type="file" size="26"[{$readonly_fields}]>
+                                    <input id="oxpic" type="hidden" maxlength="[{$edit->oxactions__oxpic->fldmax_length}]" name="editval[oxactions__oxpic]" value="[{$edit->oxactions__oxpic->value}]" readonly>
+                                </td>
+                                <td nowrap="nowrap">
+                                    [{ if (!($edit->oxactions__oxpic->value=="nopic.jpg" || $edit->oxactions__oxpic->value=="")) && !$readonly }]
+                                        <div style="display: inline-block;">
+                                            <a href="Javascript:DeletePic('oxpic');" class="deleteText"><span class="ico"></span><span style="float: left;>">[{ oxmultilang ident="GENERAL_DELETE" }]</span></a>
+                                        </div>
                                     [{/if}]
-                                    </span>
-                                </b>
-                            </td>
-                          </tr>
+                                </td>
+                              </tr>
+
+                              [{assign var="_oArticle" value=$edit->getBannerArticle()}]
+
+                              <tr>
+                                <td class="text">
+                                    <b>[{ oxmultilang ident="PROMOTIONS_BANNER_LINK" }]:</b>
+                                </td>
+                                <td class="text">
+                                    <input type="text" class="editinput" size="43" name="editval[oxactions__oxlink]" value="[{$edit->oxactions__oxlink->value}]" [{ $readonly }]>
+                                </td>
+                                <td nowrap="nowrap">
+                                    [{ if $edit->oxactions__oxlink->value }]
+                                        <div style="display: inline-block;">
+                                            <a href="[{$edit->getBannerLink()}]" class="zoomText" target="_blank"><span class="ico"></span><span style="float: left;>">[{ oxmultilang ident="ARTICLE_PICTURES_PREVIEW" }]</span></a>
+                                        </div>
+                                    [{/if}]
+                                </td>
+                              </tr>
+
+                              <tr>
+                                <td class="text">
+                                    <b>[{ oxmultilang ident="PROMOTIONS_BANNER_ASSIGNEDARTICLE" }]:</b>
+                                </td>
+                                <td class="text" colspan="2">
+                                    <b>
+                                        <span id="assignedArticleTitle">
+                                        [{if $_oArticle}]
+                                            [{$_oArticle->oxarticles__oxartnum->value}] [{$_oArticle->oxarticles__oxtitle->value}]
+                                        [{else}]
+                                            ---
+                                        [{/if}]
+                                        </span>
+                                    </b>
+                                </td>
+                              </tr>
+                          [{/block}]
                         </table>
 
                         <input type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNARTICLE" }]" class="edittext" onclick="JavaScript:showDialog('&cl=actions_main&oxpromotionaoc=article&oxid=[{ $oxid }]');" [{ $readonly }]>

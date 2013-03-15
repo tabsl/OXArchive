@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_seo.php 39902 2011-11-14 08:36:19Z arvydas.vapsva $
+ * @version   SVN: $Id: shop_seo.php 40261 2011-11-24 13:52:22Z linas.kukulskis $
  */
 
 /**
@@ -86,7 +86,7 @@ class Shop_Seo extends Shop_Config
         if ( $sActObject && $sActObject != '-1' ) {
             $this->_aViewData['sActSeoObject'] = $sActObject;
 
-            $oDb = oxDb::getDb(true);
+            $oDb = oxDb::getDb( oxDB::FETCH_MODE_ASSOC );
             $sQ  = "select oxseourl, oxlang from oxseo where oxobjectid = ".$oDb->quote( $sActObject )." and oxshopid = ".$oDb->quote( $iShopId );
             $oRs = $oDb->execute( $sQ );
             if ( $oRs != false && $oRs->recordCount() > 0 ) {

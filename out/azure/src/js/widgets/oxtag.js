@@ -106,4 +106,4 @@
 
     $.widget("ui.oxTag", oxTag );
 
-})( jQuery )
+})( jQuery );

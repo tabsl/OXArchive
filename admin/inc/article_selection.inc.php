@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_selection.inc.php 38133 2011-08-11 12:56:21Z vilma $
+ * @version   SVN: $Id: article_selection.inc.php 44134 2012-04-20 14:55:19Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -57,7 +57,7 @@ class ajaxComponent extends ajaxListComponent
         $sOxid = ( $sArtId ) ? $sArtId : $sSynchArtId;
         $sQ = "select oxparentid from $sArtViewName where oxid = " . $oDb->quote( $sOxid ) . " and oxparentid != '' ";
         $sQ .= "and (select count(oxobjectid) from oxobject2selectlist where oxobjectid = " . $oDb->quote( $sOxid ) . ") = 0";
-        $sParentId = oxDb::getDb()->getOne( $sQ );
+        $sParentId = oxDb::getDb()->getOne( $sQ, false, false );
 
         // all selectlists article is in
         $sQAdd  = " from oxobject2selectlist left join $sSLViewName on $sSLViewName.oxid=oxobject2selectlist.oxselnid ";
@@ -115,7 +115,7 @@ class ajaxComponent extends ajaxListComponent
                 $oNew->init( "oxobject2selectlist" );
                 $oNew->oxobject2selectlist__oxobjectid = new oxField($soxId);
                 $oNew->oxobject2selectlist__oxselnid   = new oxField($sAdd);
-                $oNew->oxobject2selectlist__oxsort     = new oxField( ( int ) $oDb->getOne( "select max(oxsort) + 1 from oxobject2selectlist where oxobjectid =  " . $oDb->quote( $soxId ) . " " ) );
+                $oNew->oxobject2selectlist__oxsort     = new oxField( ( int ) $oDb->getOne( "select max(oxsort) + 1 from oxobject2selectlist where oxobjectid =  " . $oDb->quote( $soxId ) . " ", false, false ) );
                 $oNew->save();
             }
         }

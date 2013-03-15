@@ -27,43 +27,45 @@
     <td valign="top" class="edittext">
 
         <table cellspacing="0" cellpadding="0" border="0">
-        <tr>
-            <td class="edittext" width="90">
-            [{ oxmultilang ident="GENERAL_ACTIVE" }]
-            </td>
-            <td class="edittext">
-            <input class="edittext" type="checkbox" name="editval[oxnews__oxactive]" value='1' [{if $edit->oxnews__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="GENERAL_ACTIVFROMTILL" }]
-            </td>
-            <td class="edittext">
-            [{ oxmultilang ident="GENERAL_FROM" }]<input type="text" class="editinput" size="30" name="editval[oxnews__oxactivefrom]" value="[{$edit->oxnews__oxactivefrom|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]><br>
-            [{ oxmultilang ident="GENERAL_TILL" }] <input type="text" class="editinput" size="30" name="editval[oxnews__oxactiveto]" value="[{$edit->oxnews__oxactiveto|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_ACTIVFROMTILL" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="GENERAL_DATE" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="15" maxlength="[{$edit->oxnews__oxdate->fldmax_length}]" name="editval[oxnews__oxdate]" value="[{$edit->oxnews__oxdate|oxformdate }]" [{include file="help.tpl" helpid=article_delivery}] [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_DATE" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="NEWS_MAIN_SHORTDESC" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="40" maxlength="[{$edit->oxnews__oxshortdesc->fldmax_length}]" name="editval[oxnews__oxshortdesc]" value="[{$edit->oxnews__oxshortdesc->value }]" [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_NEWS_MAIN_SHORTDESC" }]
-            </td>
-        </tr>
+        [{block name="admin_news_main_form"}]
+            <tr>
+                <td class="edittext" width="90">
+                [{ oxmultilang ident="GENERAL_ACTIVE" }]
+                </td>
+                <td class="edittext">
+                <input class="edittext" type="checkbox" name="editval[oxnews__oxactive]" value='1' [{if $edit->oxnews__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="GENERAL_ACTIVFROMTILL" }]
+                </td>
+                <td class="edittext">
+                [{ oxmultilang ident="GENERAL_FROM" }]<input type="text" class="editinput" size="30" name="editval[oxnews__oxactivefrom]" value="[{$edit->oxnews__oxactivefrom|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]><br>
+                [{ oxmultilang ident="GENERAL_TILL" }] <input type="text" class="editinput" size="30" name="editval[oxnews__oxactiveto]" value="[{$edit->oxnews__oxactiveto|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_GENERAL_ACTIVFROMTILL" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="GENERAL_DATE" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="15" maxlength="[{$edit->oxnews__oxdate->fldmax_length}]" name="editval[oxnews__oxdate]" value="[{$edit->oxnews__oxdate|oxformdate }]" [{include file="help.tpl" helpid=article_delivery}] [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_GENERAL_DATE" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="NEWS_MAIN_SHORTDESC" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="40" maxlength="[{$edit->oxnews__oxshortdesc->fldmax_length}]" name="editval[oxnews__oxshortdesc]" value="[{$edit->oxnews__oxshortdesc->value }]" [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_NEWS_MAIN_SHORTDESC" }]
+                </td>
+            </tr>
+        [{/block}]
         <tr>
             <td class="edittext">
             </td>

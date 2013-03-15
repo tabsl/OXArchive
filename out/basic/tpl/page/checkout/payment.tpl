@@ -192,7 +192,7 @@
                   [{else}]
                     <tr onclick="oxid.form.select('paymentid',[{$inptcounter}]);">
                       <td><input id="test_Payment_[{$sPaymentID}]" type="radio" name="paymentid" value="[{$sPaymentID}]" [{if $oView->getCheckedPaymentId() == $paymentmethod->oxpayments__oxid->value}]checked[{/if}]></td>
-                      <td id="test_PaymentDesc_[{$smarty.foreach.PaymentSelect.iteration}]" colspan="2"><label><b>[{ $paymentmethod->oxpayments__oxdesc->value}] [{ if $paymentmethod->fAddPaymentSum }]([{ $paymentmethod->fAddPaymentSum }] [{ $currency->sign}])[{/if}]</b></label></td>
+                      <td id="test_PaymentDesc_[{$smarty.foreach.PaymentSelect.iteration}]" colspan="2"><label><b>[{ $paymentmethod->oxpayments__oxdesc->value}] [{ if $paymentmethod->dAddPaymentSum }]([{ $paymentmethod->fAddPaymentSum }] [{ $currency->sign}])[{/if}]</b></label></td>
                     </tr>
                     [{foreach from=$paymentmethod->getDynValues() item=value name=PaymentDynValues}]
                       <tr onclick="oxid.form.select('paymentid',[{$inptcounter}]);">
@@ -206,7 +206,7 @@
                   [{/if}]
                   <tr onclick="oxid.form.select('paymentid',[{$inptcounter}]);">
                     <td></td>
-                    <td id="test_PaymentLongDesc_[{$sPaymentID}]" colspan="2">[{ $paymentmethod->oxpayments__oxlongdesc->value}]</td>
+                    <td id="test_PaymentLongDesc_[{$sPaymentID}]" colspan="2">[{ $paymentmethod->oxpayments__oxlongdesc->getRawValue()}]</td>
                   </tr>
                     [{if $inptcounter > -1 && $inptcounter < ($oView->getPaymentCnt()-1) }]
                     <tr class="tr_sep">

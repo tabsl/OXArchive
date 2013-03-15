@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcategory.php 43217 2012-03-27 13:31:04Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxcategory.php 43713 2012-04-11 06:56:26Z linas.kukulskis $
  */
 
 /**
@@ -232,7 +232,7 @@ class oxCategory extends oxI18n implements oxIUrl
 
 
         $myConfig = $this->getConfig();
-        $oDB      = oxDb::getDb();
+        $oDb      = oxDb::getDb();
         $blRet    = false;
 
         if ( $this->oxcategories__oxright->value == ($this->oxcategories__oxleft->value+1) ) {
@@ -241,35 +241,35 @@ class oxCategory extends oxI18n implements oxIUrl
 
             // only delete empty categories
             // #1173M - not all pic are deleted, after article is removed
-            $myUtilsPic->safePictureDelete( $this->oxcategories__oxthumb->value, $sDir . '/master/thumb', 'oxcategories', 'oxthumb' );
-            $myUtilsPic->safePictureDelete( $this->oxcategories__oxicon->value, $sDir . '/master/icon', 'oxcategories', 'oxicon' );
-            $myUtilsPic->safePictureDelete( $this->oxcategories__oxpromoicon->value, $sDir . '/master/promo_icon', 'oxcategories', 'oxpromoicon' );
+            $myUtilsPic->safePictureDelete( $this->oxcategories__oxthumb->value, $sDir . oxUtilsFile::getInstance()->getImageDirByType('TC'), 'oxcategories', 'oxthumb' );
+            $myUtilsPic->safePictureDelete( $this->oxcategories__oxicon->value, $sDir . oxUtilsFile::getInstance()->getImageDirByType('CICO'), 'oxcategories', 'oxicon' );
+            $myUtilsPic->safePictureDelete( $this->oxcategories__oxpromoicon->value, $sDir . oxUtilsFile::getInstance()->getImageDirByType('PICO'), 'oxcategories', 'oxpromoicon' );
 
             $sAdd = " and oxshopid = '" . $this->getShopId() . "' ";
 
-            $oDB->execute( "UPDATE oxcategories SET OXLEFT = OXLEFT - 2
-                            WHERE  OXROOTID = ".$oDB->quote($this->oxcategories__oxrootid->value)."
+            $oDb->execute( "UPDATE oxcategories SET OXLEFT = OXLEFT - 2
+                            WHERE  OXROOTID = ".$oDb->quote($this->oxcategories__oxrootid->value)."
                             AND OXLEFT >   ".((int) $this->oxcategories__oxleft->value).$sAdd );
 
-            $oDB->execute( "UPDATE oxcategories SET OXRIGHT = OXRIGHT - 2
-                            WHERE  OXROOTID = ".$oDB->quote($this->oxcategories__oxrootid->value)."
+            $oDb->execute( "UPDATE oxcategories SET OXRIGHT = OXRIGHT - 2
+                            WHERE  OXROOTID = ".$oDb->quote($this->oxcategories__oxrootid->value)."
                             AND OXRIGHT >   ".((int) $this->oxcategories__oxright->value).$sAdd );
 
             // delete entry
             $blRet = parent::delete( $sOXID );
 
-            $sOxidQuoted = $oDB->quote( $sOXID );
+            $sOxidQuoted = $oDb->quote( $sOXID );
             // delete links to articles
-            $oDB->execute( "delete from oxobject2category where oxobject2category.oxcatnid=$sOxidQuoted ");
+            $oDb->execute( "delete from oxobject2category where oxobject2category.oxcatnid=$sOxidQuoted ");
 
             // #657 ADDITIONAL delete links to attributes
-            $oDB->execute( "delete from oxcategory2attribute where oxcategory2attribute.oxobjectid=$sOxidQuoted ");
+            $oDb->execute( "delete from oxcategory2attribute where oxcategory2attribute.oxobjectid=$sOxidQuoted ");
 
             // A. removing assigned:
             // - deliveries
-            $oDB->execute( "delete from oxobject2delivery where oxobject2delivery.oxobjectid=$sOxidQuoted ");
+            $oDb->execute( "delete from oxobject2delivery where oxobject2delivery.oxobjectid=$sOxidQuoted ");
             // - discounts
-            $oDB->execute( "delete from oxobject2discount where oxobject2discount.oxobjectid=$sOxidQuoted ");
+            $oDb->execute( "delete from oxobject2discount where oxobject2discount.oxobjectid=$sOxidQuoted ");
 
             oxSeoEncoderCategory::getInstance()->onDeleteCategory($this);
         }
@@ -815,8 +815,9 @@ class oxCategory extends oxI18n implements oxIUrl
         if ( !isset( $sCategoryId ) ) {
             return;
         }
+        $oDb = oxDb::getDb();
 
-        return oxDb::getDb()->getOne( 'select oxrootid from '.getViewName('oxcategories').' where oxid = ?', array( $sCategoryId ) );
+        return $oDb->getOne( 'select oxrootid from '.getViewName('oxcategories').' where oxid = ' . $oDb->quote( $sCategoryId ) );
     }
 
 
@@ -858,15 +859,15 @@ class oxCategory extends oxI18n implements oxIUrl
             $sAdd = " and oxshopid = '" . $this->getShopId() . "' ";
 
             // update existing nodes
-            $oDB = oxDb::getDb();
-            $oDB->execute( "UPDATE oxcategories SET OXLEFT = OXLEFT + 2
-                            WHERE  OXROOTID = ".$oDB->quote($oParent->oxcategories__oxrootid->value)."
+            $oDb = oxDb::getDb();
+            $oDb->execute( "UPDATE oxcategories SET OXLEFT = OXLEFT + 2
+                            WHERE  OXROOTID = ".$oDb->quote($oParent->oxcategories__oxrootid->value)."
                             AND OXLEFT >   ".((int) $oParent->oxcategories__oxright->value)."
                             AND OXRIGHT >= ".((int) $oParent->oxcategories__oxright->value).$sAdd);
 
 
-            $oDB->execute( "UPDATE oxcategories SET OXRIGHT = OXRIGHT + 2
-                            WHERE  OXROOTID = ".$oDB->quote($oParent->oxcategories__oxrootid->value)."
+            $oDb->execute( "UPDATE oxcategories SET OXRIGHT = OXRIGHT + 2
+                            WHERE  OXROOTID = ".$oDb->quote($oParent->oxcategories__oxrootid->value)."
                             AND OXRIGHT >= ".((int) $oParent->oxcategories__oxright->value).$sAdd );
 
             //if ( !isset( $this->_sOXID) || trim( $this->_sOXID) == "")
@@ -902,9 +903,8 @@ class oxCategory extends oxI18n implements oxIUrl
     protected function _update()
     {
 
-        $oDB = oxDb::getDb();
-
-        $sOldParentID = $oDB->getOne( "select oxparentid from oxcategories where oxid = ".$oDB->quote( $this->getId() ));
+        $oDb = oxDb::getDb();
+        $sOldParentID = $oDb->getOne( "select oxparentid from oxcategories where oxid = ".$oDb->quote( $this->getId() ), false, false );
 
         if ( $this->_blIsSeoObject && $this->isAdmin() ) {
             oxSeoEncoderCategory::getInstance()->markRelatedAsExpired($this);
@@ -927,7 +927,7 @@ class oxCategory extends oxI18n implements oxIUrl
 
             $iTreeSize = $sOldParentRight-$sOldParentLeft+1;
 
-            $sNewRootID = $oDB->getOne( "select oxrootid from oxcategories where oxid = ".$oDB->quote($this->oxcategories__oxparentid->value));
+            $sNewRootID = $oDb->getOne( "select oxrootid from oxcategories where oxid = ".$oDb->quote($this->oxcategories__oxparentid->value), false, false);
 
             //If empty rootID, we set it to categorys oxid
             if ( $sNewRootID == "") {
@@ -935,7 +935,7 @@ class oxCategory extends oxI18n implements oxIUrl
                 $sNewRootID = $this->getId();
             }
 
-            $sNewParentLeft = $oDB->getOne( "select oxleft from oxcategories where oxid = ".$oDB->quote($this->oxcategories__oxparentid->value));
+            $sNewParentLeft = $oDb->getOne( "select oxleft from oxcategories where oxid = ".$oDb->quote($this->oxcategories__oxparentid->value), false, false);
 
             //if(!$sNewParentLeft){
                 //the current node has become root node, (oxrootid == "oxrootid")
@@ -950,8 +950,8 @@ class oxCategory extends oxI18n implements oxIUrl
                 //echo "<br>* ) Can't asign category to it's child";
 
                 //Restoring old parentid, stoping further actions
-                $sRestoreOld = "UPDATE oxcategories SET OXPARENTID = ".$oDB->quote($sOldParentID)." WHERE oxid = ".$oDB->quote($this->getId());
-                $oDB->execute( $sRestoreOld );
+                $sRestoreOld = "UPDATE oxcategories SET OXPARENTID = ".$oDb->quote($sOldParentID)." WHERE oxid = ".$oDb->quote($this->getId());
+                $oDb->execute( $sRestoreOld );
                 return false;
             }
 
@@ -965,27 +965,27 @@ class oxCategory extends oxI18n implements oxIUrl
 
             //echo "Size=$iTreeSize, NewStart=$iMoveAfter, delta=$iDelta";
 
-            $sAddOld = " and oxshopid = '" . $this->getShopId() . "' and OXROOTID = ".$oDB->quote($this->oxcategories__oxrootid->value).";";
-            $sAddNew = " and oxshopid = '" . $this->getShopId() . "' and OXROOTID = ".$oDB->quote($sNewRootID).";";
+            $sAddOld = " and oxshopid = '" . $this->getShopId() . "' and OXROOTID = ".$oDb->quote($this->oxcategories__oxrootid->value).";";
+            $sAddNew = " and oxshopid = '" . $this->getShopId() . "' and OXROOTID = ".$oDb->quote($sNewRootID).";";
 
             //Updating everything after new position
-            $oDB->execute( "UPDATE oxcategories SET OXLEFT = (OXLEFT + ".$iTreeSize.") WHERE OXLEFT >= ".$iMoveAfter.$sAddNew );
-            $oDB->execute( "UPDATE oxcategories SET OXRIGHT = (OXRIGHT + ".$iTreeSize.") WHERE OXRIGHT >= ".$iMoveAfter.$sAddNew );
+            $oDb->execute( "UPDATE oxcategories SET OXLEFT = (OXLEFT + ".$iTreeSize.") WHERE OXLEFT >= ".$iMoveAfter.$sAddNew );
+            $oDb->execute( "UPDATE oxcategories SET OXRIGHT = (OXRIGHT + ".$iTreeSize.") WHERE OXRIGHT >= ".$iMoveAfter.$sAddNew );
             //echo "<br>1.) + $iTreeSize, >= $iMoveAfter";
 
             $sChangeRootID = "";
             if ($this->oxcategories__oxrootid->value != $sNewRootID) {
                 //echo "<br>* ) changing root IDs ( {$this->oxcategories__oxrootid->value} -> {$sNewRootID} )";
-                $sChangeRootID = ", OXROOTID=".$oDB->quote($sNewRootID);
+                $sChangeRootID = ", OXROOTID=".$oDb->quote($sNewRootID);
             }
 
             //Updating subtree
-            $oDB->execute( "UPDATE oxcategories SET OXLEFT = (OXLEFT + ".$iDelta."), OXRIGHT = (OXRIGHT + ".$iDelta.") ".$sChangeRootID." WHERE OXLEFT >= ".$sOldParentLeft." AND OXRIGHT <= ".$sOldParentRight.$sAddOld );
+            $oDb->execute( "UPDATE oxcategories SET OXLEFT = (OXLEFT + ".$iDelta."), OXRIGHT = (OXRIGHT + ".$iDelta.") ".$sChangeRootID." WHERE OXLEFT >= ".$sOldParentLeft." AND OXRIGHT <= ".$sOldParentRight.$sAddOld );
             //echo "<br>2.) + $iDelta, >= $sOldParentLeft and <= $sOldParentRight";
 
             //Updating everything after old position
-            $oDB->execute( "UPDATE oxcategories SET OXLEFT = (OXLEFT - ".$iTreeSize.") WHERE OXLEFT >=   ".($sOldParentRight+1).$sAddOld );
-            $oDB->execute( "UPDATE oxcategories SET OXRIGHT = (OXRIGHT - ".$iTreeSize.") WHERE OXRIGHT >=   ".($sOldParentRight+1).$sAddOld );
+            $oDb->execute( "UPDATE oxcategories SET OXLEFT = (OXLEFT - ".$iTreeSize.") WHERE OXLEFT >=   ".($sOldParentRight+1).$sAddOld );
+            $oDb->execute( "UPDATE oxcategories SET OXRIGHT = (OXRIGHT - ".$iTreeSize.") WHERE OXRIGHT >=   ".($sOldParentRight+1).$sAddOld );
             //echo "<br>3.) - $iTreeSize, >= ".($sOldParentRight+1);
         }
 

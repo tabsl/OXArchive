@@ -16,7 +16,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   out
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: oxmodalpopup.js 35529 2011-05-23 07:31:20Z vilma $
  */
@@ -81,7 +81,7 @@
                     draggable : options.draggable,
 
                     open: function(event, ui) {
-                        $('div.ui-dialog-titlebar').css("visibility", "hidden");
+                        $('div.ui-dialog-titlebar').remove();
                     }
                 });
             }

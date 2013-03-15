@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: statistic_service.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: statistic_service.php 44135 2012-04-20 15:06:35Z linas.kukulskis $
  */
 
 /**
@@ -39,7 +39,7 @@ class Statistic_Service extends oxAdminDetails
     public function render()
     {
         parent::render();
-        $this->_aViewData['iLogCount'] = oxDb::getDb()->getOne( "select count(*) from oxlogs where oxshopid = '".$this->getConfig()->getShopId()."'");
+        $this->_aViewData['iLogCount'] = oxDb::getDb()->getOne( "select count(*) from oxlogs where oxshopid = '".$this->getConfig()->getShopId()."'", false, false);
 
         return "statistic_service.tpl";
     }

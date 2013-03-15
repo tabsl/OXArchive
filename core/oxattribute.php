@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxattribute.php 39198 2011-10-12 13:27:52Z arvydas.vapsva $
+ * @version   SVN: SVN: $Id: oxattribute.php 43706 2012-04-11 06:18:36Z linas.kukulskis $
  */
 
 /**
@@ -35,14 +35,6 @@ class oxAttribute extends oxI18n
      * @var string
      */
     protected $_sClassName = 'oxattribute';
-
-    /**
-     * Object core table name
-     *
-     * @var string
-     */
-    protected $_sCoreTbl = 'oxattribute';
-
 
     /**
      * Selected attribute value
@@ -71,7 +63,7 @@ class oxAttribute extends oxI18n
     public function __construct()
     {
         parent::__construct();
-        $this->init( $this->_sCoreTbl);
+        $this->init('oxattribute');
     }
 
     /**
@@ -90,14 +82,14 @@ class oxAttribute extends oxI18n
 
 
         // remove attributes from articles also
-        $oDB = oxDb::getDb();
-        $sOxidQuoted = $oDB->quote($sOXID);
+        $oDb = oxDb::getDb();
+        $sOxidQuoted = $oDb->quote($sOXID);
         $sDelete = "delete from oxobject2attribute where oxattrid = ".$sOxidQuoted;
-        $rs = $oDB->execute( $sDelete);
+        $rs = $oDb->execute( $sDelete);
 
         // #657 ADDITIONAL removes attribute connection to category
         $sDelete = "delete from oxcategory2attribute where oxattrid = ".$sOxidQuoted;
-        $rs = $oDB->execute( $sDelete);
+        $rs = $oDb->execute( $sDelete);
 
         return parent::delete( $sOXID);
     }
@@ -199,7 +191,7 @@ class oxAttribute extends oxI18n
             $sSelect .= "where o2a.oxobjectid = ".$oDb->quote( $sArtId )." order by o2a.oxpos";
 
             $aIds = array();
-            $rs = $oDb->execute( $sSelect );
+            $rs = $oDb->select( $sSelect );
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     $aIds[] = $rs->fields[0];

@@ -23,29 +23,32 @@
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
 <tr>
     <td valign="top" class="edittext">
-
-        <select name="rem_oxid" size="17" class="editinput" style="width:180px;" onChange="Javascript:document.myedit.submit();" [{ $readonly }]>
-        [{foreach from=$allremark item=allitem}]
-        <option value="[{ $allitem->oxremark__oxid->value }]" [{ if $allitem->selected}]SELECTED[{/if}]>[{ $allitem->oxremark__oxheader|oxformdate:"datetime" }]
-        [{ if $allitem->oxremark__oxtype->value == "r" }][{ oxmultilang ident="USER_REMARK_REMARK" }][{elseif $allitem->oxremark__oxtype->value == "o" }][{ oxmultilang ident="USER_REMARK_ORDER" }][{elseif $allitem->oxremark__oxtype->value == "c" }][{ oxmultilang ident="USER_REMARK_USER" }][{else}][{ oxmultilang ident="USER_REMARK_NEWS" }][{/if}]
-        </option>
-        [{/foreach}]
-        </select><br><br>
+        [{block name="admin_user_remark_selection"}]
+            <select name="rem_oxid" size="17" class="editinput" style="width:180px;" onChange="Javascript:document.myedit.submit();" [{ $readonly }]>
+            [{foreach from=$allremark item=allitem}]
+            <option value="[{ $allitem->oxremark__oxid->value }]" [{ if $allitem->selected}]SELECTED[{/if}]>[{ $allitem->oxremark__oxheader|oxformdate:"datetime" }]
+            [{ if $allitem->oxremark__oxtype->value == "r" }][{ oxmultilang ident="USER_REMARK_REMARK" }][{elseif $allitem->oxremark__oxtype->value == "o" }][{ oxmultilang ident="USER_REMARK_ORDER" }][{elseif $allitem->oxremark__oxtype->value == "c" }][{ oxmultilang ident="USER_REMARK_USER" }][{else}][{ oxmultilang ident="USER_REMARK_NEWS" }][{/if}]
+            </option>
+            [{/foreach}]
+            </select><br><br>
+        [{/block}]
         <input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="GENERAL_SAVE" }]" onClick="Javascript:document.myedit.fnc.value='save'"" [{ $readonly }]>
         <input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="GENERAL_DELETE" }]" onClick="Javascript:document.myedit.fnc.value='delete'"" [{ $readonly }]><br>
 
     </td>
     <!-- Anfang rechte Seite -->
     <td valign="top" class="edittext" align="left">
-    <input type="text" class="editinput" size="100" maxlength="128" value="[{if $remarkheader}][{$remarkheader|oxformdate:"datetime":true}][{/if}]" readonly disabled><br>
-    <input type="hidden" name="remarkheader" value="[{$remarkheader}]" [{ $readonly }]>
-    <textarea class="editinput" cols="100" rows="17" wrap="VIRTUAL" name="remarktext" [{ $readonly }]>[{$remarktext}]</textarea>
+    [{block name="admin_user_remark_form"}]
+        <input type="text" class="editinput" size="100" maxlength="128" value="[{if $remarkheader}][{$remarkheader|oxformdate:"datetime":true}][{/if}]" readonly disabled><br>
+        <input type="hidden" name="remarkheader" value="[{$remarkheader}]" [{ $readonly }]>
+        <textarea class="editinput" cols="100" rows="17" wrap="VIRTUAL" name="remarktext" [{ $readonly }]>[{$remarktext}]</textarea>
+    [{/block}]
     </td>
     <!-- Ende rechte Seite -->
 
 </tr>
 </table>
-
+</form>
 [{include file="bottomnaviitem.tpl"}]
 
 [{include file="bottomitem.tpl"}]

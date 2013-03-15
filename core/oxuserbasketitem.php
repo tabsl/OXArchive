@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuserbasketitem.php 29921 2010-09-21 12:18:02Z sarunas $
+ * @version   SVN: $Id: oxuserbasketitem.php 40616 2011-12-14 14:09:53Z arvydas.vapsva $
  */
 
 /**
@@ -129,15 +129,6 @@ class oxUserBasketItem extends oxBase
                     }
                 }
                 $this->_oArticle->setSelectlist( $aSelectlist );
-            }
-            // formatting title if variant
-            if ( $this->_oArticle->oxarticles__oxparentid->value ) {
-                $oParent = oxNew( 'oxarticle' );
-                if ( $oParent->load( $this->_oArticle->oxarticles__oxparentid->value ) ) {
-                    if ( $this->_oArticle->oxarticles__oxvarselect->value ) {
-                        $this->_oArticle->oxarticles__oxtitle->value .= ', '.$this->_oArticle->oxarticles__oxvarselect->value;
-                    }
-                }
             }
 
             // generating item key

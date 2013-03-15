@@ -88,7 +88,7 @@
             <tr class="sep">
               <td colspan="3"></td>
             </tr>
-            [{foreach from=$order->getOrderArticles() item=orderitem name=testOrderItem}]
+            [{foreach from=$order->getOrderArticles(true) item=orderitem name=testOrderItem}]
             [{assign var=sArticleId value=$orderitem->oxorderarticles__oxartid->value }]
             [{assign var=oArticle value=$oArticleList[$sArticleId] }]
             <tr>

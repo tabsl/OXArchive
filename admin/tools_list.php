@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: tools_list.php 40515 2011-12-12 08:42:16Z mindaugas.rimgaila $
+ * @version   SVN: $Id: tools_list.php 40557 2011-12-12 13:48:24Z linas.kukulskis $
  */
 
 /**

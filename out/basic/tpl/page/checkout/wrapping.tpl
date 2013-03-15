@@ -60,8 +60,8 @@
 
           <!-- basket items -->
           [{assign var="icounter" value="0"}]
-          [{foreach key=basketindex from=$oxcmp_basket->getContents() item=basketitem name=testArt}]
           [{assign var="basketitemlist" value=$oView->getBasketItems()}]
+          [{foreach key=basketindex from=$oxcmp_basket->getContents() item=basketitem name=testArt}]
           [{assign var="basketproduct" value=$basketitemlist.$basketindex }]
 
             [{if $icounter > 0}]
@@ -76,14 +76,14 @@
               <!-- product image -->
               <td class="brd"></td>
               <td>
-                  <a id="test_pic_[{ $basketproduct->oxarticles__oxid->value}]_[{$smarty.foreach.testArt.iteration}]" class="picture" href="[{ $basketproduct->getLink()}]">
-                    <img src="[{$basketproduct->getIconUrl() }]" alt="[{ $basketproduct->oxarticles__oxtitle->value|strip_tags }]">
+                  <a id="test_pic_[{$basketitem->getProductId()}]_[{$smarty.foreach.testArt.iteration}]" class="picture" href="[{$basketitem->getLink()}]">
+                    <img src="[{$basketitem->getIconUrl()}]" alt="[{$basketitem->getTitle()|strip_tags }]">
                   </a>
               </td>
 
               <!-- product title & number -->
               <td>
-                <div class="art_title"><a id="test_title_[{ $basketproduct->oxarticles__oxid->value}]_[{$smarty.foreach.testArt.iteration}]" rel="nofollow" href="[{ $basketproduct->getLink()}]">[{ $basketproduct->oxarticles__oxtitle->value }][{ if $basketproduct->oxarticles__oxvarselect->value}], [{ $basketproduct->oxarticles__oxvarselect->value}][{/if}]</a></div>
+                <div class="art_title"><a id="test_title_[{$basketitem->getProductId()}]_[{$smarty.foreach.testArt.iteration}]" rel="nofollow" href="[{$basketitem->getLink()}]">[{$basketitem->getTitle()}]</a></div>
                 <div class="art_num">[{ oxmultilang ident="WRAPPING_ARTNUMBER" }] [{ $basketproduct->oxarticles__oxartnum->value }]</div>
               </td>
 
@@ -91,16 +91,16 @@
               <td colspan="2">
                 <table width="100%" class="wrapping_items">
                   <tr onclick="JavaScript:document.getElementsByName('wrapping[[{$basketindex}]]')[0].checked=true;">
-                    <td><input id="test_WrapItem_[{ $basketproduct->oxarticles__oxid->value}]_NONE" type="radio" name="wrapping[[{$basketindex}]]" value="0" [{ if !$basketitem->wrapping}]CHECKED[{/if}]></td>
+                    <td><input id="test_WrapItem_[{$basketitem->getProductId()}]_NONE" type="radio" name="wrapping[[{$basketindex}]]" value="0" [{ if !$basketitem->getWrappingId()}]CHECKED[{/if}]></td>
                     <td>[{ oxmultilang ident="WRAPPING_NONE" }]</td>
                     <td align="right">0,00 [{ $currency->sign}]</td>
                   </tr>
                     [{assign var="ictr" value="1"}]
                     [{foreach from=$oView->getWrappingList() item=wrapping name=Wraps}]
                       <tr onclick="JavaScript:document.getElementsByName('wrapping[[{$basketindex}]]')['[{$ictr}]'].checked=true;">
-                        <td><input id="test_WrapItem_[{ $basketproduct->oxarticles__oxid->value}]_[{$smarty.foreach.Wraps.iteration}]" type="radio" name="wrapping[[{$basketindex}]]" value="[{$wrapping->oxwrapping__oxid->value}]" [{ if $basketitem->wrapping == $wrapping->oxwrapping__oxid->value}]CHECKED[{/if}]></td>
-                        <td id="test_WrapItemName_[{ $basketproduct->oxarticles__oxid->value}]_[{$smarty.foreach.Wraps.iteration}]">[{$wrapping->oxwrapping__oxname->value}]</td>
-                        <td id="test_WrapItemPrice_[{ $basketproduct->oxarticles__oxid->value}]_[{$smarty.foreach.Wraps.iteration}]" align="right">[{$wrapping->getFPrice()}] [{ $currency->sign}]</td>
+                        <td><input id="test_WrapItem_[{$basketitem->getProductId()}]_[{$smarty.foreach.Wraps.iteration}]" type="radio" name="wrapping[[{$basketindex}]]" value="[{$wrapping->oxwrapping__oxid->value}]" [{ if $basketitem->getWrappingId() == $wrapping->oxwrapping__oxid->value}]CHECKED[{/if}]></td>
+                        <td id="test_WrapItemName_[{ $basketitem->getProductId()}]_[{$smarty.foreach.Wraps.iteration}]">[{$wrapping->oxwrapping__oxname->value}]</td>
+                        <td id="test_WrapItemPrice_[{ $basketitem->getProductId()}]_[{$smarty.foreach.Wraps.iteration}]" align="right">[{$wrapping->getFPrice()}] [{ $currency->sign}]</td>
                       </tr>
                       <tr onclick="JavaScript:document.getElementsByName('wrapping[[{$basketindex}]]')['[{$ictr}]'].checked=true;">
                         <td></td>

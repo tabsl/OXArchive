@@ -26,13 +26,19 @@ window.onload = function ()
 <form name="search" id="search" action="[{ $oViewConf->getSelfLink() }]" method="post">
 [{include file="_formparams.tpl" cl="selectlist_list" lstrt=$lstrt actedit=$actedit oxid=$oxid fnc="" language=$actlang editlanguage=$actlang}]
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
-<colgroup><col width="49%"><col width="49%"><col width="2%"></colgroup>
+<colgroup>
+    [{block name="admin_selectlist_list_colgroup"}]
+        <col width="49%"><col width="49%"><col width="2%">
+    [{/block}]
+</colgroup>
 <tr class="listitem">
-    <td valign="top" class="listfilter first" height="20">
-        <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="50" maxlength="128" name="where[oxselectlist][oxtitle]" value="[{ $where.oxselectlist.oxtitle }]">
-        </div></div>
-    </td>
+    [{block name="admin_selectlist_list_filter"}]
+        <td valign="top" class="listfilter first" height="20">
+            <div class="r1"><div class="b1">
+            <input class="listedit" type="text" size="50" maxlength="128" name="where[oxselectlist][oxtitle]" value="[{ $where.oxselectlist.oxtitle }]">
+            </div></div>
+        </td>
+    [{/block}]
     <td valign="top" class="listfilter" height="20" colspan="2">
         <div class="r1"><div class="b1">
         <div class="find">
@@ -47,8 +53,10 @@ window.onload = function ()
     </td>
 </tr>
 <tr>
-    <td class="listheader first" height="15">&nbsp;<a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxselectlist', 'oxtitle', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_TITLE" }]</a></td>
-    <td class="listheader" height="15" colspan="2"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxselectlist', 'oxident', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_TITLEIDENT" }]</a></td>
+    [{block name="admin_selectlist_list_sorting"}]
+        <td class="listheader first" height="15">&nbsp;<a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxselectlist', 'oxtitle', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_TITLE" }]</a></td>
+        <td class="listheader" height="15" colspan="2"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxselectlist', 'oxident', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_TITLEIDENT" }]</a></td>
+    [{/block}]
 </tr>
 
 [{assign var="blWhite" value=""}]
@@ -56,22 +64,23 @@ window.onload = function ()
 [{foreach from=$mylist item=listitem}]
     [{assign var="_cnt" value=$_cnt+1}]
     <tr id="row.[{$_cnt}]">
-
-    [{ if $listitem->blacklist == 1}]
-        [{assign var="listclass" value=listitem3 }]
-    [{ else}]
-        [{assign var="listclass" value=listitem$blWhite }]
-    [{ /if}]
-    [{ if $listitem->getId() == $oxid }]
-        [{assign var="listclass" value=listitem4 }]
-    [{ /if}]
-    <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating">&nbsp;<a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxselectlist__oxid->value}]');" class="[{ $listclass}]">[{ $listitem->oxselectlist__oxtitle->value }]</a></div></td>
-    <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxselectlist__oxid->value}]');" class="[{ $listclass}]">[{ $listitem->oxselectlist__oxident->value }]</a></div></td>
-    <td class="[{ $listclass}]">
-      [{if !$readonly }]
-          <a href="Javascript:top.oxid.admin.deleteThis('[{ $listitem->oxselectlist__oxid->value }]');" class="delete" id="del.[{$_cnt}]" [{include file="help.tpl" helpid=item_delete}]></a>
-      [{/if}]
-    </td>
+    [{block name="admin_selectlist_list_item"}]
+        [{ if $listitem->blacklist == 1}]
+            [{assign var="listclass" value=listitem3 }]
+        [{ else}]
+            [{assign var="listclass" value=listitem$blWhite }]
+        [{ /if}]
+        [{ if $listitem->getId() == $oxid }]
+            [{assign var="listclass" value=listitem4 }]
+        [{ /if}]
+        <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating">&nbsp;<a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxselectlist__oxid->value}]');" class="[{ $listclass}]">[{ $listitem->oxselectlist__oxtitle->value }]</a></div></td>
+        <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxselectlist__oxid->value}]');" class="[{ $listclass}]">[{ $listitem->oxselectlist__oxident->value }]</a></div></td>
+        <td class="[{ $listclass}]">
+          [{if !$readonly }]
+              <a href="Javascript:top.oxid.admin.deleteThis('[{ $listitem->oxselectlist__oxid->value }]');" class="delete" id="del.[{$_cnt}]" [{include file="help.tpl" helpid=item_delete}]></a>
+          [{/if}]
+        </td>
+    [{/block}]
 </tr>
 [{if $blWhite == "2"}]
 [{assign var="blWhite" value=""}]

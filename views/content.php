@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: content.php 40522 2011-12-12 12:40:30Z linas.kukulskis $
+ * @version   SVN: $Id: content.php 43762 2012-04-11 09:16:31Z vaidas.matulevicius $
  */
 
 /**
@@ -68,6 +68,44 @@ class Content extends oxUBase
      * @var sting
      */
     protected $_sContentTitle = null;
+
+    /**
+     * Sign if to load and show bargain action
+     * @var bool
+     */
+    protected $_blBargainAction = true;
+
+    /**
+     * Business entity data template
+     * @var string
+     */
+    protected $_sBusinessTemplate = 'rdfa/content/inc/business_entity.tpl';
+
+    /**
+     * Delivery charge data template
+     * @var string
+     */
+    protected $_sDeliveryTemplate = 'rdfa/content/inc/delivery_charge.tpl';
+
+    /**
+     * Payment charge data template
+     * @var string
+     */
+    protected $_sPaymentTemplate = 'rdfa/content/inc/payment_charge.tpl';
+
+    /**
+    * An array including all ShopConfVars which are used to extend business
+    * entity data
+    *
+    * @var array
+    */
+    protected $_aBusinessEntityExtends = array(	"sRDFaLogoUrl",
+                                                "sRDFaLongitude",
+                                                "sRDFaLatitude",
+                                                "sRDFaGLN",
+                                                "sRDFaNAICS",
+                                                "sRDFaISIC",
+                                                "sRDFaDUNS");
 
     /**
      * Returns prefix ID used by template engine.
@@ -226,7 +264,6 @@ class Content extends oxUBase
     public function getContentId()
     {
         if ( $this->_sContentId === null ) {
-            $oConfig    = $this->getConfig();
             $sContentId = oxConfig::getParameter( 'oxcid' );
 
             if ( !$sContentId ) {
@@ -242,9 +279,19 @@ class Content extends oxUBase
 
             $this->_sContentId = false;
             $oContent = oxNew( 'oxcontent' );
-            if ( $oContent->load( $sContentId ) && $oContent->oxcontents__oxactive->value ) {
-                $this->_sContentId = $sContentId;
-                $this->_oContent = $oContent;
+            if ( $oContent->load( $sContentId ) ) {
+
+                //#000347A - special case for credits
+                if ( $oContent->oxcontents__oxloadid->value === "oxcredits" &&
+                     $oContent->getLanguage() !== oxConfig::getParameter( "lang" ) ) {
+                    $oContent->setLanguage( (int) oxConfig::getParameter( "lang" ) );
+                    $oContent->load( $oContent->getId() );
+                }
+
+                if ( $oContent->oxcontents__oxactive->value ) {
+                    $this->_sContentId = $sContentId;
+                    $this->_oContent = $oContent;
+                }
             }
         }
         return $this->_sContentId;
@@ -337,4 +384,153 @@ class Content extends oxUBase
 
         return $this->_sContentTitle;
     }
+
+    /**
+     * Returns if page has rdfa
+     *
+     * @return bool
+     */
+    public function showRdfa()
+    {
+        return $this->getConfig()->getConfigParam( 'blRDFaEmbedding' );
+    }
+
+    /**
+     * Returns template name wich content page to specify:
+     * business entity data, payment charge specifications or delivery charge
+     *
+     * @return array
+     */
+    public function getContentPageTpl()
+    {
+        $aTemplate  = array();
+        $sContentId = $this->getContent()->oxcontents__oxloadid->value;
+        $myConfig   = $this->getConfig();
+        if ( $sContentId == $myConfig->getConfigParam( 'sRDFaBusinessEntityLoc' )) {
+            $aTemplate[] = $this->_sBusinessTemplate;
+        }
+        if ( $sContentId == $myConfig->getConfigParam( 'sRDFaDeliveryChargeSpecLoc' )) {
+            $aTemplate[] = $this->_sDeliveryTemplate;
+        }
+        if ( $sContentId == $myConfig->getConfigParam( 'sRDFaPaymentChargeSpecLoc' )) {
+            $aTemplate[] = $this->_sPaymentTemplate;
+        }
+        return $aTemplate;
+    }
+
+    /**
+     * Gets extended business entity data
+     *
+     * @return object
+     */
+    public function getBusinessEntityExtends()
+    {
+        $myConfig = $this->getConfig();
+        $aExtends = array();
+
+        foreach ( $this->_aBusinessEntityExtends as $sExtend ) {
+            $aExtends[$sExtend] = $myConfig->getConfigParam($sExtend);
+        }
+
+        return $aExtends;
+    }
+
+    /**
+    * Returns an object including all payments which are not mapped to a
+    * predefined GoodRelations payment method. This object is used for
+    * defining new instances of gr:PaymentMethods at content pages.
+    *
+    * @return object
+    */
+    public function getNotMappedToRDFaPayments()
+    {
+        $oPayments = oxNew("oxpaymentlist");
+        $oPayments->loadNonRDFaPaymentList();
+        return $oPayments;
+    }
+
+    /**
+     * Returns an object including all delivery sets which are not mapped to a
+     * predefined GoodRelations delivery method. This object is used for
+     * defining new instances of gr:DeliveryMethods at content pages.
+     *
+     * @return object
+     */
+    public function getNotMappedToRDFaDeliverySets()
+    {
+        $oDelSets = oxNew("oxdeliverysetlist");
+        $oDelSets->loadNonRDFaDeliverySetList();
+        return $oDelSets;
+    }
+
+    /**
+     * Returns delivery methods with assigned deliverysets.
+     *
+     * @return object
+     */
+    public function getDeliveryChargeSpecs()
+    {
+        $aDeliveryChargeSpecs = array();
+        $oDeliveryChargeSpecs = $this->getDeliveryList();
+        foreach ($oDeliveryChargeSpecs as $oDeliveryChargeSpec) {
+            if ($oDeliveryChargeSpec->oxdelivery__oxaddsumtype->value == "abs") {
+                $oDelSets = oxNew("oxdeliverysetlist");
+                $oDelSets->loadRDFaDeliverySetList($oDeliveryChargeSpec->getId());
+                $oDeliveryChargeSpec->deliverysetmethods = $oDelSets;
+                $aDeliveryChargeSpecs[] = $oDeliveryChargeSpec;
+            }
+        }
+        return $aDeliveryChargeSpecs;
+    }
+
+    /**
+     * Template variable getter. Returns delivery list
+     *
+     * @return object
+     */
+    public function getDeliveryList()
+    {
+        if ( $this->_oDelList === null ) {
+            $this->_oDelList = oxNew( 'oxdeliverylist' );
+            $this->_oDelList->getList();
+        }
+        return $this->_oDelList;
+    }
+
+    /**
+     * Returns rdfa VAT
+     *
+     * @return bool
+     */
+    public function getRdfaVAT()
+    {
+        return $this->getConfig()->getConfigParam( 'iRDFaVAT' );
+    }
+
+    /**
+     * Returns rdfa VAT
+     *
+     * @return bool
+     */
+    public function getRdfaPriceValidity()
+    {
+        $iDays = $this->getConfig()->getConfigParam( 'iRDFaPriceValidity' );
+        $iFrom = oxUtilsDate::getInstance()->getTime();
+        $iThrough = $iFrom + ($iDays * 24 * 60 * 60);
+        $oPriceValidity = array();
+        $oPriceValidity['validfrom'] = date('Y-m-d\TH:i:s', $iFrom)."Z";
+        $oPriceValidity['validthrough'] = date('Y-m-d\TH:i:s', $iThrough)."Z";
+        return $oPriceValidity;
+    }
+    
+    /**
+     * Returns content parsed through smarty 
+     * 
+     * @return string
+     */
+    public function getParsedContent()
+    {        
+        return oxUtilsView::getInstance()->parseThroughSmarty( $this->getContent()->oxcontents__oxcontent->value );        
+    }
+
 }

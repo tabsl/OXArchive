@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oximex.php 42258 2012-02-14 13:19:38Z linas.kukulskis $
+ * @version   SVN: $Id: oximex.php 43730 2012-04-11 07:39:14Z linas.kukulskis $
  */
 
 /**
@@ -39,12 +39,12 @@ class oxImex extends oxBase
     public function exportLexwareArticles( $iStart, $iLines, $sFilepath)
     {
         $myConfig = $this->getConfig();
-        $oDB      = oxDb::getDb();
+        $oDb      = oxDb::getDb();
 
         $sArticleTable = getViewName('oxarticles');
 
         $sSelect = "select count(oxid) from $sArticleTable ";
-        $iSize = $oDB->getOne( $sSelect);
+        $iSize = $oDb->getOne( $sSelect );
 
         if ( $iStart < $iSize) {
             $fp = fopen( $sFilepath, "ab");
@@ -52,10 +52,10 @@ class oxImex extends oxBase
                 // first time, write header
                 fwrite( $fp, "\"Artikelnummer\";\"Bezeichnung\";\"Einheit\";\"Gewicht\";\"Matchcode\";\"Preis pro Anzahl\";\"Warengruppe\";\"Warengr.-Kurzbez.\";\"Warengr.-Steuersatz\";\"Warengr.-Konto Inland\";\"Warengr.-Konto Ausland\";\"Warengr.-Konto EG\";\"Preis 1\";\"Preis 2\";\"Preis 3\";\"Preis I/1\";\"Preis I/2\";\"Preis I/3\";\"Preis II/1\";\"Preis II/2\";\"Preis II/3\";\"Preis III/1\";\"Preis III/2\";\"Preis III/3\";\"B/N\";\"Lagerartikel\";\"EK 1\";\"Währung EK1\";\"EK 2\";\"Währung EK2\";\"Staffelmenge 1\";\"Staffelmenge 2\";\"Staffelmenge 3\";\"Lieferantennummer 1\";\"Lieferantennummer 2\";\"Bestellmenge Lf.1\";\"Bestellmenge Lf.2\";\"Bestellnr. Lf.1\";\"Bestellnr. Lf.2\";\"Lieferzeit Lf.1\";\"Lieferzeit Lf.2\";\"Lagerbestand\";\"Mindestbestand\";\"Lagerort\";\"Bestellte Menge\";\"Stückliste\";\"Internet\";\"Text\"\r\n");
             }
-            $oldMode = $oDB->setFetchMode( ADODB_FETCH_ASSOC);
+            $oldMode = $oDb->setFetchMode( oxDb::FETCH_MODE_ASSOC );
             $sSelect = "select * from $sArticleTable ";
-            $rs = $oDB->selectLimit( $sSelect, $iLines, $iStart);
-            $oDB->setFetchMode( $oldMode);
+            $rs = $oDb->selectLimit( $sSelect, $iLines, $iStart);
+            $oDb->setFetchMode( $oldMode);
 
             while (!$rs->EOF) {
                 $oArticle = oxNew( "oxarticle" );
@@ -65,8 +65,8 @@ class oxImex extends oxBase
                 $oArticle->load( $rs->fields['OXID']);
                 $this->setAdminMode( $blAdmin );
 
-                $sSelect = "select oxtitle from ".$oArticle->getViewName()." where oxid = " . $oDB->quote( $oArticle->oxarticles__oxparentid->value );
-                $oTitle = $oDB->getOne( $sSelect);
+                $sSelect = "select oxtitle from ".$oArticle->getViewName()." where oxid = " . $oDb->quote( $oArticle->oxarticles__oxparentid->value );
+                $oTitle = $oDb->getOne( $sSelect );
                 if ($oTitle != false && strlen ($oTitle)) {
                     $nTitle = $this->interForm($oTitle);
                 } else {
@@ -349,7 +349,7 @@ class oxImex extends oxBase
             $dSumNetPrice = 0;
             $dSumBrutPrice = 0;
 
-            $oOrderArticles = $oOrder->getOrderArticles();
+            $oOrderArticles = $oOrder->getOrderArticles( true );
             foreach ($oOrderArticles as $oOrderArt) {
 
                 $dVATSet = array_search( $oOrderArt->oxorderarticles__oxvat->value, $myConfig->getConfigParam( 'aLexwareVAT' ) );

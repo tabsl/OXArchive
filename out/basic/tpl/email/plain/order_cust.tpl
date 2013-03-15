@@ -5,6 +5,8 @@
 [{ assign var="oDelSet"   value=$order->getDelSet() }]
 [{ assign var="basket"    value=$order->getBasket() }]
 [{ assign var="payment"   value=$order->getPayment() }]
+[{ assign var="sOrderId"   value=$order->getId() }]
+[{ assign var="oOrderFileList"   value=$oEmailView->getOrderFileList($sOrderId) }]
 
 [{if $payment->oxuserpayments__oxpaymentsid->value == "oxempty"}]
 [{oxcontent ident="oxuserordernpplainemail"}]
@@ -15,8 +17,9 @@
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_ORDERNOMBER" }] [{ $order->oxorder__oxordernr->value }]
 
 [{if $oViewConf->getShowVouchers() }]
-[{ foreach from=$vouchers item=voucher}]
-[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_USEDCOUPONS" }] [{$voucher->oxmodvouchers__oxvouchernr->value}] - [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_REBATE" }] [{$voucher->oxmodvouchers__oxdiscount->value}] [{ if $voucher->oxmodvouchers__oxdiscounttype->value == "absolute"}][{ $currency->name}][{else}]%[{/if}]
+[{ foreach from=$order->getVoucherList() item=voucher}]
+[{ assign var="voucherseries" value=$voucher->getSerie() }]
+[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_USEDCOUPONS" }] [{$voucher->oxvouchers__oxvouchernr->value}] - [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_DICOUNT" }] [{$voucherseries->oxvoucherseries__oxdiscount->value}] [{ if $voucherseries->oxvoucherseries__oxdiscounttype->value == "absolute"}][{ $currency->sign}][{else}]%[{/if}]
 [{/foreach }]
 [{/if}]
 
@@ -105,8 +108,18 @@
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_YOURMESSAGE" }] [{ $order->oxorder__oxremark->getRawValue() }]
 [{/if}]
 
+[{ if $oOrderFileList }]
+    [{ oxmultilang ident="MY_DOWNLOADS_DESC" }]
+    [{foreach from=$oOrderFileList item="oOrderFile"}]
+      [{if $order->oxorder__oxpaid->value || !$oOrderFile->oxorderfiles__oxpurchasedonly->value}]
+        [{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=download" params="sorderfileid="|cat:$oOrderFile->getId() }]
+      [{else}]
+        [{$oOrderFile->oxorderfiles__oxfilename->value}] [{ oxmultilang ident="DOWNLOADS_PAYMENT_PENDING" }]
+      [{/if}]
+    [{/foreach}]
+[{/if}]
+
 [{if $payment->oxuserpayments__oxpaymentsid->value != "oxempty"}][{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_PAYMENTMETHOD" }] [{ $payment->oxpayments__oxdesc->getRawValue() }] [{ if $basket->getPaymentCosts() }]([{ $basket->getFPaymentCosts() }] [{ $currency->sign}])[{/if}]
-[{ $payment->oxpayments__oxlongdesc->value }]
 [{/if}]
 
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_EMAILADDRESS" }] [{ $user->oxuser__oxusername->value }]

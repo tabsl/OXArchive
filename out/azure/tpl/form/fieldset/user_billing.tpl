@@ -1,4 +1,26 @@
 [{assign var="invadr" value=$oView->getInvoiceAddress()}]
+[{assign var="blBirthdayRequired" value=$oView->isFieldRequired(oxuser__oxbirthdate)}]
+[{if isset( $invadr.oxuser__oxbirthdate.month ) }]
+    [{assign var="iBirthdayMonth" value=$invadr.oxuser__oxbirthdate.month }]
+[{elseif $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00" }]
+    [{assign var="iBirthdayMonth" value=$oxcmp_user->oxuser__oxbirthdate->value|regex_replace:"/^([0-9]{4})[-]/":""|regex_replace:"/[-]([0-9]{1,2})$/":"" }]
+[{else}]
+    [{assign var="iBirthdayMonth" value=0}]
+[{/if}]
+[{if isset( $invadr.oxuser__oxbirthdate.day ) }]
+    [{assign var="iBirthdayDay" value=$invadr.oxuser__oxbirthdate.day}]
+[{elseif $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00"}]
+    [{assign var="iBirthdayDay" value=$oxcmp_user->oxuser__oxbirthdate->value|regex_replace:"/^([0-9]{4})[-]([0-9]{1,2})[-]/":"" }]
+[{else}]
+    [{assign var="iBirthdayDay" value=0}]
+[{/if}]
+[{if isset( $invadr.oxuser__oxbirthdate.year ) }]
+    [{assign var="iBirthdayYear" value=$invadr.oxuser__oxbirthdate.year }]
+[{elseif $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00" }]
+    [{assign var="iBirthdayYear" value=$oxcmp_user->oxuser__oxbirthdate->value|regex_replace:"/[-]([0-9]{1,2})[-]([0-9]{1,2})$/":"" }]
+[{else}]
+    [{assign var="iBirthdayYear" value=0}]
+[{/if}]
     <li>
         <label [{if $oView->isFieldRequired(oxuser__oxsal)}]class="req"[{/if}]>[{ oxmultilang ident="FORM_FIELDSET_USER_BILLING_TITLE" }]</label>
         [{include file="form/fieldset/salutation.tpl" name="invadr[oxuser__oxsal]" value=$oxcmp_user->oxuser__oxsal->value }]
@@ -33,10 +55,21 @@
         </p>
           [{/if}]
     </li>
+    <li [{if $aErrors.oxuser__oxaddinfo}]class="oxInValid"[{/if}]>
+        [{assign var="_address_addinfo_tooltip" value="FORM_FIELDSET_USER_BILLING_ADDITIONALINFO_TOOLTIP"|oxmultilangassign }]
+        <label [{if $_address_addinfo_tooltip}]title="[{$_address_addinfo_tooltip}]" class="tooltip"[{/if}] [{if $oView->isFieldRequired(oxuser__oxaddinfo) }]class="req"[{/if}]>[{ oxmultilang ident="FORM_FIELDSET_USER_BILLING_ADDITIONALINFO" }]</label>
+          <input [{if $oView->isFieldRequired(oxuser__oxaddinfo) }]class="js-oxValidate js-oxValidate_notEmpty" [{/if}]type="text" size="37" maxlength="255" name="invadr[oxuser__oxaddinfo]" value="[{if isset( $invadr.oxuser__oxaddinfo ) }][{ $invadr.oxuser__oxaddinfo }][{else }][{ $oxcmp_user->oxuser__oxaddinfo->value }][{/if}]">
+          [{if $oView->isFieldRequired(oxuser__oxaddinfo) }]
+        <p class="oxValidateError">
+            <span class="js-oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
+            [{include file="message/inputvalidation.tpl" aErrors=$aErrors.oxuser__oxaddinfo}]
+        </p>
+          [{/if}]
+    </li>
     <li [{if $aErrors.oxuser__oxstreet}]class="oxInValid"[{/if}]>
         <label [{if $oView->isFieldRequired(oxuser__oxstreet) || $oView->isFieldRequired(oxuser__oxstreetnr) }]class="req"[{/if}]>[{ oxmultilang ident="FORM_FIELDSET_USER_BILLING_STREETANDSTREETNO" }]</label>
-          <input [{if $oView->isFieldRequired(oxuser__oxstreet) }]class="js-oxValidate js-oxValidate_notEmpty" [{/if}]type="text" field="pair-xsmall" maxlength="255" name="invadr[oxuser__oxstreet]" value="[{if isset( $invadr.oxuser__oxstreet ) }][{ $invadr.oxuser__oxstreet }][{else }][{ $oxcmp_user->oxuser__oxstreet->value }][{/if}]">
-          <input [{if $oView->isFieldRequired(oxuser__oxstreetnr) }]class="js-oxValidate js-oxValidate_notEmpty" [{/if}]type="text" field="xsmall" maxlength="16" name="invadr[oxuser__oxstreetnr]" value="[{if isset( $invadr.oxuser__oxstreetnr ) }][{ $invadr.oxuser__oxstreetnr }][{else }][{ $oxcmp_user->oxuser__oxstreetnr->value }][{/if}]">
+          <input [{if $oView->isFieldRequired(oxuser__oxstreet) }]class="js-oxValidate js-oxValidate_notEmpty" [{/if}]type="text" data-fieldsize="pair-xsmall" maxlength="255" name="invadr[oxuser__oxstreet]" value="[{if isset( $invadr.oxuser__oxstreet ) }][{ $invadr.oxuser__oxstreet }][{else }][{ $oxcmp_user->oxuser__oxstreet->value }][{/if}]">
+          <input [{if $oView->isFieldRequired(oxuser__oxstreetnr) }]class="js-oxValidate js-oxValidate_notEmpty" [{/if}]type="text" data-fieldsize="xsmall" maxlength="16" name="invadr[oxuser__oxstreetnr]" value="[{if isset( $invadr.oxuser__oxstreetnr ) }][{ $invadr.oxuser__oxstreetnr }][{else }][{ $oxcmp_user->oxuser__oxstreetnr->value }][{/if}]">
           [{if $oView->isFieldRequired(oxuser__oxstreet) || $oView->isFieldRequired(oxuser__oxstreetnr) }]
         <p class="oxValidateError">
             <span class="js-oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
@@ -46,8 +79,8 @@
     </li>
     <li [{if $aErrors.oxuser__oxzip}]class="oxInValid"[{/if}]>
         <label [{if $oView->isFieldRequired(oxuser__oxzip) || $oView->isFieldRequired(oxuser__oxcity) }]class="req"[{/if}]>[{ oxmultilang ident="FORM_FIELDSET_USER_BILLING_POSTALCODEANDCITY" }]</label>
-          <input [{if $oView->isFieldRequired(oxuser__oxzip) }]class="js-oxValidate js-oxValidate_notEmpty" [{/if}]type="text" field="small" maxlength="16" name="invadr[oxuser__oxzip]" value="[{if isset( $invadr.oxuser__oxzip ) }][{ $invadr.oxuser__oxzip }][{else }][{ $oxcmp_user->oxuser__oxzip->value }][{/if}]">
-          <input [{if $oView->isFieldRequired(oxuser__oxcity) }]class="js-oxValidate js-oxValidate_notEmpty" [{/if}]type="text" field="pair-small" maxlength="255" name="invadr[oxuser__oxcity]" value="[{if isset( $invadr.oxuser__oxcity ) }][{ $invadr.oxuser__oxcity }][{else }][{ $oxcmp_user->oxuser__oxcity->value }][{/if}]">
+          <input [{if $oView->isFieldRequired(oxuser__oxzip) }]class="js-oxValidate js-oxValidate_notEmpty" [{/if}]type="text" data-fieldsize="small" maxlength="16" name="invadr[oxuser__oxzip]" value="[{if isset( $invadr.oxuser__oxzip ) }][{ $invadr.oxuser__oxzip }][{else }][{ $oxcmp_user->oxuser__oxzip->value }][{/if}]">
+          <input [{if $oView->isFieldRequired(oxuser__oxcity) }]class="js-oxValidate js-oxValidate_notEmpty" [{/if}]type="text" data-fieldsize="pair-small" maxlength="255" name="invadr[oxuser__oxcity]" value="[{if isset( $invadr.oxuser__oxcity ) }][{ $invadr.oxuser__oxcity }][{else }][{ $oxcmp_user->oxuser__oxcity->value }][{/if}]">
           [{if $oView->isFieldRequired(oxuser__oxzip) || $oView->isFieldRequired(oxuser__oxcity) }]
         <p class="oxValidateError">
             <span class="js-oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
@@ -65,22 +98,22 @@
         </p>
           [{/if}]
     </li>
-    <li [{if $aErrors.oxuser__oxaddinfo}]class="oxInValid"[{/if}]>
-        <label [{if $oView->isFieldRequired(oxuser__oxaddinfo) }]class="req"[{/if}]>[{ oxmultilang ident="FORM_FIELDSET_USER_BILLING_ADDITIONALINFO" }]</label>
-          <input [{if $oView->isFieldRequired(oxuser__oxaddinfo) }]class="js-oxValidate js-oxValidate_notEmpty" [{/if}]type="text" size="37" maxlength="255" name="invadr[oxuser__oxaddinfo]" value="[{if isset( $invadr.oxuser__oxaddinfo ) }][{ $invadr.oxuser__oxaddinfo }][{else }][{ $oxcmp_user->oxuser__oxaddinfo->value }][{/if}]">
-          [{if $oView->isFieldRequired(oxuser__oxaddinfo) }]
-        <p class="oxValidateError">
-            <span class="js-oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
-            [{include file="message/inputvalidation.tpl" aErrors=$aErrors.oxuser__oxaddinfo}]
-        </p>
-          [{/if}]
-    </li>
+    [{block name="form_user_billing_country"}]
     <li [{if $aErrors.oxuser__oxcountryid}]class="oxInValid"[{/if}]>
         <label [{if $oView->isFieldRequired(oxuser__oxcountryid) }]class="req"[{/if}]>[{ oxmultilang ident="FORM_FIELDSET_USER_BILLING_COUNTRY" }]</label>
           <select [{if $oView->isFieldRequired(oxuser__oxcountryid) }] class="js-oxValidate js-oxValidate_notEmpty" [{/if}] id="invCountrySelect" name="invadr[oxuser__oxcountryid]">
-               <option value="">-</option>
-            [{foreach from=$oViewConf->getCountryList() item=country key=country_id }]
-                <option value="[{ $country->oxcountry__oxid->value }]" [{if isset( $invadr.oxuser__oxcountryid ) && $invadr.oxuser__oxcountryid == $country->oxcountry__oxid->value}] selected[{elseif $oxcmp_user->oxuser__oxcountryid->value == $country->oxcountry__oxid->value}] selected[{/if}]>[{ $country->oxcountry__oxtitle->value }]</option>
+              <option value="">-</option>
+              [{assign var="blCountrySelected" value=false}]
+              [{foreach from=$oViewConf->getCountryList() item=country key=country_id }]
+                  [{assign var="sCountrySelect" value=""}]
+                  [{if !$blCountrySelected}]
+                      [{if (isset($invadr.oxuser__oxcountryid) && $invadr.oxuser__oxcountryid == $country->oxcountry__oxid->value) ||
+                           (!isset($invadr.oxuser__oxcountryid) && $oxcmp_user->oxuser__oxcountryid->value == $country->oxcountry__oxid->value) }]
+                          [{assign var="blCountrySelected" value=true}]
+                          [{assign var="sCountrySelect" value="selected"}]
+                      [{/if}]
+                  [{/if}]
+                <option value="[{ $country->oxcountry__oxid->value }]" [{$sCountrySelect}]>[{ $country->oxcountry__oxtitle->value }]</option>
             [{/foreach }]
           </select>
           [{if $oView->isFieldRequired(oxuser__oxcountryid) }]
@@ -98,6 +131,9 @@
                 selectedStateId=$oxcmp_user->oxuser__oxstateid->value
          }]
     </li>
+    [{/block}]
+
+
     <li [{if $aErrors.oxuser__oxfon}]class="oxInValid"[{/if}]>
         <label [{if $oView->isFieldRequired(oxuser__oxfon) }]class="req"[{/if}]>[{ oxmultilang ident="FORM_FIELDSET_USER_BILLING_PHONE" }]</label>
           <input [{if $oView->isFieldRequired(oxuser__oxfon) }]class="js-oxValidate js-oxValidate_notEmpty" [{/if}]type="text" size="37" maxlength="128" name="invadr[oxuser__oxfon]" value="[{if isset( $invadr.oxuser__oxfon ) }][{ $invadr.oxuser__oxfon }][{else }][{ $oxcmp_user->oxuser__oxfon->value }][{/if}]">
@@ -139,18 +175,29 @@
         [{/if}]
     </li>
     [{if $oViewConf->showBirthdayFields() }]
-    <li [{if $aErrors.oxuser__oxbirthdate}]class="oxInValid"[{/if}]>
+    <li class="oxDate[{if $aErrors.oxuser__oxbirthdate}] oxInValid[{/if}]">
         <label [{if $oView->isFieldRequired(oxuser__oxbirthdate) }]class="req"[{/if}]>[{ oxmultilang ident="FORM_FIELDSET_USER_BILLING_BIRTHDATE" }]</label>
-          <input [{if $oView->isFieldRequired(oxuser__oxbirthdate) }] class="js-oxValidate js-oxValidate_notEmpty" [{/if}] type="text" field="small" maxlength="2" name="invadr[oxuser__oxbirthdate][day]" value="[{if isset( $invadr.oxuser__oxbirthdate.day ) }][{$invadr.oxuser__oxbirthdate.day }][{elseif $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00"}][{$oxcmp_user->oxuser__oxbirthdate->value|regex_replace:"/^([0-9]{4})[-]([0-9]{1,2})[-]/":"" }][{/if}]">
-          <input [{if $oView->isFieldRequired(oxuser__oxbirthdate) }] class="js-oxValidate js-oxValidate_notEmpty" [{/if}] type="text" field="small" maxlength="2" name="invadr[oxuser__oxbirthdate][month]" value="[{if isset( $invadr.oxuser__oxbirthdate.month ) }][{$invadr.oxuser__oxbirthdate.month }][{elseif $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00" }][{$oxcmp_user->oxuser__oxbirthdate->value|regex_replace:"/^([0-9]{4})[-]/":""|regex_replace:"/[-]([0-9]{1,2})$/":"" }][{/if}]">
-         <input [{if $oView->isFieldRequired(oxuser__oxbirthdate) }] class="js-oxValidate js-oxValidate_notEmpty" [{/if}] type="text" field="small" maxlength="4" name="invadr[oxuser__oxbirthdate][year]" value="[{if isset( $invadr.oxuser__oxbirthdate.year ) }][{$invadr.oxuser__oxbirthdate.year }][{elseif $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00" }][{$oxcmp_user->oxuser__oxbirthdate->value|regex_replace:"/[-]([0-9]{1,2})[-]([0-9]{1,2})$/":"" }][{/if}]">
-
-          [{if $oView->isFieldRequired(oxuser__oxbirthdate) }]
+        <select class='oxMonth js-oxValidate js-oxValidate_date [{if $oView->isFieldRequired(oxuser__oxbirthdate) }] js-oxValidate_notEmpty [{/if}]' name='invadr[oxuser__oxbirthdate][month]'>
+            <option value="" label="-">-</option>
+            [{section name="month" start=1 loop=13 }]
+            <option value="[{$smarty.section.month.index}]" label="[{$smarty.section.month.index}]" [{if $iBirthdayMonth == $smarty.section.month.index}] selected="selected" [{/if}]>
+                [{oxmultilang ident="MONTH_NAME_"|cat:$smarty.section.month.index}]
+            </option>
+            [{/section}]
+        </select>
+        <label class="innerLabel" for="oxDay">[{ oxmultilang ident="DAY_2" }]</label>
+        <input id="oxDay" class='oxDay js-oxValidate' name='invadr[oxuser__oxbirthdate][day]' type="text" data-fieldsize="xsmall" maxlength="2" value="[{if $iBirthdayDay > 0 }][{$iBirthdayDay }][{/if}]" />
+        [{oxscript include="js/widgets/oxinnerlabel.js" priority=10 }]
+        [{oxscript add="$( '#oxDay' ).oxInnerLabel({sReloadElement:'#userChangeAddress'});"}]
+        <label class="innerLabel" for="oxYear">[{ oxmultilang ident="YEAR" }]</label>
+        <input id="oxYear" class='oxYear js-oxValidate' name='invadr[oxuser__oxbirthdate][year]' type="text" data-fieldsize="small" maxlength="4" value="[{if $iBirthdayYear }][{$iBirthdayYear }][{/if}]" />
+        [{oxscript include="js/widgets/oxinnerlabel.js" priority=10 }]
+        [{oxscript add="$( '#oxYear' ).oxInnerLabel({sReloadElement:'#userChangeAddress'});"}]
         <p class="oxValidateError">
             <span class="js-oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
+            <span class="js-oxError_incorrectDate">[{ oxmultilang ident="ERROR_MESSAGE_INCORRECT_DATE" }]</span>
             [{include file="message/inputvalidation.tpl" aErrors=$aErrors.oxuser__oxbirthdate}]
         </p>
-          [{/if}]
     </li>
     [{/if}]
 

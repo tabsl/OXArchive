@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxmanufacturer.php 42170 2012-02-10 15:04:39Z linas.kukulskis $
+ * @version   SVN: $Id: oxmanufacturer.php 42403 2012-02-22 14:30:06Z mindaugas.rimgaila $
  */
 
 /**
@@ -29,10 +29,6 @@ class oxManufacturer extends oxI18n implements oxIUrl
 {
 
     protected static $_aRootManufacturer = array();
-    /**
-     * @var string name of object core table
-     */
-    protected $_sCoreTbl   = 'oxmanufacturers';
 
     /**
      * @var string Name of current class

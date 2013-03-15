@@ -34,41 +34,49 @@ window.onload = function ()
 
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
 <colgroup>
-    <col width="3%">
-    <col width="98%">
+    [{block name="admin_theme_list_colgroup"}]
+        <col width="3%">
+        <col width="98%">
+    [{/block}]
 </colgroup>
 <tr class="listitem">
-    <td valign="top" class="listfilter first" height="20">
-        <div class="r1"><div class="b1">&nbsp;</div></div>
-    </td>
-    <td valign="top" class="listfilter" height="20">
-        <div class="r1"><div class="b1">&nbsp;</div></div>
-    </td>
+    [{block name="admin_theme_list_filter"}]
+        <td valign="top" class="listfilter first" height="20">
+            <div class="r1"><div class="b1">&nbsp;</div></div>
+        </td>
+        <td valign="top" class="listfilter" height="20">
+            <div class="r1"><div class="b1">&nbsp;</div></div>
+        </td>
+    [{/block}]
 </tr>
 <tr>
-    <td class="listheader first" height="15">
-        <b><a href="Javascript:document.search.sort.value='oxtitle';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_ACTIVE" }]</a></b>
-    </td>
-    <td class="listheader" height="15">
-        <b><a href="Javascript:document.search.sort.value='oxtitle';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_NAME" }]</a></b>
-    </td>
+    [{block name="admin_theme_list_sorting"}]
+        <td class="listheader first" height="15">
+            <b><a href="Javascript:document.search.sort.value='oxtitle';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_ACTIVE" }]</a></b>
+        </td>
+        <td class="listheader" height="15">
+            <b><a href="Javascript:document.search.sort.value='oxtitle';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_NAME" }]</a></b>
+        </td>
+    [{/block}]
 </tr>
 [{foreach from=$mylist item=listitem}]
 <tr id="row.[{counter}]">
-    [{cycle values="listitem,listitem2" assign="zebra"}]
-    [{ if $listitem->getInfo('id') == $oxid }]
-        [{assign var="zebra" value=listitem4 }]
-    [{ /if}]
-    <td valign="top" class="[{$zebra}][{ if $listitem->getInfo('active')}] active[{/if}]" height="15">
-        <div class="listitemfloating">
-            <a href="Javascript:top.oxid.admin.editThis('[{ $listitem->getInfo('id') }]');">&nbsp;</a></div></td>
-        </div>
-    </td>
-    <td valign="top" class="[{$zebra}]" height="15">
-        <div class="listitemfloating">
-            <a href="Javascript:top.oxid.admin.editThis('[{ $listitem->getInfo('id') }]');">[{ $listitem->getInfo('title') }]</a>
-        </div>
-    </td>
+    [{block name="admin_theme_list_item"}]
+        [{cycle values="listitem,listitem2" assign="zebra"}]
+        [{ if $listitem->getInfo('id') == $oxid }]
+            [{assign var="zebra" value=listitem4 }]
+        [{ /if}]
+        <td valign="top" class="[{$zebra}][{ if $listitem->getInfo('active')}] active[{/if}]" height="15">
+            <div class="listitemfloating">
+                <a href="Javascript:top.oxid.admin.editThis('[{ $listitem->getInfo('id') }]');">&nbsp;</a></div></td>
+            </div>
+        </td>
+        <td valign="top" class="[{$zebra}]" height="15">
+            <div class="listitemfloating">
+                <a href="Javascript:top.oxid.admin.editThis('[{ $listitem->getInfo('id') }]');">[{ $listitem->getInfo('title') }]</a>
+            </div>
+        </td>
+    [{/block}]
 </tr>
 [{/foreach}]
 [{include file="pagenavisnippet.tpl" colspan="5"}]

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxpricealarm.php 34906 2011-04-22 13:05:51Z linas.kukulskis $
+ * @version   SVN: $Id: oxpricealarm.php 34922 2011-04-26 08:58:39Z sarunas $
  */
 
 /**

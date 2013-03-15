@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdelivery.php 43217 2012-03-27 13:31:04Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxdelivery.php 43721 2012-04-11 07:12:15Z linas.kukulskis $
  */
 
 /**
@@ -29,13 +29,6 @@
  */
 class oxDelivery extends oxI18n
 {
-    /**
-     * Object core table name
-     *
-     * @var string
-     */
-    protected $_sCoreTbl = 'oxdelivery';
-
     /**
      * Current class name
      *
@@ -103,11 +96,25 @@ class oxDelivery extends oxI18n
     protected static $_aProductList = array();
 
     /**
-     * Wrapping VAT config
+     * Delivery VAT config
      *
      * @var bool
      */
     protected $_blDelVatOnTop = false;
+
+    /**
+     * Countries ISO assigned to current delivery.
+     *
+     * @var array
+     */
+    protected $_aCountriesISO = null;
+
+    /**
+     * RDFa delivery sets assigned to current delivery.
+     *
+     * @var array
+     */
+    protected $_aRDFaDeliverySet = null;
 
     /**
      * Class constructor, initiates parent constructor (parent::oxBase()).
@@ -144,7 +151,7 @@ class oxDelivery extends oxI18n
 
         $oDb = oxDb::getDb();
         $sQ = "select oxobjectid from oxobject2delivery where oxdeliveryid=".$oDb->quote($this->getId())." and oxtype = 'oxarticles'";
-        $aArtIds = $oDb->getArray( $sQ );
+        $aArtIds = $oDb->getAll( $sQ );
 
         //make single dimension array
         foreach ( $aArtIds as $aItem ) {
@@ -519,9 +526,33 @@ class oxDelivery extends oxI18n
      */
     public function getIdByName( $sTitle )
     {
-        $sQ = "SELECT `oxid` FROM `" . getViewName( 'oxdelivery' ) . "` WHERE  `oxtitle` = " . oxDb::getDb()->quote( $sTitle );
-        $sId = oxDb::getDb()->getOne( $sQ );
+        $oDb = oxDb::getDb();
+        $sQ = "SELECT `oxid` FROM `" . getViewName( 'oxdelivery' ) . "` WHERE  `oxtitle` = " . $oDb->quote( $sTitle );
+        $sId = $oDb->getOne( $sQ );
 
         return $sId;
     }
+
+    /**
+     * Returns array of country ISO's which are assigned to current delivery
+     *
+     * @return array
+     */
+    public function getCountriesISO()
+    {
+        if ( $this->_aCountriesISO === null ) {
+            $oDb = oxDb::getDb();
+            $this->_aCountriesISO = array();
+            $sSelect = 'select oxcountry.oxisoalpha2 from oxcountry left join oxobject2delivery on oxobject2delivery.oxobjectid = oxcountry.oxid where oxobject2delivery.oxdeliveryid='.$oDb->quote( $this->getId() ).' and oxobject2delivery.oxtype = "oxcountry" ';
+            $rs = $oDb->select( $sSelect );
+            if ( $rs && $rs->recordCount()) {
+                while ( !$rs->EOF ) {
+                    $this->_aCountriesISO[] = $rs->fields[0];
+                    $rs->moveNext();
+                }
+            }
+        }
+        return $this->_aCountriesISO;
+    }
+
 }

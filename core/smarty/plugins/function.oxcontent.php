@@ -19,7 +19,7 @@
  * @package   smarty_plugins
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: function.oxcontent.php 41034 2012-01-09 13:11:21Z linas.kukulskis $
+ * @version   SVN: $Id: function.oxcontent.php 41162 2012-01-11 12:16:05Z linas.kukulskis $
  */
 
 /**

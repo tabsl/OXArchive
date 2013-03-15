@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: discount_main.php 39911 2011-11-14 08:38:57Z arvydas.vapsva $
+ * @version   SVN: $Id: discount_main.php 44135 2012-04-20 15:06:35Z linas.kukulskis $
  */
 
 /**
@@ -104,7 +104,7 @@ class Discount_Main extends oxAdminDetails
             $sQ = "select concat( $sViewName.oxartnum, ' ', $sViewName.oxtitle ) from oxdiscount
                    left join $sViewName on $sViewName.oxid=oxdiscount.oxitmartid
                    where oxdiscount.oxitmartid != '' and oxdiscount.oxid=" . $oDb->quote( $sOxId );
-            $sTitle = $oDb->getOne( $sQ );
+            $sTitle = $oDb->getOne( $sQ, false, false );
         }
 
         return $sTitle ? $sTitle : " -- ";

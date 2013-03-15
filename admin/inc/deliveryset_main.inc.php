@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: deliveryset_main.inc.php 39617 2011-10-27 12:42:57Z arvydas.vapsva $
+ * @version   SVN: $Id: deliveryset_main.inc.php 44134 2012-04-20 14:55:19Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -107,7 +107,7 @@ class ajaxComponent extends ajaxListComponent
             $oDb = oxDb::getDb();
             foreach ( $aChosenSets as $sChosenSet) {
                 // check if we have this entry already in
-                $sID = $oDb->GetOne("select oxid from oxdel2delset where oxdelid =  " . $oDb->quote( $sChosenSet ) . " and oxdelsetid = ".$oDb->quote( $soxId ) );
+                $sID = $oDb->getOne("select oxid from oxdel2delset where oxdelid =  " . $oDb->quote( $sChosenSet ) . " and oxdelsetid = ".$oDb->quote( $soxId ), false, false );
                 if ( !isset( $sID) || !$sID) {
                     $oDel2delset = oxNew( 'oxbase' );
                     $oDel2delset->init( 'oxdel2delset' );

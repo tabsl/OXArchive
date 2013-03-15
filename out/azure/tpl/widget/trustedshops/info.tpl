@@ -21,7 +21,7 @@
     </div>
 [{else}]
     <a id="tsMembership" class="js-external" href="[{ oxmultilang ident="WIDGET_TRUSTEDSHOPS_ITEM_LINK" }]">
-        [{assign var="sTrustShopImg" value="trustedshops_"|cat:$oViewConf->getActLanguageId()|cat:".gif" }]
+        [{assign var="sTrustShopImg" value="trustedshops_"|cat:$oViewConf->getActLanguageAbbr()|cat:".gif" }]
         <img src="[{$oViewConf->getImageUrl($sTrustShopImg)}]" alt="[{ oxmultilang ident="WIDGET_TRUSTEDSHOPS_ITEM_ALTTEXT" }]">
     </a>
 [{/if}]

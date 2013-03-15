@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: actions_main.inc.php 39175 2011-10-12 13:12:18Z arvydas.vapsva $
+ * @version   SVN: $Id: actions_main.inc.php 44134 2012-04-20 14:55:19Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -173,7 +173,7 @@ class ajaxComponent extends ajaxListComponent
         $sQ = "select max(oxactions2article.oxsort) from oxactions2article join $sArtTable on $sArtTable.oxid=oxactions2article.oxartid
                where oxactions2article.oxactionid = ".$oDb->quote( $soxId )." and oxactions2article.oxshopid = '".$myConfig->getShopId()."'
                and $sArtTable.oxid is not null";
-        $iSort = ( (int) $oDb->getOne( $sQ ) ) + 1;
+        $iSort = ( (int) $oDb->getOne( $sQ, false, false ) ) + 1;
 
         if ( $soxId && $soxId != "-1" && is_array( $aArticles ) ) {
             $sShopId = $myConfig->getShopId();

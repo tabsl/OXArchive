@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxwrapping.php 37306 2011-07-25 11:48:28Z arvydas.vapsva $
+ * @version   SVN: $Id: oxwrapping.php 43764 2012-04-11 09:22:12Z linas.kukulskis $
  */
 
 /**
@@ -29,13 +29,6 @@
  */
 class oxWrapping extends oxI18n
 {
-    /**
-     * Core table name
-     *
-     * @var string name of object core table
-     */
-    protected $_sCoreTbl = 'oxwrapping';
-
     /**
      * Class name
      *
@@ -58,6 +51,13 @@ class oxWrapping extends oxI18n
     protected $_dVat = 0;
 
     /**
+     * Wrapping VAT config
+     *
+     * @var bool
+     */
+    protected $_blWrappingVatOnTop = false;
+
+    /**
      * Class constructor, initiates parent constructor (parent::oxBase()), loads
      * base shop objects.
      *
@@ -65,7 +65,9 @@ class oxWrapping extends oxI18n
      */
     public function __construct()
     {
-        $this->setWrappingVat( $this->getConfig()->getConfigParam( 'dDefaultVAT' ) );
+        $oConfig = $this->getConfig();
+        $this->setWrappingVat( $oConfig->getConfigParam( 'dDefaultVAT' ) );
+        $this->setWrappingVatOnTop( $oConfig->getConfigParam( 'blWrappingVatOnTop' ) );
         parent::__construct();
         $this->init( 'oxwrapping' );
     }
@@ -80,6 +82,18 @@ class oxWrapping extends oxI18n
     public function setWrappingVat( $dVat )
     {
         $this->_dVat = $dVat;
+    }
+
+    /**
+     * Wrapping VAT config setter
+     *
+     * @param bool $blOnTop wrapping vat config
+     *
+     * @return null
+     */
+    public function setWrappingVatOnTop( $blOnTop )
+    {
+        $this->_blWrappingVatOnTop = $blOnTop;
     }
 
     /**
@@ -109,6 +123,12 @@ class oxWrapping extends oxI18n
     {
         if ( $this->_oPrice === null ) {
             $this->_oPrice = oxNew( 'oxprice' );
+
+            if ( !$this->_blWrappingVatOnTop ) {
+                $this->_oPrice->setBruttoPriceMode();
+            } else {
+                $this->_oPrice->setNettoPriceMode();
+            }
 
             $oCur = $this->getConfig()->getActShopCurrencyObject();
             $this->_oPrice->setPrice( $this->oxwrapping__oxprice->value * $oCur->rate, $this->_dVat );
@@ -147,8 +167,9 @@ class oxWrapping extends oxI18n
     public function getWrappingCount( $sWrapType )
     {
         $sWrappingViewName = getViewName( 'oxwrapping' );
-        $sQ = "select count(*) from $sWrappingViewName where $sWrappingViewName.oxactive = '1' and $sWrappingViewName.oxtype = " . oxDb::getDb()->quote( $sWrapType );
-        return (int) oxDb::getDb()->getOne( $sQ );
+        $oDb = oxDb::getDb();
+        $sQ = "select count(*) from $sWrappingViewName where $sWrappingViewName.oxactive = '1' and $sWrappingViewName.oxtype = " . $oDb->quote( $sWrapType );
+        return (int) $oDb->getOne( $sQ );
     }
 
     /**

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: review.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
+ * @version   SVN: $Id: review.php 41843 2012-01-27 15:35:19Z rimvydas.paskevicius $
  */
 
 /**
@@ -98,13 +98,13 @@ class Review extends Details
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'review.tpl';
+    protected $_sThisTemplate = 'page/review/review.tpl';
 
     /**
      * Current class login template name.
      * @var string
      */
-    protected $_sThisLoginTemplate = 'review_login.tpl';
+    protected $_sThisLoginTemplate = 'page/review/review_login.tpl';
 
     /**
      * Current view search engine indexing state
@@ -147,6 +147,12 @@ class Review extends Details
      */
     public function render()
     {
+        $oConfig = $this->getConfig();
+
+        if ( !$oConfig->getConfigParam( "bl_perfLoadReviews" ) ) {
+            oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() );
+        }
+
         oxUBase::render();
         if ( ! ( $this->getReviewUser() ) ) {
             $this->_sThisTemplate = $this->_sThisLoginTemplate;

@@ -25,24 +25,26 @@
     <td valign="top" class="edittext">
 
         <table cellspacing="0" cellpadding="0" border="0">
-        <tr>
-            <td class="edittext" width="120">
-            [{ oxmultilang ident="GENERAL_NAME" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="20" maxlength="[{$edit->oxattribute__oxtitle->fldmax_length}]" name="editval[oxattribute__oxtitle]" value="[{$edit->oxattribute__oxtitle->value}]" [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_NAME" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext" width="120">
-            [{ oxmultilang ident="ATTRIBUTE_MAIN_SORTING" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="20" maxlength="[{$edit->oxattribute__oxpos->fldmax_length}]" name="editval[oxattribute__oxpos]" value="[{$edit->oxattribute__oxpos->value}]" [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_ATTRIBUTE_MAIN_SORTING" }]
-            </td>
-        </tr>
+        [{block name="admin_attribute_main_form"}]
+            <tr>
+                <td class="edittext" width="120">
+                [{ oxmultilang ident="GENERAL_NAME" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="20" maxlength="[{$edit->oxattribute__oxtitle->fldmax_length}]" name="editval[oxattribute__oxtitle]" value="[{$edit->oxattribute__oxtitle->value}]" [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_GENERAL_NAME" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext" width="120">
+                [{ oxmultilang ident="ATTRIBUTE_MAIN_SORTING" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="20" maxlength="[{$edit->oxattribute__oxpos->fldmax_length}]" name="editval[oxattribute__oxpos]" value="[{$edit->oxattribute__oxpos->value}]" [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_ATTRIBUTE_MAIN_SORTING" }]
+                </td>
+            </tr>
+        [{/block}]
         <tr>
             <td class="edittext">
             </td>

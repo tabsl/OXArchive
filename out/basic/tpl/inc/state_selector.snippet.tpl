@@ -46,5 +46,16 @@
 </span>
 
 <noscript>
-  <input type=text name="[{$stateSelectName}]">
+   <select name="[{$stateSelectName}]">
+   <option value="">[{ oxmultilang ident="STATE_PROMPT"  }]</option>
+   [{foreach from=$oViewConf->getCountryList() item=country key=country_id }]
+        [{assign var=countryStates value=$country->getStates()}]
+        [{if $countryStates->count()}]
+        <option value="">-- [{ $country->oxcountry__oxtitle->value  }] --</option>
+        [{foreach from=$countryStates item=state}]
+                <option value="[{$state->oxstates__oxid->value}]" [{if $state->oxstates__oxid->value == $selectedStateId }]SELECTED[{/if}]> [{ $state->oxstates__oxtitle->value  }]</option>
+        [{/foreach}]
+        [{/if}]
+  [{/foreach}]
+  </select>
 </noscript>

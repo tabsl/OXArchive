@@ -7,94 +7,99 @@
   <meta http-equiv=Refresh content="[{$meta_refresh_sec}];URL=[{$meta_refresh_url|replace:"&amp;":"&"}]">
   [{/if}]
   <link rel="shortcut icon" href="[{ $oViewConf->getBaseDir() }]favicon.ico">
-  <link rel="stylesheet" href="[{$oViewConf->getResourceUrl()}]main.css">
-  <link rel="stylesheet" href="[{$oViewConf->getResourceUrl()}]colors.css">
-  [{include file="tooltips.tpl"}]
 
-  <link rel="stylesheet" type="text/css" href="[{$oViewConf->getResourceUrl()}]yui/build/assets/skins/sam/container.css">
+  [{block name="admin_headitem_inccss"}]
+      <link rel="stylesheet" href="[{$oViewConf->getResourceUrl()}]main.css">
+      <link rel="stylesheet" href="[{$oViewConf->getResourceUrl()}]colors.css">
+      <link rel="stylesheet" type="text/css" href="[{$oViewConf->getResourceUrl()}]yui/build/assets/skins/sam/container.css">
+  [{/block}]
 
-  <script type="text/javascript" src="[{$oViewConf->getResourceUrl()}]yui/build/utilities/utilities.js"></script>
-  <script type="text/javascript" src="[{$oViewConf->getResourceUrl()}]yui/build/container/container-min.js"></script>
+  [{block name="admin_headitem_incjs"}]
+      <script type="text/javascript" src="[{$oViewConf->getResourceUrl()}]yui/build/utilities/utilities.js"></script>
+      <script type="text/javascript" src="[{$oViewConf->getResourceUrl()}]yui/build/container/container-min.js"></script>
+      <script type="text/javascript" src="[{$oViewConf->getResourceUrl()}]yui/oxid-help.js"></script>
+  [{/block}]
 
-  <script type="text/javascript" src="[{$oViewConf->getResourceUrl()}]yui/oxid-help.js"></script>
+  [{block name="admin_headitem_js"}]
+      <script type="text/javascript">
+      <!--
+        // standard messages
+        var sUnassignMessage = "[{ oxmultilang ident='GENERAL_YOUWANTTOUNASSIGN' }]";
+        var sDeleteMessage   = "[{ oxmultilang ident='GENERAL_YOUWANTTODELETE' }]";;
 
-  <script type="text/javascript">
-  <!--
-    // standard messages
-    var sUnassignMessage = "[{ oxmultilang ident='GENERAL_YOUWANTTOUNASSIGN' }]";
-    var sDeleteMessage   = "[{ oxmultilang ident='GENERAL_YOUWANTTODELETE' }]";;
+        // class info
+        var sDefClass = '[{ $default_edit }]';
+        var sActClass = '[{$actlocation}]';
 
-    // class info
-    var sDefClass = '[{ $default_edit }]';
-    var sActClass = '[{$actlocation}]';
-
-    [{ if $updatelist == 1}]
-    window.onload = function ()
-    {
-        top.oxid.admin.updateList('[{ $oxid }]');
-    }
-    [{ /if}]
-
-
-    var ajaxpopup = null;
-    function showDialog( sParams )
-    {
-        ajaxpopup = window.open('[{ $oViewConf->getSelfLink()|replace:"&amp;":"&" }]'+sParams, 'ajaxpopup', 'width=800,height=680,scrollbars=yes,resizable=yes');
-    }
-
-    function focusPopup()
-    {
-        if ( ajaxpopup )ajaxpopup.focus();
-    }
-
-    window.onclick = focusPopup;
-
-    function cleanupLongDesc( sValue )
-    {
-        if ( sValue == '<br>' || sValue == '<br />' ) {
-            return '';
+        [{ if $updatelist == 1}]
+        window.onload = function ()
+        {
+            top.oxid.admin.updateList('[{ $oxid }]');
         }
-        return sValue;
-    }
+        [{ /if}]
 
-    function copyLongDesc( sIdent )
-    {
-        var textVal = null;
-        try {
-            if ( WPro.editors[sIdent] != null ) {
-               WPro.editors[sIdent].prepareSubmission();
-               textVal = cleanupLongDesc( WPro.editors[sIdent].getValue() );
+
+        var ajaxpopup = null;
+        function showDialog( sParams )
+        {
+            ajaxpopup = window.open('[{ $oViewConf->getSelfLink()|replace:"&amp;":"&" }]'+sParams, 'ajaxpopup', 'width=800,height=680,scrollbars=yes,resizable=yes');
+        }
+
+        function focusPopup()
+        {
+            if ( ajaxpopup )ajaxpopup.focus();
+        }
+
+        window.onclick = focusPopup;
+
+        function cleanupLongDesc( sValue )
+        {
+            if ( sValue == '<br>' || sValue == '<br />' ) {
+                return '';
             }
-        } catch(err) {
-                var varEl = document.getElementById(sIdent);
+            return sValue;
+        }
+
+        function copyLongDesc( sIdent )
+        {
+            var textVal = null;
+            try {
+                if ( WPro.editors[sIdent] != null ) {
+                   WPro.editors[sIdent].prepareSubmission();
+                   textVal = cleanupLongDesc( WPro.editors[sIdent].getValue() );
+                }
+            } catch(err) {
+                    var varEl = document.getElementById(sIdent);
+                    if (varEl != null) {
+                        textVal = cleanupLongDesc( varEl.value );
+                    }
+            }
+
+            if (textVal == null) {
+                var varName = 'editor_'+sIdent;
+                var varEl = document.getElementById(varName);
                 if (varEl != null) {
                     textVal = cleanupLongDesc( varEl.value );
                 }
-        }
+            }
 
-        if (textVal == null) {
-            var varName = 'editor_'+sIdent;
-            var varEl = document.getElementById(varName);
-            if (varEl != null) {
-                textVal = cleanupLongDesc( varEl.value );
+            if (textVal != null) {
+                var oTarget = document.getElementsByName( 'editval['+ sIdent + ']' );
+                if ( oTarget != null && ( oField = oTarget.item( 0 ) ) != null ) {
+                    oField.value = textVal;
+                }
             }
         }
-
-        if (textVal != null) {
-            var oTarget = document.getElementsByName( 'editval['+ sIdent + ']' );
-            if ( oTarget != null && ( oField = oTarget.item( 0 ) ) != null ) {
-                oField.value = textVal;
-            }
-        }
-    }
-  -->
-  </script>
+      -->
+      </script>
+  [{/block}]
 
 </head>
 <body>
+[{include file="tooltips.tpl"}]
 <div id="oxajax_data"></div>
 
-<div class="[{$box|default:'box'}]">
+<div class="[{$box|default:'box'}]" style="[{if !$box && !$bottom_buttons}]height: 90%;[{/if}]">
 [{include file="inc_error.tpl" Errorlist=$Errors.default}]
 
 <!-- Input help popup -->

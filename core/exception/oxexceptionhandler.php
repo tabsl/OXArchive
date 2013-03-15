@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxexceptionhandler.php 39821 2011-11-05 12:15:16Z arvydas.vapsva $
+ * @version   SVN: $Id: oxexceptionhandler.php 39858 2011-11-09 08:19:09Z linas.kukulskis $
  */
 
 /**

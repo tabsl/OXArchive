@@ -20,6 +20,12 @@
                     <dt><a id="linkAccountOrder" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_order" }]" rel="nofollow">[{ oxmultilang ident="PAGE_ACCOUNT_DASHBOARD_ORDERHISTORY" }]</a></dt>
                     <dd>[{ oxmultilang ident="PAGE_ACCOUNT_DASHBOARD_ORDERS" }] [{ $oView->getOrderCnt() }]</dd>
                 </dl>
+                [{if $oView->isEnabledDownloadableFiles()}]
+                  <dl>
+                      <dt><a id="linkAccountDownloads" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_downloads" }]" rel="nofollow">[{ oxmultilang ident="MY_DOWNLOADS" }]</a></dt>
+                      <dd>[{ oxmultilang ident="MY_DOWNLOADS_DESC" }]</dd>
+                  </dl>
+                [{/if}]
             [{/block}]
         </div>
         <div class="col">

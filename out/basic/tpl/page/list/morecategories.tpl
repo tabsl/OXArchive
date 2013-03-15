@@ -31,7 +31,7 @@
               [{assign var="globcount" value=`$globcount+1`}]
 
               <dl>
-                <dt>          
+                <dt>
                     <a href="[{ $osubcat->getLink() }]">[{ $osubcat->oxcontents__oxtitle->value }]</a>
                 </dt>
               </dl>
@@ -52,12 +52,12 @@
 
           [{assign var="globcount" value=`$globcount+1`}]
           <dl>
-            <dt>          
-                <a id="test_CatRoot_[{$smarty.foreach.CatRoot.iteration}]" href="[{ $category->getLink() }]">[{ $category->oxcategories__oxtitle->value }] [{ if $category->getNrOfArticles() > 0 }]([{ $category->getNrOfArticles() }])[{/if}]</a>
+            <dt>
+                <a id="test_CatRoot_[{$smarty.foreach.CatRoot.iteration}]" href="[{ $category->getLink() }]">[{ $category->oxcategories__oxtitle->value }] [{if $oView->showCategoryArticlesCount() && $category->getNrOfArticles() > 0 }]([{ $category->getNrOfArticles() }])[{/if}]</a>
             </dt>
 
           [{foreach from=$category->getSubCats() item=osubcat name=SubCat}]
-            
+
             <dd>
             [{ if $osubcat->getContentCats() }]
               [{foreach from=$osubcat->getContentCats() item=oCatContent }]
@@ -66,7 +66,7 @@
             [{ /if}]
 
             [{if $osubcat->getIsVisible()}]
-              <a id="test_CatRoot_[{$smarty.foreach.CatRoot.iteration}]_SubCat_[{$smarty.foreach.SubCat.iteration}]" href="[{ $osubcat->getLink() }]">[{ $osubcat->oxcategories__oxtitle->value }] [{ if $osubcat->getNrOfArticles() > 0 }]([{ $osubcat->getNrOfArticles() }])[{/if}]</a>
+              <a id="test_CatRoot_[{$smarty.foreach.CatRoot.iteration}]_SubCat_[{$smarty.foreach.SubCat.iteration}]" href="[{ $osubcat->getLink() }]">[{ $osubcat->oxcategories__oxtitle->value }] [{if $oView->showCategoryArticlesCount() && $osubcat->getNrOfArticles() > 0 }]([{ $osubcat->getNrOfArticles() }])[{/if}]</a>
             [{/if}]
             </dd>
           [{/foreach}]

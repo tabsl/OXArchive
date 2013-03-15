@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account_password.php 44474 2012-04-27 12:26:32Z mindaugas.rimgaila $
+ * @version   SVN: $Id: account_password.php 38456 2011-08-26 13:53:41Z arunas.paskevicius $
  */
 
 
@@ -81,22 +81,22 @@ class Account_Password extends Account
             return;
         }
 
-        $sOldPass  = oxConfig::getParameter( 'password_old', true );
-        $sNewPass  = oxConfig::getParameter( 'password_new', true );
-        $sConfPass = oxConfig::getParameter( 'password_new_confirm', true );
+        $sOldPass  = oxConfig::getParameter( 'password_old' );
+        $sNewPass  = oxConfig::getParameter( 'password_new' );
+        $sConfPass = oxConfig::getParameter( 'password_new_confirm' );
 
         if ( ( $oExcp = $oUser->checkPassword( $sNewPass, $sConfPass, true ) ) ) {
             switch ( $oExcp->getMessage() ) {
                 case 'EXCEPTION_INPUT_EMPTYPASS':
                 case 'EXCEPTION_INPUT_PASSTOOSHORT':
-                    return oxUtilsView::getInstance()->addErrorToDisplay('ACCOUNT_PASSWORD_ERRPASSWORDTOSHORT', false, true);
+                    return oxUtilsView::getInstance()->addErrorToDisplay('ERROR_MESSAGE_PASSWORD_TOO_SHORT', false, true);
                 default:
-                    return oxUtilsView::getInstance()->addErrorToDisplay('ACCOUNT_PASSWORD_ERRPASSWDONOTMATCH', false, true);
+                    return oxUtilsView::getInstance()->addErrorToDisplay('ERROR_MESSAGE_PASSWORD_DO_NOT_MATCH', false, true);
             }
         }
-
+        
         if ( !$sOldPass || !$oUser->isSamePassword( $sOldPass ) ) {
-            return oxUtilsView::getInstance()->addErrorToDisplay('ACCOUNT_PASSWORD_ERRINCORRECTCURRENTPASSW', false, true, 'user');
+            return oxUtilsView::getInstance()->addErrorToDisplay('ERROR_MESSAGE_CURRENT_PASSWORD_INVALID', false, true);
         }
 
         // testing passed - changing password

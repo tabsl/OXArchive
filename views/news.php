@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: news.php 40615 2011-12-14 14:02:29Z linas.kukulskis $
+ * @version   SVN: $Id: news.php 43554 2012-04-05 09:22:43Z linas.kukulskis $
  */
 
 /**
@@ -51,6 +51,19 @@ class News extends oxUBase
      */
     protected $_blBargainAction = true;
 
+
+    /**
+     * Page navigation
+     * @var object
+     */
+    protected $_oPageNavigation = null;
+
+    /**
+     * Number of possible pages.
+     * @var integer
+     */
+    protected $_iCntPages = null;
+
     /**
      * Template variable getter. Returns newslist
      *
@@ -60,13 +73,21 @@ class News extends oxUBase
     {
         if ( $this->_oNewsList === null ) {
             $this->_oNewsList = false;
-            $oActNews = oxNew( 'oxnewslist' );
-            $oActNews->loadNews();
 
-            if ( count($oActNews) ) {
-                $this->_oNewsList = $oActNews;
+            $iPerPage = (int) $this->getConfig()->getConfigParam( 'iNrofCatArticles' );
+            $iPerPage = $iPerPage ? $iPerPage : 10;
+
+            $oActNews = oxNew( 'oxnewslist' );
+
+            if ( $iCnt = $oActNews->getCount() ) {
+
+                 $this->_iCntPages = round( $iCnt / $iPerPage + 0.49 );
+
+                 $oActNews->loadNews( $this->getActPage() * $iPerPage, $iPerPage );
+                 $this->_oNewsList = $oActNews;
             }
         }
+
         return $this->_oNewsList;
     }
 
@@ -89,5 +110,19 @@ class News extends oxUBase
         return $aPaths;
     }
 
+    /**
+     * Template variable getter. Returns page navigation
+     *
+     * @return object
+     */
+    public function getPageNavigation()
+    {
+        if ( $this->_oPageNavigation === null ) {
+            $this->_oPageNavigation = false;
+            $this->_oPageNavigation = $this->generatePageNavigation();
+        }
+
+        return $this->_oPageNavigation;
+    }
 
 }

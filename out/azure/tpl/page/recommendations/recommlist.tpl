@@ -27,20 +27,23 @@
                     <div>
                         [{ $_actvrecommlist->oxrecommlists__oxdesc->value }]
                     </div>
+                    [{if $oView->isReviewActive()}]
                     <div class="rating clear">
                         [{include file="widget/reviews/rating.tpl" itemid="recommid="|cat:$_actvrecommlist->getId() sRateUrl=$oViewConf->getSelfLink()|cat:"cl=recommlist"}]
                     </div>
+                    [{/if}]
                 </div>
             </div>
         [{/block}]
-
         [{* List types: grid|line *}]
         [{include file="widget/product/list.tpl" type="line" listId="productList" products=$oView->getArticleList() recommid=$_actvrecommlist->getId()}]
         [{include file="widget/locator/listlocator.tpl" locator=$oView->getPageNavigation() place="bottom"}]
+        [{if $oView->isReviewActive()}]
         <div class="widgetBox reviews">
             <h4>[{oxmultilang ident="DETAILS_PRODUCTREVIEW"}]</h4>
             [{include file="widget/reviews/reviews.tpl"}]
         </div>
+        [{/if}]
     [{else}]
 
         [{assign var="hitsfor" value="PAGE_RECOMMENDATIONS_PRODUCTS_HITSFOR"|oxmultilangassign }]

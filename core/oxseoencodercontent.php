@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencodercontent.php 38137 2011-08-11 13:31:10Z arvydas.vapsva $
+ * @version   SVN: $Id: oxseoencodercontent.php 41202 2012-01-11 15:52:59Z mindaugas.rimgaila $
  */
 
 /**
@@ -125,7 +125,7 @@ class oxSeoEncoderContent extends oxSeoEncoder
                 }
             }
 
-            $sSeoUrl .= $this->_prepareTitle( $oCont->oxcontents__oxtitle->value ) . '/';
+            $sSeoUrl .= $this->_prepareTitle( $oCont->oxcontents__oxtitle->value, false, $oCont->getLanguage() ) . '/';
             $sSeoUrl  = $this->_processSeoUrl( $sSeoUrl, $oCont->getId(), $iLang );
 
             $this->_saveToDb( 'oxcontent', $oCont->getId(), $oCont->getBaseStdLink($iLang), $sSeoUrl, $iLang );

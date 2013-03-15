@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 44197 2012-04-23 13:01:53Z juergen.busch $
+ * @version   SVN: $Id: help_lang.php 44174 2012-04-23 09:40:11Z juergen.busch $
  */
 
 /**
@@ -66,6 +66,10 @@ $aLang =  array(
 'HELP_SHOP_SYSTEM_ISERVERTIMESHIFT'           => 'Es kann sein, dass sich der Server in einer anderen Zeitzone befindet. Mit dieser Einstellung können Sie die Zeitverschiebung korrigieren: Geben Sie die Anzahl der Stunden, die zur Serverzeit addiert/abgezogen werden sollen ein, z. B. <kdb>+2</kdb> oder <kdb>-2</kdb>',
 
 'HELP_SHOP_SYSTEM_INLINEIMGEMAIL'             => 'Wenn die Einstellung aktiv ist, werden die Bilder, die in E-Mails verwendet werden, zusammen mit der E-Mail versendet. Wenn die Einstellung nicht aktiv ist, lädt das E-Mail Programm die Bilder herunter, wenn Benutzer die E-Mail öffnen.',
+
+'HELP_SHOP_SYSTEM_SHOP_LOCATION'              => 'Bitte wählen Sie die Region, auf die der Shop ausgerichtet ist. Abhängig davon werden zusätzliche eCommerce Services vom OXID Server nachgeladen. Bitte vergessen Sie nicht, die Einstellung "Zusätzliche Informationen vom OXID Server laden" in Stammdaten -> Grundeinstellungen -> Einstell. -> Administrationsbereich zu aktivieren',
+    
+'HELP_SHOP_SYSTEM_UTILMODULE'                 => 'Bitte tragen Sie Ihre .php-Datei ein, mit der beim Shopstart eShop Funktionen überschrieben werden sollen.',
 
 
 
@@ -138,7 +142,7 @@ $aLang =  array(
 
 'HELP_SHOP_CONFIG_NEWARTBYINSERT'             => 'Auf der Startseite Ihres eShops werden die unter <span class="filename_filepath_or_italic">Frisch eingetroffen!</span> die neusten Artikel in Ihrem eShop angezeigt. Sie können die Artikel, die hier angezeigt werden, manuell einstellen oder automatisch berechnen lassen. Mit dieser Einstellung wählen Sie, wie die neusten Artikel berechnet werden sollen: Nach dem Datum, an dem die Artikel erstellt wurden, oder nach dem Datum der letzten Änderung im Administrationsbereich/der letzten Bestellung im Shop.',
 
-'HELP_SHOP_CONFIG_LOAD_DYNAMIC_PAGES'         => 'Wenn diese Einstellung aktiv ist, werden zusätzliche Informationen zu anderen OXID-Produkten im Administrationsbereich angezeigt, z. B. zu OXID eFire. Welche Informationen geladen werden, hängt vom Standort ihres eShops ab.',
+'HELP_SHOP_CONFIG_LOAD_DYNAMIC_PAGES'         => 'Wenn diese Einstellung aktiv ist, werden zusätzliche Informationen zu anderen OXID Produkten im Administrationsbereich angezeigt, z. B. zu OXID eFire. Welche Informationen geladen werden, hängt von der Region ab, die für den Shop gewählt wurde.',
 
 
 'HELP_SHOP_CONFIG_DELETERATINGLOGS'           => 'Wenn Benutzer einen Artikel bewerten, können Sie den Artikel nicht erneut bewerten. Hier können Sie einstellen, dass die Benutzer nach einer bestimmten Anzahl von Tagen den Artikel erneut bewerten können.',
@@ -152,7 +156,7 @@ $aLang =  array(
                                                  'Sie Private Sales Communities mit geschlossenen Nutzergruppen.',
 
 'HELP_SHOP_CONFIG_BASKETEXCLUDE'              => 'Ermöglicht es, Produkte aus ausschließlich einer Wurzelkategorie in den Warenkorb zu legen. ' .
-                                                 'Beim Wechsel der Wurzelkatgorie wird der Konsument gezwungen den Warenkorb zu erwerben oder ihn zu verwerfen.',
+                                                 'Beim Wechsel der Wurzelkategorie wird der Konsument gezwungen den Warenkorb zu erwerben oder ihn zu verwerfen.',
 
 'HELP_SHOP_CONFIG_BASKETRESERVATION'          => 'Ist diese Option aktiviert, laufen Warenkörbe nach einer von Ihnen definierbaren Zeit ab.  <br><br>'.
                                                  'Darüber hinaus schaltet diese Option die Produktreservierung ein, mit der die Lagerbestände der Produkte zunächst reserviert ' .
@@ -161,7 +165,7 @@ $aLang =  array(
                                                  'Für Produkte aus gekauften Warenkörben wird der Lagerbestand endgültig reduziert.',
 
 
-'HELP_SHOP_CONFIG_BASKETRESERVATIONTIMEOUT'   => 'Nach der eingstellten Anzahl von Sekunden ohne Änderung am Warenkorb, wird der Warenkorb automatisch geleert ' .
+'HELP_SHOP_CONFIG_BASKETRESERVATIONTIMEOUT'   => 'Nach der eingestellten Anzahl von Sekunden ohne Änderung am Warenkorb, wird der Warenkorb automatisch geleert ' .
                                                  'und die darin enthaltenen Produkte dem Lagerbestand wieder zugeführt.',
 
 'HELP_SHOP_CONFIG_INVITATION'                 => 'Mit Einladungen können Ihre Kunden weitere Freunde einladen sich zu registrieren und Bonuspunkte zu sammeln. ' .
@@ -174,19 +178,17 @@ $aLang =  array(
 
 'HELP_SHOP_CONFIG_SHOP_CONFIG_FACEBOOKAPPID'  => 'Um Ihren eShop mit Facebook zu verbinden müssen Sie die Facebook \'Application ID\' angeben. ' .
                                                  'Weitere Informationen finden Sie im ' .
-                                                 '<a href="http://wiki.oxidforge.org/Tutorials/Connecting_website_to_facebook" target="_blank" target="_blank">Tutorial</a>.',
+                                                 '<a href="http://wiki.oxidforge.org/Tutorials/Connecting_website_to_facebook" target="_blank">Tutorial</a>.',
 
 'HELP_SHOP_CONFIG_SHOP_CONFIG_FACEBOOKCONFIRM'=> 'Um die Privatsphäre des Kunden zu schützen, muss die Anzeige der Facebook Social Plugins explizit bestätigt werden. Erst nach Bestätigung werden Daten mit Facebook ausgetauscht.',
 
 'HELP_SHOP_CONFIG_SHOP_CONFIG_FBSECRETKEY'    => 'Um die Verbindung zwischen eShop und Facebook abzusichern, geben Sie den \'Secure Key\' hier ein. ' .
                                                  'Weitere Informationen finden Sie im ' .
-                                                 '<a href="http://wiki.oxidforge.org/Tutorials/Connecting_website_to_facebook" target="_blank" target="_blank">Tutorial</a>.',
+                                                 '<a href="http://wiki.oxidforge.org/Tutorials/Connecting_website_to_facebook" target="_blank">Tutorial</a>.',
 
 'HELP_SHOP_CONFIG_FBCOMMENTS'                 => 'Erlaubt den Shopbesuchern, Kommentare zu Produkten abzugeben.',
 
 'HELP_SHOP_CONFIG_FBFACEPILE'                 => 'Zeigt Ihren Shopbesuchern, wer von deren Freunden in Facebook ein Freund Ihres Shops ist.',
-
-'HELP_SHOP_CONFIG_FBLIVESTREAM'               => 'Lässt die Besucher Ihres Shops miteinander in Echtzeit über Produkte Ihres Shops diskutieren',
 
 'HELP_SHOP_CONFIG_FBINVITE'                   => 'Erlaubt Ihren Besuchern, Freunde über Facebook einladen',
 
@@ -207,6 +209,21 @@ $aLang =  array(
 'HELP_SHOP_MALL_PRICEADDITION'                => 'Sie haben die Möglichkeit, auf alle Artikelpreise einen Aufschlag zu berechnen: Geben Sie den entsprechenden Aufschlag ein und wählen Sie in der Auswahlliste aus, ob er prozentual (<span class="userinput_or_code">%</span>) oder absolut (<span class="userinput_or_code">abs</span>) berechnet werden soll.',
 
 
+'HELP_SHOP_CONFIG_DOWNLOADS'                  => 'Shop mit Download-Artikeln. Aktivieren Sie hier, dass Artikel bestellt und heruntergeladen werden können.',
+
+'HELP_SHOP_CONFIG_DOWNLOADS_PATH'             => 'Pfad, in dem Dateien für Download-Artikel gespeichert werden.',
+
+'HELP_SHOP_CONFIG_MAX_DOWNLOADS_COUNT'        => 'Geben Sie hier an, wie oft Benutzer nach einer Bestellung den Link zum Download verwenden können. Das ist die Standardeinstellung für alle Artikel.'.
+                                                 'Sie können diesen Wert für jede Datei des Artikels unter Artikel verwalten -> Artikel -> Downloads ändern.',
+
+'HELP_SHOP_CONFIG_LINK_EXPIRATION_TIME_UNREGISTERED' => 'Geben Sie hier an, wie oft Benutzer, die ohne Registrierung bestellt haben, den Link zum Download verwenden können. Das ist die Standardeinstellung für alle Artikel.'.
+                                                 'Sie können diesen Wert für jede Datei des Artikels unter Artikel verwalten -> Artikel -> Downloads ändern.',
+
+'HELP_SHOP_CONFIG_LINK_EXPIRATION_TIME'       => 'Geben Sie die Zeit in Stunden an, die der Downloadlink nach der Bestellung gültig ist. Das ist die Standardeinstellung für alle Artikel.'.
+                                                 'Sie können diesen Wert für jede Datei des Artikels unter Artikel verwalten -> Artikel -> Downloads ändern.',
+
+'HELP_SHOP_CONFIG_DOWNLOAD_EXPIRATION_TIME'   => 'Geben Sie die Zeit in Stunden an, die der Downloadlink nach dem ersten Download gültig ist. Das ist die Standardeinstellung für alle Artikel.'.
+                                                 'Sie können diesen Wert für jede Datei des Artikels unter Artikel verwalten -> Artikel -> Downloads ändern.',
 
 'HELP_SHOP_PERF_NEWESTARTICLES'               => 'In Ihrem eShop wird eine Liste mit den neusten Artikeln (Frisch eingetroffen!) angezeigt. Hier können Sie einstellen, wie die Liste generiert wird:' .
                                                  '<ul><li><span class="userinput_or_code">ausgeschaltet</span>: Die Liste wird nicht angezeigt.</li>' .
@@ -293,9 +310,7 @@ $aLang =  array(
 
 'HELP_ARTICLE_MAIN_TAGS'                      => 'Hier können Sie passende Stichworte zum Artikel eingeben. Aus diesen Stichworten wird die Tagcloud (Stichwortwolke) auf der Startseite generiert. Tags werden durch Komma getrennt.',
 
-
-
-'HELP_ARTICLE_EXTEND_UNITQUANTITY'            => 'Mit <span class="navipath_or_inputname">Menge</span> und <span class="navipath_or_inputname">Mengeneinheit</span> können Sie den Grundpreis des Artikels (Preis pro Mengeneinheit) einstellen (z. B. 1,43 EUR pro Liter): Geben Sie bei <span class="navipath_or_inputname">Menge</span> die Menge des Artikels (z. B. 1,5) und bei <span class="navipath_or_inputname">Mengeneinheit</span> die entsprechende Mengeneinheit (z. B. Liter) ein. Dann wird der Grundpreis pro Mengeneinheit berechnet und beim Artikel angezeigt.',
+'HELP_ARTICLE_EXTEND_UNITQUANTITY'            => 'Mit <span class="navipath_or_inputname">Menge</span> und <span class="navipath_or_inputname">Mengeneinheit</span> können Sie den Grundpreis des Artikels (Preis pro Mengeneinheit) einstellen. Dieser wird berechnet und beim Artikel angezeigt (z.B. 1,43 EUR pro Liter). Geben Sie bei <span class="navipath_or_inputname">Menge</span> die Menge des Artikels (z.B. 1,5) ein und legen Sie bei <span class="navipath_or_inputname">Mengeneinheit</span> die entsprechende Mengeneinheit (z.B. Liter) fest. Sie können eine Mengeneinheit aus der Liste auswählen oder eine Mengeneinheit eintragen, ohne eine Mengeneinheit auszuwählen ("-"). </br> Wie Sie die Liste der Mengeneinheiten erweitern können, wird in diesem <a href="http://wiki.oxidforge.org/Tutorials/Adding_new_unit_types" target="_blank">Tutorial</a> beschrieben.',
 
 'HELP_ARTICLE_EXTEND_EXTURL'                  => 'Bei <span class="navipath_or_inputname">Externe URL</span> können Sie einen Link eingeben, wo weitere Informationen zu dem Artikel erhältlich sind (z. B. auf der Hersteller-Website). Bei <span class="navipath_or_inputname">Text für ext. URL</span> können Sie den Text eingeben, der verlinkt wird (z. B. <span class="userinput_or_code">weitere Informationen vom Hersteller</span>).',
 
@@ -315,7 +330,17 @@ $aLang =  array(
 'HELP_ARTICLE_EXTEND_ISCONFIGURABLE'          => 'Wenn der Artikel individualisierbar ist, wird den Kunden ein zusätzliches Eingabefeld auf der Detailseite des Artikels und im Warenkorb angezeigt. In dieses Eingabefeld können Kunden Text eingeben, um den Artikel zu individualisieren.<br><br>'.
                                                  'Ein typisches Beispiel sind T-Shirts, die bedruckt werden können. In das Eingabefeld können Kunden den Text eingeben, mit dem ein T-Shirt bedruckt werden soll.',
 
+'HELP_ARTICLE_EXTEND_UPDATEPRICE'             => 'Preise können zu einem festgelegten Zeitpunkt geändert werden. Die eingetragenen Preise aktualisieren die Standardpreise. Hat ein Preis den Wert "0", wird er nicht aktualisiert.',
 
+'HELP_ARTICLE_FILES_MAX_DOWNLOADS_COUNT'      => 'Geben Sie hier an, wie oft Benutzer nach einer Bestellung den Link zum Download verwenden können. Hier können Sie für diese Datei die Standardeinstellung überschreiben, die in Stammdaten -> Grundeinstellung -> Einstell. -> Downloads für alle Artikel gesetzt wurde.',
+
+'HELP_ARTICLE_FILES_LINK_EXPIRATION_TIME_UNREGISTERED' => 'Geben Sie hier an, wie oft Benutzer, die ohne Registrierung bestellt haben, den Link zum Download verwenden können. Hier können Sie für diese Datei die Standardeinstellung überschreiben, die in Stammdaten -> Grundeinstellung -> Einstell. -> Downloads für alle Artikel gesetzt wurde.',
+
+'HELP_ARTICLE_FILES_LINK_EXPIRATION_TIME'     => 'Geben Sie die Zeit in Stunden an, die der Downloadlink nach der Bestellung gültig ist. Hier können Sie für diese Datei die Standardeinstellung überschreiben, die in Stammdaten -> Grundeinstellung -> Einstell. -> Downloads für alle Artikel gesetzt wurde.',
+
+'HELP_ARTICLE_FILES_DOWNLOAD_EXPIRATION_TIME' => 'Geben Sie die Zeit in Stunden an, die der Downloadlink nach dem ersten Download gültig ist. Hier können Sie für diese Datei die Standardeinstellung überschreiben, die in Stammdaten -> Grundeinstellung -> Einstell. -> Downloads für alle Artikel gesetzt wurde.',
+
+'HELP_ARTICLE_FILES_NEW'                      => 'Geben Sie den Namen einer per FTP übertragenen Datei an oder laden Sie hier eine neue Datei hoch. Große Dateien sollten immer per FTP übertragen werden. Die Beschränkung der Dateigröße gilt nur für das Hochladen im Administrationsbereich. Sie hängt von den PHP-Einstellungen des Servers ab, die nur dort geändert werden können.',
 
 'HELP_ARTICLE_PICTURES_ICON'                  => 'Icons sind die kleinsten Bilder eines Artikels, sie werden z. B. im Warenkorb verwendet. <br>'.
                                                  'Wenn Sie ein Icon manuell hochladen, wird das automatisch erzeugte Icon überschrieben.<br>' .
@@ -371,7 +396,7 @@ $aLang =  array(
 'HELP_ARTICLE_VARIANT_VARNAME'                => 'Bei <span class="navipath_or_inputname">Name der Auswahl</span> können Sie einstellen, wie die Auswahl zwischen den verschiedenen Varianten heißen soll, z. B. <span class="userinput_or_code">Farbe</span> oder <span class="userinput_or_code">Größe</span>.<br> '.
                                                  'Weitere Informationen zu Varianten finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/varianten-eines-artikels-anlegen" target="_blank">Varianten-Kapitel des Handbuchs</a>.',
 
-
+'HELP_ARTICLE_IS_DOWNLOADABLE'                => 'Dateien dieses Artikels können heruntergeladen werden.',
 
 'HELP_CATEGORY_MAIN_HIDDEN'                   => 'Mit <span class="navipath_or_inputname">Versteckt</span> können Sie einstellen, ob die Kategorie den Benutzern angezeigt werden soll. Wenn eine Kategorie versteckt ist, wird Sie den Benutzern nicht angezeigt, auch wenn die Kategorie aktiv ist.',
 
@@ -573,4 +598,26 @@ $aLang =  array(
 'HELP_PROMOTIONS_BANNER_PICTUREANDLINK'       => 'Laden Sie ein Bild für den großen Startseitenbanner hoch und geben die URL für den Klick auf den Banner an. Falls ein Artikel zugeordnet wird, wird dessen URL automatisch als Banner-URL verwendet.',
 'HELP_SHOP_PERF_SEO_CACHE'                    => 'Aktivierter SEO Cache verbessert die Performance, benötigt aber sehr viel Speicherplatz im /tmp-Verzeichnis.',
 
+'HELP_ALTERNATIVE_IMAGE_SERVER_NOTE'          => 'In der Konfigurationsdatei config.inc.php kann mit den Parametern <i>sAltImageUrl</i> und <i>sSSLAltImageUrl</i> eine URL zu einem externen Bilder-Server gesetzt werden. Dadurch werden alle Artikelbilder von diesem alternativen Server geladen. Alle hochgeladenen Dateien werden jedoch lokal gespeichert, so dass sie manuell oder per Script mit dem externen Server synchronisiert werden müssen.',
+
+'HELP_SHOP_RDFA_SUBMIT_URL'                   => 'Überträgt Ihre Shop URL zur GR-Notify-Seite. Dort wird die URL gespeichert und an Suchmaschinen und Endpunkte von Linked Open Commerce & Semantic Web weitergeleitet.',
+'HELP_SHOP_RDFA_CONTENT_OFFERER'              => 'Wählen Sie hier aus, welche Content-Seite die Hauptinformationen zum eShop anzeigt, beispielsweise "Impressum".',
+'HELP_SHOP_RDFA_CONTENT_PAYMENT'              => 'Wählen Sie hier aus, welche Content-Seite (beispielsweise "AGB") Zahlungsinformationen anzeigt, die RDFa nicht zugewiesen wurden. Um Ihre Zahlungsarten den RDFa-Zahlungsarten generell zuzuordnen, gehen Sie zu Shopeinstellungen -> Zahlungsarten -> RDFa.',
+'HELP_SHOP_RDFA_CONTENT_DELIVERY'             => 'Wählen Sie hier aus, welche Content-Seite (beispielsweise "Versand und Kosten") Versandinformationen anzeigt, die RDFa nicht zugewiesen wurden. Um Ihre Versandarten den RDFa-Versandarten generell zuzuordnen, gehen Sie zu Shopeinstellungen -> Versandarten -> RDFa.',
+'HELP_SHOP_RDFA_VAT'                          => 'Diese Option gibt an, ob die MwSt. im Preis und in den Zahlungs- und Lieferkosten enthalten ist oder nicht.',
+'HELP_SHOP_RDFA_DURATION_PRICES'              => 'Geben Sie hier den Gültigkeitszeitraum für die Kosten von Artikeln, Zahlungs- und Versandarten an (z.B.: 1 Tag, 1 Woche).',
+'HELP_SHOP_RDFA_LOGO_URL'                     => 'Die Webadresse (URL) eines Logos oder Bildes.',
+'HELP_SHOP_RDFA_GEO_LONGITUDE'                => 'Die geografische Länge (Longitude) des Ladengeschäftes als Bestandteil der Geoposition. Bitte nur Zahlen eingeben.',
+'HELP_SHOP_RDFA_GEO_LATITUDE'                 => 'Die geografische Breite (Latitude) des Ladengeschäftes als Bestandteil der Geoposition. Bitte nur Zahlen eingeben.',
+'HELP_SHOP_RDFA_GLN'                          => 'Global Location Number (GLN) der Firma. Die Global Location Number ist eine 13-stellige Zahl, mit der Firmen und Firmensitz identifiziert werden.',
+'HELP_SHOP_RDFA_NAICS'                        => 'Schlüssel Ihrer Firma im North American Industry Classification System (NAICS). Siehe http://www.census.gov/eos/www/naics/.',
+'HELP_SHOP_RDFA_ISIC'                         => 'Schlüssel Ihrer Firma im International Standard of Industrial Classification of All Economic Activities (ISIC). Siehe http://unstats.un.org/unsd/cr/registry/isic-4.asp.',
+'HELP_SHOP_RDFA_DUNS'                         => 'Die Dun & Bradstreet D-U-N-S ist ein neunstelliger Zahlenschlüssel zur Identifizierung von Unternehmen.',
+'HELP_SHOP_RDFA_SHOW_PRODUCTSTOCK'            => 'Ist diese Option aktiviert, bedeutet das, dass der tatsächliche Lagerbestand angezeigt wird.',
+'HELP_SHOP_RDFA_RATING_MIN'                   => 'Möglicher Minimalwert für die Bewertung im Shop. Dieser Wert ist nicht die aktuell niedrigste Bewertung eines Artikels!',
+'HELP_SHOP_RDFA_RATING_MAX'                   => 'Möglicher Maximalwert für die Bewertung im Shop. Dieser Wert ist nicht die aktuell höchste Bewertung eines Artikels!',
+'HELP_SHOP_RDFA_COND'                         => 'Wählen Sie aus, was den Zustand der Artikel beschreibt (neu, gebraucht oder aufgearbeitet).',
+'HELP_SHOP_RDFA_FNC'                          => 'Wählen Sie hier die geschäftliche Funktion der Artikel. Werden diese beispielsweise verkauft, vermietet oder repariert?',
+'HELP_SHOP_RDFA_COSTUMER'                     => 'Gibt den Kundentypen an, dem die Artikel des Shops gelten (Endverbraucher, Wiederverkäufer, Unternehmen/Gewerbe und/oder Öffentliche Einrichtungen).',
+'HELP_SHOP_RDFA_DURATION_OFFERINGS'           => 'Diese Eigenschaft kennzeichnet den Gültigkeitszeitraum von Artikeln, beispielsweise 1 Tag, 1 Woche oder 1 Monat.',
 );

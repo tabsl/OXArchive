@@ -58,7 +58,7 @@
                     <td>
                         <h3>[{ oxmultilang ident="PAGE_ACCOUNT_ORDER_CART" }]</h3>
                         <table class="orderhistory">
-                            [{foreach from=$order->getOrderArticles() item=orderitem name=testOrderItem}]
+                            [{foreach from=$order->getOrderArticles(true) item=orderitem name=testOrderItem}]
                                 [{assign var=sArticleId value=$orderitem->oxorderarticles__oxartid->value }]
                                 [{assign var=oArticle value=$oArticleList[$sArticleId] }]
                                 <tr id="accOrderAmount_[{$order->oxorder__oxordernr->value}]_[{$smarty.foreach.testOrderItem.iteration}]">

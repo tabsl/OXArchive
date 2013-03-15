@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseodecoder.php 40596 2011-12-14 12:08:05Z arvydas.vapsva $
+ * @version   SVN: $Id: oxseodecoder.php 43748 2012-04-11 08:08:11Z linas.kukulskis $
  */
 
 /**
@@ -85,8 +85,8 @@ class oxSeoDecoder extends oxSuperCfg
         $sKey = $this->_getIdent( $sSeoUrl );
         $aRet = false;
 
-        $oDb = oxDb::getDb(true);
-        $oRs = $oDb->Execute( "select oxstdurl, oxlang from oxseo where oxident=" . $oDb->quote( $sKey ) . " and oxshopid='$iShopId' limit 1");
+        $oDb = oxDb::getDb( oxDb::FETCH_MODE_ASSOC );
+        $oRs = $oDb->select( "select oxstdurl, oxlang from oxseo where oxident=" . $oDb->quote( $sKey ) . " and oxshopid='$iShopId' limit 1");
         if ( !$oRs->EOF ) {
             // primary seo language changed ?
             $aRet = $this->parseStdUrl( $oRs->fields['oxstdurl'] );
@@ -107,7 +107,7 @@ class oxSeoDecoder extends oxSuperCfg
     protected function _decodeOldUrl( $sSeoUrl )
     {
         $oStr = getStr();
-        $oDb = oxDb::getDb(true);
+        $oDb = oxDb::getDb( oxDb::FETCH_MODE_ASSOC );
         $sBaseUrl = $this->getConfig()->getShopURL();
         if ( $oStr->strpos( $sSeoUrl, $sBaseUrl ) === 0 ) {
             $sSeoUrl = $oStr->substr( $sSeoUrl, $oStr->strlen( $sBaseUrl ) );
@@ -118,7 +118,7 @@ class oxSeoDecoder extends oxSuperCfg
         $sKey = $this->_getIdent( $sSeoUrl, true );
 
         $sUrl = false;
-        $oRs = $oDb->execute( "select oxobjectid, oxlang from oxseohistory where oxident = " . $oDb->quote( $sKey ) . " and oxshopid = '{$iShopId}' limit 1");
+        $oRs = $oDb->select( "select oxobjectid, oxlang from oxseohistory where oxident = " . $oDb->quote( $sKey ) . " and oxshopid = '{$iShopId}' limit 1");
         if ( !$oRs->EOF ) {
             // updating hit info (oxtimestamp field will be updated automatically)
             $oDb->execute( "update oxseohistory set oxhits = oxhits + 1 where oxident = " . $oDb->quote( $sKey ) . " and oxshopid = '{$iShopId}' limit 1" );
@@ -164,7 +164,7 @@ class oxSeoDecoder extends oxSuperCfg
      */
     protected function _getSeoUrl($sObjectId, $iLang, $iShopId)
     {
-        $oDb = oxDb::getDb(true);
+        $oDb = oxDb::getDb( oxDb::FETCH_MODE_ASSOC );
         $aInfo = $oDb->getRow( "select oxseourl, oxtype from oxseo where oxobjectid =  " . $oDb->quote( $sObjectId ) . " and oxlang =  " . $oDb->quote( $iLang ) . " and oxshopid = " . $oDb->quote( $iShopId ) . " order by oxparams limit 1" );
         if ('oxarticle' == $aInfo['oxtype']) {
             $sMainCatId = $oDb->getOne( "select oxcatnid from ".getViewName( "oxobject2category" )." where oxobjectid = " . $oDb->quote( $sObjectId ) . " order by oxtime" );

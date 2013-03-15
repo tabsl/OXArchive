@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxgbentry.php 39195 2011-10-12 13:26:37Z arvydas.vapsva $
+ * @version   SVN: $Id: oxgbentry.php 43729 2012-04-11 07:35:33Z linas.kukulskis $
  */
 
 /**
@@ -101,7 +101,9 @@ class oxGbEntry extends oxBase
         $myConfig = $this->getConfig();
 
         // loading entries
-        $sSelect  = 'select oxgbentries.*, oxuser.oxfname from oxgbentries left join oxuser on oxgbentries.oxuserid = oxuser.oxid ';
+        $sSelect  = 'select oxgbentries.*, oxuser.oxfname,
+                    `oxuser`.`oxusername` AS `author`, `oxgbentries`.`oxcreate` AS `date`
+            from oxgbentries left join oxuser on oxgbentries.oxuserid = oxuser.oxid ';
         $sSelect .= 'where oxuser.oxid is not null and oxgbentries.oxshopid = "'.$myConfig->getShopId().'" ';
 
         // setting GB entry view restirction rules
@@ -116,6 +118,7 @@ class oxGbEntry extends oxBase
         if ( $sSortBy ) {
             $sSelect .= "order by $sSortBy ";
         }
+
 
         $oEntries = oxNew( 'oxlist' );
         $oEntries->init( 'oxgbentry' );

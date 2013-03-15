@@ -8,6 +8,9 @@
                 <h3>[{ oxmultilang ident="PAGE_CHECKOUT_USER_OPTION_NOREGISTRATION" }]</h3>
                 [{block name="checkout_options_noreg_text"}]
                     <p>[{ oxmultilang ident="PAGE_CHECKOUT_USER_OPTION_NOREGISTRATION_DESCRIPTION" }]</p>
+                    [{if $oView->isDownloadableProductWarning() }]
+                        <p class="errorMsg">[{ oxmultilang ident="MESSAGE_DOWNLOADABLE_PRODUCT" }]</p>
+                    [{/if}]
                 [{/block}]
                 <form action="[{ $oViewConf->getSslSelfLink() }]" method="post">
                     <p>

@@ -19,7 +19,7 @@
  * @package   utils
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: verificationimg.php 41675 2012-01-23 14:33:45Z mindaugas.rimgaila $
+ * @version   SVN: $Id: verificationimg.php 41676 2012-01-23 14:36:59Z mindaugas.rimgaila $
  */
 
 /**

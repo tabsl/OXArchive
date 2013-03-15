@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: theme_lang.php 28697 2010-06-29 11:09:58Z vilma $
  */
@@ -75,7 +75,5 @@ $aLang = array(
 'SHOP_THEME_iNewBasketItemMessage_2'         => 'Open popup',
 'SHOP_THEME_iNewBasketItemMessage_3'         => 'Open basket',
 'SHOP_THEME_aNrofCatArticles'                => 'Number of products which can be shown in a product lists (category pages, search results)<br><br>Attention: A large number of products per page (above 100) can cause performance loss!',
-'SHOP_THEME_blDisableNavBars'                => 'Don\'t display most Navigation Elements during Checkout',
-'HELP_SHOP_THEME_blDisableNavBars'           => 'If this setting is checked, most navigation elements aren\'t shown during checkout. Thereby users aren\'t distracted unnecessarily during checkout.',
 
 );

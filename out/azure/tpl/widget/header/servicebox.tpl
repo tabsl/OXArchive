@@ -28,6 +28,9 @@
                     [{if $oViewConf->getShowListmania()}]
                         <li><a href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_recommlist" }]" rel="nofollow"><span>[{oxmultilang ident="LAYOUT_HEADER_LISTMANIA_LINK"}]</span>[{ if $oxcmp_user && $oxcmp_user->getRecommListsCount()}]<span class="counter FXgradOrange">[{ $oxcmp_user->getRecommListsCount() }]</span>[{/if}]</a></li>
                     [{/if}]
+                    [{if $oView->isEnabledDownloadableFiles()}]
+                        <li><a href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_downloads" }]" rel="nofollow"><span>[{oxmultilang ident="MY_DOWNLOADS"}]</span></a></li>
+                    [{/if}]
                 [{/block}]
             </ul>
         </div>

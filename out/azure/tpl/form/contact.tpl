@@ -34,6 +34,7 @@
             <input id="contactEmail" type="text" name="editval[oxuser__oxusername]"  size=70 maxlength=40 value="[{$editval.oxuser__oxusername}]" class="js-oxValidate js-oxValidate_notEmpty js-oxValidate_email">
             <p class="oxValidateError">
                 <span class="js-oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
+                <span class="js-oxError_email">[{ oxmultilang ident="EXCEPTION_INPUT_NOVALIDEMAIL" }]</span>
             </p>
         </li>
         <li [{if $aErrors && !$oView->getContactSubject()}]class="oxInValid"[{/if}]>
@@ -55,7 +56,7 @@
             [{else}]
                 <span class="verificationCode" id="verifyTextCode">[{$oCaptcha->getText()}]</span>
             [{/if}]
-            <input type="text" field="verify" name="c_mac" value="" class="js-oxValidate js-oxValidate_notEmpty">
+            <input type="text" data-fieldsize="verify" name="c_mac" value="" class="js-oxValidate js-oxValidate_notEmpty">
             <p class="oxValidateError">
                 <span class="js-oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
             </p>

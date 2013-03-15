@@ -16,26 +16,37 @@
         <input type="hidden" name="editval[oxnewsletter__oxtemplate]" value="">
 
             <table cellspacing="0" cellpadding="0" border="0" width="98%;">
-              <tr>
-                <td class="edittext" width="60">
-                [{ oxmultilang ident="GENERAL_TITLE" }]
-                </td>
-                <td class="edittext">
-                <input type="text" class="editinput" style="width:100%" size="120" maxlength="[{$edit->oxnewsletter__oxtitle->fldmax_length}]" name="editval[oxnewsletter__oxtitle]" value="[{$edit->oxnewsletter__oxtitle->value}]">
-                [{ oxinputhelp ident="HELP_GENERAL_TITLE" }]
-                </td>
-              </tr>
-              <tr>
-                <td class="edittext" style="width:60px" valign="top">
-                [{ oxmultilang ident="NEWSLETTER_MAIN_MODEL" }]
-                </td>
-                <td valign="top" class="edittext" align="left">
+              [{block name="admin_newsletter_main_form"}]
+                  <tr>
+                    <td class="edittext" width="60">
+                    [{ oxmultilang ident="GENERAL_TITLE" }]
+                    </td>
+                    <td class="edittext">
+                    <input type="text" class="editinput" style="width:100%" size="120" maxlength="[{$edit->oxnewsletter__oxtitle->fldmax_length}]" name="editval[oxnewsletter__oxtitle]" value="[{$edit->oxnewsletter__oxtitle->value}]">
+                    [{ oxinputhelp ident="HELP_GENERAL_TITLE" }]
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="edittext" width="60">
+                    [{ oxmultilang ident="NEWSLETTER_SUBJECT" }]
+                    </td>
+                    <td class="edittext">
+                    <input type="text" class="editinput" style="width:100%" size="120" maxlength="[{$edit->oxnewsletter__oxsubject->fldmax_length}]" name="editval[oxnewsletter__oxsubject]" value="[{$edit->oxnewsletter__oxsubject->value}]">                    
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="edittext" style="width:60px" valign="top">
+                    [{ oxmultilang ident="NEWSLETTER_MAIN_MODEL" }]
+                    </td>
+                    <td valign="top" class="edittext" align="left">
 
-                        [{ $editor }]
+                            [{ $editor }]
 
 
-                </td>
-              </tr>
+                    </td>
+                  </tr>
+              [{/block}]
+
               <tr>
                 <td class="edittext">
                 </td>

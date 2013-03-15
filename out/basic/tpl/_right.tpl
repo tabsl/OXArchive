@@ -19,8 +19,8 @@
     [{if $oViewConf->getShowFbConnect()}]
         [{if !$oxcmp_user || ($oxcmp_user && $oView->isConnectedWithFb()) }]
         <strong class="h2"><a id="test_RightSideNewsLetterHeader" rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account"}]">[{ oxmultilang ident="INC_RIGHTITEM_FBCONNECT" }]</a></strong>
-        <div class="box">
-            [{oxid_include_dynamic file="dyn/cmp_fbconnect_right.tpl" type="login" pgnr=$oView->getActPage() tpl=$oViewConf->getActTplName() additional_form_parameters="`$AdditionalFormParameters`"|cat:$oViewConf->getNavFormParams() }]
+        <div class="box" id="loginboxFbConnect">
+            [{include file="inc/facebook/fb_enable.tpl" source="dyn/cmp_fbconnect_right.tpl" ident="#loginboxFbConnect" }]
         </div>
         [{/if}]
     [{/if}]
@@ -131,4 +131,10 @@
     </div>
 [{ /if }]
 
-[{ include file="inc/facebook/fb_facepile.tpl" }]
+[{if $oView->isActive('FbFacepile') }]
+	<strong id="test_facebookFacepileHead" strong class="h2">[{ oxmultilang ident="FACEBOOK_FACEPILE" }]</strong>
+    <div class="box" id="productFbFacePile">
+    	[{include file="inc/facebook/fb_enable.tpl" source="inc/facebook/fb_facepile.tpl" ident="#productFbFacePile"}]
+    </div>	
+[{/if}]
+

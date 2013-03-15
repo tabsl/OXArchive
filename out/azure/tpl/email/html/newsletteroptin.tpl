@@ -6,8 +6,6 @@
 
     <p style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
         [{ oxcontent ident="oxnewsletteremail" }]
-        <br><br>
-        [{ oxcontent ident="oxemailfooter" }]
     </p>
 
 [{include file="email/html/footer.tpl"}]

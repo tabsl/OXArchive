@@ -18,9 +18,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxinputvalidator.php 36403 2011-06-16 13:48:20Z arunas.paskevicius $
+ * @version   SVN: $Id: oxinputvalidator.php 43732 2012-04-11 07:39:52Z linas.kukulskis $
  */
 
 /**
@@ -386,7 +386,7 @@ class oxInputValidator extends oxSuperCfg
 
         // checking
         foreach ( $aMustFields as $sMustField ) {
-            
+
             // A. not nice, but we keep all fields info in one config array, and must support baskwards compat.
             if ( !$blCheckDel && strpos( $sMustField, 'oxaddress__' ) === 0 ) {
                 continue;

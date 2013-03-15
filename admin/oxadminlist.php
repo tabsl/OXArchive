@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadminlist.php 34906 2011-04-22 13:05:51Z linas.kukulskis $
+ * @version   SVN: $Id: oxadminlist.php 44135 2012-04-20 15:06:35Z linas.kukulskis $
  */
 
 /**
@@ -267,7 +267,7 @@ class oxAdminList extends oxAdminView
         $sSql = $oStr->preg_replace( '/order by .*$/', '', $sSql );
 
         // con of list items which fits current search conditions
-        $this->_iListSize = oxDb::getDb()->getOne( $sSql );
+        $this->_iListSize = oxDb::getDb()->getOne( $sSql, false, false );
 
         // set it into session that other frames know about size of DB
         oxSession::setVar( 'iArtCnt', $this->_iListSize );

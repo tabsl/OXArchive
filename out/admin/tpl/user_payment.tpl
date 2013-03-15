@@ -50,41 +50,42 @@
     </td>
 
     <td valign="top" class="edittext vr">
-
         <table cellspacing="0" cellpadding="0" border="0">
-        <tr>
-            <td class="edittext" width="70">
-            [{ oxmultilang ident="USER_PAYMENT_PAYMENTTYPE" }]
-            </td>
-            <td class="edittext">
-                <select name="editval[oxuserpayments__oxpaymentsid]" class="editinput" [{ $readonly}]>
-                    [{foreach from=$paymenttypes item=payment}]
-                    <option value="[{ $payment->oxpayments__oxid->value }]" [{ if $payment->selected}]SELECTED[{/if}]>[{ $payment->oxpayments__oxdesc->value }]</option>
-                    [{/foreach}]
-                </select>
-                [{ oxinputhelp ident="HELP_USER_PAYMENT_PAYMENTTYPE" }]
-            </td>
-        </tr>
-        <!--tr>
-            <td class="edittext" width="70">
-            [{ oxmultilang ident="USER_PAYMENT_VALUE" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="15" maxlength="[{$edit->oxuserpayments__oxvalue->fldmax_length}]" name="editval[oxuserpayments__oxvalue]" value="[{$edit->oxuserpayments__oxvalue->value }]">
-            </td>
-        </tr-->
-        [{foreach from=$edit->aDynValues item=value}]
-        [{assign var="ident" value='ORDER_OVERVIEW_'|cat:$value->name}]
-        [{assign var="ident" value=$ident|oxupper }]
-        <tr>
-            <td class="edittext" width="70">
-            [{ oxmultilang ident=$ident }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="20" maxlength="64" name="dynvalue[[{$value->name}]]" value="[{ $value->value}]" [{ $readonly}]>
-            </td>
-        </tr>
-        [{/foreach}]
+        [{block name="admin_user_payment_form"}]
+            <tr>
+                <td class="edittext" width="70">
+                [{ oxmultilang ident="USER_PAYMENT_PAYMENTTYPE" }]
+                </td>
+                <td class="edittext">
+                    <select name="editval[oxuserpayments__oxpaymentsid]" class="editinput" [{ $readonly}]>
+                        [{foreach from=$paymenttypes item=payment}]
+                        <option value="[{ $payment->oxpayments__oxid->value }]" [{ if $payment->selected}]SELECTED[{/if}]>[{ $payment->oxpayments__oxdesc->value }]</option>
+                        [{/foreach}]
+                    </select>
+                    [{ oxinputhelp ident="HELP_USER_PAYMENT_PAYMENTTYPE" }]
+                </td>
+            </tr>
+            <!--tr>
+                <td class="edittext" width="70">
+                [{ oxmultilang ident="USER_PAYMENT_VALUE" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="15" maxlength="[{$edit->oxuserpayments__oxvalue->fldmax_length}]" name="editval[oxuserpayments__oxvalue]" value="[{$edit->oxuserpayments__oxvalue->value }]">
+                </td>
+            </tr-->
+            [{foreach from=$edit->aDynValues item=value}]
+            [{assign var="ident" value='ORDER_OVERVIEW_'|cat:$value->name}]
+            [{assign var="ident" value=$ident|oxupper }]
+            <tr>
+                <td class="edittext" width="70">
+                [{ oxmultilang ident=$ident }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="20" maxlength="64" name="dynvalue[[{$value->name}]]" value="[{ $value->value}]" [{ $readonly}]>
+                </td>
+            </tr>
+            [{/foreach}]
+        [{/block}]
         <tr>
             <td class="edittext">
             </td>
@@ -101,6 +102,7 @@
 
 </tr>
 </table>
+</form>
 
 [{include file="bottomnaviitem.tpl"}]
 

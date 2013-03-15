@@ -1,7 +1,9 @@
 [{capture append="oxidBlock_content"}]
     [{if $oView->getNewsletterStatus() == 4 || !$oView->getNewsletterStatus()}]
       <h1 class="pageHead">[{ oxmultilang ident="PAGE_INFO_NEWSLETTER_STAYINFORMED" }]</h1>
-      [{ oxcontent ident="oxnewstlerinfo" }]
+      [{oxifcontent ident="oxnewstlerinfo" object="oCont"}]
+           [{ $oCont->oxcontents__oxcontent->value }]
+      [{/oxifcontent}]
       <br>
       [{include file="form/newsletter.tpl"}]
     [{elseif $oView->getNewsletterStatus() == 1}]

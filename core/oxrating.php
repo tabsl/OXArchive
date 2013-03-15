@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxrating.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxrating.php 43744 2012-04-11 07:55:41Z linas.kukulskis $
  */
 
 /**
@@ -76,18 +76,92 @@ class oxRating extends oxBase
      */
     public function allowRating( $sUserId, $sType, $sObjectId)
     {
-        $oDB = oxDb::getDb();
+        $oDb = oxDb::getDb();
         $myConfig = $this->getConfig();
+
         if ( $iRatingLogsTimeout = $myConfig->getConfigParam( 'iRatingLogsTimeout' ) ) {
             $sExpDate = date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() - $iRatingLogsTimeout*24*60*60);
-            $oDB->execute( "delete from oxratings where oxtimestamp < '$sExpDate'" );
+            $oDb->execute( "delete from oxratings where oxtimestamp < '$sExpDate'" );
         }
-        $sSelect = "select oxid from oxratings where oxuserid = ".$oDB->quote( $sUserId )." and oxtype=".$oDB->quote( $sType )." and oxobjectid = ".$oDB->quote( $sObjectId );
-        if ( $oDB->getOne( $sSelect ) ) {
+        $sSelect = "select oxid from oxratings where oxuserid = ".$oDb->quote( $sUserId )." and oxtype=".$oDb->quote( $sType )." and oxobjectid = ".$oDb->quote( $sObjectId );
+        if ( $oDb->getOne( $sSelect ) ) {
             return false;
         }
 
         return true;
+    }
+
+
+    /**
+     * calculates and return objects rating
+     *
+     * @param string $sObjectId           object id
+     * @param string $sType               object type
+     * @param array  $aIncludedObjectsIds array of ids
+     *
+     * @return float
+     */
+    public function getRatingAverage( $sObjectId, $sType, $aIncludedObjectsIds = null )
+    {
+        $oDb = oxDb::getDb();
+
+        $sQuerySnipet = '';
+        if ( is_array( $aIncludedObjectsIds ) && count( $aIncludedObjectsIds ) > 0 ) {
+            $sQuerySnipet = " AND ( `oxobjectid` = ".$oDb->quote( $sObjectId ) . " OR `oxobjectid` in ('" .implode("', '", $aIncludedObjectsIds). "') )";
+        } else {
+            $sQuerySnipet = " AND `oxobjectid` = ".$oDb->quote( $sObjectId );
+        }
+
+        $sSelect = "
+            SELECT
+                AVG(`oxrating`)
+            FROM `oxreviews`
+            WHERE `oxrating` > 0
+                 AND `oxtype` = " . $oDb->quote( $sType )
+               . $sQuerySnipet . "
+            LIMIT 1";
+
+        $fRating = 0;
+        if ( $fRating = $oDb->getOne( $sSelect, false, false ) ) {
+            $fRating = round( $fRating, 1 );
+        }
+
+        return $fRating;
+    }
+
+    /**
+     * calculates and return objects rating count
+     *
+     * @param string $sObjectId           object id
+     * @param string $sType               object type
+     * @param array  $aIncludedObjectsIds array of ids
+     *
+     * @return integer
+     */
+    public function getRatingCount( $sObjectId, $sType, $aIncludedObjectsIds = null )
+    {
+        $oDb = oxDb::getDb();
+
+        $sQuerySnipet = '';
+        if ( is_array( $aIncludedObjectsIds ) && count( $aIncludedObjectsIds ) > 0 ) {
+            $sQuerySnipet = " AND ( `oxobjectid` = ".$oDb->quote( $sObjectId ) . " OR `oxobjectid` in ('" .implode("', '", $aIncludedObjectsIds). "') )";
+        } else {
+            $sQuerySnipet = " AND `oxobjectid` = ".$oDb->quote( $sObjectId );
+        }
+
+        $sSelect = "
+            SELECT
+                COUNT(*)
+            FROM `oxreviews`
+            WHERE `oxrating` > 0
+                AND `oxtype` = " . $oDb->quote( $sType )
+               . $sQuerySnipet . "
+            LIMIT 1";
+
+        $iCount = 0;
+        $iCount = $oDb->getOne( $sSelect, false, false );
+
+        return $iCount;
     }
 
 }

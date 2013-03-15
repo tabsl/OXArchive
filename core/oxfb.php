@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: oxfb.php 25467 2010-02-01 14:14:26Z alfonsas $
  */
@@ -31,7 +31,7 @@ try {
     return;
 }
 
-error_reporting($iOldErrorReproting);
+//error_reporting($iOldErrorReproting);
 
 /**
  * Facebook API
@@ -68,7 +68,7 @@ class oxFb extends Facebook
         $aFbConfig["secret"] = $oConfig->getConfigParam( "sFbSecretKey" );
         $aFbConfig["cookie"] = true;
 
-        parent::__construct( $aFbConfig );
+        BaseFacebook::__construct( $aFbConfig );
     }
 
     /**
@@ -111,19 +111,80 @@ class oxFb extends Facebook
         }
 
         $this->_blIsConnected = false;
+        $oUser = $this->getUser();
 
-        $oSession = $this->getSession();
+        if (!$oUser) {
+            $this->_blIsConnected = false;
+            return $this->_blIsConnected;
+        }
 
-        if ( $oSession ) {
-            try {
-              if ( $this->getUser() ) {
-                    $this->_blIsConnected = true;
-              }
-            } catch (FacebookApiException $e) {
-                $this->_blIsConnected = false;
-            }
+        $this->_blIsConnected = true;
+        try {
+            $this->api('/me');
+        } catch (FacebookApiException $e) {
+            $this->_blIsConnected = false;
         }
 
         return $this->_blIsConnected;
+    }
+
+    /**
+     * Provides the implementations of the inherited abstract
+     * methods.  The implementation uses PHP sessions to maintain
+     * a store for authorization codes, user ids, CSRF states, and
+     * access tokens.
+     *
+     * @param string $key   Session key
+     * @param string $value Session value
+     *
+     * @return null
+     */
+    protected function setPersistentData($key, $value)
+    {
+        if (!in_array($key, self::$kSupportedKeys)) {
+            self::errorLog('Unsupported key passed to setPersistentData.');
+            return;
+        }
+
+        $sSessionVarName = $this->constructSessionVariableName($key);
+        oxSession::getInstance()->setVar($sSessionVarName, $value);
+    }
+
+    /**
+     * GET session value
+     *
+     * @param string $key     Session key
+     * @param boot   $default Default value, if session key not found
+     *
+     * @return string Session value / default
+     */
+    protected function getPersistentData($key, $default = false)
+    {
+        if (!in_array($key, self::$kSupportedKeys)) {
+            self::errorLog('Unsupported key passed to getPersistentData.');
+            return $default;
+        }
+
+        $sSessionVarName = $this->constructSessionVariableName($key);
+        return (oxSession::getInstance()->hasVar($sSessionVarName) ?
+            oxSession::getInstance()->getVar($sSessionVarName) : $default);
+    }
+
+    /**
+     * Remove session parameter
+     *
+     * @param string $key Session param key
+     *
+     * @return null
+     */
+    protected function clearPersistentData($key)
+    {
+        if (!in_array($key, self::$kSupportedKeys)) {
+            self::errorLog('Unsupported key passed to clearPersistentData.');
+            return;
+        }
+
+        $sSessionVarName = $this->constructSessionVariableName($key);
+        oxSession::getInstance()->deleteVar($sSessionVarName);
     }
 }

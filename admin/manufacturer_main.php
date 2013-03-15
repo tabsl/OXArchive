@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: manufacturer_main.php 39910 2011-11-14 08:38:40Z arvydas.vapsva $
+ * @version   SVN: $Id: manufacturer_main.php 40193 2011-11-23 15:44:57Z linas.kukulskis $
  */
 
 /**

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlinks.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxlinks.php 42403 2012-02-22 14:30:06Z mindaugas.rimgaila $
  */
 
 /**
@@ -29,13 +29,6 @@
  */
 class oxLinks extends oxI18n
 {
-    /**
-     * Object core table name
-     *
-     * @var string
-     */
-    protected $_sCoreTbl = 'oxlinks';
-
     /**
      * Current class name
      *
@@ -51,7 +44,7 @@ class oxLinks extends oxI18n
     public function __construct()
     {
         parent::__construct();
-        $this->init( $this->_sCoreTbl );
+        $this->init('oxlinks');
     }
 
     /**

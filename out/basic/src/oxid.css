@@ -513,7 +513,7 @@ a.rss{display:block;position:absolute;right:0;bottom:0; width:14px;height:14px; 
 
 #body .product.details .tocart {float: left; margin-top:2px; margin-right: 40px; }
 
-#body .product.details .socialbookmarks {padding-top:1em;}
+#body .product.details .socialbookmarks {padding-top:1em;height:30px;}
 #body .product.details a.sbookmarks {border-right:1px solid #e2e2e2; height: 20px; display:block; float:left; padding: 0px 3px 0px 3px; margin: 0px;}
 #body .product.details a.sbookmarks.noborder {border:none; height: 20px; display:block; float:left; padding: 0px 3px 0px 3px; margin: 0px;}
 
@@ -663,6 +663,7 @@ a.rss{display:block;position:absolute;right:0;bottom:0; width:14px;height:14px; 
 #body .useroptboxbig {border:1px solid #555555; border-top: none; width:248px;height:310px;margin:0 5px 10px 5px;padding:5px 15px;position:relative; font-size: 12px;}
 #body .useroptbox .link {font-size: 10px;}
 #body .useroptbox .err {margin-bottom: 10px; font-size: 10px;}
+#body .useroptbox .errorMsg {color: #F90;}
 
 /* payment step */
 #body .paymentboxhead, #body .thankyouboxhead {margin-top: 5px;}
@@ -884,3 +885,25 @@ div.fbMsg.on.popup .popupFooter { position: absolute; bottom: 10px; left: 10px; 
 .promotionsRow .promotionCurrent .promoTimeout {font-weight:600;}
 
 .psLoginPlainBox {position: absolute; width: 580px; left: 50%; margin-left: -290px; padding: 5px 0; background: #eee; border: 1px solid #ddd;}
+
+/* fb enable */
+#body a.fbEnableLink {display: inline-block; text-transform: uppercase; padding: 30px 0 15px 0; font-size: 12px; font-weight: bold; color: #2c5e97;}
+#body .fbEnableDesc {margin-bottom: 35px; font-size: 11px; color: #555;}
+#body .fbEnableDesc a {line-height: 25px; color: #2c5e97;}
+#body a.fbEnableLink, .fbEnableDesc {margin-left: 20px;}
+.popupBox {position: absolute;border: 1px solid #c1c1c1;padding: 10px;display: none;}
+.popupBox img.closePop {position: absolute;right: 7px;top: 7px;cursor: pointer;}
+.FXgradGreyLight{background: #d1d8db url(../bg/svg/grad_grey-light.svg);background: -moz-linear-gradient(#fff, #d1d8db);background: -ms-linear-gradient(#fff, #d1d8db);background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#d1d8db));background: -webkit-linear-gradient(#fff, #d1d8db);background: -o-linear-gradient(#fff, #d1d8db);background: linear-gradient(#fff, #d1d8db);}
+.glowShadow{-moz-box-shadow: 1px 1px 9px 1px #000;-webkit-box-shadow: 1px 1px 9px 2px #000;box-shadow: 1px 1px 9px 2px #000;}
+.fbInfoPopup a {color: #1D7E96;}
+.fbEnableButton {height:18px;width:80px;border: 1px solid #c8d5e6;text-align: left;margin-right: 10px;}
+.fbEnableButton:hover {border-color: #9dacce;}
+#body .fbEnableButton a {font-size: 10px;}
+.fbEnableButton a {display: block;float: left;line-height: 18px;background: url(../img/facebook_icon.png) no-repeat 3px 3px;padding: 0px 0px 0px 21px;font-size: 10px;text-transform: uppercase;color: #2c5e97;}
+.fbEnableButton a:hover {text-decoration: none;}
+.fbEnableButton a.helpText {float: left;background: none;border-left: 1px solid #c8d5e6;margin-left: 5px;padding: 0 4px;}
+.fbEnableButton a.helpText:hover {background: #d7e3f1;-webkit-border-top-right-radius: 4px;-webkit-border-bottom-right-radius: 4px;-moz-border-radius-topright: 4px;-moz-border-radius-bottomright: 4px;border-top-right-radius: 4px;border-bottom-right-radius: 4px;}
+.popupBox img.closePop {position: absolute;right: 7px;top: 7px;cursor: pointer;}
+.FXgradGreyLight{background: #d1d8db url(../bg/svg/grad_grey-light.svg);background: -moz-linear-gradient(#fff, #d1d8db);background: -ms-linear-gradient(#fff, #d1d8db);background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#d1d8db));background: -webkit-linear-gradient(#fff, #d1d8db);background: -o-linear-gradient(#fff, #d1d8db);background: linear-gradient(#fff, #d1d8db);}
+.glowShadow{-moz-box-shadow: 1px 1px 9px 1px #000;-webkit-box-shadow: 1px 1px 9px 2px #000;box-shadow: 1px 1px 9px 2px #000;}
+.fbInfoPopup a {color: #1D7E96;}

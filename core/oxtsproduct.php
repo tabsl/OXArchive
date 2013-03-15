@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: oxactions.php 28344 2010-06-15 11:32:21Z sarunas $
  */
@@ -142,9 +142,11 @@ class oxTsProduct extends oxSuperCfg
 
                     $oPrice = oxNew( 'oxPrice' );
                     $oPrice->setPrice( $dPrice );
-                    if ( $oConfig->getConfigParam( 'blCalcVATForPayCharge' ) ) {
-                        $oPrice->setVat( $dVat );
-                    }
+                    // VAT will be always calculated (#3757)
+                    // blCalcVATForPayCharge option is @deprecated since 2012-03-23 in version 4.6
+                    // blShowVATForPayCharge option will be used only for displaying
+                    $oPrice->setVat( $dVat );
+
                     $this->_oPrice = $oPrice;
                 }
             }

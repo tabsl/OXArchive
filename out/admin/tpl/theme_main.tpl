@@ -1,4 +1,4 @@
-[{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign}]
+[{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign box="box"}]
 
 <form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
     [{ $oViewConf->getHiddenSid() }]
@@ -8,7 +8,7 @@
 </form>
 
 [{if $oTheme}]
-<table cellspacing="10" width="100%">
+<table cellspacing="10" width="98%">
     <tr>
         <td width="20%" valign="top"><img src="[{ $oViewConf->getBaseDir() }]/out/[{$oTheme->getInfo('id')}]/[{$oTheme->getInfo('thumbnail')}]" hspace="20" vspace="10"></td>
         <td width="50%" valign="top">
@@ -46,7 +46,7 @@
                         <input type="hidden" name="updatelist" value="1">
                         <input type="hidden" name="oxid" value="[{$oTheme->getInfo('id')}]">
                         <input type="submit" value="[{ oxmultilang ident="THEME_ACTIVATE" }]">
-                        <p>
+                        </p>
                     </form>
                 [{else}]
                     <div class="error">[{ oxmultilang ident=$_sError }]</div>
@@ -57,4 +57,5 @@
 </table>
 [{/if}]
 
+[{include file="bottomnaviitem.tpl"}]
 [{include file="bottomitem.tpl"}]

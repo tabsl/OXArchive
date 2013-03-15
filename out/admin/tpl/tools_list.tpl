@@ -38,29 +38,27 @@ window.onload = function ()
     <br>
     <table cellspacing="0" cellpadding="0" border="0" width="100%" class="editnavigation">
     [{foreach from=$aQueries key=key item=query}]
-    [{ assign var="sQuery"        value=$aQueries.$key}]
-    [{ assign var="sAffectedRows" value=$aAffectedRows.$key}]
-    [{ assign var="sErrorMsg"     value=$aErrorMessages.$key}]
-    [{ assign var="iErrorNum"     value=$aErrorNumbers.$key}]
-    [{ if $sQuery }]
-    <tr valign="top"><td>[{ oxmultilang ident="TOOLS_LIST_SQLQUERY" }] ([{$key+1}]) : </td><td>[{ $sQuery|oxwordwrap:100:"<br>":true }]</td></tr>
-    [{/if}]
-    [{ if $sAffectedRows }]
-    <tr><td colspan="2"><br></td></tr>
-    <tr valign="top"><td>[{ oxmultilang ident="TOOLS_LIST_AFFECTEDROWS" }] : </td><td>[{ $sAffectedRows }]</td></tr>
-    [{/if}]
-    [{ if $sErrorMsg }]
-    <tr><td colspan="2"><br></td></tr>
-    <tr valign="top"><td>[{ oxmultilang ident="TOOLS_LIST_ERRORMESSAGE" }] : </td><td>[{ $sErrorMsg }]</td></tr>
-    [{/if}]
-    [{ if $iErrorNum }]
-    <tr><td colspan="2"><br></td></tr>
-    <tr valign="top"><td>[{ oxmultilang ident="TOOLS_LIST_ERRORNUM" }] : </td><td>[{ $iErrorNum }]</td></tr>
-    [{/if}]
-    <tr><td colspan="2"><hr></td></tr>
+        [{ assign var="sQuery"        value=$aQueries.$key}]
+        [{ assign var="sAffectedRows" value=$aAffectedRows.$key}]
+        [{ assign var="sErrorMsg"     value=$aErrorMessages.$key}]
+        [{ assign var="iErrorNum"     value=$aErrorNumbers.$key}]
+        [{ if $sQuery }]
+        <tr valign="top"><td>[{ oxmultilang ident="TOOLS_LIST_SQLQUERY" }] ([{$key+1}]) : </td><td>[{ $sQuery|oxwordwrap:100:"<br>":true }]</td></tr>
+        [{/if}]
+        [{ if $sAffectedRows }]
+        <tr><td colspan="2"><br></td></tr>
+        <tr valign="top"><td>[{ oxmultilang ident="TOOLS_LIST_AFFECTEDROWS" }] : </td><td>[{ $sAffectedRows }]</td></tr>
+        [{/if}]
+        [{ if $sErrorMsg }]
+        <tr><td colspan="2"><br></td></tr>
+        <tr valign="top"><td>[{ oxmultilang ident="TOOLS_LIST_ERRORMESSAGE" }] : </td><td>[{ $sErrorMsg }]</td></tr>
+        [{/if}]
+        [{ if $iErrorNum }]
+        <tr><td colspan="2"><br></td></tr>
+        <tr valign="top"><td>[{ oxmultilang ident="TOOLS_LIST_ERRORNUM" }] : </td><td>[{ $iErrorNum }]</td></tr>
+        [{/if}]
+        <tr><td colspan="2"><hr></td></tr>
     [{/foreach}]
-
-    </tr>
     </table>
 
 </div>

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: object_seo.php 38325 2011-08-22 12:30:00Z arvydas.vapsva $
+ * @version   SVN: $Id: object_seo.php 44135 2012-04-20 15:06:35Z linas.kukulskis $
  */
 
 /**
@@ -127,7 +127,7 @@ class Object_Seo extends oxAdminDetails
         $sQ = "select oxfixed from oxseo where
                    oxseo.oxobjectid = ".oxDb::getDb()->quote( $this->getEditObjectId() )." and
                    oxseo.oxshopid = '{$iShopId}' and oxseo.oxlang = {$iLang} and oxparams = '' ";
-        return (bool) oxDb::getDb()->getOne( $sQ );
+        return (bool) oxDb::getDb()->getOne( $sQ, false, false );
     }
 
     /**

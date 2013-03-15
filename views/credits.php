@@ -16,37 +16,49 @@
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @link      http://www.oxid-esales.com
- * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: payment_overview.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: details.php 42113 2012-02-09 15:05:26Z linas.kukulskis $
  */
 
 /**
- * Class for extending
- * @package admin
+ * Special page for Credits
+ * @package main
  */
-class Payment_Overview extends oxAdminDetails
+class Credits extends Content
 {
     /**
-     * Executes parent method parent::render(), creates oxpayment object and
-     * passes it to Smarty engine, returns name of template file
-     * "payment_overview.tpl".
+     * Content id.
+     * @var string
+     */
+    protected $_sContentId = "oxcredits";
+
+    /**
+     * Returns active content id to load its seo meta info
      *
      * @return string
      */
-    public function render()
+    protected function _getSeoObjectId()
     {
-        parent::render();
+        return $this->getContentId();
+    }
 
-        $soxId = $this->getEditObjectId();
-        if ( $soxId != "-1" && isset( $soxId)) {
-            // load object
-            $oPayment = oxNew( "oxpayment" );
-            $oPayment->load( $soxId);
-            $this->_aViewData["edit"] =  $oPayment;
+    /**
+     * Template variable getter. Returns active content
+     *
+     * @return object
+     */
+    public function getContent()
+    {
+        if ( $this->_oContent === null ) {
+            $this->_oContent = false;
+            $oContent = oxNew( 'oxcontent' );
+            if ( $oContent->loadCredits( $this->getContentId() ) ) {
+                $this->_oContent = $oContent;
+            }
         }
 
-        return "payment_overview.tpl";
+        return $this->_oContent;
     }
 }

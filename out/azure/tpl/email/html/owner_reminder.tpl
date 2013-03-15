@@ -22,7 +22,7 @@
     [{foreach from=$articles item=oProduct}]
     <tr valign="top">
         <td style="padding: 5px; border-bottom: 1px solid #ddd;">
-            <img src="[{$oProduct->getThumbnailUrl()}]" border="0" hspace="0" vspace="0" alt="[{ $oProduct->oxarticles__oxtitle->value|strip_tags }]" align="texttop">
+            <img src="[{$oProduct->getThumbnailUrl(false)}]" border="0" hspace="0" vspace="0" alt="[{ $oProduct->oxarticles__oxtitle->value|strip_tags }]" align="texttop">
         </td>
         <td style="padding: 5px; border-bottom: 1px solid #ddd;">
             <p style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; margin: 0;">

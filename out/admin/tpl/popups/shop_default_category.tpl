@@ -47,7 +47,7 @@
             var aSelRows= YAHOO.oxid.container1.getSelectedRows();
             if ( aSelRows.length ) {
                 oParam = YAHOO.oxid.container1.getRecord(aSelRows[0]);
-                sRequest = '&oxcatid=' + oParam._oData._2;
+                sRequest = '&oxcatid=' + oParam._oData._3;
             }
             YAHOO.util.Connect.asyncRequest( 'GET', '[{ $oViewConf->getAjaxLink() }]&cmpid=container1&container=shop_default_category&fnc=assignCat&oxid=[{ $oxid }]'+sRequest, callback );
 

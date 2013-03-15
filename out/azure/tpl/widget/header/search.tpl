@@ -1,4 +1,5 @@
 [{block name="widget_header_search_form"}]
+[{if $oView->showSearch() }]
     [{oxscript include="js/widgets/oxinnerlabel.js" priority=10 }]
     [{oxscript add="$( '#searchParam' ).oxInnerLabel();"}]
     <form class="search" action="[{ $oViewConf->getSelfActionLink() }]" method="get" name="search">
@@ -12,4 +13,5 @@
             <input class="searchSubmit" type="submit" value="">
         </div>
     </form>
+[{/if}]
 [{/block}]

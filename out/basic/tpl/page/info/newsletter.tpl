@@ -4,7 +4,9 @@
 [{if $oView->getNewsletterStatus() == 4 || !$oView->getNewsletterStatus()}]
 <strong id="test_stayInformedHeader" class="boxhead">[{ oxmultilang ident="NEWSLETTER_STAYINFORMED" }]</strong>
 <div class="box info">
-  [{ oxcontent ident="oxnewstlerinfo" }]
+  [{oxifcontent ident="oxnewstlerinfo" object="oCont"}]
+      [{ $oCont->oxcontents__oxcontent->value }]
+  [{/oxifcontent}]
   [{assign var="aRegParams" value=$oView->getRegParams()}]
     <form action="[{ $oViewConf->getSslSelfLink() }]" method="post">
       <div>

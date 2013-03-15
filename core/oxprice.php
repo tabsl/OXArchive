@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxprice.php 43232 2012-03-28 07:29:41Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxprice.php 44094 2012-04-19 15:16:08Z mindaugas.rimgaila $
  */
 
 /**
@@ -400,6 +400,9 @@ class oxPrice extends oxSuperCfg
 
     /**
      * Calculates price depending on price entering mode.
+     * Round only displayed price to the user, other leave as accurate as possible:
+     *    in Brutto mode: round Brutto price before calculations;
+     *    in Netto mode: round Brutto price after calculations;
      *
      * @access protected
      *
@@ -409,10 +412,11 @@ class oxPrice extends oxSuperCfg
     {
         if ( $this->_blNetPriceMode ) {
             $this->_dBrutto = self::netto2Brutto($this->_dNetto, $this->_dVat);
+            $this->_dBrutto = oxUtils::getInstance()->fRound($this->_dBrutto);
         } else {
+            $this->_dBrutto = oxUtils::getInstance()->fRound($this->_dBrutto);
             $this->_dNetto  = self::brutto2Netto($this->_dBrutto, $this->_dVat);
         }
-        $this->_dBrutto = oxUtils::getInstance()->fRound($this->_dBrutto);
     }
 
     /**

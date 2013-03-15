@@ -14,4 +14,4 @@
     [{/if}]
     [{ insert name="oxid_tracker"}]
 [{/capture}]
-[{include file="layout/page.tpl" sidebar="Right"}]
+[{include file="layout/page.tpl" sidebar="Left"}]

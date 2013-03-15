@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: start.php 37949 2011-08-04 10:38:08Z linas.kukulskis $
+ * @version   SVN: $Id: start.php 42212 2012-02-13 13:29:39Z linas.kukulskis $
  */
 
 /**
@@ -163,7 +163,7 @@ class Start extends oxUBase
         if ( !$sMeta &&
             $this->getConfig()->getConfigParam( 'bl_perfLoadAktion' ) &&
             $oArt = $this->getFirstArticle() ) {
-            $oDescField = $oArt->getArticleLongDesc();
+            $oDescField = $oArt->getLongDescription();
             $sMeta = $oArt->oxarticles__oxtitle->value . ' - ' . $oDescField->value;
         }
         return parent::_prepareMetaDescription( $sMeta, $iLength, $blDescTag );
@@ -184,7 +184,7 @@ class Start extends oxUBase
         if ( !$sKeywords &&
             $this->getConfig()->getConfigParam( 'bl_perfLoadAktion' ) &&
             $oArt = $this->getFirstArticle() ) {
-            $oDescField = $oArt->getArticleLongDesc();
+            $oDescField = $oArt->getLongDescription();
             $sKeywords = $oDescField->value;
         }
 

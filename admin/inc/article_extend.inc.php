@@ -19,17 +19,19 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_extend.inc.php 43523 2012-04-04 11:42:11Z mindaugas.rimgaila $
+ * @version   SVN: $Id: article_extend.inc.php 44134 2012-04-20 14:55:19Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
                                         array( 'oxtitle', 'oxcategories', 1, 1, 0 ),
                                         array( 'oxdesc',  'oxcategories', 1, 1, 0 ),
+                                        array( 'oxid',    'oxcategories', 0, 0, 0 ),
                                         array( 'oxid',    'oxcategories', 0, 0, 1 )
                                         ),
                      'container2' => array(
                                         array( 'oxtitle', 'oxcategories', 1, 1, 0 ),
                                         array( 'oxdesc',  'oxcategories', 1, 1, 0 ),
+                                        array( 'oxid',    'oxcategories', 0, 0, 0 ),
                                         array( 'oxid',    'oxobject2category', 0, 0, 1 ),
                                         array( 'oxtime',  'oxobject2category', 0, 0, 1 ),
                                         array( 'oxid',    'oxcategories',      0, 0, 1 )
@@ -176,7 +178,7 @@ class ajaxComponent extends ajaxListComponent
 
                 // check, if it's already in, then don't add it again
                 $sSelect = "select 1 from " . $sO2CView . " as oxobject2category where oxobject2category.oxcatnid= " . $oDb->quote( $sAdd ) . " and oxobject2category.oxobjectid = " . $oDb->quote( $soxId ) . " ";
-                if ( $oDb->getOne( $sSelect ) )
+                if ( $oDb->getOne( $sSelect, false, false ) )
                     continue;
 
                 $oNew->setId( $myUtilsObj->generateUID() );

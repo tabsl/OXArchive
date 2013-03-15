@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account.php 39729 2011-11-03 14:40:37Z arvydas.vapsva $
+ * @version   SVN: $Id: account.php 39812 2011-11-05 09:30:32Z linas.kukulskis $
  */
 
 /**

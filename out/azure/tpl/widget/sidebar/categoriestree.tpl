@@ -16,7 +16,7 @@
                 [{/if }]
                 [{* subcategories *}]
                 <li class="[{if !$oContentCat && $act && $act->getId()==$_cat->getId() }]active[{elseif $_cat->expanded}]exp[{/if}][{if !$_cat->hasVisibleSubCats}] end[{/if}]">
-                    <a href="[{$_cat->getLink()}]"><i></i>[{$_cat->oxcategories__oxtitle->value}] [{ if $oView->showCategoryArticlesCount() && ($_cat->getNrOfArticles() > 0) }] ([{$_cat->getNrOfArticles()}])[{/if}]</a>
+                    <a href="[{$_cat->getLink()}]"><i><span></span></i>[{$_cat->oxcategories__oxtitle->value}] [{ if $oView->showCategoryArticlesCount() && ($_cat->getNrOfArticles() > 0) }] ([{$_cat->getNrOfArticles()}])[{/if}]</a>
                     [{if $_cat->getSubCats() && $_cat->expanded}]
                         <ul>[{fun name="tree" categories=$_cat->getSubCats() }]</ul>
                     [{/if}]

@@ -24,18 +24,21 @@
 
     oxSlider = {
             options: {
-                width                  : 940,
+                width                : 940,
                 height               : 220,
                 autoPlay             : true,
-                classPanel             : '.panel',
-                classStartStop         : '.start-stop',
-                classPromotionText     : '.promoBox',
-                classNavigation        : '.thumbNav',
+                delay				 : 6700,
+                animationTime 		 : 2700,
+                startStopped		 : false,
+                classPanel           : '.panel',
+                classStartStop       : '.start-stop',
+                classPromotionText   : '.promoBox',
+                classNavigation      : '.thumbNav',
                 classForwardArrow    : '.forward',
-                classBackArrow        : '.back',
-                classAnythingSlider    : '.anythingSlider',
-                classThumbNav        : '.thumbNav',
-                classAnythingControls    : '.anythingControls',
+                classBackArrow       	: '.back',
+                classAnythingSlider  	: '.anythingSlider',
+                classThumbNav        	: '.thumbNav',
+                classAnythingControls	: '.anythingControls',
                 elementLi             : 'li',
                 eventMouseover        : "mouseover",
                 eventMouseout        : "mouseout",
@@ -60,9 +63,9 @@
                         width               : options.width,
                         height              : options.height,
                         autoPlay            : options.autoPlay,
-                        startStopped        : false,
-                        delay               : 6700,
-                        animationTime       : 2700,
+                        startStopped        : options.startStopped,
+                        delay               : options.delay,
+                        animationTime       : options.animationTime,
                         navigationFormatter : function(i, panel){
                             return aNavigationTabs[i - 1];
                         }

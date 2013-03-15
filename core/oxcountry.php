@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcountry.php 40930 2012-01-03 11:30:10Z linas.kukulskis $
+ * @version   SVN: $Id: oxcountry.php 43718 2012-04-11 07:05:05Z linas.kukulskis $
  */
 
 
@@ -92,7 +92,7 @@ class oxCountry extends oxI18n
     }
 
     /**
-     * Returns caountry id by code
+     * Returns country id by code
      *
      * @param string $sCode country code
      *
@@ -100,6 +100,7 @@ class oxCountry extends oxI18n
      */
     public function getIdByCode( $sCode )
     {
-        return oxDb::getDb()->getOne( "select oxid from oxcountry where oxisoalpha2 = ?", array( $sCode ) );
+        $oDb = oxDb::getDb();
+        return $oDb->getOne( "select oxid from oxcountry where oxisoalpha2 = " . $oDb->quote( $sCode ) );
     }
 }

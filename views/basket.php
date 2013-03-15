@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: basket.php 35590 2011-05-25 12:16:54Z vilma $
+ * @version   SVN: $Id: basket.php 35809 2011-06-03 08:03:39Z linas.kukulskis $
  */
 
 /**

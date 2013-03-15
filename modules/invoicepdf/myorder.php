@@ -19,7 +19,7 @@
  * @package   modules
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: myorder.php 45644 2012-05-24 08:39:05Z vaidas.matulevicius $
+ * @version   SVN: $Id: myorder.php 43676 2012-04-10 13:25:25Z linas.kukulskis $
  */
 
 /**
@@ -1231,30 +1231,5 @@ class MyOrder extends MyOrder_parent
     public function getSelectedLang()
     {
         return $this->_iSelectedLang;
-    }
-
-    /**
-     * Assigns data, stored in oxorderarticles to oxorder object .
-     *
-     * @param bool $blStorno Include canceled articles
-     *
-     * @return null
-     */
-    public function getOrderArticles( $blStorno = false )
-    {
-        if ( $this->_oArticles == null ) {
-            // order articles
-            $this->_oArticles = oxNew( 'oxlist' );
-            $this->_oArticles->init( 'oxorderarticle' );
-
-            $sSelect = 'select oxorderarticles.* from oxorderarticles where oxorderarticles.oxorderid="'.$this->getId().'"';
-            if ( $blStorno ) {
-                $sSelect.= ' and oxstorno = 0';
-            }
-            $sSelect.= ' order by oxorderarticles.oxartid';
-            $this->_oArticles->selectString( $sSelect );
-        }
-
-        return $this->_oArticles;
     }
 }

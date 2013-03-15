@@ -1,4 +1,4 @@
-[{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign}]
+[{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign box="box"}]
 
 <script type="text/javascript">
 <!--
@@ -43,6 +43,7 @@ function _groupExp(el) {
     [{foreach from=$var_grouping item=var_list key=var_group}]
         <div class="groupExp">
             <div>
+            [{block name="admin_theme_config_form"}]
                 <a href="#" onclick="_groupExp(this);return false;" class="rc"><b>[{ oxmultilang ident="SHOP_THEME_GROUP_`$var_group`" }]</b></a>
                 [{foreach from=$var_list item=var_type key=theme_var}]
                     <dl>
@@ -71,6 +72,7 @@ function _groupExp(el) {
                         <div class="spacer"></div>
                     </dl>
                 [{/foreach}]
+             [{/block}]
              </div>
          </div>
     [{/foreach}]

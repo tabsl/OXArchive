@@ -41,8 +41,8 @@
 [{assign var="blWhite" value="2"}]
 [{/if}]
 [{/foreach}]
-</table>
 </form>
+</table>
 
 
 [{include file="bottomnaviitem.tpl"}]

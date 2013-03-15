@@ -25,7 +25,7 @@
         <tt class="identifier" id="test_no_[{$testid}]">
             [{if $product->getPricePerUnit()}]
                 <div id="test_product_price_unit_[{$testid}]" class="pperunit">
-                    [{$product->oxarticles__oxunitquantity->value}] [{$product->oxarticles__oxunitname->value}] | [{$product->getPricePerUnit()}] [{ $currency->sign}]/[{$product->oxarticles__oxunitname->value}]
+                    [{$product->oxarticles__oxunitquantity->value}] [{$product->getUnitName()}] | [{$product->getPricePerUnit()}] [{ $currency->sign}]/[{$product->getUnitName()}]
                 </div>
             [{elseif $product->oxarticles__oxweight->value  }]
                 <span class="type" title="weight">[{ oxmultilang ident="INC_PRODUCTITEM_ARTWEIGHT" }]</span>
@@ -68,7 +68,7 @@
                 <sub class="only">[{ oxmultilang ident="DETAILS_NOWONLY" }]</sub>
             [{/if}]
             [{if $product->getFPrice()}]
-              <big class="price">[{ $product->getFPrice() }] [{ $currency->sign}]</big><sup class="dinfo"><a href="#delivery_link" rel="nofollow">*</a></sup>
+              <big class="price">[{ $product->getFPrice() }] [{ $currency->sign}]</big><sup class="dinfo"><a href="#delivery_link" rel="nofollow">[{ if !$product->isNotBuyable() && !$product->hasMdVariants() && !$blDisableToCart }]*[{/if}]</a></sup>
             [{else}]
               <big>&nbsp;</big>
             [{/if}]
@@ -113,21 +113,21 @@
 
         [{if $product->hasMdVariants() }]
             <select id="mdVariant_[{$testid}]" name="mdVariant_[{$testid}]">
-            [{if !$product->isParentNotBuyable()}]
-              <option value="[{$product->getId()}]">[{ $product->oxarticles__oxvarselect->value }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $product->getFPrice() }] [{ $currency->sign|strip_tags}]*[{/oxhasrights}]</option>
+            [{if !$product->isParentNotBuyable() && $product->getFPrice() }]
+              <option value="[{$product->getLink()}]">[{ $product->oxarticles__oxvarselect->value }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $product->getFPrice() }] [{ $currency->sign|strip_tags}]* [{/oxhasrights}]</option>
             [{/if}]
 
             [{foreach from=$product->getMdSubvariants() item=mdVariant}]
-              <option value="[{$mdVariant->getLink()}]?[{$oViewConf->getNavUrlParams()}]">[{ $mdVariant->getName() }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $mdVariant->getFPrice()|strip_tags }]* [{/oxhasrights}]</option>
+              <option value="[{$mdVariant->getLink()}]?[{$oViewConf->getNavUrlParams()}]">[{ $mdVariant->getName() }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{if $mdVariant->getFPrice() }] [{ $mdVariant->getFPrice()|strip_tags }]* [{/if }] [{/oxhasrights}]</option>
             [{/foreach}]
             </select>
         [{else}]
             <select id="varSelect_[{$testid}]" name="aid">
-            [{ if !$product->isParentNotBuyable()}]
-                <option value="[{$product->getId()}]">[{ $product->oxarticles__oxvarselect->value }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $product->getFPrice() }] [{ $currency->sign|strip_tags}]*[{/oxhasrights}]</option>
+            [{ if !$product->isParentNotBuyable() && $product->getFPrice() }]
+                <option value="[{$product->getId()}]">[{ $product->oxarticles__oxvarselect->value }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $product->getFPrice() }] [{ $currency->sign|strip_tags}]* [{/oxhasrights}]</option>
             [{/if}]
             [{foreach from=$product->getVariantList() item=variant}]
-                <option value="[{$variant->getId()}]">[{ $variant->oxarticles__oxvarselect->value }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $variant->getFPrice() }] [{ $currency->sign|strip_tags}]* [{/oxhasrights}]</option>
+                <option value="[{$variant->getId()}]">[{ $variant->oxarticles__oxvarselect->value }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{if $variant->getFPrice() }] [{ $variant->getFPrice() }] [{ $currency->sign|strip_tags}]* [{/if }] [{/oxhasrights}]</option>
             [{/foreach}]
             </select>
         [{/if}]
@@ -148,7 +148,7 @@
     [{if $size!='big'}] [{$smarty.capture.product_price}] [{/if}]
 
     [{oxhasrights ident="TOBASKET"}]
-        [{ if !$product->isNotBuyable() && !$product->hasMdVariants() }]
+        [{ if !$product->isNotBuyable() && !$product->hasMdVariants() && !$blDisableToCart }]
 
         [{if $size=='thin' || $size=='thinest'}]
         <div class="amount">
@@ -159,7 +159,7 @@
         [{/if}]
     [{/oxhasrights}]
 
-    [{if $product->hasMdVariants() }]
+    [{if $product->hasMdVariants() || $blDisableToCart }]
     <span class="btn moreinfo">
         <a id="test_variantMoreInfo_[{$testid}]" class="" href="[{ $_productLink }]" onclick="oxid.mdVariants.getMdVariantUrl('mdVariant_[{$testid}]'); return false;">[{ oxmultilang ident="INC_PRODUCT_VARIANTS_MOREINFO" }]</a>
     </span>

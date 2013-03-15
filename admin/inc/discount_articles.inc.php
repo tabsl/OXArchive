@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: discount_articles.inc.php 39182 2011-10-12 13:18:54Z arvydas.vapsva $
+ * @version   SVN: $Id: discount_articles.inc.php 39304 2011-10-13 08:35:28Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident

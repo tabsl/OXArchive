@@ -49,7 +49,6 @@
                 <dl [{if $nrCol == 1}]class="first"[{/if}]>
                     <dt>[{ oxmultilang ident=$menuitem->getAttribute('name')|default:$menuitem->getAttribute('id') }]</dt>
                     <dd>
-                        [{ oxmultilang ident="HOME_EXPLAIN" }]
                         <ul>
                         [{strip}]
                         [{foreach from=$menuitem->childNodes item=submenuitem }]

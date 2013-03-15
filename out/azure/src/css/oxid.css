@@ -780,6 +780,13 @@ a.viewAllHover,
     line-height: 100px;
 }
 
+.box .featured.icon{
+    border-bottom: 2px solid #58b3ca;
+    overflow: hidden;
+    height: auto;
+    min-height: 100px;
+}
+
 .box .featured img {
     vertical-align: middle;
 }
@@ -1103,6 +1110,7 @@ h3.blockHead {
     margin-top: 20px;
     border-bottom: 5px solid #eceff0;
     color: #000;
+    line-height:20px;
 }
 
 
@@ -1193,6 +1201,9 @@ h3.lightHead {
     margin-bottom: 20px;
 }
 
+.tabbedWidgetBox {
+    min-height:50px;
+}
 .widgetBoxBottomRound {
     margin-top: -1px;
 }
@@ -1202,6 +1213,8 @@ h3.lightHead {
     position: relative;
     margin-top: 0;
 }
+
+
 
 .widgetBox h4, .widgetBoxBottomRound h4 {
     color: #515353;
@@ -1454,8 +1467,6 @@ a.submitButton {
     color: #b4b8b8;
 }
 
-
-
 .loginForm,.altLoginBox{
     border: 1px solid #c1c1c1;
     padding: 1px 11px 5px 11px;
@@ -1500,6 +1511,10 @@ a.submitButton {
 
 .loginForm .textbox {
   width: 128px;
+}
+
+.loginForm .textbox:focus {
+    color: #333;
 }
 
 .loginForm .passwordbox {
@@ -1768,7 +1783,7 @@ div.searchBox input.textbox:focus {
 }
 
 #footer .bar {color:#000; padding:10px 10px 10px 20px; border-bottom:1px solid #3799B1; height:20px;}
-#footer .bar .facebook {float: left;}
+#footer .bar .facebook {float: left; margin-right:5px;}
 #footer .bar .deliveryinfo {float: right;}
 #footer .bar .deliveryinfo a {font-size:10px; color:#515353;}
 
@@ -2302,7 +2317,7 @@ a.tagText img{
 }
 
 
-/* --- Modal Popap -------------------- */
+/* --- Modal Popup -------------------- */
 
 .popupBox {
     position: absolute;
@@ -2325,9 +2340,22 @@ a.tagText img{
     width: 318px;
     position: absolute;
     z-index: 111;
-    right: 10px;
+    right: 5px;
     top: 10px;
     padding: 7px 0 10px 0;
+}
+
+.basketFlyout img.basket {
+    position: absolute;
+    right: 4px;
+    z-index: 12;
+    top:26px;
+}
+
+.basketFlyout .counter {
+    right: 32px;
+    z-index: 13;
+    top:23px;
 }
 
 .basketFlyout .title {
@@ -2335,6 +2363,10 @@ a.tagText img{
     padding-bottom: 7px;
     display: block;
     margin: 0;
+}
+
+.basketFlyout .title .note {
+    color: #EC6105;
 }
 
 .basketFlyout .functions {
@@ -2422,7 +2454,7 @@ a.tagText img{
 .basketFlyout img.closePop {
     float:right;
     cursor:pointer;
-    margin: 0 10px 0 0;
+    margin: 0 6px 0 0;
 }
 
 .basketFlyout hr {
@@ -2441,17 +2473,19 @@ a.tagText img{
     width: 250px;
 }
 
-.basketItems {
-    width: 250px;
-    height:230px;
-    oveflow:hidden;
-}
-
 .scrollable .scrollbarBox {
     height: 200px;
     width:  265px;
     overflow: hidden;
 }
+
+.scrollable .basketItems {
+    width: 250px;
+    min-height:230px;
+    overflow:hidden;
+}
+
+
 
 /* --- Side Bar category tree ------------------------------ */
 #sidebar .tree {
@@ -2463,14 +2497,43 @@ a.tagText img{
     margin: 0;
 }
 
-.tree li {
+#sidebar .tree li {
     list-style: none;
     padding: 0;
+    background: #ddd;
 }
 
-#sidebar .tree li.active {
-    background:#fff;
+#sidebar .tree li.active li {
+    list-style: none;
+    padding: 0;
+    background: #fff;
 }
+
+#sidebar .tree ul li a  {
+    padding-left: 5px;
+    color: #333;
+}
+
+#sidebar .tree li.exp>a, #sidebar .tree li.active>a {
+    position: relative;
+}
+
+#sidebar .tree ul li.active li a  {
+    color: #000;
+}
+
+#sidebar .tree ul li.active li a:hover  {
+    color: #fff;
+}
+
+#sidebar .tree ul li ul li a  {
+    padding-left: 15px;
+}
+
+#sidebar .tree ul li ul li ul li a  {
+    padding-left: 30px;
+}
+
 
 #sidebar .tree a  {
     border-bottom:1px solid #999;
@@ -2478,13 +2541,34 @@ a.tagText img{
     padding:5px;
     line-height: 17px;
 }
+
 #sidebar .tree a>i {
     width:14px;
     height: 14px;
-    background: url('../bg/categorysprite.png') left 0 no-repeat;
+    background: url('../bg/categorysprite.png') left top no-repeat;
     float:left;
     padding:0;
     margin:2px 5px 2px 0;
+}
+
+#sidebar .tree li.exp>a>i span, #sidebar .tree li.active>a>i span {
+    width:14px;
+    height: 14px;
+    position: absolute;
+    bottom: -14px;
+    z-index: 20;
+}
+
+#sidebar .tree li.exp>a>i span {
+    background: url('../bg/arrows-cat-exp-blue.png') no-repeat;
+}
+
+#sidebar .tree li.active>a>i span {
+    background: url('../bg/arrows-cat-exp-orange.png') no-repeat;
+}
+
+#sidebar .tree li.end>a>i span {
+    background: none;
 }
 
 #sidebar .tree a:hover {
@@ -2514,11 +2598,11 @@ a.tagText img{
 }
 
 #sidebar .tree li.active>a>i {
-    background-position: left -30px;
+    background-position: 1px -30px;
 }
 
 #sidebar .tree li.exp>a {
-    background: #389cb4 url(../bg/svg/grad_blue.svg);
+    background: #18778e url(../bg/svg/grad_blue.svg);
     background: -moz-linear-gradient(#adefff, #389cb4, #18778e);
     background: -ms-linear-gradient(#defff, #389cb4, #18778e);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #adefff), color-stop(50%, #389cb4), color-stop(100%, #18778e));
@@ -2528,8 +2612,13 @@ a.tagText img{
     color:#fff;
 }
 
+#sidebar .tree li.active>a, #sidebar .tree li.exp>a {
+    box-shadow: 0 3px 5px -2px #555555;
+    border-bottom: none;
+}
+
 #sidebar .tree li.exp>a>i {
-    background-position: left -60px;
+    background-position: 1px -61px;
 }
 
 #sidebar .tree li.end>a>i {
@@ -2729,11 +2818,11 @@ a.tagText img{
 .dropDown p span.asc,
 .dropDown p span.desc {
     padding-right: 15px;
-    background: url(../../img/arrow-updown.png) no-repeat 100% 3px;
+    background: url(../../img/arrow-updown.png) no-repeat 100% -39px;
 }
 
 .dropDown li.desc span, .dropDown p span.desc {
-    background-position: 100% -39px;
+    background-position: 100% 3px;
 }
 
 /* --- Pager ------------------------- */
@@ -2914,6 +3003,7 @@ a.next {
     width: 646px;
     margin-bottom: 10px;
     background:#fff;
+    z-index: 99999;
 }
 
 .wrappingComment label {
@@ -3048,6 +3138,10 @@ a.next {
     padding: 9px 10px 10px 10px;
     margin: 20px 0;
     background:#d9dfe1 url(../../img/line-innershadow.png) no-repeat 0 0;
+}
+
+.lineBox p.errorMsg {
+    color: #ff0000;
 }
 
 .couponBox {
@@ -3356,7 +3450,7 @@ a.fb_button_simple {
 
 .tobasketFunction .selector {
     position: relative;
-    z-index:20;
+    z-index:14;
 }
 
 .selector {
@@ -3515,7 +3609,7 @@ a.fb_button_simple {
 }
 
 .information .tobasket{
-    position: absolute; bottom:5px;
+    bottom:5px;
 }
 
 /* --- Ratings ---------------------------- */
@@ -3662,6 +3756,41 @@ dl.review .param {
     float: left;
     width: 50%;
 }
+/* --- Account Downloads ------------------------ */
+.downloadList {
+    margin: 0;
+    padding: 0;
+    line-height: 18px;
+}
+
+.downloadList li {
+    padding: 15px 10px;
+    list-style: none;
+    border-top: 5px solid #eceff0;
+}
+
+.downloadList li:first-child {
+    border: 0;
+    padding-top: 0;
+}
+
+.downloadList dd {
+    padding: 3px 0;
+}
+
+.downloadList dt {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 3px;
+    display: block;
+    font-weight: 400;
+    margin-bottom: 7px;
+}
+
+.downloadList dt strong {
+    font-size: 18px;
+    display: block;
+}
+
 /* --- Account Order List ----------------------- */
 .orderList {
     margin: 0;
@@ -3781,55 +3910,69 @@ dl.review .param {
     float: left;
 }
 
+.form .oxDate select {
+    float:left;
+    width:100px;
+}
+
+.form .oxDate .innerLabel {
+     margin-top: 1px;
+     text-transform: none;
+}
+
 .form input[type="password"],
 .form input[type="text"] {
     width: 190px;
 }
 
-.form input[field="xsmall"] {
+.form input[data-fieldsize="xsmall"] {
     width: 25px;
 }
 
-.form input[field="small"] {
+.form input[data-fieldsize="small"] {
     width: 52px;
 }
 
-.form input[field="medium"] {
+.form input[data-fieldsize="small"] {
+    width: 52px;
+}
+
+.form input[data-fieldsize="medium"] {
     width: 86px;
 }
 
-.form input[field="xsmall"] + input[field="pair-xsmall"],
-.form input[field="xsmall"] + css3-container + input[field="pair-xsmall"],
+.form input[data-fieldsize="xsmall"] + input[data-fieldsize="pair-xsmall"],
+.form input[data-fieldsize="xsmall"] + css3-container + input[data-fieldsize="pair-xsmall"],
 
-.form input[field="pair-xsmall"] + input[field="xsmall"],
-.form input[field="pair-xsmall"] + css3-container + input[field="xsmall"],
+.form input[data-fieldsize="pair-xsmall"] + input[data-fieldsize="xsmall"],
+.form input[data-fieldsize="pair-xsmall"] + css3-container + input[data-fieldsize="xsmall"],
 
-.form input[field="small"] + input[field="pair-small"],
-.form input[field="small"] + css3-container + input[field="pair-small"],
+.form input[data-fieldsize="small"] + input[data-fieldsize="pair-small"],
+.form input[data-fieldsize="small"] + css3-container + input[data-fieldsize="pair-small"],
 
-.form input[field="small"] + input[field="small"],
-.form input[field="small"] + css3-container + input[field="small"],
+.form input[data-fieldsize="small"] + input[data-fieldsize="small"],
+.form input[data-fieldsize="small"] + css3-container + input[data-fieldsize="small"],
 
-.form input[field="medium"] + input[field="medium"],
-.form input[field="medium"] + css3-container + input[field="medium"] {
+.form input[data-fieldsize="medium"] + input[data-fieldsize="medium"],
+.form input[data-fieldsize="medium"] + css3-container + input[data-fieldsize="medium"] {
     margin-left: 5px;
 }
 
-.form input[field="xsmall"] + .form input,
-.form input[field="xsmall"] + css3-container + .form input {
+.form input[data-fieldsize="xsmall"] + .form input,
+.form input[data-fieldsize="xsmall"] + css3-container + .form input {
     margin-left: 10px;
     margin-right: 0;
 }
 
-.form input[field="pair-xsmall"] {
+.form input[data-fieldsize="pair-xsmall"] {
     width: 148px;
 }
 
-.form input[field="pair-small"] {
+.form input[data-fieldsize="pair-small"] {
     width: 121px;
 }
 
-.form input[field="verify"] {
+.form input[data-fieldsize="verify"] {
     width: 103px;
 }
 
@@ -3860,6 +4003,19 @@ span.verificationCode {
     width: 90px;
     padding-right: 5px;
     line-height: 18px;
+}
+
+.form .underInput {
+    padding: 5px 0px;
+    margin-left:140px;
+}
+
+.form .underInput.short {
+    margin-left:90px;
+}
+
+.form label.tooltip{
+    background:url(../../img/help-icon.png) 95% center no-repeat;
 }
 
 .form li.checkFields {
@@ -3932,13 +4088,17 @@ span.verificationCode {
     clear: both;
 }
 
-
 label.innerLabel{
   display:block;
   position:absolute;
   color:#B4B8B8;
   margin: 3px 0 0 5px;
   font-weight: normal;
+  text-transform: uppercase;
+}
+
+label.innerLabel.textArea{
+  text-transform: none;
 }
 
 .oxValidateError {
@@ -4495,7 +4655,18 @@ a.sliderHover {
 
 .wishlistSearch {
     float:left;
-    width:360px;
+}
+
+.wishlistSearch .form {
+    width: 100%;
+}
+
+.wishlistSearch .form li {
+    width: 100%;
+}
+
+.wishlistSearch .form label {
+    width: auto;
 }
 
 .wishlistPublish .form label {
@@ -4548,7 +4719,7 @@ a.sliderHover {
 .accountDashboardView .col {
    float: left;
    width: 374px;
-   height: 230px;
+   height: 250px;
  /* padding-right: 20px; */
 }
 
@@ -4716,7 +4887,7 @@ td.alignTop{
 .errorBox a:hover {color:#666;}
 .errorBox .errHead {background: #D81F01; color: #fff; padding: 5px 15px;}
 .errorBox .errBody {border: 1px solid #D81F01; padding: 15px;}
-.errorBox .stackTrace { font-size: 11px; color #000; font-weight: normal; margin: 10px 0; padding: 10px 0; border-top: 2px solid #EED8D2}
+.errorBox .stackTrace { font-size: 11px; color: #000; font-weight: normal; margin: 10px 0; padding: 10px 0; border-top: 2px solid #EED8D2}
 
 
 /* --- article box ------------------------ */
@@ -4746,7 +4917,7 @@ li.articleImage{
 }
 
 div.information .selectorsBox {
-    margin-bottom: 85px;
+    margin-bottom: 55px;
 }
 
 .selectorsBox .dropDown {
@@ -4770,7 +4941,7 @@ div.information .selectorsBox {
 .variantReset {
     padding-bottom: 10px;
     font-size: 11px;
-    margin-top: -82px;
+    margin-top: -55px;
 }
 
 .variantReset label {
@@ -4849,7 +5020,8 @@ div.agbButton  {
     float:right;
 }
 
-.agb a {
+
+.agb a, .cmsContent p a {
     color: #1d7e96;
 }
 
@@ -4936,3 +5108,32 @@ a.fbEnableLink {
 a.fbEnableLink, .fbEnableDesc {
     margin-left: 20px;
 }
+
+a.downloadableFile {
+    color: #1d7e96;
+    text-decoration: underline;
+    background: url(../bg/download.png) left center no-repeat;
+    padding:5px 0 5px 25px;
+}
+
+a.downloadableFile:hover {
+    color: #ec6105;
+    text-decoration: none;
+}
+
+a.downloadableFile.pending {
+    color: #909090;
+    text-decoration: none;
+    background: url(../bg/download-pending.png) left center no-repeat;
+    padding:5px 0 5px 25px;
+}
+.variantMessage{
+    color: #e70404;
+    display: block;
+    padding-bottom: 5px;
+}
+.selectMessage{
+    color: #e70404;
+}
+
+

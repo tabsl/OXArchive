@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlang.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
+ * @version   SVN: $Id: oxlang.php 43354 2012-03-29 14:57:06Z vilma $
  */
 
 /**
@@ -28,7 +28,7 @@
 class oxLang extends oxSuperCfg
 {
     /**
-     * oxUtilsCount instance.
+     * oxLang instance.
      *
      * @var oxlang
      */
@@ -97,6 +97,12 @@ class oxLang extends oxSuperCfg
      */
     protected $_aLangMap = array();
 
+    /**
+     * Active module Ids and paths array
+     *
+     * @var array
+     */
+    protected $_aActiveModuleInfo = null;
 
     /**
      * resturns a single instance of this class
@@ -249,6 +255,7 @@ class oxLang extends oxSuperCfg
                 $this->_iEditLanguageId = $this->getBaseLanguage();
             } else {
 
+                $iLang = null;
                 // choosing language ident
                 // check if we really need to set the new language
                 if ( "saveinnlang" == $this->getConfig()->getActiveView()->getFncName() ) {
@@ -480,8 +487,6 @@ class oxLang extends oxSuperCfg
      */
     public function translateString( $sStringToTranslate, $iLang = null, $blAdminMode = null )
     {
-        $myConfig = $this->getConfig();
-
         // checking if in cash exist
         $aLang = $this->_getLangTranslationArray( $iLang, $blAdminMode );
         if ( isset( $aLang[$sStringToTranslate] ) ) {
@@ -489,7 +494,7 @@ class oxLang extends oxSuperCfg
         }
 
         // checking if in map exist
-        $aMap = $this->_getLanguageMap( $iLang );
+        $aMap = $this->_getLanguageMap( $iLang, $blAdminMode );
         if ( isset( $aLang[$aMap[$sStringToTranslate]] ) ) {
             return $aLang[$aMap[$sStringToTranslate]];
         }
@@ -509,6 +514,63 @@ class oxLang extends oxSuperCfg
             }
 
         return $sStringToTranslate;
+    }
+
+    /**
+     * Iterates through given array ($aData) and collects data if array key is similar as
+     * searchable key ($sKey*). If you pass $aCollection, it will be appended with found items
+     *
+     * @param array  $aData       array to search in
+     * @param string $sKey        key to look for (looking for similar with strpos)
+     * @param array  $aCollection array to append found items [optional]
+     *
+     * @return array
+     */
+    protected function _collectSimilar( $aData, $sKey, $aCollection = array() )
+    {
+        foreach ( $aData as $sValKey => $sValue ) {
+            if ( strpos( $sValKey, $sKey ) === 0 ) {
+                $aCollection[$sValKey] = $sValue;
+            }
+        }
+
+        return $aCollection;
+    }
+
+    /**
+     * Returns array( "MY_TRANSLATION_KEY" => "MY_TRANSLATION_VALUE", ... ) by
+     * given filter "MY_TRANSLATION_" from language files
+     *
+     * @param string $sKey    key to look
+     * @param int    $iLang   language files to search [optional]
+     * @param bool   $blAdmin admin/non admin mode [optional]
+     *
+     * @return array
+     */
+    public function getSimilarByKey( $sKey, $iLang = null, $blAdmin = null )
+    {
+        startProfile("getSimilarByKey");
+
+        $iLang   = isset( $iLang ) ? $iLang : $this->getTplLanguage();
+        $blAdmin = isset( $blAdmin ) ? $blAdmin : $this->isAdmin();
+
+        // checking if in cash exist
+        $aLang = $this->_getLangTranslationArray( $iLang, $blAdmin );
+        $aSimilarConst = $this->_collectSimilar( $aLang, $sKey );
+
+        // checking if in map exist
+        $aMap = $this->_getLanguageMap( $iLang, $blAdminMode );
+        $aSimilarConst = $this->_collectSimilar( $aMap, $sKey, $aSimilarConst );
+
+        // checking if in theme options exist
+        if ( count( $this->_aAdditionalLangFiles ) ) {
+            $aLang = $this->_getLangTranslationArray( $iLang, $blAdminMode, $this->_aAdditionalLangFiles);
+            $aSimilarConst = $this->_collectSimilar( $aLang, $sKey, $aSimilarConst );
+        }
+
+        stopProfile("getSimilarByKey");
+
+        return $aSimilarConst;
     }
 
     /**
@@ -640,18 +702,26 @@ class oxLang extends oxSuperCfg
     /**
      * Goes through language array and recodes its values. Returns recoded data
      *
-     * @param array  $aLangArray language data
-     * @param string $sCharset   charset which was used while making file
+     * @param array  $aLangArray   language data
+     * @param string $sCharset     charset which was used while making file
+     * @param bool   $blRecodeKeys leave keys untouched or recode it
      *
      * @return array
      */
-    protected function _recodeLangArray( $aLangArray, $sCharset )
+    protected function _recodeLangArray( $aLangArray, $sCharset, $blRecodeKeys = false )
     {
+        $aLangs = array();
         foreach ( $aLangArray as $sKey => $sValue ) {
-            $aLangArray[$sKey] = iconv( $sCharset, 'UTF-8', $sValue );
+            $sItemKey = $sKey;
+            if ($blRecodeKeys === true) {
+                $sItemKey = iconv($sCharset, 'UTF-8', $sItemKey);
+            }
+
+            $aLangs[$sItemKey] = iconv( $sCharset, 'UTF-8', $sValue );
+            unset($aLangArray[$sKey]);
         }
 
-        return $aLangArray;
+        return $aLangs;
     }
 
     /**
@@ -672,9 +742,9 @@ class oxLang extends oxSuperCfg
         $sTheme         = $myConfig->getConfigParam( "sTheme" );
         $sCustomTheme   = $myConfig->getConfigParam( "sCustomTheme" );
         $sShopId        = $myConfig->getShopId();
+        $aModuleInfo    = $this->_getActiveModuleInfo();
 
         if ( $blAdmin ) {
-
             // admin lang files
             $sAdminPath = $sOutDir . 'admin/' . $sLang . '/';
             $aLangFiles[] = $sAdminPath . "lang.php";
@@ -688,6 +758,19 @@ class oxLang extends oxSuperCfg
             $aTmpFiles = glob( $sThemePath );
             if ( is_array( $aTmpFiles ) && count( $aTmpFiles ) ) {
                 $aLangFiles = array_merge( $aLangFiles, $aTmpFiles);
+            }
+
+            //load admin modules lang files
+            if ( is_array( $aModuleInfo ) ) {
+                foreach ( $aModuleInfo as $sPath ) {
+                    $aModuleFiles = glob( $myConfig->getModulesDir().$sPath.'/out/admin/' . $sLang . '/*_lang.php' );
+                    if ( is_array( $aModuleFiles ) && count( $aModuleFiles ) ) {
+                        $aLangFiles = array_merge( $aLangFiles, $aModuleFiles );
+                    }
+
+                    //load admin modules options lang files
+                    $aLangFiles[] = $myConfig->getModulesDir().$sPath.'/out/admin/' . $sLang . '/module_options.php';
+                }
             }
 
             return count( $aLangFiles ) ? $aLangFiles : false;
@@ -744,9 +827,13 @@ class oxLang extends oxSuperCfg
         }
 
         //modules language files
-        $aModuleFiles = glob(getShopBasePath().'/modules/*/out/lang/' . $sLang . '/*_lang.php');
-        if (is_array($aModuleFiles) && count($aModuleFiles)) {
-            $aLangFiles = array_merge( $aLangFiles, $aModuleFiles );
+        if ( is_array( $aModuleInfo ) ) {
+            foreach ( $aModuleInfo as $sPath ) {
+                $aModuleFiles = glob( $myConfig->getModulesDir() . $sPath . '/out/lang/' . $sLang . '/*_lang.php');
+                if (is_array($aModuleFiles) && count($aModuleFiles)) {
+                    $aLangFiles = array_merge( $aLangFiles, $aModuleFiles );
+                }
+            }
         }
 
         return count( $aLangFiles ) ? $aLangFiles : false;
@@ -793,6 +880,8 @@ class oxLang extends oxSuperCfg
         if ( !$aLangCache && $aLangFiles ) {
             $aLangCache = array();
             $sBaseCharset = false;
+            $aLang = array();
+            $aLangSeoReplaceChars = array();
             foreach ( $aLangFiles as $sLangFile ) {
 
                 if ( file_exists( $sLangFile ) && is_readable( $sLangFile ) ) {
@@ -805,8 +894,16 @@ class oxLang extends oxSuperCfg
                         if ( $myConfig->isUtf() ) {
                             $aLang = $this->_recodeLangArray( $aLang, $aLang['charset'] );
 
+                            if (isset($aSeoReplaceChars) && is_array($aSeoReplaceChars)) {
+                                $aSeoReplaceChars = $this->_recodeLangArray( $aSeoReplaceChars, $aLang['charset'], true );
+                            }
+
                             // overriding charset
                             $aLang['charset'] = 'UTF-8';
+                        }
+
+                        if (isset($aSeoReplaceChars) && is_array($aSeoReplaceChars)) {
+                            $aLangSeoReplaceChars = array_merge($aLangSeoReplaceChars, $aSeoReplaceChars);
                         }
 
                         if ( !$sBaseCharset ) {
@@ -823,6 +920,9 @@ class oxLang extends oxSuperCfg
                 $aLangCache['charset'] = $sBaseCharset;
             }
 
+            // special character replacement list
+            $aLangCache['_aSeoReplaceChars'] = $aLangSeoReplaceChars;
+
             //save to cache
             $myUtils->setLangCache( $sCacheName, $aLangCache );
         }
@@ -833,25 +933,28 @@ class oxLang extends oxSuperCfg
     /**
      * Returns language map array
      *
-     * @param int $iLang language index
+     * @param int  $iLang   language index
+     * @param bool $blAdmin admin mode [default NULL]
      *
      * @return array
      */
-    protected function _getLanguageMap( $iLang )
+    protected function _getLanguageMap( $iLang, $blAdmin = null )
     {
-        if ( !isset($this->_aLangMap[$iLang]) ) {
-            $this->_aLangMap[$iLang] = array();
+        $blAdmin = isset( $blAdmin ) ? $blAdmin : $this->isAdmin();
+        $sKey = $iLang . ( (int) $blAdmin );
+        if ( !isset( $this->_aLangMap[$sKey] ) ) {
+            $this->_aLangMap[$sKey] = array();
             $myConfig = $this->getConfig();
-            $sMapFile = $myConfig->getOutDir() . '/' . $myConfig->getConfigParam( "sTheme" ) .'/' . oxLang::getInstance()->getLanguageAbbr( $iLang ) . '/map.php';
+            $sMapFile = $myConfig->getOutDir() . '/' .  ( $blAdmin ? 'admin' : $myConfig->getConfigParam( "sTheme" ) ) .'/' . oxLang::getInstance()->getLanguageAbbr( $iLang ) . '/map.php';
             if ( $sMapFile ) {
                 if ( file_exists( $sMapFile ) && is_readable( $sMapFile ) ) {
                     include $sMapFile;
-                    $this->_aLangMap[$iLang] = $aMap;
+                    $this->_aLangMap[$sKey] = $aMap;
                 }
             }
         }
 
-        return $this->_aLangMap[$iLang];
+        return $this->_aLangMap[$sKey];
     }
 
     /**
@@ -1103,4 +1206,44 @@ class oxLang extends oxSuperCfg
 
         return $aTables;
     }
+
+    /**
+     * Get SEO spec. chars replacement list for current language
+     *
+     * @param int $iLang language ID
+     *
+     * @return null
+     */
+    public function getSeoReplaceChars($iLang)
+    {
+        // compatibility: check for global settings
+        $aGlobalSeoReplaceChars = $this->getConfig()->getConfigParam('aSeoReplaceChars');
+        if (!is_array($aGlobalSeoReplaceChars)) {
+            $aGlobalSeoReplaceChars = array();
+        }
+
+        // get language replace chars
+        $aSeoReplaceChars = $this->translateString('_aSeoReplaceChars', $iLang);
+        if (!is_array($aSeoReplaceChars)) {
+            $aSeoReplaceChars = array();
+        }
+
+        $aSeoReplaceChars = array_merge($aGlobalSeoReplaceChars, $aSeoReplaceChars);
+        return $aSeoReplaceChars;
+    }
+
+    /**
+     * Returns active module Ids
+     *
+     * @return array
+     */
+    protected function _getActiveModuleInfo()
+    {
+        if ($this->_aActiveModuleInfo === null) {
+            $oModulelist = oxNew('oxmodulelist');
+            $this->_aActiveModuleInfo = $oModulelist->getActiveModuleInfo();
+        }
+        return $this->_aActiveModuleInfo;
+    }
+
 }

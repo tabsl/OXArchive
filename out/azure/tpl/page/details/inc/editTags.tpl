@@ -19,7 +19,7 @@
         <input type="hidden" id="tagsInput" name="highTags">
         <input type="hidden" name="fnc" value="addTags">
         <label for="newTags">[{oxmultilang ident="PAGE_DETAILS_TAGS_ADD"}]</label>
-        <input class="input" type="text" name="newTags" id="newTags">
+        <input class="input" type="text" name="newTags" id="newTags" maxlength="[{$oCloudManager->getTagMaxLength()}]">
         <button class="submitButton" id="saveTag" type="submit" title="[{oxmultilang ident="PAGE_DETAILS_TAGS_SUBMIT"}]">[{oxmultilang ident="PAGE_DETAILS_TAGS_SUBMIT"}]</button>
         <button class="submitButton" id="cancelTag" type="submit" title="[{oxmultilang ident="PAGE_DETAILS_TAGS_SUBMIT"}]">[{oxmultilang ident="PAGE_DETAILS_TAGS_CANCEL"}]</button>
     </div>

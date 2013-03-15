@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: vendorlist.php 38568 2011-09-05 12:25:37Z arvydas.vapsva $
+ * @version   SVN: $Id: vendorlist.php 44119 2012-04-20 12:23:13Z alfonsas $
  */
 
 /**
@@ -234,9 +234,9 @@ class VendorList extends aList
     }
 
     /**
-     * Template variable getter. Returns active object's reviews
+     * Returns if vendor has visible subcats and load them.
      *
-     * @return array
+     * @return bool
      */
     public function hasVisibleSubCats()
     {
@@ -255,7 +255,7 @@ class VendorList extends aList
     }
 
     /**
-     * Template variable getter. Returns active object's reviews
+     * Returns vendor subcategories
      *
      * @return array
      */
@@ -271,7 +271,7 @@ class VendorList extends aList
     }
 
     /**
-     * Template variable getter. Returns active object's reviews
+     * Get vendor article list
      *
      * @return array
      */
@@ -292,7 +292,7 @@ class VendorList extends aList
     }
 
     /**
-     * Template variable getter. Returns template location
+     * Return vendor title
      *
      * @return string
      */
@@ -433,10 +433,10 @@ class VendorList extends aList
     {
         $aPaths = array();
 
-        $oCatTree = $this->getVendorTree()->getPath();
+        $oCatTree = $this->getVendorTree();
 
         if ( $oCatTree ) {
-            foreach ( $oCatTree as $oCat ) {
+            foreach ( $oCatTree->getPath() as $oCat ) {
                 $aCatPath = array();
 
                 $aCatPath['link'] = $oCat->getLink();

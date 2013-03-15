@@ -24,10 +24,10 @@
                 <input type="hidden" name="attrfilter[[{ $sAttrID }]]" value="[{$oFilterAttr->getActiveValue()}]">
                 <ul class="drop FXgradGreyLight shadow">
                     [{if $oFilterAttr->getActiveValue() }]
-                        <li><a rel="" href="#">[{ oxmultilang ident="WIDGET_PRODUCT_ATTRIBUTES_PLEASECHOOSE" }]</a></li>
+                        <li><a data-seletion-id="" href="#">[{ oxmultilang ident="WIDGET_PRODUCT_ATTRIBUTES_PLEASECHOOSE" }]</a></li>
                     [{/if}]
                     [{foreach from=$oFilterAttr->getValues() item=sValue}]
-                        <li><a rel="[{ $sValue }]" href="#" [{if $oFilterAttr->getActiveValue() == $sValue }]class="selected"[{/if}] >[{ $sValue }]</a></li>
+                        <li><a data-seletion-id="[{ $sValue }]" href="#" [{if $oFilterAttr->getActiveValue() == $sValue }]class="selected"[{/if}] >[{ $sValue }]</a></li>
                     [{/foreach}]
                 </ul>
             </div>

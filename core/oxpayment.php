@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxpayment.php 39192 2011-10-12 13:25:31Z arvydas.vapsva $
+ * @version   SVN: $Id: oxpayment.php 43743 2012-04-11 07:52:36Z linas.kukulskis $
  */
 
 /**
@@ -96,12 +96,32 @@ class oxPayment extends oxI18n
     protected $_iPaymentError = null;
 
     /**
+     * Payment VAT config
+     *
+     * @var bool
+     */
+    protected $_blPaymentVatOnTop = false;
+
+    /**
      * Class constructor, initiates parent constructor (parent::oxI18n()).
      */
     public function __construct()
     {
+        $this->setPaymentVatOnTop( $this->getConfig()->getConfigParam( 'blPaymentVatOnTop' ) );
         parent::__construct();
         $this->init( 'oxpayments' );
+    }
+
+    /**
+     * Payment VAT config setter
+     *
+     * @param bool $blOnTop Payment vat config
+     *
+     * @return null
+     */
+    public function setPaymentVatOnTop( $blOnTop )
+    {
+        $this->_blPaymentVatOnTop = $blOnTop;
     }
 
     /**
@@ -253,10 +273,18 @@ class oxPayment extends oxI18n
 
         // calculating total price
         $oPrice = oxNew( 'oxPrice' );
-        $oPrice->setBruttoPriceMode();
+        if ( !$this->_blPaymentVatOnTop ) {
+            $oPrice->setBruttoPriceMode();
+        } else {
+            $oPrice->setNettoPriceMode();
+        }
+
         $oPrice->setPrice( $dPrice );
 
-        if ( $this->getConfig()->getConfigParam( 'blCalcVATForPayCharge' ) && $dPrice > 0 ) {
+        // VAT will be always calculated(#3757)
+        // blCalcVATForPayCharge option is @deprecated since 2012-03-23 in version 4.6
+        // blShowVATForPayCharge option will be used only for displaying
+        if ( $dPrice > 0 ) {
             $oPrice->setVat( $oBasket->getMostUsedVatPercent() );
         }
 
@@ -274,7 +302,7 @@ class oxPayment extends oxI18n
             $oDb = oxDb::getDb();
             $this->_aCountries = array();
             $sSelect = 'select oxobjectid from oxobject2payment where oxpaymentid='.$oDb->quote( $this->getId() ).' and oxtype = "oxcountry" ';
-            $rs = $oDb->execute( $sSelect );
+            $rs = $oDb->select( $sSelect );
             if ( $rs && $rs->recordCount()) {
                 while ( !$rs->EOF ) {
                     $this->_aCountries[] = $rs->fields[0];

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: user_payment.php 39898 2011-11-14 08:35:38Z arvydas.vapsva $
+ * @version   SVN: $Id: user_payment.php 40181 2011-11-23 15:42:54Z linas.kukulskis $
  */
 
 /**

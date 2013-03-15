@@ -83,7 +83,7 @@
         //
         YAHOO.oxid.container2.subscribe( "rowSelectEvent", function( oParam )
         {
-            var sOxid = oParam.record._oData._3;
+            var sOxid = oParam.record._oData._4;
 
             if ( YAHOO.oxid.container3 != null && ( !YAHOO.oxid.container3._lastRecord || YAHOO.oxid.container3._lastRecord != oParam.record ) ) {
                 resetSortingContainer();

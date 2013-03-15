@@ -21,11 +21,13 @@
 
 [{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_ORDERNOMBER" }] [{ $order->oxorder__oxordernr->value }]
 
-[{foreach from=$order->getOrderArticles() item=oOrderArticle}]
+[{foreach from=$order->getOrderArticles(true) item=oOrderArticle}]
 [{ $oOrderArticle->oxorderarticles__oxamount->value }] [{ $oOrderArticle->oxorderarticles__oxtitle->getRawValue() }] [{ $oOrderArticle->oxorderarticles__oxselvariant->getRawValue() }]
 [{/foreach}]
 
 [{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_YUORTEAM1" }] [{ $shop->oxshops__oxname->getRawValue() }] [{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_YUORTEAM2" }]
+
+[{if $order->getShipmentTrackingUrl()}][{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_SHIPMENTTRACKING" }] [{ $order->getShipmentTrackingUrl()}][{/if}]
 
 [{if $oViewConf->showTs("ORDERCONFEMAIL") && $oViewConf->getTsId() }]
 [{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_TS_RATINGS_RATEUS" }]

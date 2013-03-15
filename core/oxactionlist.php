@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: oxshop.php 25467 2010-02-01 14:14:26Z alfonsas $
  */
@@ -47,7 +47,9 @@ class oxActionList extends oxList
     {
         $sViewName = $this->getBaseObject()->getViewName();
         $sDate = date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() );
-        $sQ = "select * from {$sViewName} where oxtype=2 and oxactive=1 and oxshopid='".$this->getConfig()->getShopId()."' and oxactiveto>0 and oxactiveto < ".oxDb::getDb()->quote($sDate)."
+
+        $oDb = oxDb::getDb();
+        $sQ = "select * from {$sViewName} where oxtype=2 and oxactive=1 and oxshopid='".$this->getConfig()->getShopId()."' and oxactiveto>0 and oxactiveto < ".$oDb->quote($sDate)."
                ".$this->_getUserGroupFilter()."
                order by oxactiveto desc, oxactivefrom desc limit ".(int)$iCount;
         $this->selectString( $sQ );
@@ -66,7 +68,8 @@ class oxActionList extends oxList
         $sViewName = $this->getBaseObject()->getViewName();
         $sDateTo   = date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() );
         $sDateFrom = date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime()-$iTimespan );
-        $sQ = "select * from {$sViewName} where oxtype=2 and oxactive=1 and oxshopid='".$this->getConfig()->getShopId()."' and oxactiveto < ".oxDb::getDb()->quote($sDateTo)." and oxactiveto > ".oxDb::getDb()->quote($sDateFrom)."
+        $oDb = oxDb::getDb();
+        $sQ = "select * from {$sViewName} where oxtype=2 and oxactive=1 and oxshopid='".$this->getConfig()->getShopId()."' and oxactiveto < ".$oDb->quote($sDateTo)." and oxactiveto > ".$oDb->quote($sDateFrom)."
                ".$this->_getUserGroupFilter()."
                order by oxactiveto, oxactivefrom";
         $this->selectString( $sQ );
@@ -81,7 +84,8 @@ class oxActionList extends oxList
     {
         $sViewName = $this->getBaseObject()->getViewName();
         $sDate = date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() );
-        $sQ = "select * from {$sViewName} where oxtype=2 and oxactive=1 and oxshopid='".$this->getConfig()->getShopId()."' and (oxactiveto > ".oxDb::getDb()->quote($sDate)." or oxactiveto=0) and oxactivefrom != 0 and oxactivefrom < ".oxDb::getDb()->quote($sDate)."
+        $oDb = oxDb::getDb();
+        $sQ = "select * from {$sViewName} where oxtype=2 and oxactive=1 and oxshopid='".$this->getConfig()->getShopId()."' and (oxactiveto > ".$oDb->quote($sDate)." or oxactiveto=0) and oxactivefrom != 0 and oxactivefrom < ".$oDb->quote($sDate)."
                ".$this->_getUserGroupFilter()."
                order by oxactiveto, oxactivefrom";
         $this->selectString( $sQ );
@@ -98,7 +102,8 @@ class oxActionList extends oxList
     {
         $sViewName = $this->getBaseObject()->getViewName();
         $sDate = date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() );
-        $sQ = "select * from {$sViewName} where oxtype=2 and oxactive=1 and oxshopid='".$this->getConfig()->getShopId()."' and (oxactiveto > ".oxDb::getDb()->quote($sDate)." or oxactiveto=0) and oxactivefrom > ".oxDb::getDb()->quote($sDate)."
+        $oDb = oxDb::getDb();
+        $sQ = "select * from {$sViewName} where oxtype=2 and oxactive=1 and oxshopid='".$this->getConfig()->getShopId()."' and (oxactiveto > ".$oDb->quote($sDate)." or oxactiveto=0) and oxactivefrom > ".$oDb->quote($sDate)."
                ".$this->_getUserGroupFilter()."
                order by oxactiveto, oxactivefrom limit ".(int)$iCount;
         $this->selectString( $sQ );
@@ -116,7 +121,8 @@ class oxActionList extends oxList
         $sViewName = $this->getBaseObject()->getViewName();
         $sDate = date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() );
         $sDateTo = date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime()+$iTimespan );
-        $sQ = "select * from {$sViewName} where oxtype=2 and oxactive=1 and oxshopid='".$this->getConfig()->getShopId()."' and (oxactiveto > ".oxDb::getDb()->quote($sDate)." or oxactiveto=0) and oxactivefrom > ".oxDb::getDb()->quote($sDate)." and oxactivefrom < ".oxDb::getDb()->quote($sDateTo)."
+        $oDb = oxDb::getDb();
+        $sQ = "select * from {$sViewName} where oxtype=2 and oxactive=1 and oxshopid='".$this->getConfig()->getShopId()."' and (oxactiveto > ".$oDb->quote($sDate)." or oxactiveto=0) and oxactivefrom > ".$oDb->quote($sDate)." and oxactivefrom < ".$oDb->quote($sDateTo)."
                ".$this->_getUserGroupFilter()."
                order by oxactiveto, oxactivefrom";
         $this->selectString( $sQ );

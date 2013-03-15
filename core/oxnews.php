@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxnews.php 44655 2012-05-08 10:33:14Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxnews.php 43511 2012-04-04 07:25:34Z linas.kukulskis $
  */
 
 /**

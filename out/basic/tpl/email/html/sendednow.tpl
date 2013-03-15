@@ -34,11 +34,13 @@
       <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px; background-color: #494949; color: #FFFFFF;" height="15" width="100">
         &nbsp;&nbsp;<b>[{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_PRODUCT" }]</b>
       </td>
+      [{if $blShowReviewLink}]
       <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px; background-color: #494949; color: #FFFFFF;" align="right" width="150">
         [{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_PRODUCTRATING" }]
       </td>
+      [{/if}]
     </tr>
-    [{foreach from=$order->getOrderArticles() item=oOrderArticle}]
+    [{foreach from=$order->getOrderArticles(true) item=oOrderArticle}]
       <tr>
         <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px; padding-top: 10px;" valign="top" align="right">
           [{ $oOrderArticle->oxorderarticles__oxamount->value }]
@@ -47,19 +49,28 @@
           &nbsp;&nbsp;[{ $oOrderArticle->oxorderarticles__oxtitle->value }] [{ $oOrderArticle->oxorderarticles__oxselvariant->value }]
           <br>&nbsp;&nbsp;[{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_ARTNOMBER" }] [{ $oOrderArticle->oxorderarticles__oxartnum->value }]
         </td>
+        [{if $blShowReviewLink}]
         <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px; padding-top: 10px;" valign="top" align="right">
           <a href="[{ $oViewConf->getBaseDir() }]index.php?shp=[{$shop->oxshops__oxid->value}]&amp;anid=[{ $oOrderArticle->oxorderarticles__oxartid->value }]&amp;cl=review&amp;reviewuserhash=[{$reviewuserhash}]" style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px;" target="_blank">[{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_REVIEW" }]</a>
         </td>
+        [{/if}]
       </tr>
     [{/foreach}]
     </table>
+
     <br><br>
+    [{if $order->getShipmentTrackingUrl()}]
+        [{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_SHIPMENTTRACKING" }]
+        <a href="[{$order->getShipmentTrackingUrl()}]" target="_blank" title="[{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_SHIPMENTTRACKING" }]">[{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_SHIPMENTTRACKINGURL" }]</a>
+        <br><br>
+    [{/if}]
     [{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_YUORTEAM1" }] [{ $shop->oxshops__oxname->value }] [{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_YUORTEAM2" }]<br>
     [{if $oViewConf->showTs("ORDERCONFEMAIL") && $oViewConf->getTsId() }]
     <br><br>
+    [{assign var="sTSRatingImg" value="https://www.trustedshops.com/bewertung/widget/img/bewerten_"|cat:$oViewConf->getActLanguageAbbr()|cat:".gif"}]
     [{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_TS_RATINGS_RATEUS" }]<br><br>
     <a href="[{ $oViewConf->getTsRatingUrl() }]" target="_blank" title="[{ oxmultilang ident="TS_RATINGS_URL_TITLE" }]">
-      <img src="https://www.trustedshops.com/bewertung/widget/img/bewerten_de.gif" border="0" alt="[{ oxmultilang ident="TS_RATINGS_BUTTON_ALT" }]" align="middle">
+      <img src="[{$sTSRatingImg}]" border="0" alt="[{ oxmultilang ident="TS_RATINGS_BUTTON_ALT" }]" align="middle">
     </a>
     [{/if}]
     <br><br>

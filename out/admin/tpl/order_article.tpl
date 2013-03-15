@@ -90,43 +90,47 @@ function StornoThisArticle( sID)
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="fnc" value="updateOrder">
 <tr>
-    <td class="listheader first">[{ oxmultilang ident="GENERAL_SUM" }]</td>
-    <td class="listheader" height="15">&nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_ITEMNR" }]</td>
-    <td class="listheader">&nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_TITLE" }]</td>
-    <td class="listheader">&nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_TYPE" }]</td>
-    <td class="listheader">&nbsp;&nbsp;&nbsp;[{ oxmultilang ident="ORDER_ARTICLE_PARAMS" }]</td>
-    <td class="listheader">&nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_SHORTDESC" }]</td>
-    <td class="listheader">[{ oxmultilang ident="ORDER_ARTICLE_ENETTO" }]</td>
-    <td class="listheader">[{ oxmultilang ident="ORDER_ARTICLE_EBRUTTO" }]</td>
-    <td class="listheader">[{ oxmultilang ident="GENERAL_ATALL" }]</td>
-    <td class="listheader" colspan="3">[{ oxmultilang ident="ORDER_ARTICLE_MWST" }]</td>
+    [{block name="admin_order_article_header"}]
+        <td class="listheader first">[{ oxmultilang ident="GENERAL_SUM" }]</td>
+        <td class="listheader" height="15">&nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_ITEMNR" }]</td>
+        <td class="listheader">&nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_TITLE" }]</td>
+        <td class="listheader">&nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_TYPE" }]</td>
+        <td class="listheader">&nbsp;&nbsp;&nbsp;[{ oxmultilang ident="ORDER_ARTICLE_PARAMS" }]</td>
+        <td class="listheader">&nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_SHORTDESC" }]</td>
+        <td class="listheader">[{ oxmultilang ident="ORDER_ARTICLE_ENETTO" }]</td>
+        <td class="listheader">[{ oxmultilang ident="ORDER_ARTICLE_EBRUTTO" }]</td>
+        <td class="listheader">[{ oxmultilang ident="GENERAL_ATALL" }]</td>
+        <td class="listheader" colspan="3">[{ oxmultilang ident="ORDER_ARTICLE_MWST" }]</td>
+    [{/block}]
 </tr>
 [{assign var="blWhite" value=""}]
 [{foreach from=$edit->getOrderArticles() item=listitem name=orderArticles}]
 <tr id="art.[{$smarty.foreach.orderArticles.iteration}]">
-    [{ if $listitem->oxorderarticles__oxstorno->value == 1 }]
-        [{assign var="listclass" value=listitem3 }]
-    [{else}]
-        [{assign var="listclass" value=listitem$blWhite }]
-    [{/if}]
-    <td valign="top" class="[{ $listclass}]">[{ if $listitem->oxorderarticles__oxstorno->value != 1 && !$listitem->isBundle() }]<input type="text" name="aOrderArticles[[{$listitem->getId()}]][oxamount]" value="[{ $listitem->oxorderarticles__oxamount->value }]" class="listedit">[{else}][{ $listitem->oxorderarticles__oxamount->value }][{/if}]</td>
-    <td valign="top" class="[{ $listclass}]" height="15">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:editThis('[{ $listitem->oxarticles__oxid->value}]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxartnum->value }]</a></td>
-    <td valign="top" class="[{ $listclass}]">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:editThis('[{ $listitem->oxarticles__oxid->value }]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxtitle->value|oxtruncate:20:""|strip_tags }]</a></td>
-    <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxselvariant->value }]</td>
-    <td valign="top" class="[{ $listclass}]">
-        [{ if $listitem->getPersParams() }]
-            [{foreach key=sVar from=$listitem->getPersParams() item=aParam}]
-                     &nbsp;&nbsp;,&nbsp;<em>[{$sVar}] : [{$aParam}]</em>
-            [{/foreach}]
+    [{block name="admin_order_article_listitem"}]
+        [{ if $listitem->oxorderarticles__oxstorno->value == 1 }]
+            [{assign var="listclass" value=listitem3 }]
+        [{else}]
+            [{assign var="listclass" value=listitem$blWhite }]
         [{/if}]
-    </td>
-    <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxshortdesc->value|oxtruncate:20:""|strip_tags }]</td>
-    <td valign="top" class="[{ $listclass}]">[{ $listitem->getNetPriceFormated() }] <small>[{ $edit->oxorder__oxcurrency->value }]</small></td>
-    <td valign="top" class="[{ $listclass}]">[{ $listitem->getBrutPriceFormated() }] <small>[{ $edit->oxorder__oxcurrency->value }]</small></td>
-    <td valign="top" class="[{ $listclass}]">[{ $listitem->getTotalBrutPriceFormated() }] <small>[{ $edit->oxorder__oxcurrency->value }]</small></td>
-    <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxvat->value}]</td>
-    <td valign="top" class="[{ $listclass}]">[{if !$listitem->isBundle()}]<a href="Javascript:DeleteThisArticle('[{ $listitem->oxorderarticles__oxid->value }]');" class="delete" [{if $readonly }]onclick="JavaScript:return false;"[{/if}] [{include file="help.tpl" helpid=item_delete}]></a>[{/if}]</td>
-    <td valign="top" class="[{ $listclass}]">[{if !$listitem->isBundle()}]<a href="Javascript:StornoThisArticle('[{ $listitem->oxorderarticles__oxid->value }]');" class="pause" [{if $readonly }]onclick="JavaScript:return false;"[{/if}] [{include file="help.tpl" helpid=item_storno}]></a>[{/if}]</td>
+        <td valign="top" class="[{ $listclass}]">[{ if $listitem->oxorderarticles__oxstorno->value != 1 && !$listitem->isBundle() }]<input type="text" name="aOrderArticles[[{$listitem->getId()}]][oxamount]" value="[{ $listitem->oxorderarticles__oxamount->value }]" class="listedit">[{else}][{ $listitem->oxorderarticles__oxamount->value }][{/if}]</td>
+        <td valign="top" class="[{ $listclass}]" height="15">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:editThis('[{ $listitem->oxarticles__oxid->value}]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxartnum->value }]</a></td>
+        <td valign="top" class="[{ $listclass}]">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:editThis('[{ $listitem->oxarticles__oxid->value }]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxtitle->value|oxtruncate:20:""|strip_tags }]</a></td>
+        <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxselvariant->value }]</td>
+        <td valign="top" class="[{ $listclass}]">
+            [{ if $listitem->getPersParams() }]
+                [{foreach key=sVar from=$listitem->getPersParams() item=aParam}]
+                         &nbsp;&nbsp;,&nbsp;<em>[{$sVar}] : [{$aParam}]</em>
+                [{/foreach}]
+            [{/if}]
+        </td>
+        <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxshortdesc->value|oxtruncate:20:""|strip_tags }]</td>
+        <td valign="top" class="[{ $listclass}]">[{ $listitem->getNetPriceFormated() }] <small>[{ $edit->oxorder__oxcurrency->value }]</small></td>
+        <td valign="top" class="[{ $listclass}]">[{ $listitem->getBrutPriceFormated() }] <small>[{ $edit->oxorder__oxcurrency->value }]</small></td>
+        <td valign="top" class="[{ $listclass}]">[{ $listitem->getTotalBrutPriceFormated() }] <small>[{ $edit->oxorder__oxcurrency->value }]</small></td>
+        <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxvat->value}]</td>
+        <td valign="top" class="[{ $listclass}]">[{if !$listitem->isBundle()}]<a href="Javascript:DeleteThisArticle('[{ $listitem->oxorderarticles__oxid->value }]');" class="delete" [{if $readonly }]onclick="JavaScript:return false;"[{/if}] [{include file="help.tpl" helpid=item_delete}]></a>[{/if}]</td>
+        <td valign="top" class="[{ $listclass}]">[{if !$listitem->isBundle()}]<a href="Javascript:StornoThisArticle('[{ $listitem->oxorderarticles__oxid->value }]');" class="pause" [{if $readonly }]onclick="JavaScript:return false;"[{/if}] [{include file="help.tpl" helpid=item_storno}]></a>[{/if}]</td>
+    [{/block}]
 </tr>
 [{if $blWhite == "2"}]
 [{assign var="blWhite" value=""}]

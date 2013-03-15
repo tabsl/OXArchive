@@ -13,7 +13,7 @@
         <span id="selID_ArticleNav[{$where}]">
             [{assign var="blSep" value=""}]
             [{if $actCategory->prevProductLink }]
-              <a id="test_link_prevArticle[{$where}]" href="[{$actCategory->prevProductLink }]"><span class="arrow">&laquo;</span> [{ oxmultilang ident="INC_DETAILS_LOCATOR_PREVIUOSPRODUCT" }]</a>
+              <a id="test_link_prevArticle[{$where}]" href="[{$actCategory->prevProductLink }]"><span class="arrow">&laquo;</span> [{ oxmultilang ident="INC_DETAILS_LOCATOR_PREVIOUSPRODUCT" }]</a>
               [{assign var="blSep" value="y"}]
             [{/if}]
             [{if $actCategory->nextProductLink }]

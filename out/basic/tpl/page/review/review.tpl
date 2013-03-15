@@ -6,7 +6,7 @@
 [{/if}]
 [{include file="_header.tpl" title=$template_title location=$template_title}]
 
-[{if !$oxcmp_user->oxuser__oxusername->value && !$oView->getProduct()}]
+[{if (!$oxcmp_user->oxuser__oxusername->value) && !$oView->getProduct()}]
   [{include file="inc/cmp_login.tpl" }]
 [{else}]
   [{if $oView->getProduct()}]
@@ -71,23 +71,25 @@
     </div>
   [{/if}]
 
-  [{ if $oView->getReviews() }]
-    <strong class="boxhead">[{ oxmultilang ident="REVIEW_PASTREVIEW" }]</strong>
-    <div class="box info">
-        [{foreach from=$oView->getReviews() item=review}]
-        <dl class="review">
-            <dt>
-                <span class="left"><b>[{ $review->oxuser__oxfname->value }]</b> [{ oxmultilang ident="DETAILS_WRITES" }]</span>
-                <span class="right param"><b>[{ oxmultilang ident="DETAILS_TIME" }]</b>&nbsp;[{ $review->oxreviews__oxcreate->value|date_format:"%H:%M" }]</span>
-                <span class="right param"><b>[{ oxmultilang ident="DETAILS_DATE" }]</b>&nbsp;[{ $review->oxreviews__oxcreate->value|date_format:"%d.%m.%Y" }]</span>
-                <span class="right param">[{if $review->oxreviews__oxrating->value }]<b>[{ oxmultilang ident="DETAILS_RATING" }]</b>&nbsp;[{ $review->oxreviews__oxrating->value }][{/if}]</span>
-            </dt>
-            <dd>
-                [{ $review->oxreviews__oxtext->value }]
-            </dd>
-        </dl>
-        [{/foreach}]
-    </div>
+  [{if $oView->isReviewActive() }]
+    [{ if $oView->getReviews() }]
+        <strong class="boxhead">[{ oxmultilang ident="REVIEW_PASTREVIEW" }]</strong>
+        <div class="box info">
+            [{foreach from=$oView->getReviews() item=review}]
+            <dl class="review">
+                <dt>
+                    <span class="left"><b>[{ $review->oxuser__oxfname->value }]</b> [{ oxmultilang ident="DETAILS_WRITES" }]</span>
+                    <span class="right param"><b>[{ oxmultilang ident="DETAILS_TIME" }]</b>&nbsp;[{ $review->oxreviews__oxcreate->value|date_format:"%H:%M" }]</span>
+                    <span class="right param"><b>[{ oxmultilang ident="DETAILS_DATE" }]</b>&nbsp;[{ $review->oxreviews__oxcreate->value|date_format:"%d.%m.%Y" }]</span>
+                    <span class="right param">[{if $review->oxreviews__oxrating->value }]<b>[{ oxmultilang ident="DETAILS_RATING" }]</b>&nbsp;[{ $review->oxreviews__oxrating->value }][{/if}]</span>
+                </dt>
+                <dd>
+                    [{ $review->oxreviews__oxtext->value }]
+                </dd>
+            </dl>
+            [{/foreach}]
+        </div>
+    [{/if}]
   [{/if}]
 
 [{/if}]

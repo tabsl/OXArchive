@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsserver.php 41881 2012-01-30 12:34:50Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxutilsserver.php 42112 2012-02-09 14:55:11Z mindaugas.rimgaila $
  */
 
 /**
@@ -349,7 +349,7 @@ class oxUtilsServer extends oxSuperCfg
 
         $this->_aUserCookie[$sShopId] = $sUser . '@@@' . crypt( $sPassword, $sSalt );
         $this->setOxCookie( 'oxid_' . $sShopId, $this->_aUserCookie[$sShopId], oxUtilsDate::getInstance()->getTime() + $iTimeout, '/', null, true, $blSsl );
-        $this->setOxCookie( 'oxid_' . $sShopId.'_autologin', '1', oxUtilsDate::getInstance()->getTime() + $iTimeout, '/');
+        $this->setOxCookie( 'oxid_' . $sShopId.'_autologin', '1', oxUtilsDate::getInstance()->getTime() + $iTimeout, '/', null, true, false);
     }
 
     /**
@@ -372,7 +372,7 @@ class oxUtilsServer extends oxSuperCfg
 
         $this->_aUserCookie[$sShopId] = '';
         $this->setOxCookie( 'oxid_'.$sShopId, '', oxUtilsDate::getInstance()->getTime() - 3600, '/', null, true, $blSsl );
-        $this->setOxCookie( 'oxid_' . $sShopId.'_autologin', '0', oxUtilsDate::getInstance()->getTime() - 3600, '/');
+        $this->setOxCookie( 'oxid_' . $sShopId.'_autologin', '0', oxUtilsDate::getInstance()->getTime() - 3600, '/', null, true, false);
     }
 
     /**

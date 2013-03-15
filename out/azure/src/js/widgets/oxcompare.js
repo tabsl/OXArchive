@@ -157,4 +157,4 @@
      */
     $.widget("ui.oxCompare", oxCompare );
 
-})( jQuery )
+})( jQuery );

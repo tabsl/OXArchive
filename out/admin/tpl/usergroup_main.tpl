@@ -26,24 +26,26 @@
     <td valign="top" class="edittext">
 
         <table cellspacing="0" cellpadding="0" border="0">
-        <tr>
-            <td class="edittext" width="70">
-            [{ oxmultilang ident="GENERAL_ACTIVE" }]
-            </td>
-            <td class="edittext">
-            <input class="edittext" type="checkbox" name="editval[oxgroups__oxactive]" value='1' [{if $edit->oxgroups__oxactive->value == 1}]checked[{/if}] [{ $readonly }] [{ $disableSharedEdit }]>
-            [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext" width="100">
-            [{ oxmultilang ident="GENERAL_NAME" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="25" maxlength="[{$edit->oxgroups__oxtitle->fldmax_length}]" name="editval[oxgroups__oxtitle]" value="[{$edit->oxgroups__oxtitle->value}]" [{ $readonly }] [{ $disableSharedEdit }]>
-            [{ oxinputhelp ident="HELP_GENERAL_NAME" }]
-            </td>
-        </tr>
+        [{block name="admin_usergroup_main_form"}]
+            <tr>
+                <td class="edittext" width="70">
+                [{ oxmultilang ident="GENERAL_ACTIVE" }]
+                </td>
+                <td class="edittext">
+                <input class="edittext" type="checkbox" name="editval[oxgroups__oxactive]" value='1' [{if $edit->oxgroups__oxactive->value == 1}]checked[{/if}] [{ $readonly }] [{ $disableSharedEdit }]>
+                [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext" width="100">
+                [{ oxmultilang ident="GENERAL_NAME" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="25" maxlength="[{$edit->oxgroups__oxtitle->fldmax_length}]" name="editval[oxgroups__oxtitle]" value="[{$edit->oxgroups__oxtitle->value}]" [{ $readonly }] [{ $disableSharedEdit }]>
+                [{ oxinputhelp ident="HELP_GENERAL_NAME" }]
+                </td>
+            </tr>
+        [{/block}]
         <tr>
             <td class="edittext">
             </td>

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: order_main.php 39907 2011-11-14 08:37:38Z arvydas.vapsva $
+ * @version   SVN: $Id: order_main.php 43462 2012-04-03 11:24:14Z vilma $
  */
 
 /**
@@ -100,6 +100,12 @@ class Order_Main extends oxAdminDetails
             $aParams['oxorder__oxid'] = null;
         }
 
+        //change payment
+        $sPayId = oxConfig::getParameter( "setPayment");
+        if ($sPayId != $oOrder->oxorder__oxpaymenttype->value) {
+            $aParams['oxorder__oxpaymenttype'] = $sPayId;
+        }
+
         $oOrder->assign( $aParams);
 
         $aDynvalues = oxConfig::getParameter( "dynvalue" );
@@ -110,9 +116,15 @@ class Order_Main extends oxAdminDetails
             $oPayment->oxuserpayments__oxvalue->setValue(oxUtils::getInstance()->assignValuesToText( $aDynvalues));
             $oPayment->save();
         }
-
-        // keeps old delivery cost
-        $oOrder->reloadDelivery( false );
+        //change delivery set
+        $sDelSetId = oxConfig::getParameter( "setDelSet");
+        if ($sDelSetId != $oOrder->oxorder__oxdeltype->value) {
+            $oOrder->oxorder__oxpaymenttype->setValue( "oxempty" );
+            $oOrder->setDelivery( $sDelSetId );
+        } else {
+            // keeps old delivery cost
+            $oOrder->reloadDelivery( false );
+        }
 
         // keeps old discount
         $oOrder->reloadDiscount( false );
@@ -139,20 +151,28 @@ class Order_Main extends oxAdminDetails
             $oOrder->save();
 
             // #1071C
-            $oOrderArticles = $oOrder->getOrderArticles();
-            foreach ( $oOrderArticles as $sOxId => $oArticle ) {
-                // remove canceled articles from list
-                if ( $oArticle->oxorderarticles__oxstorno->value == 1 ) {
-                    $oOrderArticles->offsetUnset( $sOxId );
-                }
-            }
-
+            $oOrderArticles = $oOrder->getOrderArticles( true );
             if ( oxConfig::getParameter( "sendmail" ) ) {
                 // send eMail
                 $oEmail = oxNew( "oxemail" );
                 $oEmail->sendSendedNowMail( $oOrder );
             }
 
+        }
+    }
+
+    /**
+     * Sends download links.
+     *
+     * @return null
+     */
+    public function senddownloadlinks()
+    {
+        $soxId = $this->getEditObjectId();
+        $oOrder = oxNew( "oxorder" );
+        if ( $oOrder->load( $soxId ) ) {
+            $oEmail = oxNew( "oxemail" );
+            $oEmail->sendDownloadLinksMail( $oOrder );
         }
     }
 
@@ -169,43 +189,6 @@ class Order_Main extends oxAdminDetails
             $oOrder->oxorder__oxsenddate->setValue("0000-00-00 00:00:00");
             $oOrder->save();
 
-        }
-    }
-
-    /**
-     * Changes delivery set for this order and
-     * resets current payment.
-     *
-     * @return null
-     */
-    public function changeDelSet()
-    {
-        $oOrder = oxNew( "oxorder" );
-        if ( ( $sDelSetId = oxConfig::getParameter( "setDelSet" ) ) &&
-             $oOrder->load( $this->getEditObjectId() ) ) {
-            $oOrder->oxorder__oxpaymenttype->setValue( "oxempty" );
-            // keeps old discount
-            $oOrder->reloadDiscount( false );
-            $oOrder->setDelivery( $sDelSetId );
-            $oOrder->recalculateOrder();
-        }
-    }
-
-    /**
-     * Changes delivery set for this order and
-     * resets current payment.
-     *
-     * @return null
-     */
-    public function changePayment()
-    {
-        $oOrder = oxNew( "oxorder" );
-        if ( ( $sPayId = oxConfig::getParameter( "setPayment") ) &&
-             $oOrder->load( $this->getEditObjectId() ) ) {
-            $oOrder->oxorder__oxpaymenttype->setValue( $sPayId );
-            // keeps old discount
-            $oOrder->reloadDiscount( false );
-            $oOrder->recalculateOrder();
         }
     }
 }

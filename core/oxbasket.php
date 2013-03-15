@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasket.php 49762 2012-09-25 15:12:13Z tomas $
+ * @version   SVN: $Id: oxbasket.php 44167 2012-04-23 08:45:17Z linas.kukulskis $
  */
 
 /**
@@ -249,6 +249,12 @@ class oxBasket extends oxSuperCfg
      * @var bool
      */
     protected $_blNewITemAdded = null;
+
+    /**
+     * if basket has downloadable product
+     * @var bool
+     */
+    protected $_blDownloadableProducts = null;
 
     /**
      * Checks if configuration allows basket usage or if user agent is search engine
@@ -700,8 +706,8 @@ class oxBasket extends oxSuperCfg
                 $oBasketPrice->setBruttoPriceMode();
                 if ( !$oArticle->skipDiscounts() && $this->canCalcDiscounts() ) {
                     // apply basket type discounts
-                    $aItemDiscounts = $oDiscountList->applyBasketDiscounts( $oBasketPrice, $oDiscountList->getBasketItemDiscounts( $oArticle, $this, $this->getBasketUser() ), $oBasketItem->getAmount() );
-
+                    //#3857 added clone in order not to influence the price
+                    $aItemDiscounts = $oDiscountList->applyBasketDiscounts( clone $oBasketPrice, $oDiscountList->getBasketItemDiscounts( $oArticle, $this, $this->getBasketUser() ), $oBasketItem->getAmount() );
                     if ( is_array($this->_aItemDiscounts) && is_array($aItemDiscounts) ) {
                         $this->_aItemDiscounts = $this->_mergeDiscounts( $this->_aItemDiscounts, $aItemDiscounts);
                     }
@@ -792,12 +798,12 @@ class oxBasket extends oxSuperCfg
             return $oDeliveryPrice;
         }
 
-        // VAT for delivery ?
+        // VAT for delivery will be calculated always (#3757)
+        // blCalcVATForDelivery option is @deprecated since 2012-03-23 in version 4.6
+        // the option blShowVATForDelivery will be used only for displaying
         $fDelVATPercent = 0;
-        if ( $myConfig->getConfigParam( 'blCalcVATForDelivery' ) ) {
-            $fDelVATPercent = $this->getMostUsedVatPercent();
-            $oDeliveryPrice->setVat( $fDelVATPercent );
-        }
+        $fDelVATPercent = $this->getMostUsedVatPercent();
+        $oDeliveryPrice->setVat( $fDelVATPercent );
 
         // list of active delivery costs
         if ( $myConfig->getConfigParam('bl_perfLoadDelivery') ) {
@@ -874,6 +880,8 @@ class oxBasket extends oxSuperCfg
         // 2. substract discounts
         if ( $dprice ) {
 
+            /*
+            //#3857 this section is not needed as $this->_aItemDiscounts is part of $this->_aDiscounts
             // 2.1 applying basket item discounts
             foreach ( $this->_aItemDiscounts as $oDiscount ) {
 
@@ -882,7 +890,7 @@ class oxBasket extends oxSuperCfg
                     continue;
                 }
                 $this->_oPrice->subtract( $oDiscount->dDiscount );
-            }
+            }*/
 
             // 2.2 applying basket discounts
             $this->_oPrice->subtract( $this->_oTotalDiscount->getBruttoPrice() );
@@ -1073,9 +1081,14 @@ class oxBasket extends oxSuperCfg
      */
     protected function _calcBasketTotalDiscount()
     {
-        if ( $this->_oTotalDiscount === null || ( $this->_blUpdateNeeded && !$this->isAdmin() ) ) {
+        if ( $this->_oTotalDiscount === null || ( !$this->isAdmin() ) ) {
+
+
             $this->_oTotalDiscount = oxNew( 'oxPrice' );
             $this->_oTotalDiscount->setBruttoPriceMode();
+
+            //#3857 merging item discounts to aDiscounts and later to oTotalDiscount
+            $this->_aDiscounts = array_merge($this->_aItemDiscounts, $this->_aDiscounts);
 
             if ( is_array($this->_aDiscounts) ) {
                 foreach ( $this->_aDiscounts as $oDiscount ) {
@@ -1107,24 +1120,29 @@ class oxBasket extends oxSuperCfg
         $oWrappingPrice = oxNew( 'oxPrice' );
         $oWrappingPrice->setBruttoPriceMode();
 
-        // wrapping VAT
-        if ( $myConfig->getConfigParam( 'blCalcVatForWrapping' ) ) {
-            $oWrappingPrice->setVat( $this->getMostUsedVatPercent() );
-        }
+        // wrapping VAT will be always calculated (#3757)
+        // blCalcVatForWrapping option is @deprecated since 2012-03-23 in version 4.6
+        // blShowVATForWrapping option will be used only for displaying
+        $dWrappingVATPercent = $this->getMostUsedVatPercent();
+        $oWrappingPrice->setVat( $dWrappingVATPercent );
 
         // calculating basket items wrapping
         foreach ( $this->_aBasketContents as $oBasketItem ) {
 
             if ( ( $oWrapping = $oBasketItem->getWrapping() ) ) {
-                $oWrapPrice = $oWrapping->getWrappingPrice( $oBasketItem->getAmount() );
-                $oWrappingPrice->add( $oWrapPrice->getBruttoPrice() );
+                if ($dWrappingVATPercent !== null) {
+                    $oWrapping->setWrappingVat($dWrappingVATPercent);
+                }
+                $oWrappingPrice->addPrice( $oWrapping->getWrappingPrice( $oBasketItem->getAmount() ) );
             }
         }
 
         // gift card price calculation
         if ( ( $oCard = $this->getCard() ) ) {
-            $oCardPrice = $oCard->getWrappingPrice();
-            $oWrappingPrice->add( $oCardPrice->getBruttoPrice() );
+            if ($dWrappingVATPercent !== null) {
+                $oCard->setWrappingVat($dWrappingVATPercent);
+            }
+            $oWrappingPrice->addPrice( $oCard->getWrappingPrice() );
         }
 
         return $oWrappingPrice;
@@ -1200,6 +1218,20 @@ class oxBasket extends oxSuperCfg
      */
     public function calculateBasket( $blForceUpdate = false )
     {
+        /*
+        //would be good to perform the reset of previous calculation
+        //at least you can use it for the debug
+        $this->_aDiscounts = array();
+        $this->_aItemDiscounts = array();
+        $this->_oTotalDiscount = null;
+        $this->_dDiscountedProductNettoPrice = 0;
+        $this->_aDiscountedVats = array();
+        $this->_oPrice = null;
+        $this->_oNotDiscountedProductsPriceList = null;
+        $this->_oProductsPriceList = null;
+        $this->_oDiscountProductsPriceList = null;*/
+
+
         if ( !$this->isEnabled() ) {
             return;
         }
@@ -1990,7 +2022,9 @@ class oxBasket extends oxSuperCfg
             return null;
         }
 
-        return array_merge($this->_aItemDiscounts, $this->_aDiscounts);
+        //#3857 this section is not needed as $this->_aItemDiscounts is part of $this->_aDiscounts already
+        //return array_merge($this->_aItemDiscounts, $this->_aDiscounts);
+        return $this->_aDiscounts;
     }
 
     /**
@@ -2108,7 +2142,8 @@ class oxBasket extends oxSuperCfg
     {
         $dDelVAT = $this->getCosts( 'oxdelivery' )->getVatValue();
 
-        if ( $dDelVAT > 0 ) {
+        // blShowVATForDelivery option will be used, only for displaying, but not calculation
+        if ( $dDelVAT > 0 && $this->getConfig()->getConfigParam( 'blShowVATForDelivery' )) {
             return oxLang::getInstance()->formatCurrency( $dDelVAT, $this->getBasketCurrency() );
         }
         return false;
@@ -2121,8 +2156,14 @@ class oxBasket extends oxSuperCfg
      */
     public function getDelCostNet()
     {
-        if ( $this->getBasketUser() || $this->getConfig()->getConfigParam( 'blCalculateDelCostIfNotLoggedIn' ) ) {
-            return oxLang::getInstance()->formatCurrency( $this->getCosts( 'oxdelivery' )->getNettoPrice(), $this->getBasketCurrency() );
+        $oConfig = $this->getConfig();
+
+        // blShowVATForDelivery option will be used, only for displaying, but not calculation
+        if ( $oConfig->getConfigParam( 'blShowVATForDelivery' ) && ( $this->getBasketUser() || $oConfig->getConfigParam( 'blCalculateDelCostIfNotLoggedIn' ) ) ) {
+            $dNetPrice = $this->getCosts( 'oxdelivery' )->getNettoPrice();
+            if ( $dNetPrice > 0 ) {
+                return oxLang::getInstance()->formatCurrency( $dNetPrice, $this->getBasketCurrency() );
+            }
         }
         return false;
     }
@@ -2145,7 +2186,9 @@ class oxBasket extends oxSuperCfg
     public function getPayCostVat()
     {
         $dPayVAT = $this->getCosts( 'oxpayment' )->getVatValue();
-        if ( $dPayVAT > 0 ) {
+
+        // blShowVATForPayCharge option will be used, only for displaying, but not calculation
+        if ( $dPayVAT > 0 && $this->getConfig()->getConfigParam( 'blShowVATForPayCharge' ) ) {
             return oxLang::getInstance()->formatCurrency( $dPayVAT, $this->getBasketCurrency() );
         }
         return false;
@@ -2158,7 +2201,14 @@ class oxBasket extends oxSuperCfg
      */
     public function getPayCostNet()
     {
-        return oxLang::getInstance()->formatCurrency( $this->getCosts( 'oxpayment' )->getNettoPrice(), $this->getBasketCurrency() );
+        // blShowVATForPayCharge option will be used, only for displaying, but not calculation
+        if ( $this->getConfig()->getConfigParam( 'blShowVATForPayCharge' ) ) {
+            $dNetPrice = $this->getCosts( 'oxpayment' )->getNettoPrice();
+            if ($dNetPrice) {
+                return oxLang::getInstance()->formatCurrency( $dNetPrice, $this->getBasketCurrency() );
+            }
+        }
+        return false;
     }
 
     /**
@@ -2233,7 +2283,8 @@ class oxBasket extends oxSuperCfg
     public function getWrappCostVat()
     {
         $dWrappVAT = $this->getCosts( 'oxwrapping' )->getVatValue();
-        if ( $dWrappVAT > 0 ) {
+        // blShowVATForWrapping option will be used, only for displaying, but not calculation
+        if ( $dWrappVAT > 0 && $this->getConfig()->getConfigParam( 'blShowVATForWrapping' ) ) {
             return oxLang::getInstance()->formatCurrency( $dWrappVAT, $this->getBasketCurrency() );
         }
         return false;
@@ -2248,7 +2299,8 @@ class oxBasket extends oxSuperCfg
     public function getWrappCostNet()
     {
         $dWrappNet = $this->getCosts( 'oxwrapping' )->getNettoPrice();
-        if ( $dWrappNet > 0 ) {
+        // blShowVATForWrapping option will be used, only for displaying, but not calculation
+        if ( $dWrappNet > 0 && $this->getConfig()->getConfigParam( 'blShowVATForWrapping' ) ) {
             return  oxLang::getInstance()->formatCurrency( $dWrappNet, $this->getBasketCurrency() );
         }
         return false;
@@ -2286,7 +2338,7 @@ class oxBasket extends oxSuperCfg
     public function getFDeliveryCosts()
     {
         $oDeliveryCost = $this->getCosts( 'oxdelivery' );
-        if ( $oDeliveryCost ) {
+        if ( $oDeliveryCost && ( $this->getBasketUser() || $this->getConfig()->getConfigParam( 'blCalculateDelCostIfNotLoggedIn' ) ) ) {
             return oxLang::getInstance()->formatCurrency( $oDeliveryCost->getBruttoPrice(), $this->getBasketCurrency() );
         }
         return false;
@@ -2579,7 +2631,8 @@ class oxBasket extends oxSuperCfg
     public function getTsProtectionVat()
     {
         $dProtectionVAT = $this->getCosts( 'oxtsprotection' )->getVatValue();
-        if ( $dProtectionVAT > 0 ) {
+        // blShowVATForPayCharge option will be used, only for displaying, but not calculation
+        if ( $dProtectionVAT > 0 && $this->getConfig()->getConfigParam( 'blShowVATForPayCharge' ) ) {
             return oxLang::getInstance()->formatCurrency( $dProtectionVAT, $this->getBasketCurrency() );
         }
         return false;
@@ -2592,7 +2645,11 @@ class oxBasket extends oxSuperCfg
      */
     public function getTsProtectionNet()
     {
-        return oxLang::getInstance()->formatCurrency( $this->getCosts( 'oxtsprotection' )->getNettoPrice(), $this->getBasketCurrency() );
+        // blShowVATForPayCharge option will be used, only for displaying, but not calculation
+        if ( $this->getConfig()->getConfigParam( 'blShowVATForPayCharge' ) ) {
+            return oxLang::getInstance()->formatCurrency( $this->getCosts( 'oxtsprotection' )->getNettoPrice(), $this->getBasketCurrency() );
+        }
+        return false;
     }
 
     /**
@@ -2663,4 +2720,23 @@ class oxBasket extends oxSuperCfg
         }
         return $this->_blNewITemAdded;
     }
+
+    /**
+     * Returns true if at least one product is downloadable in basket
+     *
+     * @return bool
+     */
+    public function hasDownloadableProducts()
+    {
+        $this->_blDownloadableProducts = false;
+        foreach ( $this->_aBasketContents as $sItemKey => $oOrderArticle ) {
+            if ( $oOrderArticle->getArticle()->isDownloadable() ) {
+                $this->_blDownloadableProducts = true;
+                break;
+            }
+        }
+
+        return $this->_blDownloadableProducts;
+    }
+
 }

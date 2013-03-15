@@ -6,5 +6,5 @@
     </div>
     [{insert name="oxid_tracker" title=$template_title}]
 [{/capture}]
-[{include file="layout/page.tpl" sidebar="Right"}]
+[{include file="layout/page.tpl" sidebar="Left"}]
 

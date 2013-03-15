@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: newsletter_send.php 39171 2011-10-12 13:08:53Z arvydas.vapsva $
+ * @version   SVN: $Id: newsletter_send.php 44135 2012-04-20 15:06:35Z linas.kukulskis $
  */
 
 /**
@@ -57,7 +57,7 @@ class Newsletter_Send extends Newsletter_Selection
         $oNewsletterGroups = $oNewsletter->getGroups();
 
         // send emails....
-        $oDB = oxDb::getDb(true);
+        $oDB = oxDb::getDb( oxDB::FETCH_MODE_ASSOC );
         $sQGroups = " ( oxobject2group.oxgroupsid in ( ";
         $blSep = false;
         foreach ( $oNewsletterGroups as $sInGroup ) {
@@ -100,7 +100,7 @@ class Newsletter_Send extends Newsletter_Selection
                     $iSendCnt++;
 
                     // must check if such user is in DB
-                    if ( !$oDB->getOne( "select oxid from oxuser where oxid = ".$oDB->quote( $sUserId ) ) ) {
+                    if ( !$oDB->getOne( "select oxid from oxuser where oxid = ".$oDB->quote( $sUserId ), false, false ) ) {
                         $sUserId = null;
                     }
 

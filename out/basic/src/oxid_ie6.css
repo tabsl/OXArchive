@@ -65,7 +65,7 @@ div.bar.links a.language.act img{filter:Alpha(Opacity=70);}
 #mask.on iframe{visibility: visible;width:900px;height: 100%;width:100%;filter:mask();}
 
 /* IE6 position fixed workaround */
-#mask.on{ position:absolute;top:expression((mask = document.documentElement.scrollTop) + 'px');}
+#mask.on{ position:absolute;}
 div.popup { visibility:hidden;display:none;}
 div.popup.on { position:absolute;visibility:visible;display:block;_top:expression((_popup = document.documentElement.scrollTop) + document.documentElement.clientHeight/2 + 'px');}
 

@@ -14,7 +14,9 @@
             <div class="price [{if $_product->getPricePerUnit()}]tight[{/if}]" id="priceBargain_[{$smarty.foreach.bargainList.iteration}]">
                 <div>
                 [{oxhasrights ident="SHOWARTICLEPRICE"}]
-                    [{if $_product->getFTPrice() > $_product->getFPrice()}]
+                    [{assign var=tprice value=$_product->getTPrice()}]
+                    [{assign var=price  value=$_product->getPrice()}]
+                    [{if $tprice && $tprice->getBruttoPrice() > $price->getBruttoPrice()}]
                     <span class="priceOld">
                         [{ oxmultilang ident="WIDGET_PRODUCT_PRODUCT_REDUCEDFROM" }] <del>[{ $_product->getFTPrice()}] [{ $currency->sign}]</del>
                     </span>
@@ -25,7 +27,7 @@
                     [{/if}]
                     [{if $_product->getPricePerUnit()}]
                     <span class="pricePerUnit">
-                        [{$_product->oxarticles__oxunitquantity->value}] [{$_product->oxarticles__oxunitname->value}] | [{$_product->getPricePerUnit()}] [{ $currency->sign}]/[{$_product->oxarticles__oxunitname->value}]
+                        [{$_product->oxarticles__oxunitquantity->value}] [{$_product->getUnitName()}] | [{$_product->getPricePerUnit()}] [{ $currency->sign}]/[{$_product->getUnitName()}]
                     </span>
                     [{/if}]
                     [{block name="widget_product_bargainitem_tobasket"}]

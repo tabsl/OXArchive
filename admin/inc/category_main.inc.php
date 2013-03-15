@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: category_main.inc.php 40915 2012-01-02 12:15:02Z vilma $
+ * @version   SVN: $Id: category_main.inc.php 44134 2012-04-20 14:55:19Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -156,13 +156,14 @@ class ajaxComponent extends ajaxListComponent
 
                 // check, if it's already in, then don't add it again
                 $sSelect = "select 1 from $sO2CView as oxobject2category where oxobject2category.oxcatnid= " . $oDb->quote( $sCategoryID ) . " and oxobject2category.oxobjectid = " . $oDb->quote( $sAdd ) . "";
-                if ( $oDb->getOne( $sSelect ) )
+                if ( $oDb->getOne( $sSelect, false, false ) )
                     continue;
 
                 $oNew->oxobject2category__oxid       = new oxField( $oNew->setId( $myUtilsObject->generateUID() ) );
                 $oNew->oxobject2category__oxobjectid = new oxField( $sAdd );
                 $oNew->oxobject2category__oxcatnid   = new oxField( $sCategoryID );
                 $oNew->oxobject2category__oxtime     = new oxField( time() );
+
                 $oNew->save();
 
                 if ( $sProdIds ) {

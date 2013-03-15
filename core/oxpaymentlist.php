@@ -17,11 +17,10 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxpaymentlist.php 32007 2010-12-17 15:10:27Z sarunas $
+ * @version   SVN: $Id: oxpaymentlist.php 43744 2012-04-11 07:55:41Z linas.kukulskis $
  */
-
 /**
  * Payment list manager.
  * @package core
@@ -29,8 +28,8 @@
 class oxPaymentList extends oxList
 {
     /**
-     * oxDeliveryList instance
-     * @var oxDeliveryList
+     * oxPaymentList instance
+     * @var oxPaymentList
      */
     protected static $_instance = null;
 
@@ -180,4 +179,47 @@ class oxPaymentList extends oxList
         $this->selectString( $this->_getFilterSelect( $sShipSetId, $dPrice, $oUser ) );
         return $this->_aArray;
     }
+
+    /**
+     * Loads an object including all payments which are not mapped to a
+     * predefined GoodRelations payment method.
+     *
+     * @return null
+     */
+    public function loadNonRDFaPaymentList()
+    {
+        $sTable = getViewName( 'oxpayments' );
+        $sSubSql = "SELECT * FROM oxobject2payment WHERE oxobject2payment.OXPAYMENTID = $sTable.OXID AND oxobject2payment.OXTYPE = 'rdfapayment'";
+        $this->selectString( "SELECT $sTable.* FROM $sTable WHERE NOT EXISTS($sSubSql) AND $sTable.OXACTIVE = 1" );
+    }
+
+    /**
+     * Loads payments mapped to a
+     * predefined GoodRelations payment method.
+     *
+     * @param double $dPrice product price
+     *
+     * @return array
+     */
+    public function loadRDFaPaymentList($dPrice = null)
+    {
+        $oDb = oxDb::getDb( oxDb::FETCH_MODE_ASSOC );
+        $sTable = getViewName( 'oxpayments' );
+        $sQ  = "select $sTable.*, oxobject2payment.oxobjectid from $sTable left join (select oxobject2payment.* from oxobject2payment where oxobject2payment.oxtype = 'rdfapayment') as oxobject2payment on oxobject2payment.oxpaymentid=$sTable.oxid ";
+        $sQ .= "where $sTable.oxactive = 1 ";
+        if ( $dPrice !== null ) {
+            $sQ .= "and $sTable.oxfromamount <= ".$oDb->quote( $dPrice ) ." and $sTable.oxtoamount >= ".$oDb->quote( $dPrice );
+        }
+        $rs = $oDb->select( $sQ );
+        if ($rs != false && $rs->recordCount() > 0) {
+            $oSaved = clone $this->getBaseObject();
+            while (!$rs->EOF) {
+                $oListObject = clone $oSaved;
+                $this->_assignElement($oListObject, $rs->fields);
+                $this->_aArray[] = $oListObject;
+                $rs->moveNext();
+            }
+        }
+    }
+
 }

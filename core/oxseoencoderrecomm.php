@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: oxseoencodercontent.php 17768 2009-04-02 10:52:12Z sarunas $
  */
@@ -81,7 +81,7 @@ class oxSeoEncoderRecomm extends oxSeoEncoder
                         $iLang
                     )
                     .
-                    $this->_prepareTitle( $oRecomm->oxrecommlists__oxtitle->value );
+                    $this->_prepareTitle( $oRecomm->oxrecommlists__oxtitle->value, false, $iLang );
 
             // creating unique
             $sSeoUrl = $this->_processSeoUrl( $sSeoUrl, $oRecomm->getId(), $iLang );

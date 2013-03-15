@@ -18,11 +18,14 @@
         a.help {text-decoration:none;text-align:center;display:block;color:#000;margin:2px 0 0 100px;}
         a.help:hover {text-decoration:underline;}
         div.errorbox{color:#f00;text-align:center;margin:0 0 5px 0;}
+        .notify {position: fixed; width: 100%; font-size: 16px; color: #fff; background-color: #f77704; padding: 8px 0 8px 0; text-align: center; border-bottom: 1px solid #d36706;}
     </style>
 </head>
 <body>
 
+
 <div class="box">
+
 <form action="[{ $oViewConf->getSelfLink() }]" target="_top" method="post" name="login" id="login">
     <p>
         <img src="[{$oViewConf->getImageUrl()}]/loginlogo.gif" alt="" class="logo">

@@ -1,7 +1,7 @@
 [{oxscript include="js/widgets/oxrating.js" priority=10 }]
 [{oxscript add="$( '#itemRating' ).oxRating();"}]
 
-<ul id="itemRating" class="rating" itemprop="aggregateRating" itemscope itemprop="http://schema.org/AggregateRating">
+<ul id="itemRating" class="rating">
     [{math equation="x*y" x=20 y=$oView->getRatingValue() assign="iRatingAverage"}]
 
     [{if !$oxcmp_user}]
@@ -14,7 +14,6 @@
 
     <li class="currentRate" style="width: [{$iRatingAverage}]%;">
         <a title="[{$_star_title}]"></a>
-        <meta itemprop="ratingValue" content="[{$oView->getRatingValue()}]">
         <span title="[{$iRatingAverage}]"></span>
     </li>
     [{section name=star start=1 loop=6}]
@@ -30,9 +29,9 @@
          </li>
     [{/section}]
     <li class="ratingValue">
-        <a id="itemRatingText" class="rates" rel="nofollow" rel="nofollow" [{if $sRateUrl}]href="[{if !$oxcmp_user}][{oxgetseourl ident=$sRateUrl params=$sRateUrlParams}][{else}][{$sRateUrl}][{/if}]#review"[{/if}]>
+        <a id="itemRatingText" class="rates" rel="nofollow" [{if $sRateUrl}]href="[{if !$oxcmp_user}][{oxgetseourl ident=$sRateUrl params=$sRateUrlParams}][{else}][{$sRateUrl}][{/if}]#review"[{/if}]>
             [{if $oView->getRatingCount()}]
-                (<span itemprop="ratingCount">[{$oView->getRatingCount()}]</span>)
+                ([{$oView->getRatingCount()}])
             [{else}]
                 [{oxmultilang ident="DETAILS_NORATINGS"}]
             [{/if}]

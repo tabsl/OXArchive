@@ -35,7 +35,7 @@
         </li>
         <li class="formNote">[{ oxmultilang ident="FORM_NEWSLETTER_COMPLETEMARKEDFIELDS" }]</li>
         <li class="formSubmit">
-            <button id="newsLetterSubmit" class="submitButton largeButton" type="submit">[{ oxmultilang ident="FORM_NEWSLETTER_SUBSCRIBE" }]</button>
+            <button id="newsLetterSubmit" class="submitButton largeButton" type="submit">[{ oxmultilang ident="SUBMIT" }]</button>
         </li>
     </ul>
 </form>

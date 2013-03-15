@@ -16,5 +16,8 @@
         [{if $oViewConf->getShowListmania()}]
             <li [{if $active_link == "recommendationlist"}]class="active"[{/if}]><a href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_recommlist" }]" rel="nofollow">[{ oxmultilang ident="PAGE_ACCOUNT_INC_ACCOUNT_MENU_RECOMMENDLIST" }]</a></li>
         [{/if}]
+        [{if $oView->isEnabledDownloadableFiles()}]
+        <li [{if $active_link == "downloads"}]class="active"[{/if}]><a href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_downloads" }]" rel="nofollow">[{ oxmultilang ident="MY_DOWNLOADS" }]</a></li>
+        [{/if}]
     [{/block}]
 </ul>

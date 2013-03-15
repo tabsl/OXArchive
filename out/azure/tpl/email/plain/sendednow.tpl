@@ -30,13 +30,17 @@
 [{/block}]
 
 [{block name="email_plain_sendednow_orderarticles"}]
-[{foreach from=$order->getOrderArticles() item=oOrderArticle}]
+[{foreach from=$order->getOrderArticles(true) item=oOrderArticle}]
 [{ $oOrderArticle->oxorderarticles__oxamount->value }] [{ $oOrderArticle->oxorderarticles__oxtitle->getRawValue() }] [{ $oOrderArticle->oxorderarticles__oxselvariant->getRawValue() }]
 [{/foreach}]
 [{/block}]
 
 [{block name="email_plain_sendednow_infofooter"}]
 [{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_YUORTEAM1" }] [{ $shop->oxshops__oxname->getRawValue() }] [{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_YUORTEAM2" }]
+[{/block}]
+
+[{block name="email_html_sendednow_shipmenttrackingurl"}]
+[{if $order->getShipmentTrackingUrl()}][{ oxmultilang ident="EMAIL_SENDEDNOW_HTML_SHIPMENTTRACKING" }] [{ $order->getShipmentTrackingUrl()}][{/if}]
 [{/block}]
 
 [{block name="email_plain_sendednow_ts"}]

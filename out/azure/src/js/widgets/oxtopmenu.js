@@ -58,6 +58,14 @@
                         liWidth = activeItem.width();
                         ulWidth = $('ul:first', activeItem).width();
                         marginWidth = (liWidth - ulWidth) / 2;
+
+                        var itemleft = activeItem.position().left + marginWidth;
+                        if (itemleft < 0) marginWidth -= itemleft;
+
+                        var pagewidth = $("#page").outerWidth(),
+                        itemright = activeItem.position().left + this.outerWidth() + marginWidth;
+                        if (itemright > pagewidth) marginWidth += pagewidth - itemright;
+
                         $('ul:first', activeItem).css("margin-left", marginWidth);
                     }
                 },

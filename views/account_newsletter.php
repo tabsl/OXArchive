@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account_newsletter.php 40060 2011-11-21 09:51:38Z arunas.paskevicius $
+ * @version   SVN: $Id: account_newsletter.php 40234 2011-11-23 15:52:44Z linas.kukulskis $
  */
 
 /**

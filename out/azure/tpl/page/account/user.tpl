@@ -1,5 +1,5 @@
 [{capture append="oxidBlock_content"}]
-[{assign var="template_title" value="PAGE_ACCOUNT_USER_USERTITLE"|oxmultilangassign }]
+[{assign var="template_title" value="BILLING_SHIPPING_SETTINGS"|oxmultilangassign }]
 <h1 id="addressSettingsHeader" class="pageHead">[{ $template_title }]</h1>
 [{include file="form/user.tpl"}]
 [{ insert name="oxid_tracker" title=$template_title }]

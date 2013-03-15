@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  *    This file is part of OXID eShop Community Edition.
  *
@@ -24,12 +24,12 @@
 
 /**
  * Theme Information
- */ 
+ */
 $aTheme = array(
     'id'           => 'basic',
     'title'        => 'Basic',
     'description'  => 'Basic theme by OXID eSales AG',
     'thumbnail'    => 'theme.jpg',
-    'version'      => '1.4',
+    'version'      => '1.6',
     'author'       => 'OXID',
 );

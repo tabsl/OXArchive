@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: pricealarm.php 36093 2011-06-08 14:59:33Z arvydas.vapsva $
+ * @version   SVN: $Id: pricealarm.php 36245 2011-06-13 13:24:59Z linas.kukulskis $
  */
 
 /**

@@ -37,7 +37,7 @@
             [{else}]
                 <span class="verificationCode" id="verifyTextCode">[{$oCaptcha->getText()}]</span>
             [{/if}]
-            <input class="js-oxValidate js-oxValidate_notEmpty" type="text" field="verify" name="c_mac" value="">
+            <input class="js-oxValidate js-oxValidate_notEmpty" type="text" data-fieldsize="verify" name="c_mac" value="">
             <p class="oxValidateError">
                 <span class="js-oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
             </p>

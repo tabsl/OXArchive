@@ -1,7 +1,3 @@
-        [{if $oView->isActive('FbInvite') && $oViewConf->getFbAppId()}]
-        <strong id="test_facebookInviteHead" class="boxhead">[{ oxmultilang ident="FACEBOOK_INVITE" }]</strong>
-        <div class="box">
-            <fb:serverfbml width="560px">
                 <script type="text/fbml">
                     <fb:fbml>
                       <fb:request-form action="[{$oView->getCanonicalUrl()}]"
@@ -20,6 +16,3 @@
                       </fb:request-form>
                     </fb:fbml>
                 </script>
-            </fb:serverfbml>
-        </div>
-        [{/if}]

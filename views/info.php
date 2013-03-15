@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: info.php 32923 2011-02-04 14:35:22Z vilma $
+ * @version   SVN: $Id: info.php 43785 2012-04-11 14:43:50Z rimvydas.paskevicius $
  * @deprecated
  */
 
@@ -74,6 +74,8 @@ class Info extends oxUBase
             // security fix so that you cant access files from outside template dir
             $sTplName = basename( $sTplName );
             oxSession::setVar( 'infotpl', $sTplName );
+
+            $sTplName = 'custom/'.$sTplName;
         }
 
         $this->_sThisTemplate = $sTplName;
@@ -155,5 +157,27 @@ class Info extends oxUBase
             $this->_oDelSetList->getList();
         }
         return $this->_oDelSetList;
+    }
+    
+    /**
+     * Returns content parsed through smarty 
+     * 
+     * @return string
+     */
+    public function getParsedContent()
+    {        
+        return oxUtilsView::getInstance()->parseThroughSmarty( $this->getContent()->oxcontents__oxcontent->value );        
+    }
+
+    /**
+     * Template title getter.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        $oContent = $this->getContent();
+        
+        return $oContent->oxcontents__oxtitle->value;
     }
 }

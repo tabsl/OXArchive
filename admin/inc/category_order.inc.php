@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: category_order.inc.php 39176 2011-10-12 13:13:04Z arvydas.vapsva $
+ * @version   SVN: $Id: category_order.inc.php 44134 2012-04-20 14:55:19Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -131,7 +131,7 @@ class ajaxComponent extends ajaxListComponent
             $sSelect .= "not in ( ".implode( ", ", oxDb::getInstance()->quoteArray( $aSkipArt ) )." ) ";
 
             // simply echoing "1" if some items found, and 0 if nothing was found
-            echo (int) oxDb::getDb()->getOne( $sSelect );
+            echo (int) oxDb::getDb()->getOne( $sSelect, false, false );
         }
     }
 
@@ -168,7 +168,7 @@ class ajaxComponent extends ajaxListComponent
             $sSelect .= "not in ( ".implode( ", ", oxDb::getInstance()->quoteArray( $aOrdArt ) )." ) ";
 
             // simply echoing "1" if some items found, and 0 if nothing was found
-            echo (int) oxDb::getDb()->getOne( $sSelect );
+            echo (int) oxDb::getDb()->getOne( $sSelect, false, false );
         }
     }
 

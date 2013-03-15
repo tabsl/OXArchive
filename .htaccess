@@ -1,5 +1,17 @@
-<IfModule mod_rewrite.c>
+# In case you want to add a .htpasswd authentification
+# you'll have to add the host of the shop as an allowed entity,
+# so that calls from the host skip the authentification
+# Example:
+# Order Deny,Allow
+# Deny from All
+# AuthType Basic
+# AuthName "Access not allowed"
+# AuthUserFile path_to_htpasswd_file/.htpasswd
+# Require valid-user
+# Allow from localhost
+# Satisfy Any
 
+<IfModule mod_rewrite.c>
 Options +FollowSymLinks
 RewriteEngine On
 RewriteBase /
@@ -25,12 +37,12 @@ RewriteRule (\.html|\/)$ oxseo.php
 RewriteCond %{REQUEST_URI} (\/out\/pictures\/)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule (\.jpg|\.gif|\.png)$ core/utils/getimg.php
+RewriteRule (\.jpe?g|\.gif|\.png)$ core/utils/getimg.php
 
 </IfModule>
 
 # disabling log file access from outside
-<FilesMatch "(EXCEPTION_LOG\.txt|\.log$|\.tpl$|pkg.rev)">
+<FilesMatch "(EXCEPTION_LOG\.txt|\.log$|\.tpl$|pkg\.rev)">
 order allow,deny
 deny from all
 </FilesMatch>

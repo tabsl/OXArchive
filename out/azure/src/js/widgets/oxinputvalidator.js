@@ -16,7 +16,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   out
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: oxinputvalidator.js 35529 2011-05-23 07:31:20Z vilma $
  */
@@ -24,28 +24,27 @@
 
     oxInputValidator = {
             options: {
-                classValid            : "oxValid",
-                classInValid          : "oxInValid",
-                errorParagraf         : "p.oxValidateError",
-                errorMessageNotEmpty  : "js-oxError_notEmpty",
-                errorMessageNotEmail  : "js-oxError_email",
-                errorMessageShort     : "js-oxError_length",
-                errorMessageNotEqual  : "js-oxError_match",
-                metodValidate         : "js-oxValidate",
-                metodValidateEmail    : "js-oxValidate_email",
-                metodValidateNotEmpty : "js-oxValidate_notEmpty",
-                metodValidateLength   : "js-oxValidate_length",
-                metodValidateMatch    : "js-oxValidate_match",
-                idPasswordLength      : "#passwordLength",
-                listItem              : "li",
-                list                  : "ul",
-                paragraf              : "p",
-                span                  : "span",
-                form                  : "form",
-                visible               : ":visible",
-
-                //
-                metodEnterPasswd      : "oxValidate_enterPass"
+                classValid                 : "oxValid",
+                classInValid               : "oxInValid",
+                errorParagraf              : "p.oxValidateError",
+                errorMessageNotEmpty       : "js-oxError_notEmpty",
+                errorMessageNotEmail       : "js-oxError_email",
+                errorMessageShort          : "js-oxError_length",
+                errorMessageNotEqual       : "js-oxError_match",
+                errorMessageIncorrectDate  : "js-oxError_incorrectDate",
+                metodValidate              : "js-oxValidate",
+                metodValidateEmail         : "js-oxValidate_email",
+                metodValidateNotEmpty      : "js-oxValidate_notEmpty",
+                metodValidateLength        : "js-oxValidate_length",
+                metodValidateMatch         : "js-oxValidate_match",
+                metodValidateDate          : "js-oxValidate_date",
+                idPasswordLength           : "#passwordLength",
+                listItem                   : "li",
+                list                       : "ul",
+                paragraf                   : "p",
+                span                       : "span",
+                form                       : "form",
+                visible                    : ":visible"
             },
 
             _create: function() {
@@ -55,9 +54,24 @@
                     el      = self.element;
 
                 el.delegate("."+options.metodValidate, "blur", function() {
-                    if ( $( this ).is(options.visible) ) {
-                        self.inputValidation(this, true);
-                    }
+
+                    var oTrigger = this; 
+                    // the element who caused the event
+                    // adding a timeout to delay the callback from modifying the form
+                    // this allows other events like CLICK to be called before the blur event
+                    // this happens only on some browsers where blur has higher priority than click
+                    setTimeout(function(){
+                        if ( $( oTrigger ).is(options.visible) ) {
+                            var oFieldSet = self.getFieldSet( oTrigger );
+                            if ( oFieldSet.children( '.'+options.metodValidateDate ).length <= 0 ) {
+                                var blIsValid = self.isFieldSetValid( oFieldSet, true );
+                                self.hideErrorMessage( oFieldSet );
+                                if ( blIsValid != true ){
+                                    self.showErrorMessage( oFieldSet, blIsValid );
+                                }
+                            }
+                        }
+                    }, 50);
                 });
 
                 el.bind( "submit", function() {
@@ -70,33 +84,36 @@
              *
              * @return boolean
              */
-            inputValidation: function(oInput, blCanSetDefaultState)
+            inputValidation: function( oInput, blCanSetDefaultState )
             {
                 var oOptions = this.options;
                 var self = this;
                 var blValidInput = true;
 
                     if ( $( oInput ).hasClass( oOptions.metodValidateNotEmpty ) && blValidInput ) {
-                        var sValue = $.trim( $( oInput ).val());
-                        self.manageErrorMessage(oInput, sValue , oOptions.errorMessageNotEmpty);
-                        blValidInput = sValue ? true : false;
+                        if (! $.trim( $( oInput ).val()) ){
+                            return oOptions.errorMessageNotEmpty;
+                        }
                     }
 
                     if ( $( oInput ).hasClass( oOptions.metodValidateEmail ) && blValidInput ) {
 
-                        if( $( oInput ).val() ) {
-                            self.manageErrorMessage(oInput, self.isEmail( $( oInput ).val() ), oOptions.errorMessageNotEmail);
-                            blValidInput = blValidInput && self.isEmail( $( oInput ).val() );
+                        if( $( oInput ).val()  ) {
+
+                            if ( !self.isEmail( $( oInput ).val() ) ){
+                                return oOptions.errorMessageNotEmail;
+                            }
                         }
                     }
+
 
                     if ( $( oInput ).hasClass( oOptions.metodValidateLength ) && blValidInput ) {
 
                         var iLength = self.getLength( $( oInput ).closest(oOptions.form ));
-
                         if( $( oInput ).val() ) {
-                            self.manageErrorMessage(oInput, self.hasLength( $( oInput ).val(), iLength), oOptions.errorMessageShort);
-                            blValidInput = blValidInput && self.hasLength( $( oInput ).val(), iLength);
+                            if ( !self.hasLength( $( oInput ).val(), iLength ) ) {
+                                return  oOptions.errorMessageShort;
+                            }
                         }
                     }
 
@@ -104,16 +121,40 @@
 
                         var inputs = new Array();
 
-                        var oForm = $( oInput ).parent(oOptions.listItem).parent(oOptions.list).parent(oOptions.form);
+                        var oForm = $( oInput ).closest(oOptions.form);
 
                         $( "." + oOptions.metodValidateMatch, oForm).each( function(index) {
                             inputs[index] = this;
                         });
 
                         if( $(inputs[0]).val() && $(inputs[1]).val() ) {
-                            self.manageErrorMessage(inputs[0], self.isEqual($(inputs[0]).val(), $(inputs[1]).val()), oOptions.errorMessageNotEqual);
-                            self.manageErrorMessage(inputs[1], self.isEqual($(inputs[0]).val(), $(inputs[1]).val()), oOptions.errorMessageNotEqual);
-                            blValidInput = blValidInput && self.isEqual($(inputs[0]).val(), $(inputs[1]).val());
+
+                            if( !self.isEqual($(inputs[0]).val(), $(inputs[1]).val()) ) {
+                                return oOptions.errorMessageNotEqual;
+                            }
+                        }
+                    }
+
+                    if ( $( oInput ).hasClass( oOptions.metodValidateDate ) ) {
+                        oDay   = $( oInput ).parent().children( '.oxDay' );
+                        oMonth = $( oInput ).parent().children( '.oxMonth' );
+                        oYear  = $( oInput ).parent().children( '.oxYear' );
+                        
+                        if ( !( oDay.val() && oMonth.val() && oYear.val() ) && !( !oDay.val() && !oMonth.val() && !oYear.val() ) ) {
+                            return oOptions.errorMessageNotEmpty;
+                        } else if ( oDay.val() && oMonth.val() && oYear.val() ) {
+                            RE = /^\d+$/;
+                            blDayOnlyDigits  = RE.test( oDay.val() );
+                            blYearOnlyDigits = RE.test( oYear.val() );
+                            if ( !blDayOnlyDigits || !blYearOnlyDigits ) {
+                                return oOptions.errorMessageIncorrectDate;
+                            } else {
+                                iMonthDays = new Date((new Date(oYear.val(), oMonth.val(), 1))-1).getDate();
+                                
+                                if ( oDay.val() <= 0 || oYear.val() <= 0 || oDay.val() > iMonthDays ) {
+                                    return oOptions.errorMessageIncorrectDate;
+                                }
+                            }
                         }
                     }
 
@@ -129,12 +170,12 @@
             },
 
             /**
-             * On submit validate requared form elements,
+             * On submit validate required form elements,
              * return true - if all filled correctly, false - if not
              *
              * @return boolean
              */
-            submitValidation: function(oForm)
+            submitValidation: function( oForm )
             {
                 var blValid = true;
                 var oFirstNotValidElement = null;
@@ -144,14 +185,18 @@
                 $( "." + oOptions.metodValidate, oForm).each(    function(index) {
 
                     if ( $( this ).is(oOptions.visible) ) {
-                        if(! self.inputValidation(this, false)){
+
+                        var oFieldSet = self.getFieldSet(this);
+                        self.hideErrorMessage( oFieldSet );
+                        var blIsValid = self.isFieldSetValid( oFieldSet, false );
+                        if ( blIsValid != true ){
+                            self.showErrorMessage( oFieldSet, blIsValid );
                             blValid = false;
                             if( oFirstNotValidElement == null ) {
                                 oFirstNotValidElement = this;
                             }
                         }
                     }
-
                 });
 
                 if( oFirstNotValidElement != null ) {
@@ -161,19 +206,37 @@
                 return blValid;
             },
 
+            isFieldSetValid: function ( oFieldSet, blCanSetDefaultState ) {
+
+                var blIsValid = true;
+                var self = this;
+                var oOptions = this.options;
+
+                $( "." + oOptions.metodValidate, oFieldSet).each( function(index) {
+
+                    if ( $( this ).is(oOptions.visible) ) {
+                        var tmpblIsValid = self.inputValidation( this, blCanSetDefaultState );
+
+                        if( tmpblIsValid != true){
+                            blIsValid = tmpblIsValid;
+                        }
+                    }
+                });
+
+                return blIsValid;
+            },
 
             /**
-             * Manage error messages show / hide
+             * returns li element
+             *
              *
              * @return object
              */
-            manageErrorMessage: function ( oObject, isValid, messageType )
-            {
-                if ( isValid ) {
-                     return this.hideErrorMessage(oObject, messageType);
-                } else {
-                    return this.showErrorMessage(oObject, messageType);
-                }
+            getFieldSet: function( oField ){
+
+               var oFieldSet =  $( oField ).parent();
+
+               return oFieldSet;
             },
 
             /**
@@ -183,8 +246,6 @@
              */
             showErrorMessage: function ( oObject, messageType )
             {
-                var oObject =  $( oObject).parent();
-
                 oObject.removeClass(this.options.classValid);
                 oObject.addClass(this.options.classInValid);
                 oObject.children(this.options.errorParagraf).children( this.options.span + "." + messageType ).show();
@@ -198,20 +259,46 @@
              *
              * @return object
              */
-            hideErrorMessage: function ( oObject, messageType )
+            hideErrorMessage: function ( oObject )
             {
-                var oObject = $( oObject).parent();
+                this.hideMatchMessages( oObject );
 
                 oObject.removeClass(this.options.classInValid);
                 oObject.addClass(this.options.classValid);
-                oObject.children(this.options.errorParagraf).children( this.options.span + "." + messageType ).hide();
+                oObject.children(this.options.errorParagraf).children( this.options.span ).hide();
                 oObject.children(this.options.errorParagraf).hide();
 
                 return oObject;
             },
 
             /**
-             * Set dafault look of form list element
+             * has match error messages
+             *
+             * @return boolean
+             */
+            hasOpenMatchMessage: function ( oObject )
+            {
+                return $( '.'+this.options.errorMessageNotEqual, oObject ).is( this.options.visible )
+            },
+
+            /**
+             * Hide match error messages
+             *
+             * @return object
+             */
+            hideMatchMessages: function ( oObject )
+            {
+                if ( this.hasOpenMatchMessage( oObject.next(this.options.listItem) ) ){
+                    this.hideErrorMessage( oObject.next(this.options.listItem) );
+                }
+
+                if ( this.hasOpenMatchMessage( oObject.prev(this.options.listItem) ) ){
+                    this.hideErrorMessage( oObject.prev(this.options.listItem) );
+                }
+            },
+
+            /**
+             * Set default look of form list element
              *
              * @return object
              */
@@ -233,7 +320,7 @@
             },
 
             /**
-             * gets requared length from form
+             * gets required length from form
              *
              * @return boolean
              */
@@ -269,7 +356,6 @@
                 email = jQuery.trim(email);
 
                 var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-                //var reg = /^([-!#\$%&'*+.\/0-9=?A-Z^_`a-z{|}~\177])+@([-!#\$%&'*+\/0-9=?A-Z^_`a-z{|}~\177]+\\.)+[a-zA-Z]{2,6}\$/i;
 
                 if(reg.test(email) == false) {
                     return false;

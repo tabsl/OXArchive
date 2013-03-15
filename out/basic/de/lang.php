@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 43474 2012-04-03 15:20:41Z juergen.busch $
+ * @version   SVN: $Id: lang.php 44071 2012-04-19 10:34:30Z vaidas.matulevicius $
  */
 
 
@@ -38,7 +38,6 @@ $sLangName  = "Deutsch";
 // -------------------------------
 $aLang = array(
 'ACCOUNT_PASSWORD_CONFIRMPASSWORD'                            => "Passwort wiederholen:",
-'ACCOUNT_PASSWORD_ERRINCORRECTCURRENTPASSW'                   => "Fehler: Ihr aktuelles Passwort ist falsch.",
 'ACCOUNT_PASSWORD_PASSWORDMINLENGTH'                          => "Die Mindestlänge des Passwortes beträgt 6 Zeichen.",
 'ACCOUNT_RECOMM_LISTTITLE'                                    => "Überschrift",
 'ACCOUNT_USER_BILLINGADDRESS'                                 => "Rechnungsadresse",
@@ -254,7 +253,6 @@ $aLang = array(
 'PROMO_WILLENDIN_PREFIX'                                      => "Endet in ",
 'PROMO_WILLENDIN_SUFFIX'                                      => "!",
 'PROMO_WILLSTARTIN_PREFIX'                                    => "Startet in ",
-'PROMO_WILLSTARTIN_SUFFIX'                                    => "",
 'RECOMMLIST_LISTREVIEW'                                       => "Kommentare",
 'RECOMMLIST_LOGGINTOWRITEREVIEW'                              => "Melden Sie sich hier an, um einen Kommentar zu schreiben.",
 'RECOMMLIST_RATETHISLIST'                                     => "Bewerten Sie diese Lieblingsliste!",

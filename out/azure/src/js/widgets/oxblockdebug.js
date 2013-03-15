@@ -122,4 +122,4 @@
      */
     $.widget("ui.oxBlockDebug", oxBlockDebug );
 
-})( jQuery )
+})( jQuery );

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: compare.php 48916 2012-08-22 07:59:30Z tomas $
+ * @version   SVN: $Id: compare.php 41841 2012-01-27 15:35:11Z linas.kukulskis $
  */
 
 /**
@@ -388,12 +388,6 @@ class Compare extends oxUBase
         $iCnt = 0;
         $iActPage = $this->getActPage();
         foreach ( $aItems as $sOxid => $sVal ) {
-
-            //#4391T, skipping non loaded products
-            if (!isset ($oList[$sOxid]) ) {
-                continue;
-            }
-
             $iCnt++;
             $oNewList[$sOxid] = $oList[$sOxid];
 

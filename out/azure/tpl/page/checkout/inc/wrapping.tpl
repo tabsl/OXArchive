@@ -1,5 +1,6 @@
 [{oxscript include="js/widgets/oxmodalpopup.js" priority=10 }]
 [{oxscript add="$( '.wrappingTrigger' ).oxModalPopup({ target: '.wrapping'});"}]
+
 <div class="wrapping popupBox corners FXgradGreyLight glowShadow">
     <img src="[{$oViewConf->getImageUrl('x.png')}]" alt="" class="closePop">
     [{assign var="currency" value=$oView->getActCurrency() }]
@@ -38,32 +39,34 @@
                                 [{assign var="basketproduct" value=$basketitemlist.$basketindex }]
                                 <tr>
                                     <td>
-                                        <a href="[{ $basketproduct->getLink()}]">
-                                            <img src="[{$basketproduct->getThumbnailUrl() }]" alt="[{ $basketproduct->oxarticles__oxtitle->value|strip_tags }]">
+                                        <a href="[{$basketitem->getLink()}]">
+                                            <img src="[{$basketproduct->getThumbnailUrl() }]" alt="[{$basketitem->getTitle()|strip_tags}]">
                                         </a>
                                     </td>
                                     <td>
-                                        <a rel="nofollow" href="[{ $basketproduct->getLink()}]">[{ $basketproduct->oxarticles__oxtitle->value }][{ if $basketproduct->oxarticles__oxvarselect->value}], [{ $basketproduct->oxarticles__oxvarselect->value}][{/if}]</a>
+                                        <a rel="nofollow" href="[{$basketitem->getLink()}]">[{$basketitem->getTitle()}]</a>
                                     </td>
                                     <td>
                                         <ul id="wrapp_[{$smarty.foreach.wrappArt.iteration}]">
                                             <li>
-                                                <input class="radiobox" type="radio" name="wrapping[[{$basketindex}]]" value="0" [{ if !$basketitem->getWrappingId()}]CHECKED[{/if}]>
-                                                <label>[{ oxmultilang ident="PAGE_CHECKOUT_WRAPPING_NONE" }]</label><strong>0,00 [{ $currency->sign}]</strong>
+                                                <input class="radiobox" type="radio" name="wrapping[[{$basketindex}]]" id="wrapping_[{$basketindex}]" value="0" [{ if !$basketitem->getWrappingId()}]CHECKED[{/if}]>
+                                                <label for="wrapping_[{$basketindex}]">[{ oxmultilang ident="PAGE_CHECKOUT_WRAPPING_NONE" }]</label><strong>0,00 [{ $currency->sign}]</strong>
                                             </li>
                                             [{assign var="ictr" value="1"}]
                                             [{foreach from=$oView->getWrappingList() item=wrapping name=Wraps}]
                                                 <li>
-                                                    <input class="radiobox" type="radio" name="wrapping[[{$basketindex}]]" value="[{$wrapping->oxwrapping__oxid->value}]" [{ if $basketitem->getWrappingId() == $wrapping->oxwrapping__oxid->value}]CHECKED[{/if}]>
+                                                    <input class="radiobox" type="radio" name="wrapping[[{$basketindex}]]" id="wrapping_[{$wrapping->oxwrapping__oxid->value}]" value="[{$wrapping->oxwrapping__oxid->value}]" [{ if $basketitem->getWrappingId() == $wrapping->oxwrapping__oxid->value}]CHECKED[{/if}]>
                                                     [{if $wrapping->oxwrapping__oxpic->value }]
                                                     <span><img src="[{$wrapping->getPictureUrl()}]" alt="[{$wrapping->oxwrapping__oxname->value}]"></span>
                                                     [{/if}]
-                                                    <label>[{$wrapping->oxwrapping__oxname->value}]</label>
+                                                    <label for="wrapping_[{$wrapping->oxwrapping__oxid->value}]">[{$wrapping->oxwrapping__oxname->value}]</label>
                                                     <strong>[{$wrapping->getFPrice()}] [{ $currency->sign}]</strong>
                                                 </li>
                                                 [{assign var="ictr" value="`$ictr+1`"}]
                                             [{/foreach}]
+                                            [{oxscript add="$( '#wrapp_`$smarty.foreach.wrappArt.iteration` img' ).click(function(){ $(this).parent().parent().find('input').click(); });"}]
                                         </ul>
+                                        
                                     </td>
                                 </tr>
                                 [{assign var="icounter" value="`$icounter+1`"}]
@@ -79,8 +82,8 @@
                         <ul class="wrappingCard clear" id="wrappCard">
                             <li>
                                 <p class="clear">
-                                    <input type="radio" class="radiobox" name="chosencard" value="0" [{ if !$oxcmp_basket->getCardId() }]CHECKED[{/if}]>
-                                    <label>[{ oxmultilang ident="PAGE_CHECKOUT_WRAPPING_NOGREETINGCARD" }]</label>
+                                    <input type="radio" class="radiobox" name="chosencard" id="chosencard" value="0" [{ if !$oxcmp_basket->getCardId() }]CHECKED[{/if}]>
+                                    <label for="chosencard">[{ oxmultilang ident="PAGE_CHECKOUT_WRAPPING_NOGREETINGCARD" }]</label>
                                 </p>
                             </li>
                         [{assign var="icounter" value="0"}]
@@ -89,8 +92,8 @@
                         [{foreach from=$oCardList item=card name=GreetCards}]
                             <li>
                                 <p class="clear">
-                                    <input class="radiobox" type="radio" name="chosencard" value="[{$card->oxwrapping__oxid->value}]" [{ if $oxcmp_basket->getCardId() == $card->oxwrapping__oxid->value}]CHECKED[{/if}]>
-                                    <label>[{$card->oxwrapping__oxname->value}] <strong>[{$card->getFPrice() }] [{ $currency->sign}]</strong></label>
+                                    <input class="radiobox" type="radio" name="chosencard" id="chosen_[{$card->oxwrapping__oxid->value}]" value="[{$card->oxwrapping__oxid->value}]" [{ if $oxcmp_basket->getCardId() == $card->oxwrapping__oxid->value}]CHECKED[{/if}]>
+                                    <label for="chosen_[{$card->oxwrapping__oxid->value}]">[{$card->oxwrapping__oxname->value}] <strong>[{$card->getFPrice() }] [{ $currency->sign}]</strong></label>
                                 </p>
                                 [{if $card->oxwrapping__oxpic->value}]
                                 <img src="[{$card->getPictureUrl()}]" alt="[{$card->oxwrapping__oxname->value}]">
@@ -98,18 +101,20 @@
                             </li>
                         [{assign var="icounter" value="`$icounter+1`"}]
                         [{/foreach}]
+                        [{oxscript add="$( '#wrappCard img' ).click(function(){ $(this).parent().find('input').click(); });"}]
                         </ul>
+                        
                     [{/block}]
                     [{block name="checkout_wrapping_comment"}]
                         <div class="wrappingComment">
                             <label>[{ oxmultilang ident="PAGE_CHECKOUT_WRAPPING_GREETINGMESSAGE" }]</label>
-                            <textarea cols="102" style="background:#fff; z-index:99999;" rows="5" name="giftmessage" class="areabox">[{$oxcmp_basket->getCardMessage()}]</textarea>
+                            <textarea cols="102" rows="5" name="giftmessage" class="areabox">[{$oxcmp_basket->getCardMessage()}]</textarea>
                         </div>
                     [{/block}]
                 [{/if}]
                 [{block name="checkout_wrapping_submit"}]
                     <div class="submitForm clear">
-                        <button type="submit" style="white-space:nowrap;" class="submitButton largeButton">[{ oxmultilang ident="PAGE_CHECKOUT_WRAPPING_BACKTOORDER" }]</button>
+                        <button type="submit" class="submitButton largeButton">[{ oxmultilang ident="PAGE_CHECKOUT_WRAPPING_BACKTOORDER" }]</button>
                         <button class="textButton largeButton closePop">[{ oxmultilang ident="PAGE_CHECKOUT_WRAPPING_CANCEL" }]</button>
                     </div>
                 [{/block}]

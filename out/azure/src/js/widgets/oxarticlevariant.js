@@ -45,7 +45,7 @@
 
                 // setting new selection
                 if ( obj.parents().hasClass("js-fnSubmit") ){
-                    obj.parent('li').parent('ul').siblings('input:hidden').attr( "value", obj.attr("rel") );
+                    obj.parent('li').parent('ul').siblings('input:hidden').attr( "value", obj.attr("data-seletion-id") );
 
                     var form = obj.closest("form");
                     $('input[name=fnc]', form).val("");
@@ -75,7 +75,7 @@
                             aSelectionInputs.not("*[value='']").each(function(i){
                                 hash = hash+i+':'+$(this).val()+"|";
                             });
-                            if ( jQuery.inArray( hash, oxVariantSelections ) ) {
+                            if ( jQuery.inArray( hash, oxVariantSelections ) === -1 ) {
                                 return self.reloadProductPartially( $("form.js-oxProductForm"), 'detailsMain', $("#detailsMain"), $("#detailsMain")[0]);
                             }
                         }
@@ -127,4 +127,4 @@
 
     $.widget("ui.oxArticleVariant", oxArticleVariant );
 
-})( jQuery )
+})( jQuery );

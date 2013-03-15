@@ -3,7 +3,9 @@
 
 <strong class="boxhead">[{$template_title}]</strong>
 <div class="box info">
-  [{ oxcontent ident="oxblocked" }]
+  [{oxifcontent ident="oxblocked" object="oCont"}]
+           [{ $oCont->oxcontents__oxcontent->value }]
+      [{/oxifcontent}]
 </div>
 
 [{ insert name="oxid_tracker" title=$template_title }]

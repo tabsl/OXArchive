@@ -91,7 +91,7 @@
          * @return null
          */
         select : function( oSelectLink ) {
-            this.selectedValue.val( oSelectLink.attr('rel') );
+            this.selectedValue.val( oSelectLink.attr('data-seletion-id') );
             this.selectedValueLabel.text( oSelectLink.text() );
             $('a', this.valueList).removeClass('selected');
             oSelectLink.addClass('selected');
@@ -166,4 +166,4 @@
 
    $.widget("ui.oxDropDown", oxDropDown );
 
-})( jQuery )
+})( jQuery );

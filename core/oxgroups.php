@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxgroups.php 28010 2010-05-28 09:23:10Z sarunas $
+ * @version   SVN: $Id: oxgroups.php 43733 2012-04-11 07:40:31Z linas.kukulskis $
  */
 
 /**
@@ -29,13 +29,6 @@
  */
 class oxGroups extends oxI18n
 {
-
-    /**
-     * Core database table name. $sCoreTbl could be only original data table name and not view name.
-     * @var string
-     */
-    protected $_sCoreTbl   = 'oxgroups';
-
     /**
      * Name of current class
      * @var string
@@ -72,21 +65,21 @@ class oxGroups extends oxI18n
 
         parent::delete( $sOXID );
 
-        $oDB = oxDb::getDb();
+        $oDb = oxDb::getDb();
 
 
         // deleting related data records
-        $sDelete = 'delete from oxobject2group where oxobject2group.oxgroupsid = ' . $oDB->quote( $sOXID );
-        $rs = $oDB->execute( $sDelete );
+        $sDelete = 'delete from oxobject2group where oxobject2group.oxgroupsid = ' . $oDb->quote( $sOXID );
+        $rs = $oDb->execute( $sDelete );
 
-        $sDelete = 'delete from oxobject2delivery where oxobject2delivery.oxobjectid = ' . $oDB->quote( $sOXID );
-        $rs = $oDB->execute( $sDelete );
+        $sDelete = 'delete from oxobject2delivery where oxobject2delivery.oxobjectid = ' . $oDb->quote( $sOXID );
+        $rs = $oDb->execute( $sDelete );
 
-        $sDelete = 'delete from oxobject2discount where oxobject2discount.oxobjectid = ' . $oDB->quote( $sOXID );
-        $rs = $oDB->execute( $sDelete );
+        $sDelete = 'delete from oxobject2discount where oxobject2discount.oxobjectid = ' . $oDb->quote( $sOXID );
+        $rs = $oDb->execute( $sDelete );
 
-        $sDelete = 'delete from oxobject2payment where oxobject2payment.oxobjectid = ' . $oDB->quote( $sOXID );
-        $rs = $oDB->execute( $sDelete );
+        $sDelete = 'delete from oxobject2payment where oxobject2payment.oxobjectid = ' . $oDb->quote( $sOXID );
+        $rs = $oDb->execute( $sDelete );
 
         return $rs->EOF;
     }

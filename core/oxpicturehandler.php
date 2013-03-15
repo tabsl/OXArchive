@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxpicturehandler.php 43880 2012-04-13 13:04:01Z alfonsas $
+ * @version   SVN: $Id: oxpicturehandler.php 43885 2012-04-13 13:35:28Z linas.kukulskis $
  */
 
 /**
@@ -72,47 +72,29 @@ class oxPictureHandler extends oxSuperCfg
         $myConfig   = $this->getConfig();
         $myUtilsPic = oxUtilsPic::getInstance();
         $oUtilsFile = oxUtilsFile::getInstance();
+        $blGeneratedImagesOnly = !$blDeleteMasterPicture;
 
         $sAbsDynImageDir = $myConfig->getPictureDir(false);
         $sMasterImage = basename( $oObject->{"oxarticles__oxpic".$iIndex}->value );
-
         if ( !$sMasterImage || $sMasterImage == "nopic.jpg" ) {
             return;
         }
 
+        $aPic = array("sField"    => "oxpic".$iIndex,
+                      "sDir"      => $oUtilsFile->getImageDirByType( "M".$iIndex, $blGeneratedImagesOnly ),
+                      "sFileName" => $sMasterImage);
 
-        if ( $blDeleteMasterPicture ) {
-            // master picture
-            $aPic = array("sField"    => "oxpic".$iIndex,
-                          "sDir"      => $oUtilsFile->getImageDirByType( "M".$iIndex ),
-                          "sFileName" => $sMasterImage);
-        } else {
-            // general picture
-            $aPic = array("sField"    => "oxpic".$iIndex,
-                          "sDir"      => $oUtilsFile->getImageDirByType( "P".$iIndex ),
-                          "sFileName" => $sMasterImage);
-        }
-
-        $blDeleted = $myUtilsPic->safePictureDelete( $aPic["sFileName"], $myConfig->getPictureDir(false) . $aPic["sDir"], "oxarticles", $aPic["sField"] );
-
+        $blDeleted = $myUtilsPic->safePictureDelete( $aPic["sFileName"], $sAbsDynImageDir . $aPic["sDir"], "oxarticles", $aPic["sField"] );
         if ( $blDeleted ) {
             $this->deleteZoomPicture( $oObject, $iIndex );
 
             $aDelPics = array();
-
-            if ( $blDeleteMasterPicture ) {
-                //deleting general picture
-                $aDelPics[] = array("sField"    => "oxpic".$iIndex,
-                                    "sDir"      => $oUtilsFile->getImageDirByType( "P".$iIndex ),
-                                    "sFileName" => $sMasterImage);
-            }
-
             if ( $iIndex == 1 ) {
                 // deleting generated main icon picture if custom main icon
                 // file name not equal with generated from master picture
                 if ( $this->getMainIconName( $sMasterImage ) != basename($oObject->oxarticles__oxicon->value) ) {
                     $aDelPics[] = array("sField"    => "oxpic1",
-                                        "sDir"      => $oUtilsFile->getImageDirByType( "ICO" ),
+                                        "sDir"      => $oUtilsFile->getImageDirByType( "ICO", $blGeneratedImagesOnly ),
                                         "sFileName" => $this->getMainIconName( $sMasterImage ));
                 }
 
@@ -120,12 +102,13 @@ class oxPictureHandler extends oxSuperCfg
                 // file name not equal with generated from master picture
                 if ( $this->getThumbName( $sMasterImage ) != basename($oObject->oxarticles__oxthumb->value) ) {
                     $aDelPics[] = array("sField"    => "oxpic1",
-                                        "sDir"      => $oUtilsFile->getImageDirByType( "TH" ),
+                                        "sDir"      => $oUtilsFile->getImageDirByType( "TH", $blGeneratedImagesOnly ),
                                         "sFileName" => $this->getThumbName( $sMasterImage ));
                 }
             }
+
             foreach ( $aDelPics as $aPic ) {
-                $myUtilsPic->safePictureDelete( $aPic["sFileName"], $myConfig->getPictureDir(false) . $aPic["sDir"], "oxarticles", $aPic["sField"] );
+                $myUtilsPic->safePictureDelete( $aPic["sFileName"], $sAbsDynImageDir . $aPic["sDir"], "oxarticles", $aPic["sField"] );
             }
         }
 
@@ -366,15 +349,16 @@ class oxPictureHandler extends oxSuperCfg
      * @param string $sSize    picture sizes (x, y)
      * @param string $sIndex   picture index [optional]
      * @param string $sAltPath alternative picture path [optional]
+     * @param bool   $bSsl     Whether to force SSL
      *
      * @return string | bool
      */
-    public function getPicUrl( $sPath, $sFile, $sSize, $sIndex = null, $sAltPath = false)
+    public function getPicUrl( $sPath, $sFile, $sSize, $sIndex = null, $sAltPath = false, $bSsl = null )
     {
         $sUrl = null;
         if ( $sPath && $sFile && ( $aSize = $this->getImageSize( $sSize, $sIndex ) ) ) {
 
-            $aPicInfo = $this->_getPictureInfo( "master/" . ( $sAltPath ? $sAltPath : $sPath ), $sFile, $this->isAdmin() );
+            $aPicInfo = $this->_getPictureInfo( "master/" . ( $sAltPath ? $sAltPath : $sPath ), $sFile, $this->isAdmin(), $bSsl );
             if ( $aPicInfo['url'] && $aSize[0] && $aSize[1] ) {
                 $sDirName = "{$aSize[0]}_{$aSize[1]}_" . $this->getConfig()->getConfigParam( 'sDefaultImageQuality' );
                 $sUrl = str_replace( "/master/" . ( $sAltPath ? $sAltPath : $sPath ), "/generated/{$sPath}{$sDirName}/", $aPicInfo['url'] );
@@ -390,14 +374,15 @@ class oxPictureHandler extends oxSuperCfg
      * @param string $sFile  picture file name
      * @param string $sSize  picture sizes (x, y)
      * @param string $sIndex picture index [optional]
+     * @param bool   $bSsl   Whether to force SSL
      *
      * @return string | bool
      */
-    public function getProductPicUrl( $sPath, $sFile, $sSize, $sIndex = null )
+    public function getProductPicUrl( $sPath, $sFile, $sSize, $sIndex = null, $bSsl = null )
     {
         $sUrl = null;
-        if ( !$sFile || !( $sUrl = $this->getPicUrl( $sPath, $sFile, $sSize, $sIndex ) ) ) {
-            $sUrl = $this->getPicUrl( $sPath, "nopic.jpg", $sSize, $sIndex, "/" );
+        if ( !$sFile || !( $sUrl = $this->getPicUrl( $sPath, $sFile, $sSize, $sIndex, false, $bSsl ) ) ) {
+            $sUrl = $this->getPicUrl( $sPath, "nopic.jpg", $sSize, $sIndex, "/", $bSsl );
         }
         return $sUrl;
     }

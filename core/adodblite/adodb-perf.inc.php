@@ -79,7 +79,8 @@ function& adodb_log_sql(&$conn,$sql,$inputarr)
     $conn->_logsql = true; // reverse setting ::_logsql=false
 
     if (!$_logSqlDbInstance){
-        $conn->_logSqlDbInstance = $_logSqlDbInstance = & NewADOConnection('mysql');
+        $myConfig  = oxConfig::getInstance();
+        $conn->_logSqlDbInstance = $_logSqlDbInstance = & NewADOConnection($myConfig->getConfigParam( "dbType" ));
         $_logSqlDbInstance->_connect($conn->host, $conn->username, $conn->password, $conn->database, false, true);
     }
 
@@ -88,10 +89,10 @@ function& adodb_log_sql(&$conn,$sql,$inputarr)
         //$conn->_logsql = false; // disable logsql error simulation
         $dbT = $conn->dbtype;
 
-        $a0 = split(' ',$t0);
+        $a0 = explode (' ',$t0);
         $a0 = (float)$a0[1]+(float)$a0[0];
 
-        $a1 = split(' ',$t1);
+        $a1 = explode (' ',$t1);
         $a1 = (float)$a1[1]+(float)$a1[0];
 
         $time = $a1 - $a0;

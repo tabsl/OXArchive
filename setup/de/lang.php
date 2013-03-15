@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   setup
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 38391 2011-08-24 15:09:50Z vilma $
+ * @version   SVN: $Id: lang.php 43969 2012-04-16 15:22:52Z mindaugas.rimgaila $
  */
 
 $aLang = array(
@@ -37,7 +37,7 @@ $aLang = array(
 'TAB_5_TITLE'                                   => "Lizenz",
 'TAB_6_TITLE'                                   => "Fertigstellen",
 
-'TAB_0_DESC'                                    => "Überprüfen, ob ihr System die Voraussetzungen erfüllt",
+'TAB_0_DESC'                                    => "Überprüfen, ob Ihr System die Voraussetzungen erfüllt",
 'TAB_1_DESC'                                    => "Herzlich willkommen<br>zur Installation von OXID eShop",
 'TAB_2_DESC'                                    => "Bestätigen Sie die Lizenzbedingungen",
 'TAB_3_DESC'                                    => "Verbindung testen,<br>Tabellen anlegen",
@@ -79,7 +79,7 @@ $aLang = array(
 'MOD_SERVER_PERMISSIONS'                        => 'Dateizugriffsrechte',
 'MOD_ALLOW_URL_FOPEN'                           => 'allow_url_fopen oder fsockopen auf Port 80',
 'MOD_PHP4_COMPAT'                               => 'Zend Kompatibilitätsmodus muss ausgeschaltet sein',
-'MOD_PHP_VERSION'                               => 'PHP mindestens Version 5.2.0',
+'MOD_PHP_VERSION'                               => 'PHP mindestens Version 5.2.10',
 'MOD_REQUEST_URI'                               => 'REQUEST_URI vorhanden',
 'MOD_LIB_XML2'                                  => 'LIB XML2',
 'MOD_PHP_XML'                                   => 'DOM',
@@ -98,7 +98,9 @@ $aLang = array(
 'MOD_OPEN_SSL'                                  => 'OpenSSL',
 'MOD_SOAP'                                      => 'SOAP',
 'MOD_UNICODE_SUPPORT'                           => 'UTF-8 Unterstützung',
+'MOD_FILE_UPLOADS'                              => 'Hochladen von Dateien erlaubt (file_uploads)',
 'MOD_BUG53632'                                  => 'Mögliche Probleme mit Server durch PHP Bugs',
+'MOD_SESSION_AUTOSTART'                         => 'session.auto_start muss ausgeschaltet sein',
 
 'STEP_0_ERROR_TEXT'                             => 'Ihr System erfüllt nicht alle nötigen Systemvoraussetzungen',
 'STEP_0_ERROR_URL'                              => "http://www.oxid-esales.com/de/produkte/community-edition/systemvoraussetzungen",
@@ -171,7 +173,7 @@ $aLang = array(
 'STEP_5_TITLE'                                  => "OXID eShop Lizenz",
 'STEP_5_DESC'                                   => "Bitte geben Sie nun Ihren OXID eShop Lizenzschlüssel ein:",
 'STEP_5_LICENCE_KEY'                            => "Lizenzschlüssel",
-'STEP_5_LICENCE_DESC'                           => "Der mit der Demo Version ausgelieferte Lizenzschlüssel (oben bereits ausgefüllt) ist 30 Tage gültig .<br>
+'STEP_5_LICENCE_DESC'                           => "Der mit der Demoversion ausgelieferte Lizenzschlüssel (oben bereits ausgefüllt) ist 30 Tage gültig .<br>
                                                     Nach Ablauf der 30 Tage können alle Ihre Änderungen nach Eingabe eines gültigen Lizenzschlüssels weiterhin benutzt werden.",
 'BUTTON_WRITE_LICENCE'                          => "Lizenzschlüssel speichern",
 
@@ -179,26 +181,29 @@ $aLang = array(
 'STEP_5_1_SERIAL_ADDED'                         => "Lizenzschlüssel erfolgreich gespeichert!<br>Bitte warten...",
 
 'STEP_6_TITLE'                                  => "OXID eShop Einrichtung erfolgreich",
-'STEP_6_DESC'                                   => "Die Einrichtung Ihres OXID eShops wurde erfolgreich abgeschlossen.",
+'STEP_6_DESC'                                   => "Die Einrichtung Ihres OXID eShop wurde erfolgreich abgeschlossen.",
 'STEP_6_LINK_TO_SHOP'                           => "Hier geht es zu Ihrem Shop",
 'STEP_6_LINK_TO_SHOP_ADMIN_AREA'                => "Zugang zu Ihrer Shop Administration",
 'STEP_6_TO_SHOP'                                => "Zum Shop",
 'STEP_6_TO_SHOP_ADMIN'                          => "Zur Shop Administration",
 
 'ATTENTION'                                     => "Bitte beachten Sie",
-'SETUP_DIR_DELETE_NOTICE'                       => "WICHTIG: Bitte löschen Sie Ihr Setup Verzeichnis falls dieses nicht bereits automatisch entfernt wurde!",
+'SETUP_DIR_DELETE_NOTICE'                       => "WICHTIG: Bitte löschen Sie Ihr Setup-Verzeichnis falls dieses nicht bereits automatisch entfernt wurde!",
 'SETUP_CONFIG_PERMISSIONS'                      => "WICHTIG: Aus Sicherheitsgründen setzen Sie Ihre config.inc.php Datei auf read-only-Modus!",
 
-'SELECT_SETUP_LANG'                             => "Sprache für Installation und Shop",
-'SELECT_SETUP_LANG_HINT'                        => ". Aktivieren Sie weitere Sprachen im Admin, falls gewünscht.",
-'SELECT_COUNTRY_LANG'                           => "Shop-Standort",
-'SELECT_SELIVERY_COUNTRY'                       => "Haupt Lieferland",
-'SELECT_DELIVERY_COUNTRY_HINT'                  => "Aktivieren Sie weitere Lieferländer im Admin, falls benötigt",
+'SELECT_SETUP_LANG'                             => "Sprache für Installation",
+'SELECT_SHOP_LOCATION'                          => "Ihre Region",
+'SELECT_PLEASE_CHOOSE'                          => "Bitte auswählen",
+'SELECT_SHOP_LOCATION_HINT'                     => "Bitte wählen Sie eine Region, auf die der Shop ausgerichtet ist. Abhängig davon werden zusätzliche eCommerce Services vom OXID Server nachgeladen, wenn Sie das erlauben.",
+'SELECT_DELIVERY_COUNTRY'                       => "Hauptlieferland",
+'SELECT_DELIVERY_COUNTRY_HINT'                  => "Aktivieren Sie weitere Lieferländer im Administrationsbereich, falls benötigt.",
+'SELECT_SHOP_LANG'                              => "Sprache für Shop",
+'SELECT_SHOP_LANG_HINT'                         => "Aktivieren Sie weitere Sprachen im Administrationsbereich, falls gewünscht.",
 'SELECT_SETUP_LANG_SUBMIT'                      => "Auswählen",
-'USE_DYNAMIC_PAGES'                             => "Um Ihren Geschäftserfolg zu vergrößern, laden Sie weitere Informationen vom OXID Server nach. <br>Mehr Informationen in unserern ",
+'USE_DYNAMIC_PAGES'                             => "Um Ihren Geschäftserfolg zu vergrößern, laden Sie weitere Informationen vom OXID Server nach. <br>Mehr Informationen in unseren ",
 'PRIVACY_POLICY'                                => "Datenschutzerläuterungen",
 
-'LOAD_DYN_CONTENT_NOTICE'                       => "<p>Falls die Option &quot;Weitere Informationen&quot; nachladen eingeschaltet ist, sehen Sie ein zusätzliches Menü im Admin Bereich Ihres OXID eShops.</p><p>Mittels dieses Menüs erhalten Sie weitere Informationen über eCommerce Services wie z.B. Google Produktsuche oder econda.</p> <p>Sie können diese Einstellung im Admin Bereich jederzeit wieder ändern.</p>",
+'LOAD_DYN_CONTENT_NOTICE'                       => "<p>Wenn diese Option gesetzt ist, sehen Sie ein zusätzliches Menü im Administrationsbereich Ihres OXID eShop.</p><p>Über dieses Menü erhalten Sie weitere Informationen über eCommerce Services, wie z.B. Google Produktsuche oder econda.</p> <p>Sie können diese Einstellung im Administrationsbereich jederzeit wieder ändern.</p>",
 'ERROR_SETUP_CANCELLED'                         => "Das Setup wurde abgebrochen, weil Sie die Lizenzvereinbarungen nicht akzeptiert haben.",
 'BUTTON_START_INSTALL'                          => "Setup erneut starten",
 

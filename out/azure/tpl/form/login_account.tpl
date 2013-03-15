@@ -35,7 +35,6 @@
                     <span class="js-oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
                 </p>
             </li>
-
             [{if $oView->showRememberMe()}]
             <li>
                 <label>[{ oxmultilang ident="FORM_LOGIN_ACCOUNT_KEEPLOGGEDIN" }]</label>

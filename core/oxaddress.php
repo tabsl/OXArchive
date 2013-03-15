@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: oxaddress.php 17768 2009-04-02 10:52:12Z tomas $
  */
@@ -29,13 +29,6 @@
  */
 class oxAddress extends oxBase
 {
-    /**
-     * Object core table name
-     *
-     * @var string
-     */
-    protected $_sCoreTbl = 'oxaddress';
-
     /**
      * Current class name
      *

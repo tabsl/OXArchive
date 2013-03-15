@@ -30,6 +30,6 @@ $aTheme = array(
     'title'        => 'Azure',
     'description'  => 'Azure theme by OXID eSales AG',
     'thumbnail'    => 'theme.jpg',
-    'version'      => '0.5',
+    'version'      => '1.2',
     'author'       => 'OXID',
 );

@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: oxbasketreservation.php 28089 2010-06-02 13:49:19Z sarunas $
  */
@@ -277,9 +277,9 @@ class oxBasketReservation extends oxSuperCfg
      */
     public function discardUnusedReservations($iLimit)
     {
-        $oDb = oxDb::getDb(true);
+        $oDb = oxDb::getDb( oxDb::FETCH_MODE_ASSOC );
         $iStartTime = oxUtilsDate::getInstance()->getTime() - (int) $this->getConfig()->getConfigParam( 'iPsBasketReservationTimeout' );
-        $oRs = $oDb->execute("select oxid from oxuserbaskets where oxtitle = 'reservations' and oxupdate <= $iStartTime limit $iLimit");
+        $oRs = $oDb->select("select oxid from oxuserbaskets where oxtitle = 'reservations' and oxupdate <= $iStartTime limit $iLimit", false, false);
         if ($oRs->EOF) {
             return;
         }
@@ -288,7 +288,7 @@ class oxBasketReservation extends oxSuperCfg
             $aFinished[] = $oDb->quote($oRs->fields['oxid']);
             $oRs->MoveNext();
         }
-        $oRs = $oDb->execute("select oxartid, oxamount from oxuserbasketitems where oxbasketid in (".implode(",", $aFinished).")");
+        $oRs = $oDb->select("select oxartid, oxamount from oxuserbasketitems where oxbasketid in (".implode(",", $aFinished).")", false, false );
         while (!$oRs->EOF) {
             $oArticle = oxNew('oxarticle');
             if ($oArticle->load($oRs->fields['oxartid'])) {

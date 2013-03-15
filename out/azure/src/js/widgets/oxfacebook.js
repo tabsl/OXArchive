@@ -16,7 +16,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   out
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: oxfacebook.js 35529 2011-05-23 07:31:20Z vilma $
  */
@@ -50,7 +50,7 @@
                 }
             }
 
-            $.cookie( "fbwidgetson", "1" );
+            $.cookie( 'fbwidgetson',1, {path: '/'});
             this.fbInit( sFbAppId, sLocale, sLoginUrl, sLogoutUrl );
         },
 
@@ -62,26 +62,26 @@
 
             window.fbAsyncInit = function() {
 
-                FB.init({appId: sFbAppId, status: true, cookie: true, xfbml: true});
+                FB.init({appId: sFbAppId, status: true, cookie: true, xfbml: true, oauth: true});
                 FB.Event.subscribe('auth.login', function(response) {
                     // redirecting after successfull login
-                    oxFacebook.redirectPage( sLoginUrl );
+                    setTimeout(function(){oxFacebook.redirectPage(sLoginUrl);}, 0);
 
-                    if ( FB.XFBML.Host.parseDomTree )
-                          setTimeout( FB.XFBML.Host.parseDomTree, 0 );
+                    if ( FB.XFBML.Host !== undefined && FB.XFBML.Host.parseDomTree )
+                          setTimeout(function(){FB.XFBML.Host.parseDomTree;}, 0 );
                 });
 
                 FB.Event.subscribe('auth.logout', function(response) {
                     // redirecting after logout
-                    oxFacebook.redirectPage( sLogoutUrl );
+                    setTimeout(function(){oxFacebook.redirectPage(sLogoutUrl);}, 0);
                 });
             };
 
             // loading FB script file
             var e   = document.createElement('script');
             e.type  = 'text/javascript';
-            e.src   = document.location.protocol + '//connect.facebook.net/' + sLocale + '/all.js';
             e.async = true;
+            e.src   = document.location.protocol + '//connect.facebook.net/' + sLocale + '/all.js';
             $('#fb-root').append(e);
         },
 

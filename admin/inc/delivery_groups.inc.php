@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: delivery_groups.inc.php 39177 2011-10-12 13:14:39Z arvydas.vapsva $
+ * @version   SVN: $Id: delivery_groups.inc.php 39299 2011-10-13 08:34:01Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,  visible, multilanguage, ident

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxi18n.php 42279 2012-02-15 13:00:27Z linas.kukulskis $
+ * @version   SVN: $Id: oxi18n.php 43730 2012-04-11 07:39:14Z linas.kukulskis $
  */
 
 /**
@@ -232,7 +232,7 @@ class oxI18n extends oxBase
         }
 
         // select from non-multilanguage core view (all ml tables joined to one)
-        $oDb = oxDb::getDb( true );
+        $oDb = oxDb::getDb( oxDb::FETCH_MODE_ASSOC );
         $query = "select * from ".getViewName($this->_sCoreTable, -1, -1)." where oxid = " . $oDb->quote( $this->getId() );
         $rs = $oDb->getAll($query);
 
@@ -459,7 +459,7 @@ class oxI18n extends oxBase
                 $sUpdate= "insert into $sLangTable set ".$this->_getUpdateFieldsForTable( $sLangTable, false ) .
                           " on duplicate key update ".$this->_getUpdateFieldsForTable( $sLangTable );
 
-                $blRet = (bool) oxDB::getDb()->execute( $sUpdate);
+                $blRet = (bool) oxDb::getDb()->execute( $sUpdate);
             }
         }
 
@@ -501,7 +501,7 @@ class oxI18n extends oxBase
             //also insert to multilang tables if it is separate
             foreach ($this->_getLanguageSetTables() as $sTable) {
                 $sSq = "insert into $sTable set ".$this->_getUpdateFieldsForTable( $sTable, false );
-                $blRet = $blRet && (bool) oxDB::getDb()->execute( $sSq );
+                $blRet = $blRet && (bool) oxDb::getDb()->execute( $sSq );
             }
         }
 

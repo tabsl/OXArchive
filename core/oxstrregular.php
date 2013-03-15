@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxstrregular.php 51387 2012-11-06 09:11:01Z andrius.silgalis $
+ * @version   SVN: $Id: oxstrregular.php 34145 2011-04-01 15:51:13Z sarunas $
  */
 
 /**
@@ -305,7 +305,7 @@ class oxStrRegular
 
     /**
      * Replaces special characters with passed char.
-     * Special chars are: \n \r \t x95 xa0 ;
+     * Special chars are: " ' : ! ? \n \r \t x95 xa0 ;
      *
      * @param string $sStr      string to cleanup
      * @param object $sCleanChr which character should be used as a replacement (default is empty space)
@@ -314,7 +314,7 @@ class oxStrRegular
      */
     public function cleanStr( $sStr, $sCleanChr = ' ')
     {
-        return $this->preg_replace( "/\n|\r|\t|\x95|\xa0|;/", $sCleanChr, $sStr );
+        return $this->preg_replace( "/\"|\'|\:|\!|\?|\n|\r|\t|\x95|\xa0|;/", $sCleanChr, $sStr );
     }
 
     /**
@@ -350,22 +350,5 @@ class oxStrRegular
         } else {
             return '"'.addcslashes((string)$data, "\r\n\t\"\\").'"';
         }
-    }
-
-    /**
-     * PHP strip_tags() function wrapper.
-     *
-     * @param string $sString        the input string
-     * @param string $sAllowableTags an optional parameter to specify tags which should not be stripped
-     *
-     * @return string
-     */
-    public function strip_tags( $sString, $sAllowableTags = '' )
-    {
-        if ( stripos( $sAllowableTags, '<style>' ) === false ) {
-            // strip style tags with definitions within
-            $sString = $this->preg_replace( "'<style[^>]*>.*</style>'siU", '', $sString );
-        }
-        return strip_tags( $sString, $sAllowableTags );
     }
 }

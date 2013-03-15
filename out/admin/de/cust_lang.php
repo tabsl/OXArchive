@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: cust_lang.php 43526 2012-04-04 11:54:49Z juergen.busch $
+ * @version   SVN: $Id: cust_lang.php 43522 2012-04-04 11:38:36Z juergen.busch $
  */
 
 $sLangName  = "Deutsch";

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_news.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxcmp_news.php 43554 2012-04-05 09:22:43Z linas.kukulskis $
  */
 
 /**
@@ -65,7 +65,7 @@ class oxcmp_news extends oxView
         $iNewsToLoad = $iNewsToLoad?$iNewsToLoad:1;
 
         $oActNews = oxNew( 'oxnewslist' );
-        $oActNews->loadNews( $iNewsToLoad );
+        $oActNews->loadNews( 0, $iNewsToLoad );
 
         return $oActNews;
     }

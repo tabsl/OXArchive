@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: order_address.php 39908 2011-11-14 08:37:54Z arvydas.vapsva $
+ * @version   SVN: $Id: order_address.php 40191 2011-11-23 15:44:35Z linas.kukulskis $
  */
 
 /**

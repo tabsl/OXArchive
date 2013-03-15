@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: statistic_main.php 38161 2011-08-12 12:44:20Z vilma $
+ * @version   SVN: $Id: statistic_main.php 38258 2011-08-19 11:25:37Z linas.kukulskis $
  */
 
 /**

@@ -5,6 +5,13 @@
       [{ oxmultilang ident="PAGE_ACCOUNT_PASSWORD_PASSWORDCHANGED" }]
      </div>
 [{/if}]
+[{if count($Errors) > 0 && count($Errors.user) > 0}]
+<div class="status error corners">
+    [{foreach from=$Errors.user item=oEr key=key }]
+        <p>[{ $oEr->getOxMessage()}]</p>
+    [{/foreach}]
+</div>
+[{/if}]
 <h1 id="personalSettingsHeader" class="pageHead">[{ oxmultilang ident="PAGE_ACCOUNT_PASSWORD_PERSONALSETTINGS" }]</h1>
 [{include file="form/user_password.tpl"}]
 [{insert name="oxid_tracker" title=$template_title }]

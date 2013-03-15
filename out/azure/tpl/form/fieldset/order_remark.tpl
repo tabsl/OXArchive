@@ -3,7 +3,7 @@
     [{oxscript add="$( '#orderRemark' ).oxInnerLabel();"}]
     <li>
         <label>[{ oxmultilang ident="FORM_FIELDSET_USER_YOURMESSAGE" }]</label>
-        <label for="orderRemark" class="innerLabel">[{ oxmultilang ident="FORM_FIELDSET_USER_MESSAGEHERE" }]</label>
+        <label for="orderRemark" class="innerLabel textArea">[{ oxmultilang ident="FORM_FIELDSET_USER_MESSAGEHERE" }]</label>
         <textarea id="orderRemark" cols="60" rows="7" name="order_remark" class="areabox" >[{$oView->getOrderRemark()}]</textarea>
     </li>
 [{/if}]

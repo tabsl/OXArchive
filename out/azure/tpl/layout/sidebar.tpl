@@ -42,7 +42,7 @@
     [{/block}]
 
     [{block name="sidebar_tags"}]
-        [{if $oView->showTags() && $oView->getClassName() ne "details" && $oView->getClassName() ne "alist" && $oView->getClassName() ne "tags"}]
+        [{if $oView->showTags() && $oView->getClassName() ne "details" && $oView->getClassName() ne "alist" && $oView->getClassName() ne "suggest" && $oView->getClassName() ne "tags"}]
             [{if $oView->getTagCloudManager() }]
                 [{include file="widget/sidebar/tags.tpl" oTagsManager=$oView->getTagCloudManager()}]
             [{/if}]
@@ -56,8 +56,13 @@
     [{/block}]
 
     [{block name="sidebar_facebookfacepile"}]
-        [{if $oView->isActive('FbFacepile') && $oView->isConnectedWithFb()}]
-            [{include file="widget/facebook/facepile.tpl"}]
+          [{if $oView->isActive('FbFacepile') && $oView->isConnectedWithFb()}]
+        	<div id="facebookFacepile" class="box">
+		    	<h3>[{oxmultilang ident="WIDGET_FACEBOOK_FACEPILE_HEADER"}]</h3>
+		    	<div class="content" id="productFbFacePile">
+        			[{include file="widget/facebook/enable.tpl" source="widget/facebook/facepile.tpl" ident="#productFbFacePile" type="text"}]
+        	    </div>
+			</div>
         [{/if}]
     [{/block}]
 

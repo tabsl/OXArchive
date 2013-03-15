@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxpdf.php 44655 2012-05-08 10:33:14Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxpdf.php 41947 2012-02-01 09:29:57Z mindaugas.rimgaila $
  */
 
 $myConfig = oxConfig::getInstance();

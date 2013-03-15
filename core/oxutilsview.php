@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsview.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
+ * @version   SVN: $Id: oxutilsview.php 43766 2012-04-11 09:53:06Z linas.kukulskis $
  */
 
 /**
@@ -54,6 +54,13 @@ class oxUtilsView extends oxSuperCfg
      * @var array
      */
     protected $_blIsTplBlocks = null;
+
+    /**
+     * Active module Ids array
+     *
+     * @var array
+     */
+    protected $_aActiveModuleInfo = null;
 
     /**
      * Utility instance getter
@@ -91,7 +98,7 @@ class oxUtilsView extends oxSuperCfg
     public function getSmarty( $blReload = false )
     {
         if ( !self::$_oSmarty || $blReload ) {
-            self::$_oSmarty = new Smarty;
+            self::$_oSmarty = new Smarty();
             $this->_fillCommonSmartyProperties( self::$_oSmarty );
             $this->_smartyCompileCheck( self::$_oSmarty );
         }
@@ -309,6 +316,19 @@ class oxUtilsView extends oxSuperCfg
     }
 
     /**
+     * Get template compile id.
+     *
+     * @return string
+     */
+    public function getTemplateCompileId()
+    {
+        $sShopId = $this->getConfig()->getShopId();
+        $aDirs   = $this->getTemplateDirs();
+        $sDir    = reset($aDirs);
+        return md5( $sDir.'__'.$sShopId );
+    }
+
+    /**
      * sets properties of smarty object
      *
      * @param object $oSmarty template processor object (smarty)
@@ -331,7 +351,7 @@ class oxUtilsView extends oxSuperCfg
         $oSmarty->compile_dir  = $myConfig->getConfigParam( 'sCompileDir' );
         $oSmarty->cache_dir    = $myConfig->getConfigParam( 'sCompileDir' );
         $oSmarty->template_dir = $this->getTemplateDirs();
-        $oSmarty->compile_id   = md5( $oSmarty->template_dir[0].'__'.$myConfig->getShopId() );
+        $oSmarty->compile_id   = $this->getTemplateCompileId();
 
         $oSmarty->default_template_handler_func = array(oxUtilsView::getInstance(),'_smartyDefaultTemplateHandler');
 
@@ -341,6 +361,11 @@ class oxUtilsView extends oxSuperCfg
         $iDebug = $myConfig->getConfigParam( 'iDebug' );
         if (  $iDebug == 1 || $iDebug == 3 || $iDebug == 4 ) {
             $oSmarty->debugging = true;
+        }
+
+        if ($iDebug == 8 && !$myConfig->isAdmin()) {
+            include_once getShopBasePath().'core/smarty/plugins/prefilter.oxtpldebug.php';
+            $oSmarty->register_prefilter('smarty_prefilter_oxtpldebug');
         }
 
         //demoshop security
@@ -359,8 +384,6 @@ class oxUtilsView extends oxSuperCfg
             $oSmarty->security_settings['ALLOW_CONSTANTS'] = true;
             $oSmarty->secure_dir = $oSmarty->template_dir;
         }
-
-
     }
 
     /**
@@ -413,7 +436,13 @@ class oxUtilsView extends oxSuperCfg
      */
     protected function _getTemplateBlock($sModule, $sFile)
     {
-        $sFileName = $this->getConfig()->getConfigParam( 'sShopDir' )."/modules/$sModule/out/blocks/$sFile.tpl";
+        $aModuleInfo = $this->_getActiveModuleInfo();
+        $sModulePath = $aModuleInfo[$sModule];
+        // for 4.5 modules, since 4.6 insert in oxtplblocks the full file name
+        if (substr($sFile, -4) != '.tpl') {
+            $sFile = $sFile . ".tpl";
+        }
+        $sFileName   = $this->getConfig()->getConfigParam( 'sShopDir' )."/modules/$sModulePath/out/blocks/$sFile";
         if (file_exists($sFileName) && is_readable($sFileName)) {
             return file_get_contents($sFileName);
         } else {
@@ -440,40 +469,62 @@ class oxUtilsView extends oxSuperCfg
             $sFile = $m[1];
         }
 
-        $aRet = array();
-        $oDb = oxDb::getDb(true);
+        $oDb = oxDb::getDb( oxDb::FETCH_MODE_ASSOC );
         $sFileParam = $oDb->quote($sFile);
         $sShpIdParam = $oDb->quote($oConfig->getShopId());
+        $aRet = array();
+        $aIds = array();
 
         if ( $this->_blIsTplBlocks === null ) {
             $this->_blIsTplBlocks = false;
-            $sSql = "select COUNT(*) from oxtplblocks where oxactive=1 and oxshopid=$sShpIdParam";
-            $rs = $oDb->getOne( $sSql );
-            if ( $rs ) {
-                $this->_blIsTplBlocks = true;
+            $aIds = $this->_getActiveModuleInfo();
+            if (count($aIds)) {
+                $sSql = "select COUNT(*) from oxtplblocks where oxactive=1 and oxshopid=$sShpIdParam and oxmodule in ( " . implode(", ", oxDb::getInstance()->quoteArray(array_keys($aIds)) ) . " ) ";
+                $rs = $oDb->getOne( $sSql );
+                if ( $rs ) {
+                    $this->_blIsTplBlocks = true;
+                }
             }
         }
 
         if ( $this->_blIsTplBlocks ) {
-            $sSql = "select * from oxtplblocks where oxactive=1 and oxshopid=$sShpIdParam and oxtemplate=$sFileParam order by oxpos asc";
-            $rs = $oDb->Execute($sSql);
+            $aIds = $this->_getActiveModuleInfo();
+            if (count($aIds)) {
+                $sSql = "select * from oxtplblocks where oxactive=1 and oxshopid=$sShpIdParam and oxtemplate=$sFileParam and oxmodule in ( " . implode(", ", oxDb::getInstance()->quoteArray(array_keys($aIds)) ) . " ) order by oxpos asc";
+                $oDb->setFetchMode( oxDb::FETCH_MODE_ASSOC );
+                $rs = $oDb->select( $sSql );
 
-            if ($rs != false && $rs->recordCount() > 0) {
-                while (!$rs->EOF) {
-                    try {
-                        if (!is_array($aRet[$rs->fields['OXBLOCKNAME']])) {
-                            $aRet[$rs->fields['OXBLOCKNAME']] = array();
+                if ($rs != false && $rs->recordCount() > 0) {
+                    while (!$rs->EOF) {
+                        try {
+                            if (!is_array($aRet[$rs->fields['OXBLOCKNAME']])) {
+                                $aRet[$rs->fields['OXBLOCKNAME']] = array();
+                            }
+                            $aRet[$rs->fields['OXBLOCKNAME']][] = $this->_getTemplateBlock($rs->fields['OXMODULE'], $rs->fields['OXFILE']);
+                        } catch (oxException $oE) {
+                            $oE->debugOut();
                         }
-                        $aRet[$rs->fields['OXBLOCKNAME']][] = $this->_getTemplateBlock($rs->fields['OXMODULE'], $rs->fields['OXFILE']);
-                    } catch (oxException $oE) {
-                        $oE->debugOut();
+                        $rs->moveNext();
                     }
-
-                    $rs->moveNext();
                 }
             }
         }
 
         return $aRet;
     }
+
+    /**
+     * Returns active module Ids
+     *
+     * @return array
+     */
+    protected function _getActiveModuleInfo()
+    {
+        if ($this->_aActiveModuleInfo === null) {
+            $oModulelist = oxNew('oxmodulelist');
+            $this->_aActiveModuleInfo = $oModulelist->getActiveModuleInfo();
+        }
+        return $this->_aActiveModuleInfo;
+    }
+
 }

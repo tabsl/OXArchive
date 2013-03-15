@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   setup
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: lang.php 25584 2010-02-03 12:11:40Z arvydas $
  */
@@ -27,7 +27,7 @@ require "_header.php"; ?>
 <form action="index.php" method="post">
 <table cellpadding="1" cellspacing="0">
     <tr>
-        <td style="padding-top: 5px;"><?php $this->getText('SELECT_COUNTRY_LANG'); ?>: </td>
+        <td style="padding-top: 5px;"><?php $this->getText('SELECT_SHOP_LOCATION'); ?>: </td>
         <td>
             <table cellpadding="0" cellspacing="0" border="0" height="29">
               <tr>
@@ -35,7 +35,7 @@ require "_header.php"; ?>
                     <select name="location_lang" style="font-size: 11px;"
                     onChange="update_dynpages_checkbox();"
                     >
-
+                        <option value=""><?php $this->getText('SELECT_PLEASE_CHOOSE'); ?></option>
                         <?php
                         $aLocations   = $this->getViewParam( "aLocations" );
                         $sSetupLang   = $this->getViewParam( "sSetupLang" );
@@ -49,6 +49,12 @@ require "_header.php"; ?>
                         }
                         ?>
                     </select>
+                </td>
+                <td style="padding: 0px 5px;">
+                    <a href="#" style="display:block;width:18px;height:18px;background: #ddd;border: 1px solid #ccc;border-radius: 5px;line-height: 18px;text-align: center;font-weight: bold;color: #777;" onmouseover="document.getElementById('marketHelpBox').style.display = '';" onmouseout="document.getElementById('marketHelpBox').style.display = 'none';">?</a>
+                    <div id="marketHelpBox" style="position: absolute;margin-top:5px;border: 1px solid #c1c1c1; background: #ddd;padding: 10px;border-radius: 5px;display: none;width:300px;">
+                        <?php $this->getText('SELECT_SHOP_LOCATION_HINT'); ?>
+                    </div>
                 </td>
                 <noscript>
                 <td>
@@ -68,7 +74,7 @@ require "_header.php"; ?>
         </td>
     </tr>
     <tr>
-        <td style="padding-top: 5px;"><?php $this->getText('SELECT_SELIVERY_COUNTRY'); ?>: </td>
+        <td style="padding-top: 5px;"><?php $this->getText('SELECT_DELIVERY_COUNTRY'); ?>: </td>
         <td>
             <table cellpadding="0" cellspacing="0" border="0" height="29">
                 <tr>
@@ -89,7 +95,37 @@ require "_header.php"; ?>
                         </select>
                     </td>
                     <td style="padding: 0px 5px;">
-                        <?php $this->getText('SELECT_DELIVERY_COUNTRY_HINT'); ?>
+                        <a href="#" style="display:block;width:18px;height:18px;background: #ddd;border: 1px solid #ccc;border-radius: 5px;line-height: 18px;text-align: center;font-weight: bold;color: #777;" onmouseover="document.getElementById('countryHelpBox').style.display = '';" onmouseout="document.getElementById('countryHelpBox').style.display = 'none';">?</a>
+                        <div id="countryHelpBox" style="position: absolute;margin-top:5px;border: 1px solid #c1c1c1; background: #ddd;padding: 10px;border-radius: 5px;display: none;width:300px;">
+                            <?php $this->getText('SELECT_DELIVERY_COUNTRY_HINT'); ?>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-top: 5px;"><?php $this->getText('SELECT_SHOP_LANG'); ?>: </td>
+        <td>
+            <table cellpadding="0" cellspacing="0" border="0" height="29">
+                <tr>
+                    <td>
+                        <select name="sShopLang" style="font-size: 11px;">
+                            <?php
+                            $aLanguages = $this->getViewParam( "aLanguages" );
+                            foreach ( $aLanguages as $sLangId => $sLangTitle ) {
+                                ?>
+                                <option value="<?php echo $sLangId; ?>" <?php if ( $this->getViewParam( "sShopLang" ) == $sLangId ) echo 'selected'; ?>><?php echo $sLangTitle; ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </td>
+                    <td style="padding: 0px 5px;">
+                        <a href="#" style="display:block;width:18px;height:18px;background: #ddd;border: 1px solid #ccc;border-radius: 5px;line-height: 18px;text-align: center;font-weight: bold;color: #777;" onmouseover="document.getElementById('langHelpBox').style.display = '';" onmouseout="document.getElementById('langHelpBox').style.display = 'none';">?</a>
+                        <div id="langHelpBox" style="position: absolute;margin-top:5px;border: 1px solid #c1c1c1; background: #ddd;padding: 10px;border-radius: 5px;display: none;width:300px;">
+                            <?php $this->getText('SELECT_SHOP_LANG_HINT'); ?>
+                        </div>
                     </td>
                 </tr>
             </table>

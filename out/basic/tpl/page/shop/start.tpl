@@ -52,7 +52,7 @@
       [{if $actionproduct->getCategory() }]
           [{assign var="oCategory" value=$actionproduct->getCategory()}]
           [{assign var="actionproduct_title" value=$oCategory->oxcategories__oxtitle->value}]
-          [{if $oCategory->getNrOfArticles() > 0}][{assign var="actionproduct_title" value=$actionproduct_title|cat:" ("|cat:$oCategory->getNrOfArticles()|cat:")"}][{/if}]
+          [{if $oView->showCategoryArticlesCount() && $oCategory->getNrOfArticles() > 0}][{assign var="actionproduct_title" value=$actionproduct_title|cat:" ("|cat:$oCategory->getNrOfArticles()|cat:")"}][{/if}]
           [{include file="inc/product.tpl" showMainLink=true product=$actionproduct size=$actionproduct_size head=$actionproduct_title head_link=$oCategory->getLink() testid="CatArticle_"|cat:$actionproduct->oxarticles__oxid->value  testHeader="Category_`$smarty.foreach.CatArt.iteration`"}]
           [{assign var="actionproduct_size" value=""}]
       [{/if}]

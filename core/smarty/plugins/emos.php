@@ -36,7 +36,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: emos.php 46618 2012-06-25 09:21:19Z edvardas.gineika $
+ * $Id: emos.php 38923 2011-09-23 14:13:53Z linas.kukulskis $
  */
 
 /**
@@ -335,8 +335,7 @@ class Emos
      */
     public function addSearch( $sQueryString, $iNumberOfHits )
     {
-        // #4018: The emospro.search string is URL-encoded forwarded to econda instead of URL-escaped
-        $this->_searchQuery = $this->_emos_DataFormat($sQueryString);
+        $this->_searchQuery = $sQueryString;
         $this->_searchNumberOfHits = $iNumberOfHits;
     }
 

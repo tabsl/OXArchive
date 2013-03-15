@@ -24,7 +24,7 @@
 
         <div class="checkoutCollumns clear">
             <div class="row">
-                <h3 class="blockHead">[{ oxmultilang ident="FORM_REGISTER_ACCOUNTINFO" }]</h3>
+                <h3 class="blockHead">[{ oxmultilang ident="NOTREGISTERED_ACCOUNTINFO" }]</h3>
                 <ul class="form">
                     [{ include file="form/fieldset/user_noaccount.tpl" }]
                 </ul>

@@ -27,33 +27,35 @@
         <tr>
           <td valign="top" class="edittext">
             <table cellspacing="0" cellpadding="0" border="0">
-              <tr>
-                <td class="edittext" width="90">
-                [{ oxmultilang ident="GENERAL_ACTIVE" }]&nbsp;
-                </td>
-                <td class="edittext">
-                <input class="edittext" type="checkbox" name="editval[oxlinks__oxactive]" value='1' [{if $edit->oxlinks__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
-                [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
-                </td>
-              </tr>
-              <tr>
-                <td class="edittext">
-                [{ oxmultilang ident="GENERAL_DATE" }]&nbsp;
-                </td>
-                <td class="edittext">
-                <input type="text" class="editinput" size="30" name="editval[oxlinks__oxinsert]" value="[{$edit->oxlinks__oxinsert|oxformdate }]" [{ $readonly }]>
-                [{ oxinputhelp ident="HELP_GENERAL_DATE" }]
-                </td>
-              </tr>
-              <tr>
-                <td class="edittext">
-                 [{ oxmultilang ident="GENERAL_URL" }]&nbsp;
-                </td>
-                <td class="edittext">
-                <input type="text" class="editinput" size="30" maxlength="[{$edit->oxlinks__oxurl->fldmax_length}]" name="editval[oxlinks__oxurl]" value="[{$edit->oxlinks__oxurl->value }]" [{ $readonly }]>
-                [{ oxinputhelp ident="HELP_GENERAL_URL" }]
-                </td>
-              </tr>
+              [{block name="admin_adminlinks_main_form"}]
+                  <tr>
+                    <td class="edittext" width="90">
+                    [{ oxmultilang ident="GENERAL_ACTIVE" }]&nbsp;
+                    </td>
+                    <td class="edittext">
+                    <input class="edittext" type="checkbox" name="editval[oxlinks__oxactive]" value='1' [{if $edit->oxlinks__oxactive->value == 1}]checked[{/if}] [{ $readonly }]>
+                    [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="edittext">
+                    [{ oxmultilang ident="GENERAL_DATE" }]&nbsp;
+                    </td>
+                    <td class="edittext">
+                    <input type="text" class="editinput" size="30" name="editval[oxlinks__oxinsert]" value="[{$edit->oxlinks__oxinsert|oxformdate }]" [{ $readonly }]>
+                    [{ oxinputhelp ident="HELP_GENERAL_DATE" }]
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="edittext">
+                     [{ oxmultilang ident="GENERAL_URL" }]&nbsp;
+                    </td>
+                    <td class="edittext">
+                    <input type="text" class="editinput" size="30" maxlength="[{$edit->oxlinks__oxurl->fldmax_length}]" name="editval[oxlinks__oxurl]" value="[{$edit->oxlinks__oxurl->value }]" [{ $readonly }]>
+                    [{ oxinputhelp ident="HELP_GENERAL_URL" }]
+                    </td>
+                  </tr>
+              [{/block}]
               <tr>
                 <td class="edittext">
                 </td>
@@ -73,9 +75,9 @@
         <td></td>
         <!-- Anfang rechte Seite -->
           <td valign="top" class="edittext vr" align="left">
-
-                [{ $editor }]
-
+              [{block name="admin_adminlinks_main_editor"}]
+                  [{ $editor }]
+              [{/block}]
           </td>
         </tr>
       </table>

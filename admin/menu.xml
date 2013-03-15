@@ -9,6 +9,7 @@
                 <TAB id="tbclshop_license" cl="shop_license" disableForDemoShop="1" />
                 <TAB id="tbclshop_performance" cl="shop_performance" />
                 <TAB id="tbclshop_seo" cl="shop_seo" />
+                <TAB id="tbclshop_rdfa" cl="shop_rdfa" />
                 <BTN id="shop_new" />
             </SUBMENU>
             <SUBMENU id="mxcountries" cl="country" list="country_list">
@@ -27,10 +28,6 @@
                 <BTN id="manufacturer_new" />
                 <BTN id="manufacturer_resetnrofarticles" />
             </SUBMENU>
-            <SUBMENU id="mxtheme" cl="theme" list="theme_list">
-                <TAB id="tbcltheme_main" cl="theme_main" />
-                <TAB id="tbcltheme_config" cl="theme_config" />
-            </SUBMENU>
             <SUBMENU id="mxlanguages" cl="language" list="language_list">
                 <TAB id="tbcllanguage_main" cl="language_main" />
                 <BTN id="language_new" />
@@ -40,6 +37,7 @@
             <SUBMENU id="mxpaymeth" cl="admin_payment" list="payment_list">
                 <TAB id="tbclpayment_main" cl="payment_main" />
                 <TAB id="tbclpayment_country" cl="payment_country" />
+                <TAB id="tbclpayment_rdfa" cl="payment_rdfa" />
                 <BTN id="payment_new"/>
             </SUBMENU>
             <SUBMENU id="mxdiscount" cl="discount" list="discount_list">
@@ -52,6 +50,7 @@
                 <TAB id="tbcldeliveryset_main" cl="deliveryset_main" />
                 <TAB id="tbcldeliveryset_payment" cl="deliveryset_payment" />
                 <TAB id="tbcldeliveryset_users" cl="deliveryset_users" />
+                <TAB id="tbcldeliveryset_rdfa" cl="deliveryset_rdfa" />
                 <BTN id="deliveryset_new"/>
             </SUBMENU>
             <SUBMENU id="mxshipping" cl="delivery" list="delivery_list">
@@ -70,6 +69,17 @@
                 <BTN id="wrapping_new" />
             </SUBMENU>
         </MAINMENU>
+        <MAINMENU id="mxextensions">
+            <SUBMENU id="mxtheme" cl="theme" list="theme_list">
+                <TAB id="tbcltheme_main" cl="theme_main" />
+                <TAB id="tbcltheme_config" cl="theme_config" />
+            </SUBMENU>
+            <SUBMENU id="mxmodule" cl="module" list="module_list">
+                <TAB id="tbclmodule_sortlist" cl="module_sortlist" />
+                <TAB id="tbclmodule_main" cl="module_main" />
+                <TAB id="tbclmodule_config" cl="module_config" />
+            </SUBMENU>
+        </MAINMENU>
         <MAINMENU id="mxmanageprod">
             <SUBMENU id="mxarticles" cl="article" list="article_list">
                 <TAB id="tbclarticle_main" cl="article_main" />
@@ -79,6 +89,7 @@
                 <TAB id="tbclarticle_crossselling" cl="article_crossselling"/>
                 <TAB id="tbclarticle_variant" cl="article_variant"/>
                 <TAB id="tbclarticle_pictures" cl="article_pictures" />
+                <TAB id="tbclarticle_files" cl="article_files" />
                 <TAB id="tbclarticle_review" cl="article_review"/>
                 <TAB id="tbclarticle_overview" cl="article_overview" />
                 <TAB id="tbclarticle_seo" cl="article_seo" />
@@ -131,6 +142,7 @@
                 <TAB id="tbclorder_address" cl="order_address" />
                 <TAB id="tbclorder_article" cl="order_article" />
                 <TAB id="tbclorder_remark" cl="order_remark" />
+                <TAB id="tbclorder_downloads" cl="order_downloads" />
                 <BTN id="order_newremark" />
             </SUBMENU>
             <SUBMENU id="mxorderovw" cl="list_order" />

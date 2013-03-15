@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: search.php 42291 2012-02-15 14:50:54Z linas.kukulskis $
+ * @version   SVN: $Id: search.php 42364 2012-02-20 15:11:38Z linas.kukulskis $
  */
 
 /**

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdeliverysetlist.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxdeliverysetlist.php 41429 2012-01-16 16:00:32Z vilma $
  */
 
 /**
@@ -342,4 +342,39 @@ class oxDeliverySetList extends oxList
     {
         $this->_oUser = $oUser;
     }
+
+    /**
+     * Loads an object including all delivery sets which are not mapped to a
+     * predefined GoodRelations delivery method.
+     *
+     * @return null
+     */
+    public function loadNonRDFaDeliverySetList()
+    {
+        $sTable = getViewName( 'oxdeliveryset' );
+        $sSubSql = "SELECT * FROM oxobject2delivery WHERE oxobject2delivery.OXDELIVERYID = $sTable.OXID AND oxobject2delivery.OXTYPE = 'rdfadeliveryset'";
+        $this->selectString( "SELECT $sTable.* FROM $sTable WHERE NOT EXISTS($sSubSql) AND $sTable.OXACTIVE = 1" );
+    }
+
+    /**
+     * Loads delivery set mapped to a
+     * predefined GoodRelations delivery method.
+     *
+     * @param string $sDelId delivery set id
+     *
+     * @return null
+     */
+    public function loadRDFaDeliverySetList($sDelId = null)
+    {
+        $sTable = getViewName( 'oxdeliveryset' );
+        if ($sDelId) {
+            $oDb = oxDb::getDb();
+            $sSubSql = "( select $sTable.* from $sTable left join oxdel2delset on oxdel2delset.oxdelsetid=$sTable.oxid where ".$this->getBaseObject()->getSqlActiveSnippet()." and oxdel2delset.oxdelid = ".$oDb->quote($sDelId)." ) as $sTable";
+        } else {
+            $sSubSql = $sTable;
+        }
+        $sQ  = "select $sTable.*, oxobject2delivery.oxobjectid from $sSubSql left join (select oxobject2delivery.* from oxobject2delivery where oxobject2delivery.oxtype = 'rdfadeliveryset' ) as oxobject2delivery on oxobject2delivery.oxdeliveryid=$sTable.oxid ";
+        $this->selectString( $sQ );
+    }
+
 }

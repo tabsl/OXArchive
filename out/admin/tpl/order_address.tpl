@@ -26,6 +26,7 @@
         <b>[{ oxmultilang ident="GENERAL_BILLADDRESS" }]</b><br>
         <br>
         <table cellspacing="0" cellpadding="0" border="0">
+        [{block name="admin_order_address_billing"}]
         <tr>
             <td class="edittext">
             [{ oxmultilang ident="GENERAL_BILLSAL" }]
@@ -116,7 +117,7 @@
                     [{foreach from=$countrylist item=country key=country_id }]
                         var states = new Array();
                         var ids = new Array();
-                        var i = 0;   
+                        var i = 0;
                         [{assign var=countryStates value=$country->getStates()}]
                         [{foreach from=$countryStates item=state key=state_id}]
                             states[i] = '[{$state->oxstates__oxtitle->value}]';
@@ -127,7 +128,7 @@
                         allStateIds[cCount]  = ids;
                         allCountryIds['[{$country->getId()}]']  = cCount;
                     [{/foreach}]
-                    
+
                     function getCountryStates(countries_select, states_select)
                     {
                         var oCountries = document.getElementById(countries_select);
@@ -139,7 +140,7 @@
                                 var oOption = document.createElement('option');
                                 oOption.text = allStates[allCountryIds[oCountries.options[oCountries.selectedIndex].value]][i];
                                 oOption.value = allStateIds[allCountryIds[oCountries.options[oCountries.selectedIndex].value]][i];
-                                var oOptionOld = oStates.options[0];  
+                                var oOptionOld = oStates.options[0];
                                 try {
                                     oStates.add(oOption, oOptionOld); /* standards compliant does not work in IE */
                                 }
@@ -153,7 +154,7 @@
                             var oOption = document.createElement('option');
                             oOption.text = '---';
                             oOption.value = '';
-                            var oOptionOld = oStates.options[0];  
+                            var oOptionOld = oStates.options[0];
                             try {
                                 oStates.add(oOption, oOptionOld); /* standards compliant does not work in IE */
                             }
@@ -164,7 +165,7 @@
                     }
                     //-->
                 </script>
-                
+
                 <select id="bill_state_select" class="editinput" name="editval[oxorder__oxbillstateid]" [{ $readonly }]>
                 [{if $edit->oxorder__oxbillstateid->value}]
                     [{foreach from=$countrylist item=country key=country_id }]
@@ -200,24 +201,25 @@
             </td>
         </tr>
 
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="GENERAL_FON" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="12" maxlength="[{$edit->oxorder__oxbillfon->fldmax_length}]" name="editval[oxorder__oxbillfon]" value="[{$edit->oxorder__oxbillfon->value }]" [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_FON" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="GENERAL_FAX" }]<br><br><br>
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="12" maxlength="[{$edit->oxorder__oxbillfax->fldmax_length}]" name="editval[oxorder__oxbillfax]" value="[{$edit->oxorder__oxbillfax->value }]" [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_FAX" }]
-            <br><br><br></td>
-        </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="GENERAL_FON" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="12" maxlength="[{$edit->oxorder__oxbillfon->fldmax_length}]" name="editval[oxorder__oxbillfon]" value="[{$edit->oxorder__oxbillfon->value }]" [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_GENERAL_FON" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="GENERAL_FAX" }]<br><br><br>
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="12" maxlength="[{$edit->oxorder__oxbillfax->fldmax_length}]" name="editval[oxorder__oxbillfax]" value="[{$edit->oxorder__oxbillfax->value }]" [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_GENERAL_FAX" }]
+                <br><br><br></td>
+            </tr>
+        [{/block}]
         <tr>
             <td class="edittext">
             </td>
@@ -235,69 +237,70 @@
         <br>
 
         <table cellspacing="0" cellpadding="0" border="0">
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="GENERAL_BILLSAL" }]
-            </td>
-            <td class="edittext">
-                <select name="editval[oxorder__oxdelsal]" class="editinput" [{ $readonly }]>
-                    <option value="MR"  [{if $edit->oxorder__oxdelsal->value|lower  == "mr"  }]SELECTED[{/if}]>[{ oxmultilang ident="MR"  }]</option>
-                    <option value="MRS" [{if $edit->oxorder__oxdelsal->value|lower  == "mrs" }]SELECTED[{/if}]>[{ oxmultilang ident="MRS" }]</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="GENERAL_NAME" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="10" maxlength="[{$edit->oxorder__oxdelfname->fldmax_length}]" name="editval[oxorder__oxdelfname]" value="[{$edit->oxorder__oxdelfname->value }]" [{ $readonly }]>
-            <input type="text" class="editinput" size="20" maxlength="[{$edit->oxorder__oxdellname->fldmax_length}]" name="editval[oxorder__oxdellname]" value="[{$edit->oxorder__oxdellname->value }]" [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_NAME" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="GENERAL_COMPANY" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="37" maxlength="[{$edit->oxorder__oxdelcompany->fldmax_length}]" name="editval[oxorder__oxdelcompany]" value="[{$edit->oxorder__oxdelcompany->value }]" [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_COMPANY" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="GENERAL_STREETNUM" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="28" maxlength="[{$edit->oxorder__oxdelstreet->fldmax_length}]" name="editval[oxorder__oxdelstreet]" value="[{$edit->oxorder__oxdelstreet->value }]" [{ $readonly }]> <input type="text" class="editinput" size="5" maxlength="[{$edit->oxorder__oxdelstreetnr->fldmax_length}]" name="editval[oxorder__oxdelstreetnr]" value="[{$edit->oxorder__oxdelstreetnr->value }]" [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_STREETNUM" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="GENERAL_ZIPCITY" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="5" maxlength="[{$edit->oxorder__oxdelzip->fldmax_length}]" name="editval[oxorder__oxdelzip]" value="[{$edit->oxorder__oxdelzip->value }]" [{ $readonly }]>
-            <input type="text" class="editinput" size="25" maxlength="[{$edit->oxorder__oxdelcity->fldmax_length}]" name="editval[oxorder__oxdelcity]" value="[{$edit->oxorder__oxdelcity->value }]" [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_ZIPCITY" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="GENERAL_EXTRAINFO" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="37" maxlength="[{$edit->oxorder__oxdeladdinfo->fldmax_length}]" name="editval[oxorder__oxdeladdinfo]" value="[{$edit->oxorder__oxdeladdinfo->value }]" [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_EXTRAINFO" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="GENERAL_STATE" }]
-            </td>
-            <td class="edittext">
+        [{block name="admin_order_address_delivery"}]
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="GENERAL_BILLSAL" }]
+                </td>
+                <td class="edittext">
+                    <select name="editval[oxorder__oxdelsal]" class="editinput" [{ $readonly }]>
+                        <option value="MR"  [{if $edit->oxorder__oxdelsal->value|lower  == "mr"  }]SELECTED[{/if}]>[{ oxmultilang ident="MR"  }]</option>
+                        <option value="MRS" [{if $edit->oxorder__oxdelsal->value|lower  == "mrs" }]SELECTED[{/if}]>[{ oxmultilang ident="MRS" }]</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="GENERAL_NAME" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="10" maxlength="[{$edit->oxorder__oxdelfname->fldmax_length}]" name="editval[oxorder__oxdelfname]" value="[{$edit->oxorder__oxdelfname->value }]" [{ $readonly }]>
+                <input type="text" class="editinput" size="20" maxlength="[{$edit->oxorder__oxdellname->fldmax_length}]" name="editval[oxorder__oxdellname]" value="[{$edit->oxorder__oxdellname->value }]" [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_GENERAL_NAME" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="GENERAL_COMPANY" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="37" maxlength="[{$edit->oxorder__oxdelcompany->fldmax_length}]" name="editval[oxorder__oxdelcompany]" value="[{$edit->oxorder__oxdelcompany->value }]" [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_GENERAL_COMPANY" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="GENERAL_STREETNUM" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="28" maxlength="[{$edit->oxorder__oxdelstreet->fldmax_length}]" name="editval[oxorder__oxdelstreet]" value="[{$edit->oxorder__oxdelstreet->value }]" [{ $readonly }]> <input type="text" class="editinput" size="5" maxlength="[{$edit->oxorder__oxdelstreetnr->fldmax_length}]" name="editval[oxorder__oxdelstreetnr]" value="[{$edit->oxorder__oxdelstreetnr->value }]" [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_GENERAL_STREETNUM" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="GENERAL_ZIPCITY" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="5" maxlength="[{$edit->oxorder__oxdelzip->fldmax_length}]" name="editval[oxorder__oxdelzip]" value="[{$edit->oxorder__oxdelzip->value }]" [{ $readonly }]>
+                <input type="text" class="editinput" size="25" maxlength="[{$edit->oxorder__oxdelcity->fldmax_length}]" name="editval[oxorder__oxdelcity]" value="[{$edit->oxorder__oxdelcity->value }]" [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_GENERAL_ZIPCITY" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="GENERAL_EXTRAINFO" }]
+                </td>
+                <td class="edittext">
+                <input type="text" class="editinput" size="37" maxlength="[{$edit->oxorder__oxdeladdinfo->fldmax_length}]" name="editval[oxorder__oxdeladdinfo]" value="[{$edit->oxorder__oxdeladdinfo->value }]" [{ $readonly }]>
+                [{ oxinputhelp ident="HELP_GENERAL_EXTRAINFO" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="GENERAL_STATE" }]
+                </td>
+                <td class="edittext">
                 <select id="del_state_select" class="editinput" name="editval[oxorder__oxdelstateid]" [{ $readonly }]>
                 [{if $edit->oxorder__oxdelstateid->value}]
                     [{foreach from=$countrylist item=country key=country_id }]
@@ -312,20 +315,20 @@
                     <option value=''>---</option>
                 [{/if}]
                 </select>
-            [{ oxinputhelp ident="HELP_GENERAL_STATE" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="GENERAL_COUNTRY" }]
-            </td>
-            <td class="edittext">
+                [{ oxinputhelp ident="HELP_GENERAL_STATE" }]
+                </td>
+            </tr>
+            <tr>
+                <td class="edittext">
+                [{ oxmultilang ident="GENERAL_COUNTRY" }]
+                </td>
+                <td class="edittext">
             <select onchange="getCountryStates('del_country_select', 'del_state_select');" id="del_country_select" class="editinput" name="editval[oxorder__oxdelcountryid]" [{ $readonly }]>
-               <option value=''>---</option>
-               [{ foreach from=$countrylist item=oCountry}]
-               <option value="[{$oCountry->oxcountry__oxid->value}]" [{if $oCountry->oxcountry__oxid->value == $edit->oxorder__oxdelcountryid->value}]selected[{/if}]>[{$oCountry->oxcountry__oxtitle->value}]</option>
-               [{/foreach}]
-            </select>
+                   <option value=''>---</option>
+                   [{ foreach from=$countrylist item=oCountry}]
+                   <option value="[{$oCountry->oxcountry__oxid->value}]" [{if $oCountry->oxcountry__oxid->value == $edit->oxorder__oxdelcountryid->value}]selected[{/if}]>[{$oCountry->oxcountry__oxtitle->value}]</option>
+                   [{/foreach}]
+                </select>
             [{ oxinputhelp ident="HELP_GENERAL_COUNTRY" }]
             </td>
         </tr>
@@ -347,6 +350,7 @@
             [{ oxinputhelp ident="HELP_GENERAL_FAX" }]
             </td>
         </tr>
+        [{/block}]
         </table>
 
     </td>

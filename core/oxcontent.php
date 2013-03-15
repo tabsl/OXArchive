@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcontent.php 40875 2011-12-30 15:17:21Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxcontent.php 43716 2012-04-11 07:03:13Z linas.kukulskis $
  */
 
 /**
@@ -30,13 +30,6 @@
  */
 class oxContent extends oxI18n implements oxIUrl
 {
-    /**
-     * Core database table name. $_sCoreTbl could be only original data table name and not view name.
-     *
-     * @var string
-     */
-    protected $_sCoreTbl = 'oxcontents';
-
     /**
      * Current class name
      *
@@ -205,7 +198,12 @@ class oxContent extends oxI18n implements oxIUrl
             $sUrl = $this->getConfig()->getShopUrl( $iLang, false );
         }
 
-        $sUrl .= "index.php?cl=content";
+        if ( $this->oxcontents__oxloadid->value === 'oxcredits' ) {
+            $sUrl .= "index.php?cl=credits";
+        } else {
+            $sUrl .= "index.php?cl=content";
+        }
+
         if ( $blAddId ) {
             $sUrl .= "&amp;oxcid=".$this->getId();
             // adding parent category if if available
@@ -314,5 +312,40 @@ class oxContent extends oxI18n implements oxIUrl
         if ( $this->loadByIdent( 'oxagb' ) ) {
             return $this->oxcontents__oxtermversion->value;
         }
+    }
+
+    /**
+     * Loads "credits" content object and its text (first available)
+     *
+     * @param string $sCreditsId credits load id
+     *
+     * @return bool
+     */
+    public function loadCredits( $sCreditsId = "oxcredits" )
+    {
+        $sShopId = $this->getShopId();
+
+        // fetching column names
+        $sColQ = "SHOW COLUMNS FROM oxcontents WHERE field LIKE  'oxcontent%'";
+
+        $aCols = oxDb::getDb()->getAll( $sColQ );
+
+        // building subquery
+        $sPattern = "IF ( %s != '', %s, %s ) ";
+        $iCount = count( $aCols ) - 1;
+
+        $sContQ = "SELECT {$sPattern}";
+        foreach ( $aCols as $iKey => $aCol ) {
+            $sContQ = sprintf( $sContQ, $aCol[0], $aCol[0], $iCount != $iKey ? $sPattern : "''" );
+        }
+        $sContQ .= " FROM oxcontents WHERE oxloadid = '{$sCreditsId}' AND oxshopid = '{$sShopId}'";
+
+        $sTable  = $this->getViewName();
+        $aParams = array( "{$sTable}.oxloadid" => $sCreditsId,
+                          "{$sTable}.oxshopid" => $sShopId );
+        $sQ = $this->buildSelectString( $aParams );
+        $sQ = str_replace( "{$sTable}.oxcontent", "( $sContQ ) as oxcontent", $sQ );
+
+        return $this->assignRecord( $sQ );
     }
 }

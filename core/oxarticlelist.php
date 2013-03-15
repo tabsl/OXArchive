@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxarticlelist.php 43562 2012-04-05 13:42:03Z mindaugas.rimgaila $
+ * @version   SVN: SVN: $Id: oxarticlelist.php 43695 2012-04-10 14:33:11Z linas.kukulskis $
  */
 
 /**
@@ -767,7 +767,7 @@ class oxArticleList extends oxList
         }
 
         foreach ($aIds as $iKey => $sVal) {
-            $aIds[$iKey] = mysql_real_escape_string($sVal);
+            $aIds[$iKey] = oxDb::getInstance()->escapeString($sVal);
         }
 
         $oBaseObject    = $this->getBaseObject();
@@ -824,6 +824,136 @@ class oxArticleList extends oxList
     }
 
     /**
+     * Loads list of low stock state products
+     *
+     * @param array $aBasketContents product ids array
+     *
+     * @return null
+     */
+    public function loadStockRemindProducts( $aBasketContents )
+    {
+        if ( is_array( $aBasketContents ) && count( $aBasketContents ) ) {
+            $oDb = oxDb::getDb();
+            foreach ( $aBasketContents as $oBasketItem ) {
+                $aArtIds[] = $oDb->quote($oBasketItem->getProductId());
+            }
+
+            $oBaseObject = $this->getBaseObject();
+
+            $sFieldNames = $oBaseObject->getSelectFields();
+            $sTable      = $oBaseObject->getViewName();
+
+            // fetching actual db stock state and reminder status
+            $sQ = "select {$sFieldNames} from {$sTable} where {$sTable}.oxid in ( ".implode( ",", $aArtIds )." ) and
+                          oxremindactive = '1' and oxstock <= oxremindamount";
+            $this->selectString( $sQ );
+
+            // updating stock reminder state
+            if ( $this->count() ) {
+                $sQ = "update {$sTable} set oxremindactive = '2' where {$sTable}.oxid in ( ".implode( ",", $aArtIds )." ) and
+                              oxremindactive = '1' and oxstock <= oxremindamount";
+                $oDb->execute( $sQ );
+            }
+        }
+    }
+
+    /**
+     * Calculates, updates and returns next price renew time
+     *
+     * @return int
+     */
+    public function renewPriceUpdateTime()
+    {
+        $oDb = oxDb::getDb();
+
+        // fetching next update time
+        $sQ = "select unix_timestamp( oxupdatepricetime ) from %s where oxupdatepricetime > 0 order by oxupdatepricetime asc";
+        $iTimeToUpdate = $oDb->getOne( sprintf( $sQ, "`oxarticles`" ), false, false );
+
+
+        // next day?
+        $iCurrUpdateTime = oxUtilsDate::getInstance()->getTime();
+        $iNextUpdateTime = $iCurrUpdateTime + 3600 * 24;
+
+        // renew next update time
+        if ( !$iTimeToUpdate || $iTimeToUpdate > $iNextUpdateTime ) {
+            $iTimeToUpdate = $iNextUpdateTime;
+        }
+
+        $this->getConfig()->saveShopConfVar( "int", "iTimeToUpdatePrices", $iTimeToUpdate );
+
+        return $iTimeToUpdate;
+    }
+
+    /**
+     * Updates prices where new price > 0, update time != '0000-00-00 00:00:00'
+     * and <= CURRENT_TIMESTAMP. Returns update execution state (result of oxDb::execute())
+     *
+     * @param bool $blForceUpdate if true, forces price update without timeout check, default value is FALSE
+     *
+     * @return mixed
+     */
+    public function updateUpcomingPrices( $blForceUpdate = false )
+    {
+        $blUpdated = false;
+
+        if ( $blForceUpdate || $this->_canUpdatePrices() ) {
+
+            oxDb::startTransaction();
+
+            $sCurrUpdateTime = date( "Y-m-d H:i:s", oxUtilsDate::getInstance()->getTime() );
+            // updating oxarticles
+            $sQ = "UPDATE %s SET
+                       `oxprice`  = IF( `oxupdateprice` > 0, `oxupdateprice`, `oxprice` ),
+                       `oxpricea` = IF( `oxupdatepricea` > 0, `oxupdatepricea`, `oxpricea` ),
+                       `oxpriceb` = IF( `oxupdatepriceb` > 0, `oxupdatepriceb`, `oxpriceb` ),
+                       `oxpricec` = IF( `oxupdatepricec` > 0, `oxupdatepricec`, `oxpricec` ),
+                       `oxupdatepricetime` = 0,
+                       `oxupdateprice`     = 0,
+                       `oxupdatepricea`    = 0,
+                       `oxupdatepriceb`    = 0,
+                       `oxupdatepricec`    = 0
+                   WHERE
+                       `oxupdatepricetime` > 0 AND
+                       `oxupdatepricetime` <= '{$sCurrUpdateTime}'" ;
+            $blUpdated = oxDb::getDb()->execute( sprintf( $sQ, "`oxarticles`" ) );
+
+
+            // update oxvarminprice field value also
+            $sQ = "CREATE TEMPORARY TABLE IF NOT EXISTS `__oxminprices` (
+                    `oxid` CHAR(32) character set latin1 collate latin1_general_ci NOT NULL,
+                    `oxminprice` DOUBLE NOT NULL,
+                    PRIMARY KEY ( `oxid` )
+                  ) ENGINE=MYISAM
+                  SELECT `oxparentid` AS `oxid`, MIN(`oxprice`) AS `oxminprice`
+                      FROM `oxarticles` WHERE `oxparentid` <> '' GROUP BY `oxparentid`";
+
+                $blUpdated = oxDb::getDb()->execute( $sQ );
+
+            $sQ = "UPDATE `oxarticles`
+                    INNER JOIN `__oxminprices` ON `__oxminprices`.`oxid` = `oxarticles`.`oxid`";
+
+            if ( $this->getConfig()->getConfigParam( 'blVariantParentBuyable' ) ) {
+                $sQ .= " SET `oxarticles`.`oxvarminprice` = IF( `oxarticles`.`oxprice` < `__oxminprices`.`oxminprice`, `oxarticles`.`oxprice`, `__oxminprices`.`oxminprice`)";
+            } else {
+                $sQ .= " SET `oxarticles`.`oxvarminprice` = `__oxminprices`.`oxminprice`";
+            }
+
+            $blUpdated = oxDb::getDb()->execute( $sQ );
+            $blUpdated = oxDb::getDb()->execute( "DROP TEMPORARY TABLE `__oxminprices`" );
+
+            // renew update time in case update is not forced
+            if ( !$blForceUpdate ) {
+                $this->renewPriceUpdateTime();
+            }
+
+            oxDb::commitTransaction();
+        }
+
+        return $blUpdated;
+    }
+
+    /**
      * fills the list simply with keys of the oxid and the position as value for the given sql
      *
      * @param string $sSql SQL select
@@ -832,7 +962,7 @@ class oxArticleList extends oxList
      */
     protected function _createIdListFromSql( $sSql)
     {
-        $rs = oxDb::getDb(true)->execute( $sSql);
+        $rs = oxDb::getDb( oxDb::FETCH_MODE_ASSOC )->select( $sSql );
         if ($rs != false && $rs->recordCount() > 0) {
             while (!$rs->EOF) {
                 $rs->fields = array_change_key_case($rs->fields, CASE_LOWER);
@@ -891,9 +1021,8 @@ class oxArticleList extends oxList
      */
     protected function _getFilterSql( $sCatId, $aFilter )
     {
-        $oDb = oxDb::getDb( true );
         $sArticleTable = getViewName( 'oxarticles' );
-        $aIds = $oDb->getAll( $this->_getFilterIdsSql( $sCatId, $aFilter ) );
+        $aIds = oxDb::getDb(oxDb::FETCH_MODE_ASSOC)->getAll( $this->_getFilterIdsSql( $sCatId, $aFilter ) );
         $sIds = '';
 
         if ( $aIds ) {
@@ -901,7 +1030,7 @@ class oxArticleList extends oxList
                 if ( $sIds ) {
                     $sIds .= ', ';
                 }
-                $sIds .= $oDb->quote( current( $aArt ) );
+                $sIds .= oxDb::getDb()->quote( current( $aArt ) );
             }
 
             if ( $sIds ) {
@@ -949,7 +1078,7 @@ class oxArticleList extends oxList
         $sSelect = "SELECT $sFields FROM $sO2CView as oc left join $sArticleTable
                     ON $sArticleTable.oxid = oc.oxobjectid
                     WHERE ".$this->getBaseObject()->getSqlActiveSnippet()." and $sArticleTable.oxparentid = ''
-                    and oc.oxcatnid = ".$oDb->quote($sCatId)." $sFilterSql GROUP BY oc.oxcatnid, oc.oxobjectid ORDER BY $sSorting oc.oxpos, oc.oxobjectid ";
+                    and oc.oxcatnid = ".$oDb->quote($sCatId)." $sFilterSql ORDER BY $sSorting oc.oxpos, oc.oxobjectid ";
 
         return $sSelect;
     }
@@ -1138,36 +1267,23 @@ class oxArticleList extends oxList
     }
 
     /**
-     * Loads list of low stock state products
+     * Checks if price update can be executed - current time > next price update time
      *
-     * @param array $aBasketContents product ids array
-     *
-     * @return null
+     * @return bool
      */
-    public function loadStockRemindProducts( $aBasketContents )
+    protected function _canUpdatePrices()
     {
-        if ( is_array( $aBasketContents ) && count( $aBasketContents ) ) {
-            $oDb = oxDb::getDb();
-            foreach ( $aBasketContents as $oBasketItem ) {
-                $aArtIds[] = $oDb->quote($oBasketItem->getProductId());
-            }
+        $oConfig = $this->getConfig();
+        $blCan = false;
 
-            $oBaseObject = $this->getBaseObject();
-
-            $sFieldNames = $oBaseObject->getSelectFields();
-            $sTable      = $oBaseObject->getViewName();
-
-            // fetching actual db stock state and reminder status
-            $sQ = "select {$sFieldNames} from {$sTable} where {$sTable}.oxid in ( ".implode( ",", $aArtIds )." ) and
-                          oxremindactive = '1' and oxstock <= oxremindamount";
-            $this->selectString( $sQ );
-
-            // updating stock reminder state
-            if ( $this->count() ) {
-                $sQ = "update {$sTable} set oxremindactive = '2' where {$sTable}.oxid in ( ".implode( ",", $aArtIds )." ) and
-                              oxremindactive = '1' and oxstock <= oxremindamount";
-                $oDb->execute( $sQ );
+        // crontab is off?
+        if ( !$oConfig->getConfigParam( "blUseCron" ) ) {
+            $iTimeToUpdate = $oConfig->getConfigParam( "iTimeToUpdatePrices" );
+            if ( !$iTimeToUpdate || $iTimeToUpdate <= oxUtilsDate::getInstance()->getTime() ) {
+                $blCan = true;
             }
         }
+        return $blCan;
     }
+
 }

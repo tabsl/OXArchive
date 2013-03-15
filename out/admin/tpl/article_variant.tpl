@@ -141,34 +141,38 @@ function editThis( sID )
         <div style="overflow-x:auto;">
         <table cellspacing="0" cellpadding="0" border="0" width="730">
           <tr>
-            <td class="listheader first" height="15">[{ oxmultilang ident="ARTICLE_VARIANT_EDIT" }] </td>
-            <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_ACTIVE" }] </td>
-            <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_CHOICE" }] </td>
-            <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_ARTNUM" }]</td>
-            <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_PRICE" }] ([{ $oActCur->sign }])</td>
-            <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_SORT" }]</td>
-            <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_STOCK" }]</td>
-            <td class="listheader" colspan="2">&nbsp;</td>
+            [{block name="admin_article_variant_listheader"}]
+                <td class="listheader first" height="15">[{ oxmultilang ident="ARTICLE_VARIANT_EDIT" }] </td>
+                <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_ACTIVE" }] </td>
+                <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_CHOICE" }] </td>
+                <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_ARTNUM" }]</td>
+                <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_PRICE" }] ([{ $oActCur->sign }])</td>
+                <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_SORT" }]</td>
+                <td class="listheader">[{ oxmultilang ident="ARTICLE_VARIANT_STOCK" }]</td>
+                <td class="listheader" colspan="2">&nbsp;</td>
+            [{/block}]
           </tr>
 
           [{if $oViewConf->isBuyableParent()}]
 
           <tr>
-            <td class="[{ $listclass}]">&nbsp;</td>
-            <td class="[{ $listclass}]">&nbsp;</td>
-            <td class="[{ $listclass}]"><input type="text" class="editinput" size="15" maxlength="[{$edit->oxarticles__oxvarselect->fldmax_length}]" name="editval[oxarticles__oxvarselect]" value="[{$edit->oxarticles__oxvarselect->value}]" [{ $readonly }]></td>
-            <td class="[{ $listclass}]"><input type="text" class="editinput" size="10" maxlength="[{$edit->oxarticles__oxartnum->fldmax_length}]" name="editval[oxarticles__oxartnum]" value="[{$edit->oxarticles__oxartnum->value}]" [{ $readonly }]></td>
-            <td class="[{ $listclass}]"><input type="text" class="editinput" size="7" maxlength="[{$edit->oxarticles__oxprice->fldmax_length}]" name="editval[oxarticles__oxprice]" value="[{$edit->oxarticles__oxprice->value}]" [{ $readonly }]></td>
-            <td class="[{ $listclass}]">&nbsp;</td>
-            <td class="[{ $listclass}]"><input type="text" class="editinput" size="7" maxlength="[{$edit->oxarticles__oxstock->fldmax_length}]" name="editval[oxarticles__oxstock]" value="[{$edit->oxarticles__oxstock->value}]" [{ $readonly }]></td>
-            <td class="[{ $listclass}]">
-              <select name="editval[oxarticles__oxstockflag]" class="editinput" [{ $readonly }]>
-              <option value="1" [{ if $edit->oxarticles__oxstockflag->value == 1 }]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_STANDARD" }]</option>
-              <option value="4" [{ if $edit->oxarticles__oxstockflag->value == 4 }]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_EXTERNALSTOCK" }]</option>
-              <option value="2" [{ if $edit->oxarticles__oxstockflag->value == 2 }]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_OFFLINE" }]</option>
-              <option value="3" [{ if $edit->oxarticles__oxstockflag->value == 3 }]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_NONORDER" }]</option>
-              </select>
-            </td>
+            [{block name="admin_article_variant_parent"}]
+                <td class="[{ $listclass}]">&nbsp;</td>
+                <td class="[{ $listclass}]">&nbsp;</td>
+                <td class="[{ $listclass}]"><input type="text" class="editinput" size="15" maxlength="[{$edit->oxarticles__oxvarselect->fldmax_length}]" name="editval[oxarticles__oxvarselect]" value="[{$edit->oxarticles__oxvarselect->value}]" [{ $readonly }]></td>
+                <td class="[{ $listclass}]"><input type="text" class="editinput" size="10" maxlength="[{$edit->oxarticles__oxartnum->fldmax_length}]" name="editval[oxarticles__oxartnum]" value="[{$edit->oxarticles__oxartnum->value}]" [{ $readonly }]></td>
+                <td class="[{ $listclass}]"><input type="text" class="editinput" size="7" maxlength="[{$edit->oxarticles__oxprice->fldmax_length}]" name="editval[oxarticles__oxprice]" value="[{$edit->oxarticles__oxprice->value}]" [{ $readonly }]></td>
+                <td class="[{ $listclass}]">&nbsp;</td>
+                <td class="[{ $listclass}]"><input type="text" class="editinput" size="7" maxlength="[{$edit->oxarticles__oxstock->fldmax_length}]" name="editval[oxarticles__oxstock]" value="[{$edit->oxarticles__oxstock->value}]" [{ $readonly }]></td>
+                <td class="[{ $listclass}]">
+                  <select name="editval[oxarticles__oxstockflag]" class="editinput" [{ $readonly }]>
+                  <option value="1" [{ if $edit->oxarticles__oxstockflag->value == 1 }]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_STANDARD" }]</option>
+                  <option value="4" [{ if $edit->oxarticles__oxstockflag->value == 4 }]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_EXTERNALSTOCK" }]</option>
+                  <option value="2" [{ if $edit->oxarticles__oxstockflag->value == 2 }]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_OFFLINE" }]</option>
+                  <option value="3" [{ if $edit->oxarticles__oxstockflag->value == 3 }]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_NONORDER" }]</option>
+                  </select>
+                </td>
+            [{/block}]
             <td class="[{ $listclass}]"><input class="edittext" type="submit" value="[{ oxmultilang ident="ARTICLE_VARIANT_ARTSAVE" }]" [{ $readonly }]></td>
           </tr>
           <tr><td colspan=9>&nbsp;</td><tr>
@@ -187,6 +191,7 @@ function editThis( sID )
           [{foreach from=$mylist item=listitem}]
           [{assign var="_cnt1" value=$_cnt1+1}]
           <tr id="test_variant.[{$_cnt1}]">
+            [{block name="admin_article_variant_listitem"}]
             [{assign var="listclass" value=listitem$blWhite }]
             [{assign var="hasvariants" value=true }]
             <td class="[{ $listclass}]"><a href="Javascript:editThis('[{ $listitem->oxarticles__oxid->value}]');" class="[{ $listclass}]" [{include file="help.tpl" helpid=editvariant}]><img src="[{$oViewConf->getImageUrl()}]/editvariant.gif" width="15" height="15" alt="" border="0" align="absmiddle"></a></td>
@@ -207,6 +212,7 @@ function editThis( sID )
             <td class="[{ $listclass}]">
               <a href="Javascript:deleteThis('[{ $listitem->oxarticles__oxid->value }]');" class="delete"[{include file="help.tpl" helpid=item_delete}]></a>
             </td>
+            [{/block}]
           </tr>
 
           [{if $blWhite == "2"}]
@@ -241,22 +247,24 @@ function editThis( sID )
             <input type="hidden" name="voxid" value="-1">
             <input type="hidden" name="parentvarname" value="[{$edit->oxarticles__oxvarname->value}]">
 
-            <td class="[{ $listclass}]" colspan="2">&nbsp;</td>
-            <td class="[{ $listclass}]"><input type="text" class="editinput" size="15" maxlength="[{$listitem->oxarticles__oxvarselect->fldmax_length}]" name="editval[oxarticles__oxvarselect]" value="" [{ $readonly }]></td>
-            <td class="[{ $listclass}]"><input type="text" class="editinput" size="10" maxlength="[{$listitem->oxarticles__oxartnum->fldmax_length}]" name="editval[oxarticles__oxartnum]" value="" [{ $readonly }]></td>
-            <td class="[{ $listclass}]"><input type="text" class="editinput" size="7" maxlength="[{$listitem->oxarticles__oxprice->fldmax_length}]" name="editval[oxarticles__oxprice]" value="" [{ $readonly }]></td>
-            <td class="[{ $listclass}]"><input type="text" class="editinput" size="7" maxlength="[{$listitem->oxarticles__oxsort->fldmax_length}]" name="editval[oxarticles__oxsort]" value="" [{ $readonly }]></td>
-            <td class="[{ $listclass}]"><input type="text" class="editinput" size="7" maxlength="[{$listitem->oxarticles__oxstock->fldmax_length}]" name="editval[oxarticles__oxstock]" value="" [{ $readonly }]></td>
-            <td class="[{ $listclass}]">
+            [{block name="admin_article_variant_newitem"}]
+                <td class="[{ $listclass}]" colspan="2">&nbsp;</td>
+                <td class="[{ $listclass}]"><input type="text" class="editinput" size="15" maxlength="[{$listitem->oxarticles__oxvarselect->fldmax_length}]" name="editval[oxarticles__oxvarselect]" value="" [{ $readonly }]></td>
+                <td class="[{ $listclass}]"><input type="text" class="editinput" size="10" maxlength="[{$listitem->oxarticles__oxartnum->fldmax_length}]" name="editval[oxarticles__oxartnum]" value="" [{ $readonly }]></td>
+                <td class="[{ $listclass}]"><input type="text" class="editinput" size="7" maxlength="[{$listitem->oxarticles__oxprice->fldmax_length}]" name="editval[oxarticles__oxprice]" value="" [{ $readonly }]></td>
+                <td class="[{ $listclass}]"><input type="text" class="editinput" size="7" maxlength="[{$listitem->oxarticles__oxsort->fldmax_length}]" name="editval[oxarticles__oxsort]" value="" [{ $readonly }]></td>
+                <td class="[{ $listclass}]"><input type="text" class="editinput" size="7" maxlength="[{$listitem->oxarticles__oxstock->fldmax_length}]" name="editval[oxarticles__oxstock]" value="" [{ $readonly }]></td>
+                <td class="[{ $listclass}]">
 
-              <select name="editval[oxarticles__oxstockflag]" class="editinput" [{ $readonly }]>
-              <option value="1">[{ oxmultilang ident="GENERAL_STANDARD" }]</option>
-              <option value="4">[{ oxmultilang ident="GENERAL_EXTERNALSTOCK" }]</option>
-              <option value="2">[{ oxmultilang ident="GENERAL_OFFLINE" }]</option>
-              <option value="3">[{ oxmultilang ident="GENERAL_NONORDER" }]</option>
-              </select>
+                  <select name="editval[oxarticles__oxstockflag]" class="editinput" [{ $readonly }]>
+                  <option value="1">[{ oxmultilang ident="GENERAL_STANDARD" }]</option>
+                  <option value="4">[{ oxmultilang ident="GENERAL_EXTERNALSTOCK" }]</option>
+                  <option value="2">[{ oxmultilang ident="GENERAL_OFFLINE" }]</option>
+                  <option value="3">[{ oxmultilang ident="GENERAL_NONORDER" }]</option>
+                  </select>
 
-            </td>
+                </td>
+            [{/block}]
 
             <td class="[{ $listclass}]" align="right"><input class="edittext" type="submit" onClick="document.forms['myedit4'].elements['parentvarname'].value = document.forms['search'].elements['editval[oxarticles__oxvarname]'].value;" value="[{ oxmultilang ident="ARTICLE_VARIANT_NEWVAR" }]" [{ $readonly }]></td>
           </tr>

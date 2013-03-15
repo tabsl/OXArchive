@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_system.php 34537 2011-04-09 12:21:10Z linas.kukulskis $
+ * @version   SVN: $Id: shop_system.php 44135 2012-04-20 15:06:35Z linas.kukulskis $
  */
 
 /**
@@ -62,7 +62,7 @@ class Shop_System extends Shop_Config
             $soxId = $myConfig->getShopId();
 
         $oDb = oxDb::getDb();
-        $sShopCountry = $oDb->getOne("select DECODE( oxvarvalue, ".$oDb->quote( $myConfig->getConfigParam( 'sConfigKey' ) ).") as oxvarvalue from oxconfig where oxshopid = '$soxId' and oxvarname = 'sShopCountry'");
+        $sShopCountry = $oDb->getOne("select DECODE( oxvarvalue, ".$oDb->quote( $myConfig->getConfigParam( 'sConfigKey' ) ).") as oxvarvalue from oxconfig where oxshopid = '$soxId' and oxvarname = 'sShopCountry'", false, false);
 
         $this->_aViewData["shop_countries"] = $aLocationCountries[$sLangAbbr];
         $this->_aViewData["confstrs"]["sShopCountry"] = $sShopCountry;

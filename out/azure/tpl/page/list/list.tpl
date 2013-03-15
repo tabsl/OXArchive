@@ -1,14 +1,35 @@
 [{oxscript add="$('a.js-external').attr('target', '_blank');"}]
 [{oxscript include="js/widgets/oxarticlebox.js" priority=10 }]
 [{oxscript add="$( '#content' ).oxArticleBox();"}]
-[{capture append="oxidBlock_content"}]
-        [{assign var="actCategory" value=$oView->getActiveCategory()}]
-            
-        [{if $actCategory->oxcategories__oxthumb->value }]
-            [{if $actCategory->getThumbUrl()}]
-                <img src="[{$actCategory->getThumbUrl()}]" alt="[{$actCategory->oxcategories__oxtitle->value}]" class="categoryPicture">
-            [{/if}]
+
+[{assign var="actCategory" value=$oView->getActiveCategory()}]
+
+
+[{capture append="oxidBlock_sidebar"}]
+    [{assign var="listType" value=$oView->getListType()}]
+    [{if $listType=='manufacturer' || $listType=='vendor'}]
+        [{if $actCategory && $actCategory->getIconUrl()}]
+        <div class="box">
+            <h3>
+                [{if $listType=='manufacturer'}]
+                    [{ oxmultilang ident="BRAND" }]
+                [{elseif $listType=='vendor'}]
+                    [{ oxmultilang ident="VENDOR" }]
+                [{/if}]
+            </h3>
+            <div class="featured icon">
+                <img src="[{$actCategory->getIconUrl()}]" alt="[{$actCategory->getTitle()}]">
+            </div>
+        </div>
         [{/if}]
+    [{/if}]
+[{/capture}]
+
+[{capture append="oxidBlock_content"}]
+        [{if $actCategory->oxcategories__oxthumb->value && $actCategory->getThumbUrl()}]
+            <img src="[{$actCategory->getThumbUrl()}]" alt="[{$actCategory->oxcategories__oxtitle->value}]" class="categoryPicture">
+        [{/if}]
+
         [{if $actCategory && $actCategory->oxcategories__oxdesc->value }]
             <div class="categoryTopDescription" id="catDesc">[{$actCategory->oxcategories__oxdesc->value}]</div>
         [{/if}]

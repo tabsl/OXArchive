@@ -22,7 +22,7 @@
                     </span>
                 </span>
             [{/if}]
-            <img src="[{$oViewConf->getImageUrl('basket.png')}]" id="[{$_prefix}]minibasketIcon" alt="Basket">
+            <img src="[{$oViewConf->getImageUrl('basket.png')}]" id="[{$_prefix}]minibasketIcon" alt="Basket" class="basket">
         [{/if}]
     </div>
 
@@ -34,9 +34,25 @@
                 [{assign var="currency" value=$oView->getActCurrency() }]
                 <div id="[{$_prefix}]basketFlyout" class="basketFlyout corners[{if $scrollableBasket}] scrollable[{/if}]">
                     <p class="title">
-                        <strong>[{$oxcmp_basket->getItemsCount()}] [{ oxmultilang ident="WIDGET_MINIBASKET_ITEMS_IN_BASKET" }]</strong>
+                        [{if $_prefix != "modal"}]
+                            <strong>[{$oxcmp_basket->getItemsCount()}] [{ oxmultilang ident="WIDGET_MINIBASKET_ITEMS_IN_BASKET" }]</strong>
+                        [{else}]
+                            <strong class="note">[{ oxmultilang ident="WIDGET_NEWBASKETITEMMSG" }]</strong>
+                        [{/if}]
                         <img src="[{$oViewConf->getImageUrl('x.png')}]" alt="" class="closePop">
                     </p>
+                    [{if $_prefix != "modal"}]
+                        [{if $oxcmp_basket->getItemsCount() > 0}]
+                            <span class="counter FXgradOrange">
+                                [{insert name="oxid_newbasketitem" tpl="widget/minibasket/newbasketitemmsg.tpl" type="message"}]
+                                <span id="[{$_prefix}]countValue">
+                                    [{$oxcmp_basket->getItemsCount()}]
+                                </span>
+                            </span>
+                        [{/if}]
+                        <img src="[{$oViewConf->getImageUrl('basket.png')}]" id="[{$_prefix}]minibasketIcon" alt="Basket" class="basket">
+                    [{/if}]
+
                     [{if $scrollableBasket}]
                         <div class="scrollbarBox">
                         <div class="basketItems">

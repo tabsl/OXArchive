@@ -1,6 +1,6 @@
 [{assign var=oBanners value=$oView->getBanners() }]
 [{assign var="currency" value=$oView->getActCurrency()}]
-[{if $oBanners}]
+[{if $oBanners|@count}]
     [{oxstyle include="css/libs/anythingslider.css"}]
     [{oxscript include="js/libs/anythingslider.js"}]
     [{oxscript include="js/widgets/oxslider.js" priority=10 }]

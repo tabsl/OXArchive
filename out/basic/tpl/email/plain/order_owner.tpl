@@ -15,8 +15,9 @@
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_ORDERNOMBER" }] [{ $order->oxorder__oxordernr->value }]
 
 [{if $oViewConf->getShowVouchers() }]
-[{ foreach from=$vouchers item=voucher}]
-[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_USEDCOUPONS" }] [{$voucher->oxmodvouchers__oxvouchernr->value}] - [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_DICOUNT" }] [{$voucher->oxmodvouchers__oxdiscount->value}] [{ if $voucher->oxmodvouchers__oxdiscounttype->value == "absolute"}][{ $currency->name}][{else}]%[{/if}]
+[{ foreach from=$order->getVoucherList() item=voucher}]
+[{ assign var="voucherseries" value=$voucher->getSerie() }]
+[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_USEDCOUPONS" }] [{$voucher->oxvouchers__oxvouchernr->value}] - [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_DICOUNT" }] [{$voucherseries->oxvoucherseries__oxdiscount->value}] [{ if $voucherseries->oxvoucherseries__oxdiscounttype->value == "absolute"}][{ $currency->sign}][{else}]%[{/if}]
 [{/foreach }]
 [{/if}]
 
@@ -107,7 +108,6 @@
 
 [{if $payment->oxuserpayments__oxpaymentsid->value != "oxempty"}][{ oxmultilang ident="EMAIL_ORDER_OWNER_HTML_PAYMENTINFO" }]
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_PAYMENTMETHOD" }][{ $payment->oxpayments__oxdesc->getRawValue() }] [{ if $basket->getPaymentCosts() }]([{ $basket->getFPaymentCosts() }] [{ $currency->sign}])[{/if}]
-[{ $payment->oxpayments__oxlongdesc->value }]
 [{ oxmultilang ident="EMAIL_ORDER_OWNER_HTML_PAYMENTINFOOFF" }]
 [{*
 [{foreach from=$payment->aDynValues item=value }]

@@ -32,12 +32,13 @@
   [{/if}]
 
   [{if $oViewConf->showTs("THANKYOU") && $oViewConf->getTsId() }]
+  [{assign var="sTSRatingImg" value="https://www.trustedshops.com/bewertung/widget/img/bewerten_"|cat:$oView->getActiveLangAbbr()|cat:".gif"}]
   <strong class="boxhead">[{ oxmultilang ident="TS_RATINGS" }]</strong>
   <div class="box info">
     <div>
       [{ oxmultilang ident="TS_RATINGS_RATEUS" }]
       <a href="[{ $oViewConf->getTsRatingUrl() }]" target="_blank" title="[{ oxmultilang ident="TS_RATINGS_URL_TITLE" }]">
-        <img src="https://www.trustedshops.com/bewertung/widget/img/bewerten_de.gif" border="0" alt="[{ oxmultilang ident="TS_RATINGS_BUTTON_ALT" }]" align="middle">
+        <img src="[{$sTSRatingImg}]" border="0" alt="[{ oxmultilang ident="TS_RATINGS_BUTTON_ALT" }]" align="middle">
       </a>
     </div>
   </div>
@@ -139,7 +140,7 @@
 
       <strong class="head2">[{ oxmultilang ident="THANKYOU_ALSOBOUGHT"}]</strong>
       [{foreach from=$oView->getAlsoBoughtTheseProducts() item=actionproduct}]
-          [{include file="inc/product.tpl" product=$actionproduct size="small" testid="AlsoBought_"|cat:$actionproduct->oxarticles__oxid->value }]
+          [{include file="inc/product.tpl" product=$actionproduct size="small" testid="AlsoBought_"|cat:$actionproduct->oxarticles__oxid->value blDisableToCart=true}]
       [{/foreach}]
 
     [{/if}]

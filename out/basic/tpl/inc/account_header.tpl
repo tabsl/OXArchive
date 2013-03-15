@@ -23,10 +23,16 @@
                 <dd id="test_link_account_billshipDesc">[{ oxmultilang ident="INC_ACCOUNT_HEADER_UPDATEYOURBILLINGSHIPPINGSET" }]</dd>
             </dl>
 
-            <dl class="lastInCol">
+            <dl>
                 <dt><a id="test_link_account_order" class="[{if $active_link == 4}]active[{/if}]" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_order" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_ORDERHISTORY" }]</a></dt>
                 <dd id="test_link_account_orderDesc">[{ oxmultilang ident="INC_ACCOUNT_HEADER_ORDERS" }] [{ $oView->getOrderCnt() }]</dd>
             </dl>
+            [{if $oView->isEnabledDownloadableFiles()}]
+            <dl class="lastInCol">
+                <dt><a id="test_link_account_downloads" class="[{if $active_link == 10}]active[{/if}]" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_downloads" }]" rel="nofollow">[{ oxmultilang ident="MY_DOWNLOADS" }]</a></dt>
+                <dd id="test_link_account_downloadsDesc">[{ oxmultilang ident="MY_DOWNLOADS_DESC" }]</dd>
+            </dl>
+            [{/if}]
         </td>
         <td valign="top">
             <dl>

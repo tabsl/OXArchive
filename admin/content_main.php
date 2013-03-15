@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: content_main.php 39915 2011-11-14 08:39:56Z arvydas.vapsva $
+ * @version   SVN: $Id: content_main.php 44135 2012-04-20 15:06:35Z linas.kukulskis $
  */
 
 /**
@@ -237,7 +237,7 @@ class Content_Main extends oxAdminDetails
         // null not allowed
         if ( !strlen( $sIdent ) ) {
             $blAllow = true;
-        } elseif ( $oDb->getOne( "select oxid from oxcontents where oxloadid = ".$oDb->quote( $sIdent ) ." and oxid != ".$oDb->quote( $sOxId ) ." and oxshopid = '".$this->getConfig()->getShopId()."'" ) ) {
+        } elseif ( $oDb->getOne( "select oxid from oxcontents where oxloadid = ".$oDb->quote( $sIdent ) ." and oxid != ".$oDb->quote( $sOxId ) ." and oxshopid = '".$this->getConfig()->getShopId()."'", false, false ) ) {
             $blAllow = true;
         }
         return $blAllow;

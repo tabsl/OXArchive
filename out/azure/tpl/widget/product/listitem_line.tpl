@@ -43,17 +43,17 @@
 
     [{block name="widget_product_listitem_line_picturebox"}]
         <div class="pictureBox">
-            <a class="sliderHover" href="[{ $_productLink }]" title="[{ $product->oxarticles__oxtitle->value}]"></a>
-            <a href="[{$_productLink}]" class="viewAllHover glowShadow corners" title="[{ $product->oxarticles__oxtitle->value}]"><span>[{oxmultilang ident="WIDGET_PRODUCT_PRODUCT_DETAILS"}]</span></a>
-            <img itemprop="image" src="[{$product->getThumbnailUrl()}]" alt="[{ $product->oxarticles__oxtitle->value}]">
+            <a class="sliderHover" href="[{ $_productLink }]" title="[{ $product->oxarticles__oxtitle->value}] [{$product->oxarticles__oxvarselect->value}]"></a>
+            <a href="[{$_productLink}]" class="viewAllHover glowShadow corners" title="[{ $product->oxarticles__oxtitle->value}] [{$product->oxarticles__oxvarselect->value}]"><span>[{oxmultilang ident="WIDGET_PRODUCT_PRODUCT_DETAILS"}]</span></a>
+            <img src="[{$product->getThumbnailUrl()}]" alt="[{ $product->oxarticles__oxtitle->value}] [{$product->oxarticles__oxvarselect->value}]">
         </div>
     [{/block}]
 
     <div class="infoBox">
         [{block name="widget_product_listitem_line_selections"}]
             <div class="info">
-                <a id="[{$testid}]" itemprop="url" href="[{$_productLink}]" class="title" title="[{ $product->oxarticles__oxtitle->value}]">
-                    <span itemprop="name">[{ $product->oxarticles__oxtitle->value }]</span>
+                <a id="[{$testid}]" href="[{$_productLink}]" class="title" title="[{ $product->oxarticles__oxtitle->value}] [{$product->oxarticles__oxvarselect->value}]">
+                    <span>[{ $product->oxarticles__oxtitle->value }] [{$product->oxarticles__oxvarselect->value}]</span>
                 </a>
                 <div class="variants">
                     [{if $aVariantSelections && $aVariantSelections.selections }]
@@ -87,32 +87,33 @@
             </div>
         [{/block}]
     </div>
-    <div class="functions" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+    <div class="functions">
             [{if $oViewConf->getShowCompareList()}]
                 [{oxid_include_dynamic file="widget/product/compare_links.tpl" testid="_`$testid`" type="compare" aid=$product->oxarticles__oxid->value anid=$altproduct in_list=$product->isOnComparisonList() page=$oView->getActPage()}]
             [{/if}]
             [{block name="widget_product_listitem_line_price"}]
                 [{oxhasrights ident="SHOWARTICLEPRICE"}]
-                    [{if $product->getFTPrice() > $product->getFPrice()}]
+                    [{assign var=tprice value=$product->getTPrice()}]
+                    [{assign var=price  value=$product->getPrice()}]
+                    [{if $tprice && $tprice->getBruttoPrice() > $price->getBruttoPrice()}]
                         <span class="oldPrice">
                             [{oxmultilang ident="WIDGET_PRODUCT_PRODUCT_REDUCEDFROM"}] <del>[{$product->getFTPrice()}] [{$currency->sign}]</del>
                         </span>
                     [{/if}]
                     [{block name="widget_product_listitem_line_price_value"}]
                         <label id="productPrice_[{$testid}]" class="price">
-                            <span itemprop="price">[{ $product->getFPrice() }]</span> [{ $currency->sign}] <meta itemprop="priceCurrency" content="[{ $currency->name}]"> [{if !($product->hasMdVariants() || ($oViewConf->showSelectListsInList() && $product->getSelections(1)) || $product->getVariantList())}]*[{/if}]
+                            <span>[{ $product->getFPrice() }]</span> [{ $currency->sign}] [{if !($product->hasMdVariants() || ($oViewConf->showSelectListsInList() && $product->getSelections(1)) || $product->getVariantList())}]*[{/if}]
                         </label>
                     [{/block}]
 
-                    [{oxscript include="js/widgets/oxamountpriceselect.js" priority=10 }]
                     [{if $product->loadAmountPriceInfo()}]
+                        [{oxscript include="js/widgets/oxamountpriceselect.js" priority=10 }]
                         [{include file="page/details/inc/priceinfo.tpl" oDetailsProduct=$product}]
                     [{/if}]
 
-
                     [{if $product->getPricePerUnit()}]
                         <span id="productPricePerUnit_[{$testid}]" class="pricePerUnit">
-                            [{$product->oxarticles__oxunitquantity->value}] [{$product->oxarticles__oxunitname->value}] | [{$product->getPricePerUnit()}] [{ $currency->sign}]/[{$product->oxarticles__oxunitname->value}]
+                            [{$product->oxarticles__oxunitquantity->value}] [{$product->getUnitName()}] | [{$product->getPricePerUnit()}] [{ $currency->sign}]/[{$product->getUnitName()}]
                         </span>
                     [{elseif $product->oxarticles__oxweight->value  }]
                         <span id="productPricePerUnit_[{$testid}]" class="pricePerUnit">

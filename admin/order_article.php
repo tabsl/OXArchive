@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: order_article.php 38545 2011-09-05 09:45:22Z arunas.paskevicius $
+ * @version   SVN: $Id: order_article.php 44135 2012-04-20 15:06:35Z linas.kukulskis $
  */
 
 /**
@@ -138,7 +138,7 @@ class Order_Article extends oxAdminDetails
             $sArtId = null;
 
             //get article id
-            $oDb = oxDb::getDb(true);
+            $oDb = oxDb::getDb( oxDB::FETCH_MODE_ASSOC );
             $sTable = getViewName( "oxarticles" );
             $sQ  = "select oxid, oxparentid from $sTable where oxartnum = ".$oDb->quote( $sArtNum )." limit 1";
 
@@ -265,7 +265,7 @@ class Order_Article extends oxAdminDetails
 
         //get article id
         $sQ = "select oxartid from oxorderarticles where oxid = ".$oDb->quote( $sOrderArtId );
-        if ( ( $sArtId = oxDb::getDb()->getOne( $sQ ) ) ) {
+        if ( ( $sArtId = oxDb::getDb()->getOne( $sQ, false, false ) ) ) {
             $oOrder = oxNew( 'oxorder' );
             if ( $oOrder->load( $this->getEditObjectId() ) ) {
                 $oOrder->recalculateOrder();
@@ -286,7 +286,7 @@ class Order_Article extends oxAdminDetails
         if ( is_array( $aOrderArticles ) && $oOrder->load( $this->getEditObjectId() ) ) {
 
             $myConfig = $this->getConfig();
-            $oOrderArticles = $oOrder->getOrderArticles();
+            $oOrderArticles = $oOrder->getOrderArticles( true );
 
             $blUseStock = $myConfig->getConfigParam( 'blUseStock' );
             foreach ( $oOrderArticles as $oOrderArticle ) {

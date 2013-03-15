@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: wrapping_main.php 39895 2011-11-14 08:33:56Z arvydas.vapsva $
+ * @version   SVN: $Id: wrapping_main.php 40178 2011-11-23 15:42:25Z linas.kukulskis $
  */
 
 /**

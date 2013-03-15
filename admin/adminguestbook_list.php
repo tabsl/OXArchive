@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: adminguestbook_list.php 31980 2010-12-17 14:02:48Z sarunas $
+ * @version   SVN: $Id: adminguestbook_list.php 44135 2012-04-20 15:06:35Z linas.kukulskis $
  */
 
 /**
@@ -74,7 +74,7 @@ class AdminGuestbook_List extends oxAdminList
             foreach ( $oList as $oEntry ) {
                 // preloading user info ..
                 if ( isset( $oEntry->oxgbentries__oxuserid ) && $oEntry->oxgbentries__oxuserid->value ) {
-                    $oEntry->oxuser__oxlname = new oxField( $oDb->getOne( "select oxlname from oxuser where oxid=".$oDb->quote( $oEntry->oxgbentries__oxuserid->value ) ));
+                    $oEntry->oxuser__oxlname = new oxField( $oDb->getOne( "select oxlname from oxuser where oxid=".$oDb->quote( $oEntry->oxgbentries__oxuserid->value ), false, false ));
                 }
             }
         }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxmediaurl.php 38536 2011-09-05 09:02:38Z linas.kukulskis $
+ * @version   SVN: $Id: oxmediaurl.php 39009 2011-10-04 11:17:15Z vilma $
  */
 
 /**
@@ -90,7 +90,7 @@ class oxMediaUrl extends oxI18n
         if ( $this->oxmediaurls__oxisuploaded->value ) {
             $sUrl = $this->getConfig()->isSsl() ? $this->getConfig()->getSslShopUrl() : $this->getConfig()->getShopUrl();
             $sUrl .= 'out/media/';
-            $sUrl .= $this->oxmediaurls__oxurl->value;
+            $sUrl .= basename($this->oxmediaurls__oxurl->value);
         } else {
             $sUrl = $this->oxmediaurls__oxurl->value;
         }
@@ -108,10 +108,12 @@ class oxMediaUrl extends oxI18n
     public function delete( $sOXID = null )
     {
         $sFilePath = $this->getConfig()->getConfigParam('sShopDir') . "/out/media/" .
-                     $this->oxmediaurls__oxurl->value;
+                     basename($this->oxmediaurls__oxurl->value);
 
-        if ($this->oxmediaurls__oxisuploaded->value && file_exists($sFilePath)) {
-            unlink($sFilePath);
+        if ($this->oxmediaurls__oxisuploaded->value) {
+            if (file_exists($sFilePath)) {
+                unlink($sFilePath);
+            }
         }
 
         return parent::delete( $sOXID );

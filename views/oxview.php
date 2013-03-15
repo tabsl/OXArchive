@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxview.php 43803 2012-04-12 08:53:54Z tomas $
+ * @version   SVN: $Id: oxview.php 43859 2012-04-13 11:49:56Z linas.kukulskis $
  */
 
 /**
@@ -913,6 +913,16 @@ class oxView extends oxSuperCfg
     public function isMall()
     {
             return false;
+    }
+
+    /**
+     * Returns if page has rdfa
+     *
+     * @return bool
+     */
+    public function showRdfa()
+    {
+        return false;
     }
 
 }

@@ -16,7 +16,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   out
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: oxinnerlabel.js 35529 2011-05-23 07:31:20Z vilma $
  */
@@ -25,7 +25,8 @@
     oxInnerLabel = {
 
         options: {
-                sDefaultValue : 'innerLabel'
+                sDefaultValue  : 'innerLabel',
+                sReloadElement : ''
         },
 
         _create: function(){
@@ -35,8 +36,7 @@
                 input = self.element,
                 label = $("label[for='"+input.attr('id')+"']");
 
-            var pos = input.position();
-            label.css( { "left": (pos.left) + "px", "top":(pos.top) + "px" } );
+            self._reload( input, label );
 
             input.focus(function() {
                 label.hide();
@@ -56,6 +56,15 @@
                     label.hide();
                 }
             });
+
+            $(options.sReloadElement).click(function() {
+                setTimeout(function(){ self._reload( self.element, label ); }, 100);
+            });
+       },
+       
+       _reload : function( input, label ){
+           var pos = input.position();
+           label.css( { "left": (pos.left) + "px", "top":(pos.top) + "px" } );
        }
     }
 

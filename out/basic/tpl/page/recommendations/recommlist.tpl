@@ -14,6 +14,7 @@
         [{/if}]
     </strong>
     <div class="box info">
+      [{if $oView->isReviewActive() }]
       <div class="right">
           [{ if !$oxcmp_user}]
             [{assign var="_star_title" value="RECOMMLIST_LOGGIN"|oxmultilangassign }]
@@ -35,6 +36,7 @@
             <a id="star_rating_text" rel="nofollow" href="#review" onclick="oxid.review.show();" class="fs10 link2">[{ oxmultilang ident="RECOMMLIST_NORATINGS" }]</a>
           [{/if}]
       </div>
+      [{/if}]
 
       <div id="test_recommlistDesc" class="recomlistdesc">
         [{ $_actvrecommlist->oxrecommlists__oxdesc->value }]
@@ -53,7 +55,7 @@
       [{include file="inc/list_locator.tpl" PageLoc="Bottom" where="Bottom"}]
     [{/if}]
 
-
+[{if $oView->isReviewActive() }]
     <strong class="boxhead" id="test_reviewHeader">[{ oxmultilang ident="RECOMMLIST_LISTREVIEW" }]</strong>
     <div id="review" class="box info">
       [{ if $oxcmp_user }]
@@ -102,6 +104,7 @@
         [{ oxmultilang ident="RECOMMLIST_REVIEWNOTAVAILABLE" }]
       [{/if}]
     </div>
+[{/if}]
 
 [{else}]
       [{assign var="hitsfor" value="RECOMMLIST_HITSFOR"|oxmultilangassign }]

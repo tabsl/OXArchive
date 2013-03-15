@@ -36,6 +36,12 @@ class Invite extends oxUBase
     protected $_sThisTemplate = 'page/privatesales/invite.tpl';
 
     /**
+     * Current class login template name.
+     * @var string
+     */
+    protected $_sThisLoginTemplate = 'page/account/login.tpl';
+
+    /**
      * Required fields to fill before sending suggest email
      * @var array
      */
@@ -93,7 +99,7 @@ class Invite extends oxUBase
 
         parent::render();
 
-        return $this->_sThisTemplate;
+        return $this->getUser() ? $this->_sThisTemplate : $this->_sThisLoginTemplate;
     }
 
     /**
@@ -111,7 +117,8 @@ class Invite extends oxUBase
         }
 
         $aParams = oxConfig::getParameter( 'editval', true );
-        if ( !is_array( $aParams ) ) {
+        $oUser = $this->getUser();
+        if ( !is_array( $aParams ) || !$oUser ) {
             return;
         }
 
@@ -184,10 +191,7 @@ class Invite extends oxUBase
             $oUser = $this->getUser();
 
             //saving statitics for sended emails
-            if ( $oUser ) {
-                $oUser->updateInvitationStatistics( $aParams["rec_email"] );
-            }
-
+            $oUser->updateInvitationStatistics( $aParams["rec_email"] );
         } else {
             oxUtilsView::getInstance()->addErrorToDisplay('EXCEPTION_INVITE_ERRORWHILESENDINGMAIL');
         }

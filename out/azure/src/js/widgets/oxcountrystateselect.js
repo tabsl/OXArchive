@@ -104,9 +104,8 @@
             for(var x = 0; x < aValues.length; x++) {
                 if (selectedStateId == aValues[x]) {
                     oSelect.
-                    append($("<option></option>").
+                    append($('<option selected="selected"></option>').
                     attr("value",aValues[x]).
-                    attr('selected', x).
                     text(aLables[x]));
                 } else {
                     oSelect.

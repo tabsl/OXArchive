@@ -26,7 +26,7 @@
 [{else}]
 <div id="siegel">
     <a id="tsMembership" href="[{ oxmultilang ident="INC_TRUSTEDSHOPS_ITEM_LINK" }]">
-        <img style="border:0px none;" src="[{$oViewConf->getImageUrl()}]trustedshops_[{$oViewConf->getActLanguageId()}].gif" alt="[{ oxmultilang ident="INC_TRUSTEDSHOPS_ITEM_ALTTEXT" }]">
+        <img style="border:0px none;" src="[{$oViewConf->getImageUrl()}]trustedshops_[{$oViewConf->getActLanguageAbbr()}].gif" alt="[{ oxmultilang ident="INC_TRUSTEDSHOPS_ITEM_ALTTEXT" }]">
     </a>
     [{oxscript add="oxid.blank('tsMembership');"}]
 </div>

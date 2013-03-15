@@ -60,7 +60,7 @@ function showInvitations()
 <input type="hidden" name="oxid" value="[{ $oxid }]">
 <input type="hidden" name="editval[oxshops__oxid]" value="[{ $oxid }]">
 
-
+[{block name="admin_shop_config_options"}]
     <div class="groupExp">
         <div>
             <a href="#" onclick="_groupExp(this);return false;" class="rc"><b>[{ oxmultilang ident="SHOP_OPTIONS_GROUP_GLOBAL" }]</b></a>
@@ -402,8 +402,31 @@ function showInvitations()
             <a href="#" onclick="_groupExp(this);return false;" class="rc"><b>[{ oxmultilang ident="SHOP_OPTIONS_GROUP_VAT" }]</b></a>
             <dl>
                 <dt>
-                    <input type=hidden name=confbools[blCalcVATForDelivery] value=false>
-                    <input type=checkbox name=confbools[blCalcVATForDelivery] value=true  [{if ($confbools.blCalcVATForDelivery)}]checked[{/if}] [{ $readonly}]>
+                    <input type=text class="txt" style="width:70" name=confstrs[dDefaultVAT] value="[{$confstrs.dDefaultVAT}]" [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_DEFAULTVAT" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_DEFAULTVAT" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+             <dl>
+                <dt>
+            <input type=hidden name=confbools[blEnterNetPrice] value=false>
+            <input type=checkbox name=confbools[blEnterNetPrice] value=true  [{if ($confbools.blEnterNetPrice)}]checked[{/if}] [{ $readonly}]>
+            [{ oxinputhelp ident="HELP_SHOP_CONFIG_ENTERNETPRICE" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_ENTERNETPRICE" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <input type=hidden name=confbools[blShowVATForDelivery] value=false>
+                    <input type=checkbox name=confbools[blShowVATForDelivery] value=true  [{if ($confbools.blShowVATForDelivery)}]checked[{/if}] [{ $readonly}]>
                     [{ oxinputhelp ident="HELP_SHOP_CONFIG_CALCULATEVATFORDELIVERY" }]
                 </dt>
                 <dd>
@@ -426,8 +449,8 @@ function showInvitations()
 
             <dl>
                 <dt>
-                    <input type=hidden name=confbools[blCalcVATForPayCharge] value=false>
-                    <input type=checkbox name=confbools[blCalcVATForPayCharge] value=true  [{if ($confbools.blCalcVATForPayCharge)}]checked[{/if}] [{ $readonly}]>
+                    <input type=hidden name=confbools[blShowVATForPayCharge] value=false>
+                    <input type=checkbox name=confbools[blShowVATForPayCharge] value=true  [{if ($confbools.blShowVATForPayCharge)}]checked[{/if}] [{ $readonly}]>
                     [{ oxinputhelp ident="HELP_SHOP_CONFIG_CALCULATEVATOFORPAYCHARGE" }]
                 </dt>
                 <dd>
@@ -438,23 +461,36 @@ function showInvitations()
 
             <dl>
                 <dt>
-                    <input type=text class="txt" style="width:70" name=confstrs[dDefaultVAT] value="[{$confstrs.dDefaultVAT}]" [{ $readonly}]>
-                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_DEFAULTVAT" }]
+                    <input type=hidden name=confbools[blPaymentVatOnTop] value=false>
+                    <input type=checkbox name=confbools[blPaymentVatOnTop] value=true  [{if ($confbools.blPaymentVatOnTop)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_CALCPAYVATONTOP" }]
                 </dt>
                 <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_DEFAULTVAT" }]
+                    [{ oxmultilang ident="SHOP_CONFIG_CALCPAYVATONTOP" }]
                 </dd>
                 <div class="spacer"></div>
             </dl>
 
             <dl>
                 <dt>
-                    <input type=hidden name=confbools[blCalcVatForWrapping] value=false>
-                    <input type=checkbox name=confbools[blCalcVatForWrapping] value=true  [{if ($confbools.blCalcVatForWrapping)}]checked[{/if}] [{ $readonly}]>
+                    <input type=hidden name=confbools[blShowVATForWrapping] value=false>
+                    <input type=checkbox name=confbools[blShowVATForWrapping] value=true  [{if ($confbools.blShowVATForWrapping)}]checked[{/if}] [{ $readonly}]>
                     [{ oxinputhelp ident="HELP_SHOP_CONFIG_CALCULATEVATFORWRAPPING" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_CALCULATEVATFORWRAPPING" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <input type=hidden name=confbools[blWrappingVatOnTop] value=false>
+                    <input type=checkbox name=confbools[blWrappingVatOnTop] value=true  [{if ($confbools.blWrappingVatOnTop)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_CALCWRAPVATONTOP" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_CALCWRAPVATONTOP" }]
                 </dd>
                 <div class="spacer"></div>
             </dl>
@@ -467,18 +503,6 @@ function showInvitations()
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_SHIPPINGCOUNTRYVAT" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-             <dl>
-                <dt>
-            <input type=hidden name=confbools[blEnterNetPrice] value=false>
-            <input type=checkbox name=confbools[blEnterNetPrice] value=true  [{if ($confbools.blEnterNetPrice)}]checked[{/if}] [{ $readonly}]>
-            [{ oxinputhelp ident="HELP_SHOP_CONFIG_ENTERNETPRICE" }]
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_ENTERNETPRICE" }]
                 </dd>
                 <div class="spacer"></div>
             </dl>
@@ -742,20 +766,6 @@ function showInvitations()
 
             <dl>
                 <dt>
-                    <select class="select" name=confstrs[blFbLiveStreamEnabled] [{ $readonly }]>
-                        <option value="0"  [{if !$confstrs.blFbLiveStreamEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_DISABLE" }]</option>
-                        <option value="1"  [{if $confstrs.blFbLiveStreamEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_ENABLE" }]</option>
-                    </select>
-                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_FBLIVESTREAM" }]
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_FBLIVESTREAM" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-            <dl>
-                <dt>
                     <select class="select" name=confstrs[blFbInviteEnabled] [{ $readonly }]>
                         <option value="0"  [{if !$confstrs.blFbInviteEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_DISABLE" }]</option>
                         <option value="1"  [{if $confstrs.blFbInviteEnabled }]selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_ENABLE" }]</option>
@@ -796,6 +806,78 @@ function showInvitations()
                 <div class="spacer"></div>
             </dl>
 
+         </div>
+    </div>
+
+    <div class="groupExp">
+        <div>
+            <a href="#" onclick="_groupExp(this);return false;" class="rc"><b>[{ oxmultilang ident="SHOP_OPTIONS_GROUP_SHOP_DOWNLOADABLEARTICLES" }]</b></a>
+            <dl>
+                <dt>
+                    <input type=hidden name=confbools[blEnableDownloads] value=false>
+                    <input type=checkbox name=confbools[blEnableDownloads] value=true  [{if ($confbools.blEnableDownloads)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_DOWNLOADS" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_DOWNLOADS" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <input type=text class="txt" style="width: 250px;" name=confstrs[sDownloadsDir] value="[{$confstrs.sDownloadsDir}]">
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_DOWNLOADS_PATH" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_DOWNLOADS_PATH" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <input type=text class="txt" name=confstrs[iMaxDownloadsCount] value="[{$confstrs.iMaxDownloadsCount}]">
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_MAX_DOWNLOADS_COUNT" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="GENERAL_MAX_DOWNLOADS_COUNT" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <input type=text class="txt" name=confstrs[iLinkExpirationTime] value="[{$confstrs.iLinkExpirationTime}]">
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_LINK_EXPIRATION_TIME" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="GENERAL_LINK_EXPIRATION_TIME" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <input type=text class="txt" name=confstrs[iDownloadExpirationTime] value="[{$confstrs.iDownloadExpirationTime}]">
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_DOWNLOAD_EXPIRATION_TIME" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="GENERAL_DOWNLOAD_EXPIRATION_TIME" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
+                    <input type=text class="txt" name=confstrs[iMaxDownloadsCountUnregistered] value="[{$confstrs.iMaxDownloadsCountUnregistered}]">
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_LINK_EXPIRATION_TIME_UNREGISTERED" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="GENERAL_LINK_EXPIRATION_TIME_UNREGISTERED" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
          </div>
     </div>
 
@@ -1137,7 +1219,7 @@ function showInvitations()
 
          </div>
     </div>
-
+[{/block}]
 
     <br>
 

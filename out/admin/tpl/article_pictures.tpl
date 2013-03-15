@@ -54,6 +54,10 @@ function editThis( sID )
 <input type="hidden" name="oxparentid" value="[{ $oxparentid }]">
 <input type="hidden" name="masterPicIndex" value="">
 
+[{if $oViewConf->isAltImageServerConfigured() }]
+    <div class="warning">[{ oxmultilang ident="ALTERNATIVE_IMAGE_SERVER_NOTE" }] [{ oxinputhelp ident="HELP_ALTERNATIVE_IMAGE_SERVER_NOTE" }]</div>
+[{/if}]
+
 
 
 
@@ -68,7 +72,7 @@ function editThis( sID )
         <td class="picPreviewCol" valign="top">
             [{assign var="sThumbUrl" value=$edit->getThumbnailUrl()}]
 
-            <div class="picPreview"><img src="[{$sThumbUrl}]"></div>
+            <div class="picPreview">[{ if $sThumbUrl }]<img src="[{$sThumbUrl}]">[{ /if }]</div>
             <div class="picDescr">[{ oxmultilang ident="GENERAL_THUMB" }]</div>
             <br>
             <div class="picPreview" width="100%" align="center"><img src="[{$edit->getIconUrl()}]"></div>
@@ -79,129 +83,133 @@ function editThis( sID )
 
             <!-- ARTICLE MAIN PICTURES -->
             <table cellspacing="0" cellpadding="0" width="100%" border="0" class="listTable">
-              <colgroup>
-                  <col width="2%">
-                  <col width="1%" nowrap>
-                  <col width="1%">
-                  <col width="10%" nowrap>
-                  <col width="95%">
-              </colgroup>
-              <tr>
-                  <th colspan="5" valign="top">
-                     [{ oxmultilang ident="GENERAL_ARTICLE_PICTURES" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}])
-                     [{ oxinputhelp ident="HELP_ARTICLE_PICTURES_PIC1" }]
-                  </th>
-              </tr>
+              [{block name="admin_article_pictures_main"}]
+                  <colgroup>
+                      <col width="2%">
+                      <col width="1%" nowrap>
+                      <col width="1%">
+                      <col width="10%" nowrap>
+                      <col width="95%">
+                  </colgroup>
+                  <tr>
+                      <th colspan="5" valign="top">
+                         [{ oxmultilang ident="GENERAL_ARTICLE_PICTURES" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}])
+                         [{ oxinputhelp ident="HELP_ARTICLE_PICTURES_PIC1" }]
+                      </th>
+                  </tr>
 
-             [{ if $oxparentid }]
-              <tr>
-                <td class="index" colspan="5">
-                      <b>[{ oxmultilang ident="GENERAL_VARIANTE" }]</b>
-                      <a href="Javascript:editThis('[{ $parentarticle->oxarticles__oxid->value}]');" class="edittext"><b>"[{ $parentarticle->oxarticles__oxartnum->value }] [{ $parentarticle->oxarticles__oxtitle->value }]"</b></a>
-                </td>
-              </tr>
-             [{/if}]
+                 [{ if $oxparentid }]
+                  <tr>
+                    <td class="index" colspan="5">
+                          <b>[{ oxmultilang ident="GENERAL_VARIANTE" }]</b>
+                          <a href="Javascript:editThis('[{ $parentarticle->oxarticles__oxid->value}]');" class="edittext"><b>"[{ $parentarticle->oxarticles__oxartnum->value }] [{ $parentarticle->oxarticles__oxtitle->value }]"</b></a>
+                    </td>
+                  </tr>
+                 [{/if}]
 
-              [{section name=picRow start=1 loop=$iPicCount+1 step=1}]
-              [{assign var="iIndex" value=$smarty.section.picRow.index}]
+                  [{section name=picRow start=1 loop=$iPicCount+1 step=1}]
+                  [{assign var="iIndex" value=$smarty.section.picRow.index}]
 
-              <tr>
-                <td class="index">
-                    #[{$iIndex}]
-                </td>
-                <td class="text">
-                    [{assign var="sPicFile" value=$edit->getPictureFieldValue("oxpic", $iIndex) }]
-                    [{assign var="blPicUplodaded" value=true}]
+                  <tr>
+                    <td class="index">
+                        #[{$iIndex}]
+                    </td>
+                    <td class="text">
+                        [{assign var="sPicFile" value=$edit->getPictureFieldValue("oxpic", $iIndex) }]
+                        [{assign var="blPicUplodaded" value=true}]
 
-                    [{if $sPicFile == "nopic.jpg" || $sPicFile == ""}]
-                    [{assign var="blPicUplodaded" value=false}]
-                    <span class="notActive">-------</span>
-                    [{else}]
-                    <b>[{$sPicFile}]</b>
-                    [{/if}]
+                        [{if $sPicFile == "nopic.jpg" || $sPicFile == ""}]
+                        [{assign var="blPicUplodaded" value=false}]
+                        <span class="notActive">-------</span>
+                        [{else}]
+                        <b>[{$sPicFile}]</b>
+                        [{/if}]
 
-                </td>
-                <td class="edittext">
-                    <input class="editinput" name="myfile[M[{$iIndex}]@oxarticles__oxpic[{$iIndex}]]" type="file">
-                </td>
-                <td nowrap="nowrap">
-                    [{if $blPicUplodaded && !$readonly }]
-                    <a href="Javascript:DeletePic('[{$iIndex}]');" class="deleteText"><span class="ico"></span><span class="float: left;>">[{ oxmultilang ident="GENERAL_DELETE" }]</span></a>
-                    [{/if}]
-                </td>
-                <td>
+                    </td>
+                    <td class="edittext">
+                        <input class="editinput" name="myfile[M[{$iIndex}]@oxarticles__oxpic[{$iIndex}]]" type="file">
+                    </td>
+                    <td nowrap="nowrap">
+                        [{if $blPicUplodaded && !$readonly }]
+                        <a href="Javascript:DeletePic('[{$iIndex}]');" class="deleteText"><span class="ico"></span><span class="float: left;>">[{ oxmultilang ident="GENERAL_DELETE" }]</span></a>
+                        [{/if}]
+                    </td>
+                    <td>
 
-                    [{if $blPicUplodaded && !$readonly }]
-                        [{assign var="sPicUrl" value=$edit->getPictureUrl($iIndex)}]
-                        <a href="[{$sPicUrl}]" class="zoomText" target="_blank"><span class="ico"></span><span class="float: left;>">[{ oxmultilang ident="ARTICLE_PICTURES_PREVIEW" }]</span></a>
-                    [{/if}]
-                </td>
-              </tr>
+                        [{if $blPicUplodaded && !$readonly }]
+                            [{assign var="sPicUrl" value=$edit->getPictureUrl($iIndex)}]
+                            <a href="[{$sPicUrl}]" class="zoomText" target="_blank"><span class="ico"></span><span class="float: left;>">[{ oxmultilang ident="ARTICLE_PICTURES_PREVIEW" }]</span></a>
+                        [{/if}]
+                    </td>
+                  </tr>
 
-              [{/section}]
+                  [{/section}]
+              [{/block}]
             </table>
 
             <!-- CUSTOM PICTURES -->
             <table cellspacing="0" cellpadding="0" width="100%" border="0" class="listTable">
-              <colgroup>
-                  <col width="1%" nowrap>
-                  <col width="1%" nowrap>
-                  <col width="1%" nowrap>
-                  <col width="98%">
-              </colgroup>
-              <tr>
-                  <th colspan="5" valign="top">
-                     [{ oxmultilang ident="ARTICLE_PICTURES_CUSTOM_PICTURES" }]
-                  </th>
-              </tr>
+              [{block name="admin_article_pictures_custom"}]
+                  <colgroup>
+                      <col width="1%" nowrap>
+                      <col width="1%" nowrap>
+                      <col width="1%" nowrap>
+                      <col width="98%">
+                  </colgroup>
+                  <tr>
+                      <th colspan="5" valign="top">
+                         [{ oxmultilang ident="ARTICLE_PICTURES_CUSTOM_PICTURES" }]
+                      </th>
+                  </tr>
 
-              <tr>
-                <td class="index" nowrap>
-                    [{ oxmultilang ident="GENERAL_THUMB" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}])
-                    [{ oxinputhelp ident="HELP_ARTICLE_PICTURES_THUMB" }]
-                </td>
-                <td class="text">
-                    [{assign var="sThumbFile" value=$edit->getPictureFieldValue("oxthumb")}]
-                    [{if $sThumbFile == "nopic.jpg"  || $sThumbFile == "" }]
-                    -------
-                    [{else}]
-                    [{assign var="blThumbUplodaded" value=true}]
-                    <b>[{$sThumbFile}]</b>
-                    [{/if}]
-                </td>
-                <td class="edittext">
-                    <input class="editinput" name="myfile[TH@oxarticles__oxthumb]" type="file">
-                </td>
-                <td nowrap="nowrap">
-                    [{if $blThumbUplodaded && !$readonly }]
-                    <a href="Javascript:DeletePic('TH');" class="deleteText"><span class="ico"></span><span class="float: left;>">[{ oxmultilang ident="GENERAL_DELETE" }]</span></a>
-                    [{/if}]
-                </td>
-              </tr>
+                  <tr>
+                    <td class="index" nowrap>
+                        [{ oxmultilang ident="GENERAL_THUMB" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}])
+                        [{ oxinputhelp ident="HELP_ARTICLE_PICTURES_THUMB" }]
+                    </td>
+                    <td class="text">
+                        [{assign var="sThumbFile" value=$edit->getPictureFieldValue("oxthumb")}]
+                        [{if $sThumbFile == "nopic.jpg"  || $sThumbFile == "" }]
+                        -------
+                        [{else}]
+                        [{assign var="blThumbUplodaded" value=true}]
+                        <b>[{$sThumbFile}]</b>
+                        [{/if}]
+                    </td>
+                    <td class="edittext">
+                        <input class="editinput" name="myfile[TH@oxarticles__oxthumb]" type="file">
+                    </td>
+                    <td nowrap="nowrap">
+                        [{if $blThumbUplodaded && !$readonly }]
+                        <a href="Javascript:DeletePic('TH');" class="deleteText"><span class="ico"></span><span class="float: left;>">[{ oxmultilang ident="GENERAL_DELETE" }]</span></a>
+                        [{/if}]
+                    </td>
+                  </tr>
 
-              <tr>
-                <td class="index" nowrap>
-                    [{ oxmultilang ident="ARTICLE_PICTURES_ICON" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}])
-                    [{ oxinputhelp ident="HELP_ARTICLE_PICTURES_ICON" }]
-                </td>
-                <td class="text">
-                    [{assign var="sIconFile" value=$edit->getPictureFieldValue("oxicon")}]
-                    [{if "nopic_ico.jpg" == $sIconFile || "nopic.jpg" == $sIconFile || "" == $sIconFile }]
-                    -------
-                    [{else}]
-                    [{assign var="blIcoUplodaded" value=true}]
-                    <b>[{$sIconFile}]</b>
-                    [{/if}]
-                </td>
-                <td class="edittext">
-                    <input class="editinput" name="myfile[ICO@oxarticles__oxicon]" type="file">
-                </td>
-                <td nowrap="nowrap">
-                    [{if $blIcoUplodaded && !$readonly }]
-                    <a href="Javascript:DeletePic('ICO');" class="deleteText"><span class="ico"></span><span class="float: left;>">[{ oxmultilang ident="GENERAL_DELETE" }]</span></a>
-                    [{/if}]
-                </td>
-              </tr>
+                  <tr>
+                    <td class="index" nowrap>
+                        [{ oxmultilang ident="ARTICLE_PICTURES_ICON" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}], [{ oxmultilang ident="GENERAL_MAX_PICTURE_DIMENSIONS"}])
+                        [{ oxinputhelp ident="HELP_ARTICLE_PICTURES_ICON" }]
+                    </td>
+                    <td class="text">
+                        [{assign var="sIconFile" value=$edit->getPictureFieldValue("oxicon")}]
+                        [{if "nopic_ico.jpg" == $sIconFile || "nopic.jpg" == $sIconFile || "" == $sIconFile }]
+                        -------
+                        [{else}]
+                        [{assign var="blIcoUplodaded" value=true}]
+                        <b>[{$sIconFile}]</b>
+                        [{/if}]
+                    </td>
+                    <td class="edittext">
+                        <input class="editinput" name="myfile[ICO@oxarticles__oxicon]" type="file">
+                    </td>
+                    <td nowrap="nowrap">
+                        [{if $blIcoUplodaded && !$readonly }]
+                        <a href="Javascript:DeletePic('ICO');" class="deleteText"><span class="ico"></span><span class="float: left;>">[{ oxmultilang ident="GENERAL_DELETE" }]</span></a>
+                        [{/if}]
+                    </td>
+                  </tr>
+              [{/block}]
 
             </table>
 

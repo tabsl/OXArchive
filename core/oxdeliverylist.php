@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdeliverylist.php 29921 2010-09-21 12:18:02Z sarunas $
+ * @version   SVN: $Id: oxdeliverylist.php 41426 2012-01-16 15:58:41Z vilma $
  */
 
 /**
@@ -401,6 +401,35 @@ class oxDeliveryList extends oxList
     public function setCollectFittingDeliveriesSets( $blCollectFittingDeliveriesSets = false )
     {
         $this->_blCollectFittingDeliveriesSets = $blCollectFittingDeliveriesSets;
+    }
+
+    /**
+     * Load deliverylist for product
+     *
+     * @param object $oProduct oxarticle object
+     *
+     * @return null
+     */
+    public function loadDeliveryListForProduct( $oProduct )
+    {
+        $oDb = oxDb::getDb();
+        $dPrice  = $oDb->quote($oProduct->getPrice()->getBruttoPrice());
+        $dSize   = $oDb->quote($oProduct->oxarticles__oxlength->value * $oProduct->oxarticles__oxwidth->value * $oProduct->oxarticles__oxheight->value);
+        $dWeight = $oProduct->oxarticles__oxweight->value;
+        $sTable  = getViewName( 'oxdelivery' );
+        $sQ = "select $sTable.* from $sTable";
+        $sQ .= " where ".$this->getBaseObject()->getSqlActiveSnippet();
+        $sQ .= " and ($sTable.oxdeltype != 'a' || ( $sTable.oxparam <= 1 && $sTable.oxparamend >= 1))";
+        if ($dPrice) {
+            $sQ .= " and ($sTable.oxdeltype != 'p' || ( $sTable.oxparam <= $dPrice && $sTable.oxparamend >= $dPrice))";
+        }
+        if ($dSize) {
+            $sQ .= " and ($sTable.oxdeltype != 's' || ( $sTable.oxparam <= $dSize && $sTable.oxparamend >= $dSize))";
+        }
+        if ($dWeight) {
+            $sQ .= " and ($sTable.oxdeltype != 'w' || ( $sTable.oxparam <= $dWeight && $sTable.oxparamend >= $dWeight))";
+        }
+        $this->selectString($sQ);
     }
 
 }

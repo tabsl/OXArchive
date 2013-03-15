@@ -1,7 +1,8 @@
 [{if $oViewConf->getFbAppId()}]
     <div id="fb-root"></div>
+    [{oxscript include="js/widgets/oxmodalpopup.js"}]
     [{oxscript include="js/widgets/oxfacebook.js"}]
-    [{if !$oView->isFbWidgetWisible()}]
+    [{if $oView->isActive('FacebookConfirm') && !$oView->isFbWidgetVisible()}]
         <div id="fbinfo" class="fbInfoPopup popupBox corners FXgradGreyLight glowShadow">
             <img src="[{$oViewConf->getImageUrl('x.png')}]" alt="" class="closePop">
             <div class="wrappingIntro clear">

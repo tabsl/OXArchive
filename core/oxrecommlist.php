@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxrecommlist.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
+ * @version   SVN: $Id: oxrecommlist.php 43744 2012-04-11 07:55:41Z linas.kukulskis $
  */
 
 /**
@@ -209,7 +209,7 @@ class oxRecommList extends oxBase implements oxIUrl
         $blAdd = false;
         if ( $sOXID ) {
             $oDb = oxDb::getDb();
-            if ( !$oDb->getOne( "select oxid from oxobject2list where oxobjectid=".$oDb->quote( $sOXID )." and oxlistid=".$oDb->quote( $this->getId() ) ) ) {
+            if ( !$oDb->getOne( "select oxid from oxobject2list where oxobjectid=".$oDb->quote( $sOXID )." and oxlistid=".$oDb->quote( $this->getId() ), false, false) ) {
                 $sUid  = oxUtilsObject::getInstance()->generateUID();
                 $sQ    = "insert into oxobject2list ( oxid, oxobjectid, oxlistid, oxdesc ) values ( '$sUid', ".$oDb->quote( $sOXID ).", ".$oDb->quote( $this->getId() ).", ".$oDb->quote( $sDesc )." )";
                 $blAdd = $oDb->execute( $sQ );

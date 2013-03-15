@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlocator.php 44333 2012-04-25 10:35:02Z tomas $
+ * @version   SVN: $Id: oxlocator.php 44342 2012-04-25 10:59:43Z linas.kukulskis $
  */
 
 /**

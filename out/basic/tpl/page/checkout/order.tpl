@@ -11,6 +11,10 @@
 [{ if $oView->isConfirmAGBActive() && $oView->isConfirmAGBError() == 1 }]
     <div class="errorbox">[{ oxmultilang ident="ORDER_READANDCONFIRMTERMS" }]</div>
 [{/if}]
+[{assign var="iError" value=$oView->getAddressError() }]
+[{ if $iError == 1}]
+    <div class="errorbox">[{ oxmultilang ident="ERROR_DELIVERY_ADDRESS_WAS_CHANGED_DURING_CHECKOUT" }]</div>
+[{ /if}]
 
 [{ if !$oxcmp_basket->getProductsCount()  }]
   <div class="msg">[{ oxmultilang ident="ORDER_BASKETEMPTY" }]</div>
@@ -31,23 +35,28 @@
               <input type="hidden" name="cl" value="order">
               <input type="hidden" name="fnc" value="[{$oView->getExecuteFnc()}]">
               <input type="hidden" name="challenge" value="[{$challenge}]">
+              <input type="hidden" name="sDeliveryAddressMD5" value="[{$oView->getDeliveryAddressMD5()}]">
               <div class="right arrowright">
                   <input id="test_OrderSubmitTop" type="submit" value="[{ oxmultilang ident="ORDER_SUBMITORDER" }]">
               </div>
-              [{if $oView->isConfirmAGBActive() }]
-                <div class="termsconfirm">
-                    <input type="hidden" name="ord_agb" value="0">
-                    <table>
-                      <tr>
-                        <td><input id="test_OrderConfirmAGBTop" type="checkbox" class="chk" name="ord_agb" value="1"></td>
-                        <td>
-                            [{oxifcontent ident="oxrighttocancellegend" object="oContent"}]
-                              [{ $oContent->oxcontents__oxcontent->value }]
-                            [{/oxifcontent}]
-                        </td>
-                      </tr>
-                    </table>
-                </div>
+              [{if $oView->isActive('PsLogin') }]
+                  <input type="hidden" name="ord_agb" value="1">
+              [{else}]
+                  [{if $oView->isConfirmAGBActive() }]
+                    <div class="termsconfirm">
+                        <input type="hidden" name="ord_agb" value="0">
+                        <table>
+                          <tr>
+                            <td><input id="test_OrderConfirmAGBTop" type="checkbox" class="chk" name="ord_agb" value="1"></td>
+                            <td>
+                                [{oxifcontent ident="oxrighttocancellegend" object="oContent"}]
+                                  [{ $oContent->oxcontents__oxcontent->value }]
+                                [{/oxifcontent}]
+                            </td>
+                          </tr>
+                        </table>
+                    </div>
+                  [{/if}]
               [{/if}]
           </div>
         </form>
@@ -94,16 +103,16 @@
           <!-- product image -->
           <td class="brd"></td>
           <td>
-              <a id="test_orderPic_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.testArt.iteration}]" class="picture" href="[{ $basketproduct->getLink() }]">
-                <img src="[{$basketproduct->getIconUrl()}]" alt="[{ $basketproduct->oxarticles__oxtitle->value|strip_tags }]">
+              <a id="test_orderPic_[{$basketitem->getProductId()}]_[{$smarty.foreach.testArt.iteration}]" class="picture" href="[{$basketitem->getLink()}]">
+                <img src="[{$basketitem->getIconUrl()}]" alt="[{$basketitem->getTitle()|strip_tags}]">
               </a>
           </td>
 
           <!-- product title & number -->
           <td>
 
-            <div class="art_title"><a id="test_orderUrl_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.testArt.iteration}]" rel="nofollow" href="[{ $basketproduct->getLink() }]">[{ $basketproduct->oxarticles__oxtitle->value }][{if $basketproduct->oxarticles__oxvarselect->value }], [{ $basketproduct->oxarticles__oxvarselect->value }][{/if }]</a>[{if $basketitem->isSkipDiscount() }] <sup><a rel="nofollow" href="#SkipDiscounts_link" class="note">**</a></sup>[{/if}]</div>
-            <div class="art_num" id="test_orderArtNo_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.testArt.iteration}]">[{ oxmultilang ident="ORDER_ARTICLENOMBER" }] [{ $basketproduct->oxarticles__oxartnum->value }]</div>
+            <div class="art_title"><a id="test_orderUrl_[{$basketitem->getProductId()}]_[{$smarty.foreach.testArt.iteration}]" rel="nofollow" href="[{$basketitem->getLink()}]">[{$basketitem->getTitle()}]</a>[{if $basketitem->isSkipDiscount() }] <sup><a rel="nofollow" href="#SkipDiscounts_link" class="note">**</a></sup>[{/if}]</div>
+            <div class="art_num" id="test_orderArtNo_[{$basketitem->getProductId()}]_[{$smarty.foreach.testArt.iteration}]">[{ oxmultilang ident="ORDER_ARTICLENOMBER" }] [{ $basketproduct->oxarticles__oxartnum->value }]</div>
 
             [{if $basketitem->isBundle() }]
             [{else}]
@@ -124,18 +133,18 @@
                 [{$oWrap->oxwrapping__oxname->value}]<br />
               [{/if}]
               <span class="wrapmod">
-                  <a id="test_orderWrapp_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.testArt.iteration}]" rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=wrapping" params="aid="|cat:$basketitem->getProductId() }]" title="[{ oxmultilang ident="ORDER_MODIFYALT" }]">[{ oxmultilang ident="ORDER_MODIFY" }]</a>
+                  <a id="test_orderWrapp_[{$basketitem->getProductId()}]_[{$smarty.foreach.testArt.iteration}]" rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=wrapping" params="aid="|cat:$basketitem->getProductId() }]" title="[{ oxmultilang ident="ORDER_MODIFYALT" }]">[{ oxmultilang ident="ORDER_MODIFY" }]</a>
               </span>
             [{/if}]
           </td>
 
           <!-- product price -->
-          <td id="test_orderUnitPrice_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.testArt.iteration}]" class="orderprice" align="right">
+          <td id="test_orderUnitPrice_[{$basketitem->getProductId()}]_[{$smarty.foreach.testArt.iteration}]" class="orderprice" align="right">
             [{if $basketitem->getFUnitPrice() }][{ $basketitem->getFUnitPrice() }]&nbsp;[{ $currency->sign}][{/if}]
           </td>
 
           <!-- product count -->
-          <td id="test_orderUnitCount_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.testArt.iteration}]" class="amount" align="right">
+          <td id="test_orderUnitCount_[{$basketitem->getProductId()}]_[{$smarty.foreach.testArt.iteration}]" class="amount" align="right">
             [{if $basketitem->getdBundledAmount() > 0 && ($basketitem->isBundle() || $basketitem->isDiscountArticle()) }]
              <b class="note">+[{ $basketitem->getdBundledAmount() }]</b>
             [{else}]
@@ -144,12 +153,12 @@
           </td>
 
           <!-- product VAT percent -->
-          <td id="test_orderUnitVat_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.testArt.iteration}]" class="vat_order">
+          <td id="test_orderUnitVat_[{$basketitem->getProductId()}]_[{$smarty.foreach.testArt.iteration}]" class="vat_order">
             [{ $basketitem->getVatPercent()}]%
           </td>
 
           <!-- product quantity * price -->
-          <td id="test_orderTotalPrice_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.testArt.iteration}]" align="right" class="totalprice">
+          <td id="test_orderTotalPrice_[{$basketitem->getProductId()}]_[{$smarty.foreach.testArt.iteration}]" align="right" class="totalprice">
             [{ $basketitem->getFTotalPrice() }]&nbsp;[{ $currency->sign}]
           </td>
           <td></td>
@@ -158,7 +167,7 @@
         [{foreach key=sVar from=$basketitem->getPersParams() item=aParam name=orderPersParam}]
           <tr>
             <td class="brd"></td>
-            <td id="test_orderPersParam_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.orderPersParam.iteration}]" colspan="7">[{ oxmultilang ident="ORDER_DETAILS" }]: <input type="text" name="persparam[[{$sVar}]]" value="[{$aParam}]" readonly disabled></td>
+            <td id="test_orderPersParam_[{$basketitem->getProductId()}]_[{$smarty.foreach.orderPersParam.iteration}]" colspan="7">[{ oxmultilang ident="ORDER_DETAILS" }]: <input type="text" name="persparam[[{$sVar}]]" value="[{$aParam}]" readonly disabled></td>
             <td></td>
           </tr>
         [{/foreach}]
@@ -169,7 +178,7 @@
            [{if $basketitem->getProductId() == $oEr->getValue('productId') }]
            <tr>
              <td class="brd"></td>
-             <td id="test_orderErrors_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.orderErrors.iteration}]" colspan="7"><span class="err">[{ $oEr->getOxMessage() }] [{ $oEr->getValue('remainingAmount') }]</span></td>
+             <td id="test_orderErrors_[{$basketitem->getProductId()}]_[{$smarty.foreach.orderErrors.iteration}]" colspan="7"><span class="err">[{ $oEr->getOxMessage() }] [{ $oEr->getValue('remainingAmount') }]</span></td>
              <td></td>
            </tr>
            [{/if}]
@@ -280,23 +289,32 @@
       [{/if}]
 
       <tr class="bsk_sep"><td class="brd"></td><td colspan="7" class="line"></td><td></td></tr>
-      <tr class="sumrow">
-        <td class="brd"></td>
-        <td colspan="6" class="sumdesc">[{if $oxcmp_basket->getDelCostVat() }][{ oxmultilang ident="ORDER_SHIPPINGNET" }][{else}][{ oxmultilang ident="ORDER_SHIPPINGGROSS1" }][{/if}]</td>
-        <td id="test_orderShippingNet" align="right">[{ $oxcmp_basket->getDelCostNet() }]&nbsp;[{ $currency->sign}]</td>
-        <td></td>
-      </tr>
+      [{if $oxcmp_basket->getDelCostNet() }]
+          <tr class="sumrow">
+            <td class="brd"></td>
+            <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_SHIPPINGNET" }]</td>
+            <td id="test_orderShippingNet" align="right">[{ $oxcmp_basket->getDelCostNet() }]&nbsp;[{ $currency->sign}]</td>
+            <td></td>
+          </tr>
 
-      [{if $oxcmp_basket->getDelCostVat()}]
-        <tr class="sumrow">
-          <td class="brd"></td>
-          <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_PLUSSHIPPINGTAX1" }] [{ $oxcmp_basket->getDelCostVatPercent() }][{ oxmultilang ident="ORDER_PLUSSHIPPINGTAX2" }]</td>
-          <td id="test_orderShippingVat" align="right">[{ $oxcmp_basket->getDelCostVat() }]&nbsp;[{ $currency->sign}]</td>
-          <td></td>
-        </tr>
-      [{/if}]
+          [{if $oxcmp_basket->getDelCostVat()}]
+            <tr class="sumrow">
+              <td class="brd"></td>
+              <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_PLUSSHIPPINGTAX1" }] [{ $oxcmp_basket->getDelCostVatPercent() }][{ oxmultilang ident="ORDER_PLUSSHIPPINGTAX2" }]</td>
+              <td id="test_orderShippingVat" align="right">[{ $oxcmp_basket->getDelCostVat() }]&nbsp;[{ $currency->sign}]</td>
+              <td></td>
+            </tr>
+          [{/if}]
+      [{elseif $oxcmp_basket->getFDeliveryCosts() }]
+          <tr class="sumrow">
+            <td class="brd"></td>
+            <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_SHIPPINGGROSS1" }]</td>
+            <td id="test_orderShippingNet" align="right">[{ $oxcmp_basket->getFDeliveryCosts() }]&nbsp;[{ $currency->sign}]</td>
+            <td></td>
+          </tr>
+      [{/if }]
 
-      [{if $oxcmp_basket->getPaymentCosts() }]
+      [{if $oxcmp_basket->getPayCostNet() }]
         <tr class="sumrow">
           <td class="brd"></td>
           <td colspan="6" class="sumdesc">[{if $oxcmp_basket->getPaymentCosts() >= 0 }][{ oxmultilang ident="ORDER_PAYMENT1" }][{else}][{ oxmultilang ident="ORDER_PAYMENT2" }][{/if}] [{ oxmultilang ident="ORDER_PAYMENT3" }]</td>
@@ -311,32 +329,57 @@
             <td></td>
           </tr>
         [{/if}]
+      [{elseif $oxcmp_basket->getFPaymentCosts()}]
+        <tr class="sumrow">
+          <td class="brd"></td>
+          <td colspan="6" class="sumdesc">[{if $oxcmp_basket->getPaymentCosts() >= 0 }][{ oxmultilang ident="ORDER_PAYMENT1" }][{else}][{ oxmultilang ident="ORDER_PAYMENT2" }][{/if}] [{ oxmultilang ident="ORDER_PAYMENT3" }]</td>
+          <td id="test_orderPaymentNet" align="right">[{ $oxcmp_basket->getFPaymentCosts() }]&nbsp;[{ $currency->sign}]</td>
+          <td></td>
+        </tr>
       [{/if}]
 
       [{if $oxcmp_basket->getTsProtectionCosts() }]
-        <tr class="sumrow">
-          <td class="brd"></td>
-          <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_TSPROTECTION" }]</td>
-          <td id="test_orderTsProtectionNet" align="right">[{ $oxcmp_basket->getTsProtectionNet() }]&nbsp;[{ $currency->sign}]</td>
-          <td></td>
-        </tr>
-        [{if $oxcmp_basket->getTsProtectionVat() }]
-          <tr class="sumrow">
-            <td class="brd"></td>
-            <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_TSPROTECTIONCHARGETAX1" }] [{ $oxcmp_basket->getTsProtectionVatPercent()}][{ oxmultilang ident="ORDER_TSPROTECTIONCHARGETAX2" }]</td>
-            <td id="test_orderTsProtectionVat" align="right">[{ $oxcmp_basket->getTsProtectionVat() }]&nbsp;[{ $currency->sign}]</td>
-            <td></td>
-          </tr>
+        [{ if $oxcmp_basket->getTsProtectionNet() }]
+            <tr class="sumrow">
+              <td class="brd"></td>
+              <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_TSPROTECTION" }]</td>
+              <td id="test_orderTsProtectionNet" align="right">[{ $oxcmp_basket->getTsProtectionNet() }]&nbsp;[{ $currency->sign}]</td>
+              <td></td>
+            </tr>
+            [{if $oxcmp_basket->getTsProtectionVat() }]
+              <tr class="sumrow">
+                <td class="brd"></td>
+                <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_TSPROTECTIONCHARGETAX1" }] [{ $oxcmp_basket->getTsProtectionVatPercent()}][{ oxmultilang ident="ORDER_TSPROTECTIONCHARGETAX2" }]</td>
+                <td id="test_orderTsProtectionVat" align="right">[{ $oxcmp_basket->getTsProtectionVat() }]&nbsp;[{ $currency->sign}]</td>
+                <td></td>
+              </tr>
+            [{/if}]
+        [{elseif $oxcmp_basket->getFTsProtectionCosts()}]
+            <tr class="sumrow">
+              <td class="brd"></td>
+              <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_TSPROTECTION" }]</td>
+              <td id="test_orderTsProtectionNet" align="right">[{ $oxcmp_basket->getFTsProtectionCosts() }]&nbsp;[{ $currency->sign}]</td>
+              <td></td>
+            </tr>
         [{/if}]
       [{/if}]
 
-      [{if $oViewConf->getShowGiftWrapping() && $oxcmp_basket->getWrappCostNet() }]
-        <tr class="sumrow">
-          <td class="brd"></td>
-          <td colspan="6" class="sumdesc">[{if $oxcmp_basket->getWrappCostVat() }][{ oxmultilang ident="ORDER_WRAPPINGNET" }][{else}][{ oxmultilang ident="ORDER_WRAPPINGGROSS1" }][{/if}]</td>
-          <td id="test_orderWrappNet" align="right">[{ $oxcmp_basket->getWrappCostNet() }] [{ $currency->sign}]</td>
-          <td></td>
-        </tr>
+      [{ if $oViewConf->getShowGiftWrapping() }]
+        [{if $oxcmp_basket->getWrappCostNet() }]
+            <tr class="sumrow">
+              <td class="brd"></td>
+              <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_WRAPPINGNET" }]</td>
+              <td id="test_orderWrappNet" align="right">[{ $oxcmp_basket->getWrappCostNet() }] [{ $currency->sign}]</td>
+              <td></td>
+            </tr>
+        [{elseif $oxcmp_basket->getFWrappingCosts()}]
+            <tr class="sumrow">
+              <td class="brd"></td>
+              <td colspan="6" class="sumdesc">[{ oxmultilang ident="ORDER_WRAPPINGGROSS1" }]</td>
+              <td id="test_orderWrappNet" align="right">[{ $oxcmp_basket->getFWrappingCosts() }] [{ $currency->sign}]</td>
+              <td></td>
+            </tr>
+        [{/if}]
         [{if $oxcmp_basket->getWrappCostVat() }]
           <tr class="sumrow">
             <td class="brd"></td>
@@ -502,7 +545,7 @@
                   <input type="hidden" name="cl" value="order">
                   <input type="hidden" name="fnc" value="[{$oView->getExecuteFnc()}]">
                   <input type="hidden" name="challenge" value="[{$challenge}]">
-
+                  <input type="hidden" name="sDeliveryAddressMD5" value="[{$oView->getDeliveryAddressMD5()}]">
                   <div class="right arrowright">
                       <input id="test_OrderSubmitBottom" type="submit" value="[{ oxmultilang ident="ORDER_SUBMITORDER" }]">
                   </div>

@@ -17,19 +17,21 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: attribute_category.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
+ * @version   SVN: $Id: attribute_category.inc.php 44134 2012-04-20 14:55:19Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
                                         array( 'oxtitle', 'oxcategories', 1, 1, 0 ),
                                         array( 'oxdesc',  'oxcategories', 1, 1, 0 ),
+                                        array( 'oxid',    'oxcategories', 0, 0, 0 ),
                                         array( 'oxid',    'oxcategories', 0, 0, 1 )
                                         ),
                      'container2' => array(
                                         array( 'oxtitle', 'oxcategories', 1, 1, 0 ),
                                         array( 'oxdesc',  'oxcategories', 1, 1, 0 ),
+                                        array( 'oxid',    'oxcategories', 0, 0, 0 ),
                                         array( 'oxid',    'oxcategory2attribute', 0, 0, 1 ),
                                         array( 'oxid',    'oxcategories', 0, 0, 1 )
                                         ),
@@ -122,7 +124,7 @@ class ajaxComponent extends ajaxListComponent
                 $oNewGroup->init( "oxcategory2attribute" );
                 $oNewGroup->oxcategory2attribute__oxobjectid = new oxField($sAdd);
                 $oNewGroup->oxcategory2attribute__oxattrid = new oxField($oAttribute->oxattribute__oxid->value);
-                $oNewGroup->oxcategory2attribute__oxsort   = new oxField( ( int ) $oDb->getOne( "select max(oxsort) + 1 from oxcategory2attribute where oxobjectid = '$sAdd' " ) );
+                $oNewGroup->oxcategory2attribute__oxsort   = new oxField( ( int ) $oDb->getOne( "select max(oxsort) + 1 from oxcategory2attribute where oxobjectid = '$sAdd' ", false, false ) );
                 $oNewGroup->save();
             }
         }

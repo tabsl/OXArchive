@@ -278,7 +278,7 @@ var oxid = {
         },
 
         set: function(id, value, blset) {
-            var _el = document.getElementsByName(id);
+            var _el = document.getElementById(id);
             if (_el) {
                 _el.value = value;
             }

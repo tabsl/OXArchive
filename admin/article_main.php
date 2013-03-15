@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_main.php 39921 2011-11-14 08:41:04Z arvydas.vapsva $
+ * @version   SVN: $Id: article_main.php 42205 2012-02-13 13:26:04Z linas.kukulskis $
  */
 
 /**
@@ -117,7 +117,7 @@ class Article_Main extends oxAdminDetails
     {
         $sEditObjectValue = '';
         if ( $oObject ) {
-            $oDescField = $oObject->getArticleLongDesc();
+            $oDescField = $oObject->getLongDescription();
             $sEditObjectValue = $this->_processEditValue( $oDescField->getRawValue() );
             $oDescField = new oxField( $sEditObjectValue, oxField::T_RAW );
         }
@@ -138,16 +138,11 @@ class Article_Main extends oxAdminDetails
         $soxId    = $this->getEditObjectId();
         $aParams  = oxConfig::getParameter( "editval" );
 
-        // checkbox handling
-        if ( !isset( $aParams['oxarticles__oxactive'] ) ) {
-            $aParams['oxarticles__oxactive'] = 0;
-        }
-
         // default values
         $aParams = $this->addDefaultValues( $aParams );
 
         // null values
-        if ($aParams['oxarticles__oxvat'] === '') {
+        if (isset($aParams['oxarticles__oxvat']) && $aParams['oxarticles__oxvat'] === '') {
             $aParams['oxarticles__oxvat'] = null;
         }
 
@@ -170,6 +165,10 @@ class Article_Main extends oxAdminDetails
             $aParams['oxarticles__oxstockflag'] = 1;
                 // shopid
                 $aParams['oxarticles__oxshopid'] = oxSession::getVar( "actshop");
+
+            if (!isset($aParams['oxarticles__oxactive'])) {
+                $aParams['oxarticles__oxactive'] = 0;
+            }
         }
 
         //article number handling, warns for artnum dublicates
@@ -190,7 +189,7 @@ class Article_Main extends oxAdminDetails
             }
 
             $aResetIds = array();
-            if ( $aParams['oxarticles__oxactive'] != $oArticle->oxarticles__oxactive->value) {
+            if ( isset($aParams['oxarticles__oxactive']) && $aParams['oxarticles__oxactive'] != $oArticle->oxarticles__oxactive->value) {
                 $oDb = oxDb::getDb();
                 //check categories
                 $sQ = "select oxcatnid from oxobject2category where oxobjectid = ".$oDb->quote( $oArticle->oxarticles__oxid->value );
@@ -225,7 +224,9 @@ class Article_Main extends oxAdminDetails
         $oArticle->setLanguage(0);
 
         //triming spaces from article title (M:876)
-        $aParams['oxarticles__oxtitle'] = trim( $aParams['oxarticles__oxtitle'] );
+        if (isset($aParams['oxarticles__oxtitle'])) {
+            $aParams['oxarticles__oxtitle'] = trim( $aParams['oxarticles__oxtitle'] );
+        }
 
         $oArticle->assign( $aParams );
         $oArticle->setArticleLongDesc( $this->_processLongDesc( $aParams['oxarticles__oxlongdesc'] ) );
@@ -241,12 +242,15 @@ class Article_Main extends oxAdminDetails
             }
         }
 
-        //saving tags
-        $sTags = $aParams['tags'];
-        if (!trim($sTags)) {
-            $sTags = $oArticle->oxarticles__oxsearchkeys->value;
+        if (isset($aParams['tags'])) {
+            //saving tags
+            $sTags = $aParams['tags'];
+            if (!trim($sTags)) {
+                $sTags = $oArticle->oxarticles__oxsearchkeys->value;
+            }
+            $oArticle->saveTags($sTags);
         }
-        $oArticle->saveTags($sTags);
+
         $this->setEditObjectId( $oArticle->getId() );
     }
 
@@ -357,6 +361,9 @@ class Article_Main extends oxAdminDetails
             //copy article extends (longdescription, tags)
             $this->_copyArtExtends( $sOldId, $sNewId);
 
+            //files
+            $this->_copyFiles( $sOldId, $sNewId );
+
                 // resetting
                 $aResetIds['vendor'][$oArticle->oxarticles__oxvendorid->value] = 1;
                 $aResetIds['manufacturer'][$oArticle->oxarticles__oxmanufacturerid->value] = 1;
@@ -406,6 +413,7 @@ class Article_Main extends oxAdminDetails
     protected function _copyCategories( $sOldId, $sNewId )
     {
         $myUtilsObject = oxUtilsObject::getInstance();
+        $oShopMetaData = oxShopMetaData::getInstance();
         $oDb = oxDb::getDb();
 
 
@@ -453,6 +461,37 @@ class Article_Main extends oxAdminDetails
                 $oAttr->setId( $myUtilsObject->generateUID() );
                 $oAttr->oxobject2attribute__oxobjectid->setValue( $sNewId );
                 $oAttr->save();
+                $oRs->moveNext();
+            }
+        }
+    }
+
+     /**
+     * Copying files
+     *
+     * @param string $sOldId Id from old article
+     * @param string $sNewId Id from new article
+     *
+     * @return null
+     */
+    protected function _copyFiles( $sOldId, $sNewId )
+    {
+        $myUtilsObject = oxUtilsObject::getInstance();
+        $oDb = oxDb::getDb( oxDB::FETCH_MODE_ASSOC );
+
+        $sQ = "SELECT * FROM `oxfiles` WHERE `oxartid` = ".$oDb->quote( $sOldId );
+        $oRs = $oDb->execute($sQ);
+        if ( $oRs !== false && $oRs->recordCount() > 0 ) {
+            while ( !$oRs->EOF ) {
+
+                $oFile = oxNew( "oxfile" );
+                $oFile->setId( $myUtilsObject->generateUID() );
+                $oFile->oxfiles__oxartid = new oxField( $sNewId );
+                $oFile->oxfiles__oxfilename =  new oxField( $oRs->fields['OXFILENAME'] );
+                $oFile->oxfiles__oxfilesize =  new oxField( $oRs->fields['OXFILESIZE'] );
+                $oFile->oxfiles__oxstorehash =  new oxField( $oRs->fields['OXSTOREHASH'] );
+                $oFile->oxfiles__oxpurchasedonly =  new oxField( $oRs->fields['OXPURCHASEDONLY'] );
+                $oFile->save();
                 $oRs->moveNext();
             }
         }

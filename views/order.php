@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: order.php 40613 2011-12-14 13:59:39Z mindaugas.rimgaila $
+ * @version   SVN: $Id: order.php 40676 2011-12-19 08:21:44Z linas.kukulskis $
  */
 
 /**
@@ -266,6 +266,12 @@ class order extends oxUBase
         switch ( true ) {
             case ( $iSuccess === oxOrder::ORDER_STATE_MAILINGERROR ):
                 $sNextStep = 'thankyou?mailerror=1';
+                break;
+            case ( $iSuccess === oxOrder::ORDER_STATE_INVALIDDElADDRESSCHANGED ):
+                $sNextStep = 'order?iAddressError=1';
+                break;
+            case ( $iSuccess === oxOrder::ORDER_STATE_BELOWMINPRICE ):
+                $sNextStep = 'order';
                 break;
             case ( $iSuccess === oxOrder::ORDER_STATE_PAYMENTERROR ):
                 // no authentication, kick back to payment methods
@@ -518,4 +524,65 @@ class order extends oxUBase
 
         return $aPaths;
     }
+
+    /**
+     * Return error number
+     *
+     * @return int
+     */
+    public function getAddressError()
+    {
+        return oxConfig::getParameter( 'iAddressError' );
+    }
+
+    /**
+     * Return users setted delivery address md5
+     *
+     * @return string
+     */
+    public function getDeliveryAddressMD5()
+    {
+        // bill address
+        $oUser = $this->getUser();
+        $sDelAddress = '';
+
+        $sDelAddress .= $oUser->oxuser__oxcompany;
+        $sDelAddress .= $oUser->oxuser__oxusername;
+        $sDelAddress .= $oUser->oxuser__oxfname;
+        $sDelAddress .= $oUser->oxuser__oxlname;
+        $sDelAddress .= $oUser->oxuser__oxstreet;
+        $sDelAddress .= $oUser->oxuser__oxstreetnr;
+        $sDelAddress .= $oUser->oxuser__oxaddinfo;
+        $sDelAddress .= $oUser->oxuser__oxustid;
+        $sDelAddress .= $oUser->oxuser__oxcity;
+        $sDelAddress .= $oUser->oxuser__oxcountryid;
+        $sDelAddress .= $oUser->oxuser__oxstateid;
+        $sDelAddress .= $oUser->oxuser__oxzip;
+        $sDelAddress .= $oUser->oxuser__oxfon;
+        $sDelAddress .= $oUser->oxuser__oxfax;
+        $sDelAddress .= $oUser->oxuser__oxsal;
+
+        // delivery address
+        if ( oxSession::getVar( 'deladrid' )  ) {
+            $oDelAdress = oxNew( 'oxaddress' );
+            $oDelAdress->load( oxSession::getVar( 'deladrid' ) );
+
+            $sDelAddress .= $oDelAdress->oxaddress__oxcompany;
+            $sDelAddress .= $oDelAdress->oxaddress__oxfname;
+            $sDelAddress .= $oDelAdress->oxaddress__oxlname;
+            $sDelAddress .= $oDelAdress->oxaddress__oxstreet;
+            $sDelAddress .= $oDelAdress->oxaddress__oxstreetnr;
+            $sDelAddress .= $oDelAdress->oxaddress__oxaddinfo;
+            $sDelAddress .= $oDelAdress->oxaddress__oxcity;
+            $sDelAddress .= $oDelAdress->oxaddress__oxcountryid;
+            $sDelAddress .= $oDelAdress->oxaddress__oxstateid;
+            $sDelAddress .= $oDelAdress->oxaddress__oxzip;
+            $sDelAddress .= $oDelAdress->oxaddress__oxfon;
+            $sDelAddress .= $oDelAdress->oxaddress__oxfax;
+            $sDelAddress .= $oDelAdress->oxaddress__oxsal;
+        }
+
+        return md5($sDelAddress);
+    }
+
 }

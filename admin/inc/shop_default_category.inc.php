@@ -25,6 +25,7 @@
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
                                         array( 'oxtitle',  'oxcategories', 1, 1, 0 ),
                                         array( 'oxdesc',   'oxcategories', 1, 1, 0 ),
+                                        array( 'oxid',     'oxcategories', 0, 0, 0 ),
                                         array( 'oxid',     'oxcategories', 0, 0, 1 )
                                         )
                     );

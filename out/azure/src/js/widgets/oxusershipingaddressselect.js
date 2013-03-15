@@ -32,13 +32,13 @@
                 el = self.element;
 
             el.change(function() {
-                $( ".js-oxValidate" ).unbind('submit');
                 var selectValue = $(this).val();
 
                 if ($("input[name=reloadaddress]")) {
                     $("input[name=reloadaddress]").val(self.getReloadValue(selectValue));
                 }
                 if (selectValue !== '-1') {
+                    $( ".js-oxValidate" ).unbind('submit');
                     self.submitForm();
                 } else {
                     self.emptyInputFields();

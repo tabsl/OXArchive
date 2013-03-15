@@ -26,6 +26,7 @@
             <item>
                 <title>[{$item->title}]</title>
                 <link>[{$item->link}]</link>
+                <pubDate>[{$item->date}]</pubDate>
                 <description>[{$item->description}]</description>
                 <guid isPermaLink="[{if $item->isGuidPermalink}]true[{else}]false[{/if}]">[{$item->guid}]</guid>
                 [{*<!-- category></category -->*}]

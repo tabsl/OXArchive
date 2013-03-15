@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxnewssubscribed.php 42893 2012-03-15 07:23:24Z saulius.stasiukaitis $
+ * @version   SVN: $Id: oxnewssubscribed.php 43741 2012-04-11 07:48:55Z linas.kukulskis $
  */
 
 /**
@@ -109,7 +109,7 @@ class oxNewsSubscribed extends oxBase
      */
     public function loadFromUserId( $sOxUserId )
     {
-        $oDb = oxDb::getDb( true );
+        $oDb = oxDb::getDb();
         $sOxId = $oDb->getOne( "select oxid from oxnewssubscribed where oxuserid = " . $oDb->quote( $sOxUserId ) );
         return $this->load( $sOxId );
     }
@@ -199,7 +199,7 @@ class oxNewsSubscribed extends oxBase
 
     /**
      * Check if was ever unsubscribed by unsubscribed field.
-     * 
+     *
      * @return bool
      */
     public function wasUnsubscribed()

@@ -85,8 +85,15 @@ function changeLanguage()
 <input type="hidden" name="editlanguage" value="[{ $actlang }]">
 
 <table cellspacing="0" cellpadding="0" border="0" width="99%">
-<colgroup><col width="5%"><col width="70%"><col width="25%"></colgroup>
-<tr>
+    <colgroup>
+        [{block name="admin_list_review_colgroup"}]
+            <col width="5%">
+            <col width="70%">
+            <col width="25%">
+        [{/block}]
+    </colgroup>
+    <tr>
+    [{block name="admin_list_review_filter"}]
     <td class="listfilter first">
         <div class="r1"><div class="b1">
         <input class="listedit" type="text" size="15" maxlength="128" name="where[oxreviews][oxcreate]" value="[{ $where.oxreviews.oxcreate }]">
@@ -118,22 +125,27 @@ function changeLanguage()
         </div>
       </div>
     </td>
+    [{/block}]
 </tr>
 <tr>
-    <td class="listheader first"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxreviews', 'oxcreate', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxcreate" }]</a></td>
-    <td class="listheader"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxreviews', 'oxtext', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxtext" }]</a></td>
-    <td class="listheader"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, '', 'arttitle', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxtitle" }]</a></td>
+    [{block name="admin_list_review_sorting"}]
+        <td class="listheader first"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxreviews', 'oxcreate', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxcreate" }]</a></td>
+        <td class="listheader"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxreviews', 'oxtext', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxtext" }]</a></td>
+        <td class="listheader"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, '', 'arttitle', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxtitle" }]</a></td>
+    [{/block}]
 </tr>
 
 [{assign var="blWhite" value=""}]
 [{assign var="_cnt" value=0}]
 [{ foreach from=$mylist item=oReview }]
-[{assign var="_cnt" value=$_cnt+1}]
-<tr id="row.[{$_cnt}]">
-    <td align="center" class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:editThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{ $oReview->oxreviews__oxcreate|oxformdate }]</a></td>
-    <td class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:editThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{ $oReview->oxreviews__oxtext->value }]</a></td>
-    <td class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:editThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{if $oReview->oxreviews__oxparentid->value}][{ $oReview->oxreviews__parenttitle->value }] [{ $oReview->oxreviews__oxvarselect->value }][{else}][{$oReview->oxreviews__oxtitle->value}][{/if}]</a></td>
-</tr>
+    [{assign var="_cnt" value=$_cnt+1}]
+    <tr id="row.[{$_cnt}]">
+        [{block name="admin_list_review_item"}]
+            <td align="center" class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:editThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{ $oReview->oxreviews__oxcreate|oxformdate }]</a></td>
+            <td class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:editThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{ $oReview->oxreviews__oxtext->value }]</a></td>
+            <td class="listitem[{ $blWhite }]" valign="top"><a href="Javascript:editThis( '[{$oReview->oxreviews__oxobjectid->value}]');" class="listitem[{ $blWhite }]">[{if $oReview->oxreviews__oxparentid->value}][{ $oReview->oxreviews__parenttitle->value }] [{ $oReview->oxreviews__oxvarselect->value }][{else}][{$oReview->oxreviews__oxtitle->value}][{/if}]</a></td>
+        [{/block}]
+    </tr>
 [{if $blWhite == "2"}]
     [{assign var="blWhite" value=""}]
 [{else}]

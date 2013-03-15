@@ -73,44 +73,48 @@ function editThis( sID)
 <form name="showlist" id="showlist" action="[{ $oViewConf->getSelfLink() }]" method="post">
     [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="cl" value="list_user">
-<table cellspacing="0" cellpadding="0" border="0" width="100%">
-<tr>
-    <td class="listfilter first">
-        <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser][oxfname]" value="[{ $where.oxuser.oxfname }]">
-        </div></div>
-    </td>
-    <td class="listfilter">
-        <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser][oxlname]" value="[{ $where.oxuser.oxlname }]">
-        </div></div>
-    </td>
-    <td class="listfilter">
-        <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser][oxusername]" value="[{ $where.oxuser.oxusername }]">
-        </div></div>
-    </td>
-    <td class="listfilter">
-        <div class="r1">
-          <div class="b1">
-            <div class="find">
-              <select name="viewListSize" class="editinput" onChange="JavaScript:top.oxid.admin.changeListSize()">
-                <option value="50" [{ if $viewListSize == 50 }]SELECTED[{/if}]>50</option>
-                <option value="100" [{ if $viewListSize == 100 }]SELECTED[{/if}]>100</option>
-                <option value="200" [{ if $viewListSize == 200 }]SELECTED[{/if}]>200</option>
-              </select>
-              <input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]">
+    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+    <tr>
+    [{block name="admin_list_user_filter"}]
+        <td class="listfilter first">
+            <div class="r1"><div class="b1">
+            <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser][oxfname]" value="[{ $where.oxuser.oxfname }]">
+            </div></div>
+        </td>
+        <td class="listfilter">
+            <div class="r1"><div class="b1">
+            <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser][oxlname]" value="[{ $where.oxuser.oxlname }]">
+            </div></div>
+        </td>
+        <td class="listfilter">
+            <div class="r1"><div class="b1">
+            <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser][oxusername]" value="[{ $where.oxuser.oxusername }]">
+            </div></div>
+        </td>
+        <td class="listfilter">
+            <div class="r1">
+              <div class="b1">
+                <div class="find">
+                  <select name="viewListSize" class="editinput" onChange="JavaScript:top.oxid.admin.changeListSize()">
+                    <option value="50" [{ if $viewListSize == 50 }]SELECTED[{/if}]>50</option>
+                    <option value="100" [{ if $viewListSize == 100 }]SELECTED[{/if}]>100</option>
+                    <option value="200" [{ if $viewListSize == 200 }]SELECTED[{/if}]>200</option>
+                  </select>
+                  <input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]">
+                </div>
+                <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser][oxregister]" value="[{ $where.oxuser.oxregister|oxformdate }]">
+              </div>
             </div>
-            <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser][oxregister]" value="[{ $where.oxuser.oxregister|oxformdate }]">
-          </div>
-        </div>
-    </td>
+        </td>
+    [{/block}]
 </tr>
 <tr>
-    <td class="listheader first"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxuser', 'oxfname', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxfname" }]</a></td>
-    <td class="listheader"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxuser', 'oxlname', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxlname" }]</a></td>
-    <td class="listheader"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxuser', 'oxusername', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxusername" }]</a></td>
-    <td class="listheader"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxuser', 'oxregister', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxcreate" }]</a></td>
+    [{block name="admin_list_user_sorting"}]
+        <td class="listheader first"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxuser', 'oxfname', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxfname" }]</a></td>
+        <td class="listheader"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxuser', 'oxlname', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxlname" }]</a></td>
+        <td class="listheader"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxuser', 'oxusername', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxusername" }]</a></td>
+        <td class="listheader"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxuser', 'oxregister', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxcreate" }]</a></td>
+    [{/block}]
 </tr>
 
 [{assign var="blWhite" value=""}]
@@ -118,12 +122,13 @@ function editThis( sID)
 [{foreach from=$mylist item=oUser}]
     [{assign var="_cnt" value=$_cnt+1}]
     <tr id="row.[{$_cnt}]">
-
-    <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxfname->value }]</a></td>
-    <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxlname->value }]</a></td>
-    <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxusername->value }]</a></td>
-    <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxregister|oxformdate }]</a></td>
-</tr>
+        [{block name="admin_list_user_item"}]
+            <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxfname->value }]</a></td>
+            <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxlname->value }]</a></td>
+            <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxusername->value }]</a></td>
+            <td class="listitem[{ $blWhite }]"><a href="Javascript:editThis( '[{$oUser->oxuser__oxid->value}]');" class="listitem[{ $blWhite }]">[{ $oUser->oxuser__oxregister|oxformdate }]</a></td>
+       [{/block}]
+    </tr>
 [{if $blWhite == "2"}]
     [{assign var="blWhite" value=""}]
 [{else}]

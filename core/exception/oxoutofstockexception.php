@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxoutofstockexception.php 25635 2010-02-04 21:29:50Z alfonsas $
+ * @version   SVN: $Id: oxoutofstockexception.php 40167 2011-11-23 14:38:23Z ramunas.skarbalius $
  */
 
 /**
@@ -33,6 +33,13 @@ class oxOutOfStockException extends oxArticleException
      * @var integer
      */
     private $_iRemainingAmount = 0;
+
+    /**
+     * Enter description here ...
+     *
+     * @var string
+     */
+    private $_sBasketIndex = null;
 
     /**
      * Sets the amount of the article remaining in stock.
@@ -54,6 +61,28 @@ class oxOutOfStockException extends oxArticleException
     public function getRemainingAmount()
     {
         return $this->_iRemainingAmount;
+    }
+
+    /**
+     * Sets the basket index for the article
+     *
+     * @param string $sBasketIndex Basket index for the faulty article
+     *
+     * @return null
+     */
+    public function setBasketIndex( $sBasketIndex )
+    {
+        $this->_sBasketIndex = $sBasketIndex;
+    }
+
+    /**
+     * The basketindex of the faulty article
+     *
+     * @return string
+     */
+    public function getBasketIndex()
+    {
+        return $this->_sBasketIndex;
     }
 
     /**
@@ -79,6 +108,7 @@ class oxOutOfStockException extends oxArticleException
     {
         $aRes = parent::getValues();
         $aRes['remainingAmount'] = $this->getRemainingAmount();
+        $aRes['basketIndex'] = $this->getBasketIndex();
         return $aRes;
     }
 

@@ -26,8 +26,8 @@ ul li{list-style: none;}
 
 #nav .exp ul{display:block;}
 #nav .exp a{color:#000;}
-#nav .exp > a.rc b{background-position: -400px center;}
-#nav .act a.rc b{background-position: -200px center;}
+#nav .exp > a.rc b{background-position: -2000px center;}
+#nav .act a.rc b{background-position: -1000px center;}
 
 .extra ul{ border-top:1px solid #bdbdbd;padding:5px 0;}
 .extra ul li a.rc b{ color:#000}

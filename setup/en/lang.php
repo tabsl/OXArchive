@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   setup
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 38391 2011-08-24 15:09:50Z vilma $
+ * @version   SVN: $Id: lang.php 43969 2012-04-16 15:22:52Z mindaugas.rimgaila $
  */
 
 $aLang = array(
@@ -79,7 +79,7 @@ $aLang = array(
 'MOD_SERVER_PERMISSIONS'                        => 'Files/folders access rights',
 'MOD_ALLOW_URL_FOPEN'                           => 'allow_url_fopen or fsockopen to port 80',
 'MOD_PHP4_COMPAT'                               => 'Zend compatibility mode must be off',
-'MOD_PHP_VERSION'                               => 'PHP version at least 5.2.0',
+'MOD_PHP_VERSION'                               => 'PHP version at least 5.2.10',
 'MOD_REQUEST_URI'                               => 'REQUEST_URI set',
 'MOD_LIB_XML2'                                  => 'LIB XML2',
 'MOD_PHP_XML'                                   => 'DOM',
@@ -98,7 +98,9 @@ $aLang = array(
 'MOD_OPEN_SSL'                                  => 'OpenSSL',
 'MOD_SOAP'                                      => 'SOAP',
 'MOD_UNICODE_SUPPORT'                           => 'UTF-8 support',
+'MOD_FILE_UPLOADS'                              => 'File uploads are enabled (file_uploads)',
 'MOD_BUG53632'                                  => 'Possible issues on server due to PHP Bugs',
+'MOD_SESSION_AUTOSTART'                         => 'session.auto_start must be off',
 
 'STEP_0_ERROR_TEXT'                             => 'Your system does not fit system requirements',
 'STEP_0_ERROR_URL'                              => "http://www.oxid-esales.com/en/products/community-edition/system-requirements",
@@ -189,16 +191,19 @@ $aLang = array(
 'SETUP_DIR_DELETE_NOTICE'                       => "Due to security reasons remove setup directory if not yet done during installation.",
 'SETUP_CONFIG_PERMISSIONS'                      => "Due to security reasons put your config.inc.php file to read-only mode!",
 
-'SELECT_SETUP_LANG'                             => "Language for installation and shop is",
-'SELECT_SETUP_LANG_HINT'                        => ". If needed, activate easily more languages in admin.",
-'SELECT_COUNTRY_LANG'                           => "Please choose your country",
-'SELECT_SELIVERY_COUNTRY'                       => "Main delivery country",
-'SELECT_DELIVERY_COUNTRY_HINT'                  => "If needed, activate easily more delivery countries in admin",
+'SELECT_SETUP_LANG'                             => "Installation language",
+'SELECT_SHOP_LOCATION'                          => "Your market",
+'SELECT_PLEASE_CHOOSE'                          => "Please choose",
+'SELECT_SHOP_LOCATION_HINT'                     => "Please choose the market to which shop is focused. According to it, additional eCommerce Services will be loaded from OXID server, if you allow that.",
+'SELECT_DELIVERY_COUNTRY'                       => "Main delivery country",
+'SELECT_DELIVERY_COUNTRY_HINT'                  => "If needed, activate easily more delivery countries in admin.",
+'SELECT_SHOP_LANG'                              => "Shop language",
+'SELECT_SHOP_LANG_HINT'                         => "If needed, activate easily more languages in admin.",
 'SELECT_SETUP_LANG_SUBMIT'                      => "Select",
 'USE_DYNAMIC_PAGES'                             => "To increase your business success get additional information from OXID's server. You find more information in our ",
 'PRIVACY_POLICY'                                => "privacy statements",
 
-'LOAD_DYN_CONTENT_NOTICE'                       => "<p>If checkbox &quot;more information&quot; is set, you will see an additional menu in the admin area of your OXID eShop.</p><p>In that menu you get further information about eCommerce services like Google product search.</p> <p>You can change these settings at any time.</p>",
+'LOAD_DYN_CONTENT_NOTICE'                       => "<p>If checkbox is set, you will see an additional menu in the admin area of your OXID eShop.</p><p>In that menu you get further information about eCommerce services like Google product search.</p> <p>You can change these settings at any time.</p>",
 'ERROR_SETUP_CANCELLED'                         => "Setup has been cancelled because you didn't accept the license conditions.",
 'BUTTON_START_INSTALL'                          => "Restart setup",
 

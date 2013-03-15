@@ -18,15 +18,17 @@
 <tr>
     <td valign="top" class="edittext">
         <table cellspacing="0" cellpadding="0" border="0">
-        <tr>
-            <td class="edittext" width="100">
-            [{ oxmultilang ident="NEWSLETTER_PLAIN_TEXT" }]
-            </td>
-            <td class="edittext">
-            <textarea class="editinput" cols="150" rows="15" wrap="VIRTUAL" name="editval[oxnewsletter__oxplaintemplate]">[{$edit->oxnewsletter__oxplaintemplate->value}]</textarea><br>
-            [{ oxinputhelp ident="HELP_NEWSLETTER_PLAIN_TEXT" }]
-            </td>
-        </tr>
+        [{block name="admin_newsleter_plain_form"}]
+            <tr>
+                <td class="edittext" width="100">
+                [{ oxmultilang ident="NEWSLETTER_PLAIN_TEXT" }]
+                </td>
+                <td class="edittext">
+                <textarea class="editinput" cols="150" rows="15" wrap="VIRTUAL" name="editval[oxnewsletter__oxplaintemplate]">[{$edit->oxnewsletter__oxplaintemplate->value}]</textarea><br>
+                [{ oxinputhelp ident="HELP_NEWSLETTER_PLAIN_TEXT" }]
+                </td>
+            </tr>
+        [{/block}]
         <tr>
             <td class="edittext">
             </td>

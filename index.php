@@ -19,11 +19,12 @@
  * @package   main
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: index.php 43009 2012-03-19 12:20:26Z mindaugas.rimgaila $
+ * @version   SVN: $Id: index.php 43087 2012-03-22 13:04:00Z linas.kukulskis $
  */
 
 // Setting error reporting mode
-    error_reporting( E_ALL ^ E_NOTICE );
+    // some 3rd party libraries still use deprecated functions
+    error_reporting( E_ALL ^ E_NOTICE ^ E_DEPRECATED );
 
 //Know exactly where in the code the event occurred.
 //Zend platform only.

@@ -8,7 +8,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=[{$oEmailView->getCharset()}]">
 </head>
 <body bgcolor="#FFFFFF" link="#355222" alink="#355222" vlink="#355222" style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px;">
-<img src="[{$oViewConf->getImageUrl()}]logo_white.gif" border="0" hspace="0" vspace="0" alt="[{ $shop->oxshops__oxname->value }]" align="texttop"><br>
+<img src="[{$oViewConf->getImageUrl('logo_white.gif', false)}]" border="0" hspace="0" vspace="0" alt="[{ $shop->oxshops__oxname->value }]" align="texttop"><br>
 <br>
 [{ oxmultilang ident="EMAIL_OWNER_REMINDER_HTML_STOCKLOW" }]
 <br>
@@ -27,7 +27,7 @@
 [{foreach from=$articles item=oProduct}]
 <tr>
         <td valign="top" style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px; padding-top: 10px;">
-            <img src="[{$oProduct->getThumbnailUrl()}]" border="0" hspace="0" vspace="0" alt="[{ $oProduct->oxarticles__oxtitle->value|strip_tags }]" align="texttop">
+            <img src="[{$oProduct->getThumbnailUrl(false)}]" border="0" hspace="0" vspace="0" alt="[{ $oProduct->oxarticles__oxtitle->value|strip_tags }]" align="texttop">
         </td>
         <td valign="top" style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px; padding-top: 10px;">
             <b>[{ $oProduct->oxarticles__oxtitle->value }][{ if $oProduct->oxarticles__oxvarselect->value}], [{ $oProduct->oxarticles__oxvarselect->value}][{/if}]</b>

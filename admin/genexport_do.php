@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: genexport_do.php 43957 2012-04-16 13:20:52Z tomas $
+ * @version   SVN: $Id: genexport_do.php 44015 2012-04-18 09:29:22Z linas.kukulskis $
  */
 
 /**
