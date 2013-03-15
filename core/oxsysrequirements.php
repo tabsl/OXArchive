@@ -130,7 +130,8 @@ class oxSysRequirements
                                        'request_uri',
                                        'ini_set',
                                        'register_globals',
-                                       'memory_limit'
+                                       'memory_limit',
+                                       'unicode_support'
                                    );
 
             $aRequiredServerConfigs = array(
@@ -138,9 +139,9 @@ class oxSysRequirements
                                       );
 
 
-            $this->_aRequiredModules = array_fill_keys($aRequiredPHPExtensions,'php_extennsions') +
-                                       array_fill_keys($aRequiredPHPConfigs,'php_config') +
-                                       array_fill_keys($aRequiredServerConfigs,'server_config');
+            $this->_aRequiredModules = array_fill_keys( $aRequiredPHPExtensions, 'php_extennsions' ) +
+                                       array_fill_keys( $aRequiredPHPConfigs, 'php_config' ) +
+                                       array_fill_keys( $aRequiredServerConfigs, 'server_config' );
         }
         return $this->_aRequiredModules;
     }
@@ -185,7 +186,7 @@ class oxSysRequirements
             $iModStat = ( strpos( $sOut, 'mod_rewrite_on' ) !== false ) ? 2 : 0;
         } else {
             if ( function_exists( 'apache_get_modules' ) ) {
-               // it does not assure that mod_rewrite is enabled on current host, so setting 1
+                // it does not assure that mod_rewrite is enabled on current host, so setting 1
                 $iModStat = in_array( 'mod_rewrite', apache_get_modules() ) ? 1 : 0;
             } else {
                 $iModStat = -1;
@@ -438,7 +439,8 @@ class oxSysRequirements
                    'LEFT JOIN INFORMATION_SCHEMA.columns c ON t.TABLE_NAME = c.TABLE_NAME  ' .
                    'where t.TABLE_SCHEMA = "'.$myConfig->getConfigParam( 'dbName' ).'" ' .
                    'and c.TABLE_SCHEMA = "'.$myConfig->getConfigParam( 'dbName' ).'" ' .
-                   'and c.COLUMN_NAME in ("'.implode('", "', $this->_aColumns).'") ' . $this->_getAdditionalCheck();
+                   'and c.COLUMN_NAME in ("'.implode('", "', $this->_aColumns).'") ' . $this->_getAdditionalCheck() . 
+                   ' ORDER BY (t.TABLE_NAME = "oxarticles") DESC';
         $aRez = oxDb::getDb()->getAll($sSelect);
         foreach ( $aRez as $aRetTable ) {
             if ( !$sCollation ) {
@@ -450,6 +452,7 @@ class oxSysRequirements
             }
         }
 
+        $this->_blSysReqStatus = true;
         if ( count($aCollations) > 0 ) {
             $this->_blSysReqStatus = false;
         }
@@ -464,6 +467,16 @@ class oxSysRequirements
     public function checkDatabaseCluster()
     {
         return 2;
+    }
+
+    /**
+     * Checks if PCRE unicode support is turned off/on. Should be on.
+     *
+     * @return integer
+     */
+    public function checkUnicodeSupport()
+    {
+        return (@preg_match('/\pL/u', 'a') == 1) ? 2 : 1;
     }
 
     /**
@@ -573,6 +586,9 @@ class oxSysRequirements
                 case 'memory_limit':
                     $iModStat = $this->checkMemoryLimit();
                     break;
+                case 'unicode_support':
+                    $iModStat = $this->checkUnicodeSupport();
+                    break;
             }
 
 
@@ -599,6 +615,7 @@ class oxSysRequirements
                 $sBytes *= 1024;
             case 'k':
                 $sBytes *= 1024;
+                break;
         }
 
         return $sBytes;

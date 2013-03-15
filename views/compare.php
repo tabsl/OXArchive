@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: compare.php 17016 2009-03-04 13:05:30Z vilma $
+ * $Id: compare.php 18040 2009-04-09 12:22:44Z arvydas $
  */
 
 /**
@@ -265,7 +265,7 @@ class Compare extends oxUBase
     /**
      * Compare item $_aCompItems setter
      *
-     * @param $aItems array compare items i new order
+     * @param array $aItems compare items i new order
      *
      * @return null
      */

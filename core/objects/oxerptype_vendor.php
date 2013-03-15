@@ -19,13 +19,20 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_vendor.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxerptype_vendor.php 18033 2009-04-09 12:15:54Z arvydas $
  */
 
-require_once( 'oxerptype.php');
+require_once 'oxerptype.php';
 
+/**
+ * ERP vendor description class
+ */
 class oxERPType_Vendor extends oxERPType
 {
+    /**
+     * object fields description
+     * @var array
+     */
     protected $_aFieldListVersions = array(
         '1' => array(
             'OXID'           => 'OXID',
@@ -66,7 +73,11 @@ class oxERPType_Vendor extends oxERPType
         ),
     );
 
-
+    /**
+     * Class constructor
+     *
+     * @return null
+     */
     public function __construct()
     {
         parent::__construct();
@@ -78,8 +89,9 @@ class oxERPType_Vendor extends oxERPType
     /**
      * return sql column name of given table column
      *
-     * @param string $sField
-     * @param int    $iLanguage
+     * @param string $sField    object field anme
+     * @param int    $iLanguage language id
+     * @param int    $iShopID   shop id
      *
      * @return string
      */

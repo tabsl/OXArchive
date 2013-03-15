@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxadminview.php 17958 2009-04-07 14:29:36Z rimvydas.paskevicius $
+ * $Id: oxadminview.php 18346 2009-04-20 08:39:52Z rimvydas.paskevicius $
  */
 
 /**
@@ -415,14 +415,18 @@ class oxAdminView extends oxView
     /**
      * Reset output cache
      *
+     * @param  $blForceResete if true, forces reset
+     *
      * @return null
      */
-    public function resetContentCache()
+    public function resetContentCache( $blForceResete = null )
     {
         $blDeleteCacheOnLogout = $this->getConfig()->getConfigParam( 'blClearCacheOnLogout' );
 
 
-            oxUtils::getInstance()->oxResetFileCache();
+            if ( !$blDeleteCacheOnLogout  || $blForceResete ) {
+                oxUtils::getInstance()->oxResetFileCache();
+            }
     }
 
     /**

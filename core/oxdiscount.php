@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdiscount.php 17903 2009-04-06 14:38:41Z arvydas $
+ * $Id: oxdiscount.php 18143 2009-04-14 12:00:18Z rimvydas.paskevicius $
  */
 
 /**
@@ -99,7 +99,7 @@ class oxDiscount extends oxI18n
             return false;
         }
 
-        if ( $this->oxdiscount__oxpriceto->value < $oArticle->getBasePrice() ) {
+        if ( $this->oxdiscount__oxpriceto->value && ($this->oxdiscount__oxpriceto->value < $oArticle->getBasePrice()) ) {
             return false;
         }
 

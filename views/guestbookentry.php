@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: guestbookentry.php 16306 2009-02-05 10:28:05Z rimvydas.paskevicius $
+ * $Id: guestbookentry.php 18041 2009-04-09 12:23:18Z arvydas $
  */
 
 /**
@@ -43,7 +43,7 @@ class GuestbookEntry extends GuestBook
      */
     public function saveEntry()
     {
-        $sReviewText = trim( ( string ) oxConfig::getParameter( 'rvw_txt' , true ) );
+        $sReviewText = trim( ( string ) oxConfig::getParameter( 'rvw_txt', true ) );
         $sShopId     = $this->getConfig()->getShopId();
         $sUserId     = oxSession::getVar( 'usr' );
 

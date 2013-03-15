@@ -19,7 +19,7 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 17955 2009-04-07 14:17:30Z rimvydas.paskevicius $
+ * $Id: lang.php 18295 2009-04-16 15:09:12Z rimvydas.paskevicius $
  */
 
 $sLangName  = 'Deutsch';
@@ -1319,6 +1319,7 @@ $aLang = array(
 'SYSREQ_ZEND_OPTIMIZER'                         => 'Zend Optimizer installiert',
 'SYSREQ_ZEND_PLATFORM'                          => 'Zend Platform installiert',
 'SYSREQ_MB_STRING'                              => 'mbstring',
+'SYSREQ_UNICODE_SUPPORT'                        => 'UTF-8 Unterstützung',
 'SYSREQ_MEMORY_LIMIT'                           => 'PHP Memory limit (min. 14MB, 30MB empfohlen)',
 'SYSREQ_DESCRIPTION_PASS'                       => 'Die Voraussetzung ist erfüllt.',
 'SYSREQ_DESCRIPTION_PMIN'                       => 'Die Voraussetzung ist nicht oder nur teilweise erfüllt. Der OXID eShop funktioniert trotzdem und kann installiert werden.',
@@ -1572,7 +1573,7 @@ $aLang = array(
 'mxshippingset'                                 => 'Versandarten',
 'mxshopsett'                                    => 'Shopeinstellungen',
 'mxsysinfo'                                     => 'Systeminfo',
-'mxsysreq'                                      => 'System Voraussetzungen',
+'mxsysreq'                                      => 'Systemvoraussetzungen',
 'mxtools'                                       => 'Tools',
 'mxuadmin'                                      => 'Benutzer verwalten',
 'mxurls'                                        => 'Links',

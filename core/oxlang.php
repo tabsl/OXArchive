@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxlang.php 17643 2009-03-27 13:59:37Z arvydas $
+ * $Id: oxlang.php 18182 2009-04-15 08:57:02Z tomas $
  */
 
 /**
@@ -233,7 +233,9 @@ class oxLang extends oxSuperCfg
     /**
      * Returns array of available languages.
      *
-     * @param integer $iLanguage Number if current language (default null)
+     * @param integer $iLanguage    Number if current language (default null)
+     * @param bool    $blOnlyActive load only current language or all
+     * @param bool    $blSort       enable sorting or not
      *
      * @return array
      */
@@ -346,7 +348,7 @@ class oxLang extends oxSuperCfg
             $aIds = array();
 
             foreach ( $aLangParams as $sAbbr => $aValue ) {
-                $iBaseId = (int)$aValue['baseId'];
+                $iBaseId = (int) $aValue['baseId'];
                 $aIds[$iBaseId] = $sAbbr;
             }
             return $aIds;
@@ -437,12 +439,78 @@ class oxLang extends oxSuperCfg
     }
 
     /**
+     * Validate language id. If not valid id, returns default value
+     *
+     * @param int $iLang Language id
+     *
+     * @return int
+     */
+    public function validateLanguage( $iLang = null )
+    {
+        $iLang = (int) $iLang;
+
+        // checking if this language is valid
+        $aLanguages = $this->getLanguageArray();
+
+        if ( !isset( $aLanguages[$iLang] ) && is_array( $aLanguages ) ) {
+            $oLang = current( $aLanguages );
+            $iLang = $oLang->id;
+        }
+
+        return $iLang;
+    }
+
+    /**
+     * Set base shop language
+     *
+     * @param int $iLang Language id
+     *
+     * @return null
+     */
+    public function setBaseLanguage( $iLang = null )
+    {
+        if ( is_null($iLang) ) {
+            $iLang = $this->getBaseLanguage();
+        } else {
+            $this->_iBaseLanguageId = (int) $iLang;
+        }
+
+        if ( defined( 'OXID_PHP_UNIT' ) ) {
+            modSession::getInstance();
+        }
+
+        oxSession::setVar( 'language', $iLang );
+    }
+
+    /**
+     * Set templates language id
+     *
+     * @param int $iLang Language id
+     *
+     * @return null
+     */
+    public function setTplLanguage( $iLang = null )
+    {
+        if ( is_null($iLang) ) {
+            $iLang = $this->getTplLanguage();
+        } else {
+            $this->_iTplLanguageId = (int) $iLang;
+        }
+
+        if ( defined( 'OXID_PHP_UNIT' ) ) {
+            modSession::getInstance();
+        }
+
+        oxSession::setVar( 'tpllanguage', $iLang );
+    }
+
+    /**
      * Goes through language array and recodes its values. Returns recoded data
      *
      * @param array  $aLangArray language data
      * @param string $sCharset   charset which was used while making file
      *
-     * @return
+     * @return array
      */
     protected function _recodeLangArray( $aLangArray, $sCharset )
     {
@@ -619,71 +687,13 @@ class oxLang extends oxSuperCfg
     }
 
     /**
-     * Validate language id. If not valid id, returns default value
+     * Language sorting callback function
      *
-     * @param int $iLang Language id
+     * @param object $a1 first value to check
+     * @param object $a2 second value to check
      *
-     * @return int
+     * @return bool
      */
-    public function validateLanguage( $iLang = null )
-    {
-        $iLang = (int) $iLang;
-
-        // checking if this language is valid
-        $aLanguages = $this->getLanguageArray();
-
-        if ( !isset( $aLanguages[$iLang] ) && is_array( $aLanguages ) ) {
-            $oLang = current( $aLanguages );
-            $iLang = $oLang->id;
-        }
-
-        return $iLang;
-    }
-
-    /**
-     * Set base shop language
-     *
-     * @param int $iLang Language id
-     *
-     * @return null
-     */
-    public function setBaseLanguage( $iLang = null )
-    {
-        if ( is_null($iLang) ) {
-            $iLang = $this->getBaseLanguage();
-        } else {
-            $this->_iBaseLanguageId = (int) $iLang;
-        }
-
-        if ( defined( 'OXID_PHP_UNIT' ) ) {
-            modSession::getInstance();
-        }
-
-        oxSession::setVar( 'language', $iLang );
-    }
-
-    /**
-     * Set templates language id
-     *
-     * @param int $iLang Language id
-     *
-     * @return null
-     */
-    public function setTplLanguage( $iLang = null )
-    {
-        if ( is_null($iLang) ) {
-            $iLang = $this->getTplLanguage();
-        } else {
-            $this->_iTplLanguageId = (int) $iLang;
-        }
-
-        if ( defined( 'OXID_PHP_UNIT' ) ) {
-            modSession::getInstance();
-        }
-
-        oxSession::setVar( 'tpllanguage', $iLang );
-    }
-
     protected function _sortLanguagesCallback( $a1, $a2 )
     {
         return ($a1->sort > $a2->sort);

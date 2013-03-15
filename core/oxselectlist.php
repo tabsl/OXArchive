@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxselectlist.php 17689 2009-03-31 08:36:41Z sarunas $
+ * $Id: oxselectlist.php 18115 2009-04-14 08:32:39Z sarunas $
  */
 
 /**
@@ -63,10 +63,9 @@ class oxSelectlist extends oxI18n
     public function getFieldList( $dVat = null )
     {
         if ( $this->_aFieldList == null && $this->oxselectlist__oxvaldesc->value ) {
-            $oStr = getStr();
-            $this->_aFieldList = oxUtils::getInstance()->assignValuesFromText( $this->oxselectlist__oxvaldesc->getRawValue(), $dVat );
+            $this->_aFieldList = oxUtils::getInstance()->assignValuesFromText( $this->oxselectlist__oxvaldesc->value, $dVat );
             foreach ( $this->_aFieldList as $sKey => $oField ) {
-                $this->_aFieldList[$sKey]->name = $oStr->htmlspecialchars( strip_tags( $this->_aFieldList[$sKey]->name ), false );
+                $this->_aFieldList[$sKey]->name = strip_tags( $this->_aFieldList[$sKey]->name );
             }
         }
         return $this->_aFieldList;

@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: details.php 17481 2009-03-20 12:35:53Z arvydas $
+ * $Id: details.php 18089 2009-04-10 13:18:52Z vilma $
  */
 
 /**
@@ -286,10 +286,10 @@ class Details extends oxUBase
             return $this->_sViewId;
         }
 
-            $_sViewId = parent::getViewId().'|'.oxConfig::getParameter( 'anid' ).'|'.count( $this->getVariantList() ).'|';
+            $sViewId = parent::getViewId().'|'.oxConfig::getParameter( 'anid' ).'|'.count( $this->getVariantList() ).'|';
 
 
-        return $this->_sViewId = $_sViewId;
+        return $this->_sViewId = $sViewId;
     }
 
 
@@ -427,7 +427,7 @@ class Details extends oxUBase
      *
      * @return string
      */
-    protected function _prepareMetaDescription( $sMeta, $iLength = 200, $blDescTag = true )
+    protected function _prepareMetaDescription( $sMeta, $iLength = 200, $blDescTag = false )
     {
         if ( !$sMeta ) {
             $oProduct = $this->getProduct();
@@ -493,7 +493,7 @@ class Details extends oxUBase
      */
     public function saveReview()
     {
-        $sReviewText = trim( ( string ) oxConfig::getParameter( 'rvw_txt' , true ) );
+        $sReviewText = trim( ( string ) oxConfig::getParameter( 'rvw_txt', true ) );
         $dRating     = oxConfig::getParameter( 'artrating' );
         if ($dRating < 0 || $dRating > 5) {
             $dRating = null;
@@ -540,10 +540,9 @@ class Details extends oxUBase
     public function showLogin()
     {
         $this->_sThisTemplate = 'account_login.tpl';
-
-        $sAnchor = $this->getConfig()->getParameter("anchor");
-        if ($sAnchor)
+        if ( $sAnchor = $this->getConfig()->getParameter("anchor") ) {
             $this->_sLoginFormAnchor = $sAnchor;
+        }
     }
 
     /**
@@ -582,6 +581,11 @@ class Details extends oxUBase
         $this->_sTagCloud = $oTagHandler->getTagCloud( $oProduct->getId() );
     }
 
+    /**
+     * Sets tags editing mode
+     *
+     * @return null
+     */
     public function editTags()
     {
         $oTagCloud = oxNew("oxTagCloud");
@@ -727,12 +731,12 @@ class Details extends oxUBase
     {
         $sListType = isset( $iListType ) ? $iListType : oxConfig::getParameter( 'listtype' );
         if ( 'vendor' == $sListType ) {
-                $iLinkType = OXARTICLE_LINKTYPE_VENDOR;
-            } elseif ( 'manufacturer' == $sListType ) {
-                $iLinkType = OXARTICLE_LINKTYPE_MANUFACTURER;
-            } else {
-                $iLinkType = OXARTICLE_LINKTYPE_CATEGORY;
-            }
+            $iLinkType = OXARTICLE_LINKTYPE_VENDOR;
+        } elseif ( 'manufacturer' == $sListType ) {
+            $iLinkType = OXARTICLE_LINKTYPE_MANUFACTURER;
+        } else {
+            $iLinkType = OXARTICLE_LINKTYPE_CATEGORY;
+        }
 
         $oProduct->setLinkType( $iLinkType );
     }
@@ -939,7 +943,7 @@ class Details extends oxUBase
     /**
      * Template variable getter. Returns selected picture
      *
-     * @param string $sPicNr
+     * @param string $sPicNr picture number
      *
      * @return string
      */
@@ -1144,7 +1148,7 @@ class Details extends oxUBase
     /**
      * Returns search title setter
      *
-     * @param string $sTitle
+     * @param string $sTitle search title
      *
      * @return null
      */
@@ -1156,7 +1160,7 @@ class Details extends oxUBase
     /**
      * active category path setter
      *
-     * @param string $sActCatPath
+     * @param string $sActCatPath category tree path
      *
      * @return string
      */

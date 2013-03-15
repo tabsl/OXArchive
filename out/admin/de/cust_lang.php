@@ -19,7 +19,7 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: cust_lang.php 17042 2009-03-05 11:52:04Z sarunas $
+ * $Id: cust_lang.php 18083 2009-04-10 11:58:34Z vilma $
  */
 
 $sLangName  = "Deutsch";
@@ -28,6 +28,7 @@ $iLangNr    = 0;
 // RESOURCE IDENTITFIER = STRING
 // -------------------------------
 $aLang = array(
+'charset'                                   => 'ISO-8859-15',
 'EMAIL_PRICEALARM_CUSTOMER_HY'              => 'Hallo,',
 'EMAIL_PRICEALARM_CUSTOMER_HAVEPRICEALARM'  => 'wir haben einen Preisalarm im',
 'EMAIL_PRICEALARM_CUSTOMER_ITEM1'           => 'Der Artikel',

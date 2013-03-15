@@ -32,8 +32,15 @@ require_once "Auth/OpenID.php";
  */
 class oxOpenIdHTTPFetcher extends Auth_Yadis_ParanoidHTTPFetcher
 {
-
-    function get($url, $extra_headers = null)
+    /**
+     * Performs GET action with given parameters. Returns response from opendid server
+     *
+     * @param object $url           url to execute
+     * @param object $extra_headers additional post headers [optional]
+     *
+     * @return mixed
+     */
+    public function get($url, $extra_headers = null)
     {
         if (!$this->canFetchURL($url)) {
             return null;
@@ -76,10 +83,10 @@ class oxOpenIdHTTPFetcher extends Auth_Yadis_ParanoidHTTPFetcher
             }
 
             $cv = curl_version();
-            if(is_array($cv)) {
-              $curl_user_agent = 'curl/'.$cv['version'];
+            if ( is_array( $cv ) ) {
+                $curl_user_agent = 'curl/'.$cv['version'];
             } else {
-              $curl_user_agent = $cv;
+                $curl_user_agent = $cv;
             }
 
             curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
@@ -88,7 +95,7 @@ class oxOpenIdHTTPFetcher extends Auth_Yadis_ParanoidHTTPFetcher
                         Auth_OpenID_USER_AGENT.' '.$curl_user_agent);
             curl_setopt($c, CURLOPT_TIMEOUT, $off);
             curl_setopt($c, CURLOPT_URL, $url);
-            curl_setopt($c, CURLOPT_RANGE, 
+            curl_setopt($c, CURLOPT_RANGE,
                         "0-".(1024 * Auth_OpenID_FETCHER_MAX_RESPONSE_KB));
 
             curl_exec($c);
@@ -134,7 +141,16 @@ class oxOpenIdHTTPFetcher extends Auth_Yadis_ParanoidHTTPFetcher
         return null;
     }
 
-    function post($url, $body, $extra_headers = null)
+    /**
+     * Performs POST action with given parameters. Returns response from opendid server
+     *
+     * @param object $url           url to execute
+     * @param object $body          post body
+     * @param object $extra_headers additional post headers [optional]
+     *
+     * @return mixed
+     */
+    public function post($url, $body, $extra_headers = null)
     {
         if (!$this->canFetchURL($url)) {
             return null;
@@ -187,10 +203,15 @@ class oxOpenIdHTTPFetcher extends Auth_Yadis_ParanoidHTTPFetcher
                                            $new_headers, $body);
     }
 
+    /**
+     * Returns TRUE if ssl is supported by curl
+     *
+     * @return bool
+     */
     protected function _isSSL()
     {
-    	$v = curl_version();
-        if(is_array($v)) {
+        $v = curl_version();
+        if ( is_array( $v ) ) {
             return in_array('https', $v['protocols']);
         }
         return false;

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxemail.php 17710 2009-03-31 14:23:34Z vilma $
+ * $Id: oxemail.php 18054 2009-04-09 16:47:26Z arvydas $
  */
 /**
  * Includes PHP mailer class.
@@ -35,6 +35,11 @@ require oxConfig::getInstance()->getConfigParam( 'sCoreDir' ) . "/phpmailer/clas
  */
 class oxEmail extends phpmailer
 {
+    /**
+     * Default Smtp server port
+     *
+     * @var int
+     */
     public $SMTP_PORT = 25;
 
     /**

@@ -19,75 +19,186 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerpcsv.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxerpcsv.php 18054 2009-04-09 16:47:26Z arvydas $
  */
 
 /**
  * Class handeling csv import
  * @package core
  */
-class oxErpCsv extends oxERPBase {
-
+class oxErpCsv extends oxERPBase
+{
+    /**
+     * Supported versions by current interface
+     * @var array
+     */
     protected $_aSupportedVersions = array("0.1", "1.0", "1.1", "2.0");
+
+    /**
+     * Csv importer version mapping data
+     * @var string
+     */
     protected $_aCsv2BaseVersionsMap = array("0.1" => "1", "1.0" => "1", "1.1"=>"1.1", "2.0" => "2");
 
-    //version of the file which is imported right now
+    /**
+     * version of the file which is imported right now
+     * @var string
+     */
     protected $_sCurrVersion = "";
 
+    /**
+     * Imported data array
+     * @var array
+     */
     protected $_aData = array();
 
+    /**
+     * count of import rows
+     * @var int
+     */
     protected $_iRetryRows = 0;
 
+    /**
+     * Return message after import
+     * @var string
+     */
     protected $_sReturn;
 
+    /**
+     * Import file location
+     * @var string
+     */
     protected $_sPath;
 
+    /**
+     * Imported Actions to Article data array
+     * @var array
+     */
     protected $_aImportedActions2Article = array();
+
+    /**
+     * Imported Object to Category data array
+     * @var array
+     */
     protected $_aImportedObject2Category = array();
+
+    /**
+     * Imported Accessoire to Article data array
+     * @var array
+     */
     protected $_aImportedAccessoire2Article = array();
 
-    protected function _beforeExport($sType){}
-    protected function _afterExport($sType) {}
-    protected function _getImportType(& $aData) {}
-    protected function _getImportMode($Data) {}
-    protected function _modifyData($aData, $oType) {}
-    public function loadSessionData( $sSessionID ) {}
+    /**
+     * Before import event (abstract function)
+     *
+     * @param string $sType import type
+     *
+     * @return null
+     */
+    protected function _beforeExport($sType)
+    {
+    }
+
+    /**
+     * After import event (abstract function)
+     *
+     * @param string $sType import type
+     *
+     * @return null
+     */
+    protected function _afterExport($sType)
+    {
+    }
+
+    /**
+     * Import type getter (abstract function)
+     *
+     * @param array &$aData import data
+     *
+     * @return null
+     */
+    protected function _getImportType( &$aData )
+    {
+    }
+
+    /**
+     * Import mode getter (abstract function)
+     *
+     * @param array $aData import data
+     *
+     * @return null
+     */
+    protected function _getImportMode( $aData )
+    {
+    }
+
+    /**
+     * Data modifier (abstract function)
+     *
+     * @param object $aData data to modify
+     * @param object $oType type object
+     *
+     * @return null
+     */
+    protected function _modifyData($aData, $oType)
+    {
+    }
+
+    /**
+     * Session loader (abstract function)
+     *
+     * @param object $sSessionID session identifier
+     *
+     * @return null
+     */
+    public function loadSessionData( $sSessionID )
+    {
+    }
 
     /**
      * parses and replaces special chars
      *
-     * @param string $sText input text
-     * @param bool $blMode 	true = Text2CSV, false = CSV2Text
+     * @param string $sText  input text
+     * @param bool   $blMode true = Text2CSV, false = CSV2Text
      *
      * @return string
      */
-    protected function _csvTextConvert($sText, $blMode)
+    protected function _csvTextConvert( $sText, $blMode )
     {
-        $aSearch  = array(chr(13), chr(10), '\'',    '"');
-        $aReplace = array('&#13;', '&#10;', '&#39;', '&#34;');
+        $aSearch  = array( chr(13), chr(10), '\'', '"' );
+        $aReplace = array( '&#13;', '&#10;', '&#39;', '&#34;' );
 
-        if( $blMode)
-            $sText = str_replace( $aSearch, $aReplace ,$sText);
-        else
-            $sText = str_replace( $aReplace, $aSearch ,$sText);
+        if ( $blMode ) {
+            $sText = str_replace( $aSearch, $aReplace, $sText );
+        } else {
+            $sText = str_replace( $aReplace, $aSearch, $sText );
+        }
 
         return $sText;
     }
 
-    public function Import()
+    /**
+     * Performs import action
+     *
+     * @return null
+     */
+    public function import()
     {
         $this->_beforeImport();
 
-        do{
-            while( $this->_importOne());
-        }
-        while ( !$this->_afterImport() );
-
+        do {
+            while( $this->_importOne() );
+        } while ( !$this->_afterImport() );
     }
 
+    /**
+     * Performs before import actions
+     *
+     * @return null
+     */
     protected function _beforeImport()
     {
-        if(!$this->_iRetryRows){
+        if ( !$this->_iRetryRows ) {
             //convert all text
             foreach ($this->_aData as $key => $value) {
                 $this->_aData[$key] = $this->_csvTextConvert($value, false);
@@ -95,35 +206,48 @@ class oxErpCsv extends oxERPBase {
         }
 
     }
+
+    /**
+     * Performs after import actions
+     *
+     * @return bool
+     */
     protected function _afterImport()
     {
         //check if there have been no errors or failures
         $aStatistics = $this->getStatistics();
         $iRetryRows  = 0;
 
-        foreach ($aStatistics as $key => $value) {
-            if($value['r'] == false){
-               $iRetryRows ++;
-               $this->_sReturn.=  "File[".$this->_sPath."] - dataset number: $key - Error: ".$value['m']." ---<br> ".PHP_EOL;
+        foreach ( $aStatistics as $key => $value) {
+            if ( $value['r'] == false ) {
+                $iRetryRows++;
+                $this->_sReturn .= "File[".$this->_sPath."] - dataset number: $key - Error: ".$value['m']." ---<br> ".PHP_EOL;
             }
         }
 
-        if($iRetryRows != $this->_iRetryRows && $iRetryRows>0){
+        if ( $iRetryRows != $this->_iRetryRows && $iRetryRows>0 ) {
             $this->_resetIdx();
-            $this->_iRetryRows  = $iRetryRows;
-            $this->_sReturn     = '';
+            $this->_iRetryRows = $iRetryRows;
+            $this->_sReturn    = '';
 
             return false;
         }
 
         return true;
     }
+
+    /**
+     * Returns import data cor current index
+     *
+     * @return mixed
+     */
     public function getImportData()
     {
         return $this->_aData[$this->_iIdx];
     }
 
     /**
+     * Returns order article field list
      * due to compatibility reasons, the field list of V0.1
      *
      * @return array
@@ -155,6 +279,7 @@ class oxErpCsv extends oxERPBase {
     }
 
     /**
+     * Returns order field list
      * due to compatibility reasons, the field list of V0.1
      *
      * @return array
@@ -218,41 +343,48 @@ class oxErpCsv extends oxERPBase {
             return $aFieldList;
     }
 
-    protected  function _checkIDField( $sID)
+    /**
+     * Checks if id field is valid
+     *
+     * @param string $sID field check id
+     *
+     * @return null
+     */
+    protected  function _checkIDField( $sID )
     {
-        if( !isset( $sID) || !$sID)
+        if ( !isset( $sID ) || !$sID ) {
             throw new Exception("ERROR: Articlenumber/ID missing!");
-        elseif( strlen( $sID) > 32)
+        } elseif ( strlen( $sID) > 32 ) {
             throw new Exception( "ERROR: Articlenumber/ID longer then allowed (32 chars max.)!");
+        }
     }
 
     /**
      * method overridden to allow olf Order and OrderArticle types
      *
-     * @param string $sType
+     * @param string $sType instance type
      *
      * @return object
      */
     protected function _getInstanceOfType( $sType)
     {
         //due to backward compatibility
-        if($sType == 'oldOrder'){
+        if ( $sType == 'oldOrder' ) {
             $oType = parent::_getInstanceOfType('order');
             $oType->setFieldList($this->getOldOrderFielsList());
             $oType->setFunctionSuffix('OldOrder');
-        }elseif($sType == 'oldOrderArticle'){
+        } elseif ( $sType == 'oldOrderArticle' ) {
             $oType = parent::_getInstanceOfType('orderarticle');
             $oType->setFieldList($this->getOldOrderArticleFieldList());
             $oType->setFunctionSuffix('OldOrderArticle');
-        }elseif($sType == 'article2vendor'){
+        } elseif ( $sType == 'article2vendor' ) {
             $oType = parent::_getInstanceOfType('article');
             $oType->setFieldList(array("OXID", "OXVENDORID"));
-        }elseif($sType == 'mainarticle2categroy') {
+        } elseif ( $sType == 'mainarticle2categroy') {
             $oType = parent::_getInstanceOfType('article2category');
             $oType->setFieldList(array("OXOBJECTID", "OXCATNID", "OXTIME"));
             $oType->setFunctionSuffix('mainarticle2category');
-        }
-        else{
+        } else {
             $oType = parent::_getInstanceOfType($sType);
         }
 
@@ -266,33 +398,43 @@ class oxErpCsv extends oxERPBase {
     //
     // --------------------------------------------------------------------------
 
-
-
-
-    protected function _ImportArticle( oxERPType & $oType, $aRow)
+    /**
+     * Imports article. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importArticle( oxERPType $oType, $aRow)
     {
-
-        if($this->_sCurrVersion == "0.1")
-        {
+        if ( $this->_sCurrVersion == "0.1" ) {
             $myConfig = oxConfig::getInstance();
             //to allow different shopid without consequences (ignored fields)
             $myConfig->setConfigParam('blMallCustomPrice', false);
         }
 
-
-        if(isset($aRow['OXID'])){
+        if ( isset($aRow['OXID'] ) ) {
             $this->_checkIDField($aRow['OXID']);
-        }else{
+        } else {
             $this->_checkIDField($aRow['OXARTNUM']);
             $aRow['OXID'] = $aRow['OXARTNUM'];
         }
 
-        $sResult = $this->_Save( $oType, $aRow, $this->_sCurrVersion == "0.1"); // V0.1 allowes the shopid to be set no matter which login
+        $sResult = $this->_save( $oType, $aRow, $this->_sCurrVersion == "0.1"); // V0.1 allowes the shopid to be set no matter which login
         return (boolean) $sResult;
     }
 
-    protected function _ImportAccessoire( oxERPType & $oType, $aRow) {
-
+    /**
+     * Imports accessorie. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importAccessoire( oxERPType $oType, $aRow)
+    {
         // deleting old relations before import in V0.1
         if ( $this->_sCurrVersion == "0.1" && !isset($this->_aImportedAccessoire2Article[$aRow['OXARTICLENID']] ) ) {
             $myConfig = oxConfig::getInstance();
@@ -301,29 +443,42 @@ class oxErpCsv extends oxERPBase {
             $this->_aImportedAccessoire2Article[$aRow['OXARTICLENID']] = 1;
         }
 
-        $sResult = $this->_Save( $oType, $aRow);
+        $sResult = $this->_save( $oType, $aRow);
         return (boolean) $sResult;
     }
 
-    protected function _ImportArticle2Action( oxERPType & $oType, $aRow)
+    /**
+     * Imports article 2 action relation. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importArticle2Action( oxERPType $oType, $aRow)
     {
 
         if ( $this->_sCurrVersion == "0.1" && !isset( $this->_aImportedActions2Article[$aRow['OXARTID']] ) ) { //only in V0.1 and only once per import/article
-
-
             $myConfig = oxConfig::getInstance();
             $sDeleteSQL = "delete from oxactions2article where oxartid = '{$aRow['OXARTID']}'";
             oxDb::getDb()->Execute( $sDeleteSQL );
             $this->_aImportedActions2Article[$aRow['OXARTID']] = 1;
         }
 
-        $sResult = $this->_Save( $oType, $aRow, $this->_sCurrVersion == "0.1");
+        $sResult = $this->_save( $oType, $aRow, $this->_sCurrVersion == "0.1");
         return (boolean) $sResult;
     }
 
-    protected function _ImportArticle2Category( oxERPType & $oType, $aRow)
+    /**
+     * Imports article 2 category relation. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importArticle2Category( oxERPType $oType, $aRow)
     {
-
         // deleting old relations before import in V0.1
         if ( $this->_sCurrVersion == "0.1" && !isset( $this->_aImportedObject2Category[$aRow['OXOBJECTID']] ) ) {
             $myConfig = oxConfig::getInstance();
@@ -332,11 +487,19 @@ class oxErpCsv extends oxERPBase {
             $this->_aImportedObject2Category[$aRow['OXOBJECTID']] = 1;
         }
 
-        $sResult = $this->_Save( $oType, $aRow);
+        $sResult = $this->_save( $oType, $aRow);
         return (boolean) $sResult;
     }
 
-    protected function _ImportMainArticle2Category( oxERPType & $oType, $aRow)
+    /**
+     * Imports main article 2 category relation. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importMainArticle2Category( oxERPType $oType, $aRow)
     {
         $aRow['OXTIME'] = 0;
 
@@ -344,7 +507,7 @@ class oxErpCsv extends oxERPBase {
         $sSql = "select OXID from oxobject2category where oxobjectid = '".$aRow['OXOBJECTID']."' and OXCATNID = '".$aRow['OXCATNID']."'";
         $aRow['OXID'] = oxDb::getDb()->GetOne($sSql);
 
-        $sResult = $this->_Save( $oType, $aRow);
+        $sResult = $this->_save( $oType, $aRow);
 
         if ((boolean) $sResult) {
 
@@ -356,17 +519,30 @@ class oxErpCsv extends oxERPBase {
         return (boolean) $sResult;
     }
 
-    protected function _ImportCategory( oxERPType & $oType, $aRow)
+    /**
+     * Imports category. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importCategory( oxERPType $oType, $aRow)
     {
-
-        $sResult = $this->_Save( $oType, $aRow, $this->_sCurrVersion == "0.1");
+        $sResult = $this->_save( $oType, $aRow, $this->_sCurrVersion == "0.1");
         return (boolean) $sResult;
     }
 
-    protected function _ImportCrossselling( oxERPType & $oType, $aRow)
+    /**
+     * Imports crosselling. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importCrossselling( oxERPType $oType, $aRow)
     {
-
-
         // deleting old relations before import in V0.1
         if ( $this->_sCurrVersion == "0.1" && !isset($this->_aImportedObject2Article[$aRow['OXARTICLENID']] ) ) {
             $myConfig = oxConfig::getInstance();
@@ -375,41 +551,72 @@ class oxErpCsv extends oxERPBase {
             $this->aImportedObject2Article[$aRow['OXARTICLENID']] = 1;
         }
 
-        $sResult = $this->_Save( $oType, $aRow);
+        $sResult = $this->_save( $oType, $aRow);
         return (boolean) $sResult;
     }
 
-    protected function _ImportScaleprice( oxERPType & $oType, $aRow)
+    /**
+     * Imports scale price. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importScaleprice( oxERPType $oType, $aRow)
     {
-
-        $sResult = $this->_Save( $oType, $aRow, $this->_sCurrVersion == "0.1");
+        $sResult = $this->_save( $oType, $aRow, $this->_sCurrVersion == "0.1");
         return (boolean) $sResult;
     }
 
-    protected function _ImportOrder( oxERPType & $oType, $aRow)
+    /**
+     * Imports order. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importOrder( oxERPType $oType, $aRow)
     {
-
-        $sResult = $this->_Save( $oType, $aRow);
+        $sResult = $this->_save( $oType, $aRow);
         return true; //MAFI a unavoidable hack as oxorder->update() does always return null !!! a hotfix is needed
         //return (boolean) $sResult;
     }
 
-    protected function _ImportOrderArticle( oxERPType & $oType, $aRow)
+    /**
+     * Imports order article. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importOrderArticle( oxERPType $oType, $aRow)
     {
-
-        $sResult = $this->_Save( $oType, $aRow);
+        $sResult = $this->_save( $oType, $aRow);
         return (boolean) $sResult;
     }
 
-    protected function _ImportOrderStatus( oxERPType & $oType, $aRow) {
+    /**
+     * Imports order status. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importOrderStatus( oxERPType $oType, $aRow)
+    {
         $oOrderArt = oxNew( "oxorderarticle", "core");
-        $oOrderArt->Load( $aRow['OXID']);
+        $oOrderArt->load( $aRow['OXID']);
 
-        if( $oOrderArt->getId()) {
+        if ( $oOrderArt->getId()) {
 
             try {
-                if( $this->_sCurrVersion != "0.1")
+                if ( $this->_sCurrVersion != "0.1") {
                     $oType->checkWriteAccess($oOrderArt->getId());
+                }
 
                     // store status
                 $aStatuses = unserialize( $oOrderArt->oxorderarticles__oxerpstatus->value );
@@ -421,7 +628,7 @@ class oxErpCsv extends oxERPBase {
 
                 $aStatuses[$aRow['OXERPSTATUS_TIME']] = $oStatus;
                 $oOrderArt->oxorderarticles__oxerpstatus = new oxField(serialize( $aStatuses), oxField::T_RAW);
-                $oOrderArt->Save();
+                $oOrderArt->save();
                 return true;
             } catch (Exception $ex) {
                 return false;
@@ -431,12 +638,18 @@ class oxErpCsv extends oxERPBase {
         return false;
     }
 
-    protected function _ImportUser( oxERPType & $oType, $aRow)
+    /**
+     * Imports user. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importUser( oxERPType $oType, $aRow)
     {
-
         //Speciall check for user
-        if(isset($aRow['OXUSERNAME']))
-        {
+        if ( isset($aRow['OXUSERNAME'] ) ) {
             $sID = $aRow['OXID'];
             $sUserName = $aRow['OXUSERNAME'];
 
@@ -445,39 +658,72 @@ class oxErpCsv extends oxERPBase {
 
             //If user exists with and modifies OXID, throw an axception
             //throw new Exception( "USER {$sUserName} already exists!");
-            if( $oUser->exists( $sID) && $sID != $oUser->getId() ) {
+            if ( $oUser->exists( $sID) && $sID != $oUser->getId() ) {
                 throw new Exception( "USER $sUserName already exists!");
             }
 
         }
 
-        $sResult  = $this->_Save( $oType, $aRow);
+        $sResult  = $this->_save( $oType, $aRow);
         return (boolean) $sResult;
     }
 
-    protected function _ImportVendor( oxERPType & $oType, $aRow)
+    /**
+     * Imports vendor. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importVendor( oxERPType $oType, $aRow)
     {
-
-        $sResult = $this->_Save( $oType, $aRow, $this->_sCurrVersion == "0.1");
+        $sResult = $this->_save( $oType, $aRow, $this->_sCurrVersion == "0.1");
         return (boolean) $sResult;
     }
 
-    protected function _ImportArtextends( oxERPType & $oType, $aRow) {
-        if (oxERPBase::getRequestedVersion() < 2) {
+    /**
+     * Imports article extended info. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importArtextends( oxERPType $oType, $aRow)
+    {
+        if ( oxERPBase::getRequestedVersion() < 2 ) {
             return false;
         }
-        $sResult = $this->_Save( $oType, $aRow);
+        $sResult = $this->_save( $oType, $aRow);
         return (boolean) $sResult;
     }
 
-    protected function _ImportCountry( oxERPType & $oType, $aRow)
+    /**
+     * Imports country object. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importCountry( oxERPType $oType, $aRow)
     {
-        $sResult = $this->_Save( $oType, $aRow);
+        $sResult = $this->_save( $oType, $aRow);
         return (boolean) $sResult;
     }
 
-    protected function _ImportArticleStock( oxERPType & $oType, $aRow) {
-        $sResult = $this->_Save( $oType, $aRow);
+    /**
+     * Imports article stock. Returns import status (TRUE if success)
+     *
+     * @param object $oType type object
+     * @param object $aRow  db row array
+     *
+     * @return bool
+     */
+    protected function _importArticleStock( oxERPType $oType, $aRow )
+    {
+        $sResult = $this->_save( $oType, $aRow);
         return (boolean) $sResult;
     }
 }

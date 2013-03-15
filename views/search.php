@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: search.php 17481 2009-03-20 12:35:53Z arvydas $
+ * $Id: search.php 18044 2009-04-09 12:25:33Z arvydas $
  */
 
 /**
@@ -254,11 +254,11 @@ class Search extends oxUBase
         }
 
         if ( $sParam = rawurldecode( oxConfig::getParameter( 'searchvendor' ) ) ) {
-           $sAddParams .= "&amp;searchvendor=$sParam";
+            $sAddParams .= "&amp;searchvendor=$sParam";
         }
 
         if ( $sParam = rawurldecode( oxConfig::getParameter( 'searchmanufacturer' ) ) ) {
-           $sAddParams .= "&amp;searchmanufacturer=$sParam";
+            $sAddParams .= "&amp;searchmanufacturer=$sParam";
         }
         return $sAddParams;
     }

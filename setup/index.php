@@ -19,7 +19,7 @@
  * @package setup
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: index.php 17748 2009-04-01 13:46:10Z rimvydas.paskevicius $
+ * $Id: index.php 18114 2009-04-14 07:53:45Z vilma $
  */
 
 
@@ -710,7 +710,8 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
     // mb string library info
     require_once "../core/oxsysrequirements.php";
     $oSysReq = new oxSysRequirements();
-    $blMbStringOn= $oSysReq->getModuleInfo( 'mb_string' );
+    $blMbStringOn = $oSysReq->getModuleInfo( 'mb_string' );
+    $blUnicodeSupport = $oSysReq->getModuleInfo( 'unicode_support' );
 ?>
 
 <?php echo( $aLang['STEP_3_DESC'] ) ?><br>
@@ -745,7 +746,25 @@ if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
   <tr>
     <td><?php echo( $aLang['STEP_3_UTFMODE'] ) ?>:</td>
     <td>
-        &nbsp;&nbsp;<input type="checkbox" name="aDB[iUtfMode]" value="1" <?php if( $aDB['iUtfMode'] == 1 && $blMbStringOn ) { echo( "checked"); } echo $blMbStringOn ? '' : 'disabled'; ?>><?php echo $blMbStringOn ? ( $aLang['STEP_3_UTFINFO'] ) :( $aLang['STEP_3_UTFNOTSUPPORTED'] ); ?><br>
+        &nbsp;&nbsp;<input type="checkbox" name="aDB[iUtfMode]" value="1" <?php if( $aDB['iUtfMode'] == 1 && $blMbStringOn > 1 && $blUnicodeSupport > 1) { echo( "checked"); } echo ($blMbStringOn > 1 && $blUnicodeSupport > 1) ? '' : 'disabled'; ?>>
+        <?php 
+            if ( $blMbStringOn > 1 && $blUnicodeSupport > 1 ) {
+            	echo ( $aLang['STEP_3_UTFINFO'] );
+            } else {
+                echo ( $aLang['STEP_3_UTFNOTSUPPORTED'] ); 
+                if ( $blMbStringOn < 2 ) {
+                    echo ( $aLang['STEP_3_UTFNOTSUPPORTED1'] ); 
+                }
+                if ( ($blMbStringOn + $blUnicodeSupport) == 2) {
+                	echo ","; 
+                }
+                if ( $blUnicodeSupport < 2 ) {
+                    echo ( $aLang['STEP_3_UTFNOTSUPPORTED2'] ); 
+                }
+                echo "."; 
+            }
+        ?>
+        <br>
     </td>
   </tr>
 </table>

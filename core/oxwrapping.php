@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxwrapping.php 17411 2009-03-19 09:24:17Z arvydas $
+ * $Id: oxwrapping.php 18024 2009-04-09 11:29:24Z arvydas $
  */
 
 /**
@@ -85,6 +85,7 @@ class oxWrapping extends oxI18n
                 break;
             default:
                 $sValue = parent::__get( $sName );
+                break;
         }
 
         return $sValue;

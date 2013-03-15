@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxadmindetails.php 17958 2009-04-07 14:29:36Z rimvydas.paskevicius $
+ * $Id: oxadmindetails.php 18288 2009-04-16 14:06:18Z arvydas $
  */
 
 /**
@@ -38,7 +38,7 @@ class oxAdminDetails extends oxAdminView
      *
      * @var object
      */
-    protected $_oEditor   = null;
+    protected $_oEditor = null;
 
     /**
      * Calls parent::render, sets admin help url
@@ -67,7 +67,193 @@ class oxAdminDetails extends oxAdminView
     }
 
     /**
-     * Generates Text editor and set values ( load CSS etc. )
+     * Initiates Text editor
+     *
+     * @param int    $iWidth      editor width
+     * @param int    $iHeight     editor height
+     * @param object $oObject     object passed to editor
+     * @param string $sField      object field which content is passed to editor
+     * @param string $sStylesheet stylesheet to use in editor
+     *
+     * @return wysiwygPro
+     */
+    protected function _getTextEditor( $iWidth, $iHeight, $oObject, $sField, $sStylesheet = null )
+    {
+        if ( $this->_oEditor === null ) {
+            $myConfig = $this->getConfig();
+
+            // include the config file and editor class:
+            $sEditorPath = 'wysiwigpro';
+            $sEditorFile = getShopBasePath()."admin/".$sEditorPath . '/wysiwygPro.class.php';
+
+
+            // setting loaded state
+            $this->_oEditor = false;
+
+            if ( $sEditorFile && file_exists( $sEditorFile ) ) {
+                include_once ($sEditorFile);
+
+                // create a new instance of the wysiwygPro class:
+                $this->_oEditor = new wysiwygPro();
+
+                // set language file name
+                $sEditorUrl = $myConfig->getConfigParam( 'sShopURL' ).$myConfig->getConfigParam( 'sAdminDir' )."/{$sEditorPath}/";
+                if ( $sAdminSSLURL = $myConfig->getConfigParam( 'sAdminSSLURL' ) ) {
+                    $sEditorUrl = "{$sAdminSSLURL}/{$sEditorPath}/";
+                }
+
+                $this->_oEditor->editorURL = $sEditorUrl;
+                $this->_oEditor->urlFormat = 'preserve';
+
+                // document & image directory:
+                $this->_oEditor->documentDir = $this->_oEditor->imageDir = $myConfig->getPictureDir( false ).'wysiwigpro/';
+                $this->_oEditor->documentURL = $this->_oEditor->imageURL = $myConfig->getPictureUrl( null, false ).'wysiwigpro/';
+
+                // enabling upload
+                $this->_oEditor->upload = true;
+
+                // setting empty value
+                $this->_oEditor->emptyValue = "";
+
+                //#M432 enabling deleting files and folders
+                $this->_oEditor->deleteFiles = true;
+                $this->_oEditor->deleteFolders = true;
+
+                // allowed image extensions
+                $this->_oEditor->allowedImageExtensions = '.jpg, .jpeg, .gif, .png';
+
+                // allowed document extensions
+                $this->_oEditor->allowedDocExtensions   = '.html, .htm, .pdf, .doc, .rtf, .txt, .xl, .xls, .ppt, .pps, .zip, .tar, .swf, .wmv, .rm, .mov, .jpg, .jpeg, .gif, .png';
+
+                // set name
+                $this->_oEditor->name = $sField;
+
+                // set language file name
+                $oLang = oxLang::getInstance();
+                $this->_oEditor->lang = $oLang->translateString( 'editor_language', $oLang->getTplLanguage() );
+
+                // set contents
+                if ( $sEditObjectValue = $this->_getEditValue( $oObject, $sField ) ) {
+                    $this->_oEditor->value = $sEditObjectValue;
+                }
+
+                // parse for styles and add them
+                $this->setAdminMode( false );
+                $sCSSPath = $myConfig->getResourcePath("styles/{$sStylesheet}", false );
+                $sCSSUrl  = $myConfig->getResourceUrl("styles/{$sStylesheet}", false );
+
+                $aCSSPaths = array();
+
+                // #1157C - in wysiwigpro editor font problem
+                $aCSSPaths[] = $myConfig->getResourcePath("oxid.css", false );
+
+                $this->setAdminMode( true );
+
+                if (is_file($sCSSPath)) {
+
+                    $aCSSPaths[] = $sCSSUrl;
+
+                    if (is_readable($sCSSPath)) {
+                        $aCSS = @file( $sCSSPath);
+                        if ( isset( $aCSS) && $aCSS) {
+                            $aClasses = array();
+                            $oStr = getStr();
+                            foreach ( $aCSS as $key => $sLine ) {
+                                $sLine = trim($sLine);
+
+                                if ( $sLine[0] == '.' && !strstr( $sLine, 'default' ) ) {
+                                    // found one tag
+                                    $sTag = $oStr->substr( $sLine, 1);
+                                    $iEnd = $oStr->strpos( $sTag, ' ' );
+                                    if ( !isset( $iEnd ) || !$iEnd ) {
+                                        $iEnd = $oStr->strpos( $sTag, '\n' );
+                                    }
+
+                                    if ( $sTag = $oStr->substr( $sTag, 0, $iEnd ) ) {
+                                        $aClasses["span class='{$sTag}'"] = $sTag;
+                                    }
+                                }
+                            }
+                            $this->_oEditor->stylesMenu = $aClasses;
+                        }
+                    }
+                }
+
+                foreach ( $aCSSPaths as $sCssPath ) {
+                    $this->_oEditor->addStylesheet( $sCssPath );
+                }
+
+                //while there is a bug in editor template filter we cannot use this feature
+                // loading template filter plugin
+                $this->_oEditor->loadPlugin( 'templateFilter' );
+                $this->_oEditor->plugins['templateFilter']->protect( '[{', '}]' );
+                if ( $myConfig->getConfigParam( 'bl_perfParseLongDescinSmarty' ) ) {
+                    $this->_oEditor->plugins['templateFilter']->assign( '[{$oViewConf->getCurrentHomeDir()}]', $myConfig->getShopURL() );
+                    $this->_oEditor->plugins['templateFilter']->assign( '[{$oViewConf->getCurrentHomeDir()}]', $myConfig->getSSLShopURL() );
+                }
+            }
+
+            return $this->_oEditor;
+        }
+    }
+
+    /**
+     * Returns string which must be edited by editor
+     *
+     * @param oxbase $oObject object whifh field will be used for editing
+     * @param string $sField  name of editable field
+     *
+     * @return string
+     */
+    protected function _getEditValue( $oObject, $sField )
+    {
+        $sEditObjectValue = '';
+        if ( $oObject && $sField && isset( $oObject->$sField ) ) {
+
+            if ( $oObject->$sField instanceof oxField ) {
+                $sEditObjectValue = $oObject->$sField->getRawValue();
+            } else {
+                $sEditObjectValue = $oObject->$sField->value;
+            }
+
+            // A. replace ONLY if long description is not processed by smarty, or users will not be able to
+            // store smarty tags ([{$shop->currenthomedir}]/[{$oViewConf->getCurrentHomeDir()}]) in long
+            // descriptions, which are filled dynamically
+            if ( !$this->getConfig()->getConfigParam( 'bl_perfParseLongDescinSmarty' ) ) {
+                $aReplace = array( '[{$shop->currenthomedir}]', '[{$oViewConf->getCurrentHomeDir()}]' );
+                $oObject->$sField = new oxField( str_replace( $aReplace, $this->getConfig()->getCurrentShopURL(), $sEditObjectValue ), oxField::T_RAW );
+                $sEditObjectValue = $oObject->$sField->value;
+            }
+        }
+
+        return $sEditObjectValue;
+    }
+
+    /**
+     * Returns textarea filled with text to edit
+     *
+     * @param int    $iWidth      editor width
+     * @param int    $iHeight     editor height
+     * @param object $oObject     object passed to editor
+     * @param string $sField      object field which content is passed to editor
+     *
+     * @return string
+     */
+    protected function _getPlainEditor( $iWidth, $iHeight, $oObject, $sField )
+    {
+        $sEditObjectValue = $this->_getEditValue( $oObject, $sField );
+
+        if ( strpos( $iWidth, '%' ) === false ) {
+            $iWidth .= 'px';
+        }
+        if ( strpos( $iHeight, '%' ) === false ) {
+            $iHeight .= 'px';
+        }
+        return "<textarea id='editor_{$sField}' style='width:{$iWidth}; height:{$iHeight};'>{$sEditObjectValue}</textarea>";
+    }
+
+    /**
+     * Generates Text editor html code
      *
      * @param int    $iWidth      editor width
      * @param int    $iHeight     editor height
@@ -79,140 +265,15 @@ class oxAdminDetails extends oxAdminView
      */
     protected function _generateTextEditor( $iWidth, $iHeight, $oObject, $sField, $sStylesheet = null )
     {
-        $myConfig = $this->getConfig();
-
-        // include the config file and editor class:
-        $sEditorPath = 'wysiwigpro';
-        $sEditorFile = getShopBasePath()."admin/".$sEditorPath . '/wysiwygPro.class.php';
-
-
-
-        $sEditObjectValue = '';
-        if ( $oObject ) {
-            $sInitialValue = '';
-            if ($oObject->$sField instanceof oxField) {
-                $sInitialValue = $oObject->$sField->getRawValue();
-            } else {
-                $sInitialValue = $oObject->$sField->value;
-            }
-            $oObject->$sField = new oxField(str_replace( array( '[{$shop->currenthomedir}]', '[{$oViewConf->getCurrentHomeDir()}]' ), $myConfig->getCurrentShopURL(), $sInitialValue ), oxField::T_RAW);
-            $sEditObjectValue = $oObject->$sField->value;
+        // setup editor
+        if ( $oEditor = $this->_getTextEditor( $iWidth, $iHeight, $oObject, $sField, $sStylesheet ) ) {
+            // generate and return editor code
+            $sEditorHtml = $oEditor->fetch( $iWidth, $iHeight );
+        } else {
+            $sEditorHtml = $this->_getPlainEditor( $iWidth, $iHeight, $oObject, $sField );
         }
 
-
-        if (!$sEditorFile || !file_exists($sEditorFile)) {
-            if (strpos($iWidth, '%') === false) {
-                $iWidth .= 'px';
-            }
-            if (strpos($iHeight, '%') === false) {
-                $iHeight .= 'px';
-            }
-            return "<textarea id='editor_{$sField}' style='width:{$iWidth}; height:{$iHeight};'>$sEditObjectValue</textarea>";
-        }
-
-        include_once ($sEditorFile);
-
-        // create a new instance of the wysiwygPro class:
-        $this->_oEditor = new wysiwygPro();
-
-        // set language file name
-        $sEditorUrl = $myConfig->getConfigParam( 'sShopURL' ).$myConfig->getConfigParam( 'sAdminDir' )."/{$sEditorPath}/";
-        if ( $sAdminSSLURL = $myConfig->getConfigParam( 'sAdminSSLURL' ) ) {
-            $sEditorUrl = "{$sAdminSSLURL}/{$sEditorPath}/";
-        }
-
-        $this->_oEditor->editorURL = $sEditorUrl;
-        $this->_oEditor->urlFormat = 'preserve';
-
-        // document & image directory:
-        $this->_oEditor->documentDir = $this->_oEditor->imageDir = $myConfig->getPictureDir( false ).'wysiwigpro/';
-        $this->_oEditor->documentURL = $this->_oEditor->imageURL = $myConfig->getPictureUrl( null, false ).'wysiwigpro/';
-
-        // enabling upload
-        $this->_oEditor->upload = true;
-
-        // setting empty value
-        $this->_oEditor->emptyValue = "";
-
-        //#M432 enabling deleting files and folders
-        $this->_oEditor->deleteFiles = true;
-        $this->_oEditor->deleteFolders = true;
-
-        // allowed image extensions
-        $this->_oEditor->allowedImageExtensions = '.jpg, .jpeg, .gif, .png';
-
-        // allowed document extensions
-        $this->_oEditor->allowedDocExtensions   = '.html, .htm, .pdf, .doc, .rtf, .txt, .xl, .xls, .ppt, .pps, .zip, .tar, .swf, .wmv, .rm, .mov, .jpg, .jpeg, .gif, .png';
-
-        // set name
-        $this->_oEditor->name = $sField;
-
-        // set language file name
-        $oLang = oxLang::getInstance();
-        $this->_oEditor->lang = $oLang->translateString( 'editor_language', $oLang->getTplLanguage() );
-
-        // set contents
-        if ( $sEditObjectValue ) {
-            $this->_oEditor->value = $sEditObjectValue;
-        }
-
-        // parse for styles and add them
-        $this->setAdminMode( false );
-        $sCSSPath = $myConfig->getResourcePath("styles/{$sStylesheet}", false );
-        $sCSSUrl  = $myConfig->getResourceUrl("styles/{$sStylesheet}", false );
-
-        $aCSSPaths = array();
-
-        // #1157C - in wysiwigpro editor font problem
-        $aCSSPaths[] = $myConfig->getResourcePath("oxid.css", false );
-
-        $this->setAdminMode( true );
-
-        if (is_file($sCSSPath)) {
-
-            $aCSSPaths[] = $sCSSUrl;
-
-            if (is_readable($sCSSPath)) {
-                $aCSS = @file( $sCSSPath);
-                if ( isset( $aCSS) && $aCSS) {
-                    $aClasses = array();
-                    $oStr = getStr();
-                    foreach ( $aCSS as $key => $sLine ) {
-                        $sLine = trim($sLine);
-
-                        if ( $sLine[0] == '.' && !strstr( $sLine, 'default' ) ) {
-                            // found one tag
-                            $sTag = $oStr->substr( $sLine, 1);
-                            $iEnd = $oStr->strpos( $sTag, ' ' );
-                            if ( !isset( $iEnd ) || !$iEnd ) {
-                                $iEnd = $oStr->strpos( $sTag, '\n' );
-                            }
-
-                            if ( $sTag = $oStr->substr( $sTag, 0, $iEnd ) ) {
-                                $aClasses["span class='{$sTag}'"] = $sTag;
-                            }
-                        }
-                    }
-                    $this->_oEditor->stylesMenu = $aClasses;
-                }
-            }
-        }
-
-        foreach ( $aCSSPaths as $sCssPath ) {
-            $this->_oEditor->addStylesheet( $sCssPath );
-        }
-
-        //while there is a bug in editor template filter we cannot use this feature
-        // loading template filter plugin
-        $this->_oEditor->loadPlugin( 'templateFilter' );
-        $this->_oEditor->plugins['templateFilter']->protect( '[{', '}]' );
-        if ( $myConfig->getConfigParam( 'bl_perfParseLongDescinSmarty' ) ) {
-            $this->_oEditor->plugins['templateFilter']->assign( '[{$oViewConf->getCurrentHomeDir()}]', $myConfig->getShopURL() );
-            $this->_oEditor->plugins['templateFilter']->assign( '[{$oViewConf->getCurrentHomeDir()}]', $myConfig->getSSLShopURL() );
-        }
-
-        // generate and return editor code
-        return $this->_oEditor->fetch( $iWidth, $iHeight );
+        return $sEditorHtml;
     }
 
     /**

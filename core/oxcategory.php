@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcategory.php 17854 2009-04-03 17:48:55Z tomas $
+ * $Id: oxcategory.php 18292 2009-04-16 14:30:45Z rimvydas.paskevicius $
  */
 
 /**
@@ -668,7 +668,7 @@ class oxCategory extends oxI18n
             $sC2ATbl = getViewName('oxcategory2attribute');
             $sLngSuf = oxLang::getInstance()->getLanguageTag($this->getLanguage());
 
-            $sSelect = "SELECT DISTINCT att.oxid, att.oxtitle{$sLngSuf}, o2a.oxvalue, o2a.oxvalue{$sLngSuf} ".
+            $sSelect = "SELECT DISTINCT att.oxid, att.oxtitle{$sLngSuf}, o2a.oxvalue{$sLngSuf} ".
                        "FROM $sAttTbl as att, $sO2ATbl as o2a ,$sC2ATbl as c2a ".
                        "WHERE att.oxid = o2a.oxattrid AND c2a.oxobjectid = '{$sActCat}' AND c2a.oxattrid = att.oxid AND o2a.oxvalue{$sLngSuf} !='' AND o2a.oxobjectid IN ('$sArtIds') ".
                        "ORDER BY c2a.oxsort , att.oxpos, att.oxtitle{$sLngSuf}, o2a.oxvalue{$sLngSuf}";
@@ -676,7 +676,7 @@ class oxCategory extends oxI18n
             $rs = oxDb::getDb()->Execute( $sSelect);
             if ($rs != false && $rs->recordCount() > 0) {
                 $oStr = getStr();
-                while ( !$rs->EOF && list($sAttId,$sAttTitle,$sAttVid,$sAttValue) = $rs->fields ) {
+                while ( !$rs->EOF && list($sAttId,$sAttTitle, $sAttValue) = $rs->fields ) {
                     if ( !isset( $aAttributes[$sAttId])) {
                         $oAttribute           = new stdClass();
                         $oAttribute->title    = $sAttTitle;
@@ -688,8 +688,10 @@ class oxCategory extends oxI18n
                     $oValue->value      = $oStr->htmlspecialchars( $sAttValue );
                     $oValue->blSelected = isset($aSessionFilter[$sActCat][$sAttId]) && $aSessionFilter[$sActCat][$sAttId] == $sAttValue;
 
+                    $sAttValueId = md5( $sAttValue );
+
                     $blActiveFilter = $blActiveFilter || $oValue->blSelected;
-                    $aAttributes[$sAttId]->aValues[$sAttVid] = $oValue;
+                    $aAttributes[$sAttId]->aValues[$sAttValueId] = $oValue;
                     $rs->moveNext();
                 }
             }

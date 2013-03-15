@@ -19,14 +19,20 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_order.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxerptype_order.php 18032 2009-04-09 12:14:09Z arvydas $
  */
 
-require_once( 'oxerptype.php');
+require_once 'oxerptype.php';
 
-
+/**
+ * ERP order description class
+ */
 class oxERPType_Order extends oxERPType
 {
+    /**
+     * object fields description
+     * @var array
+     */
     protected $_aFieldListVersions = array(
         '1' => array(
             'OXID'           => 'OXID',
@@ -166,7 +172,11 @@ class oxERPType_Order extends oxERPType
         ),
     );
 
-
+    /**
+     * Class constructor
+     *
+     * @return null
+     */
     public function __construct()
     {
         parent::__construct();
@@ -179,8 +189,9 @@ class oxERPType_Order extends oxERPType
     /**
      * return sql column name of given table column
      *
-     * @param string $sField
-     * @param int    $iLanguage
+     * @param string $sField    object field anme
+     * @param int    $iLanguage language id
+     * @param int    $iShopID   shop id
      *
      * @return string
      */
@@ -203,8 +214,10 @@ class oxERPType_Order extends oxERPType
     /**
      * issued before saving an object. can modify aData for saving
      *
-     * @param oxBase $oShopObject
-     * @param array  $aData
+     * @param oxBase $oShopObject         shop object
+     * @param array  $aData               data used in assign
+     * @param bool   $blAllowCustomShopId if TRUE - custom shop id is allowed
+     *
      * @return array
      */
     protected function _preAssignObject($oShopObject, $aData, $blAllowCustomShopId)
@@ -228,8 +241,9 @@ class oxERPType_Order extends oxERPType
     /**
      * post saving hook. can finish transactions if needed or ajust related data
      *
-     * @param oxBase $oShopObject
-     * @param data   $aData
+     * @param oxBase $oShopObject shop object
+     * @param data   $aData       saved object data
+     *
      * @return mixed data to return
      */
     protected function _postSaveObject($oShopObject, $aData)
@@ -241,7 +255,7 @@ class oxERPType_Order extends oxERPType
                     oxDb::getDb()->Execute("update oxorder set oxordernr=0 where oxid='$sOxid' limit 1");
                 }
             }
-        }elseif ('1.1' == oxERPBase::getRequestedVersion()) {
+        } elseif ( '1.1' == oxERPBase::getRequestedVersion() ) {
             return array('OXID'=>$oShopObject->getId(), 'OXORDERNR'=>$oShopObject->oxorder__oxordernr->value);
         }
         return parent::_postSaveObject($oShopObject, $aData);

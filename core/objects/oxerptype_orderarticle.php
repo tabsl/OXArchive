@@ -19,13 +19,20 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_orderarticle.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxerptype_orderarticle.php 18032 2009-04-09 12:14:09Z arvydas $
  */
 
-require_once( 'oxerptype.php');
+require_once 'oxerptype.php';
 
+/**
+ * ERP order article description class
+ */
 class oxERPType_OrderArticle extends oxERPType
 {
+    /**
+     * object fields description
+     * @var array
+     */
     protected $_aFieldListVersions = array(
         '1' => array(
             'OXID'          => 'OXID',
@@ -122,7 +129,11 @@ class oxERPType_OrderArticle extends oxERPType
         ),
     );
 
-
+    /**
+     * Class constructor
+     *
+     * @return null
+     */
     public function __construct()
     {
         parent::__construct();
@@ -131,18 +142,34 @@ class oxERPType_OrderArticle extends oxERPType
         $this->_sShopObjectName = 'oxorderarticle';
     }
 
+    /**
+     * Returns formattted sql
+     *
+     * @param object $sWhere    where condition
+     * @param object $iLanguage active language [optional]
+     * @param object $iShopID   shop id [optional]
+     *
+     * @return string
+     */
     public function getSQL( $sWhere, $iLanguage = 0, $iShopID = 1)
     {
-         if( strstr( $sWhere, 'where'))
+        if ( strstr( $sWhere, 'where')) {
             $sWhere .= ' and ';
-        else
+        } else {
             $sWhere .= ' where ';
+        }
 
         $sWhere .= 'oxordershopid = \''.$iShopID.'\'';
-
-        return parent::getSQL($sWhere, $iLanguage, $iShopID);
+        return parent::getSQL( $sWhere, $iLanguage, $iShopID );
     }
 
+    /**
+     * Checks for write access. If access is not granted exception is thrown
+     *
+     * @param object $sOxid object id
+     *
+     * @return null
+     */
     public function checkWriteAccess($sOxid)
     {
         $myConfig = oxConfig::getInstance();
@@ -152,16 +179,17 @@ class oxERPType_OrderArticle extends oxERPType
         $sSql = "select oxordershopid from ". $this->getTableName($myConfig->getShopId()) ." where oxid = '". $sOxid ."'";
         $sRes = $oDB->getOne($sSql);
 
-        if($sRes && $sRes != $myConfig->getShopId()){
-            throw new Exception( oxERPBase::$ERROR_USER_NO_RIGHTS);
+        if ( $sRes && $sRes != $myConfig->getShopId() ) {
+            throw new Exception( oxERPBase::$ERROR_USER_NO_RIGHTS );
         }
     }
 
     /**
      * return sql column name of given table column
      *
-     * @param string $sField
-     * @param int    $iLanguage
+     * @param string $sField    field name
+     * @param int    $iLanguage language id
+     * @param int    $iShopID   shop id
      *
      * @return string
      */
@@ -169,10 +197,9 @@ class oxERPType_OrderArticle extends oxERPType
     {
         if ('1' == oxERPBase::getUsedDbFieldsVersion()) {
             switch ($sField) {
-                case 'OXTOTALVAT': {
-                	// We need to round this value here
+                case 'OXTOTALVAT':
+                    // We need to round this value here
                     return "round(OXVATPRICE * OXAMOUNT, 5) as OXTOTALVAT";
-                }
                 case 'OXTPRICE':
                 case 'OXAKTION':
                     return "'' as $sField";
@@ -184,21 +211,23 @@ class oxERPType_OrderArticle extends oxERPType
     /**
      * We have the possibility to add some data
      *
-     * @param array $aFields
+     * @param array $aFields fields to export
+     *
+     * @return array
      */
     public function addExportData($aFields)
     {
-    	if(isset($aFields['OXTOTALVAT'])){
-    		// And we need to cast this value here, to remove trailing zeroes added after mysql round
-    		$aFields['OXTOTALVAT'] = (double) $aFields['OXTOTALVAT'];
-    	}
+        if ( isset( $aFields['OXTOTALVAT'] ) ) {
+            // And we need to cast this value here, to remove trailing zeroes added after mysql round
+            $aFields['OXTOTALVAT'] = (double) $aFields['OXTOTALVAT'];
+        }
 
-    	if (strlen($aFields['OXPERSPARAM'])) {
-    	    $aPersVals = @unserialize($aFields['OXPERSPARAM']);
-    	    if (is_array($aPersVals)) {
-    	        $aFields['OXPERSPARAM'] = implode('|', $aPersVals);
-    	    }
-    	}
+        if ( strlen( $aFields['OXPERSPARAM'] ) ) {
+            $aPersVals = @unserialize($aFields['OXPERSPARAM']);
+            if ( is_array( $aPersVals ) ) {
+                $aFields['OXPERSPARAM'] = implode( '|', $aPersVals );
+            }
+        }
         return $aFields;
     }
 
@@ -206,8 +235,10 @@ class oxERPType_OrderArticle extends oxERPType
     /**
      * issued before saving an object. can modify aData for saving
      *
-     * @param oxBase $oShopObject
-     * @param array  $aData
+     * @param oxBase $oShopObject         shop object
+     * @param array  $aData               data to assign
+     * @param bool   $blAllowCustomShopId if true - custom shop id allowed
+     *
      * @return array
      */
     protected function _preAssignObject($oShopObject, $aData, $blAllowCustomShopId)
@@ -220,12 +251,11 @@ class oxERPType_OrderArticle extends oxERPType
             }
         }
 
-
         // check if data is not serialized
         $aPersVals = @unserialize($aData['OXPERSPARAM']);
         if (!is_array($aPersVals)) {
             // data is a string with | separation, prepare for oxid
-            $aPersVals = explode("|",  $aData['OXPERSPARAM']);
+            $aPersVals = explode( "|", $aData['OXPERSPARAM']);
             $aData['OXPERSPARAM'] = serialize($aPersVals);
         }
 

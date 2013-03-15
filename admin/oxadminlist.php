@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxadminlist.php 17414 2009-03-19 09:48:33Z arvydas $
+ * $Id: oxadminlist.php 18338 2009-04-20 07:54:06Z arvydas $
  */
 
 /**
@@ -106,28 +106,59 @@ class oxAdminList extends oxAdminView
     protected $_iOverPos = null;
 
     /**
-     * Calls parent constructor and sets list size parameters
+     * Viewable list size
      *
-     * @return null
+     * @var int
      */
-    public function __construct()
+    protected $_iViewListSize = 0;
+
+    /**
+     * Viewable default list size (used in list_*.php views)
+     *
+     * @var int
+     */
+    protected $_iDefViewListSize = 50;
+
+    /**
+     * Viewable list size getter
+     *
+     * @return int
+     */
+    protected function _getViewListSize()
     {
-        parent::__construct();
+        if ( !$this->_iViewListSize ) {
+            $myConfig = $this->getConfig();
+            if ( $aProfile = oxSession::getVar( 'profile' ) ) {
+                if ( isset( $aProfile[1] ) ) {
+                    $myConfig->setConfigParam( 'iAdminListSize', (int) $aProfile[1] );
+                }
+            }
 
-        $myConfig  = $this->getConfig();
-
-        // #533
-        if ( $aProfile = oxSession::getVar( 'profile' ) ) {
-            if (isset($aProfile[1]))
-                $myConfig->setConfigParam( 'iAdminListSize', (int) $aProfile[1] );
+            $this->_iViewListSize = (int) $myConfig->getConfigParam( 'iAdminListSize' );
+            if ( !$this->_iViewListSize ) {
+                $this->_iViewListSize = 10;
+                $myConfig->setConfigParam( 'iAdminListSize', $this->_iViewListSize );
+            }
         }
-        // list protection
-        if ( !$myConfig->getConfigParam( 'iAdminListSize' ) )
-            $myConfig->setConfigParam( 'iAdminListSize', 10 );
 
-        //maybe somebody badly configured admin ?
-        if ( !is_int( $myConfig->getConfigParam( 'iAdminListSize' ) ) )
-            $myConfig->setConfigParam( 'iAdminListSize', 10 );
+        return $this->_iViewListSize;
+    }
+
+    /**
+     * Viewable list size getter (used in list_*.php views)
+     *
+     * @return int
+     */
+    protected function _getUserDefListSize()
+    {
+        if ( !$this->_iViewListSize ) {
+            if ( ! ($iViewListSize = (int) oxConfig::getParameter( 'viewListSize' ) ) ) {
+                $iViewListSize = $this->_iDefViewListSize;
+            }
+            $this->_iViewListSize = $iViewListSize;
+        }
+
+        return $this->_iViewListSize;
     }
 
     /**
@@ -175,7 +206,7 @@ class oxAdminList extends oxAdminView
             $this->_setCurrentListPosition( oxConfig::getParameter( 'jumppage' ) );
 
             // settting additioan params for list: current list size
-            $this->_oList->setSqlLimit( $this->_iCurrListPos, $myConfig->getConfigParam( 'iAdminListSize' ) );
+            $this->_oList->setSqlLimit( $this->_iCurrListPos, $this->_getViewListSize() );
 
             $this->_oList->selectString( $sSql );
         }
@@ -195,30 +226,8 @@ class oxAdminList extends oxAdminView
             $this->_aViewData['mylist'] = $this->_oList;
         }
 
-        // build where
-        $aWhere = oxConfig::getParameter( 'where' );
-
-        $myConfig = $this->getConfig();
-        $myUtils  = oxUtils::getInstance();
-        $sListTable = $myConfig->getGlobalParameter( 'ListCoreTable' );
-
-        $oSearchKeys = new oxStdClass();
-        $sWhereParam = "";
-        if ( is_array( $aWhere ) ) {
-            while ( list( $sName, $sValue ) = each( $aWhere ) ) {
-                $sWhereParam .= "&amp;where[".$sName."]=".$sValue;
-                $sFieldName = str_replace( array( getViewName( $sListTable ) . '.', $sListTable . '.' ), $sListTable . '.', $sName );
-                $sFieldName = $myUtils->getArrFldName( $sFieldName );
-                $oSearchKeys->$sFieldName = $sValue;
-            }
-            $this->_aViewData['where'] = $oSearchKeys;
-            //#M430: Pagination in admin list loses category parameter
-            $sChosenCat  = oxConfig::getParameter( "art_category");
-            if ( $sChosenCat ) {
-                $sWhereParam .= "&amp;art_category=".$sChosenCat;
-            }
-            $this->_aViewData['whereparam'] = $sWhereParam;
-        }
+        // setting filter data back to view
+        $this->_setFilterParams();
 
         // set navigation parameters
         $this->_setListNavigationParams();
@@ -231,6 +240,44 @@ class oxAdminList extends oxAdminView
         $this->_aViewData['sort'] = $this->_aSort[0];
 
         return $sReturn;
+    }
+
+    /**
+     * Sets view filter data
+     *
+     *  - aViewData['where'] containts filter data like $object->oxarticles__oxtitle = filter_value
+     *  - aViewData['whereparam'] contains string which can be later used in url. and
+     *    looks like &amp;where[oxarticles.oxtitle]=_filter_value_&amp;art_category=_filter_categry_;
+     *
+     * @return null
+     */
+    protected function _setFilterParams()
+    {
+        // build where
+        if ( is_array( $aWhere = oxConfig::getParameter( 'where' ) ) ) {
+
+            $myConfig = $this->getConfig();
+            $myUtils  = oxUtils::getInstance();
+            $sListTable = $myConfig->getGlobalParameter( 'ListCoreTable' );
+
+            $oSearchKeys = new oxStdClass();
+            $sWhereParam = "";
+
+            while ( list( $sName, $sValue ) = each( $aWhere ) ) {
+                $sWhereParam .= "&amp;where[".$sName."]=".$sValue;
+                $sFieldName = str_replace( getViewName( $sListTable ) . '.', $sListTable . '.', $sName );
+                $sFieldName = $myUtils->getArrFldName( $sFieldName );
+                $oSearchKeys->$sFieldName = $sValue;
+            }
+
+            $this->_aViewData['where'] = $oSearchKeys;
+
+            //#M430: Pagination in admin list loses category parameter
+            if ( $sChosenCat  = oxConfig::getParameter( "art_category") ) {
+                $sWhereParam .= "&amp;art_category=".$sChosenCat;
+            }
+            $this->_aViewData['whereparam'] = $sWhereParam;
+        }
     }
 
     /**
@@ -285,7 +332,7 @@ class oxAdminList extends oxAdminView
      */
     protected function _setCurrentListPosition( $sPage = null )
     {
-        $iAdminListSize = (int) $this->getConfig()->getConfigParam( 'iAdminListSize' );
+        $iAdminListSize = $this->_getViewListSize();
 
         $iJumpTo = $sPage?( (int) $sPage):( (int) ( (int) oxConfig::getParameter( 'lstrt' ) ) / $iAdminListSize );
         $iJumpTo = ( $sPage && $iJumpTo )?( $iJumpTo - 1 ):$iJumpTo;
@@ -580,9 +627,7 @@ class oxAdminList extends oxAdminView
 
         // list navigation
         $blShowNavigation = false;
-        $iAdminListSize = (int) $myConfig->getConfigParam( 'iAdminListSize' );
-        $iAdminListSize = $iAdminListSize ? $iAdminListSize : 1;
-
+        $iAdminListSize = $this->_getViewListSize();
         if ( $this->_iListSize > $iAdminListSize ) {
             // yes, we need to build the navigation object
             $pagenavigation = new oxStdClass();
@@ -644,7 +689,7 @@ class oxAdminList extends oxAdminView
 
         // determine not used space in List
         $iShowListSize  = $this->_iListSize - $this->_iCurrListPos;
-        $iAdminListSize = (int) $myConfig->getConfigParam( 'iAdminListSize' );
+        $iAdminListSize = $this->_getViewListSize();
         $iNotUsed = $iAdminListSize - min( $iShowListSize, $iAdminListSize );
         $iSpace = $iNotUsed * 15;
 

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxconfig.php 17917 2009-04-07 07:19:08Z rimvydas.paskevicius $
+ * $Id: oxconfig.php 18242 2009-04-15 14:34:30Z sarunas $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -500,7 +500,7 @@ class oxConfig extends oxSuperCfg
                         break;
                     default:
                         $this->setConfigParam( $sVarName, $sVarVal );
-                    }
+                }
 
 
                 if ( $sVarType == 'arr' || $sVarType == 'aarr' ) {
@@ -629,17 +629,19 @@ class oxConfig extends oxSuperCfg
         }
 
         if ( is_array( $sValue ) ) {
+            $newValue = array();
             foreach ( $sValue as $sKey => $sVal ) {
+                $sValidKey = $sKey;
                 if ( !$aRaw || !in_array($sKey, $aRaw) ) {
-                    $sValidKey = $sKey;
                     self::checkSpecialChars( $sValidKey );
                     self::checkSpecialChars( $sVal );
                     if ($sValidKey != $sKey) {
                         unset ($sValue[$sKey]);
                     }
-                    $sValue[$sValidKey] = $sVal;
                 }
+                $newValue[$sValidKey] = $sVal;
             }
+            $sValue = $newValue;
         } else {
             $sValue = str_replace( array( '&',     '<',    '>',    '"',      "'",      chr(0), '\\' ),
                                    array( '&amp;', '&lt;', '&gt;', '&quot;', '&#039;', '',     '&#092;' ),
@@ -1744,7 +1746,7 @@ class oxConfig extends oxSuperCfg
 
         $oDb = oxDb::getDb();
         $sQ = "delete from oxconfig where oxshopid = '$sShopId' and oxvarname = '$sVarName'";
-        $oDb->Execute( $sQ );
+        $oDb->execute( $sQ );
         $sUid = oxUtilsObject::getInstance()->generateUID();
 
         $sUid     = mysql_real_escape_string($sUid);
@@ -1755,7 +1757,7 @@ class oxConfig extends oxSuperCfg
         $sQ = "insert into oxconfig (oxid, oxshopid, oxvarname, oxvartype, oxvarvalue)
                values('$sUid', '$sShopId', '$sVarName', '$sVarType', ENCODE( '$sVarVal', '".$this->getConfigParam('sConfigKey')."'))";
 
-        $oDb->Execute($sQ);
+        $oDb->execute( $sQ );
     }
 
     /**
@@ -1789,7 +1791,7 @@ class oxConfig extends oxSuperCfg
                     break;
                 default:
                     $sValue = $sVarVal;
-            }
+                }
         }
         return $sValue;
     }

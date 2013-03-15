@@ -52,6 +52,13 @@ class oxSimpleVariant extends oxI18n
     protected $_oPrice = null;
 
     /**
+     * Parent article
+     *
+     * @var oxArticle
+     */
+    protected $_oParent = null;
+
+    /**
      * Initializes instance
      *
      */
@@ -85,8 +92,24 @@ class oxSimpleVariant extends oxI18n
         }
 
         $this->_oPrice = oxNew("oxPrice");
-        $this->_oPrice->setPrice($this->oxarticles__oxprice->value, $this->_dVat);
+        $dPrice = $this->oxarticles__oxprice->value;
+        if (!$dPrice) {
+            $dPrice = $this->_getParentPrice();
+        }
+        $this->_oPrice->setPrice($dPrice, $this->_dVat);
         return $this->_oPrice;
+    }
+
+    /**
+     * Price setter
+     *
+     * @param object $oPrice
+     *
+     * @return null;
+     */
+    public function setPrice($oPrice)
+    {
+        $this->_oPrice = $oPrice;
     }
 
     /**
@@ -113,5 +136,42 @@ class oxSimpleVariant extends oxI18n
     public function setVat($dVat)
     {
         $this->_dVat = $dVat;
+    }
+
+    /**
+     * Sets parent article
+     *
+     * @param oxArticle $oParent Parent article
+     *
+     * @return null
+     */
+    public function setParent($oParent)
+    {
+        $this->_oParent = $oParent;
+    }
+
+    /**
+     * Parent article getter.
+     *
+     * @return oxArticle
+     */
+    public function getParent()
+    {
+        return $this->_oParent;
+    }
+
+    /**
+     * Returns parent price. Assuming variant parent has been assigned before function execution.
+     *
+     * @return double
+     */
+    protected function _getParentPrice()
+    {
+
+        if (isset($this->_oParent->oxarticles__oxprice->value)) {
+            return $this->_oParent->oxarticles__oxprice->value;
+        }
+
+        return 0;
     }
 }

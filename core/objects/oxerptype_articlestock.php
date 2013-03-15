@@ -19,14 +19,21 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_articlestock.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxerptype_articlestock.php 18030 2009-04-09 11:36:21Z arvydas $
  */
 
-require_once( 'oxerptype.php');
+require_once 'oxerptype.php';
 
+/**
+ * ERP article stock description class
+ */
 class oxERPType_ArticleStock extends oxERPType
 {
-
+    /**
+     * Class constructor
+     *
+     * @return null
+     */
     public function __construct()
     {
         parent::__construct();
@@ -41,6 +48,13 @@ class oxERPType_ArticleStock extends oxERPType
         );
     }
 
+    /**
+     * Checks for write access. If access is not granted exception is thrown
+     *
+     * @param object $sOxid object id
+     *
+     * @return null
+     */
     public function checkWriteAccess($sOxid)
     {
         //extend the write access to NOT write into nonexisting articles
@@ -52,7 +66,7 @@ class oxERPType_ArticleStock extends oxERPType
         $sSql = "select oxid from ". $this->getTableName($myConfig->getShopId()) ." where oxid = '". $sOxid ."'";
         $sRes = $oDB->getOne($sSql);
 
-        if(!$sRes){
+        if ( !$sRes ) {
             throw new Exception( oxERPBase::$ERROR_OBJECT_NOT_EXISTING);
         }
 
@@ -64,9 +78,9 @@ class oxERPType_ArticleStock extends oxERPType
      * issued before saving an object. Includes fix for multilanguage article long description saving
      * ( clone of same method in oxerptype_oxarticle.php )
      *
-     * @param oxBase $oShopObject
-     * @param array  $aData
-     * @param bool   $blAllowCustomShopId
+     * @param oxBase $oShopObject         shop object
+     * @param array  $aData               data used in assign
+     * @param bool   $blAllowCustomShopId if TRUE - custom shop id is allowed
      *
      * @return array
      */
@@ -77,17 +91,17 @@ class oxERPType_ArticleStock extends oxERPType
 
             $aLongDescriptionFields = array('OXLONGDESC_1','OXLONGDESC_2','OXLONGDESC_3');
 
-            foreach ($aLongDescriptionFields as $iKey => $sField){
-                if( in_array($sField,$this->_aFieldList)){
+            foreach ( $aLongDescriptionFields as $iKey => $sField ) {
+                if ( in_array( $sField, $this->_aFieldList ) ) {
                     unset($aLongDescriptionFields[$iKey]);
                 }
             }
 
-            if(count($aLongDescriptionFields)){
+            if ( count($aLongDescriptionFields ) ) {
                 $oArtExt = oxNew('oxbase');
                 $oArtExt->init('oxartextends');
 
-                if( $oArtExt->load($aData['OXID']) ) {
+                if ( $oArtExt->load($aData['OXID'] ) ) {
                     foreach ($aLongDescriptionFields as $sField) {
                         $sFieldName = $oArtExt->getCoreTableName()."__".strtolower( $sField );
                         $sLongDesc  = null;

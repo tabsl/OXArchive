@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxstart.php 16306 2009-02-05 10:28:05Z rimvydas.paskevicius $
+ * $Id: oxstart.php 18431 2009-04-22 07:35:10Z alfonsas $
  */
 
 /**
@@ -30,7 +30,7 @@
 /**
  * Encapsulates methods for application initialization.
  */
-class oxStart extends oxView
+class oxStart extends oxUBase
 {
     /**
      * Initializes globals and environment vars
@@ -62,18 +62,28 @@ class oxStart extends oxView
 
         $sTemplate = '';
 
-        if ( $sErrorNo == 'unlicensed' )
+        if ( $sErrorNo == 'unlicensed' ) {
             $sTemplate = 'err_unlicensed.tpl';
-        if ( $sErrorNo == 'expireddemo' )
+        }
+
+        if ( $sErrorNo == 'expireddemo' ) {
             $sTemplate = 'err_expired_days.tpl';
-        if ( $sErrorNo == 'pro_exceeded' )
+        }
+
+        if ( $sErrorNo == 'pro_exceeded' ) {
             $sTemplate = 'err_overloaded_articles.tpl';
-        if ( $sErrorNo == 'unknown' )
+        }
+
+
+        if ( $sErrorNo == 'unknown' ) {
             $sTemplate = 'err_unknown.tpl';
-        if ( $sTemplate )
-          return $sTemplate;
-        else
-          return 'start.tpl';
+        }
+
+        if ( $sTemplate ) {
+            return $sTemplate;
+        } else {
+            return 'start.tpl';
+        }
     }
 
 
@@ -107,8 +117,9 @@ class oxStart extends oxView
     {
         $mySession = $this->getSession();
 
-        if ( isset( $mySession ) )
+        if ( isset( $mySession ) ) {
             $mySession->freeze();
+        }
     }
 
     /**

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxuserpayment.php 17878 2009-04-06 09:08:00Z alfonsas $
+ * $Id: oxuserpayment.php 18025 2009-04-09 11:30:19Z arvydas $
  */
 
 /**
@@ -158,7 +158,7 @@ class oxUserPayment extends oxBase
         $blRet = parent::_insert();
 
         //restore, as encoding was needed only for saving
-        if( $sEncodedValue ) {
+        if ( $sEncodedValue ) {
             $this->oxuserpayments__oxvalue->setValue($sValue);
         }
 

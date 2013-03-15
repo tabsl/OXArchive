@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcmp_basket.php 16432 2009-02-10 17:40:50Z arvydas $
+ * $Id: oxcmp_basket.php 18041 2009-04-09 12:23:18Z arvydas $
  */
 
 /**
@@ -311,8 +311,8 @@ class oxcmp_basket extends oxView
 
             if (oxConfig::getParameter( 'removeBtn' ) !== null) {
                 //setting amount to 0 if removing article from basket
-                foreach( $aProducts as $sProductId => $aProduct ) {
-                    if (isset($aProduct['remove']) && $aProduct['remove']) {
+                foreach ( $aProducts as $sProductId => $aProduct ) {
+                    if ( isset($aProduct['remove']) && $aProduct['remove']) {
                         $aProducts[$sProductId]['am'] = 0;
                     } else {
                         unset ($aProducts[$sProductId]);
@@ -371,6 +371,8 @@ class oxcmp_basket extends oxView
      * @param string $sCallName    name of action ('tobasket', 'changebasket')
      * @param array  $aProductInfo data which comes from request when you press button "to basket"
      * @param array  $aBasketInfo  array returned by oxbasket::getBasketSummary()
+     *
+     * @return null
      */
     protected function _setLastCall( $sCallName, $aProductInfo, $aBasketInfo )
     {

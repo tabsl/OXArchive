@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxfield.php 17305 2009-03-17 15:02:22Z vilma $
+ * $Id: oxfield.php 18029 2009-04-09 11:34:25Z arvydas $
  */
 
 /**
@@ -71,7 +71,7 @@ class oxField // extends oxSuperCfg
             case 'value':
                 return ($this->value !== null);
                 //return true;
-            }
+        }
         return false;
     }
 
@@ -100,7 +100,7 @@ class oxField // extends oxSuperCfg
                 return $this->value;
             default:
                 return null;
-            }
+        }
     }
 
     /**

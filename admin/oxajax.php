@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxajax.php 17958 2009-04-07 14:29:36Z rimvydas.paskevicius $
+ * $Id: oxajax.php 18346 2009-04-20 08:39:52Z rimvydas.paskevicius $
  */
 
 // shop path for includes
@@ -515,7 +515,9 @@ class ajaxListComponent extends oxSuperCfg
         $blDeleteCacheOnLogout = $this->getConfig()->getConfigParam( 'blClearCacheOnLogout' );
 
 
-            oxUtils::getInstance()->oxResetFileCache();
+            if ( !$blDeleteCacheOnLogout ) {
+                oxUtils::getInstance()->oxResetFileCache();
+            }
     }
 
     /**

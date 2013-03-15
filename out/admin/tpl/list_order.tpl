@@ -42,12 +42,9 @@ function EditThis( sID)
     oTransfer.submit();
 }
 
-function ChangeLanguage()
+function ChangeListSize()
 {
-    var oList = document.getElementById("showlist");
-    oList.language.value=oList.changelang.value;
-    oList.editlanguage.value=oList.changelang.value;
-    oList.submit();
+    document.forms.showlist.submit();
 }
 
 
@@ -57,16 +54,10 @@ function ChangeLanguage()
 <form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
     [{ $shop->hiddensid }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
-    <input type="hidden" name="cl" value="">
+    <input type="hidden" name="cl" value="list_order">
     <input type="hidden" name="updatelist" value="1">
 </form>
 
-[{if $sql}]
-    <span class="listitem">
-    [{ oxmultilang ident="SHOWLIST_SQL" }] :[{$sql}]<br>
-    [{ oxmultilang ident="SHOWLIST_CNT" }] : [{$resultcount}]<br>
-    </span>
-[{/if}]
 [{ if $noresult }]
     <span class="listitem">
         <b>[{ oxmultilang ident="SHOWLIST_NORESULTS" }]</b><br><br>
@@ -84,23 +75,35 @@ function ChangeLanguage()
 <tr>
     <td class="listfilter first">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxorder.oxorderdate]" value="[{ $where->oxorder__oxorderdate|oxformdate }]"></td>
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxorder.oxorderdate]" value="[{ $where->oxorder__oxorderdate|oxformdate }]">
         </div></div>
+    </td>
     <td class="listfilter">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxorderarticles.oxartnum]" value="[{ $where->oxorderarticles__oxartnum }]"></td>
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxorderarticles.oxartnum]" value="[{ $where->oxorderarticles__oxartnum }]">
         </div></div>
+    </td>
     <td class="listfilter">
         <div class="r1"><div class="b1">&nbsp;</div></div>
-        </td>
+    </td>
     <td class="listfilter">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxorderarticles.oxtitle]" value="[{ $where->oxorderarticles__oxtitle }]"></td>
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxorderarticles.oxtitle]" value="[{ $where->oxorderarticles__oxtitle }]">
         </div></div>
+    </td>    
     <td class="listfilter" colspan="2">
-        <div class="r1"><div class="b1">
-        <div class="find"><input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]"></div>
-        </div></div>
+        <div class="r1">
+          <div class="b1">
+          <div class="find">
+          <select name="viewListSize" class="editinput" onChange="JavaScript:ChangeListSize()">
+            <option value="50" [{ if $viewListSize == 50 }]SELECTED[{/if}]>50</option>
+            <option value="100" [{ if $viewListSize == 100 }]SELECTED[{/if}]>100</option>
+            <option value="200" [{ if $viewListSize == 200 }]SELECTED[{/if}]>200</option>
+          </select>          
+          <input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]">
+        </div>
+        </div>
+      </div>
     </td>
 </tr>
 <tr>
@@ -111,6 +114,7 @@ function ChangeLanguage()
     <td class="listheader"><a href="javascript:document.forms.showlist.sort.value='oxprice';document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="price" }]</a></td>
 </tr>
 
+[{assign var="blWhite" value=""}]
 [{assign var="_cnt" value=0}]
 [{foreach from=$mylist item=oOrder}]
     [{assign var="_cnt" value=$_cnt+1}]
@@ -128,6 +132,7 @@ function ChangeLanguage()
     [{assign var="blWhite" value="2"}]
 [{/if}]
 [{/foreach}]
+[{include file="pagenavisnippet.tpl" colspan="8"}]
 
 </table>
 </form>
@@ -135,9 +140,9 @@ function ChangeLanguage()
 <span class="listitem">
 <b>[{ oxmultilang ident="SHOWLIST_SUM" }]:</b> [{ $sumresult}]<br>
 </span>
-
-</div>
 [{/if}]
+</div>
+
 <script type="text/javascript">
 if (parent.parent)
 {   parent.parent.sShopTitle   = "[{$actshopobj->oxshops__oxname->getRawValue()|oxaddslashes}]";

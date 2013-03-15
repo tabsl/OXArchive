@@ -19,15 +19,36 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: list_user.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: list_user.php 18141 2009-04-14 11:39:01Z arvydas $
  */
 
 /**
  * user list "view" class.
  * @package admin
  */
-class List_User extends oxAdminList
+class List_User extends User_List
 {
+    /**
+     * Viewable list size getter
+     *
+     * @return int
+     */
+    protected function _getViewListSize()
+    {
+        return $this->_getUserDefListSize();
+    }
+
+    /**
+     * Sets SQL query parameters (such as sorting),
+     * executes parent method parent::Init().
+     *
+     * @return null
+     */
+    public function init()
+    {
+        oxAdminList::init();
+    }
+
     /**
      * Executes parent method parent::render(), passes data to Smarty engine
      * and returns name of template file "list_review.tpl".
@@ -36,49 +57,12 @@ class List_User extends oxAdminList
      */
     public function render()
     {
-        $this->_oList = oxNew( "oxlist", "core" );
-        $this->_oList->setSqlLimit( 0, 5000 );
-        $this->_oList->init( "oxuser" );
-
-        $aWhere = $this->buildWhere();
-
-        $sSql = $this->_buildSelectString( $this->_oList->getBaseObject() );
-        $sSql = $this->_prepareWhereQuery( $aWhere, $sSql );
-        $sSql = $this->_prepareOrderByQuery( $sSql );
-        $sSql = $this->_changeselect( $sSql );
-        $this->_oList->selectString( $sSql );
-
         parent::render();
 
-        $aWhere = oxConfig::getParameter( "where");
-        if ( is_array( $aWhere ) ) {
-            foreach ( $aWhere as $sField => $sValue ) {
-                $this->_aViewData["where"]->{str_replace( '.', '__', $sField )} = $sValue;
-            }
-        }
-
-        $this->_aViewData["menustructure"] =  $this->getNavigation()->getDomXml()->documentElement->childNodes;
-
+        $this->_aViewData["viewListSize"]  = $this->_getViewListSize();
+        $this->_aViewData["whereparam"]    = $this->_aViewData["whereparam"] . '&amp;viewListSize='.$this->_getViewListSize();
+        $this->_aViewData["menustructure"] = $this->getNavigation()->getDomXml()->documentElement->childNodes;
         return "list_user.tpl";
-    }
-
-    /**
-     * Adds where condition to SQL
-     */
-    protected function _prepareWhereQuery( $aWhere, $sSql )
-    {
-        $sQ = parent::_prepareWhereQuery( $aWhere, $sSql );
-
-
-        return $sQ;
-    }
-
-    /**
-     * Returns select query string
-     */
-    protected function _buildSelectString( $oObject = null )
-    {
-        return 'select oxuser.oxid, oxuser.oxfname, oxuser.oxlname, oxuser.oxusername, oxuser.oxregister from oxuser where 1 ';
     }
 
     /**

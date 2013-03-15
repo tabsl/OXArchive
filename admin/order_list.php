@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: order_list.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: order_list.php 18342 2009-04-20 08:28:22Z arvydas $
  */
 
 /**
@@ -87,7 +87,7 @@ class Order_List extends oxAdminList
      *
      * @return null
      */
-    function buildWhere()
+    public function buildWhere()
     {
         $myConfig = $this->getConfig();
         $aFolders = $myConfig->getConfigParam( 'aOrderfolder' );

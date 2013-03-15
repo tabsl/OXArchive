@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: review.php 17315 2009-03-17 16:18:58Z arvydas $
+ * $Id: review.php 18044 2009-04-09 12:25:33Z arvydas $
  */
 
 /**
@@ -250,7 +250,8 @@ class Review extends oxUBase
      *
      * @return boolean
      */
-    protected function _checkDirectReview($sReviewUserId) {
+    protected function _checkDirectReview( $sReviewUserId )
+    {
         $oUser = $this->getUser();
         $blAllow = false;
         if ($oUser && ($sReviewUserId == $oUser->getId())) {
@@ -364,7 +365,7 @@ class Review extends oxUBase
         if ( $this->_oActiveRecommList === null ) {
             $this->_oActiveRecommList = false;
 
-            if( $sRecommId = oxConfig::getParameter( 'recommid' ) ){
+            if ( $sRecommId = oxConfig::getParameter( 'recommid' ) ) {
                 $oActiveRecommList = oxNew('oxrecommlist');
                 if ( $oActiveRecommList->load( $sRecommId ) ) {
                     $this->_oActiveRecommList = $oActiveRecommList;

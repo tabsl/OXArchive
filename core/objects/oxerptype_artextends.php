@@ -19,14 +19,20 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_artextends.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxerptype_artextends.php 18030 2009-04-09 11:36:21Z arvydas $
  */
 
-require_once( 'oxerptype.php');
+require_once 'oxerptype.php';
 
+/**
+ * ERP article extended data description class
+ */
 class oxERPType_Artextends extends oxERPType
 {
-
+    /**
+     * object fields description
+     * @var array
+     */
     protected $_aFieldListVersions = array (
         '2' => array(
             'OXID' => 'OXID',
@@ -40,9 +46,14 @@ class oxERPType_Artextends extends oxERPType
             'OXTAGS_3'         => 'OXTAGS_3',
     ),
     );
+
+    /**
+     * Class constructor
+     *
+     * @return null
+     */
     public function __construct()
     {
-
         parent::__construct();
 
         $this->_sTableName      = 'oxartextends';

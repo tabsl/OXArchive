@@ -16,12 +16,11 @@
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @link http://www.oxid-esales.com
- * @package main
+ * @package utils
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: verificationimg.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: verificationimg.php 18034 2009-04-09 12:16:24Z arvydas $
  */
-
 
 /**
  * Returns path to main script files.

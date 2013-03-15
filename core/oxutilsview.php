@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutilsview.php 17677 2009-03-30 15:19:39Z vilma $
+ * $Id: oxutilsview.php 18165 2009-04-15 07:25:36Z arvydas $
  */
 
 /**
@@ -249,8 +249,13 @@ class oxUtilsView extends oxSuperCfg
     {
         $myConfig = $this->getConfig();
 
-        $oSmarty->php_handling = SMARTY_PHP_REMOVE;
-        $oSmarty->security = $myConfig->isDemoShop()? true : false;
+        if ( !$myConfig->isDemoShop() ) {
+            $oSmarty->php_handling = (int) $myConfig->getConfigParam( 'iSmartyPhpHandling' );
+            $oSmarty->security     = false;
+        } else {
+            $oSmarty->php_handling = SMARTY_PHP_REMOVE;
+            $oSmarty->security     = true;
+        }
 
         $oSmarty->left_delimiter  = '[{';
         $oSmarty->right_delimiter = '}]';

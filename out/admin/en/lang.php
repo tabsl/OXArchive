@@ -19,7 +19,7 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 17955 2009-04-07 14:17:30Z rimvydas.paskevicius $
+ * $Id: lang.php 18295 2009-04-16 15:09:12Z rimvydas.paskevicius $
  */
 
 /*
@@ -1251,7 +1251,6 @@ $aLang = array(
 'SHOP_SYSTEM_SMARTYPHPHANDLING_PASSTHRU'        => 'Echo tags as-is',
 'SHOP_SYSTEM_SMARTYPHPHANDLING_QUOTE'           => 'Quote the tags as html entities',
 'SHOP_SYSTEM_SMARTYPHPHANDLING_ALLOW'           => 'Execute the tags as PHP code',
-
 'SHOP_SYSTEM_SHOWNEWBASKETITEMMESSAGE_TOBASKET' => 'Open Basket',
 
 'SHOP_SEO_SEOMODE'                              => 'Active',
@@ -1326,9 +1325,10 @@ $aLang = array(
 'SYSREQ_ZEND_OPTIMIZER'                         => 'Zend Optimizer installed',
 'SYSREQ_ZEND_PLATFORM'                          => 'Zend Platform installed',
 'SYSREQ_MB_STRING'                              => 'mbstring',
+'SYSREQ_UNICODE_SUPPORT'                        => 'UTF-8 support',
 'SYSREQ_MEMORY_LIMIT'                           => 'PHP Memory limit (min. 14MB, 30MB recommended)',
 'SYSREQ_DESCRIPTION_PASS'                       => 'Your system fits the requirement.',
-'SYSREQ_DESCRIPTION_PMIN'                       => 'The requirement is not or only partly fit. The OXID eShop will work anyway and can be installed..',
+'SYSREQ_DESCRIPTION_PMIN'                       => 'The requirement is not or only partly fit. The OXID eShop will work anyway and can be installed.',
 'SYSREQ_DESCRIPTION_FAIL'                       => 'Your system doesn\'t fit the requirement. The OXID eShop will not work without it and cannot be installed.',
 'SYSREQ_DESCRIPTION_NULL'                       => 'The requirement could  not be checked.',
 'SYSREQ_DESCRIPTION_COLL'                       => 'Collations in some columns do not match',

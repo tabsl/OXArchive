@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutilsfile.php 16752 2009-02-24 12:45:56Z arvydas $
+ * $Id: oxutilsfile.php 18024 2009-04-09 11:29:24Z arvydas $
  */
 
 /**
@@ -377,6 +377,8 @@ class oxUtilsFile extends oxSuperCfg
      *
      * @param string $sSource image location
      * @param string $sTarget image copy location
+     *
+     * @return bool
      */
     protected function _moveImage( $sSource, $sTarget )
     {
@@ -393,6 +395,7 @@ class oxUtilsFile extends oxSuperCfg
      * passed object and returns it.
      *
      * @param object $oObject object, that parameters are modified according to passed files
+     * @param array  $aFiles  name of files to process
      *
      * @return object
      */

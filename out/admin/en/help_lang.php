@@ -19,7 +19,7 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: help_lang.php 17699 2009-03-31 13:29:49Z arvydas $
+ * $Id: help_lang.php 18083 2009-04-10 11:58:34Z vilma $
  */
 
 /**
@@ -46,6 +46,7 @@
  */
 
 $aLang =  array(
+'charset'                                       => 'ISO-8859-15',
 
 'HELP_SHOP_SYSTEM_OTHERCOUNTRYORDER'			=> 	"Here you can set if orders can be made in countries for which no shipping costs are defined:" .
                                                     "<ul><li>If the setting is checked, users can order: The users are notified that they are informed about the shipping costs manually.</li>" .

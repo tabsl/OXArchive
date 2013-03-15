@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: start.php 17276 2009-03-17 10:28:21Z arvydas $
+ * $Id: start.php 18045 2009-04-09 12:26:14Z arvydas $
  */
 
 /**
@@ -207,7 +207,7 @@ class Start extends oxUBase
      *
      * @return string
      */
-    public function _prepareMetaDescription( $sMeta, $iLength = 1024, $blDescTag = false )
+    protected function _prepareMetaDescription( $sMeta, $iLength = 1024, $blDescTag = false )
     {
         if ( !$sMeta &&
             $this->getConfig()->getConfigParam( 'bl_perfLoadAktion' ) &&
@@ -227,7 +227,7 @@ class Start extends oxUBase
      *
      * @return string
      */
-    public function _prepareMetaKeyword( $sKeywords )
+    protected function _prepareMetaKeyword( $sKeywords )
     {
         if ( !$sKeywords &&
             $this->getConfig()->getConfigParam( 'bl_perfLoadAktion' ) &&
@@ -243,7 +243,7 @@ class Start extends oxUBase
      *
      * @return string
      */
-    public function _getLoadActionsParam()
+    protected function _getLoadActionsParam()
     {
         if ( $this->_blLoadActions === null ) {
             $this->_blLoadActions = false;

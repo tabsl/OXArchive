@@ -19,21 +19,22 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerpgenimport.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxerpgenimport.php 18088 2009-04-10 13:10:09Z rimvydas.paskevicius $
  */
 
 /**
  * Class handeling csv import
  *
  */
-class oxErpGenImport extends oxErpCsv {
+class oxErpGenImport extends oxErpCsv
+{
 
     /**
      * Import objects types
      *
      * @var array
      */
-	protected $_aObjects = array    (
+    protected $_aObjects = array    (
                                 'A' => 'article',
                                 'K' => 'category',
                                 'H' => 'vendor',
@@ -86,12 +87,13 @@ class oxErpGenImport extends oxErpCsv {
 
         throw new oxSystemComponentException( "Function '$sMethod' does not exist or is not accessible! (" . get_class($this) . ")".PHP_EOL);
     }
-        /**
+
+    /**
      * Class constructor.
      *
      * @return null
      */
-	public function __construct()
+    public function __construct()
     {
         $this->_setDbLayerVersion();
     }
@@ -99,9 +101,9 @@ class oxErpGenImport extends oxErpCsv {
     /**
      * Get instance of type
      *
-     * @param string $sType
+     * @param string $sType instance type
      *
-     * @throws Exeption
+     * @throws Exeption type not supported
      *
      * @return object
      */
@@ -126,10 +128,10 @@ class oxErpGenImport extends oxErpCsv {
      * Modyfies data befor import. Calls method for object fields
      * and csv data mapping.
      *
-     *  @param array  $aData CSV data
-     *  @param object $oType object type
+     * @param array  $aData CSV data
+     * @param object $oType object type
      *
-     *  @return array
+     * @return array
      */
     protected function _modifyData($aData, $oType)
     {
@@ -146,13 +148,13 @@ class oxErpGenImport extends oxErpCsv {
      */
     protected function _mapFields($aData, $oType)
     {
-    	$aRet = array();
-    	$iIndex = 0;
-    	foreach ( $this->_aCsvFileFieldsOrder as $sValue ) {
-    		if ( !empty($sValue) ) {
-    		  $aRet[$sValue] = $aData[$iIndex++];
-    		}
-    	}
+        $aRet = array();
+        $iIndex = 0;
+        foreach ( $this->_aCsvFileFieldsOrder as $sValue ) {
+            if ( !empty($sValue) ) {
+                $aRet[$sValue] = $aData[$iIndex++];
+            }
+        }
 
         return $aRet;
     }
@@ -160,8 +162,9 @@ class oxErpGenImport extends oxErpCsv {
     /**
      * Gets import object type according type prefix
      *
-     * @param  array $aData CSV data
-     * @throws Exeption
+     * @param array &$aData CSV data
+     *
+     * @throws Exeption if no such import type prefix
      *
      * @return string
      */
@@ -169,7 +172,7 @@ class oxErpGenImport extends oxErpCsv {
     {
         $sType = $this->_sImportTypePrefix;
 
-        if(strlen($sType) != 1 || !array_key_exists($sType, $this->_aObjects)){
+        if ( strlen($sType) != 1 || !array_key_exists($sType, $this->_aObjects) ) {
             throw new Exception("Error unknown command: ".$sType);
         } else {
             return $this->_aObjects[$sType];
@@ -178,6 +181,8 @@ class oxErpGenImport extends oxErpCsv {
 
     /**
      * Gets import mode
+     *
+     * @param array $aData CSV data
      *
      * @return string
      */
@@ -206,7 +211,7 @@ class oxErpGenImport extends oxErpCsv {
     /**
      * Set import object type prefix
      *
-     * @param string $sType
+     * @param string $sType import type prefix
      *
      * @return null
      */
@@ -223,31 +228,30 @@ class oxErpGenImport extends oxErpCsv {
     public function getImportObjectsList()
     {
         foreach ( $this->_aObjects as $sKey => $sImportType ) {
-        	$oType = $this->_getInstanceOfType( $sImportType );
-        	$aList[$sKey] = $oType->getBaseTableName();
+            $oType = $this->_getInstanceOfType( $sImportType );
+            $aList[$sKey] = $oType->getBaseTableName();
         }
-    	return $aList;
+        return $aList;
     }
 
     /**
      * Init ERP Framework parameters
      * Creates Objects, checks Rights etc.
      *
-     * @param mixed $sUserName
-     * @param mixed $sPassword
-     * @param integer $iShopID
-     * @param integer $iLanguage
+     * @param mixed   $sUserName user name
+     * @param mixed   $sPassword password
+     * @param integer $iShopID   shop ID
+     * @param integer $iLanguage language ID
      *
      * @return boolean
      */
     public function init( $sUserName, $sPassword, $iShopID = 1, $iLanguage = 0)
     {
-    	$myConfig = oxConfig::getInstance();
-    	$mySession = oxSession::getInstance();
-    	$oUser = oxUser::getAdminUser();
+        $myConfig = oxConfig::getInstance();
+        $mySession = oxSession::getInstance();
+        $oUser = oxUser::getAdminUser();
 
-        if( ( $oUser->oxuser__oxrights->value == "malladmin" || $oUser->oxuser__oxrights->value == $myConfig->GetShopID()) )
-        {
+        if ( ( $oUser->oxuser__oxrights->value == "malladmin" || $oUser->oxuser__oxrights->value == $myConfig->getShopID()) ) {
             $this->_sSID        = $mySession->getId();
             $this->_blInit      = true;
             $this->_iLanguage   = oxLang::getInstance()->getBaseLanguage();
@@ -267,13 +271,13 @@ class oxErpGenImport extends oxErpCsv {
     /**
      * Set CSV file comumns names
      *
-     * @param array $aCsvFields
+     * @param array $aCsvFields CSV fields
      *
      * @return null
      */
     public function setCsvFileFieldsOrder( $aCsvFields )
     {
-		$this->_aCsvFileFieldsOrder = $aCsvFields;
+        $this->_aCsvFileFieldsOrder = $aCsvFields;
     }
 
     /**
@@ -285,7 +289,7 @@ class oxErpGenImport extends oxErpCsv {
      */
     public function setCsvContainsHeader( $blCsvContainsHeader )
     {
-    	$this->_blCsvContainsHeader = $blCsvContainsHeader;
+        $this->_blCsvContainsHeader = $blCsvContainsHeader;
     }
 
     /**
@@ -296,19 +300,23 @@ class oxErpGenImport extends oxErpCsv {
     public function getTotalImportedRowsNumber()
     {
         $iTotal = 0;
-    	foreach ( $this->getStatistics() as $aValue ) {
-    		if ( $aValue ['r'] ) {
-    			$iTotal++;
-    		}
-    	}
+        foreach ( $this->getStatistics() as $aValue ) {
+            if ( $aValue ['r'] ) {
+                $iTotal++;
+            }
+        }
 
-    	return $iTotal;
+        return $iTotal;
     }
 
     /**
      * Main import method, whole import of all types via a given csv file is done here
      *
-     * @param string $sPath full path of the CSV file.
+     * @param string  $sPath         full path of the CSV file.
+     * @param string  $sUserName     user name
+     * @param string  $sUserPassword password
+     * @param integer $sShopId       shop ID
+     * @param integer $sShopLanguage language ID
      *
      * @return string
      *
@@ -332,13 +340,13 @@ class oxErpGenImport extends oxErpCsv {
 
         $file = @fopen($this->_sPath, "r");
 
-        if(isset($file) && $file){
+        if ( isset($file) && $file ) {
             $iRow = 0;
             $aRow = array();
 
-            while ( ($aRow = fgetcsv( $file, $iMaxLineLength, ";",'"')) !== FALSE) {
+            while ( ($aRow = fgetcsv( $file, $iMaxLineLength, ";", '"') ) !== false ) {
 
-            	$this->_aData[] = $aRow;
+                $this->_aData[] = $aRow;
             }
 
             if ( $this->_blCsvContainsHeader ) {

@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: adminlinks_main.php 17188 2009-03-13 12:19:11Z arvydas $
+ * $Id: adminlinks_main.php 18288 2009-04-16 14:06:18Z arvydas $
  */
 
 /**
@@ -173,5 +173,25 @@ class Adminlinks_Main extends oxAdminDetails
         // set oxid if inserted
         if ( $soxId == "-1")
             oxSession::setVar( "saved_oxid", $oLinks->oxlinks__oxid->value);
+    }
+
+    /**
+     * Initiates Text editor
+     *
+     * @param int    $iWidth      editor width
+     * @param int    $iHeight     editor height
+     * @param object $oObject     object passed to editor
+     * @param string $sField      object field which content is passed to editor
+     * @param string $sStylesheet stylesheet to use in editor
+     *
+     * @return wysiwygPro
+     */
+    protected function _getTextEditor( $iWidth, $iHeight, $oObject, $sField, $sStylesheet = null )
+    {
+        if ( $oEditor = parent::_getTextEditor( $iWidth, $iHeight, $oObject, $sField, $sStylesheet ) ) {
+            // setting empty value
+            $oEditor->emptyValue = ( $oEditor->lineReturns == 'P' ) ? "<p>&nbsp;</p>" : "<div>&nbsp;</div>";
+        }
+        return $oEditor;
     }
 }

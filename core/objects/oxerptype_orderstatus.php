@@ -19,13 +19,21 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_orderstatus.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxerptype_orderstatus.php 18033 2009-04-09 12:15:54Z arvydas $
  */
 
-require_once( 'oxerptype.php');
+require_once 'oxerptype.php';
 
+/**
+ * ERP order status description class
+ */
 class oxERPType_OrderStatus extends oxERPType
 {
+    /**
+     * Class constructor
+     *
+     * @return null
+     */
     public function __construct()
     {
         parent::__construct();
@@ -40,18 +48,34 @@ class oxERPType_OrderStatus extends oxERPType
         );
     }
 
+    /**
+     * return sql column name of given table column
+     *
+     * @param string $sWhere    where condition
+     * @param int    $iLanguage language id
+     * @param int    $iShopID   shop id
+     *
+     * @return string
+     */
     public function getSQL( $sWhere, $iLanguage = 0, $iShopID = 1)
     {
-         if( strstr( $sWhere, 'where'))
+        if ( strstr( $sWhere, 'where' ) ) {
             $sWhere .= ' and ';
-        else
+        } else {
             $sWhere .= ' where ';
+        }
 
         $sWhere .= 'oxordershopid = \''.$iShopID.'\'';
-
-        return parent::getSQL($sWhere, $iLanguage, $iShopID);
+        return parent::getSQL( $sWhere, $iLanguage, $iShopID );
     }
 
+    /**
+     * Checks for write access. If access is not granted exception is thrown
+     *
+     * @param object $sOxid object id
+     *
+     * @return null
+     */
     public function checkWriteAccess($sOxid)
     {
         $myConfig = oxConfig::getInstance();
@@ -61,7 +85,7 @@ class oxERPType_OrderStatus extends oxERPType
         $sSql = "select oxordershopid from ". $this->getTableName($myConfig->getShopId()) ." where oxid = '". $sOxid ."'";
         $sRes = $oDB->getOne($sSql);
 
-        if($sRes && $sRes != $myConfig->getShopId()){
+        if ( $sRes && $sRes != $myConfig->getShopId() ) {
             throw new Exception( oxERPBase::$ERROR_USER_NO_RIGHTS);
         }
     }
@@ -69,17 +93,18 @@ class oxERPType_OrderStatus extends oxERPType
     /**
      * issued before saving an object. can modify aData for saving
      *
-     * @param oxBase $oShopObject
-     * @param array  $aData
+     * @param oxBase $oShopObject         shop object
+     * @param array  $aData               data used in assign
+     * @param bool   $blAllowCustomShopId if TRUE - custom shop id is allowed
+     *
      * @return array
      */
     protected function _preAssignObject($oShopObject, $aData, $blAllowCustomShopId)
     {
         $aData = parent::_preAssignObject($oShopObject, $aData, $blAllowCustomShopId);
-        if (isset($aData['OXERPSTATUS_STATUS'])
-            && isset($aData['OXERPSTATUS_TIME'])
-            && isset($aData['OXERPSTATUS_TRACKID']))
-            {
+        if ( isset($aData['OXERPSTATUS_STATUS'] )
+            && isset($aData['OXERPSTATUS_TIME'] )
+            && isset($aData['OXERPSTATUS_TRACKID'] ) ) {
             $oStatus = new stdClass();
             $oStatus->STATUS        = $aData['OXERPSTATUS_STATUS'];
             $oStatus->date          = $aData['OXERPSTATUS_TIME'];
@@ -92,7 +117,9 @@ class oxERPType_OrderStatus extends oxERPType
     /**
      * We have the possibility to add some data
      *
-     * @param array $aFields
+     * @param array $aFields a fields to export
+     *
+     * @return array
      */
     public function addExportData( $aFields)
     {
@@ -112,8 +139,9 @@ class oxERPType_OrderStatus extends oxERPType
     /**
      * return sql column name of given table column
      *
-     * @param string $sField
-     * @param int    $iLanguage
+     * @param string $sField    object field anme
+     * @param int    $iLanguage language id
+     * @param int    $iShopID   shop id
      *
      * @return string
      */

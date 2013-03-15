@@ -19,7 +19,7 @@
  * @package inc
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: category_main.inc.php 17958 2009-04-07 14:29:36Z rimvydas.paskevicius $
+ * $Id: category_main.inc.php 18151 2009-04-14 13:43:26Z rimvydas.paskevicius $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -150,7 +150,7 @@ class ajaxComponent extends ajaxListComponent
     public function removearticle()
     {
         $aArticles = $this->_getActionIds( 'oxobject2category.oxid' );
-        $sCategoryID = oxConfig::getParameter( 'oxajax_fid');
+        $sCategoryID = oxConfig::getParameter( 'oxid');
         $sShopID     = $this->getConfig()->getShopId();
         $oDb = oxDb::getDb();
 

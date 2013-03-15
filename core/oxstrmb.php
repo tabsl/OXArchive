@@ -22,6 +22,9 @@
  * $Id: oxerpgenimport.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
  */
 
+/**
+ * Class dealing with multibyte strings
+ */
 class oxStrMb
 {
     /**
@@ -47,7 +50,7 @@ class oxStrMb
     /**
      * PHP  multibute compliant strlen() function wrapper
      *
-     * @param string $sStr
+     * @param string $sStr strint to mesure its length
      *
      * @return int
      */
@@ -59,9 +62,9 @@ class oxStrMb
     /**
      * PHP multibute compliant substr() function wrapper
      *
-     * @param string $sStr
-     * @param int    $iStart
-     * @param int    $iLength
+     * @param string $sStr    value to truncate
+     * @param int    $iStart  start position
+     * @param int    $iLength length
      *
      * @return string
      */
@@ -72,11 +75,11 @@ class oxStrMb
     }
 
     /**
-     * PHP multibute compliant strpos() function wrapper
+     * PHP multibyte compliant strpos() function wrapper
      *
-     * @param string $sHaystack
-     * @param string $sNeedle
-     * @param int    $sOffset
+     * @param string $sHaystack value to search in
+     * @param string $sNeedle   value to search for
+     * @param int    $iOffset   initial search position
      *
      * @return string
      */
@@ -89,12 +92,12 @@ class oxStrMb
     /**
      * PHP multibute compliant strstr() function wrapper
      *
-     * @param string $sHaystack
-     * @param string $sNeedle
+     * @param string $sHaystack value to search in
+     * @param string $sNeedle   value to search for
      *
      * @return string
      */
-    public function strstr($sHaystack, $sNeedle)
+    public function strstr( $sHaystack, $sNeedle )
     {
         return mb_strstr($sHaystack, $sNeedle, false, $this->_sEncoding);
     }
@@ -127,13 +130,12 @@ class oxStrMb
      * PHP htmlspecialchars() function wrapper
      *
      * @param string $sString        string being converted
-     * @param bool   $blDoubleEncode When this is turned off PHP will not encode existing html entities, the default is to convert everything.
      *
      * @return string
      */
-    public function htmlspecialchars($sString, $blDoubleEncode= true)
+    public function htmlspecialchars($sString)
     {
-        return htmlspecialchars($sString, ENT_QUOTES, $this->_sEncoding, $blDoubleEncode);
+        return htmlspecialchars($sString, ENT_QUOTES, $this->_sEncoding);
     }
 
     /**
@@ -186,7 +188,7 @@ class oxStrMb
      *
      * @return string
      */
-    public function preg_replace($aPattern, $sString, $sSubject, $sLimit = -1, $iCount = null)
+    public function preg_replace($aPattern, $sString, $sSubject, $iLimit = -1, $iCount = null)
     {
         if ( is_array($aPattern) ) {
             foreach ( $aPattern as &$sPattern) {
@@ -195,7 +197,7 @@ class oxStrMb
         } else {
             $aPattern = $aPattern.'u';
         }
-        return preg_replace( $aPattern, $sString, $sSubject, $sLimit, $iCount);
+        return preg_replace( $aPattern, $sString, $sSubject, $iLimit, $iCount);
     }
 
     /**
@@ -240,9 +242,9 @@ class oxStrMb
     public function wordwrap( $sString, $iLength = 75, $sBreak = "\n", $blCut = null )
     {
         if ( !$blCut ) {
-            $sRegexp = '/.{'.$iLength.',}\s/u';
+            $sRegexp = "/^(.{1,{$iLength}}\r?(\s|$|\n)|.{1,{$iLength}}[^\r\s\n]*\r?(\n|\s|$))/u";
         } else {
-            $sRegexp = '/(\S{'.$iLength.'}|.{1,'.$iLength.'}\s)/u';
+            $sRegexp = "/^([^\s]{{$iLength}}|.{1,{$iLength}}\s)/u";
         }
 
         $iStrLen = mb_strlen( $sString, $this->_sEncoding );
@@ -253,18 +255,22 @@ class oxStrMb
         $aMatches = array();
         while ( $i > 0 ) {
             $iWraps = floor( mb_strlen( $sString, $this->_sEncoding ) / $iLength );
-            
+
             $i = $iWraps;
             if ( preg_match( $sRegexp, $sString, $aMatches ) ) {
                 $sStr = $aMatches[0];
-                $sReturn .= trim( $sStr ) . $sBreak;
-                $sString = $this->substr( trim( $sString ), mb_strlen( $sStr, $this->_sEncoding ) );
+                $sReturn .= preg_replace( '/\s$/s', '', $sStr ) . $sBreak;
+                $sString = $this->substr( $sString , mb_strlen( $sStr, $this->_sEncoding ) );
             } else {
-            	break;
+                break;
             }
             $i--;
         }
-        return $sReturn.$sString;
+        $sReturn = preg_replace( "/$sBreak$/", '', $sReturn );
+        if ($sString) {
+            $sReturn .= $sBreak.$sString;
+        }
+        return $sReturn;
     }
 
     /**

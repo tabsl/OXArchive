@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: navigation.php 17958 2009-04-07 14:29:36Z rimvydas.paskevicius $
+ * $Id: navigation.php 18346 2009-04-20 08:39:52Z rimvydas.paskevicius $
  */
 
 /**
@@ -121,10 +121,9 @@ class Navigation extends oxAdminView
         }
 
         //reseting content cache if needed
-        $blDeleteCacheOnLogout = $this->getConfig()->getConfigParam( 'blClearCacheOnLogout' );
-        if ( $blDeleteCacheOnLogout ) {
-
-                oxUtils::getInstance()->oxResetFileCache();
+        $blDeleteCache = $this->getConfig()->getConfigParam( 'blClearCacheOnLogout' );
+        if ( $blDeleteCache ) {
+            $this->resetContentCache( $blDeleteCache );
         }
 
         oxUtils::getInstance()->redirect( 'index.php' );

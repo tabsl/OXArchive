@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxseoencoder.php 17919 2009-04-07 07:20:15Z rimvydas.paskevicius $
+ * $Id: oxseoencoder.php 18357 2009-04-20 11:17:02Z arvydas $
  */
 
 /**
@@ -401,13 +401,13 @@ class oxSeoEncoder extends oxSuperCfg
         $sRegExp = '/[^A-Za-z0-9'.preg_quote( self::$_sSeparator, '/').'\/]+/';
         $sTitle  = trim( $oStr->preg_replace( array( "/\W*\/\W*/", $sRegExp ), array( "/", self::$_sSeparator ), $sTitle ), self::$_sSeparator );
 
-        // binding ".html" back
-        $sTitle .= $sExt;
-
         // SEO id is empty ?
         if ( !$sTitle ) {
             $sTitle = $this->_prepareTitle( self::$_sPrefix );
         }
+
+        // binding ".html" back
+        $sTitle .= $sExt;
 
         // cleaning
         return $oStr->preg_replace( array( '|//+|', '/' . preg_quote( self::$_sSeparator . self::$_sSeparator, '/' ) .'+/' ),

@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxview.php 17351 2009-03-18 12:42:39Z arvydas $
+ * $Id: oxview.php 18043 2009-04-09 12:25:00Z arvydas $
  */
 
 /**
@@ -448,7 +448,8 @@ class oxView extends oxSuperCfg
      * Executes method (creates class and then executes). Returns executed
      * function result.
      *
-     * @param string $sFunction    name of function to execute
+     * @param string $sFunction name of function to execute
+     *
      * @throws oxSystemComponentException system component exception
      *
      * @return mixed
@@ -603,11 +604,13 @@ class oxView extends oxSuperCfg
     {
         $sEdition = $this->getShopEdition();
         $sFullEdition = "Community Edition";
-        if ($sEdition == "PE")
+        if ( $sEdition == "PE" ) {
             $sFullEdition = "Professional Edition";
+        }
 
-        if ($sEdition == "EE")
+        if ( $sEdition == "EE" ) {
             $sFullEdition = "Enterprise Edition";
+        }
 
         return $sFullEdition;
     }
@@ -655,7 +658,7 @@ class oxView extends oxSuperCfg
     /**
      * Sets if to show newsletter
      *
-     * @param bool $blShow
+     * @param bool $blShow if TRUE - newsletter subscription box will be shown
      *
      * @return null
      */
@@ -677,7 +680,7 @@ class oxView extends oxSuperCfg
     /**
      * Sets shop logo
      *
-     * @param string $sLogo
+     * @param string $sLogo shop logo url
      *
      * @return null
      */

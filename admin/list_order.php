@@ -19,15 +19,25 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: list_order.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: list_order.php 18354 2009-04-20 10:42:25Z arvydas $
  */
 
 /**
  * user list "view" class.
  * @package admin
  */
-class List_Order extends oxAdminList
+class List_Order extends Order_List
 {
+    /**
+     * Viewable list size getter
+     *
+     * @return int
+     */
+    protected function _getViewListSize()
+    {
+        return $this->_getUserDefListSize();
+    }
+
     /**
      * Executes parent method parent::render(), passes data to Smarty engine
      * and returns name of template file "list_review.tpl".
@@ -36,35 +46,45 @@ class List_Order extends oxAdminList
      */
     public function render()
     {
-        $this->_oList = oxNew( "oxlist", "core" );
-        $this->_oList->setSqlLimit( 0, 5000 );
-        $this->_oList->init( "oxbase", "oxorder" );
+        oxAdminList::render();
 
-        $aWhere = $this->buildWhere();
-
-        $sSql = $this->_buildSelectString( $this->_oList->getBaseObject() );
-        $sSql = $this->_prepareWhereQuery( $aWhere, $sSql );
-
-        // calculating sum
-        $sSumQ = preg_replace("/select .*? from/", "select round( sum(oxorderarticles.oxbrutprice*oxorder.oxcurrate),2) from", $sSql );
-        $this->_aViewData["sumresult"] = oxDb::getDb()->getOne( $sSumQ );
-
-        $sSql = $this->_prepareOrderByQuery( $sSql );
-        $sSql = $this->_changeselect( $sSql );
-        $this->_oList->selectString( $sSql );
-
-        parent::render();
-
-        $aWhere = oxConfig::getParameter( "where");
-        if ( is_array( $aWhere ) ) {
-            foreach ( $aWhere as $sField => $sValue ) {
-                $this->_aViewData["where"]->{str_replace( '.', '__', $sField )} = $sValue;
-            }
-        }
-
-        $this->_aViewData["menustructure"] =  $this->getNavigation()->getDomXml()->documentElement->childNodes;
+        $this->_aViewData["viewListSize"]  = $this->_getViewListSize();
+        $this->_aViewData["whereparam"]    = $this->_aViewData["whereparam"] . '&amp;viewListSize='.$this->_getViewListSize();
+        $this->_aViewData["menustructure"] = $this->getNavigation()->getDomXml()->documentElement->childNodes;
 
         return "list_order.tpl";
+    }
+
+    /**
+     * Adding shop check
+     *
+     * @return null
+     */
+    public function buildWhere()
+    {
+        return oxAdminList::buildWhere();
+    }
+
+    /**
+     * Calculates list items count
+     *
+     * @param string $sSql SQL query used co select list items
+     *
+     * @return null
+     */
+    protected function _calcListItemsCount( $sSql )
+    {
+        // count SQL
+        $sSql = preg_replace( '/select .* from/', 'select count(*) from ', $sSql );
+
+        // removing order by
+        $sSql = preg_replace( '/order by .*$/', '', $sSql );
+
+        // con of list items which fits current search conditions
+        $this->_iListSize = oxDb::getDb()->getOne( "select count(*) from ( $sSql ) as test" );
+
+        // set it into session that other frames know about size of DB
+        oxSession::setVar( 'iArtCnt', $this->_iListSize );
     }
 
     /**
@@ -84,6 +104,10 @@ class List_Order extends oxAdminList
      */
     protected function _prepareOrderByQuery( $sSql = null )
     {
+        // calculating sum
+        $sSumQ = preg_replace("/select .*? from/", "select round( sum(oxorderarticles.oxbrutprice*oxorder.oxcurrate),2) from", $sSql );
+        $this->_aViewData["sumresult"] = oxDb::getDb()->getOne( $sSumQ );
+
         $sSql = " $sSql group by oxorderarticles.oxartnum";
         if ( $sSort = oxConfig::getParameter( "sort" ) ) {
             $sSortDesc = ($sSort == 'oxorder.oxorderdate') ? 'DESC' : '';

@@ -19,15 +19,39 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: list_review.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * $Id: list_review.php 18338 2009-04-20 07:54:06Z arvydas $
  */
 
 /**
  * user list "view" class.
  * @package admin
  */
-class List_Review extends oxAdminList
+class List_Review extends Article_List
 {
+    /**
+     * Type of list.
+     *
+     * @var string
+     */
+    protected $_sListType  = 'oxlist';
+
+    /**
+     * Name of chosen object class (default null).
+     *
+     * @var string
+     */
+    protected $_sListClass = 'oxreview';
+
+    /**
+     * Viewable list size getter
+     *
+     * @return int
+     */
+    protected function _getViewListSize()
+    {
+        return $this->_getUserDefListSize();
+    }
+
     /**
      * Executes parent method parent::render(), passes data to Smarty engine
      * and returns name of template file "list_review.tpl".
@@ -36,34 +60,45 @@ class List_Review extends oxAdminList
      */
     public function render()
     {
-        $this->_oList = oxNew( "oxlist", "core" );
-        $this->_oList->setSqlLimit( 0, 5000 );
-        $this->_oList->init( "oxreview" );
+        oxAdminList::render();
 
-        $aWhere = $this->buildWhere();
-        //$aWhere['oxreviews.oxlang'] = $this->_iEditLang;
-
-        $sSql = $this->_buildSelectString( $this->_oList->getBaseObject() );
-        $sSql = $this->_prepareWhereQuery( $aWhere, $sSql );
-        $sSql = $this->_prepareOrderByQuery( $sSql );
-        $sSql = $this->_changeselect( $sSql );
-        //$this->_oList->setAssignCallback( array( oxNew("List_Review"), 'formatArticleTitle'));
-        $this->_oList->selectString( $sSql );
-
-        parent::render();
-
-        $aWhere = oxConfig::getParameter( "where");
-        if ( is_array( $aWhere ) ) {
-            foreach ( $aWhere as $sField => $sValue ) {
-                $this->_aViewData["where"]->{str_replace( '.', '__', $sField )} = $sValue;
-            }
-        }
-
-        $this->_aViewData["menustructure"] =  $this->getNavigation()->getDomXml()->documentElement->childNodes;
+        $this->_aViewData["viewListSize"]  = $this->_getViewListSize();
+        $this->_aViewData["whereparam"]    = $this->_aViewData["whereparam"] . '&amp;viewListSize='.$this->_getViewListSize();
+        $this->_aViewData["menustructure"] = $this->getNavigation()->getDomXml()->documentElement->childNodes;
+        $this->_aViewData["articleListTable"] = getViewName('oxarticles');
 
         return "list_review.tpl";
     }
 
+    /**
+     * Sets view filter data
+     *
+     *  - aViewData['where'] containts filter data like $object->oxarticles__oxtitle = filter_value
+     *  - aViewData['whereparam'] contains string which can be later used in url. and
+     *    looks like &amp;where[oxarticles.oxtitle]=_filter_value_&amp;art_category=_filter_categry_;
+     *
+     * @return null
+     */
+    protected function _setFilterParams()
+    {
+        parent::_setFilterParams();
+
+        // build where
+        if ( is_array( $aWhere = oxConfig::getParameter( 'where' ) ) ) {
+
+            $myUtils  = oxUtils::getInstance();
+            $sTable = 'oxarticles';
+
+            $oSearchKeys = isset( $this->_aViewData['where'] ) ? $this->_aViewData['where'] : new oxStdClass();
+
+            while ( list( $sName, $sValue ) = each( $aWhere ) ) {
+                $sFieldName = str_replace( getViewName( $sTable ) . '.', $sTable . '.', $sName );
+                $sFieldName = $myUtils->getArrFldName( $sFieldName );
+                $oSearchKeys->$sFieldName = $sValue;
+            }
+            $this->_aViewData['where'] = $oSearchKeys;
+        }
+    }
 
     /**
      * Returns select query string
@@ -77,11 +112,11 @@ class List_Review extends oxAdminList
         $sArtTable = getViewName('oxarticles');
         $sLangTag = oxLang::getInstance()->getLanguageTag( $this->_iEditLang );
 
-        $sSql = "select oxreviews.oxid, oxreviews.oxcreate, oxreviews.oxtext, oxreviews.oxobjectid, oxarticles.oxparentid, oxarticles.oxtitle{$sLangTag} as oxtitle, oxarticles.oxvarselect{$sLangTag} as oxvarselect, oxparentarticles.oxtitle{$sLangTag} as parenttitle,
-                   concat( oxarticles.oxtitle{$sLangTag}, if(isnull(oxparentarticles.oxtitle{$sLangTag}), '', oxparentarticles.oxtitle{$sLangTag}), oxarticles.oxvarselect_1) as arttitle from oxreviews
-                 left join $sArtTable as oxarticles on oxarticles.oxid=oxreviews.oxobjectid and 'oxarticle' = oxreviews.oxtype
-                 left join $sArtTable as oxparentarticles on oxparentarticles.oxid = oxarticles.oxparentid
-                 where 1 and oxreviews.oxlang = '{$this->_iEditLang}' ";
+        $sSql  = "select oxreviews.oxid, oxreviews.oxcreate, oxreviews.oxtext, oxreviews.oxobjectid, {$sArtTable}.oxparentid, {$sArtTable}.oxtitle{$sLangTag} as oxtitle, {$sArtTable}.oxvarselect{$sLangTag} as oxvarselect, oxparentarticles.oxtitle{$sLangTag} as parenttitle, ";
+        $sSql .= "concat( {$sArtTable}.oxtitle{$sLangTag}, if(isnull(oxparentarticles.oxtitle{$sLangTag}), '', oxparentarticles.oxtitle{$sLangTag}), {$sArtTable}.oxvarselect_1) as arttitle from oxreviews ";
+        $sSql .= "left join $sArtTable as {$sArtTable} on {$sArtTable}.oxid=oxreviews.oxobjectid and 'oxarticle' = oxreviews.oxtype ";
+        $sSql .= "left join $sArtTable as oxparentarticles on oxparentarticles.oxid = {$sArtTable}.oxparentid ";
+        $sSql .= "where 1 and oxreviews.oxlang = '{$this->_iEditLang}' ";
         return $sSql;
     }
 
@@ -95,7 +130,8 @@ class List_Review extends oxAdminList
      */
     protected function _prepareWhereQuery( $aWhere, $sSql )
     {
-        $sArtTitleField = 'oxarticles.oxtitle';
+        $sArtTable = getViewName('oxarticles');
+        $sArtTitleField = "{$sArtTable}.oxtitle";
         $sSqlForTitle = null;
         $sLangTag = oxLang::getInstance()->getLanguageTag( $this->_iEditLang );
 
@@ -103,11 +139,11 @@ class List_Review extends oxAdminList
 
         // if searching in article title field, updating sql for this case
         if ( $this->_aWhere[$sArtTitleField] ) {
-            $sSqlForTitle = " (CONCAT( oxarticles.oxtitle{$sLangTag}, if(isnull(oxparentarticles.oxtitle{$sLangTag}), '', oxparentarticles.oxtitle{$sLangTag}), oxarticles.oxvarselect{$sLangTag})) ";
-            $sSql = preg_replace( "/oxarticles\.oxtitle\s+like/", "$sSqlForTitle like", $sSql );
+            $sSqlForTitle = " (CONCAT( {$sArtTable}.oxtitle{$sLangTag}, if(isnull(oxparentarticles.oxtitle{$sLangTag}), '', oxparentarticles.oxtitle{$sLangTag}), {$sArtTable}.oxvarselect{$sLangTag})) ";
+            $sSql = preg_replace( "/{$sArtTable}\.oxtitle\s+like/", "$sSqlForTitle like", $sSql );
         }
 
-        return " $sSql and oxarticles.oxid is not null ";
+        return " $sSql and {$sArtTable}.oxid is not null ";
     }
 
     /**

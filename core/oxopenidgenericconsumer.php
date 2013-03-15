@@ -37,11 +37,11 @@ class oxOpenIdGenericConsumer extends Auth_OpenID_GenericConsumer
      * This method initializes a new {@link Auth_OpenID_Consumer}
      * instance to access the library.
      *
-     * @param object $store an object that implements the interface in Auth_OpenID_OpenIDStore.
-     * 
+     * @param object &$store an object that implements the interface in Auth_OpenID_OpenIDStore.
+     *
      * @return null
      */
-    function oxOpenIdGenericConsumer(&$store)
+    public function oxOpenIdGenericConsumer( &$store )
     {
         $this->store =& $store;
         $this->negotiator =& Auth_OpenID_getDefaultNegotiator();
@@ -55,15 +55,17 @@ class oxOpenIdGenericConsumer extends Auth_OpenID_GenericConsumer
     /**
      * Returns an HTTP fetcher object.
      *
-     * @return object
+     * @param int $iTimeout timeout
+     *
+     * @return mixed
      */
-    function getHTTPFetcher($timeout = 20)
+    public function getHTTPFetcher( $iTimeout = 20 )
     {
         if (Auth_Yadis_Yadis::curlPresent() &&
             (!defined('Auth_Yadis_CURL_OVERRIDE'))) {
-            $fetcher = new oxOpenIdHTTPFetcher($timeout);
+            $fetcher = new oxOpenIdHTTPFetcher( $iTimeout );
         } else {
-            $fetcher = new Auth_Yadis_PlainHTTPFetcher($timeout);
+            $fetcher = new Auth_Yadis_PlainHTTPFetcher( $iTimeout );
         }
         return $fetcher;
     }

@@ -19,14 +19,14 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerpcompatability.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxerpcompatability.php 18054 2009-04-09 16:47:26Z arvydas $
  */
 
 /**
  * Class handeling ERP compatability checks based on shop revision number
  * @package core
  */
-class OXERPCompatability
+class oxERPCompatability
 {
     /**
      * Returns build revision number or false on read error.

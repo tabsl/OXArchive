@@ -36,22 +36,16 @@ function EditThis( sID)
       [{/if}]
     [{/foreach}]
 
-
-
     var oTransfer = document.getElementById( "transfer" );
     oTransfer.oxid.value = sID;
     oTransfer.cl.value = 'admin_user';
     oTransfer.submit();
 }
 
-function ChangeLanguage()
+function ChangeListSize()
 {
-    var oList = document.getElementById("showlist");
-    oList.language.value=oList.changelang.value;
-    oList.editlanguage.value=oList.changelang.value;
-    oList.submit();
+    document.forms.showlist.submit();
 }
-
 //-->
 </script>
 
@@ -60,8 +54,6 @@ function ChangeLanguage()
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="list_user">
     <input type="hidden" name="updatelist" value="1">
-    <input type="hidden" name="language" value="[{ $actlang }]">
-    <input type="hidden" name="editlanguage" value="[{ $actlang }]">
 </form>
 
 [{ if $noresult }]
@@ -96,10 +88,19 @@ function ChangeLanguage()
         </div></div>
     </td>
     <td class="listfilter">
-        <div class="r1"><div class="b1">
-        <div class="find"><input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]"></div>
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser.oxregister]" value="[{ $where->oxuser__oxregister|oxformdate }]">
-        </div></div>
+        <div class="r1">
+          <div class="b1">
+            <div class="find">
+              <select name="viewListSize" class="editinput" onChange="JavaScript:ChangeListSize()">
+                <option value="50" [{ if $viewListSize == 50 }]SELECTED[{/if}]>50</option>
+                <option value="100" [{ if $viewListSize == 100 }]SELECTED[{/if}]>100</option>
+                <option value="200" [{ if $viewListSize == 200 }]SELECTED[{/if}]>200</option>
+              </select>
+              <input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]">
+            </div>
+            <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser.oxregister]" value="[{ $where->oxuser__oxregister|oxformdate }]">
+          </div>
+        </div>
     </td>
 </tr>
 <tr>
@@ -126,9 +127,10 @@ function ChangeLanguage()
     [{assign var="blWhite" value="2"}]
 [{/if}]
 [{/foreach}]
-
+[{include file="pagenavisnippet.tpl" colspan="8"}]
 </table>
 </form>
+</div>
 
 <script type="text/javascript">
 if (parent.parent)

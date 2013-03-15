@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: alist.php 17902 2009-04-06 14:22:54Z vilma $
+ * $Id: alist.php 18038 2009-04-09 12:21:40Z arvydas $
  */
 
 /**
@@ -512,6 +512,8 @@ class aList extends oxUBase
     /**
      * Returns category seo url status (fixed or not)
      *
+     * @param oxcategory $oCategory active category
+     *
      * @return bool
      */
     protected function _isFixedUrl( $oCategory )
@@ -526,11 +528,11 @@ class aList extends oxUBase
     }
 
     /**
-     * Template variable getter. Returns true if we have category
+     * Returns true if we have category
      *
      * @return bool
      */
-    public function _isActCategory()
+    protected function _isActCategory()
     {
         return $this->_blIsCat;
     }
@@ -591,7 +593,7 @@ class aList extends oxUBase
     public function getTitleSuffix()
     {
         if ( $this->getActCategory()->oxcategories__oxshowsuffix->value ) {
-           return $this->getConfig()->getActiveShop()->oxshops__oxtitlesuffix->value;
+            return $this->getConfig()->getActiveShop()->oxshops__oxtitlesuffix->value;
         }
     }
 

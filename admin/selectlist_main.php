@@ -19,7 +19,7 @@
  * @package admin
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: selectlist_main.php 17193 2009-03-13 12:21:45Z arvydas $
+ * $Id: selectlist_main.php 18115 2009-04-14 08:32:39Z sarunas $
  */
 
 DEFINE("ERR_SUCCESS", 1);
@@ -153,18 +153,18 @@ class SelectList_Main extends oxAdminDetails
 
         //#708
         if ( !is_array( $this->aFieldArray)) {
-            $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oAttr->oxselectlist__oxvaldesc->value );
+            $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oAttr->oxselectlist__oxvaldesc->getRawValue() );
         }
         // build value
-        $oAttr->oxselectlist__oxvaldesc = new oxField("");
+        $oAttr->oxselectlist__oxvaldesc = new oxField("", oxField::T_RAW);
         foreach ( $this->aFieldArray as $oField) {
-            $oAttr->oxselectlist__oxvaldesc->setValue( $oAttr->oxselectlist__oxvaldesc->value . $oField->name);
+            $oAttr->oxselectlist__oxvaldesc->setValue( $oAttr->oxselectlist__oxvaldesc->getRawValue() . $oField->name, oxField::T_RAW);
             if ( isset( $oField->price) && $oField->price) {
-                $oAttr->oxselectlist__oxvaldesc->setValue( $oAttr->oxselectlist__oxvaldesc->value . "!P!" . trim(str_replace( ",", ".", $oField->price)));
+                $oAttr->oxselectlist__oxvaldesc->setValue( $oAttr->oxselectlist__oxvaldesc->getRawValue() . "!P!" . trim(str_replace( ",", ".", $oField->price)), oxField::T_RAW);
                 if ($oField->priceUnit == '%')
-                    $oAttr->oxselectlist__oxvaldesc->setValue( $oAttr->oxselectlist__oxvaldesc->value . '%');
+                    $oAttr->oxselectlist__oxvaldesc->setValue( $oAttr->oxselectlist__oxvaldesc->getRawValue() . '%', oxField::T_RAW);
             }
-            $oAttr->oxselectlist__oxvaldesc->setValue( $oAttr->oxselectlist__oxvaldesc->value . "__@@");
+            $oAttr->oxselectlist__oxvaldesc->setValue( $oAttr->oxselectlist__oxvaldesc->getRawValue() . "__@@", oxField::T_RAW);
         }
 
         $oAttr->setLanguage($this->_iEditLang);
@@ -229,7 +229,7 @@ class SelectList_Main extends oxAdminDetails
 
 
         $aDelFields = oxConfig::getParameter("aFields");
-        $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oSelectlist->oxselectlist__oxvaldesc->value );
+        $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oSelectlist->oxselectlist__oxvaldesc->getRawValue() );
 
         if ( isset( $aDelFields) && count( $aDelFields)) {
             foreach ( $aDelFields as $sDelField) {
@@ -262,7 +262,7 @@ class SelectList_Main extends oxAdminDetails
             oxSession::setVar("iErrorCode", ERR_REQUIREDMISSING);
             return;
         }
-        $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oSelectlist->oxselectlist__oxvaldesc->value );
+        $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oSelectlist->oxselectlist__oxvaldesc->getRawValue() );
 
         $sAddFieldPrice = oxConfig::getParameter("sAddFieldPriceMod");
         $sAddFieldPriceUnit = oxConfig::getParameter("sAddFieldPriceModUnit");
@@ -300,7 +300,7 @@ class SelectList_Main extends oxAdminDetails
         $oSelectlist->loadInLang( $this->_iEditLang, $sOxId );
 
         $aChangeFields = oxConfig::getParameter("aFields");
-        $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oSelectlist->oxselectlist__oxvaldesc->value );
+        $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oSelectlist->oxselectlist__oxvaldesc->getRawValue() );
 
         if ( isset( $aChangeFields) && count( $aChangeFields)) {
             $sChangeFieldName = $this->parseFieldName($aChangeFields[0]);

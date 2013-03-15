@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: account_recommlist.php 16603 2009-02-19 09:36:42Z arvydas $
+ * $Id: account_recommlist.php 18038 2009-04-09 12:21:40Z arvydas $
  */
 
 /**
@@ -209,7 +209,7 @@ class Account_Recommlist extends Account
             return;
         }
 
-        $sTitle  = trim( ( string ) oxConfig::getParameter( 'recomm_title' , 1 ) );
+        $sTitle  = trim( ( string ) oxConfig::getParameter( 'recomm_title', 1 ) );
         $sAuthor = trim( ( string ) oxConfig::getParameter( 'recomm_author', 1 ) );
         $sText   = trim( ( string ) oxConfig::getParameter( 'recomm_desc', 1 ) );
 

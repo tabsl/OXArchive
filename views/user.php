@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: user.php 17653 2009-03-30 08:13:53Z arvydas $
+ * $Id: user.php 18045 2009-04-09 12:26:14Z arvydas $
  */
 
 /**
@@ -152,7 +152,7 @@ class User extends oxUBase
     /**
      * Generats facke address for selection
      *
-     * @param object &$oAddresses user address list
+     * @param object $oAddresses user address list
      *
      * @return null
      */
@@ -314,7 +314,7 @@ class User extends oxUBase
     /**
      * Sets if show user shipping address
      *
-     * @param bool $blShowShipAddress
+     * @param bool $blShowShipAddress if TRUE - shipping address is shown
      *
      * @return null
      */
@@ -364,7 +364,7 @@ class User extends oxUBase
     /**
      * Sets shipping address
      *
-     * @param bool $oDelAddress
+     * @param bool $oDelAddress delivery address
      *
      * @return null
      */

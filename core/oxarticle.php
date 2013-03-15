@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxarticle.php 17908 2009-04-06 15:11:52Z sarunas $
+ * $Id: oxarticle.php 18378 2009-04-20 16:05:36Z tomas $
  */
 
 // defining supported link types
@@ -1112,10 +1112,10 @@ class oxArticle extends oxI18n
         //do not load me as a parent later
         self::$_aLoadedParents[$this->getId()] = $this;
 
-        //improve this
+        //load simple variants for lists
         if ($this->_isInList()) {
-            $oVariants = oxNew( 'oxlist' );
-            $oVariants->init('oxsimplevariant');
+            $oVariants = oxNew( 'oxsimplevariantlist' );
+            $oVariants->setParent($this);
         } else {
             //loading variants
             $oVariants = oxNew( 'oxarticlelist' );
@@ -3173,7 +3173,14 @@ class oxArticle extends oxI18n
             return true;
         }
 
-        if ($mValue == '0000-00-00 00:00:00' || $mValue == '0000-00-00') {
+        $aDoubleCopyFields = array('oxarticles__oxprice',
+                                       'oxarticles__oxvat');
+
+        if (!$mValue && in_array($sFieldName, $aDoubleCopyFields))
+            return true;
+
+
+        if (!strcmp($mValue, '0000-00-00 00:00:00') || !strcmp($mValue, '0000-00-00')) {
             return true;
         }
 
@@ -3219,9 +3226,6 @@ class oxArticle extends oxI18n
                                     'oxarticles__oxnid',
                                     'oxarticles__oxid',
                                     'oxarticles__oxparentid');
-
-            $aDoubleCopyFields = array('oxarticles__oxprice',
-                                       'oxarticles__oxvat');
 
             $aCopyParentField = array('oxarticles__oxnonmaterial',
                                       'oxarticles__oxfreeshipping',

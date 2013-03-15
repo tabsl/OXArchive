@@ -111,7 +111,8 @@ class oxManufacturer extends oxI18n
                 break;
             default:
                 $sValue = parent::__get( $sName );
-            }
+                break;
+        }
         return $sValue;
     }
 

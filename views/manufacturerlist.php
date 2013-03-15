@@ -221,6 +221,7 @@ class ManufacturerList extends aList
      *
      * @param string $sUrl  current url
      * @param int    $iPage page number
+     * @param int    $iLang active language id
      *
      * @return string
      */
@@ -258,9 +259,9 @@ class ManufacturerList extends aList
      */
     public function hasVisibleSubCats()
     {
-         if ( $this->_blVisibleSubCats === null ) {
-             $this->_blVisibleSubCats = false;
-             if ( ( $oManufacturerTree = $this->getManufacturerTree() ) ) {
+        if ( $this->_blVisibleSubCats === null ) {
+            $this->_blVisibleSubCats = false;
+            if ( ( $oManufacturerTree = $this->getManufacturerTree() ) ) {
                 if ( ( $oManufacturer = $this->getActManufacturer() ) ) {
                     if ( $oManufacturer->getId() == 'root' ) {
                         $this->_blVisibleSubCats = $oManufacturerTree->count();
@@ -295,16 +296,15 @@ class ManufacturerList extends aList
      */
     public function getArticleList()
     {
-         if ( $this->_aArticleList === null ) {
-             $this->_aArticleList = array();
-             if ( ( $oManufacturerTree = $this->getManufacturerTree() ) ) {
+        if ( $this->_aArticleList === null ) {
+            $this->_aArticleList = array();
+            if ( ( $oManufacturerTree = $this->getManufacturerTree() ) ) {
                 if ( ( $oManufacturer = $this->getActManufacturer() ) && ( $oManufacturer->getId() != 'root' ) ) {
                     list( $aArticleList, $this->_iAllArtCnt ) = $this->_loadArticles( $oManufacturer );
                     if ( $this->_iAllArtCnt ) {
                         $this->_aArticleList = $aArticleList;
                     }
                 }
-
             }
         }
         return $this->_aArticleList;
@@ -386,7 +386,7 @@ class ManufacturerList extends aList
     public function getTitleSuffix()
     {
         if ( $this->getActManufacturer()->oxmanufacturers__oxshowsuffix->value ) {
-           return $this->getConfig()->getActiveShop()->oxshops__oxtitlesuffix->value;
+            return $this->getConfig()->getActiveShop()->oxshops__oxtitlesuffix->value;
         }
     }
 

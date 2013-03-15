@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: recommlist.php 17481 2009-03-20 12:35:53Z arvydas $
+ * $Id: recommlist.php 18044 2009-04-09 12:25:33Z arvydas $
  */
 
 /**
@@ -121,9 +121,9 @@ class RecommList extends oxUBase
     protected $_oPageNavigation = null;
 
     /**
+     * Collects current view data, return current template file name
      *
-     *
-     * @return  string  current template file name
+     * @return string
      */
     public function render()
     {
@@ -217,7 +217,7 @@ class RecommList extends oxUBase
         }
 
         if ( $oRecommList = $this->getActRecommList() ) {
-           $sAddParams .= '&amp;recommid='.$oRecommList->getId();
+            $sAddParams .= '&amp;recommid='.$oRecommList->getId();
         }
 
         return $sAddParams;
@@ -232,7 +232,7 @@ class RecommList extends oxUBase
     {
         $sReviewText = trim( ( string ) oxConfig::getParameter( 'rvw_txt' , true ) );
         $dRating     = oxConfig::getParameter( 'recommlistrating' );
-        if ($dRating < 0 || $dRating > 5) {
+        if ( $dRating < 0 || $dRating > 5 ) {
             $dRating = null;
         }
 

@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: register.php 17315 2009-03-17 16:18:58Z arvydas $
+ * $Id: register.php 18044 2009-04-09 12:25:33Z arvydas $
  */
 
 /**
@@ -147,7 +147,7 @@ class Register extends User
     /**
      * Generats facke address for selection
      *
-     * @param object &$oAddresses user address list
+     * @param object $oAddresses user address list
      *
      * @return null
      */

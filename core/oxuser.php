@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxuser.php 17480 2009-03-20 12:33:16Z arvydas $
+ * $Id: oxuser.php 18025 2009-04-09 11:30:19Z arvydas $
  */
 
 /**
@@ -241,7 +241,7 @@ class oxUser extends oxBase
         }
 
         $sQ = 'select oxtitle'.oxLang::getInstance()->getLanguageTag( $iLang ).' from oxcountry where oxid = "'.$sCountryId.'" ';
-        $this->oxuser__oxcountry = new oxField( oxDb::getDb()->GetOne( $sQ ), oxField::T_RAW);
+        $this->oxuser__oxcountry = new oxField( oxDb::getDb()->getOne( $sQ ), oxField::T_RAW);
 
         return $this->oxuser__oxcountry;
     }
@@ -256,7 +256,7 @@ class oxUser extends oxBase
     public function getUserCountryId( $sCountry = null )
     {
         $sQ = 'select oxid from oxcountry where oxactive = "1" and oxisoalpha2 = "' . $sCountry . '"';
-        $sCountryId = oxDb::getDb()->GetOne( $sQ );
+        $sCountryId = oxDb::getDb()->getOne( $sQ );
 
         return $sCountryId;
     }
@@ -1355,7 +1355,7 @@ class oxUser extends oxBase
         $aLDAPParams = $myConfig->getConfigParam( 'aLDAPParams' );
         $oLDAP = new oxLDAP( $aLDAPParams['HOST'], $aLDAPParams['PORT'] );
         // maybe this is LDAP user but supplied email Address instead of LDAP login
-        $sLDAPKey = $oDb->GetOne("select oxldapkey from oxuser where oxuser.oxactive = 1 and oxuser.oxusername = ".$oDb->Quote($sUser)." $sShopSelect");
+        $sLDAPKey = $oDb->getOne("select oxldapkey from oxuser where oxuser.oxactive = 1 and oxuser.oxusername = ".$oDb->quote($sUser)." $sShopSelect");
         if ( isset( $sLDAPKey) && $sLDAPKey) {
             $sUser = $sLDAPKey;
         }
@@ -1367,8 +1367,8 @@ class oxUser extends oxBase
         if ( isset( $aData['OXUSERNAME']) && $aData['OXUSERNAME']) {   // login successful
 
             // check if user is already in database
-            $sSelect =  "select oxid from oxuser where oxuser.oxusername = ".$oDb->Quote($aData['OXUSERNAME'])." $sShopSelect";
-            $sOXID = $oDb->GetOne( $sSelect);
+            $sSelect =  "select oxid from oxuser where oxuser.oxusername = ".$oDb->quote($aData['OXUSERNAME'])." $sShopSelect";
+            $sOXID = $oDb->getOne( $sSelect);
 
             if ( !isset( $sOXID) || !$sOXID) {   // we need to create a new user
                 //$oUser->oxuser__oxid->setValue($oUser->setId());

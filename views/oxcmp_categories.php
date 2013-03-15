@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcmp_categories.php 16808 2009-02-25 10:44:05Z arvydas $
+ * $Id: oxcmp_categories.php 18244 2009-04-15 14:49:32Z arvydas $
  */
 
 /**
@@ -64,6 +64,7 @@ class oxcmp_categories extends oxView
         $sActCont = oxConfig::getParameter( 'tpl' );
         $sActManufacturer = oxConfig::getParameter( 'mnid' );
         $sActCat = $sActManufacturer ? null : oxConfig::getParameter( 'cnid' );
+        $sActTag = oxConfig::getParameter( 'searchtag' );
 
         $blArtLoaded = false;
         if ( $sActProduct ) {
@@ -84,11 +85,11 @@ class oxcmp_categories extends oxView
 
         // loaded article - then checking additional parameters
         if ( $blArtLoaded ) {
-            $sActCat = $this->_addAdditionalParams( $oProduct, $sActCat, $sActManufacturer, $sActCont );
+            $sActCat = $this->_addAdditionalParams( $oProduct, $sActCat, $sActManufacturer, $sActCont, $sActTag );
         }
 
         // Checking for the default category
-        if ( $sActCat === null && !$blArtLoaded && !$sActCont && !$sActManufacturer ) {
+        if ( $sActCat === null && !$blArtLoaded && !$sActCont && !$sActManufacturer && !$sActTag ) {
             // set remote cat
             $sActCat = $myConfig->getActiveShop()->oxshops__oxdefcat->value;
             if ( $sActCat == 'oxrootid' ) {
@@ -301,14 +302,15 @@ class oxcmp_categories extends oxView
     /**
      * Adds additional parameters: active category, list type and category id
      *
-     * @param oxarticle $oProduct loaded product
-     * @param string    $sActCat  active category id
+     * @param oxarticle $oProduct         loaded product
+     * @param string    $sActCat          active category id
      * @param string    $sActManufacturer active manufacturer id
-     * @param string    $sActCont active template
+     * @param string    $sActCont         active template
+     * @param string    $sActTag          active tag
      *
      * @return string $sActCat
      */
-    protected function _addAdditionalParams( $oProduct, $sActCat, $sActManufacturer, $sActCont )
+    protected function _addAdditionalParams( $oProduct, $sActCat, $sActManufacturer, $sActCont, $sActTag )
     {
         $sSearchPar = oxConfig::getParameter( 'searchparam' );
         $sSearchCat = oxConfig::getParameter( 'searchcnid' );
@@ -355,8 +357,16 @@ class oxcmp_categories extends oxView
                 }
             }
 
+            // tag ?
+            $blTags = false;
+            if ( !$blVendor && !$blManufacturer && $sActTag ) {
+                $blTags = true;
+                // setting list type..
+                $sListType = 'tag';
+            }
+
             // category ?
-            if ( $sActCat && !$blVendor && !$blManufacturer ) {
+            if ( $sActCat && !$blVendor && !$blManufacturer && !$blTags ) {
                 if ( !$oProduct->isAssignedToCategory( $sActCat ) ) {
                     // article is assigned to any category ?
                     $aArticleCats = $oProduct->getCategoryIds();
@@ -376,7 +386,7 @@ class oxcmp_categories extends oxView
                         $sActCat = null;
                     }
                 }
-            } elseif ( !$sActCat && !$sActCont && !$sActManufacturer ) {
+            } elseif ( !$sActCat && !$sActCont && !$sActManufacturer && !$blTags ) {
                 $aArticleCats = $oProduct->getCategoryIds();
                 if ( is_array( $aArticleCats ) && count( $aArticleCats ) ) {
                     $sActCat = reset( $aArticleCats );

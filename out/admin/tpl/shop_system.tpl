@@ -308,11 +308,11 @@ function _groupExp(el) {
             [{if !$isdemoshop}]
             <dl>
                 <dt>
-                    <select class="txt" name=confstrs[iSmartyPhpHandling] [{ $readonly }]>
-                        <option value="0"  [{if ($confstrs.iSmartyPhpHandling==0)}]selected[{/if}]>[{ oxmultilang ident="SHOP_SYSTEM_SMARTYPHPHANDLING_REMOVE" }]</option>
-                        <option value="1"  [{if ($confstrs.iSmartyPhpHandling==1)}]selected[{/if}]>[{ oxmultilang ident="SHOP_SYSTEM_SMARTYPHPHANDLING_PASSTHRU" }]</option>
-                        <option value="2"  [{if ($confstrs.iSmartyPhpHandling==2)}]selected[{/if}]>[{ oxmultilang ident="SHOP_SYSTEM_SMARTYPHPHANDLING_QUOTE" }]</option>
-                        <option value="3"  [{if ($confstrs.iSmartyPhpHandling==3)}]selected[{/if}]>[{ oxmultilang ident="SHOP_SYSTEM_SMARTYPHPHANDLING_ALLOW" }]</option>
+                    <select name=confstrs[iSmartyPhpHandling] [{ $readonly }]>
+                        <option value="[{$smarty.const.SMARTY_PHP_PASSTHRU}]"  [{if $confstrs.iSmartyPhpHandling==$smarty.const.SMARTY_PHP_PASSTHRU}]selected[{/if}]>[{ oxmultilang ident="SHOP_SYSTEM_SMARTYPHPHANDLING_REMOVE" }]</option>
+                        <option value="[{$smarty.const.SMARTY_PHP_QUOTE}]"  [{if $confstrs.iSmartyPhpHandling==$smarty.const.SMARTY_PHP_QUOTE}]selected[{/if}]>[{ oxmultilang ident="SHOP_SYSTEM_SMARTYPHPHANDLING_PASSTHRU" }]</option>
+                        <option value="[{$smarty.const.SMARTY_PHP_REMOVE}]"  [{if $confstrs.iSmartyPhpHandling==$smarty.const.SMARTY_PHP_REMOVE}]selected[{/if}]>[{ oxmultilang ident="SHOP_SYSTEM_SMARTYPHPHANDLING_QUOTE" }]</option>
+                        <option value="[{$smarty.const.SMARTY_PHP_ALLOW}]"  [{if $confstrs.iSmartyPhpHandling==$smarty.const.SMARTY_PHP_ALLOW}]selected[{/if}]>[{ oxmultilang ident="SHOP_SYSTEM_SMARTYPHPHANDLING_ALLOW" }]</option>
                     </select>
                 </dt>
                 <dd>

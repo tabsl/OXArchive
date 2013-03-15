@@ -19,41 +19,51 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_scaleprice.php 18033 2009-04-09 12:15:54Z arvydas $
+ * $Id: oxshop.php 17248 2009-03-16 15:22:07Z arvydas $
  */
-
-require_once 'oxerptype.php';
 
 /**
- * ERP scale price description class
+ * Simple variant list.
+ *
+ * @package core
  */
-class oxERPType_ScalePrice extends oxERPType
+class oxSimpleVariantList extends oxList
 {
     /**
-     * Class constructor
+     * Parent article for list variants
+     */
+    protected $_oParent = null;
+
+    /**
+     * List Object class name
+     *
+     * @var string
+     */
+    protected $_sObjectsInListName = 'oxsimplevariant';
+
+    /**
+     * Sets parent variant
+     *
+     * @param oxArticle $oParent Parent article
      *
      * @return null
      */
-    public function __construct()
+    public function setParent($oParent)
     {
-        parent::__construct();
-
-        $this->_sTableName = 'oxprice2article';
-        $this->_blRestrictedByShopId = true;
-
-        $this->_aFieldList = array(
-            'OXSHOPID'		 => 'OXSHOPID',
-            'OXARTID'		 => 'OXARTID',
-            'OXADDABS'		 => 'OXADDABS',
-            'OXADDPERC'		 => 'OXADDPERC',
-            'OXAMOUNT'		 => 'OXAMOUNT',
-            'OXAMOUNTTO'	 => 'OXAMOUNTTO',
-            'OXID'		     => 'OXID'
-        );
-
-        $this->_aKeyFieldList = array(
-            'OXID' => 'OXID'
-        );
+        $this->_oParent = $oParent;
     }
 
+    /**
+     * Sets parent for variant. This method is invoked.
+     *
+     * @param oxSimleVariant $oListObject Simple variant
+     * @param array          $aDbFields   Array of available
+     *
+     * @return null;
+     */
+    protected function _assignElement($oListObject, $aDbFields)
+    {
+        $oListObject->setParent($this->_oParent);
+        parent::_assignElement($oListObject, $aDbFields);
+    }
 }

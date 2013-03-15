@@ -1073,7 +1073,7 @@ CREATE TABLE `oxobject2attribute` (
   `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
   `OXOBJECTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXATTRID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
-  `OXVALUE` varchar(255) NOT NULL default '',
+  `OXVALUE` char(255) NOT NULL default '',
   `OXPOS` int(11) NOT NULL default '9999',
   `OXVALUE_1` char(255) NOT NULL default '',
   `OXVALUE_2` char(255) NOT NULL default '',
@@ -1385,7 +1385,7 @@ CREATE TABLE `oxpricealarm` (
 `OXSHOPID` char( 32 ) character set latin1 collate latin1_general_ci NOT NULL default '',
 `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
 `OXEMAIL` varchar(128) NOT NULL default '',
-`OXARTID` varchar(32) character set latin1 collate latin1_general_ci NOT NULL default '',
+`OXARTID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
 `OXPRICE` double NOT NULL default '0',
 `OXCURRENCY` varchar(32) NOT NULL default '',
 `OXLANG` INT(2) NOT NULL default 0,
@@ -1599,7 +1599,7 @@ CREATE TABLE `oxshops` (
 # Data for table `oxshops`
 #
 
-INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 1, 1, 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Shop', '', '', 'online kaufen', 'buy online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'Ihre Info E-Mail Adresse', 'Ihre Bestell Reply E-Mail Adresse', 'Ihre Bestell E-Mail Adresse', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order from OXID eShop', 'Thank you for your registration in OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', 'Tragen Sie bitte hier Ihren SMTP Server ein', '', '', 'Ihr Firmenname', 'Musterstr. 10', '79098', 'Musterstadt', 'Deutschland', 'Volksbank Musterstadt', '1234567890', '900 1234567', 'DE651234567', '', '', 'Hans', 'Mustermann', '0800 1234567', '0800 1234567', 'www.meineshopurl.com', '8a142c3e60a535f16.78077188', '', '', '', '', '', '', '', 'CE', '4.1.0', 1, 1, 0, 0);
+INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 1, 1, 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Shop', '', '', 'online kaufen', 'buy online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'Ihre Info E-Mail Adresse', 'Ihre Bestell Reply E-Mail Adresse', 'Ihre Bestell E-Mail Adresse', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order from OXID eShop', 'Thank you for your registration in OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', 'Tragen Sie bitte hier Ihren SMTP Server ein', '', '', 'Ihr Firmenname', 'Musterstr. 10', '79098', 'Musterstadt', 'Deutschland', 'Volksbank Musterstadt', '1234567890', '900 1234567', 'DE651234567', '', '', 'Hans', 'Mustermann', '0800 1234567', '0800 1234567', 'www.meineshopurl.com', '8a142c3e60a535f16.78077188', '', '', '', '', '', '', '', 'CE', '4.1.1', 1, 1, 0, 0);
 
 #
 # Table structure for table `oxstatistics`

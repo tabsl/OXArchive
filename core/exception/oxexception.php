@@ -160,10 +160,14 @@ class oxException extends Exception
     public function getString()
     {
         $sWarning = "";
-        if ($this->_blNotCaught)
+        if ( $this->_blNotCaught ) {
             $sWarning .= "--!--NOT CAUGHT--!--";
-        if ($this->_blRenderer)
+        }
+
+        if ( $this->_blRenderer ) {
             $sWarning .= "--!--RENDERER--!--";
+        }
+
         return $sWarning . __CLASS__ . " (time: ". date('Y-m-d H:i:s') ."): [{$this->code}]: {$this->message} \n Stack Trace: {$this->getTraceAsString()}\n\n";
     }
 

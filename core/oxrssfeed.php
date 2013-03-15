@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxrssfeed.php 17643 2009-03-27 13:59:37Z arvydas $
+ * $Id: oxrssfeed.php 18027 2009-04-09 11:32:17Z arvydas $
  */
 
 /**
@@ -497,9 +497,9 @@ class oxRssFeed extends oxSuperCfg
     /**
      * get title for 'Search Articles' rss feed
      *
-     * @param string $sSearch   search string
-     * @param string $sCatId    category id
-     * @param string $sVendorId vendor id
+     * @param string $sSearch         search string
+     * @param string $sCatId          category id
+     * @param string $sVendorId       vendor id
      * @param string $sManufacturerId Manufacturer id
      *
      * @access public
@@ -514,9 +514,9 @@ class oxRssFeed extends oxSuperCfg
     /**
      * _getSearchParamsUrl return search parameters for url
      *
-     * @param string $sSearch   search string
-     * @param string $sCatId    category id
-     * @param string $sVendorId vendor id
+     * @param string $sSearch         search string
+     * @param string $sCatId          category id
+     * @param string $sVendorId       vendor id
      * @param string $sManufacturerId Manufacturer id
      *
      * @access protected
@@ -567,10 +567,10 @@ class oxRssFeed extends oxSuperCfg
      * _getSearchParamsTranslation translates text for given lang id
      * loads category and vendor to take their titles.
      *
-     * @param string $sId       language id
-     * @param string $sSearch   search param
-     * @param string $sCatId    category id
-     * @param string $sVendorId vendor id
+     * @param string $sId             language id
+     * @param string $sSearch         search param
+     * @param string $sCatId          category id
+     * @param string $sVendorId       vendor id
      * @param string $sManufacturerId Manufacturer id
      *
      * @access protected
@@ -604,9 +604,9 @@ class oxRssFeed extends oxSuperCfg
     /**
      * getSearchArticlesUrl get url for 'Search Articles' rss feed
      *
-     * @param string $sSearch   search string
-     * @param string $sCatId    category id
-     * @param string $sVendorId vendor id
+     * @param string $sSearch         search string
+     * @param string $sCatId          category id
+     * @param string $sVendorId       vendor id
      * @param string $sManufacturerId Manufacturer id
      *
      * @access public
@@ -628,9 +628,9 @@ class oxRssFeed extends oxSuperCfg
     /**
      * loadSearchArticles loads 'Search Articles' rss data
      *
-     * @param string $sSearch   search string
-     * @param string $sCatId    category id
-     * @param string $sVendorId vendor id
+     * @param string $sSearch         search string
+     * @param string $sCatId          category id
+     * @param string $sVendorId       vendor id
      * @param string $sManufacturerId Manufacturer id
      *
      * @access public

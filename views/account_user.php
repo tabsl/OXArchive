@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: account_user.php 16306 2009-02-05 10:28:05Z rimvydas.paskevicius $
+ * $Id: account_user.php 18038 2009-04-09 12:21:40Z arvydas $
  */
 
 /**
@@ -148,7 +148,7 @@ class Account_User extends Account
     /**
      * Returns if field is required.
      *
-     * @param string $sField
+     * @param string $sField required field to check
      *
      * @return array | bool
      */

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxarticlelist.php 17480 2009-03-20 12:33:16Z arvydas $
+ * $Id: oxarticlelist.php 18022 2009-04-09 11:28:16Z arvydas $
  */
 
 /**
@@ -890,9 +890,9 @@ class oxArticleList extends oxList
 
                 $sField = $oBaseObject->getSqlFieldName( $sField );
 
-                $sSearch .= $sSearchTable.'.'.$sField.' like '.$oDb->Quote('%'.$sSearchString.'%') . ' ';
+                $sSearch .= $sSearchTable.'.'.$sField.' like '.$oDb->quote('%'.$sSearchString.'%') . ' ';
                 if ( $sUml ) {
-                    $sSearch  .= ' or '.$sSearchTable.'.'.$sField.' like '.$oDb->Quote('%'.$sUml.'%');
+                    $sSearch  .= ' or '.$sSearchTable.'.'.$sField.' like '.$oDb->quote('%'.$sUml.'%');
                 }
                 $blSep2 = true;
             }

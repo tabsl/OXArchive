@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: content.php 17676 2009-03-30 15:06:42Z arvydas $
+ * $Id: content.php 18089 2009-04-10 13:18:52Z vilma $
  */
 
 /**
@@ -124,7 +124,7 @@ class Content extends oxUBase
      *
      * @return string
      */
-    protected function _prepareMetaDescription( $sMeta, $iLength = 200, $blDescTag = true )
+    protected function _prepareMetaDescription( $sMeta, $iLength = 200, $blDescTag = false )
     {
         if ( !$sMeta ) {
             $sMeta = $this->getContent()->oxcontents__oxtitle->value;
@@ -245,6 +245,7 @@ class Content extends oxUBase
     }
 
     /**
+     * Returns name of template
      *
      * @return string
      */

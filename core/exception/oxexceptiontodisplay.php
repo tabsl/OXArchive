@@ -28,7 +28,6 @@
  */
 class oxExceptionToDisplay implements oxDisplayErrorInterface
 {
-
     /**
      * Language const of a Message
      *
@@ -64,62 +63,132 @@ class oxExceptionToDisplay implements oxDisplayErrorInterface
      */
     private $_sType;
 
+    /**
+     * Stack trace setter
+     *
+     * @param string $sStackTrace stack trace
+     *
+     * @return null
+     */
     public function setStackTrace($sStackTrace)
     {
         $this->_sStackTrace = $sStackTrace;
     }
 
+    /**
+     * Returns stack trace
+     *
+     * @return string
+     */
     public function getStackTrace()
     {
         return $this->_sStackTrace;
     }
 
+    /**
+     * Sets oxExceptionToDisplay::_aValues value
+     *
+     * @param array $aValues exception values to store
+     *
+     * @return null
+     */
     public function setValues( $aValues )
     {
         $this->_aValues = $aValues;
     }
 
+    /**
+     * Stores into exception storage message or other value
+     *
+     * @param string $sName  storage name
+     * @param mixed  $sValue value to store
+     *
+     * @return null
+     */
     public function addValue( $sName, $sValue )
     {
         $this->_aValues[$sName] = $sValue;
     }
 
+    /**
+     * Exception type setter
+     *
+     * @param string $sType exception type
+     *
+     * @return null
+     */
     public function setExceptionType( $sType )
     {
         $this->_sType = $sType;
     }
 
+    /**
+     * Returns error class type
+     *
+     * @return string
+     */
     public function getErrorClassType()
     {
         return $this->_sType;
     }
 
+    /**
+     * Returns exception stored (by name) value
+     *
+     * @param string $sName storage name
+     *
+     * @return  mixed
+     */
     public function getValue( $sName )
     {
         return $this->_aValues[$sName];
     }
 
+    /**
+     * Exception debug mode setter
+     *
+     * @param bool $bl if TRUE debug mode on
+     *
+     * @return null
+     */
     public function setDebug( $bl )
     {
         $this->_blDebug = $bl;
     }
 
+    /**
+     * Exception message setter
+     *
+     * @param string $sMessage exception message
+     *
+     * @return null
+     */
     public function setMessage($sMessage)
     {
         $this->_sMessage = $sMessage;
     }
 
+    /**
+     * Returns translated exception message
+     *
+     * @return string
+     */
     public function getOxMessage()
     {
         return $this->_blDebug ? $this : oxLang::getInstance()->translateString($this->_sMessage);
     }
 
-   public function __toString()
-   {
-       $sRes = $this->getErrorClassType() . " (time: " . date('Y-m-d H:i:s') . "): " . $this->getOxMessage() . " \n Stack Trace: " . $this->getStackTrace() . "\n";
-       foreach($this->_aValues as $key => $value) {
-           $sRes .= $key. " => ". $value . "\n";
-       }
-       return $sRes;
-   }
+    /**
+     * When exception is converted as string, this magic method return exception message
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        $sRes = $this->getErrorClassType() . " (time: " . date('Y-m-d H:i:s') . "): " . $this->getOxMessage() . " \n Stack Trace: " . $this->getStackTrace() . "\n";
+        foreach ( $this->_aValues as $key => $value ) {
+            $sRes .= $key. " => ". $value . "\n";
+        }
+        return $sRes;
+    }
 }

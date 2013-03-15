@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxcmp_user.php 17678 2009-03-30 15:22:11Z vilma $
+ * $Id: oxcmp_user.php 18327 2009-04-17 14:58:36Z alfonsas $
  */
 
 /**
@@ -127,7 +127,7 @@ class oxcmp_user extends oxView
      *
      * @return null
      */
-    public function _loadSessionUser()
+    protected function _loadSessionUser()
     {
         $myConfig = $this->getConfig();
         $oUser = $this->getUser();
@@ -303,7 +303,7 @@ class oxcmp_user extends oxView
             // redirecting if user logs out in SSL mode
             if ( oxConfig::getParameter('redirect') && $myConfig->getConfigParam( 'sSSLShopURL' ) ) {
 
-                oxUtils::getInstance()->redirect( $this->_getLoggoutLink());
+                oxUtils::getInstance()->redirect( $this->_getLogoutLink());
             }
         }
     }
@@ -564,18 +564,18 @@ class oxcmp_user extends oxView
     }
 
     /**
-     * Returns logoutlink with additional params
+     * Returns logout link with additional params
      *
      * @return string $sLogoutLink
      */
-    protected function _getLoggoutLink()
+    protected function _getLogoutLink()
     {
         $myConfig = $this->getConfig();
-        $sLogoutLink = $myConfig->getShopSecureHomeURL();
+        $sLogoutLink = $myConfig->getShopSecureHomeUrl();
         if ( $myConfig->isSsl() ) {
-            $sLogoutLink = $myConfig->getShopHomeURL();
+            $sLogoutLink = $myConfig->getShopHomeUrl();
         }
-        $sLogoutLink .= 'cl='.oxConfig::getParameter('cl').$this->getDynUrlParams();
+        $sLogoutLink .= 'cl='.oxConfig::getParameter('cl').$this->_oParent->getDynUrlParams();
         if ( $sParam = oxConfig::getParameter('anid') ) {
             $sLogoutLink .= '&amp;anid='.$sParam;
         }
@@ -647,7 +647,7 @@ class oxcmp_user extends oxView
         }
         error_reporting($iOldErrorReproting);
         if ( count( $aData ) < 1 ) {
-        	oxUtils::getInstance()->redirect($this->getConfig()->getShopHomeURL().'cl=register');
+            oxUtils::getInstance()->redirect($this->getConfig()->getShopHomeURL().'cl=register');
         }
         if ( $aData['email'] ) {
             $oUser = oxNew( 'oxuser' );

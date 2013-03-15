@@ -19,7 +19,7 @@
  * @package setup
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 17881 2009-04-06 09:13:17Z alfonsas $
+ * $Id: lang.php 18135 2009-04-14 09:18:53Z philipp.grashoff $
  */
 
 $aLang = array(
@@ -84,6 +84,7 @@ $aLang = array(
 'MOD_ZEND_OPTIMIZER'                              => 'Zend Optimizer installiert',
 'MOD_ZEND_PLATFORM'                               => 'Zend Platform installiert',
 'MOD_MB_STRING'                                   => 'mbstring',
+'MOD_UNICODE_SUPPORT'                             => 'UTF-8 Unterstützung',
 
 'STEP_0_ERROR_TEXT'                               => 'Ihr System erf&uuml;llt nicht alle n&ouml;tigen Systemvoraussetzungen',
 'STEP_0_TEXT'                                     => '<ul class="req">'.
@@ -118,7 +119,9 @@ $aLang = array(
 'STEP_3_DB_DATABSE_NAME'                          => "Datenbank Name",
 'STEP_3_DB_DEMODATA'                              => "Demodaten",
 'STEP_3_UTFMODE'                                  => "UTF-8 Zeichenkodierung benutzen",
-'STEP_3_UTFNOTSUPPORTED'                          => "Weil das mbstring PHP-Modul fehlt, kann der OXID eShop nicht im UTF-8 Modus verwendet werden.",
+'STEP_3_UTFNOTSUPPORTED'                          => "Der OXID eShop kann nicht im UTF-8 Modus verwendet werden, weil:",
+'STEP_3_UTFNOTSUPPORTED1'                         => " das mbstring PHP-Modul fehlt",
+'STEP_3_UTFNOTSUPPORTED2'                         => " die installierte PCRE-Version UTF-8 nicht unterstützt",
 'STEP_3_UTFINFO'                                  => "Die UTF-8 Zeichenkodierung kann besser mit Sonderzeichen umgehen als andere Zeichenkodierungen. Dies ist insbesondere für vielsprachige eShops wichtig. Allerdings ist der eShop mit UTF-8 geringfügig langsamer als mit der Standard-Zeichenkodierung (ISO 8859-15). <br /> Wenn Sie vorhaben, viele verschiedene Sprachen im eShop zu benutzen, sollten sie UTF-8 verwenden. Wenn Sie nur Sprachen mit ähnlichen Zeichensätzen (z. B. Deutsch, Englisch, Französisch) im eShop benutzen möchten, benötigen Sie UTF-8 nicht.",
 'STEP_3_CREATE_DB_WHEN_NO_DB_FOUND'               => "Falls die Datenbank nicht vorhanden ist, wird versucht diese anzulegen",
 'BUTTON_RADIO_INSTALL_DB_DEMO'                    => "Demodaten installieren",

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxfunctions.php 17680 2009-03-30 15:40:22Z vilma $
+ * $Id: oxfunctions.php 18054 2009-04-09 16:47:26Z arvydas $
  */
 
 /**
@@ -271,6 +271,8 @@ function oxNewArticle( $sArtId )
 
 /**
  * Returns current DB handler
+ *
+ * @param bool $blAssoc data fetch mode
  *
  * @return oxDb
  */

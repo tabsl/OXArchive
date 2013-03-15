@@ -50,6 +50,11 @@ function ChangeLanguage()
     oList.submit();
 }
 
+function ChangeListSize()
+{
+    document.forms.showlist.submit();
+}
+
 //-->
 </script>
 
@@ -68,6 +73,7 @@ function ChangeLanguage()
     </span>
 [{/if}]
 
+<div id="liste">
 <form name="showlist" id="showlist" action="[{ $shop->selflink }]" method="post">
 [{ $shop->hiddensid }]
 <input type="hidden" name="cl" value="list_review">
@@ -75,19 +81,19 @@ function ChangeLanguage()
 <input type="hidden" name="language" value="[{ $actlang }]">
 <input type="hidden" name="editlanguage" value="[{ $actlang }]">
 
-<div id="liste">
-
 <table cellspacing="0" cellpadding="0" border="0" width="99%">
 <colgroup><col width="5%"><col width="70%"><col width="25%"></colgroup>
 <tr>
     <td class="listfilter first">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxreviews.oxcreate]" value="[{ $where->oxreviews__oxcreate }]"></td>
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxreviews.oxcreate]" value="[{ $where->oxreviews__oxcreate }]">
         </div></div>
+    </td>
     <td class="listfilter">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxreviews.oxtext]" value="[{ $where->oxreviews__oxtext }]"></td>
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxreviews.oxtext]" value="[{ $where->oxreviews__oxtext }]">
         </div></div>
+    </td>
     <td class="listfilter" nowrap>
         <div class="r1"><div class="b1">
         <div class="find">
@@ -96,12 +102,19 @@ function ChangeLanguage()
               <option value="[{ $lang->id }]" [{ if $lang->selected}]SELECTED[{/if}]>[{ $lang->name }]</option>
               [{/foreach}]
             </select>
+            <select name="viewListSize" class="editinput" onChange="JavaScript:ChangeListSize()">
+              <option value="50" [{ if $viewListSize == 50 }]SELECTED[{/if}]>50</option>
+              <option value="100" [{ if $viewListSize == 100 }]SELECTED[{/if}]>100</option>
+              <option value="200" [{ if $viewListSize == 200 }]SELECTED[{/if}]>200</option>
+            </select>
             <input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]">
         </div>
 
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxarticles.oxtitle]" value="[{ $where->oxarticles__oxtitle }]"></td>
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[[{$articleListTable}].oxtitle]" value="[{ $where->oxarticles__oxtitle }]">
 
-        </div></div>
+        </div>
+      </div>
+    </td>
 </tr>
 <tr>
     <td class="listheader first"><a href="javascript:document.forms.showlist.sort.value='oxreviews.oxcreate';document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxcreate" }]</a></td>
@@ -109,6 +122,8 @@ function ChangeLanguage()
     <td class="listheader"><a href="javascript:document.forms.showlist.sort.value='arttitle ';document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxtitle" }]</a></td>
 </tr>
 
+[{assign var="blWhite" value=""}]
+[{assign var="_cnt" value=0}]
 [{ foreach from=$mylist item=oReview }]
 [{assign var="_cnt" value=$_cnt+1}]
 <tr id="row.[{$_cnt}]">
@@ -122,6 +137,7 @@ function ChangeLanguage()
     [{assign var="blWhite" value="2"}]
 [{/if}]
 [{/foreach}]
+[{include file="pagenavisnippet.tpl" colspan="8"}]
 
 </table>
 </form>

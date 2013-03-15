@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxorder.php 17924 2009-04-07 07:57:43Z sarunas $
+ * $Id: oxorder.php 18372 2009-04-20 13:52:44Z arvydas $
  */
 
 /**
@@ -165,6 +165,14 @@ class oxOrder extends oxBase
         if ( $sName == 'oDelSet' ) {
             return $this->getDelSet();
         }
+
+        if ( $sName == 'oxorder__oxbillcountry' ) {
+            return $this->getBillCountry();
+        }
+
+        if ( $sName == 'oxorder__oxdelcountry' ) {
+            return $this->getDelCountry();
+        }
     }
 
     /**
@@ -184,17 +192,6 @@ class oxOrder extends oxBase
         // convert date's to international format
         $this->oxorder__oxorderdate = new oxField( $oUtilsDate->formatDBDate( $this->oxorder__oxorderdate->value));
         $this->oxorder__oxsenddate  = new oxField( $oUtilsDate->formatDBDate( $this->oxorder__oxsenddate->value));
-
-
-        //get billing country name from billing country id
-        if ( !$this->oxorder__oxbillcountry->value ) {
-            $this->oxorder__oxbillcountry = new oxField($this->_getCountryTitle( $this->oxorder__oxbillcountryid->value ));
-        }
-
-        //get delivery country name from delivery country id
-        if ( !$this->oxorder__oxdelcountry->value ) {
-             $this->oxorder__oxdelcountry = new oxField($this->_getCountryTitle( $this->oxorder__oxdelcountryid->value ));
-        }
 
         //settting deprecated template variables
         $this->_setDeprecatedValues();
@@ -753,9 +750,9 @@ class oxOrder extends oxBase
         }
 
         // #756M Preserve already stored payment information
-        if( !$aDynvalue && $oUserpayment = $this->getPaymentType() ) {
+        if ( !$aDynvalue && ( $oUserpayment = $this->getPaymentType() ) ) {
             $aStoredDynvalue = $oUserpayment->getDynValues();
-            foreach ( $aStoredDynvalue as $oVal ){
+            foreach ( $aStoredDynvalue as $oVal ) {
                 $aDynvalue[$oVal->name] = $oVal->value;
             }
         }
@@ -1717,4 +1714,31 @@ class oxOrder extends oxBase
         $oCur = $this->getConfig()->getActShopCurrencyObject();
         return number_format( $this->oxorder__oxtotalordersum->value, $oCur->decimal, '.', '');
     }
+
+    /**
+     * Get billing country name from billing country id
+     *
+     * @return oxField
+     */
+    public function getBillCountry()
+    {
+        if( !$this->oxorder__oxbillcountry->value ) {
+            $this->oxorder__oxbillcountry = new oxField($this->_getCountryTitle( $this->oxorder__oxbillcountryid->value ));
+        }
+        return $this->oxorder__oxbillcountry;
+    }
+
+    /**
+     * Get delivery country name from delivery country id
+     *
+     * @return oxField
+     */
+    public function getDelCountry()
+    {
+        if( !$this->oxorder__oxdelcountry->value ) {
+            $this->oxorder__oxdelcountry = new oxField($this->_getCountryTitle( $this->oxorder__oxdelcountryid->value ));
+        }
+        return $this->oxorder__oxdelcountry;
+    }
+
 }

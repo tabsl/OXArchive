@@ -19,7 +19,7 @@
  * @package lang
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: lang.php 17881 2009-04-06 09:13:17Z alfonsas $
+ * $Id: lang.php 18136 2009-04-14 09:19:40Z philipp.grashoff $
  */
 
 $aLang = array(
@@ -84,6 +84,7 @@ $aLang = array(
 'MOD_ZEND_OPTIMIZER'                              => 'Zend Optimizer installed',
 'MOD_ZEND_PLATFORM'                               => 'Zend Platform installed',
 'MOD_MB_STRING'                                   => 'mbstring',
+'MOD_UNICODE_SUPPORT'                             => 'UTF-8 support',
 
 'STEP_0_ERROR_TEXT'                               => 'Your system does not fit system requirements',
 'STEP_0_TEXT'                                     => '<ul class="req">'.
@@ -119,7 +120,9 @@ $aLang = array(
 'STEP_3_DB_DATABSE_NAME'                          => "Database name",
 'STEP_3_DB_DEMODATA'                              => "Demodata",
 'STEP_3_UTFMODE'                                  => "Use UTF-8 character encoding",
-'STEP_3_UTFNOTSUPPORTED'                          => "Due to missing mbstring PHP module the OXID eShop cannot operate in UTF-8 mode",
+'STEP_3_UTFNOTSUPPORTED'                          => "The OXID eShop cannot operate in UTF-8 mode, due to:",
+'STEP_3_UTFNOTSUPPORTED1'                         => " missing mbstring PHP module",
+'STEP_3_UTFNOTSUPPORTED2'                         => " installed PCRE does not support UTF-8",
 'STEP_3_UTFINFO'                                  => "UTF-8 character encoding provides better support for special chars than other character encodings. This is particulary important for multilingual eShops. However, UTF-8 is slightly slower than the standard encoding (ISO 8859-15). <br /> If you plan to provide your eShop in many different languages, you should use UTF-8. If you just want to provide a few languages using related symbol sets (e. g. English, German, French), you don't need UTF-8.",
 'STEP_3_CREATE_DB_WHEN_NO_DB_FOUND'               => "If database does not exist, it's going to be created",
 'BUTTON_RADIO_INSTALL_DB_DEMO'                    => "Install demodata",

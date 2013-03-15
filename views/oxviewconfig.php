@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxviewconfig.php 17642 2009-03-27 13:58:14Z arvydas $
+ * $Id: oxviewconfig.php 18043 2009-04-09 12:25:00Z arvydas $
  */
 
 /**
@@ -191,7 +191,7 @@ class oxViewConfig extends oxSuperCfg
 
         if ( $this->_oShop && isset( $this->_oShop->$sName ) ) {
             $sValue = $this->_oShop->$sName;
-        } elseif( $this->_aViewData && isset( $this->_aViewData[ $sName ] ) ) {
+        } elseif ( $this->_aViewData && isset( $this->_aViewData[ $sName ] ) ) {
             $sValue = $this->_aViewData[ $sName ];
         } else {
             $sValue = ( isset( $this->_aConfigParams[ $sName ] ) ? $this->_aConfigParams[ $sName ] : null );
@@ -484,7 +484,7 @@ class oxViewConfig extends oxSuperCfg
     public function getNoSslImageDir()
     {
         if ( ( $sValue = $this->getViewConfigParam( 'nossl_imagedir' ) ) === null ) {
-            $sValue = $this->getConfig()->getImageUrl( $this->isAdmin() , false );
+            $sValue = $this->getConfig()->getImageUrl( $this->isAdmin(), false );
             $this->setViewConfigParam( 'nossl_imagedir', $sValue );
         }
         return $sValue;
@@ -499,7 +499,7 @@ class oxViewConfig extends oxSuperCfg
     public function getPictureDir()
     {
         if ( ( $sValue = $this->getViewConfigParam( 'picturedir' ) ) === null ) {
-            $sValue = $this->getConfig()->getPictureUrl( null , $this->isAdmin() );
+            $sValue = $this->getConfig()->getPictureUrl( null, $this->isAdmin() );
             $this->setViewConfigParam( 'picturedir', $sValue );
         }
         return $sValue;
@@ -801,6 +801,8 @@ class oxViewConfig extends oxSuperCfg
 
     /**
      * Returns view config variable value if possible
+     *
+     * @param string $sVarName name of variable to return
      *
      * @return mixed
      */

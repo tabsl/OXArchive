@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: tag.php 17915 2009-04-07 07:15:19Z vilma $
+ * $Id: tag.php 18244 2009-04-15 14:49:32Z arvydas $
  */
 
 /**
@@ -66,8 +66,18 @@ class Tag extends aList
      */
     protected $_sTemplateLocation;
 
+    /**
+     * Unsets SEO category, initiates tag view and calls parent::init();
+     *
+     * @return null
+     */
     public function init()
     {
+        if ( oxUtils::getInstance()->seoIsActive() ) {
+            // cleaning category id tracked by SEO
+            $this->setSessionCategoryId( null );
+        }
+
         $this->_sTag = oxConfig::getParameter("searchtag", 1);
         return parent::init();
     }
@@ -201,8 +211,6 @@ class Tag extends aList
 
     /**
      * Generates Url for page navigation
-     *
-     * @param string $sClass active class name (optional)
      *
      * @return string
      */

@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: vendorlist.php 17315 2009-03-17 16:18:58Z arvydas $
+ * $Id: vendorlist.php 18045 2009-04-09 12:26:14Z arvydas $
  */
 
 /**
@@ -226,6 +226,7 @@ class VendorList extends aList
      *
      * @param string $sUrl  current url
      * @param int    $iPage page number
+     * @param int    $iLang active language id
      *
      * @return string
      */
@@ -263,9 +264,9 @@ class VendorList extends aList
      */
     public function hasVisibleSubCats()
     {
-         if ( $this->_blVisibleSubCats === null ) {
-             $this->_blVisibleSubCats = false;
-             if ( ( $oVendorTree = $this->getVendorTree() ) ) {
+        if ( $this->_blVisibleSubCats === null ) {
+            $this->_blVisibleSubCats = false;
+            if ( ( $oVendorTree = $this->getVendorTree() ) ) {
                 if ( ( $oVendor = $this->getActVendor() ) ) {
                     if ( $oVendor->getId() == 'root' ) {
                         $this->_blVisibleSubCats = $oVendorTree->count();
@@ -300,16 +301,15 @@ class VendorList extends aList
      */
     public function getArticleList()
     {
-         if ( $this->_aArticleList === null ) {
-             $this->_aArticleList = array();
-             if ( ( $oVendorTree = $this->getVendorTree() ) ) {
+        if ( $this->_aArticleList === null ) {
+            $this->_aArticleList = array();
+            if ( ( $oVendorTree = $this->getVendorTree() ) ) {
                 if ( ( $oVendor = $this->getActVendor() ) && ( $oVendor->getId() != 'root' ) ) {
                     list( $aArticleList, $this->_iAllArtCnt ) = $this->_loadArticles( $oVendor );
                     if ( $this->_iAllArtCnt ) {
                         $this->_aArticleList = $aArticleList;
                     }
                 }
-
             }
         }
         return $this->_aArticleList;
@@ -391,7 +391,7 @@ class VendorList extends aList
     public function getTitleSuffix()
     {
         if ( $this->getActVendor()->oxvendor__oxshowsuffix->value ) {
-           return $this->getConfig()->getActiveShop()->oxshops__oxtitlesuffix->value;
+            return $this->getConfig()->getActiveShop()->oxshops__oxtitlesuffix->value;
         }
     }
 

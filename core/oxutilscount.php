@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxutilscount.php 17248 2009-03-16 15:22:07Z arvydas $
+ * $Id: oxutilscount.php 18025 2009-04-09 11:30:19Z arvydas $
  */
 
 /**
@@ -350,7 +350,7 @@ class oxUtilsCount extends oxSuperCfg
         $sQ = "select count(*) from oxartextends inner join $sArticleTable
                on $sArticleTable.oxid = oxartextends.oxid where $sActiveSnippet
                and match(oxartextends.oxtags$sLangExt)
-               against ( ".$oDb->Quote( $sTag )." ) ";
+               against ( ".$oDb->quote( $sTag )." ) ";
 
         return $oDb->getOne( $sQ );
     }

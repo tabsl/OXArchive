@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxvendor.php 17768 2009-04-02 10:52:12Z sarunas $
+ * $Id: oxvendor.php 18024 2009-04-09 11:29:24Z arvydas $
  */
 
 /**
@@ -111,6 +111,7 @@ class oxVendor extends oxI18n
                 break;
             default:
                 $sValue = parent::__get( $sName );
+                break;
         }
         return $sValue;
     }

@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: account_password.php 16489 2009-02-12 10:07:15Z arvydas $
+ * $Id: account_password.php 18038 2009-04-09 12:21:40Z arvydas $
  */
 
 
@@ -75,7 +75,7 @@ class Account_Password extends Account
             return $this->_sThisTemplate = $this->_sThisLoginTemplate;
         }
         if ( $oUser->oxuser__oxisopenid->value == 1 && strpos( $oUser->oxuser__oxpassword->value, 'openid_' ) === 0 ) {
-        	$this->_blHasPassword = false;
+            $this->_blHasPassword = false;
         }
 
         return $this->_sThisTemplate;
@@ -96,17 +96,17 @@ class Account_Password extends Account
         $sOldPass  = oxConfig::getParameter( 'password_old' );
         $sNewPass  = oxConfig::getParameter( 'password_new' );
         $sConfPass = oxConfig::getParameter( 'password_new_confirm' );
-        
+
         try {
             $oUser->checkPassword( $sNewPass, $sConfPass, true );
-        } catch ( Exception $oExcp ) {            
+        } catch ( Exception $oExcp ) {
             switch ( $oExcp->getMessage() ) {
                 case 'EXCEPTION_INPUT_EMPTYPASS':
                 case 'EXCEPTION_INPUT_PASSTOOSHORT':
                     return oxUtilsView::getInstance()->addErrorToDisplay('ACCOUNT_PASSWORD_ERRPASSWORDTOSHORT', false, true);
                 default:
                     return oxUtilsView::getInstance()->addErrorToDisplay('ACCOUNT_PASSWORD_ERRPASSWDONOTMATCH', false, true);
-            }
+                }
         }
 
         if ( !$sOldPass || !$oUser->isSamePassword( $sOldPass ) ) {

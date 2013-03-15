@@ -19,15 +19,27 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxerptype_user.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * $Id: oxerptype_user.php 18033 2009-04-09 12:15:54Z arvydas $
  */
 
-require_once( 'oxerptype.php');
-require_once( realpath(dirname(__FILE__).'/../oxerpcompatability.php'));
+require_once 'oxerptype.php';
+require_once realpath(dirname(__FILE__).'/../oxerpcompatability.php');
 
+/**
+ * ERP user description class
+ */
 class oxERPType_User extends oxERPType
 {
+    /**
+     * Error message
+     * @var string
+     */
     static $CAN_NOT_IMPORT_SALT = 'ERROR: Can not import user password salt to shop config.';
+
+    /**
+     * object fields description
+     * @var array
+     */
     protected $_aFieldListVersions = array(
         '1' => array(
             'OXID'           => 'OXID',
@@ -101,6 +113,11 @@ class oxERPType_User extends oxERPType
         ),
     );
 
+    /**
+     * Class constructor
+     *
+     * @return null
+     */
     public function __construct()
     {
         parent::__construct();
@@ -116,10 +133,12 @@ class oxERPType_User extends oxERPType
     }
 
     /**
-     * returns SQL string for this type
+     * return sql column name of given table column
      *
-     * @param string $sWhere
-     * @param integer $iLanguage
+     * @param string $sWhere    where condition
+     * @param int    $iLanguage language id
+     * @param int    $iShopID   shop id
+     *
      * @return string
      */
     public function getSQL( $sWhere, $iLanguage = 0,$iShopID = 1)
@@ -127,20 +146,28 @@ class oxERPType_User extends oxERPType
         $myConfig = oxConfig::getInstance();
 
         // add type 'user' for security reasons
-        if( strstr( $sWhere, 'where'))
+        if ( strstr( $sWhere, 'where' ) ) {
             $sWhere .= ' and ';
-        else
+        } else {
             $sWhere .= ' where ';
+        }
 
         $sWhere .= ' oxrights = \'user\'';
         //MAFI also check for shopid to restrict access
-        if(!$myConfig->getConfigParam('blMallUsers')){
+        if ( !$myConfig->getConfigParam( 'blMallUsers' ) ) {
             $sWhere .= ' AND oxshopid = \''.$iShopID.'\'';
         }
 
         return parent::getSQL( $sWhere, $iLanguage);;
     }
 
+    /**
+     * Checks for write access. If access is not granted exception is thrown
+     *
+     * @param object $sOxid object id
+     *
+     * @return null
+     */
     public function checkWriteAccess($sOxid)
     {
         $myConfig = oxConfig::getInstance();
@@ -150,40 +177,45 @@ class oxERPType_User extends oxERPType
         }
     }
 
+    /**
+     * Returns object to delete
+     *
+     * @param string $sId object id
+     *
+     * @return oxuser
+     */
     public function getObjectForDeletion( $sId)
     {
         $myConfig = oxConfig::getInstance();
 
-        if( !isset($sId))
+        if ( !isset( $sId ) ) {
             throw new Exception( "Missing ID!");
+        }
 
         $oUser = oxNew( $this->getShopObjectName(), "core");
-        if(!$oUser->exists($sId)){
+        if ( !$oUser->exists( $sId ) ) {
             throw new Exception( $this->getShopObjectName(). " " . $sId. " does not exists!");
         }
 
         //We must load the object here, to check shopid and return it for further checks
-        $oUser->Load($sId);
+        $oUser->load($sId);
 
         //if blMallUsers is true its possible to delete all users of all shops
-        if($oUser->getShopId() != $myConfig->getShopId() && !$myConfig->getConfigParam('blMallUsers'))
+        if ( $oUser->getShopId() != $myConfig->getShopId() && !$myConfig->getConfigParam('blMallUsers' ) ) {
             throw new Exception( "No right to delete object {$sId} !");
+        }
 
         //set to false, to allow a deletion, even if its normally not allowed
         $oUser->setIsDerived(false);
         return $oUser;
     }
 
-    public function getFunctionSuffix()
-    {
-        return parent::getFunctionSuffix();
-    }
-
     /**
      * return sql column name of given table column
      *
-     * @param string $sField
-     * @param int    $iLanguage
+     * @param string $sField    object field anme
+     * @param int    $iLanguage language id
+     * @param int    $iShopID   shop id
      *
      * @return string
      */
@@ -216,9 +248,9 @@ class oxERPType_User extends oxERPType
     /**
      * issued before saving an object. can modify aData for saving
      *
-     * @param oxBase $oShopObject
-     * @param array  $aData
-     * @param bool   $blAllowCustomShopId
+     * @param oxBase $oShopObject         shop object
+     * @param array  $aData               data used in assign
+     * @param bool   $blAllowCustomShopId if TRUE - custom shop id is allowed
      *
      * @return array
      */
@@ -254,8 +286,8 @@ class oxERPType_User extends oxERPType
      * prepares object for saving in shop
      * returns true if save can proceed further
      *
-     * @param $oShopObject
-     * @param $aData
+     * @param object $oShopObject shop object
+     * @param array  $aData       data array
      *
      * @return boolean
      */
@@ -283,9 +315,11 @@ class oxERPType_User extends oxERPType
     /**
      * We have the possibility to add some data
      *
-     * @param array $aFields
+     * @param array $aFields fields to add to export
+     *
+     * @return array
      */
-    public function addExportData( $aFields)
+    public function addExportData( $aFields )
     {
         $oCompat = oxNew('OXERPCompatability');
         if ($oCompat->isPasswordSaltSupported() && (oxERPBase::getUsedDbFieldsVersion() < 3)) {

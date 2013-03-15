@@ -24,7 +24,6 @@
 
 /**
  * Class dealing with regular string handling
- *
  */
 class oxStrRegular
 {
@@ -51,7 +50,7 @@ class oxStrRegular
     /**
      * PHP strlen() function wrapper
      *
-     * @param string $sStr
+     * @param string $sStr strint to mesure its length
      *
      * @return int
      */
@@ -63,9 +62,9 @@ class oxStrRegular
     /**
      * PHP substr() function wrapper
      *
-     * @param string $sStr
-     * @param int    $iStart
-     * @param int    $iLength
+     * @param string $sStr    value to truncate
+     * @param int    $iStart  start position
+     * @param int    $iLength length
      *
      * @return string
      */
@@ -81,9 +80,9 @@ class oxStrRegular
     /**
      * PHP strpos() function wrapper
      *
-     * @param string $sHaystack
-     * @param string $sNeedle
-     * @param int    $sOffset
+     * @param string $sHaystack value to search in
+     * @param string $sNeedle   value to search for
+     * @param int    $iOffset   initial search position
      *
      * @return string
      */
@@ -99,10 +98,10 @@ class oxStrRegular
     /**
      * PHP strstr() function wrapper
      *
-     * @param string $sHaystack
-     * @param string $sNeedle
+     * @param string $sHaystack string searching in
+     * @param string $sNeedle   string to search
      *
-     * @return string
+     * @return mixed
      */
     public function strstr($sHaystack, $sNeedle)
     {
@@ -137,13 +136,12 @@ class oxStrRegular
      * PHP htmlspecialchars() function wrapper
      *
      * @param string $sString        string being converted
-     * @param bool   $blDoubleEncode When this is turned off PHP will not encode existing html entities, the default is to convert everything.
      *
      * @return string
      */
-    public function htmlspecialchars($sString, $blDoubleEncode = true)
+    public function htmlspecialchars($sString)
     {
-        return htmlspecialchars( $sString, ENT_QUOTES, $this->_sEncoding, $blDoubleEncode );
+        return htmlspecialchars( $sString, ENT_QUOTES, $this->_sEncoding );
     }
 
     /**
@@ -188,17 +186,17 @@ class oxStrRegular
     /**
      * PHP preg_replace() function wrapper
      *
-     * @param mixed $sPattern pattern to search for, as a string
-     * @param mixed $sString  string to replace
+     * @param mixed  $sPattern pattern to search for, as a string
+     * @param mixed  $sString  string to replace
      * @param string $sSubject strings to search and replace
      * @param int    $iLimit   maximum possible replacements
      * @param int    $iCount   number of replacements done
      *
      * @return string
      */
-    public function preg_replace($sPattern, $sString, $sSubject, $sLimit = -1, $iCount = null)
+    public function preg_replace($sPattern, $sString, $sSubject, $iLimit = -1, $iCount = null)
     {
-        return preg_replace( $sPattern, $sString, $sSubject, $sLimit, $iCount);
+        return preg_replace( $sPattern, $sString, $sSubject, $iLimit, $iCount);
     }
 
     /**

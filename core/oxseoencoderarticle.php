@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxseoencoderarticle.php 17768 2009-04-02 10:52:12Z sarunas $
+ * $Id: oxseoencoderarticle.php 18027 2009-04-09 11:32:17Z arvydas $
  */
 
 /**
@@ -263,6 +263,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
                 break;
             default:
                 $sUri = $this->_getArticleUri( $oArticle, $iLang );
+                break;
         }
 
         return $this->_getFullUrl( $sUri, $iLang );

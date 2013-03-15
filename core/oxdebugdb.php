@@ -19,34 +19,52 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxdebugdb.php 17643 2009-03-27 13:59:37Z arvydas $
+ * $Id: oxdebugdb.php 18037 2009-04-09 12:20:55Z arvydas $
  */
-
 
 /**
  * class for parsing and retrieving warnings from adodb saved sql table
- *
  */
 class oxDebugDb
 {
-
+    /**
+     * Array of SQL queryes to skip
+     *
+     * @var array
+     */
     private static $_aSkipSqls = array();
 
-    protected static function _skipWhiteSpace($str){
-        return str_replace(array(' ', "\t", "\r", "\n"), '', $str);
+    /**
+     * Removes special chars (' ', "\t", "\r", "\n") from passed string
+     *
+     * @param string $sStr string to cleanup
+     *
+     * @return string
+     */
+    protected static function _skipWhiteSpace( $sStr )
+    {
+        return str_replace( array( ' ', "\t", "\r", "\n"), '', $sStr );
     }
 
-    protected static function _isSkipped($sSql){
-        if (!count(self::$_aSkipSqls)) {
+    /**
+     * Checks if query is allready in log file
+     *
+     * @param string $sSql sql query to check
+     *
+     * @return bool
+     */
+    protected static function _isSkipped($sSql)
+    {
+        if ( !count(self::$_aSkipSqls ) ) {
             $file = file_get_contents(realpath(dirname(__FILE__).'/..').'/oxdebugdb_skipped.sql');
             $m = explode('-- -- ENTRY END', $file);
-            foreach ($m as $n) {
-                $n = self::_skipWhiteSpace($n);
-                if ($n)
+            foreach ( $m as $n ) {
+                if ( ( $n = self::_skipWhiteSpace( $n ) ) ) {
                     self::$_aSkipSqls[md5($n)] = true;
+                }
             }
         }
-        $checkTpl = md5(self::_skipWhiteSpace(self::getSqlTemplate($sSql)));
+        $checkTpl = md5(self::_skipWhiteSpace(self::_getSqlTemplate($sSql)));
         $check = md5(self::_skipWhiteSpace($sSql));
         return self::$_aSkipSqls[$check] || self::$_aSkipSqls[$checkTpl];
     }
@@ -61,38 +79,38 @@ class oxDebugDb
         $aWarnings = array();
         $aHistory = array();
         $oDb = oxDb::getDb();
-        $_lastDbgState = $oDb->LogSQL( false );
-        $rs = $oDb->Execute("select sql0, sql1, tracer from adodb_logsql order by created limit 5000");
-        if ($rs != false && $rs->recordCount() > 0) {
-            $_lastRecord = null;
-            while (!$rs->EOF) {
+        $iLastDbgState = $oDb->logSQL( false );
+        $rs = $oDb->execute( "select sql0, sql1, tracer from adodb_logsql order by created limit 5000" );
+        if ($rs != false && $rs->recordCount() > 0 ) {
+            $aLastRecord = null;
+            while ( !$rs->EOF ) {
                 $sId  = $rs->fields[0];
                 $sSql = $rs->fields[1];
 
                 if (!self::_isSkipped($sSql)) {
                     if ($this->_checkMissingKeys($sSql)) {
                         $aWarnings['MissingKeys'][$sId] = true;
-// debug: echo "<li> <pre>".self::getSqlTemplate($sSql)." </pre><br>";
+                        // debug: echo "<li> <pre>".self::_getSqlTemplate($sSql)." </pre><br>";
                     }
                 }
 
                 // multiple executed single statements
-                if ($_lastRecord && $this->_checkMess($sSql,$_lastRecord[1])) {
+                if ( $aLastRecord && $this->_checkMess( $sSql, $aLastRecord[1] ) ) {
                     // sql0 matches, also, this is exactly following statement: MESS?
                     $aWarnings['MESS'][$sId] = true;
-                    $aWarnings['MESS'][$_lastRecord[0]] = true;
+                    $aWarnings['MESS'][$aLastRecord[0]] = true;
                 }
 
                 foreach ($aHistory as $aHistItem) {
-                    if ($this->_checkMess($sSql,$aHistItem[1])) {
+                    if ( $this->_checkMess( $sSql, $aHistItem[1] ) ) {
                         // sql0 matches, also, this is exactly following statement: MESS?
                         $aWarnings['MESS_ALL'][$sId] = true;
                         $aWarnings['MESS_ALL'][$aHistItem[0]] = true;
                     }
                 }
 
-                $aHistory[] = $_lastRecord = $rs->fields;
-/*
+                $aHistory[] = $aLastRecord = $rs->fields;
+                /*
                 if (preg_match('/select[^\*]*(?<!(from))\*.*?(?<!(from))from/im', $sSql)) {
                     $aWarnings['Select fields not strict'][$sId] = true;
                 }*/
@@ -100,23 +118,25 @@ class oxDebugDb
             }
         }
         $aWarnings = $this->_generateWarningsResult($aWarnings);
-        $this->_logToFile($aWarnings);
-        $oDb->LogSQL( $_lastDbgState );
+        $this->_logToFile( $aWarnings );
+        $oDb->logSQL( $iLastDbgState );
         return $aWarnings;
     }
 
     /**
      * returns nice formatted array
      *
-     * @param array $aInput
+     * @param array $aInput messages array
+     *
+     * @return array
      */
-    protected function _generateWarningsResult($aInput)
+    protected function _generateWarningsResult( $aInput )
     {
         $aOutput = array();
         $oDb = oxDb::getDb();
         foreach ($aInput as $fnc => $aWarnings) {
             $ids = implode("','", array_keys($aWarnings));
-            $rs = $oDb->Execute("select sql1, timer, tracer from adodb_logsql where sql0 in ('$ids')");
+            $rs = $oDb->execute("select sql1, timer, tracer from adodb_logsql where sql0 in ('$ids')");
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     $aOutputEntry = array();
@@ -136,19 +156,22 @@ class oxDebugDb
      * check missing keys - use explain
      * return true on warning
      *
-     * @param bool $sSql
+     * @param string $sSql query string
+     *
+     * @return bool
      */
-    protected function _checkMissingKeys($sSql)
+    protected function _checkMissingKeys( $sSql )
     {
-        if (strpos(strtolower(trim($sSql)), 'select ') !== 0)
+        if ( strpos( strtolower( trim( $sSql ) ), 'select ' ) !== 0 ) {
             return false;
+        }
 
-        $oDb = oxDb::getDb(true);
-        $rs = $oDb->Execute("explain $sSql");
-        if ($rs != false && $rs->recordCount() > 0) {
+        $rs = oxDb::getDb(true)->execute( "explain $sSql" );
+        if ( $rs != false && $rs->recordCount() > 0 ) {
             while (!$rs->EOF) {
-                if ($this->_missingKeysChecker($rs->fields))
+                if ( $this->_missingKeysChecker( $rs->fields ) ) {
                     return true;
+                }
                 $rs->moveNext();
             }
         }
@@ -159,31 +182,41 @@ class oxDebugDb
      * check if remark of explain is not using keys
      * true if not using
      *
-     * @param array $aExplain
+     * @param array $aExplain db explain response array
+     *
+     * @return bool
      */
     private function _missingKeysChecker($aExplain)
     {
-
-        if ($aExplain['type'] == 'system') {
+        if ( $aExplain['type'] == 'system' ) {
             return false;
         }
 
-        if ($aExplain['key'] === null)
+        if ( $aExplain['key'] === null ) {
             return true;
-
-        if (strpos($aExplain['type'], 'range'))
-            return true;
-        if (strpos($aExplain['type'], 'index'))
-            return true;
-        if (strpos($aExplain['type'], 'ALL'))
-            return true;
-
-        if (strpos($aExplain['Extra'], 'filesort')) {
-            if (strpos($aExplain['ref'], 'const') === false)
-                return true;
         }
-        if (strpos($aExplain['Extra'], 'temporary'))
+
+        if ( strpos( $aExplain['type'], 'range' ) ) {
             return true;
+        }
+
+        if ( strpos($aExplain['type'], 'index' ) ) {
+            return true;
+        }
+
+        if ( strpos( $aExplain['type'], 'ALL' ) ) {
+            return true;
+        }
+
+        if ( strpos( $aExplain['Extra'], 'filesort' ) ) {
+            if ( strpos( $aExplain['ref'], 'const' ) === false ) {
+                return true;
+            }
+        }
+
+        if ( strpos( $aExplain['Extra'], 'temporary' ) ) {
+            return true;
+        }
 
         return false;
     }
@@ -191,20 +224,24 @@ class oxDebugDb
     /**
      * return true if statements are similar
      *
-     * @param string $s1
-     * @param string $s2
+     * @param string $s1 statement one
+     * @param string $s2 statement two
+     *
      * @return boolean
      */
-    protected function _checkMess($s1, $s2)
+    protected function _checkMess( $s1, $s2 )
     {
-        if (strpos(strtolower(trim($s1)), 'select ') !== 0)
+        if ( strpos( strtolower( trim( $s1 ) ), 'select ' ) !== 0 ) {
             return false;
-        if (strpos(strtolower(trim($s2)), 'select ') !== 0)
+        }
+
+        if ( strpos( strtolower( trim( $s2 ) ), 'select ' ) !== 0 ) {
             return false;
+        }
 
         // strip from values
-        $s1 = self::getSqlTemplate($s1);
-        $s2 = self::getSqlTemplate($s2);
+        $s1 = self::_getSqlTemplate( $s1 );
+        $s2 = self::_getSqlTemplate( $s2 );
 
         if (!strcmp($s1, $s2)) {
             return true;
@@ -216,34 +253,40 @@ class oxDebugDb
     /**
      * strips sql down of its values
      *
-     * @param string $sSql
+     * @param string $sSql sql to process
+     *
      * @return string
      */
-    protected static function getSqlTemplate($sSql) {
-        $sSql = preg_replace("/'.*?(?<!\\\\)'/", "'#VALUE#'", $sSql);
-        $sSql = preg_replace('/".*?(?<!\\\\)"/', '"#VALUE#"', $sSql);
-        $sSql = preg_replace('/[0-9]/', '#NUMVALUE#', $sSql);
+    protected static function _getSqlTemplate( $sSql )
+    {
+        $sSql = preg_replace( "/'.*?(?<!\\\\)'/", "'#VALUE#'", $sSql );
+        $sSql = preg_replace( '/".*?(?<!\\\\)"/', '"#VALUE#"', $sSql );
+        $sSql = preg_replace( '/[0-9]/', '#NUMVALUE#', $sSql );
+
         return $sSql;
     }
 
-
-
     /**
-     * log to file
+     * logs warnings to file
+     *
+     * @param array $aWarnings warnings
+     *
+     * @return null
      */
     protected function _logToFile($aWarnings)
     {
         $oStr = getStr();
         $s = "\n\n\n\n\n\n-- ".date("m-d  H:i:s")." --\n\n";
-        foreach ($aWarnings as $w)
-        {
+        foreach ( $aWarnings as $w ) {
             $s .= "{$w['check']}: {$w['time']} - ".$oStr->htmlentities($w['sql'])."\n\n";
             $s .= $w['trace']."\n\n\n\n";
         }
-        $f = fopen(realpath(dirname(__FILE__).'/..').'/oxdebugdb.txt', "a+");
-        if (!$f)
+
+        if ( !( $f = fopen(realpath(dirname(__FILE__).'/..').'/oxdebugdb.txt', "a+" ) ) ) {
             return;
-        fwrite($f, $s);
-        fclose($f);
+        }
+
+        fwrite( $f, $s );
+        fclose( $f );
     }
 }

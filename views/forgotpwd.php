@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: forgotpwd.php 17315 2009-03-17 16:18:58Z arvydas $
+ * $Id: forgotpwd.php 18040 2009-04-09 12:22:44Z arvydas $
  */
 
 /**
@@ -112,7 +112,7 @@ class ForgotPwd extends oxUBase
                     return oxUtilsView::getInstance()->addErrorToDisplay('FORGOTPWD_ERRPASSWORDTOSHORT', false, true);
                 default:
                     return oxUtilsView::getInstance()->addErrorToDisplay('FORGOTPWD_ERRPASSWDONOTMATCH', false, true);
-            }
+                }
         }
 
         // passwords are fine - updating and loggin user in

@@ -19,7 +19,7 @@
  * @package views
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: contact.php 17902 2009-04-06 14:22:54Z vilma $
+ * $Id: contact.php 18040 2009-04-09 12:22:44Z arvydas $
  */
 
 /**
@@ -114,8 +114,7 @@ class Contact extends oxUBase
         $sMac     = oxConfig::getParameter( 'c_mac' );
         $sMacHash = oxConfig::getParameter( 'c_mach' );
         $oCaptcha = oxNew('oxCaptcha');
-        if (!$oCaptcha->pass($sMac, $sMacHash))
-        {
+        if ( !$oCaptcha->pass($sMac, $sMacHash ) ) {
             // even if there is no exception, use this as a default display method
             oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_INPUT_NOTALLFIELDS' );
             return false;

@@ -19,7 +19,7 @@
  * @package core
  * @copyright (C) OXID eSales AG 2003-2009
  * @version OXID eShop CE
- * $Id: oxlist.php 17845 2009-04-03 15:47:03Z tomas $
+ * $Id: oxlist.php 18377 2009-04-20 16:05:00Z tomas $
  */
 
 /**
@@ -419,7 +419,8 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
 
                 $oListObject = clone $oSaved;
 
-                $oListObject->assign( $rs->fields);
+                $this->_assignElement($oListObject, $rs->fields);
+                //$oListObject->assign( $rs->fields);
 
                 if ( $this->_aAssignCallback ) {
                     call_user_func( $this->_aAssignCallback, $oListObject );
@@ -486,6 +487,20 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
         $this->selectString($sQ);
 
         return $this;
+    }
+
+    /**
+     * Executes assign() method on list object. This method is called in loop in oxList::selectString().
+     * It is if you want to execute any functionality on every list ELEMENT after it is fully loaded (assigned).
+     *
+     * @param oxBase $oListObject List object (the one derived from oxBase)
+     * @param array  $aDbFields   An array holding db field values (normaly the result of oxDb::Execute())
+     *
+     * @return null;
+     */
+    protected function _assignElement($oListObject, $aDbFields)
+    {
+        $oListObject->assign($aDbFields);
     }
 
     /**
