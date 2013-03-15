@@ -12,5 +12,6 @@
     [{else}]
         [{ oxmultilang ident="PAGE_PRIVATESALES_INVITE_EMAILWASSENT" }]<br><br>
     [{/if}]
+    [{ insert name="oxid_tracker"}]
 [{/capture}]
 [{include file="layout/page.tpl" sidebar="Right"}]

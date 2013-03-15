@@ -27,7 +27,7 @@
 [{foreach from=$articles item=oProduct}]
 <tr>
         <td valign="top" style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px; padding-top: 10px;">
-            <img src="[{$oProduct->nossl_dimagedir}]/[{$oProduct->oxarticles__oxthumb->value }]" border="0" hspace="0" vspace="0" alt="[{ $oProduct->oxarticles__oxtitle->value|strip_tags }]" align="texttop">
+            <img src="[{$oProduct->getThumbnailUrl()}]" border="0" hspace="0" vspace="0" alt="[{ $oProduct->oxarticles__oxtitle->value|strip_tags }]" align="texttop">
         </td>
         <td valign="top" style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px; padding-top: 10px;">
             <b>[{ $oProduct->oxarticles__oxtitle->value }][{ if $oProduct->oxarticles__oxvarselect->value}], [{ $oProduct->oxarticles__oxvarselect->value}][{/if}]</b>

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerpcsv.php 25471 2010-02-01 14:35:11Z alfonsas $
+ * @version   SVN: $Id: oxerpcsv.php 35103 2011-05-04 11:19:14Z rimvydas.paskevicius $
  */
 
 /**
@@ -239,9 +239,11 @@ class oxErpCsv extends oxERPBase
     /**
      * Returns import data cor current index
      *
+     * @param string $iIdx array index value
+     *
      * @return mixed
      */
-    public function getImportData()
+    public function getImportData($iIdx = null)
     {
         return $this->_aData[$this->_iIdx];
     }

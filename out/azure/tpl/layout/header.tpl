@@ -10,9 +10,11 @@
         <li><a id="registerLink" href="[{ oxgetseourl ident=$oViewConf->getSslSelfLink()|cat:"cl=register" }]" title="[{oxmultilang ident="PAGE_ACCOUNT_REGISTER_REGISTER"}]">[{oxmultilang ident="PAGE_ACCOUNT_REGISTER_REGISTER"}]</a></li>
     [{/if}]
   </ul>
-  <a id="logo" href="[{$oViewConf->getHomeLink()}]" title="[{$oxcmp_shop->oxshops__oxtitleprefix->value}]"><img src="[{$oViewConf->getImageUrl()}]logo.png" alt="[{$oxcmp_shop->oxshops__oxtitleprefix->value}]"></a>
+  [{assign var="slogoImg" value="logo.png"}]
+  <a id="logo" href="[{$oViewConf->getHomeLink()}]" title="[{$oxcmp_shop->oxshops__oxtitleprefix->value}]"><img src="[{$oViewConf->getImageUrl($slogoImg)}]" alt="[{$oxcmp_shop->oxshops__oxtitleprefix->value}]"></a>
     [{include file="widget/header/topcategories.tpl"}]
     [{oxid_include_dynamic file="widget/minibasket/minibasket.tpl"}]
+    [{oxid_include_dynamic file="widget/minibasket/minibasketmodal.tpl"}]
     [{include file="widget/header/search.tpl"}]
 </div>
 [{if $oView->getClassName()=='start' && $oView->getBanners()|@count > 0 }]

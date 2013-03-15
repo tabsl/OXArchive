@@ -6,21 +6,21 @@
         [{assign var='_productLink' value=$product->getLink()}]
     [{/if}]
 
-    <a href="[{ $_productLink }]" class="picture url" rel="product[{if $oView->noIndex() }] nofollow[{/if}]">
-      <img class="photo" src="[{if $size=='big'}][{$product->getPictureUrl(1) }][{elseif $size=='thinest'}][{$product->getIconUrl() }][{else}][{ $product->getThumbnailUrl() }][{/if}]" alt="[{ $product->oxarticles__oxtitle->value|strip_tags }] [{ $product->oxarticles__oxvarselect->value|default:'' }]">
+    <a href="[{ $_productLink }]" class="picture" [{if $oView->noIndex() }]rel="nofollow"[{/if}]>
+      <img src="[{if $size=='big'}][{$product->getPictureUrl(1) }][{elseif $size=='thinest'}][{$product->getIconUrl() }][{else}][{ $product->getThumbnailUrl() }][{/if}]" alt="[{ $product->oxarticles__oxtitle->value|strip_tags }] [{ $product->oxarticles__oxvarselect->value|default:'' }]">
     </a>
 
     <strong class="title">
-        <a class="fn" href="[{ $_productLink }]" rel="product[{if $oView->noIndex() }] nofollow[{/if}]">[{$product->oxarticles__oxtitle->value}] [{$product->oxarticles__oxvarselect->value}]</a>
+        <a class="fn" href="[{ $_productLink }]" [{if $oView->noIndex() }]rel="nofollow"[{/if}]>[{$product->oxarticles__oxtitle->value}] [{$product->oxarticles__oxvarselect->value}]</a>
     </strong>
     <span class="identifier">
         [{if $product->oxarticles__oxweight->value }]
             <div>
-                <span class="type" title="weight">[{ oxmultilang ident="PAGE_PRODUCT_INC_PRODUCT_ARTWEIGHT" }]</span>
+                <span title="weight">[{ oxmultilang ident="PAGE_PRODUCT_INC_PRODUCT_ARTWEIGHT" }]</span>
                 <span class="value">[{ $product->oxarticles__oxweight->value }] [{ oxmultilang ident="PAGE_PRODUCT_INC_PRODUCT_ARTWEIGHT2" }]</span>
             </div>
         [{/if}]
-        <span class="type" title="sku">[{ oxmultilang ident="PAGE_PRODUCT_INC_PRODUCT_ARTNOMBER2" }]</span>
+        <span title="sku">[{ oxmultilang ident="PAGE_PRODUCT_INC_PRODUCT_ARTNOMBER2" }]</span>
         <span class="value">[{ $product->oxarticles__oxartnum->value }]</span>
     </span>
 
@@ -63,7 +63,7 @@
             [{/oxhasrights}]
 
             [{if $aVariantSelections && $aVariantSelections.selections }]
-                <div class="variantBox selectorsBox fnSubmit clear" id="compareVariantSelections_[{$testid}]">
+                <div class="selectorsBox js-fnSubmit clear" id="compareVariantSelections_[{$testid}]">
                     [{foreach from=$aVariantSelections.selections item=oSelectionList key=iKey}]
                         [{include file="widget/product/selectbox.tpl" oSelectionList=$oSelectionList}]
                     [{/foreach}]
@@ -71,7 +71,7 @@
             [{elseif $oViewConf->showSelectListsInList()}]
                 [{assign var="oSelections" value=$product->getSelections(1)}]
                 [{if $oSelections}]
-                    <div class="selectorsBox fnSubmit clear" id="compareSelections_[{$testid}]">
+                    <div class="selectorsBox js-fnSubmit clear" id="compareSelections_[{$testid}]">
                         [{foreach from=$oSelections item=oList name=selections}]
                             [{include file="widget/product/selectbox.tpl" oSelectionList=$oList sFieldName="sel" iKey=$smarty.foreach.selections.index blHideDefault=true sSelType="seldrop"}]
                         [{/foreach}]
@@ -82,7 +82,7 @@
 
         <div class="tobasket">
             [{oxhasrights ident="SHOWARTICLEPRICE"}]
-                [{if $product->getFTPrice()}]
+                [{if $product->getFTPrice() > $product->getFPrice()}]
                     <p class="oldPrice">
                         <strong>[{oxmultilang ident="DETAILS_REDUCEDFROM"}] <del>[{$product->getFTPrice()}] [{$currency->sign}]</del></strong>
                     </p>
@@ -90,11 +90,11 @@
             [{/oxhasrights}]
             <div class="tobasketFunction clear">
                 [{oxhasrights ident="SHOWARTICLEPRICE"}]
-                    <label id="productPrice" class="price">
+                    <label id="productPrice_[{$testid}]" class="price">
                         <strong>[{$product->getFPrice()}] [{$currency->sign}]</strong>
                     </label>
                     [{if $product->loadAmountPriceInfo()}]
-                        <a class="selector corners FXgradBlueDark" href="#priceinfo"><img src="[{$oViewConf->getImageUrl()}]selectbutton.png" alt="Select"></a>
+                        <a class="selector corners FXgradBlueDark" href="#priceinfo"><img src="[{$oViewConf->getImageUrl('selectbutton.png')}]" alt="Select"></a>
                     [{/if}]
                 [{/oxhasrights}]
                 [{ if $blShowToBasket }]
@@ -102,9 +102,6 @@
                         <p class="fn clear">
                             <input type="text" name="am" value="1" size="3" autocomplete="off" class="textbox" title="[{ oxmultilang ident="DETAILS_QUANTITY" }]">
                             <button type="submit" class="submitButton largeButton" title="[{oxmultilang ident="PAGE_PRODUCT_INC_PRODUCT_ADDTOCARD2"}]">[{oxmultilang ident="PAGE_PRODUCT_INC_PRODUCT_ADDTOCARD2"}]</button>
-                            [{if $product->loadAmountPriceInfo()}]
-                                [{oxscript add="$( '.ox-details-amount' ).oxSuggest();"}]
-                            [{/if}]
                         </p>
                     [{/oxhasrights}]
                 [{else}]

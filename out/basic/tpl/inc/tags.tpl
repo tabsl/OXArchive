@@ -1,4 +1,4 @@
-[{if $oView->getTagCloudManager() || ( ( $oView->getTagCloudManager() || $oxcmp_user) && $product ) }]
+[{if $oView->showTags() && ( $oView->getTagCloudManager() || ( ( $oView->getTagCloudManager() || $oxcmp_user) && $product ) ) }]
     <strong class="boxhead" id="tags">[{ oxmultilang ident="TAGS"}]</strong>
     <div class="box tags">
         [{if $oView->getEditTags()}]

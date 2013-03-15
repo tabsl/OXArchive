@@ -19,18 +19,18 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype_crossselling.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: oxerptype_crossselling.php 35102 2011-05-04 08:20:01Z rimvydas.paskevicius $
  */
 
 require_once 'oxerptype.php';
 
 /**
- * ERP crossselling description class
+ * cross-selling erp type subclass
  */
 class oxERPType_Crossselling extends oxERPType
 {
     /**
-     * Class constructor
+     * class constructor
      *
      * @return null
      */
@@ -39,13 +39,6 @@ class oxERPType_Crossselling extends oxERPType
         parent::__construct();
 
         $this->_sTableName = 'oxobject2article';
-
-        $this->_aFieldList = array(
-            'OXOBJECTID'	 => 'OXOBJECTID',
-            'OXARTICLENID'	 => 'OXARTICLENID',
-            'OXSORT'		 => 'OXSORT',
-            'OXID'		     => 'OXID'
-        );
 
         $this->_aKeyFieldList = array(
             'OXARTICLENID' => 'OXARTICLENID',

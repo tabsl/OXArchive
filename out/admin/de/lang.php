@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 34552 2011-04-09 15:31:02Z vilma $
+ * @version   SVN: $Id: lang.php 37227 2011-07-21 14:15:55Z juergen.busch $
  */
 
 $sLangName  = 'Deutsch';
@@ -207,6 +207,7 @@ $aLang = array(
 'GENERAL_EXPORTSTATUS'                                     => 'Status',
 'GENERAL_EXPORTSTATUSNEW'                                  => 'neu',
 'GENERAL_EXPORTSTATUSUSED'                                 => 'gebraucht',
+'GENERAL_EXPORTLANGUAGE'                                   => 'Export für Sprache',
 'GENERAL_EXTERNALSTOCK'                                    => 'Fremdlager',
 'GENERAL_EXTRAINFO'                                        => 'zus. Info',
 'GENERAL_FAX'                                              => 'Fax',
@@ -244,7 +245,7 @@ $aLang = array(
 'GENERAL_MANUEL'                                           => 'Manuell',
 'GENERAL_MANUELL'                                          => 'manuell',
 'GENERAL_MENUITEM'                                         => 'Artikel verwalten',
-'GENERAL_MANUFACTURER'                                     => 'Lieferant',
+'GENERAL_MANUFACTURER'                                     => 'Hersteller',
 'GENERAL_MAX_FILE_UPLOAD'                                  => 'max.',
 'GENERAL_NAME'                                             => 'Name',
 'GENERAL_NO'                                               => 'Nein',
@@ -308,7 +309,7 @@ $aLang = array(
 'GENERAL_USER'                                             => 'Benutzer',
 'GENERAL_USTID'                                            => 'Umsatzsteuer-Identnummer',
 'GENERAL_VARIANTE'                                         => 'Variante von  ',
-'GENERAL_VENDOR'                                           => 'Hersteller',
+'GENERAL_VENDOR'                                           => 'Lieferant',
 'GENERAL_VOUCHERS'                                         => 'Gutschein Rabatt',
 'GENERAL_YOUWANTTODELETE'                                  => 'Wollen Sie diesen Eintrag wirklich löschen?',
 'GENERAL_YOUWANTTOUNASSIGN'                                => 'Wollen Sie die Verknüpfung zu diesem Shop wirklich lösen?',
@@ -875,6 +876,10 @@ $aLang = array(
 'ORDER_REMARK_NEWS'                                        => '[News]',
 'ORDER_OVERVIEW_VATID'                                     => 'Umsatzsteuer-Identnummer:',
 'ORDER_OVERVIEW_DELTYPE'                                   => 'Versandart',
+'ORDER_OVERVIEW_LSBANKNAME'                                => 'Bankname',
+'ORDER_OVERVIEW_LSBLZ'                                     => 'BLZ',
+'ORDER_OVERVIEW_LSKTONR'                                   => 'Kontonummer',
+'ORDER_OVERVIEW_LSKTOINHABER'                              => 'Kontoinhaber',
 'ORDER_OVERVIEW_INFOLDER'                                  => 'In Ordner',
 'ORDER_OVERVIEW_INTSTATUS'                                 => 'Interner Status',
 'ORDER_OVERVIEW_ORDERAMTODAY'                              => 'Anzahl Bestellungen heute',
@@ -1127,6 +1132,7 @@ $aLang = array(
 'SHOP_CONFIG_POINTSFORINVITATION'                          => 'Bonuspunkte für neu geworbene Kunden',
 'SHOP_CONFIG_POINTSFORREGISTRATION'                        => 'Bonuspunkte für den Eingeladenen für die Registrierung',
 'SHOP_CONFIG_FACEBOOKAPPID'                                => 'Application ID',
+'SHOP_CONFIG_FACEBOOKCONFIRM'                              => 'Kunde muss Facebook Social Plugins erlauben',
 'SHOP_CONFIG_FBSECRETKEY'                                  => 'Application Secret Key',
 'SHOP_CONFIG_FBCOMMENTS'                                   => 'Comments',
 'SHOP_CONFIG_FBFACEPILE'                                   => 'Facepile',
@@ -1135,7 +1141,8 @@ $aLang = array(
 'SHOP_CONFIG_FBSHARE'                                      => 'Share',
 'SHOP_CONFIG_FBLIKE'                                       => 'Like',
 'SHOP_CONFIG_FACEBOOKCONNECT'                              => 'Connect',
-'SHOP_CONFIG_FACEBOOKCONNECTDISABLED'                      => 'Facebook Connect <b>ist inaktiv</b> da eine installierte cURL Library benötigt wird. Bitte <a href="http://www.google.de/search?source=ig&hl=de&rlz=&=&q=install+curl+library+in+php&aq=f&aqi=&aql=&oq=&gs_rfai=">installieren Sie cURL</a>.',
+'SHOP_CONFIG_FACEBOOKCONNECTDISABLED'                      => 'Facebook Connect <b>ist inaktiv</b>, da eine installierte cURL Library benötigt wird. Bitte <a href="http://www.google.de/search?source=ig&hl=de&rlz=&=&q=install+curl+library+in+php&aq=f&aqi=&aql=&oq=&gs_rfai=">installieren Sie cURL</a>.',
+'SHOP_CONFIG_SHOWTAGS'                                     => 'Tags im eShop anzeigen',
 
 'SHOP_SYSTEM_ATTRIBUTESPERCENT'                            => 'Prozentsatz gleicher Attribute, damit Artikel ähnlich sind',
 'SHOP_SYSTEM_DEFAULTIMAGEQUALITY'                          => 'Bildqualität - von 0 (schlechteste Qualität, kleine Dateigröße) bis 100 (beste Qualität, große Dateigröße)',
@@ -1170,7 +1177,7 @@ $aLang = array(
 'SHOP_SEO_TITLEPREFIX'                                     => 'Titel Präfix',
 'SHOP_SEO_TITLESUFFIX'                                     => 'Titel Suffix',
 'SHOP_SEO_STARTTITLE'                                      => 'Titel der Startseite',
-'SHOP_SEO_ROOTVENDORID'                                    => 'Hersteller Wurzel SEO ID',
+'SHOP_SEO_ROOTVENDORID'                                    => 'Lieferant Wurzel SEO ID',
 'SHOP_SEO_IDSSEPARATOR'                                    => 'SEO IDs Trennzeichen (z. B. "+", "-")',
 'SHOP_SEO_SAFESEOPREF'                                     => 'SEO Suffix um gleiche Artikel zu unterscheiden',
 'SHOP_SEO_RESETIDS'                                        => 'SEO URLs neu berechnen',
@@ -1248,6 +1255,7 @@ $aLang = array(
 'SYSREQ_OPEN_SSL'                                          => 'OpenSSL',
 'SYSREQ_SOAP'                                              => 'SOAP',
 'SYSREQ_UNICODE_SUPPORT'                                   => 'UTF-8 Unterstützung',
+'SYSREQ_BUG53632'                                          => 'Mögliche Probleme mit Server durch PHP Bug #53632',
 'SYSREQ_MEMORY_LIMIT'                                      => 'PHP Memory limit (min. 14MB, 30MB empfohlen)',
 'SYSREQ_DESCRIPTION_PASS'                                  => 'Erfüllt.',
 'SYSREQ_DESCRIPTION_PMIN'                                  => 'Nicht oder nur teilweise erfüllt. Dieser OXID eShop kann sich in Bereichen unerwartet verhalten.',
@@ -1378,7 +1386,7 @@ $aLang = array(
 'USERGROUP_MAIN_ALLMEMBERS'                                => 'Alle Benutzer',
 'VENDOR_LIST_MENUITEM'                                     => 'Stammdaten',
 'VENDOR_LIST_MENUSUBITEM'                                  => 'Lieferanten',
-'VENDOR_LIST_TITLE'                                        => '[OXID Herstellerverwaltung]',
+'VENDOR_LIST_TITLE'                                        => '[OXID Lieferantenverwaltung]',
 'VENDOR_MAIN_ALLITEMS'                                     => 'Alle verfügbaren Artikel',
 'VENDOR_MAIN_ITEMSWITHVENDOR'                              => 'Artikel von diesem Lieferanten',
 'VENDOR_MAIN_ICONUPLOAD'                                   => 'Icon hochladen',

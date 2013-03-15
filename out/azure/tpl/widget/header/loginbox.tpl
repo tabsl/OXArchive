@@ -1,20 +1,22 @@
+[{oxscript include="js/widgets/oxloginbox.js" priority=10 }]
+[{oxscript add="$( '#loginBoxOpener' ).oxLoginBox();"}]
 [{assign var="bIsError" value=0 }]
 [{capture name=loginErrors}]
     [{foreach from=$Errors.loginBoxErrors item=oEr key=key }]
-        <p id="errorBadLogin" class="errorMsg">[{ $oEr->getOxMessage()}]</>
+        <p id="errorBadLogin" class="errorMsg">[{ $oEr->getOxMessage()}]</p>
         [{assign var="bIsError" value=1 }]
     [{/foreach}]
 [{/capture}]
-
 [{if !$oxcmp_user->oxuser__oxpassword->value}]
+    [{oxscript include="js/widgets/oxmodalpopup.js" priority=10 }]
     [{oxscript add="$( '#forgotPasswordOpener' ).oxModalPopup({ target: '#forgotPassword'});"}]
-    <div id="forgotPassword" class="popupBox corners FXgradGreyLight glowShadow overlayPop">
-        <img src="[{$oViewConf->getImageUrl()}]x.png" alt="" class="closePop">
-        [{include file="form/forgotpwd_email.tpl"}]
+    <div id="forgotPassword" class="popupBox corners FXgradGreyLight glowShadow">
+        <img src="[{$oViewConf->getImageUrl('x.png')}]" alt="" class="closePop">
+        [{include file="form/forgotpwd_email.tpl" idPrefix="Popup"}]
     </div>
-    <a href="#" class="trigger" title="[{ oxmultilang ident="WIDGET_LOGINBOX_LOGIN" }]">[{ oxmultilang ident="WIDGET_LOGINBOX_LOGIN" }]</a>
+    <a href="#" id="loginBoxOpener" title="[{ oxmultilang ident="WIDGET_LOGINBOX_LOGIN" }]">[{ oxmultilang ident="WIDGET_LOGINBOX_LOGIN" }]</a>
     <form id="login" name="login" action="[{ $oViewConf->getSslSelfLink() }]" method="post">
-        <div id="loginBox" class="loginBox popBox" [{if $bIsError}]style="display: block;"[{/if}]>
+        <div id="loginBox" class="loginBox" [{if $bIsError}]style="display: block;"[{/if}]>
             [{ $oViewConf->getHiddenSid() }]
             [{ $oViewConf->getNavFormParams() }]
             <input type="hidden" name="fnc" value="login_noredirect">
@@ -25,13 +27,19 @@
                 [{assign var="product" value=$oView->getProduct() }]
                 <input type="hidden" name="anid" value="[{ $product->oxarticles__oxnid->value }]">
             [{/if}]
-            <div class="loginForm corners fx-gradient-bg">
+            <div class="loginForm corners">
                 <h4>[{ oxmultilang ident="WIDGET_LOGINBOX_LOGIN" }]</h4>
                 <p>
-                    <input id="loginEmail" type="text" name="lgn_usr" value="[{ oxmultilang ident="WIDGET_LOGINBOX_EMAIL_ADDRESS" }]" class="textbox innerLabel ">
+                    [{oxscript include="js/widgets/oxinnerlabel.js" priority=10 }]
+                    [{oxscript add="$( '#loginEmail' ).oxInnerLabel();"}]
+                    <label for="loginEmail" class="innerLabel">[{ oxmultilang ident="WIDGET_LOGINBOX_EMAIL_ADDRESS" }]</label>
+                    <input id="loginEmail" type="text" name="lgn_usr" value="" class="textbox">
                 </p>
                 <p>
-                    <input type="password" name="lgn_pwd" class="textbox passwordbox innerLabel" value="[{ oxmultilang ident="WIDGET_LOGINBOX_PASSWORD" }]"><strong><a id="forgotPasswordOpener" href="#" title="[{ oxmultilang ident="WIDGET_LOGINBOX_FORGOT_PASSWORD" }]">?</a></strong>
+                    [{oxscript include="js/widgets/oxinnerlabel.js" priority=10 }]
+                    [{oxscript add="$( '#loginPasword' ).oxInnerLabel();"}]
+                    <label for="loginPasword" class="innerLabel">[{ oxmultilang ident="WIDGET_LOGINBOX_PASSWORD" }]</label>
+                    <input id="loginPasword" type="password" name="lgn_pwd" class="textbox passwordbox" value=""><strong><a id="forgotPasswordOpener" href="#" title="[{ oxmultilang ident="WIDGET_LOGINBOX_FORGOT_PASSWORD" }]">?</a></strong>
                 </p>
                 [{$smarty.capture.loginErrors}]
                 <p class="checkFields clear">
@@ -42,7 +50,7 @@
                 </p>
             </div>
             [{if $oViewConf->getShowFbConnect()}]
-                <div class="altLoginBox corners fx-gradient-bg clear">
+                <div class="altLoginBox corners clear">
                     <span>[{ oxmultilang ident="WIDGET_LOGINBOX_WITH" }]</span>
                     <fb:login-button size="medium" autologoutlink="true" length="short"></fb:login-button>
                 </div>
@@ -52,7 +60,7 @@
 [{else}]
     [{ oxmultilang ident="WIDGET_LOGINBOX_GREETING" }]
     [{assign var="fullname" value=$oxcmp_user->oxuser__oxfname->value|cat:" "|cat:$oxcmp_user->oxuser__oxlname->value }]
-    <a href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_password" params=$oViewConf->getNavUrlParams() }]">
+    <a href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account"}]">
     [{if $fullname}]
         [{ $fullname }]
     [{else}]

@@ -1,6 +1,6 @@
     [{if $oViewConf->getFbAppId()}]
     <div id="fb-root"></div>
-    <script>
+    <script type="text/javascript">
 
         window.fbAsyncInit = function() {
             FB.init({appId: '[{$oViewConf->getFbAppId()}]', status: true, cookie: true, xfbml: true});

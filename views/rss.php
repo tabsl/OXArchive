@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: rss.php 33634 2011-03-03 12:44:17Z linas.kukulskis $
+ * @version   SVN: $Id: rss.php 35556 2011-05-24 06:57:05Z vilma $
  */
 
 /**
@@ -77,6 +77,12 @@ class Rss extends oxUBase
         parent::render();
 
         $oSmarty = oxUtilsView::getInstance()->getSmarty();
+
+        // #2873: In demoshop for RSS we set php_handling to SMARTY_PHP_PASSTHRU
+        // as SMARTY_PHP_REMOVE removes not only php tags, but also xml
+        if ($this->getConfig()->isDemoShop()) {
+            $oSmarty->php_handling = SMARTY_PHP_PASSTHRU;
+        }
 
         foreach ( array_keys( $this->_aViewData ) as $sViewName ) {
             $oSmarty->assign_by_ref( $sViewName, $this->_aViewData[$sViewName] );

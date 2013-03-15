@@ -62,7 +62,7 @@
     [{capture name=product_price}]
     [{oxhasrights ident="SHOWARTICLEPRICE"}]
         <div id="test_price_[{$testid}]" class="cost">
-            [{if $product->getFTPrice() && $size=='big' }]
+            [{if $product->getFTPrice() > $product->getFPrice() && $size=='big' }]
                 <b class="old">[{ oxmultilang ident="DETAILS_REDUCEDFROM" }] <del>[{ $product->getFTPrice()}] [{ $currency->sign}]</del></b>
                 <span class="desc">[{ oxmultilang ident="DETAILS_REDUCEDTEXT" }]</span><br>
                 <sub class="only">[{ oxmultilang ident="DETAILS_NOWONLY" }]</sub>
@@ -118,7 +118,7 @@
             [{/if}]
 
             [{foreach from=$product->getMdSubvariants() item=mdVariant}]
-              <option value="[{$mdVariant->getLink()}]">[{ $mdVariant->getName() }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $mdVariant->getFPrice()|strip_tags }]* [{/oxhasrights}]</option>
+              <option value="[{$mdVariant->getLink()}]?[{$oViewConf->getNavUrlParams()}]">[{ $mdVariant->getName() }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $mdVariant->getFPrice()|strip_tags }]* [{/oxhasrights}]</option>
             [{/foreach}]
             </select>
         [{else}]

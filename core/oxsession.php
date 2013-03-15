@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsession.php 33895 2011-03-22 16:20:52Z arvydas.vapsva $
+ * @version   SVN: $Id: oxsession.php 37024 2011-07-14 11:10:30Z linas.kukulskis $
  */
 
 DEFINE('_DB_SESSION_HANDLER', getShopBasePath() . 'core/adodblite/session/adodb-session.php');
@@ -110,6 +110,13 @@ class oxSession extends oxSuperCfg
      * @var object
      */
     protected $_oBasketReservations = null;
+
+    /**
+     * Started session marker
+     *
+     * @var bool
+     */
+    protected $_blStarted = false;
 
     /**
      * Force session start by defined parameter rules.
@@ -346,12 +353,12 @@ class oxSession extends oxSuperCfg
             header("Cache-Control: no-store, private, must-revalidate, proxy-revalidate, post-check=0, pre-check=0, max-age=0, s-maxage=0");
         }
 
-        $blStarted = @session_start();
+        $this->_blStarted = @session_start();
         if ( !$this->getSessionChallengeToken() ) {
             $this->_initNewSessionChallenge();
         }
 
-        return $blStarted;
+        return $this->_blStarted;
     }
 
     /**
@@ -416,10 +423,19 @@ class oxSession extends oxSuperCfg
      */
     protected function _getNewSessionId( $blUnset = true )
     {
-        session_regenerate_id( true );
+        $sOldId = session_id();
+        session_regenerate_id( ! oxConfig::getInstance()->getConfigParam( 'blAdodbSessionHandler' ) );
+        $sNewId = session_id();
+
         if ( $blUnset ) {
             session_unset();
         }
+
+        if ( oxConfig::getInstance()->getConfigParam( 'blAdodbSessionHandler' ) ) {
+            $oDB = oxDb::getDb();
+            $oDB->execute("UPDATE oxsessions SET SessionID = '$sNewId' WHERE SessionID = '$sOldId'");
+        }
+
         return session_id();
     }
 
@@ -721,12 +737,14 @@ class oxSession extends oxSuperCfg
         $sSid = $this->sid( $this->isSidNeeded( $sUrl ) );
         if ($sSid) {
             $oStr = getStr();
-            if ( !$oStr->preg_match('/(\?|&(amp;)?)sid=/i', $sUrl) && (false === $oStr->strpos($sUrl, $sSid))) {
+            $aUrlParts = explode( '#', $sUrl );
+            if ( !$oStr->preg_match('/(\?|&(amp;)?)sid=/i', $aUrlParts[0]) && (false === $oStr->strpos($aUrlParts[0], $sSid))) {
                 if (!$oStr->preg_match('/(\?|&(amp;)?)$/', $sUrl)) {
-                    $sUrl .= ( $oStr->strstr( $sUrl, '?' ) !== false ?  '&amp;' : '?' );
+                    $aUrlParts[0] .= ( $oStr->strstr( $aUrlParts[0], '?' ) !== false ?  '&amp;' : '?' );
                 }
-                $sUrl .= $sSid . '&amp;';
+                $aUrlParts[0] .= $sSid . '&amp;';
             }
+            $sUrl = join( '#', $aUrlParts );
         }
         return $sUrl;
     }
@@ -746,7 +764,7 @@ class oxSession extends oxSuperCfg
         if (!$sToken && $blGenerateNew) {
             $sToken = md5(rand() . $this->getId());
             $sToken = substr($sToken, 0, 8);
-            $this->setVar('_rtoken', $sToken);
+            self::setVar('_rtoken', $sToken);
         }
 
         return $sToken;
@@ -1038,7 +1056,7 @@ class oxSession extends oxSuperCfg
      */
     protected function _isValidRemoteAccessToken()
     {
-        $sInputToken = oxConfig::getInstance()->getParameter('rtoken');
+        $sInputToken = oxConfig::getParameter('rtoken');
         $sToken = $this->getRemoteAccessToken(false);
         $blTokenEqual = !(bool)strcmp($sInputToken, $sToken);
         $blValid = $sInputToken && $blTokenEqual;
@@ -1069,4 +1087,13 @@ class oxSession extends oxSuperCfg
         return headers_sent();
     }
 
+    /**
+     * Returns true if session was started
+     *
+     * @return bool
+     */
+    public function isSessionStarted()
+    {
+        return $this->_blStarted;
+    }
 }

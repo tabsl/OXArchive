@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_basket.php 33498 2011-02-24 11:27:10Z sarunas $
+ * @version   SVN: $Id: oxcmp_basket.php 35207 2011-05-09 07:58:47Z linas.kukulskis $
  */
 
 /**
@@ -221,6 +221,7 @@ class oxcmp_basket extends oxView
      * @param array  $aPersParam (default null)
      * @param bool   $blOverride If true means increase amount of chosen article (default false)
      *
+     * @deprecated in 4.5.1 since 2011-05-09 related with bug #0002072
      * @return mixed
      */
     public function wl_tobasket( $sProductId = null, $dAmount = null, $aSel = null, $aPersParam = null, $blOverride = false )

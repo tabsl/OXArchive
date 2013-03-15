@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxmanufacturer.php 32881 2011-02-03 11:45:36Z sarunas $
+ * @version   SVN: $Id: oxmanufacturer.php 37102 2011-07-15 14:26:58Z arvydas.vapsva $
  */
 
 /**
@@ -352,8 +352,8 @@ class oxManufacturer extends oxI18n implements oxIUrl
      */
     public function delete( $sOXID = null)
     {
-        if (parent::delete($sOXID)) {
-            oxSeoEncoderManufacturer::getInstance()->onDeleteManufacturer($this);
+        if ( parent::delete( $sOXID ) ) {
+            oxSeoEncoderManufacturer::getInstance()->onDeleteManufacturer( $this );
             return true;
         }
         return false;
@@ -366,8 +366,14 @@ class oxManufacturer extends oxI18n implements oxIUrl
      */
     public function getIconUrl()
     {
-        if ( $this->oxmanufacturers__oxicon->value ) {
-           return $this->getConfig()->getIconUrl( 'icon/'.$this->oxmanufacturers__oxicon->value );
+        if ( ( $sIcon = $this->oxmanufacturers__oxicon->value ) ) {
+            $oConfig = $this->getConfig();
+            $sSize = $oConfig->getConfigParam( 'sManufacturerIconsize' );
+            if ( !$sSize ) {
+                $sSize = $oConfig->getConfigParam( 'sIconsize' );
+            }
+
+            return oxPictureHandler::getInstance()->getPicUrl( "manufacturer/icon/", $sIcon, $sSize );
         }
     }
 

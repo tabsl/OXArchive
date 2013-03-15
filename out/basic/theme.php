@@ -28,7 +28,7 @@
 $aTheme = array(
     'id'           => 'basic',
     'title'        => 'Basic',
-    'description'  => 'Basic theme for OXID eShop 4.0',
+    'description'  => 'Basic theme by OXID eSales AG',
     'thumbnail'    => 'theme.jpg',
     'version'      => '1.4',
     'author'       => 'OXID',

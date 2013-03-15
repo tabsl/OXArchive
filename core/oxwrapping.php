@@ -19,12 +19,12 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxwrapping.php 33010 2011-02-07 16:31:41Z alfonsas $
+ * @version   SVN: $Id: oxwrapping.php 37306 2011-07-25 11:48:28Z arvydas.vapsva $
  */
 
 /**
  * Wrapping manager.
- * Performs Wrapping data/objetcs loading, deleting.
+ * Performs Wrapping data/objects loading, deleting.
  * @package core
  */
 class oxWrapping extends oxI18n
@@ -178,7 +178,8 @@ class oxWrapping extends oxI18n
      */
     public function getPictureUrl()
     {
-        return $this->getConfig()->getPictureUrl(null, false, $this->getConfig()->isSsl(), null, $this->oxwrapping__oxshopid->value );
+        if ( $this->oxwrapping__oxpic->value ) {
+           return $this->getConfig()->getPictureUrl( "master/wrapping/".$this->oxwrapping__oxpic->value, false, $this->getConfig()->isSsl(), null, $this->oxwrapping__oxshopid->value );
+        }
     }
-
 }

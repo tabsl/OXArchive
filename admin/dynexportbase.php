@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: dynexportbase.php 33602 2011-03-01 14:49:47Z linas.kukulskis $
+ * @version   SVN: $Id: dynexportbase.php 35975 2011-06-07 06:45:11Z vilma $
  */
 
 /**
@@ -159,6 +159,13 @@ class DynExportBase extends oxAdminDetails
         // parent categorie tree
         $this->_aViewData["cattree"] = oxNew( "oxCategoryList" );
         $this->_aViewData["cattree"]->buildList( $this->getConfig()->getConfigParam( 'bl_perfLoadCatTree' ) );
+
+        $oLangObj = oxNew( 'oxLang' );
+        $aLangs = $oLangObj->getLanguageArray();
+        foreach ( $aLangs as $id => $language) {
+            $language->selected = ($id == $this->_iEditLang);
+            $this->_aViewData["aLangs"][$id] = clone $language;
+        }
     }
 
     /**
@@ -237,6 +244,8 @@ class DynExportBase extends oxAdminDetails
     {
         $blContinue = true;
         $iExportedItems = 0;
+
+
 
         $this->fpFile = @fopen( $this->_sFilePath, "a");
         if ( !isset( $this->fpFile) || !$this->fpFile) {
@@ -573,7 +582,7 @@ class DynExportBase extends oxAdminDetails
         $blDone = false;
 
         $oDB = oxDb::getDb();
-        $sQ = "CREATE TABLE if not exists {$sHeapTable} ( oxid char(32) NOT NULL default '' ) TYPE=HEAP {$sTableCharset}";
+        $sQ = "CREATE TABLE if not exists {$sHeapTable} ( oxid char(32) NOT NULL default '' ) ENGINE=HEAP {$sTableCharset}";
         if ( ( $oDB->execute( $sQ ) ) !== false ) {
             $blDone = true;
             $oDB->execute( "truncate table {$sHeapTable}" );
@@ -620,11 +629,19 @@ class DynExportBase extends oxAdminDetails
     {
         $oDB = oxDb::getDb();
 
-        $sO2CView = getViewName( 'oxobject2category' );
-        $sArticleTable = getViewName( "oxarticles" );
+        $iExpLang = oxConfig::getParameter( "iExportLanguage" );
+        if (!isset($iExpLang)) {
+            $iExpLang = oxSession::getVar( "iExportLanguage" );
+        }
+
+        $oArticle = oxNew( 'oxarticle' );
+        $oArticle->setLanguage( $iExpLang );
+
+        $sO2CView = getViewName( 'oxobject2category', $iExpLang );
+        $sArticleTable = getViewName( "oxarticles", $iExpLang );
 
         $sSelect  = "insert into {$sHeapTable} select {$sArticleTable}.oxid from {$sArticleTable}, {$sO2CView} as oxobject2category where ";
-        $sSelect .= oxNew( 'oxarticle' )->getSqlActiveSnippet();
+        $sSelect .= $oArticle->getSqlActiveSnippet();
 
         if ( ! oxConfig::getParameter( "blExportVars" ) ) {
             $sSelect .= " and {$sArticleTable}.oxid = oxobject2category.oxobjectid and {$sArticleTable}.oxparentid = '' ";
@@ -655,6 +672,7 @@ class DynExportBase extends oxAdminDetails
         }
 
         $sSelect .= " group by {$sArticleTable}.oxid";
+
         return $oDB->execute( $sSelect ) ? true : false;
     }
 
@@ -734,6 +752,10 @@ class DynExportBase extends oxAdminDetails
         if ( $blAppendCatToCampaign ) {
             oxSession::setVar( "blAppendCatToCampaign", $blAppendCatToCampaign );
         }
+
+        // reset it from session
+        oxSession::deleteVar("iExportLanguage" );
+        oxSession::setVar( "iExportLanguage", oxConfig::getParameter( "iExportLanguage" ) );
     }
 
     /**
@@ -832,10 +854,14 @@ class DynExportBase extends oxAdminDetails
      */
     protected function _initArticle( $sHeapTable, $iCnt, & $blContinue )
     {
+
+
         $oRs = oxDb::getDb()->selectLimit( "select oxid from $sHeapTable", 1, $iCnt );
         if ( $oRs != false && $oRs->recordCount() > 0 ) {
             $oArticle = oxNew( 'oxarticle' );
             $oArticle->setLoadParentData( true );
+
+            $oArticle->setLanguage( oxSession::getVar( "iExportLanguage" ) );
 
             if ( $oArticle->load( $oRs->fields[0] ) ) {
                 // if article exists, do not stop export

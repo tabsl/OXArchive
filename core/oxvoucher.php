@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvoucher.php 32880 2011-02-03 11:45:17Z sarunas $
+ * @version   SVN: $Id: oxvoucher.php 37932 2011-08-03 14:16:15Z arvydas.vapsva $
  */
 
 /**
@@ -276,6 +276,7 @@ class oxVoucher extends oxBase
                     if ( $this->oxvouchers__oxvoucherserieid->value == $oVoucher->oxvouchers__oxvoucherserieid->value ) {
                             $oEx = oxNew( 'oxVoucherException' );
                             $oEx->setMessage('EXCEPTION_VOUCHER_NOTALLOWEDSAMESERIES');
+                            $oEx->setVoucherNr( $this->oxvouchers__oxvouchernr->value );
                             throw $oEx;
                     }
                 }
@@ -350,6 +351,7 @@ class oxVoucher extends oxBase
 
         $oEx = oxNew( 'oxVoucherException' );
         $oEx->setMessage('EXCEPTION_VOUCHER_ISNOTVALIDDATE');
+        $oEx->setVoucherNr( $this->oxvouchers__oxvouchernr->value );
         throw $oEx;
     }
 
@@ -369,6 +371,7 @@ class oxVoucher extends oxBase
 
         $oEx = oxNew( 'oxVoucherException' );
         $oEx->setMessage('EXCEPTION_VOUCHER_ISRESERVED');
+        $oEx->setVoucherNr( $this->oxvouchers__oxvouchernr->value );
         throw $oEx;
     }
 
@@ -727,37 +730,28 @@ class oxVoucher extends oxBase
     protected function _getCategoryDiscoutValue( $dPrice )
     {
         $oDiscount    = $this->_getSerieDiscount();
-        $aBasketItems = $this->_getBasketItems($oDiscount);
+        $aBasketItems = $this->_getBasketItems( $oDiscount );
 
         // Basket Item Count and isAdmin check (unble to access property $oOrder->_getOrderBasket()->_blSkipVouchersAvailabilityChecking)
-        if (!count($aBasketItems) && !$this->isAdmin() ) {
+        if ( !count( $aBasketItems ) && !$this->isAdmin() ) {
             $oEx = oxNew( 'oxVoucherException' );
             $oEx->setMessage('EXCEPTION_VOUCHER_NOVOUCHER');
             $oEx->setVoucherNr($this->oxvouchers__oxvouchernr->value);
             throw $oEx;
         }
 
-        $oCategoryPrice = oxNew('oxPrice');
-        $oProductPrice  = oxNew('oxPrice');
-        $oProductTotal  = oxNew('oxPrice');
+        $oProductPrice = oxNew('oxPrice');
+        $oProductTotal = oxNew('oxPrice');
 
         foreach ( $aBasketItems as $aBasketItem ) {
-
-            $oProductPrice->setPrice($aBasketItem['price']);
-            $oProductPrice->multiply($aBasketItem['amount']);
-
-            $oCategoryPrice->add($aBasketItem['price']);
-            $oProductTotal->add($oProductPrice->getBruttoPrice());
+            $oProductPrice->setPrice( $aBasketItem['price'] );
+            $oProductPrice->multiply( $aBasketItem['amount'] );
+            $oProductTotal->add( $oProductPrice->getBruttoPrice() );
         }
 
-        $dVoucher = $oDiscount->getAbsValue($oCategoryPrice->getBruttoPrice());
         $dProduct = $oProductTotal->getBruttoPrice();
-
-        if ( $dVoucher > $dProduct ) {
-            return $dProduct;
-        }
-
-        return $dVoucher;
+        $dVoucher = $oDiscount->getAbsValue( $dProduct );
+        return ( $dVoucher > $dProduct ) ? $dProduct : $dVoucher;
     }
 
     /**

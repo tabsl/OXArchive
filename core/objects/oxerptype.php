@@ -19,54 +19,27 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype.php 28094 2010-06-02 14:03:50Z michael.keiluweit $
+ * @version   SVN: $Id: oxerptype.php 35102 2011-05-04 08:20:01Z rimvydas.paskevicius $
  */
 
 /**
- * ERP base description class
+ * main erp type superclass - includes methods abstraction and basic implementation
+ * for all erp object types
  */
 class oxERPType
 {
-    /**
-     * Error message
-     * @var string
-     */
     public static $ERROR_WRONG_SHOPID = "Wrong shop id, operation not allowed!";
 
-    /**
-     * Table name
-     * @var string
-     */
-    protected $_sTableName        = null;
-
-    /**
-     * Function suffix
-     * @var string
-     */
-    protected $_sFunctionSuffix   = null;
-
-    /**
-     * Field list
-     * @var array
-     */
-    protected $_aFieldList        = null;
-
-    /**
-     * Kaye field list
-     * @var array
-     */
-    protected $_aKeyFieldList     = null;
-
-    /**
-     * Shop object name
-     * @var string
-     */
-    protected $_sShopObjectName   = null;
+    protected   $_sTableName        = null;
+    protected   $_sFunctionSuffix   = null;
+    protected   $_aFieldList        = null;
+    protected   $_aKeyFieldList     = null;
+    protected   $_sShopObjectName   = null;
 
     /**
      * If true a export will be restricted vias th oxshopid column of the table
      *
-     * @var bool
+     * @var unknown_type
      */
     protected $_blRestrictedByShopId = false;
 
@@ -108,34 +81,31 @@ class oxERPType
     }
 
     /**
-     * Class constructor
+     * class constructor
      *
      * @return null
      */
     public function __construct()
     {
         $this->_sFunctionSuffix = str_replace( "oxERPType_", "", get_class( $this));
-        if (isset($this->_aFieldListVersions)) {
-            $this->_aFieldList = $this->_aFieldListVersions[oxERPBase::getUsedDbFieldsVersion()];
-        }
     }
 
     /**
      * setter for the function prefix
      *
-     * @param string $sNew new function suffix
+     * @param string $sNew new suffix
      *
      * @return null
      */
-    public function setFunctionSuffix( $sNew )
+    public function setFunctionSuffix($sNew)
     {
         $this->_sFunctionSuffix = $sNew;
     }
 
     /**
-     * Setter for field list
+     * setter for field list
      *
-     * @param array $aFieldList field list to store at oxErpType::_aFieldList
+     * @param array $aFieldList fields to set
      *
      * @return null
      */
@@ -147,13 +117,18 @@ class oxERPType
     /**
      * Returns table or Viewname
      *
-     * @param int $iShopID table shop id
+     * @param int $iShopID   shop id - default is the current shop id
+     * @param int $iLanguage language id
      *
      * @return string
      */
-    public function getTableName( $iShopID = 1 )
+    public function getTableName($iShopID=null, $iLanguage = 0)
     {
-        return getViewName( $this->_sTableName, $iShopID );
+        if ($iShopID === null) {
+            $iShopID = oxConfig::getInstance()->getShopId();
+        }
+        
+        return getViewName($this->_sTableName, -1, $iShopID);
     }
 
     /**
@@ -167,7 +142,7 @@ class oxERPType
 
         $aData = oxDb::getInstance()->getTableDescription( $this->_sTableName);
 
-        foreach ( $aData as $key => $oADODBField) {
+        foreach ($aData as $key => $oADODBField) {
             $iLang = substr( $oADODBField->name, strlen( $oADODBField->name) - 1, 1);
             if ( is_numeric( $iLang) &&  substr( $oADODBField->name, strlen( $oADODBField->name) - 2, 1) == '_') {
                 // multilangual field
@@ -182,36 +157,45 @@ class oxERPType
     /**
      * return sql column name of given table column
      *
-     * @param string $sField    object field anme
+     * @param string $sField    field to get
      * @param int    $iLanguage language id
      * @param int    $iShopID   shop id
      *
      * @return string
      */
-    protected function getSqlFieldName($sField, $iLanguage = 0, $iShopID = 1)
+    protected function _getSqlFieldName($sField, $iLanguage = 0, $iShopID = 1)
     {
-        if ( $iLanguage ) {
+        if ($iLanguage) {
             $aMultiLang = $this->_getMultilangualFields();
             // we need to load different fields
-            if ( isset( $aMultiLang[$iLanguage][$sField] ) ) {
+            if ( isset( $aMultiLang[$iLanguage][$sField])) {
                 $sField = $aMultiLang[$iLanguage][$sField];
             }
         }
+
+            switch ($sField) {
+                case 'OXSHOPID':
+                case 'OXSHOPINCL':
+                    return "1 as $sField";
+                case 'OXSHOPEXCL':
+                    return "0 as $sField";
+            }
+
         return $sField;
     }
 
     /**
-     * return sql column name of given table column
+     * returns SQL string for this type
      *
-     * @param string $sWhere    where condition
+     * @param string $sWhere    where part of sql
      * @param int    $iLanguage language id
-     * @param int    $iShopID   shop id
+     * @param int    $iShopId   shop id
      *
      * @return string
      */
-    public function getSQL( $sWhere, $iLanguage = 0, $iShopID = 1)
+    public function getSQL( $sWhere, $iLanguage = 0, $iShopId = 1)
     {
-        if ( !$this->_aFieldList ) {
+        if ( !$this->_aFieldList) {
             return;
         }
 
@@ -219,26 +203,16 @@ class oxERPType
         $blSep = false;
 
         foreach ( $this->_aFieldList as $sField) {
-            if ( $blSep ) {
+            if ( $blSep) {
                 $sSQL .= ',';
             }
 
-            $sSQL .= $this->getSqlFieldName($sField, $iLanguage, $iShopID);
+            $sSQL .= $this->_getSqlFieldName($sField, $iLanguage, $iShopId);
             $blSep = true;
         }
 
-        if ( $this->_blRestrictedByShopId ) {
-            $oStr = getStr();
-            if ( $oStr->strstr( $sWhere, 'where')) {
-                $sWhere .= ' and ';
-            } else {
-                $sWhere .= ' where ';
-            }
 
-            $sWhere .= 'oxshopid = \''.$iShopID.'\'';
-        }
-
-        $sSQL .= ' from '.$this->getTableName($iShopID).' '.$sWhere;
+        $sSQL .= ' from '.$this->getTableName($iShopId, $iLanguage).' '.$sWhere;
 
         return $sSQL;
     }
@@ -268,25 +242,33 @@ class oxERPType
     /**
      * Basic access check for writing data, checks for same shopid, should be overridden if field oxshopid does not exist
      *
-     * @param string $sOxid the oxid of the object
+     * @param oxBase $oObj  loaded shop object
+     * @param array  $aData fields to be written, null for default
      *
-     * @throws Exception exceltion is thrown when user has no write access
+     * @throws Exception on now access
      *
      * @return null
      */
-    public function checkWriteAccess($sOxid)
+    public function checkWriteAccess($oObj, $aData = null)
     {
-        $oObj = oxNew("oxbase");
-        $oObj->init($this->_sTableName);
-        if ( $oObj->load( $sOxid ) ) {
-            $sFld = $this->_sTableName.'__oxshopid';
-            if ( isset( $oObj->$sFld ) ) {
-                $sRes = $oObj->$sFld->value;
-                if ( $sRes && $sRes != oxConfig::getInstance()->getShopId() ) {
-                    throw new Exception( oxERPBase::$ERROR_USER_NO_RIGHTS);
-                }
-            }
+            return;
+        
+        if ($oObj->isDerived()) {
+            throw new Exception( oxERPBase::$ERROR_USER_NO_RIGHTS);
         }
+    }
+
+    /**
+     * Basic access check for creating new objects
+     *
+     * @param array $aData fields to be written
+     *
+     * @throws Exception on now access
+     *
+     * @return null
+     */
+    public function checkCreateAccess($aData)
+    {
     }
 
     /**
@@ -294,31 +276,37 @@ class oxERPType
      *
      * @param string $sId id of object
      *
-     * @throws Exception exception is thrown when deletion is not possible
+     * @throws Exception on error
      *
-     * @return object of given type
+     * @return object
      */
     public function getObjectForDeletion( $sId)
     {
         $myConfig = oxConfig::getInstance();
 
-        if ( !isset( $sId ) ) {
+        if (!isset($sId)) {
             throw new Exception( "Missing ID!");
         }
 
-        $oObj = oxNew( $this->getShopObjectName(), "core");
+        $sName = $this->getShopObjectName();
+        if ($sName) {
+            $oObj = oxNew( $sName, "core");
+        } else {
+            $oObj = oxNew( 'oxbase', 'core');
+            $oObj->init($this->getBaseTableName());
+        }
 
-        if ( !$oObj->exists( $sId ) ) {
+        if (!$oObj->exists($sId)) {
             throw new Exception( $this->getShopObjectName(). " " . $sId. " does not exists!");
         }
 
         //We must load the object here, to check shopid and return it for further checks
-        if ( !$oObj->load( $sId ) ) {
+        if (!$oObj->Load($sId)) {
             //its possible that access is restricted allready
             throw new Exception( "No right to delete object {$sId} !");
         }
 
-        if ( !$this->_isAllowedToEdit($oObj->getShopId() ) ) {
+        if (!$this->_isAllowedToEdit($oObj->getShopId())) {
             throw new Exception( "No right to delete object {$sId} !");
         }
 
@@ -326,7 +314,7 @@ class oxERPType
     }
 
     /**
-     * Checks if user rights alllows to edit. Returns TRUE if rights allow
+     * checks if user is allowed to edit in this shop
      *
      * @param int $iShopId shop id
      *
@@ -347,21 +335,22 @@ class oxERPType
     /**
      * direct sql check if it is allowed to delete the OXID of the current table
      *
-     * @param string $sId entry id
+     * @param string $sId object id
+     *
+     * @throws Exception on no access
      *
      * @return null
      */
     protected function _directSqlCheckForDeletion($sId)
     {
-        $oDb =oxDb::getDb();
-        $sSql = "select oxshopid from ".$this->_sTableName." where oxid = " .$oDb->quote( $sId );
+        $sSql = "select oxshopid from ".$this->_sTableName." where oxid = '" . $sId . "'";
         try {
-            $iShopId = $oDb->getOne($sSql);
+            $iShopId = oxDb::getDb()->getOne($sSql);
         } catch (Exception $e) {
             // no shopid was found
             return;
         }
-        if ( !$this->_isAllowedToEdit( $iShopId ) ) {
+        if (!$this->_isAllowedToEdit($iShopId)) {
             throw new Exception( "No right to delete object {$sId} !");
         }
     }
@@ -371,12 +360,14 @@ class oxERPType
      *
      * @param string $sId object id
      *
+     * @throws Exception on no access
+     *
      * @return null
      */
     public function checkForDeletion($sId)
     {
 
-        if ( !isset( $sId ) ) {
+        if ( !isset($sId)) {
             throw new Exception( "Missing ID!");
         }
         // malladmin can do it
@@ -399,36 +390,35 @@ class oxERPType
     /**
      * default deletion of the given OXID in the current table
      *
-     * @param string $sID deletable object id
+     * @param string $sID object id
      *
      * @return bool
      */
     public function delete($sID)
     {
-        $oDb = oxDb::getDb();
-        $sSql = "delete from ".$this->_sTableName." where oxid = " . $oDb->quote( $sID );
+        $myConfig = oxConfig::getInstance();
+        $sSql = "delete from ".$this->_sTableName." where oxid = '" . $sID . "'";
 
-        return $oDb->Execute($sSql);
+        return oxDb::getDb()->Execute($sSql);
     }
 
     /**
      * default delete call to the given object
      *
-     * @param object $oObj object to delete
+     * @param object $oObj object
      * @param string $sID  object id
      *
      * @return bool
      */
     public function deleteObject($oObj, $sID)
     {
-
         return $oObj->delete($sID);
     }
 
     /**
      * We have the possibility to add some data
      *
-     * @param array $aFields export fields
+     * @param array $aFields initial data
      *
      * @return array
      */
@@ -440,7 +430,7 @@ class oxERPType
     /**
      * allows to modify data before import
      *
-     * @param array $aFields import fields
+     * @param array $aFields initial data
      *
      * @deprecated
      * @see _preAssignObject
@@ -455,13 +445,15 @@ class oxERPType
     /**
      * used for the RR implementation, right now not really used
      *
+     * @deprecated
+     *
      * @return array
      */
     public function getRightFields()
     {
         $aRParams = array();
 
-        foreach ( $this->_aFieldList as $sField ) {
+        foreach ($this->_aFieldList as $sField) {
             $aRParams[] = strtolower($this->_sTableName.'__'.$sField);
         }
         return $aRParams;
@@ -474,6 +466,25 @@ class oxERPType
      */
     public function getFieldList()
     {
+        $sObjectName = $this->getShopObjectName();
+
+        if ( $sObjectName ) {
+            $oShopObject = oxNew( $sObjectName );
+        } else {
+            $oShopObject = oxNew( 'oxbase' );
+            $oShopObject->init( $this->getTableName() );
+        }
+
+        if ($oShopObject instanceof oxI18n) {
+            $oShopObject->setLanguage( 0 );
+            $oShopObject->setEnableMultilang(false);
+        }
+
+        $sViewName = $oShopObject->getViewName();
+        $sFields = str_ireplace( $sViewName . ".", "", strtoupper($oShopObject->getSelectFields()) );
+        $sFields = str_ireplace( " ", "", $sFields );
+        $this->_aFieldList = explode( ",", $sFields );
+
         return $this->_aFieldList;
     }
 
@@ -488,13 +499,48 @@ class oxERPType
     }
 
     /**
+     * returns oxid of this data type from key fields
+     *
+     * @param array $aData data for object
+     *
+     * @return string
+     */
+    public function getOxidFromKeyFields($aData)
+    {
+        $myConfig = oxConfig::getInstance();
+
+        if (!is_array($this->getKeyFields())) {
+            return null;
+        }
+
+        $oDB = oxDb::getDb();
+
+        $aWhere = array();
+        $blAllKeys = true;
+        foreach ($this->getKeyFields() as $sKey) {
+            if (array_key_exists($sKey, $aData)) {
+                $aWhere[] = $sKey.'='.$oDB->qstr($aData[$sKey]);
+            } else {
+                $blAllKeys = false;
+            }
+        }
+
+        if ($blAllKeys) {
+            $sSelect = 'SELECT OXID FROM '.$this->getTableName().' WHERE '.implode(' AND ', $aWhere);
+            return $oDB->getOne($sSelect);
+        }
+
+        return null;
+    }
+
+    /**
      * returns try if type has key fields array
      *
      * @return bool
      */
     public function hasKeyFields()
     {
-        if ( isset( $this->_aKeyFieldList ) && is_array( $this->_aKeyFieldList ) ) {
+        if (isset($this->_aKeyFieldList) && is_array($this->_aKeyFieldList)) {
             return true;
         }
         return false;
@@ -504,47 +550,25 @@ class oxERPType
      * issued before saving an object. can modify aData for saving
      *
      * @param oxBase $oShopObject         shop object
-     * @param array  $aData               data used in assign
-     * @param bool   $blAllowCustomShopId if TRUE - custom shop id is allowed
+     * @param array  $aData               data to prepare
+     * @param bool   $blAllowCustomShopId if allow custom shop id
      *
      * @return array
      */
     protected function _preAssignObject($oShopObject, $aData, $blAllowCustomShopId)
     {
-        if ( !isset( $aData['OXID'] ) ) {
-            throw new Exception( "OXID missing, seems to be wrong Format!");
-        }
-        if ( !$oShopObject->exists( $aData['OXID'] ) ) {
-            //$aData['OXSHOPID'] = $this->_iShopID;
-            if ( !$blAllowCustomShopId ) {
-                if (isset($aData['OXSHOPID'])) {
-                    $aData['OXSHOPID'] = oxConfig::getInstance()->getShopId();
-                }
+            if (isset($aData['OXSHOPID'])) {
+                $aData['OXSHOPID'] = 'oxbaseshop';
             }
-            if ( !array_key_exists('OXSHOPINCL', $aData ) ) {
-                $aData['OXSHOPINCL'] = oxUtils::getInstance()->getShopBit($aData['OXSHOPID']);
-            }
-            if ( !array_key_exists( 'OXSHOPEXCL', $aData ) ) {
-                $aData['OXSHOPEXCL'] = 0;
-            }
+
+
+        if (!isset($aData['OXID'])) {
+            $aData['OXID'] = $this->getOxidFromKeyFields($aData);
         }
-        if (isset($aData['OXACTIV'])) {
-            $aData['OXACTIVE'] = $aData['OXACTIV'];
-        }
-        if (isset($aData['OXACTIVFROM'])) {
-            $aData['OXACTIVEFROM'] = $aData['OXACTIVFROM'];
-        }
-        if (isset($aData['OXACTIVTO'])) {
-            $aData['OXACTIVETO'] = $aData['OXACTIVTO'];
-        }
-        for ($i=1;$i<4;$i++) {
-            if (isset($aData['OXACTIV_'.$i])) {
-                $aData['OXACTIVE_'.$i] = $aData['OXACTIV_'.$i];
-            }
-        }
+
         // null values support
         foreach ($aData as $key => $val) {
-            if ( !strlen( (string) $val ) ) {
+            if (!strlen((string) $val)) {
                 // oxbase whill quote it as string if db does not support null for this field
                 $aData[$key] = null;
             }
@@ -556,8 +580,8 @@ class oxERPType
      * prepares object for saving in shop
      * returns true if save can proceed further
      *
-     * @param object $oShopObject shop object
-     * @param array  $aData       object data
+     * @param oxBase $oShopObject shop object
+     * @param array  $aData       data for importing
      *
      * @return boolean
      */
@@ -569,18 +593,18 @@ class oxERPType
     /**
      * saves data by calling object saving
      *
-     * @param array $aData               object data to save
-     * @param bool  $blAllowCustomShopId if TRUE - custom shop id allowed
+     * @param array $aData               data for saving
+     * @param bool  $blAllowCustomShopId allow custom shop id
      *
      * @return string | false
      */
     public function saveObject($aData, $blAllowCustomShopId)
     {
         $sObjectName = $this->getShopObjectName();
-        if ( $sObjectName ) {
+        if ($sObjectName) {
             $oShopObject = oxNew( $sObjectName, 'core');
-            if ( $oShopObject instanceof oxI18n ) {
-                $oShopObject->setLanguage(0);
+            if ($oShopObject instanceof oxI18n) {
+                $oShopObject->setLanguage( 0 );
                 $oShopObject->setEnableMultilang(false);
             }
         } else {
@@ -588,10 +612,28 @@ class oxERPType
             $oShopObject->init($this->getBaseTableName());
         }
 
-        $aData = $this->_preAssignObject($oShopObject, $aData, $blAllowCustomShopId);
+        foreach ($aData as $key => $value) {
+            // change case to UPPER
+            $sUPKey = strtoupper($key);
+            if (!isset($aData[$sUPKey])) {
+                unset($aData[$key]);
+                $aData[$sUPKey] = $value;
+            }
+        }
 
 
-        $oShopObject->load( $aData['OXID']);
+        $blLoaded = false;
+        if ($aData['OXID']) {
+            $blLoaded = $oShopObject->load( $aData['OXID']);
+        }
+
+        $aData = $this->_preAssignObject( $oShopObject, $aData, $blAllowCustomShopId );
+
+        if ($blLoaded) {
+            $this->checkWriteAccess($oShopObject, $aData);
+        } else {
+            $this->checkCreateAccess($aData);
+        }
 
         $oShopObject->assign( $aData );
 
@@ -601,7 +643,7 @@ class oxERPType
 
         if ($this->_preSaveObject($oShopObject, $aData)) {
             // store
-            if ( $oShopObject->save() ) {
+            if ( $oShopObject->save()) {
                 return $this->_postSaveObject($oShopObject, $aData);
             }
         }
@@ -613,7 +655,7 @@ class oxERPType
      * post saving hook. can finish transactions if needed or ajust related data
      *
      * @param oxBase $oShopObject shop object
-     * @param data   $aData       post save data
+     * @param data   $aData       data to save
      *
      * @return mixed data to return
      */

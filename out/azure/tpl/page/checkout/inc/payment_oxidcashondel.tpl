@@ -5,10 +5,13 @@
     </dt>
     <dd class="[{if $oView->getCheckedPaymentId() == $paymentmethod->oxpayments__oxid->value}]activePayment[{/if}]">
         [{ oxmultilang ident="PAGE_CHECKOUT_PAYMENT_PLUSCODCHARGE1" }] [{ $paymentmethod->fAddPaymentSum }] [{ $currency->sign}] [{ oxmultilang ident="PAGE_CHECKOUT_PAYMENT_PLUSCODCHARGE2" }]
+
+        [{block name="checkout_payment_longdesc"}]
+            [{if $paymentmethod->oxpayments__oxlongdesc->value}]
+                <div class="desc">
+                    [{ $paymentmethod->oxpayments__oxlongdesc->value}]
+                </div>
+            [{/if}]
+        [{/block}]
     </dd>
-[{if $paymentmethod->oxpayments__oxlongdesc->value}]
-    <div class="desc">
-        [{ $paymentmethod->oxpayments__oxlongdesc->value}]
-    </div>
-[{/if}]
 </dl>

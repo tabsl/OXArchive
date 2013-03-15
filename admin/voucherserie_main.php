@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: voucherserie_main.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: voucherserie_main.php 37914 2011-08-03 08:21:55Z arvydas.vapsva $
  */
 
 /**
@@ -135,7 +135,8 @@ class VoucherSerie_Main extends DynExportBase
     {
         if ( $this->_oVoucherSerie == null ) {
             $oVoucherSerie = oxNew( "oxvoucherserie" );
-            if ( $oVoucherSerie->load( oxSession::getVar( "voucherid" ) ) ) {
+            $sId = oxConfig::getParameter( "voucherid" );
+            if ( $oVoucherSerie->load( $sId ? $sId : oxSession::getVar( "voucherid" ) ) ) {
                 $this->_oVoucherSerie = $oVoucherSerie;
             }
         }

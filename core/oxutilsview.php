@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsview.php 34004 2011-03-25 12:50:15Z sarunas $
+ * @version   SVN: $Id: oxutilsview.php 36730 2011-07-05 13:42:25Z vilma $
  */
 
 /**
@@ -311,7 +311,6 @@ class oxUtilsView extends oxSuperCfg
     protected function _fillCommonSmartyProperties( $oSmarty )
     {
         $myConfig = $this->getConfig();
-
         $oSmarty->left_delimiter  = '[{';
         $oSmarty->right_delimiter = '}]';
 

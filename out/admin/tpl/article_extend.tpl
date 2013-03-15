@@ -199,7 +199,7 @@ function editThis( sID )
             </td>
             <td class="edittext">
               <input class="edittext" type="hidden" name="editval[oxarticles__oxnonmaterial]" value='0'>
-              <input class="edittext" type="checkbox" name="editval[oxarticles__oxnonmaterial]" value='1' [{if $edit->oxarticles__oxnonmaterial->value == 1}]checked[{/if}] [{ $readonly }]>
+              <input class="edittext" type="checkbox" name="editval[oxarticles__oxnonmaterial]" value='1' [{if $edit->oxarticles__oxnonmaterial->value == 1}]checked[{/if}] [{ $readonly }] [{if $oxparentid }]readonly disabled[{/if}]>
               [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_NONMATERIAL" }]
             </td>
           </tr>
@@ -209,7 +209,7 @@ function editThis( sID )
             </td>
             <td class="edittext">
               <input class="edittext" type="hidden" name="editval[oxarticles__oxfreeshipping]" value='0'>
-              <input class="edittext" type="checkbox" name="editval[oxarticles__oxfreeshipping]" value='1' [{if $edit->oxarticles__oxfreeshipping->value == 1}]checked[{/if}] [{ $readonly }]>
+              <input class="edittext" type="checkbox" name="editval[oxarticles__oxfreeshipping]" value='1' [{if $edit->oxarticles__oxfreeshipping->value == 1}]checked[{/if}] [{ $readonly }] [{if $oxparentid }]readonly disabled[{/if}]>
               [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_FREESHIPPING" }]
             </td>
           </tr>

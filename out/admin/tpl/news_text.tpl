@@ -51,5 +51,4 @@ function loadLang(obj)
 
 </form>
 [{include file="bottomnaviitem.tpl"}]
-<
 [{include file="bottomitem.tpl"}]

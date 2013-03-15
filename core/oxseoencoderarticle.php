@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoderarticle.php 31954 2010-12-17 13:33:40Z sarunas $
+ * @version   SVN: $Id: oxseoencoderarticle.php 36446 2011-06-17 14:56:03Z arvydas.vapsva $
  */
 
 /**
@@ -273,6 +273,8 @@ class oxSeoEncoderArticle extends oxSeoEncoder
         $sActCatId = '';
         if ( $oActCat = $this->_getCategory( $oArticle, $iLang ) ) {
             $sActCatId = $oActCat->getId();
+        } elseif ( $oActCat = $this->_getMainCategory( $oArticle ) ) {
+            $sActCatId = $oActCat->getId();
         }
 
         //load details link from DB
@@ -314,6 +316,32 @@ class oxSeoEncoderArticle extends oxSeoEncoder
     }
 
     /**
+     * Returns products main category id
+     *
+     * @param oxArticle $oArticle product
+     *
+     * @return string
+     */
+    protected function _getMainCategory( $oArticle )
+    {
+        $oMainCat = null;
+
+        // if variant parent id must be used
+        $sArtId = $oArticle->getId();
+        if ( isset( $oArticle->oxarticles__oxparentid->value ) && $oArticle->oxarticles__oxparentid->value ) {
+            $sArtId = $oArticle->oxarticles__oxparentid->value;
+        }
+
+        $sMainCatId = oxDb::getDb()->getOne( "select oxcatnid from ".getViewName( "oxobject2category" )." where oxobjectid = '{$sArtId}' order by oxtime" );
+        if ( $sMainCatId ) {
+            $oMainCat = oxNew( "oxcategory" );
+            $oMainCat->load( $sMainCatId );
+        }
+
+        return $oMainCat;
+    }
+
+    /**
      * Returns SEO uri for passed article
      *
      * @param oxarticle $oArticle article object
@@ -325,22 +353,13 @@ class oxSeoEncoderArticle extends oxSeoEncoder
     {
         startProfile(__FUNCTION__);
 
-        // if variant parent id must be used
-        $sArtId = $oArticle->getId();
-        if ( isset( $oArticle->oxarticles__oxparentid->value ) && $oArticle->oxarticles__oxparentid->value ) {
-            $sArtId = $oArticle->oxarticles__oxparentid->value;
-        }
-
-        if ( !( $sMainCatId = oxDb::getDb()->getOne( "select oxcatnid from ".getViewName( "oxobject2category" )." where oxobjectid = '{$sArtId}' order by oxtime" ) ) ) {
-            $sMainCatId = '';
-        }
+        $oMainCat   = $this->_getMainCategory( $oArticle );
+        $sMainCatId = $oMainCat ? $oMainCat->getId() : '';
 
         //load default article url from DB
         if ( !( $sSeoUri = $this->_loadFromDb( 'oxarticle', $oArticle->getId(), $iLang, null, $sMainCatId, true ) ) ) {
-            if ( $sMainCatId ) {
-                $oMainCat = oxNew( "oxcategory" );
-                $oMainCat->load( $sMainCatId );
-                // save for main category
+            // save for main category
+            if ( $oMainCat ) {
                 $sSeoUri = $this->_createArticleCategoryUri( $oArticle, $oMainCat, $iLang );
             } else {
                 // get default article url

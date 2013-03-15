@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: guestbook.php 33284 2011-02-15 15:17:07Z arvydas.vapsva $
+ * @version   SVN: $Id: guestbook.php 35529 2011-05-23 07:31:20Z arunas.paskevicius $
  */
 
 /**
@@ -334,6 +334,7 @@ class GuestBook extends oxUBase
         $aPath = array();
 
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_GUESTBOOK_LIST_GUESTBOOK', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPath['link']  = $this->getLink();
         $aPaths[] = $aPath;
 
         return $aPaths;

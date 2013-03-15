@@ -1,14 +1,16 @@
 [{if $attributes }]
     <form method="post" action="[{ $oViewConf->getSelfActionLink() }]" name="_filterlist" id="filterList">
-    <div class="listFilter fnSubmit clear">
+    <div class="listFilter js-fnSubmit clear">
         [{ $oViewConf->getHiddenSid() }]
         [{ $oViewConf->getNavFormParams() }]
         <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
         <input type="hidden" name="tpl" value="[{$oViewConf->getActTplName()}]">
         <input type="hidden" name="fnc" value="executefilter">
         <input type="hidden" name="fname" value="">
+        [{oxscript include="js/widgets/oxdropdown.js" priority=10 }]
+        [{oxscript add="$('div.dropDown p').oxDropDown();"}]
         [{foreach from=$attributes item=oFilterAttr key=sAttrID name=attr}]
-            <div class="dropDown" id="attributeFilter[[{ $sAttrID }]]">
+            <div class="dropDown js-fnSubmit" id="attributeFilter[[{ $sAttrID }]]">
                 <p>
                     <label>[{ $oFilterAttr->getTitle() }]: </label>
                     <span>

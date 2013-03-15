@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_stock.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: article_stock.php 36127 2011-06-09 13:48:00Z vilma $
  */
 
 /**
@@ -70,6 +70,7 @@ class Article_Stock extends oxAdminDetails
             if ( $oArticle->oxarticles__oxparentid->value) {
                 $oParentArticle = oxNew( "oxarticle");
                 $oParentArticle->load( $oArticle->oxarticles__oxparentid->value);
+                $oArticle->oxarticles__oxremindactive = new oxField( $oParentArticle->oxarticles__oxremindactive->value );
                 $this->_aViewData["parentarticle"] =  $oParentArticle;
                 $this->_aViewData["oxparentid"] =  $oArticle->oxarticles__oxparentid->value;
             }

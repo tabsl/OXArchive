@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsysrequirements.php 34205 2011-04-04 12:22:57Z dainius.bigelis $
+ * @version   SVN: $Id: oxsysrequirements.php 35096 2011-05-03 14:52:43Z sarunas $
  */
 
 /**
@@ -135,7 +135,8 @@ class oxSysRequirements
                                      "unicode_support"    => "UTF-8_support",
                                      "mod_rewrite"        => "apache_mod_rewrite_module",
                                      "server_permissions" => "Files_.26_Folder_Permission_Setup",
-                                     "zend_optimizer"     => "Zend_Optimizer"
+                                     "zend_optimizer"     => "Zend_Optimizer",
+                                     "bug53632"           => "PHP_Bug_.2353632",
                                      // "zend_platform_or_server"
                                       );
 
@@ -184,7 +185,8 @@ class oxSysRequirements
 
             $aRequiredServerConfigs = array(
                                           'mod_rewrite',
-                                          'server_permissions'
+                                          'server_permissions',
+                                          'bug53632'
                                       );
 
 
@@ -196,6 +198,24 @@ class oxSysRequirements
                                        array_fill_keys( $aRequiredServerConfigs, 'server_config' );
         }
         return $this->_aRequiredModules;
+    }
+
+    /**
+     * Version check for http://bugs.php.net/53632
+     * Assumme that PHP versions < 5.3.5 and < 5.2.17 may have this issue, so
+     * informing users about possible issues
+     *
+     * @return int
+     */
+    public function checkBug53632()
+    {
+        $iState = 1;
+        if ( version_compare( PHP_VERSION, "5.3", ">=" ) ) {
+            $iState = version_compare( PHP_VERSION, "5.3.5", ">=" ) ? 2 : $iState;
+        } elseif ( version_compare( PHP_VERSION, '5.2', ">=" ) ) {
+            $iState = version_compare( PHP_VERSION, "5.2.17", ">=" ) ? 2 : $iState;
+        }
+        return $iState;
     }
 
     /**
@@ -578,7 +598,7 @@ class oxSysRequirements
         }
 
         $iModStat = 0;
-        if ( version_compare( $sVersion, '5', '>=' ) && version_compare( $sVersion, '5.0.37', '<>' ) ) {
+        if ( version_compare( $sVersion, '5.0.3', '>=' ) && version_compare( $sVersion, '5.0.37', '<>' ) ) {
             $iModStat = 2;
         }
 

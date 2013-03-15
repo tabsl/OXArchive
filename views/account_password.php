@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account_password.php 33799 2011-03-16 16:51:42Z vilma $
+ * @version   SVN: $Id: account_password.php 35529 2011-05-23 07:31:20Z arunas.paskevicius $
  */
 
 
@@ -127,9 +127,11 @@ class Account_Password extends Account
         $aPath = array();
 
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_MY_ACCOUNT', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPath['link']  = oxSeoEncoder::getInstance()->getStaticUrl( $this->getViewConfig()->getSelfLink() . 'cl=account' );
         $aPaths[] = $aPath;
 
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_PASSWORD_PERSONALSETTINGS', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPath['link']  = $this->getLink();
         $aPaths[] = $aPath;
 
         return $aPaths;

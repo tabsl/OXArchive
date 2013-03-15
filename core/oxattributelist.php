@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxattributelist.php 33500 2011-02-24 12:48:37Z linas.kukulskis $
+ * @version   SVN: $Id: oxattributelist.php 35586 2011-05-25 10:58:13Z vilma $
  */
 
 /**
@@ -166,9 +166,9 @@ class oxAttributeList extends oxList
                         $oAttribute->setTitle( $sAttTitle );
 
                         $this->offsetSet( $sAttId, $oAttribute );
-
-                        if ( isset( $aSessionFilter[$sCategoryId][$sAttId] ) ) {
-                            $oAttribute->setActiveValue( $aSessionFilter[$sCategoryId][$sAttId] );
+                        $iLang = oxLang::getInstance()->getBaseLanguage();
+                        if ( isset( $aSessionFilter[$sCategoryId][$iLang][$sAttId] ) ) {
+                            $oAttribute->setActiveValue( $aSessionFilter[$sCategoryId][$iLang][$sAttId] );
                         }
 
                     } else {

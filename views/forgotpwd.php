@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: forgotpwd.php 32923 2011-02-04 14:35:22Z vilma $
+ * @version   SVN: $Id: forgotpwd.php 35529 2011-05-23 07:31:20Z arunas.paskevicius $
  */
 
 /**
@@ -199,6 +199,7 @@ class ForgotPwd extends oxUBase
         $aPath = array();
 
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_FORGOTPWD_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPath['link']  = $this->getLink();
         $aPaths[] = $aPath;
 
         return $aPaths;

@@ -2,7 +2,9 @@
 <br>
 
 <div class="col">
-    <form name="login" class="oxValidate" action="[{ $oViewConf->getSslSelfLink() }]" method="post">
+    [{oxscript include="js/widgets/oxinputvalidator.js" priority=10 }]
+    [{oxscript add="$('form.js-oxValidate').oxInputValidator();"}]
+    <form name="login" class="js-oxValidate" action="[{ $oViewConf->getSslSelfLink() }]" method="post">
         <div>
             [{ $oViewConf->getHiddenSid() }]
             [{ $oViewConf->getNavFormParams() }]
@@ -19,18 +21,18 @@
         </div>
 
         <ul class="form clear">
-            <li [{if $aErrors}]class="oxError"[{/if}]>
-                <label>[{ oxmultilang ident="FORM_LOGIN_ACCOUNT_EMAIL" }]<span class="req">*</span></label>
-                <input id="loginUser" class="oxValidate oxValidate_notEmpty" type="text" name="lgn_usr" value="" size="37" >
+            <li [{if $aErrors}]class="oxInValid"[{/if}]>
+                <label class="req">[{ oxmultilang ident="FORM_LOGIN_ACCOUNT_EMAIL" }]</label>
+                <input id="loginUser" class="js-oxValidate js-oxValidate_notEmpty" type="text" name="lgn_usr" value="" size="37" >
                 <p class="oxValidateError">
-                    <span class="oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
+                    <span class="js-oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
                 </p>
             </li>
-            <li [{if $aErrors}]class="oxError"[{/if}]>
-                <label>[{ oxmultilang ident="FORM_LOGIN_ACCOUNT_PWD" }]<span class="req">*</span></label>
-                <input id="loginPwd" class="oxValidate oxValidate_notEmpty textbox" type="password" name="lgn_pwd" value="" size="37">
+            <li [{if $aErrors}]class="oxInValid"[{/if}]>
+                <label class="req">[{ oxmultilang ident="FORM_LOGIN_ACCOUNT_PWD" }]</label>
+                <input id="loginPwd" class="js-oxValidate js-oxValidate_notEmpty textbox" type="password" name="lgn_pwd" value="" size="37">
                 <p class="oxValidateError">
-                    <span class="oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
+                    <span class="js-oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
                 </p>
             </li>
             <li>

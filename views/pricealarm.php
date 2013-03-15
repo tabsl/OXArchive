@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: pricealarm.php 32991 2011-02-07 14:23:27Z vilma $
+ * @version   SVN: $Id: pricealarm.php 36093 2011-06-08 14:59:33Z arvydas.vapsva $
  */
 
 /**
@@ -74,12 +74,10 @@ class Pricealarm extends oxUBase
         $sMac     = oxConfig::getParameter( 'c_mac' );
         $sMacHash = oxConfig::getParameter( 'c_mach' );
         $oCaptcha = oxNew('oxCaptcha');
-        if (!$oCaptcha->pass($sMac, $sMacHash)) {
+        if ( !$oCaptcha->pass( $sMac, $sMacHash )) {
             $this->_iPriceAlarmStatus = 2;
             return;
         }
-
-
 
         $aParams = oxConfig::getParameter( 'pa' );
         if ( !isset( $aParams['email'] ) || !$myUtils->isValidEmail( $aParams['email'] ) ) {

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: alist.php 33752 2011-03-14 15:05:16Z linas.kukulskis $
+ * @version   SVN: $Id: alist.php 37363 2011-07-26 11:20:02Z linas.kukulskis $
  */
 
 /**
@@ -123,7 +123,7 @@ class aList extends oxUBase
      * Show tags cloud
      * @var bool
      */
-    protected $_blShowTagCloud = false;
+    protected $_blShowTagCloud = true;
 
     /**
      * Sign if to load and show bargain action
@@ -300,13 +300,17 @@ class aList extends oxUBase
      */
     public function executefilter()
     {
+        $iLang = oxLang::getInstance()->getBaseLanguage();
         // store this into session
         $aFilter = oxConfig::getParameter( 'attrfilter', 1 );
         $sActCat = oxConfig::getParameter( 'cnid' );
 
         if ( !empty( $aFilter ) ) {
             $aSessionFilter = oxSession::getVar( 'session_attrfilter' );
-            $aSessionFilter[$sActCat] = $aFilter;
+            //fix for #2904 - if language will be changed attributes of this category will be deleted from session
+            //and new filters for active language set.
+            $aSessionFilter[$sActCat] = null;
+            $aSessionFilter[$sActCat][$iLang] = $aFilter;
             oxSession::setVar( 'session_attrfilter', $aSessionFilter );
         }
     }
@@ -659,7 +663,7 @@ class aList extends oxUBase
         $aSorting = parent::getSorting( $sCnid );
         $oActCat = $this->getActCategory();
         if ( !$aSorting && $oActCat && $oActCat->oxcategories__oxdefsort->value ) {
-            $sSortBy  = getViewName( 'oxarticles' ).".{$oActCat->oxcategories__oxdefsort->value}";
+            $sSortBy  = $oActCat->oxcategories__oxdefsort->value;
             $sSortDir = ( $oActCat->oxcategories__oxdefsortmode->value ) ? "desc" : null;
 
             $this->setItemSorting( $sCnid, $sSortBy, $sSortDir );
@@ -803,8 +807,11 @@ class aList extends oxUBase
         $aPaths = array();
 
         if ( 'oxmore' == oxConfig::getParameter( 'cnid' ) ) {
+            $aPath = array();
+            $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_PRODUCT_MORECATEGORIES', oxLang::getInstance()->getBaseLanguage(), false );
+            $aPath['link']  = $this->getLink();
 
-            $aPaths[]['title'] = oxLang::getInstance()->translateString( 'PAGE_PRODUCT_MORECATEGORIES', oxLang::getInstance()->getBaseLanguage(), false );
+            $aPaths[] = $aPath;
 
             return $aPaths;
         }
@@ -974,5 +981,15 @@ class aList extends oxUBase
     public function getPageCount()
     {
         return $this->_iCntPages;
+    }
+
+    /**
+     * Should "More tags" link be visible.
+     *
+     * @return bool
+     */
+    public function isMoreTagsVisible()
+    {
+        return true;
     }
 }

@@ -26,9 +26,8 @@
 
 <tr>
     <td valign="top" class="edittext">
-
-        <table cellspacing="0" cellpadding="0" border="0">
         <form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" target="dynexport_do" method="post">
+        <table cellspacing="0" cellpadding="0" border="0">
         [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="cl" value="[{$sClassDo}]">
         <input type="hidden" name="fnc" value="start">
@@ -131,8 +130,21 @@
             [{ oxinputhelp ident="HELP_DYNBASE_ADDCATTOCAMPAIGN" }]
             </td>
         </tr>
+        <tr>
+            <td class="edittext" width="180" height="40">
+                [{ oxmultilang ident="GENERAL_EXPORTLANGUAGE" }]
+            </td>
+            <td class="edittext">
+            <select name="iExportLanguage" class="saveinnewlanginput">
+                [{foreach from=$aLangs key=lang item=olang}]
+                <option value="[{ $lang }]"[{ if $olang->selected}]SELECTED[{/if}]>[{ $olang->name }]</option>
+                [{/foreach}]
+            </select>
+            [{ oxinputhelp ident="HELP_GENERAL_EXPORTLANGUAGE" }]
+            </td>
+        </tr>
         </table>
-
+        </form>
         <!--
         Bitte Land f&uuml;r Versandkosten w&auml;hlen : <br>
         <select name="country" class="editinput" style="width: 210px;" [{ $readonly }]>
@@ -141,7 +153,7 @@
         [{/foreach}]
         -->
     </td>
-    </form>
+
 </tr>
 </table>
 

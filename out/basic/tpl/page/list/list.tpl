@@ -2,7 +2,7 @@
 
     <div class="boxhead">
         <h1 id="test_catTitle">[{$oView->getTitle()}]</h1>
-        [{if $oView->getArticleCount() }]<em id="test_catArtCnt">([{ $oView->getArticleCount() }])</em>[{/if}]
+        [{if $oView->getArticleCount() && $oView->showCategoryArticlesCount()}]<em id="test_catArtCnt">([{ $oView->getArticleCount() }])</em>[{/if}]
         [{assign var="actCategory" value=$oView->getActiveCategory()}]
         [{if $actCategory && $actCategory->oxcategories__oxdesc->value }]<small id="test_catDesc">[{$actCategory->oxcategories__oxdesc->value}]</small>[{/if}]
         [{assign var='rsslinks' value=$oView->getRssLinks() }]

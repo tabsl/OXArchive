@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: index.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: index.php 34931 2011-04-26 12:50:20Z sarunas $
  */
 
 
@@ -37,4 +37,4 @@ if ( !function_exists( 'isAdmin' )) {
 }
 
 // Includes main index.php file
-require_once "../index.php";
+require_once dirname(__FILE__)."/../index.php";

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_user.php 33895 2011-03-22 16:20:52Z arvydas.vapsva $
+ * @version   SVN: $Id: oxcmp_user.php 35122 2011-05-05 08:07:12Z linas.kukulskis $
  */
 
 // defining login/logout states
@@ -657,8 +657,11 @@ class oxcmp_user extends oxView
 
         // order remark
         $sOrderRemark = oxConfig::getParameter( 'order_remark', true );
+
         if ( $sOrderRemark ) {
             oxSession::setVar( 'ordrem', $sOrderRemark );
+        } else {
+            oxSession::deleteVar( 'ordrem' );
         }
 
         if ( $oBasket = $this->getSession()->getBasket() ) {

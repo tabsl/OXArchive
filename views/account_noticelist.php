@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account_noticelist.php 32923 2011-02-04 14:35:22Z vilma $
+ * @version   SVN: $Id: account_noticelist.php 35529 2011-05-23 07:31:20Z arunas.paskevicius $
  */
 
 /**
@@ -159,12 +159,14 @@ class Account_Noticelist extends Account
     public function getBreadCrumb()
     {
         $aPaths = array();
-        $aPath = array();
-
+        $aPath  = array();
+        
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_MY_ACCOUNT', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPath['link']  =  oxSeoEncoder::getInstance()->getStaticUrl( $this->getViewConfig()->getSelfLink() . "cl=account" );
         $aPaths[] = $aPath;
 
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_NOTICELIST_MYWISHLIST', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPath['link']  = $this->getLink();
         $aPaths[] = $aPath;
 
         return $aPaths;

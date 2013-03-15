@@ -1,6 +1,16 @@
-[{oxstyle include="css/superfish.css"}]
+[{oxscript include="js/widgets/oxtopmenu.js" priority=10 }]
+[{oxscript add="$('#navigation').oxTopMenu();"}]
+[{oxstyle include="css/libs/superfish.css"}]
+[{assign var="homeSelected" value="false"}]
+[{if $oView->getClassName() == 'start'}]
+    [{assign var="homeSelected" value="true"}]
+    [{assign var="expandedCategory" value=$oView->getActCategory()}]
+    [{if $expandedCategory && $expandedCategory->getExpanded()}]
+        [{assign var="homeSelected" value="false"}]
+    [{/if}] 
+[{/if}]
 <ul id="navigation" class="sf-menu">
-    <li [{if $oView->getClassName()=='start'}]class="current"[{/if}]><a href="[{$oViewConf->getHomeLink()}]">[{oxmultilang ident="TOP_CATEGORIES_HOME"}]</a></li>
+    <li [{if $homeSelected == 'true' }]class="current"[{/if}]><a [{if $homeSelected == 'true'}]class="current"[{/if}] href="[{$oViewConf->getHomeLink()}]">[{oxmultilang ident="TOP_CATEGORIES_HOME"}]</a></li>
 
     [{assign var="iAllCatCount" value=$oxcmp_categories|count }]
     [{if $iAllCatCount > $oView->getTopNavigationCatCnt() }]
@@ -37,15 +47,17 @@
         [{/if}]
         [{if $iCatCnt <= $oView->getTopNavigationCatCnt()}]
             <li [{if $ocat->expanded}]class="current"[{/if}]>
-                <a href="[{$ocat->getLink()}]">[{$ocat->oxcategories__oxtitle->value}][{ if $ocat->getNrOfArticles() > 0}] ([{$ocat->getNrOfArticles()}])[{/if}]</a>
+                <a  [{if $ocat->expanded}]class="current"[{/if}] href="[{$ocat->getLink()}]">[{$ocat->oxcategories__oxtitle->value}][{ if $oView->showCategoryArticlesCount() && ($ocat->getNrOfArticles() > 0) }] ([{$ocat->getNrOfArticles()}])[{/if}]</a>
                 [{if $ocat->getSubCats()}]
                     <ul>
                     [{foreach from=$ocat->getSubCats() item=osubcat key=subcatkey name=SubCat}]
-                        [{foreach from=$osubcat->getContentCats() item=ocont name=MoreCms}]
-                            <li><a href="[{$ocont->getLink()}]">[{$ocont->oxcontents__oxtitle->value}]</a></li>
-                        [{/foreach}]
                         [{if $osubcat->getIsVisible() }]
-                            <li><a href="[{$osubcat->getLink()}]">[{$osubcat->oxcategories__oxtitle->value}] [{ if $osubcat->getNrOfArticles() > 0}] ([{$osubcat->getNrOfArticles()}])[{/if}]</a></li>
+                            [{foreach from=$osubcat->getContentCats() item=ocont name=MoreCms}]
+                                <li><a href="[{$ocont->getLink()}]">[{$ocont->oxcontents__oxtitle->value}]</a></li>
+                            [{/foreach}]
+                            [{if $osubcat->getIsVisible() }]
+                                <li [{if $osubcat->expanded}]class="current"[{/if}] ><a [{if $osubcat->expanded}]class="current"[{/if}] href="[{$osubcat->getLink()}]">[{$osubcat->oxcategories__oxtitle->value}] [{ if $oView->showCategoryArticlesCount() && ($osubcat->getNrOfArticles() > 0)}] ([{$osubcat->getNrOfArticles()}])[{/if}]</a></li>
+                            [{/if}]
                         [{/if}]
                     [{/foreach}]
                     </ul>
@@ -54,7 +66,7 @@
         [{else}]
             [{capture append="moreLinks"}]
                <li [{if $ocat->expanded}]class="current"[{/if}]>
-                    <a href="[{$ocat->getLink()}]">[{$ocat->oxcategories__oxtitle->value}][{ if $ocat->getNrOfArticles() > 0}] ([{$ocat->getNrOfArticles()}])[{/if}]</a>
+                    <a href="[{$ocat->getLink()}]">[{$ocat->oxcategories__oxtitle->value}][{ if $oView->showCategoryArticlesCount() && ($ocat->getNrOfArticles() > 0)}] ([{$ocat->getNrOfArticles()}])[{/if}]</a>
                </li>
             [{/capture}]
         [{/if}]

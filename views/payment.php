@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: payment.php 34000 2011-03-25 12:50:06Z sarunas $
+ * @version   SVN: $Id: payment.php 36076 2011-06-08 12:24:48Z arvydas.vapsva $
  */
 
 /**
@@ -600,7 +600,7 @@ class Payment extends oxUBase
             $aDynData["kkmonth"] = null;
             $aDynData["kkyear"] = null;
             $aDynData["kkpruef"] = null;
-            $this->getSession()->setVar("dynvalue", $aDynData);
+            oxSession::setVar("dynvalue", $aDynData);
         }
 
 
@@ -672,6 +672,8 @@ class Payment extends oxUBase
 
 
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_CHECKOUT_PAY', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPath['link']  = $this->getLink();
+
         $aPaths[] = $aPath;
 
         return $aPaths;

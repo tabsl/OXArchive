@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxarticlelist.php 33601 2011-03-01 14:34:42Z rimvydas.paskevicius $
+ * @version   SVN: SVN: $Id: oxarticlelist.php 37868 2011-08-01 11:57:18Z linas.kukulskis $
  */
 
 /**
@@ -57,15 +57,7 @@ class oxArticleList extends oxList
      */
     public function setCustomSorting( $sSorting )
     {
-        $aSorting = explode( " ", $sSorting );
-
-        if ( strpos( $aSorting[0], "." ) ) {
-            $aSortElements = explode( ".", $aSorting[0] );
-            $aSortElements[1] = trim($aSortElements[1]);
-            $aSorting[0] = implode( ".", $aSortElements );
-        }
-
-        $this->_sCustomSorting = implode( " ", $aSorting );
+        $this->_sCustomSorting = $sSorting;
     }
 
     /**
@@ -119,7 +111,7 @@ class oxArticleList extends oxList
     public function setHistoryArticles($aArticlesIds)
     {
         if ($this->getSession()->getId()) {
-            $this->getSession()->setVar('aHistoryArticles', $aArticlesIds);
+            oxSession::setVar('aHistoryArticles', $aArticlesIds);
             // clean cookie, if session started
             oxUtilsServer::getInstance()->setOxCookie('aHistoryArticles', '');
         } else {
@@ -682,7 +674,7 @@ class oxArticleList extends oxList
         $sTag = $oTagHandler->prepareTags( $sTag );
 
         $sQ = "select {$sArticleFields} from {$sViewName} inner join {$sArticleTable} on ".
-              "{$sArticleTable}.oxid = {$sViewName}.oxid where match ( {$sViewName}.oxtags ) ".
+              "{$sArticleTable}.oxid = {$sViewName}.oxid where {$sArticleTable}.oxparentid = '' AND match ( {$sViewName}.oxtags ) ".
               "against( ".oxDb::getDb()->quote( "\"".$sTag."\"" )." IN BOOLEAN MODE )";
 
         // checking stock etc
@@ -893,7 +885,11 @@ class oxArticleList extends oxList
             if ( $sIds ) {
                 $sFilterSql = " and $sArticleTable.oxid in ( $sIds ) ";
             }
+        // bug fix #0001695: if no articles found return false
+        } elseif ( !( current( $aFilter ) == '' && count( array_unique( $aFilter ) ) == 1 ) ) {
+            $sFilterSql = " and false ";
         }
+
         return $sFilterSql;
     }
 
@@ -921,8 +917,9 @@ class oxArticleList extends oxList
         // ----------------------------------
         // filtering ?
         $sFilterSql = '';
-        if ( $aSessionFilter && isset( $aSessionFilter[$sCatId] ) ) {
-            $sFilterSql = $this->_getFilterSql($sCatId, $aSessionFilter[$sCatId]);
+        $iLang = oxLang::getInstance()->getBaseLanguage();
+        if ( $aSessionFilter && isset( $aSessionFilter[$sCatId][$iLang] ) ) {
+            $sFilterSql = $this->_getFilterSql($sCatId, $aSessionFilter[$sCatId][$iLang]);
         }
 
         $oDb = oxDb::getDb();
@@ -1019,22 +1016,16 @@ class oxArticleList extends oxList
      */
     protected function _getPriceSelect( $dPriceFrom, $dPriceTo )
     {
-
         $oBaseObject   = $this->getBaseObject();
         $sArticleTable = $oBaseObject->getViewName();
         $sSelectFields = $oBaseObject->getSelectFields();
 
         $sSubSelect = "";
-        if ($dPriceTo) {
-            $sSubSelect .= "and oxvarminprice <= ".(double)$dPriceTo." ";
-        }
 
-        if ($dPriceFrom) {
-            $sSubSelect .= " and oxvarminprice <= ".(double)$dPriceFrom." ";
-        }
+        $sSelect  = "select {$sSelectFields} from {$sArticleTable} where oxvarminprice >= 0 ";
+        $sSelect .= $dPriceTo ? "and oxvarminprice <= " . (double)$dPriceTo . " " : " ";
+        $sSelect .= $dPriceFrom ? "and oxvarminprice  >= " . (double)$dPriceFrom . " " : " ";
 
-        $sSelect  = "select {$sSelectFields} from {$sArticleTable} where ";
-        $sSelect .= " oxvarminprice >= ".(double)$dPriceFrom." and oxvarminprice <= ".(double)$dPriceTo;
         $sSelect .= " and ".$oBaseObject->getSqlActiveSnippet()." and {$sArticleTable}.oxissearch = 1";
 
         if ( !$this->_sCustomSorting ) {
@@ -1044,7 +1035,6 @@ class oxArticleList extends oxList
         }
 
         return $sSelect;
-
     }
 
     /**

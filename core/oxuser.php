@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 33914 2011-03-23 08:59:05Z vilma $
+ * @version   SVN: $Id: oxuser.php 36613 2011-06-28 15:04:37Z arunas.paskevicius $
  */
 
 /**
@@ -419,28 +419,26 @@ class oxUser extends oxBase
             if ( $sAddressId = $this->getSelectedAddressId() ) {
                 foreach ( $oAddresses as $oAddress ) {
                     if ( $oAddress->getId() == $sAddressId ) {
-                        $oAddress->selected = 1;
+                        $oAddress->selected = 1;                            
+                        $oAddress->setSelected();
                         $oSelectedAddress = $oAddress;
                         break;
                     }
                 }
-            } elseif ( $sWishId = $this->_getWishListId() ) {
-                foreach ( $oAddresses as $oAddress ) {
-                    $oAddress->selected = 0;
-                    if ( $oAddress->oxaddress__oxaddressuserid->value == $sWishId ) {
-                        $oAddress->selected = 1;
-                        $sAddressId = $oAddress->getId();
-                        $oSelectedAddress = $oAddress;
-                    }
-                }
             }
-
+            
             // in case none is set - setting first one
             if ( !$oSelectedAddress ) {
-                $oAddresses->rewind();
-                $oAddress = $oAddresses->current();
+                if ( !$sAddressId || $sAddressId >= 0 ) {
+                    $oAddresses->rewind();
+                    $oAddress = $oAddresses->current();
+                } else {
+                    $aAddresses = $oAddresses->getArray();
+                    $oAddress   = array_pop( $aAddresses );                    
+                }
                 $oAddress->selected = 1;
-                $oSelectedAddress = $oAddress;
+                $oAddress->setSelected();
+                $oSelectedAddress = $oAddress;                
             }
         }
         $this->_oSelAddress = $oSelectedAddress;
@@ -1112,7 +1110,7 @@ class oxUser extends oxBase
 
                     if ( $blSuccess ) {
                         //setting in seesion parameter to force sending email only once (#2033)
-                        $mySession->setVar( "blDBOptInMailAlreadyDone", true );
+                        oxSession::setVar( "blDBOptInMailAlreadyDone", true );
                     }
                 } else {
                     // mail already was sent, so just confirming that
@@ -1172,6 +1170,8 @@ class oxUser extends oxBase
      * address ID
      *
      * @param object $oUser user object to copy address info
+     *
+     * @deprecated in 4.5.1 since 2011-05-06 related with bug #0002072
      *
      * @return mixed
      */
@@ -1923,6 +1923,7 @@ class oxUser extends oxBase
      *
      * @param object $sUserId user to check Id
      *
+     * @deprecated in 4.5.1 since 2011-05-06 related with bug #0002072
      * @return bool
      */
     protected function _hasUserAddress( $sUserId )

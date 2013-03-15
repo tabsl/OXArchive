@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: register.php 33900 2011-03-22 17:06:44Z vilma $
+ * @version   SVN: $Id: register.php 35529 2011-05-23 07:31:20Z arunas.paskevicius $
  */
 
 /**
@@ -211,6 +211,7 @@ class Register extends User
         $aPath = array();
 
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_REGISTER_REGISTER', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPath['link']  = $this->getLink();
         $aPaths[] = $aPath;
 
         return $aPaths;

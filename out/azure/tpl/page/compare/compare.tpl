@@ -9,42 +9,42 @@
 <h1 id="productComparisonHeader" class="pageHead">[{$template_title}]</h1>
 <div>
 [{if $oView->getCompareItemsCnt() > 1 }]
-    [{oxscript include="js/scrollpane/jquery.jscrollpane.min.js"}]
-    [{oxscript include="js/scrollpane/jquery.mousewheel.js"}]
-    [{oxscript include="js/scrollpane/mwheelIntent.js"}]
-    [{oxstyle include="css/jquery.jscrollpane.css"}]
-    [{oxscript add="$( '#compareList' ).oxCompareList();"}]
-
+    [{oxscript include="js/libs/scrollpane/jscrollpane.min.js"}]
+    [{oxscript include="js/libs/scrollpane/mousewheel.js"}]
+    [{oxscript include="js/libs/scrollpane/mwheelIntent.js"}]
+    [{oxstyle include="css/libs/jscrollpane.css"}]
+    [{oxscript include="js/widgets/oxcompare.js" priority=10 }]
+    [{oxscript add="$( '#compareList' ).oxCompare();"}]
     <table id="compareList">
         <tr>
-            <td style="vertical-align:top;">
-                <div id="compareFirstCol" style="overflow: hidden;">
-                    <table style="width:200px; border-collapse:collapse;">
+            <td>
+                <div id="compareFirstCol">
+                    <table>
                         <tr id="firstDataTr">
-                            <td class="firstCol">&nbsp;</td>
+                            <td class="js-firstCol">&nbsp;</td>
                         </tr>
                         <tr>
-                            <td class="firstCol">[{ oxmultilang ident="PAGE_PRODUCT_COMPARE_PRODUCTATTRIBUTES" }]</td>
+                            <td class="js-firstCol">[{ oxmultilang ident="PAGE_PRODUCT_COMPARE_PRODUCTATTRIBUTES" }]</td>
                         </tr>
                         [{foreach key=sAttrID from=$atributeList item=oAttrib name=CmpAttr}]
                         <tr>
-                            <td class="firstCol" id="cmpAttrTitle_[{$smarty.foreach.CmpAttr.iteration}]" class="no_left_brd">[{ $oAttrib->title }]:</td>
+                            <td class="js-firstCol" id="cmpAttrTitle_[{$smarty.foreach.CmpAttr.iteration}]">[{ $oAttrib->title }]:</td>
                         </tr>
                         [{/foreach}]
                     </table>
                 </div>
             </td>
-            <td style="vertical-align:top;">
-                <div id="compareDataDiv" [{if !$oxcmp_user}] class="compareWide"[{/if}] style="overflow:hidden; width:[{if $oxcmp_user}]545px;[{else}]740px;[{/if}] position:relative">
+            <td>
+                <div id="compareDataDiv" [{if !$oxcmp_user}]class="compareWide"[{/if}]>
                     <table>
                         <tr id="firstTr">
                             [{foreach key=iProdNr from=$articleList item=product name=comparelist}]
-                            <td valign="top">
+                            <td class="alignTop">
                                 <div class="lineBox clear">
                                 [{if !$product->hidePrev}]
                                     <a id="compareLeft_[{ $product->oxarticles__oxid->value }]" rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl="|cat:$oViewConf->getActiveClassName() params="fnc=moveleft&amp;aid=`$product->oxarticles__oxnid->value`&amp;pgNr="|cat:$oView->getActPage() }]" class="navigation movePrev">&laquo;</a>
                                 [{/if}]
-                                <span>[{ oxmultilang ident="PAGE_PRODUCT_COMPARE_MOVE" }]</span>
+                                [{ oxmultilang ident="PAGE_PRODUCT_COMPARE_MOVE" }]
                                 [{if !$product->hideNext}]
                                     <a id="compareRight_[{ $product->oxarticles__oxid->value }]" rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl="|cat:$oViewConf->getActiveClassName() params="fnc=moveright&amp;aid=`$product->oxarticles__oxnid->value`&amp;pgNr="|cat:$oView->getActPage() }]" class="navigation moveNext">&raquo;</a>
                                 [{/if}]
@@ -55,7 +55,7 @@
                         </tr>
                         <tr>
                             [{foreach key=iProdNr from=$articleList item=product name=testArt}]
-                            <td align="center">
+                            <td class="centered">
                             [{*  if $oxcmp_user }]
                                   <a id="tonotice_cmp_[{ $product->oxarticles__oxid->value }]_[{$smarty.foreach.testArt.iteration}]" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl="|cat:$oViewConf->getActiveClassName() params="aid=`$product->oxarticles__oxnid->value`&amp;anid=`$product->oxarticles__oxnid->value`&amp;fnc=tonoticelist&amp;am=1"|cat:$oViewConf->getNavUrlParams() }]" rel="nofollow">[{ oxmultilang ident="PAGE_PRODUCT_COMPARE_NOTICELIST" }]</a>
                                   [{if $oViewConf->getShowWishlist()}]
@@ -84,7 +84,7 @@
                         [{foreach key=sAttrID from=$atributeList item=oAttrib name=CmpAttr}]
                         <tr>
                               [{foreach key=iProdNr from=$articleList item=product}]
-                            <td valign="top">
+                            <td class="alignTop">
                               <div id="cmpAttr_[{$smarty.foreach.CmpAttr.iteration}]_[{ $product->oxarticles__oxid->value }]">
                                 [{ if $oAttrib->aProd.$iProdNr && $oAttrib->aProd.$iProdNr->value}]
                                   [{ $oAttrib->aProd.$iProdNr->value }]
@@ -106,6 +106,7 @@
   [{ oxmultilang ident="PAGE_PRODUCT_COMPARE_SELECTATLEASTTWOART" }]
 [{/if}]
 </div>
+[{ insert name="oxid_tracker" title=$template_title }]
 [{/capture}]
 
 [{if !$oxcmp_user->oxuser__oxpassword->value}]

@@ -19,18 +19,18 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype_scaleprice.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: oxerptype_scaleprice.php 35102 2011-05-04 08:20:01Z rimvydas.paskevicius $
  */
 
 require_once 'oxerptype.php';
 
 /**
- * ERP scale price description class
+ * scaleprices erp type subclass
  */
 class oxERPType_ScalePrice extends oxERPType
 {
     /**
-     * Class constructor
+     * class constructor
      *
      * @return null
      */
@@ -40,16 +40,6 @@ class oxERPType_ScalePrice extends oxERPType
 
         $this->_sTableName = 'oxprice2article';
         $this->_blRestrictedByShopId = true;
-
-        $this->_aFieldList = array(
-            'OXSHOPID'		 => 'OXSHOPID',
-            'OXARTID'		 => 'OXARTID',
-            'OXADDABS'		 => 'OXADDABS',
-            'OXADDPERC'		 => 'OXADDPERC',
-            'OXAMOUNT'		 => 'OXAMOUNT',
-            'OXAMOUNTTO'	 => 'OXAMOUNTTO',
-            'OXID'		     => 'OXID'
-        );
 
         $this->_aKeyFieldList = array(
             'OXID' => 'OXID'

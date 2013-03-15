@@ -35,7 +35,6 @@ class oxPictureHandler extends oxSuperCfg
      */
     private static $_instance = null;
 
-
     /**
      * Returns object instance
      *
@@ -56,103 +55,6 @@ class oxPictureHandler extends oxSuperCfg
             }
         }
         return self::$_instance;
-    }
-
-    /**
-     * Generates article pictures (icon, thumbnail, zoom picture) from master
-     * picture.
-     *
-     * @param oxArticle $oObject article object
-     * @param int       $iIndex  master picture index
-     *
-     * @return null
-     */
-    public function generateArticlePictures( $oObject, $iIndex )
-    {
-        $iGeneratedImages = (int)$oObject->oxarticles__oxpicsgenerated->value;
-        $oConfig = $this->getConfig();
-        $oUtilsFile = oxUtilsFile::getInstance();
-
-        if ( $iGeneratedImages < $iIndex ) {
-
-            $iTotalGenerated = $iGeneratedImages;
-
-            for ( $iNr = $iGeneratedImages + 1; $iNr <= $iIndex; $iNr++ ) {
-
-                $sField = "oxarticles__oxpic" . $iNr;
-
-                if ( $oObject->$sField->value ) {
-
-                    $sMasterPictureSource = $oConfig->getMasterPictureDir() . $iNr . "/" . basename($oObject->$sField->value);
-
-                    if ( file_exists( $sMasterPictureSource ) ) {
-
-                        $sNewName = $this->_getArticleMasterPictureName( $oObject, $iNr );
-
-                        $aFiles = array();
-
-                        // main product picture
-                        $sType = "P" . $iNr . "@oxarticles__oxpic" . $iNr;
-                        $aFiles['myfile']['name'][$sType] = basename($oObject->{"oxarticles__oxpic".$iNr}->value);
-                        $aFiles['myfile']['tmp_name'][$sType] = $sMasterPictureSource;
-
-                        // zoom picture
-                        $sType = "Z" . $iNr . "@oxarticles__oxzoom" . $iNr;
-                        $oObject->{"oxarticles__oxzoom" . $iNr} =  new oxField();
-                        $aFiles['myfile']['name'][$sType] = $sNewName;
-                        $aFiles['myfile']['tmp_name'][$sType] = $sMasterPictureSource ;
-
-                        $oUtilsFile->processFiles( $oObject, $aFiles, true, false );
-
-                        // if this is picture with number #1, also generating
-                        // thumbnail and icon
-                        if ( $iNr == 1 ) {
-                            $aFiles = array();
-                            // Thumbnail
-                            $sType = "TH@oxarticles__oxthumb";
-                            $aFiles['myfile']['name'][$sType] = $sNewName;
-                            $aFiles['myfile']['tmp_name'][$sType] = $sMasterPictureSource;
-
-
-                            // Icon
-                            $sType = "ICO@oxarticles__oxicon";
-                            $aFiles['myfile']['name'][$sType] = $sNewName;
-                            $aFiles['myfile']['tmp_name'][$sType] = $sMasterPictureSource;
-
-
-                            $oUtilsFile->processFiles( null, $aFiles, true, false );
-                        }
-
-                        $iTotalGenerated++;
-                    }
-                }
-            }
-
-            if ( $iTotalGenerated > $iGeneratedImages ) {
-                $oObject->updateAmountOfGeneratedPictures( $iIndex );
-            }
-        }
-    }
-
-    /**
-     * Get article master picture file name.
-     *
-     * @param oxArticle $oObject article object
-     * @param int       $iIndex  master picture index
-     *
-     * @return string
-     */
-    protected function _getArticleMasterPictureName( $oObject, $iIndex )
-    {
-        $sName = '';
-
-        if ( $iIndex ) {
-            $sName = $oObject->{"oxarticles__oxpic".$iIndex}->value;
-            $sName = $this->_getBaseMasterImageFileName( $sName );
-
-        }
-
-        return $sName;
     }
 
     /**
@@ -248,28 +150,10 @@ class oxPictureHandler extends oxSuperCfg
      */
     public function deleteMainIcon( $oObject )
     {
-        $oDB        = oxDb::getDb( true );
-        $myConfig   = $this->getConfig();
-        $myUtilsPic = oxUtilsPic::getInstance();
-        $oUtilsFile = oxUtilsFile::getInstance();
-
-        $sMainIcon = $oObject->oxarticles__oxicon->value;
-
-        if ( !$sMainIcon ) {
-            return;
+        if ( ( $sMainIcon = $oObject->oxarticles__oxicon->value ) ) {
+            $sPath = $this->getConfig()->getPictureDir( false ) . oxUtilsFile::getInstance()->getImageDirByType( "ICO" );
+            oxUtilsPic::getInstance()->safePictureDelete( $sMainIcon, $sPath, "oxarticles", "oxicon" );
         }
-
-        $aDelPics = array();
-        $sAbsDynImageDir = $myConfig->getPictureDir(false);
-
-        $aDelPics = array();
-
-        // deleting article main icon and thumb picture
-        $aPic = array("sField"    => "oxicon",
-                      "sDir"      => $oUtilsFile->getImageDirByType( "ICO" ),
-                      "sFileName" => $sMainIcon);
-
-        $myUtilsPic->safePictureDelete( $aPic["sFileName"], $myConfig->getPictureDir(false) . $aPic["sDir"], "oxarticles", $aPic["sField"] );
     }
 
     /**
@@ -281,27 +165,11 @@ class oxPictureHandler extends oxSuperCfg
      */
     public function deleteThumbnail( $oObject )
     {
-        $oDB        = oxDb::getDb( true );
-        $myConfig   = $this->getConfig();
-        $myUtilsPic = oxUtilsPic::getInstance();
-        $oUtilsFile = oxUtilsFile::getInstance();
-
-        $aDelPics = array();
-        $sAbsDynImageDir = $myConfig->getPictureDir(false);
-        $sThumb = $oObject->oxarticles__oxthumb->value;
-
-        if ( !$sThumb ) {
-            return;
+        if ( ( $sThumb = $oObject->oxarticles__oxthumb->value ) ) {
+            // deleting article main icon and thumb picture
+            $sPath = $this->getConfig()->getPictureDir( false ) . oxUtilsFile::getInstance()->getImageDirByType( "TH" );
+            oxUtilsPic::getInstance()->safePictureDelete( $sThumb, $sPath, "oxarticles", "oxthumb" );
         }
-
-        $aDelPics = array();
-
-        // deleting article main icon and thumb picture
-        $aPic = array("sField"    => "oxthumb",
-                      "sDir"      => $oUtilsFile->getImageDirByType( "TH" ),
-                      "sFileName" => $sThumb);
-
-        $myUtilsPic->safePictureDelete( $aPic["sFileName"], $myConfig->getPictureDir(false) . $aPic["sDir"], "oxarticles", $aPic["sField"] );
     }
 
     /**
@@ -329,30 +197,11 @@ class oxPictureHandler extends oxSuperCfg
             $sFieldToCheck = "oxzoom".$iIndex;
         }
 
-        if ( $sZoomPicName == "nopic.jpg") {
-            return;
+        if ( $sZoomPicName && $sZoomPicName != "nopic.jpg" ) {
+            // deleting zoom picture
+            $sPath = $this->getConfig()->getPictureDir( false ) . oxUtilsFile::getInstance()->getImageDirByType( "Z" . $iIndex );
+            oxUtilsPic::getInstance()->safePictureDelete( $sZoomPicName, $sPath, "oxarticles", $sFieldToCheck );
         }
-
-        $oDB        = oxDb::getDb( true );
-        $myConfig   = $this->getConfig();
-        $myUtilsPic = oxUtilsPic::getInstance();
-        $oUtilsFile = oxUtilsFile::getInstance();
-
-        $aDelPics = array();
-        $sAbsDynImageDir = $myConfig->getPictureDir(false);
-
-        if ( !$sZoomPicName ) {
-            return;
-        }
-
-        $aDelPics = array();
-
-        // deleting zoom picture
-        $aPic = array("sField"    => $sFieldToCheck,
-                      "sDir"      => $oUtilsFile->getImageDirByType( "Z".$iIndex ),
-                      "sFileName" => $sZoomPicName);
-
-        $myUtilsPic->safePictureDelete( $aPic["sFileName"], $myConfig->getPictureDir(false) . $aPic["sDir"], "oxarticles", $aPic["sField"] );
     }
 
     /**
@@ -364,9 +213,7 @@ class oxPictureHandler extends oxSuperCfg
      */
     public function getIconName( $sFilename )
     {
-        $sIconName = getStr()->preg_replace( '/(\.jpg|\.jpeg|\.gif|\.png)$/i', '_ico\\1', basename($sFilename) );
-
-        return $sIconName;
+        return $sFilename;
     }
 
     /**
@@ -378,10 +225,7 @@ class oxPictureHandler extends oxSuperCfg
      */
     public function getMainIconName( $sMasterImageFile )
     {
-        $sMasterImageFile = $this->_getBaseMasterImageFileName( $sMasterImageFile );
-        $sIconName = getStr()->preg_replace( '/(\.jpg|\.jpeg|\.gif|\.png)$/i', '_ico\\1', $sMasterImageFile );
-
-        return $sIconName;
+        return $this->_getBaseMasterImageFileName( $sMasterImageFile );
     }
 
     /**
@@ -393,10 +237,7 @@ class oxPictureHandler extends oxSuperCfg
      */
     public function getThumbName( $sMasterImageFile )
     {
-        $sMasterImageFile = $this->_getBaseMasterImageFileName( $sMasterImageFile );
-        $sThumbName = getStr()->preg_replace( '/(\.jpg|\.jpeg|\.gif|\.png)$/i', '_th\\1', $sMasterImageFile );
-
-        return $sThumbName;
+        return basename( $sMasterImageFile );
     }
 
     /**
@@ -409,11 +250,7 @@ class oxPictureHandler extends oxSuperCfg
      */
     public function getZoomName( $sMasterImageFile, $iIndex )
     {
-        $sMasterImageFile = $this->_getBaseMasterImageFileName( $sMasterImageFile );
-
-        $sZoomName = getStr()->preg_replace( '/(\.jpg|\.jpeg|\.gif|\.png)$/i', '_z'.$iIndex.'\\1', $sMasterImageFile );
-
-        return $sZoomName;
+        return basename( $sMasterImageFile );
     }
 
     /**
@@ -425,9 +262,122 @@ class oxPictureHandler extends oxSuperCfg
      */
     protected function _getBaseMasterImageFileName( $sMasterImageFile )
     {
-        $sMasterImageFile = getStr()->preg_replace( '/_p\d+(\.jpg|\.jpeg|\.gif|\.png)$/i', '\\1', $sMasterImageFile );
-
         return basename( $sMasterImageFile );
     }
-}
 
+    /**
+     * Returns image sizes from provided config array
+     *
+     * @param mixed  $aImgSizes array or string of sizes in format x*y
+     * @param string $sIndex    index in array
+     *
+     * @return array
+     */
+    public function getImageSize($aImgSizes, $sIndex = null)
+    {
+        if (isset($sIndex) && is_array($aImgSizes) && isset($aImgSizes[$sIndex])) {
+            $aSize = explode('*', $aImgSizes[$sIndex]);
+        } elseif (is_string ($aImgSizes)) {
+            $aSize = explode('*', $aImgSizes);
+        }
+        if (2 == count($aSize)) {
+            $x = (int)$aSize[0];
+            $y = (int)$aSize[1];
+            if ($x && $y) {
+                return $aSize;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns dir/url info for given image file
+     *
+     * @param string $sFilePath path to file
+     * @param string $sFile     filename in pictures dir
+     * @param bool   $blAdmin   is admin mode ?
+     * @param bool   $blSSL     is ssl ?
+     * @param int    $iLang     language id
+     * @param int    $iShopId   shop id
+     *
+     * @return array
+     */
+    protected function _getPictureInfo( $sFilePath, $sFile, $blAdmin = false, $blSSL = null, $iLang = null, $iShopId = null )
+    {
+        $oConfig = $this->getConfig();
+        if (!isset($blSSL)) {
+            $blSSL = $oConfig->isSsl();
+        }
+
+        // custom server as image storage?
+        $sAltUrl = $oConfig->getConfigParam( 'sAltImageUrl' );
+        if ( $sAltUrl ) {
+            if ( $blSSL && $oConfig->isSsl() ) {
+                $sSslAltUrl = $oConfig->getConfigParam( 'sSSLAltImageUrl' );
+                if ( $sSslAltUrl ) {
+                    $sAltUrl = $sSslAltUrl;
+                }
+            }
+
+            if ( !is_null( $sFile ) ) {
+                $sAltUrl .= $sFilePath . $sFile;
+            }
+
+            return array( 'path' => false, 'url'=> $sAltUrl );
+        }
+
+        $sPath = $oConfig->getPicturePath( $sFilePath . $sFile, $blAdmin, $iLang, $iShopId );
+        if ( !$sPath ) {
+            return array( 'path'=> false, 'url' => false );
+        }
+
+        $sDirPrefix = $oConfig->getOutDir();
+        $sUrlPrefix = $oConfig->getOutUrl( $blSSL, $blAdmin, $oConfig->getConfigParam( 'blNativeImages' ) );
+
+        return array( 'path' => $sPath, 'url'=> str_replace( $sDirPrefix, $sUrlPrefix, $sPath ) );
+    }
+
+    /**
+     * Returns requested picture url. If image is not available - returns false
+     *
+     * @param string $sPath    path from pictures/master/
+     * @param string $sFile    picture file name
+     * @param string $sSize    picture sizes (x, y)
+     * @param string $sIndex   picture index [optional]
+     * @param string $sAltPath alternative picture path [optional]
+     *
+     * @return string | bool
+     */
+    public function getPicUrl( $sPath, $sFile, $sSize, $sIndex = null, $sAltPath = false )
+    {
+        $sUrl = null;
+        if ( $sPath && $sFile && ( $aSize = $this->getImageSize( $sSize, $sIndex ) ) ) {
+
+            $aPicInfo = $this->_getPictureInfo( "master/" . ( $sAltPath ? $sAltPath : $sPath ), $sFile, $this->isAdmin() );
+            if ( $aPicInfo['url'] && $aSize[0] && $aSize[1] ) {
+                $sDirName = "{$aSize[0]}_{$aSize[1]}_" . $this->getConfig()->getConfigParam( 'sDefaultImageQuality' );
+                $sUrl = str_replace( "/master/" . ( $sAltPath ? $sAltPath : $sPath ), "/generated/{$sPath}{$sDirName}/", $aPicInfo['url'] );
+            }
+        }
+        return $sUrl;
+    }
+
+    /**
+     * Returns requested product picture url. If image is not available - returns url to nopic.jpg
+     *
+     * @param string $sPath  path from pictures/master/
+     * @param string $sFile  picture file name
+     * @param string $sSize  picture sizes (x, y)
+     * @param string $sIndex picture index [optional]
+     *
+     * @return string | bool
+     */
+    public function getProductPicUrl( $sPath, $sFile, $sSize, $sIndex = null )
+    {
+        $sUrl = null;
+        if ( !$sFile || !( $sUrl = $this->getPicUrl( $sPath, $sFile, $sSize, $sIndex ) ) ) {
+            $sUrl = $this->getPicUrl( $sPath, "nopic.jpg", $sSize, $sIndex, "/" );
+        }
+        return $sUrl;
+    }
+}

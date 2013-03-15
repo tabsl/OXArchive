@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account_recommlist.php 33826 2011-03-17 15:29:35Z vilma $
+ * @version   SVN: $Id: account_recommlist.php 35529 2011-05-23 07:31:20Z arunas.paskevicius $
  */
 
 /**
@@ -322,9 +322,11 @@ class Account_Recommlist extends Account
         $aPath = array();
 
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_MY_ACCOUNT', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPath['link']  = oxSeoEncoder::getInstance()->getStaticUrl( $this->getViewConfig()->getSelfLink() . 'cl=account' );
         $aPaths[] = $aPath;
 
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_RECOMMENDATIONLIST_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPath['link']  = $this->getLink();
         $aPaths[] = $aPath;
 
         return $aPaths;

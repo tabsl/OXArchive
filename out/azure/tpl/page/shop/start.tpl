@@ -1,3 +1,5 @@
+[{oxscript include="js/widgets/oxcenterelementonhover.js" priority=10 }]
+[{oxscript add="$( '#specCatBox' ).oxCenterElementOnHover();" }]
 [{capture append="oxidBlock_content"}]
     [{assign var="oFirstArticle" value=$oView->getFirstArticle()}]
     [{if $oView->getCatOfferArticleList()|@count > 0}]
@@ -20,7 +22,7 @@
                 </div>
             [{/if}]
             [{if $promoCatTitle && $promoCatImg}]
-                <div id="specCatBox" class="specCatBox linkAll box">
+                <div id="specCatBox" class="specCatBox">
                     <h2 class="sectionHead">[{$promoCatTitle}]</h2>
                     <a href="[{$promoCatLink}]" class="viewAllHover glowShadow corners"><span>[{ oxmultilang ident="PAGE_SHOP_START_VIEW_ALL" }]</span></a>
                     <img src="[{$promoCatImg}]" alt="[{$promoCatTitle}]">
@@ -31,7 +33,8 @@
     [{include file="widget/manufacturersslider.tpl" }]
     [{if $oView->getNewestArticles() }]
         [{assign var='rsslinks' value=$oView->getRssLinks() }]
-        [{include file="widget/product/list.tpl" type=$oView->getListDisplayType() head="PAGE_SHOP_START_JUSTARRIVED"|oxmultilangassign listId="newItems" products=$oView->getNewestArticles() rsslink=$rsslinks.newestArticles rssId="rssNewestProducts"}]
+        [{include file="widget/product/list.tpl" type=$oViewConf->getViewThemeParam('sStartPageListDisplayType') head="PAGE_SHOP_START_JUSTARRIVED"|oxmultilangassign listId="newItems" products=$oView->getNewestArticles() rsslink=$rsslinks.newestArticles rssId="rssNewestProducts" showMainLink=true}]
     [{/if}]
+    [{ insert name="oxid_tracker"}]
 [{/capture}]
 [{include file="layout/page.tpl" sidebar="Right"}]

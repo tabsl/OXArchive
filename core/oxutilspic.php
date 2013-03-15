@@ -19,8 +19,13 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilspic.php 32881 2011-02-03 11:45:36Z sarunas $
+ * @version   SVN: $Id: oxutilspic.php 37224 2011-07-21 12:22:18Z arvydas.vapsva $
  */
+
+/**
+ * Including pictures generator functions file
+ */
+require_once getShopBasePath() . "core/utils/oxpicgenerator.php";
 
 /**
  * Image manipulation class
@@ -79,34 +84,14 @@ class oxUtilsPic extends oxSuperCfg
     public function resizeImage( $sSrc, $sTarget, $iDesiredWidth, $iDesiredHeight )
     {
         $blResize = false;
-        $myConfig = $this->getConfig();
 
         // use this GD Version
-        if ( ( $iUseGDVersion = $myConfig->getConfigParam( 'iUseGDVersion' ) ) &&
-               function_exists( 'imagecreate' ) && file_exists( $sSrc ) &&
-              ( $aImageInfo = @getimagesize( $sSrc ) ) ) {
+        if ( ( $iUseGDVersion = getGdVersion() ) && function_exists( 'imagecreate' ) &&
+             file_exists( $sSrc ) && ( $aImageInfo = @getimagesize( $sSrc ) ) ) {
 
-            // #1837/1177M - do not resize smaller pictures
-            if ( $iDesiredWidth < $aImageInfo[0] || $iDesiredHeight < $aImageInfo[1] ) {
-                if ( $aImageInfo[0] >= $aImageInfo[1]*( (float) ( $iDesiredWidth / $iDesiredHeight ) ) ) {
-                    $iNewHeight = round( ( $aImageInfo[1] * (float) ( $iDesiredWidth / $aImageInfo[0] ) ), 0 );
-                    $iNewWidth = $iDesiredWidth;
-                } else {
-                    $iNewHeight = $iDesiredHeight;
-                    $iNewWidth = round( ( $aImageInfo[0] * (float) ( $iDesiredHeight / $aImageInfo[1] ) ), 0 );
-                }
-            } else {
-                $iNewWidth = $aImageInfo[0];
-                $iNewHeight = $aImageInfo[1];
-            }
-
-            if ( $iUseGDVersion == 1) {
-                $hDestinationImage = imagecreate( $iNewWidth, $iNewHeight );
-            } else {
-                $hDestinationImage = imagecreatetruecolor( $iNewWidth, $iNewHeight );
-            }
-
-            $blResize = $this->_resize( $aImageInfo, $sSrc, $hDestinationImage, $sTarget, $iNewWidth, $iNewHeight, $iUseGDVersion, $myConfig->getConfigParam( 'blDisableTouch' ), $myConfig->getConfigParam( 'sDefaultImageQuality' ) );
+            $myConfig = $this->getConfig();
+            list( $iWidth, $iHeight ) = calcImageSize( $iDesiredWidth, $iDesiredHeight, $aImageInfo[0], $aImageInfo[1] );
+            $blResize = $this->_resize( $aImageInfo, $sSrc, null, $sTarget, $iWidth, $iHeight, $iUseGDVersion, $myConfig->getConfigParam( 'blDisableTouch' ), $myConfig->getConfigParam( 'sDefaultImageQuality' ) );
         }
         return $blResize;
     }
@@ -144,8 +129,8 @@ class oxUtilsPic extends oxSuperCfg
         $blDeleted = false;
         $myConfig  = $this->getConfig();
 
-        if ( !$myConfig->isDemoShop() && ( strpos( $sPicName, 'nopic.jpg' ) === false
-                || strpos( $sPicName, 'nopic_ico.jpg' ) === false ) ) {
+        if ( !$myConfig->isDemoShop() && ( strpos( $sPicName, 'nopic.jpg' ) === false ||
+             strpos( $sPicName, 'nopic_ico.jpg' ) === false ) ) {
 
             $sFile = "$sAbsDynImageDir/$sPicName";
 
@@ -153,11 +138,12 @@ class oxUtilsPic extends oxSuperCfg
                 $blDeleted = unlink( $sFile );
             }
 
-            // additionally deleting icon ..
-            $sIconFile = getStr()->preg_replace( "/(\.[a-z0-9]*$)/i", "_ico\\1", $sFile );
-
-            if ( file_exists( $sIconFile ) && is_file( $sIconFile ) ) {
-                unlink( $sIconFile );
+            if ( !$myConfig->getConfigParam( 'sAltImageUrl' ) ) {
+                // deleting various size generated images
+                $sGenPath = str_replace( '/master/', '/generated/', $sAbsDynImageDir );
+                foreach ( glob( "{$sGenPath}*/{$sPicName}" ) as $sFile ) {
+                    $blDeleted = unlink( $sFile );
+                }
             }
         }
         return $blDeleted;
@@ -181,11 +167,7 @@ class oxUtilsPic extends oxSuperCfg
         }
 
         $iCountUsed = oxDb::getDb()->getOne( "select count(*) from $sTable where $sField = '$sPicName' group by $sField " );
-
-        if ( $iCountUsed > 1) {
-            return false;
-        }
-        return true;
+        return $iCountUsed > 1 ? false : true;
     }
 
     /**
@@ -231,27 +213,7 @@ class oxUtilsPic extends oxSuperCfg
      */
     protected function _resizeGif( $sSrc, $sTarget, $iNewWidth, $iNewHeight, $iOriginalWidth, $iOriginalHeigth, $iGDVer, $blDisableTouch )
     {
-        $hDestinationImage = imagecreate( $iNewWidth, $iNewHeight );
-        $hSourceImage = imagecreatefromgif( $sSrc );
-        $iTransparentColor = imagecolorresolve( $hSourceImage, 255, 255, 255 );
-        $iFillColor = imagecolorresolve( $hDestinationImage, 255, 255, 255 );
-        imagefill( $hDestinationImage, 0, 0, $iFillColor );
-        imagecolortransparent( $hSourceImage, $iTransparentColor );
-
-        if ( $iGDVer == 1 ) {
-            imagecopyresized( $hDestinationImage, $hSourceImage, 0, 0, 0, 0, $iNewWidth, $iNewHeight, $iOriginalWidth, $iOriginalHeigth );
-        } else {
-            imagecopyresampled( $hDestinationImage, $hSourceImage, 0, 0, 0, 0, $iNewWidth, $iNewHeight, $iOriginalWidth, $iOriginalHeigth );
-        }
-
-        imagecolortransparent( $hDestinationImage, $fillColor );
-        if ( !$blDisableTouch ) {
-            touch( $sTarget );
-        }
-        imagegif( $hDestinationImage, $sTarget );
-        imagedestroy( $hDestinationImage );
-        imagedestroy( $hSourceImage );
-        return true;
+        return resizeGif( $sSrc, $sTarget, $iNewWidth, $iNewHeight, $iOriginalWidth, $iOriginalHeigth, $iGDVer, $blDisableTouch );
     }
 
     /**
@@ -274,46 +236,24 @@ class oxUtilsPic extends oxSuperCfg
         startProfile("PICTURE_RESIZE");
 
         $blSuccess = false;
-        switch ( $aImageInfo[2] ) {    //Image type
+        switch ( $aImageInfo[2] ) { //Image type
             case ( $this->_aImageTypes["GIF"] ):
                 //php does not process gifs until 7th July 2004 (see lzh licensing)
                 if ( function_exists( "imagegif" ) ) {
-                    imagedestroy( $hDestinationImage );
-                    $blSuccess = $this->_resizeGif( $sSrc, $sTarget, $iNewWidth, $iNewHeight, $aImageInfo[0], $aImageInfo[1], $iGdVer, $blDisableTouch );
+                    $blSuccess = resizeGif( $sSrc, $sTarget, $iNewWidth, $iNewHeight, $aImageInfo[0], $aImageInfo[1], $iGdVer );
                 }
                 break;
             case ( $this->_aImageTypes["JPEG"] ):
             case ( $this->_aImageTypes["JPG"] ):
-                $hSourceImage = imagecreatefromjpeg( $sSrc );
-                if ( $this->_copyAlteredImage( $hDestinationImage, $hSourceImage, $iNewWidth, $iNewHeight, $aImageInfo, $sTarget, $iGdVer, $blDisableTouch ) ) {
-                    imagejpeg( $hDestinationImage, $sTarget, $iDefQuality );
-                    imagedestroy( $hDestinationImage );
-                    imagedestroy( $hSourceImage );
-                    $blSuccess = true;
-                }
+                $blSuccess = resizeJpeg( $sSrc, $sTarget, $iNewWidth, $iNewHeight, $aImageInfo, $iGdVer, $hDestinationImage, $iDefQuality );
                 break;
             case ( $this->_aImageTypes["PNG"] ):
-                $hSourceImage = imagecreatefrompng( $sSrc );
-
-                if ( !imageistruecolor( $hSourceImage ) ) {
-                    $hDestinationImage = imagecreate( $iNewWidth, $iNewHeight );
-                    // fix for transparent images sets image to transparent
-                    $imgWhite = imagecolorallocate( $hDestinationImage, 255, 255, 255 );
-                    imagefill( $hDestinationImage, 0, 0, $imgWhite );
-                    imagecolortransparent( $hDestinationImage, $imgWhite );
-                    //end of fix
-                } else {
-                    imagealphablending( $hDestinationImage, false );
-                    imagesavealpha( $hDestinationImage, true );
-                }
-
-                if ( $this->_copyAlteredImage( $hDestinationImage, $hSourceImage, $iNewWidth, $iNewHeight, $aImageInfo, $sTarget, $iGdVer, $blDisableTouch ) ) {
-                    imagepng( $hDestinationImage, $sTarget );
-                    imagedestroy( $hDestinationImage );
-                    imagedestroy( $hSourceImage );
-                    $blSuccess = true;
-                }
+                $blSuccess = resizePng( $sSrc, $sTarget, $iNewWidth, $iNewHeight, $aImageInfo, $iGdVer, $hDestinationImage );
                 break;
+        }
+
+        if ( $blSuccess && !$blDisableTouch ) {
+            @touch( $sTarget );
         }
 
         stopProfile("PICTURE_RESIZE");
@@ -337,16 +277,10 @@ class oxUtilsPic extends oxSuperCfg
      */
     protected function _copyAlteredImage( $sDestinationImage, $sSourceImage, $iNewWidth, $iNewHeight, $aImageInfo, $sTarget, $iGdVer, $blDisableTouch )
     {
-        if ( $iGdVer == 1 ) {
-            $blSuccess = imagecopyresized( $sDestinationImage, $sSourceImage, 0, 0, 0, 0, $iNewWidth, $iNewHeight, $aImageInfo[0], $aImageInfo[1] );
-        } else {
-            $blSuccess = imagecopyresampled( $sDestinationImage, $sSourceImage, 0, 0, 0, 0, $iNewWidth, $iNewHeight, $aImageInfo[0], $aImageInfo[1] );
-        }
-
+        $blSuccess = copyAlteredImage( $sDestinationImage, $sSourceImage, $iNewWidth, $iNewHeight, $aImageInfo, $sTarget, $iGdVer );
         if ( !$blDisableTouch && $blSuccess ) {
             @touch( $sTarget );
         }
-
         return $blSuccess;
     }
 

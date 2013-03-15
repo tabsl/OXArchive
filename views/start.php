@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: start.php 32965 2011-02-07 12:22:04Z vilma $
+ * @version   SVN: $Id: start.php 37949 2011-08-04 10:38:08Z linas.kukulskis $
  */
 
 /**
@@ -28,6 +28,13 @@
  */
 class Start extends oxUBase
 {
+    /**
+     * List display type
+     *
+     * @var string
+     */
+    protected $_sListDisplayType = null;
+
     /**
      * Current class template name.
      * @var string
@@ -119,28 +126,10 @@ class Start extends oxUBase
     public function render()
     {
         if ( oxConfig::getParameter( 'showexceptionpage' ) == '1' ) {
-            return 'exception.tpl';
+            return 'message/exception.tpl';
         }
-
-        startProfile("allarticles");
 
         $myConfig = $this->getConfig();
-        if ( $myConfig->getConfigParam( 'bl_perfLoadAktion' ) ) {
-            $myUtilsCount = oxUtilsCount::getInstance();
-
-            if ( $oArtList = $this->getCatOfferArticleList() ) {
-                foreach ( $oArtList as $oCatArticle ) {
-                    $oCatArticle->oCategory = $oCatArticle->getCategory();
-                    if ( $oCatArticle->oCategory && $myConfig->getConfigParam( 'bl_perfShowActionCatArticleCnt' ) ) {
-                        $oCatArticle->oCategory->iArtCnt = $oCatArticle->oCategory->getNrOfArticles();
-                        if ( $oCatArticle->oCategory->iArtCnt == -1 ) {
-                            $oCatArticle->oCategory->iArtCnt = $myUtilsCount->getCatArticleCount( $oCatArticle->oCategory->oxcategories__oxid->value );
-                        }
-                    }
-                }
-            }
-        }
-        stopProfile("allarticles");
 
         $oRss = oxNew('oxrssfeed');
         if ($myConfig->getConfigParam( 'iTop5Mode' ) && $myConfig->getConfigParam( 'bl_rssTopShop' ) ) {
@@ -419,4 +408,5 @@ class Start extends oxUBase
 
         return $oList;
     }
+
 }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsimplevariant.php 32880 2011-02-03 11:45:17Z sarunas $
+ * @version   SVN: $Id: oxsimplevariant.php 37026 2011-07-14 11:52:21Z vilma $
  */
 
 /**
@@ -255,7 +255,7 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
      */
     protected function _applyParentVat( $oPrice )
     {
-        if ( ( $oParent = $this->getParent() ) ) {
+        if ( ( $oParent = $this->getParent() ) && !$this->getConfig()->getConfigParam( 'blEnterNetPrice' ) ) {
             $oParent->applyVats($oPrice);
         }
     }

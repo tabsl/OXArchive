@@ -1,11 +1,12 @@
 [{assign var=oBanners value=$oView->getBanners() }]
 [{assign var="currency" value=$oView->getActCurrency()}]
 [{if $oBanners}]
-    [{oxstyle include="css/anythingslider.css"}]
-    [{oxscript include="js/jquery.anythingslider.js"}]
+    [{oxstyle include="css/libs/anythingslider.css"}]
+    [{oxscript include="js/libs/anythingslider.js"}]
+    [{oxscript include="js/widgets/oxslider.js" priority=10 }]
     [{oxscript add="$( '#promotionSlider' ).oxSlider();"}]
-    <img src="[{$oViewConf->getImageUrl()}]promo-shadowleft.png" height="220" width="7" class="promoShadow shadowLeft" alt="">
-    <img src="[{$oViewConf->getImageUrl()}]promo-shadowright.png" height="220" width="7" class="promoShadow shadowRight" alt="">
+    <img src="[{$oViewConf->getImageUrl('promo-shadowleft.png')}]" height="220" width="7" class="promoShadow" alt="">
+    <img src="[{$oViewConf->getImageUrl('promo-shadowright.png')}]" height="220" width="7" class="promoShadow shadowRight" alt="">
     <ul id="promotionSlider">
         [{foreach from=$oBanners item=oBanner }]
         [{assign var=oArticle value=$oBanner->getBannerArticle() }]
@@ -22,7 +23,7 @@
             [{/if }]
             [{assign var=sBannerPictureUrl value=$oBanner->getBannerPictureUrl() }]
             [{if $sBannerPictureUrl }]
-            <img src="[{ $sBannerPictureUrl }]" height="220" width="940">
+            <img src="[{ $sBannerPictureUrl }]" height="220" width="940" alt="[{$oBanner->oxactions__oxtitle->value}]">
             [{/if }]
             [{if $sBannerLink }]
             </a>

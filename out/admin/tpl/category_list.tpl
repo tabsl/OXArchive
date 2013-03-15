@@ -18,7 +18,6 @@ window.onload = function ()
 }
 //-->
 </script>
-
 <div id="liste">
 <form name="search" id="search" action="[{ $oViewConf->getSelfLink() }]" method="post">
 [{include file="_formparams.tpl" cl="category_list" lstrt=$lstrt actedit=$actedit oxid=$oxid fnc="" language=$actlang editlanguage=$actlang}]
@@ -46,7 +45,7 @@ window.onload = function ()
 
         <select name="where[oxcategories][oxparentid]" class="editinput" onChange="Javascript:document.search.submit();">
         [{foreach from=$cattree->aList item=pcat}]
-        <option value="[{ $pcat->oxcategories__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value }]</option>
+        <option value="[{ $pcat->oxcategories__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->getRawValue() }]</option>
         [{/foreach}]
         </select>
 

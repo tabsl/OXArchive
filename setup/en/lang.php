@@ -19,7 +19,7 @@
  * @package   setup
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 34394 2011-04-07 14:18:26Z ralf.trapp $
+ * @version   SVN: $Id: lang.php 36503 2011-06-21 13:36:50Z juergen.busch $
  */
 
 $aLang = array(
@@ -75,7 +75,7 @@ $aLang = array(
 'MOD_PHP_CONFIG'                                => 'PHP configuration',
 'MOD_SERVER_CONFIG'                             => 'Server configuration',
 
-'MOD_MOD_REWRITE'                               => 'apache mod_rewrite module',
+'MOD_MOD_REWRITE'                               => 'Apache mod_rewrite module',
 'MOD_SERVER_PERMISSIONS'                        => 'Files/folders access rights',
 'MOD_ALLOW_URL_FOPEN'                           => 'allow_url_fopen or fsockopen to port 80',
 'MOD_PHP4_COMPAT'                               => 'Zend compatibility mode must be off',
@@ -98,6 +98,7 @@ $aLang = array(
 'MOD_OPEN_SSL'                                  => 'OpenSSL',
 'MOD_SOAP'                                      => 'SOAP',
 'MOD_UNICODE_SUPPORT'                           => 'UTF-8 support',
+'MOD_BUG53632'                                  => 'Possible issues on server due to PHP Bug #53632',
 
 'STEP_0_ERROR_TEXT'                             => 'Your system does not fit system requirements',
 'STEP_0_ERROR_URL'                              => "http://www.oxid-esales.com/en/products/community-edition/system-requirements",
@@ -123,7 +124,7 @@ $aLang = array(
 'BUTTON_PROCEED_INSTALL'                        => "Proceed with setup",
 
 'STEP_2_TITLE'                                  => "License conditions",
-'BUTTON_RADIO_LICENCE_ACCEPT'                   => "I acceppt license conditions.",
+'BUTTON_RADIO_LICENCE_ACCEPT'                   => "I accept license conditions.",
 'BUTTON_RADIO_LICENCE_NOT_ACCEPT'               => "I do not accept license conditions.",
 'BUTTON_LICENCE'                                => "Continue",
 

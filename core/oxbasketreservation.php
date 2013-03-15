@@ -40,10 +40,10 @@ class oxBasketReservation extends oxSuperCfg
      */
     protected function _getReservationsId()
     {
-        $sId = $this->getSession()->getVar('basketReservationToken');
+        $sId = oxSession::getVar('basketReservationToken');
         if (!$sId) {
             $sId = oxUtilsObject::getInstance()->generateUID();
-            $this->getSession()->setVar('basketReservationToken', $sId);
+            oxSession::setVar('basketReservationToken', $sId);
         }
         return $sId;
     }
@@ -52,7 +52,7 @@ class oxBasketReservation extends oxSuperCfg
      * load reservation or create new reservation oxuserbasket
      *
      * @param string $sBasketId basket id for this userbasket
-     * 
+     *
      * @return oxuserbasket
      */
     protected function _loadReservations($sBasketId)
@@ -72,7 +72,7 @@ class oxBasketReservation extends oxSuperCfg
 
     /**
      * get reservations collection
-     * 
+     *
      * @return oxUserBasket
      */
     public function getReservations()
@@ -160,7 +160,7 @@ class oxBasketReservation extends oxSuperCfg
      * @param array $aBasketDiff basket difference array
      *
      * @see oxBasketReservation::_basketDifference
-     * 
+     *
      * @return null
      */
     protected function _reserveArticles($aBasketDiff)

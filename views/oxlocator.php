@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlocator.php 33870 2011-03-21 16:09:01Z sarunas $
+ * @version   SVN: $Id: oxlocator.php 36078 2011-06-08 12:45:12Z arunas.paskevicius $
  */
 
 /**
@@ -82,7 +82,7 @@ class oxLocator extends oxSuperCfg
         // passing list type to view
         $oLocatorTarget->setListType( $this->_sType );
     }
-
+    
     /**
      * Sets details locator data for articles that came from regular list.
      *
@@ -98,10 +98,20 @@ class oxLocator extends oxSuperCfg
             $sCatId = $oCategory->getId();
 
             $sOrderBy = null;
-            if ( $oLocatorTarget->showSorting() ) {
+            if ( $oLocatorTarget->showSorting() ) {  
+                $aSorting = $oLocatorTarget->getSorting( $sCatId );
+                // checking if we have defined sorting parameters in the sessions                              
+                if ( !$aSorting && $oCategory->oxcategories__oxdefsort->value ) {
+                    // if no sorting parameters are set in the session and the category has default
+                    // sorting parameters, we use them instead
+                    $sSortBy  = getViewName( 'oxarticles' ) . ".{$oCategory->oxcategories__oxdefsort->value}";
+                    $sSortDir = ( $oCategory->oxcategories__oxdefsortmode->value ) ? "desc" : null;                                      
+                    $oLocatorTarget->setItemSorting( $sCatId, $sSortBy, $sSortDir );                   
+                }
                 $oLocatorTarget->prepareSortColumns();
-                $sOrderBy = $oLocatorTarget->getSortingSql( $sCatId );
+                $sOrderBy = $oLocatorTarget->getSortingSql( $sCatId );                                 
             }
+            
             $oIdList = $this->_loadIdsInList( $oCategory, $oCurrArticle, $sOrderBy );
 
             //page number

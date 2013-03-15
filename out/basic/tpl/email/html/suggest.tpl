@@ -35,7 +35,7 @@
         <td>
           <table border="0" width="100%" cellspacing="10" cellpadding="0" bgcolor="#FFFFFF">
             <tr>
-              <td bgcolor="#FFFFFF" align="top" width="30%"><a href="[{ $sArticleUrl }]"><img src="[{$product->nossl_dimagedir}]/[{$product->oxarticles__oxpic1->value }]" border="0" hspace="0" vspace="0" alt="[{ $product->oxarticles__oxtitle->value|strip_tags }]"></a></td>
+              <td bgcolor="#FFFFFF" align="top" width="30%"><a href="[{ $sArticleUrl }]"><img src="[{$product->getPictureUrl()}]" border="0" hspace="0" vspace="0" alt="[{ $product->oxarticles__oxtitle->value|strip_tags }]"></a></td>
               <td>
                 <table border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
                   <tr>

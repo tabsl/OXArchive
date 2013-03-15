@@ -48,7 +48,7 @@ window.onload = function ()
         <option value="">[{ oxmultilang ident="ARTICLE_LIST_ALLPRODUCTS" }]</option>
         <optgroup label="[{ oxmultilang ident="GENERAL_CATEGORY" }]">
         [{foreach from=$cattree->aList item=pcat}]
-        <option value="cat@@[{ $pcat->oxcategories__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value }]</option>
+        <option value="cat@@[{ $pcat->oxcategories__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->getRawValue() }]</option>
         [{/foreach}]
         </optgroup>
         <optgroup label="[{ oxmultilang ident="GENERAL_MANUFACTURER" }]">

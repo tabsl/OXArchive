@@ -9,6 +9,7 @@
 <strong class="boxhead" id="test_accOrderHistoryHeader">[{ $template_title }]</strong>
 <div class="box info">
   [{if count($oView->getOrderList()) > 0 }]
+  [{assign var=oArticleList value=$oView->getOrderArticleList()}]
   <table class="form" width="100%">
     <colgroup>
         <col width="50%" span="2">
@@ -87,8 +88,6 @@
             <tr class="sep">
               <td colspan="3"></td>
             </tr>
-            [{assign var=oArticleList value=$oView->getOrderArticleList()}]
-
             [{foreach from=$order->getOrderArticles() item=orderitem name=testOrderItem}]
             [{assign var=sArticleId value=$orderitem->oxorderarticles__oxartid->value }]
             [{assign var=oArticle value=$oArticleList[$sArticleId] }]

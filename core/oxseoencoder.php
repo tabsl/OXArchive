@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoder.php 33661 2011-03-07 09:50:28Z sarunas $
+ * @version   SVN: $Id: oxseoencoder.php 37956 2011-08-04 12:12:18Z linas.kukulskis $
  */
 
 /**
@@ -695,6 +695,7 @@ class oxSeoEncoder extends oxSuperCfg
         $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)(force_)?(admin_)?sid=[a-z0-9\.]+&?(amp;)?/i', '\1', $sUrl );
         $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)shp=[0-9]+&?(amp;)?/i', '\1', $sUrl );
         $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)lang=[0-9]+&?(amp;)?/i', '\1', $sUrl );
+        $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)cur=[0-9]+&?(amp;)?/i', '\1', $sUrl );
         $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)&(amp;)?/i', '\1', $sUrl );
         $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)+$/i', '', $sUrl );
         return trim($sUrl);

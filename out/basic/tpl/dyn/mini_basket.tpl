@@ -32,7 +32,7 @@
                 <th>[{ oxmultilang ident="INC_CMP_BASKET_QUANTITY" }]</th>
                 <td id="test_[{$_basket_testid}]Items">[{ $oxcmp_basket->getItemsCount()}]</td>
               </tr>
-              [{ if $oxcmp_basket->getFDeliveryCosts() }]
+              [{ if $oxcmp_basket->getDeliveryCosts() }]
                 <tr>
                   <th>[{ oxmultilang ident="INC_CMP_BASKET_SHIPPING" }]</th>
                   <td id="test_[{$_basket_testid}]Shipping">[{ $oxcmp_basket->getFDeliveryCosts() }] [{ $currency->sign}] </td>

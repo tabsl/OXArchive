@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdb.php 32609 2011-01-20 15:17:15Z vilma $
+ * @version   SVN: $Id: oxdb.php 36963 2011-07-12 07:59:29Z arvydas.vapsva $
  */
 
 
@@ -272,6 +272,16 @@ class oxDb extends oxSuperCfg
             $aStrArray[$sKey] = self::getDb()->quote($sString);
         }
         return $aStrArray;
+    }
+
+    /**
+     * Call to reset table description cache
+     *
+     * @return null
+     */
+    public function resetTblDescCache()
+    {
+        self::$_aTblDescCache = array();
     }
 
     /**

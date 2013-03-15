@@ -13,6 +13,4 @@
         </div>
     </div>
     [{ include file="page/details/inc/related_products.tpl" }]
-
-    [{oxscript add="$(function(){oxid.initDetailsRelated();});"}]
 </div>

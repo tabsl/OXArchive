@@ -1,5 +1,11 @@
 [{assign var="oDetailsProduct" value=$oView->getProduct()}]
-[{if $oView->getTagCloudManager() || ( $oxcmp_user && $oDetailsProduct )}]
+[{if $oView->showTags() && ( $oView->getTagCloudManager() || ( $oxcmp_user && $oDetailsProduct ) ) }]
+    [{oxscript include='js/widgets/oxajax.js'}]
+    [{oxscript include='js/widgets/oxtag.js'}]
+    [{oxscript add="$('p.tagCloud a.tagText').click(oxTag.highTag);"}]
+    [{oxscript add="$('#saveTag').click(oxTag.saveTag);"}]
+    [{oxscript add="$('#cancelTag').click(oxTag.cancelTag);"}]
+    [{oxscript add="$('#editTag').click(oxTag.editTag);"}]
     <p class="tagCloud">
         [{assign var="oCloudManager" value=$oView->getTagCloudManager()}]
         [{if $oCloudManager->getCloudArray()|count < 0}]
@@ -11,7 +17,7 @@
     </p>
     [{if $oDetailsProduct && $oView->canChangeTags()}]
       <form action="[{$oViewConf->getSelfActionLink()}]#tags" method="post" id="tagsForm" >
-        <div class="tagAdd">
+        <div>
           [{$oViewConf->getHiddenSid()}]
           [{$oViewConf->getNavFormParams()}]
           <input type="hidden" name="cl" value="[{$oViewConf->getActiveClassName()}]">

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: search.php 33003 2011-02-07 15:49:58Z vilma $
+ * @version   SVN: $Id: search.php 35529 2011-05-23 07:31:20Z arunas.paskevicius $
  */
 
 /**
@@ -459,6 +459,7 @@ class Search extends oxUBase
         $aPath = array();
 
         $aPath['title'] = oxLang::getInstance()->translateString( 'SEARCH_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPath['link']  = $this->getLink();
         $aPaths[] = $aPath;
 
         return $aPaths;
@@ -472,6 +473,16 @@ class Search extends oxUBase
     public function canSelectDisplayType()
     {
         return $this->getConfig()->getConfigParam( 'blShowListDisplayType' );
+    }
+
+    /**
+     * Checks if current request parameters does not block SEO redirection process
+     *
+     * @return bool
+     */
+    protected function _canRedirect()
+    {
+        return false;
     }
 
 }

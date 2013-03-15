@@ -13,9 +13,20 @@
     [{/if}]
     [{if $oView->getMetaDescription()}]<meta name="description" content="[{$oView->getMetaDescription()}]">[{/if}]
     [{if $oView->getMetaKeywords()}]<meta name="keywords" content="[{$oView->getMetaKeywords()}]">[{/if}]
+    [{if $oViewConf->getFbAppId()}]        
+        [{if $oViewConf->getActiveClassName() == 'details' }]   
+            <meta property="og:type" content="product">            
+            <meta property="og:image" content="[{$oView->getActPicture()}]">
+            <meta property="og:url" content="[{$oView->getCanonicalUrl()}]">
+	        <meta property="og:site_name" content="[{$oViewConf->getCurrentHomeDir()}]">
+	        <meta property="fb:app_id" content="[{$oViewConf->getFbAppId()}]">
+            <meta property="og:title" content="[{ $_titleprefix }][{if $title&& $_titleprefix }] | [{/if}][{$title|strip_tags}][{if $_titlesuffix}] | [{$_titlesuffix}][{/if}][{if $titlepagesuffix}] | [{$titlepagesuffix}][{/if}]">
+        [{/if}] 
+    [{/if}]
+    
     [{assign var="canonical_url" value=$oView->getCanonicalUrl()}]
     [{if $canonical_url }]<link rel="canonical" href="[{ $canonical_url }]">[{/if}]
-    <link rel="shortcut icon" href="[{ $oViewConf->getBaseDir() }]favicon.ico">
+    <link rel="shortcut icon" href="[{ $oViewConf->getImageUrl() }]favicon.ico">
     <link rel="stylesheet" type="text/css" href="[{ $oViewConf->getResourceUrl() }]oxid.css">
     <!--[if IE 8]><link rel="stylesheet" type="text/css" href="[{ $oViewConf->getResourceUrl() }]oxid_ie8.css"><![endif]-->
     <!--[if IE 7]><link rel="stylesheet" type="text/css" href="[{ $oViewConf->getResourceUrl() }]oxid_ie7.css"><![endif]-->

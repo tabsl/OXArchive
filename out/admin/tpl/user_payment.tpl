@@ -74,9 +74,11 @@
             </td>
         </tr-->
         [{foreach from=$edit->aDynValues item=value}]
+        [{assign var="ident" value='ORDER_OVERVIEW_'|cat:$value->name}]
+        [{assign var="ident" value=$ident|oxupper }]
         <tr>
             <td class="edittext" width="70">
-            [{ $value->name}]
+            [{ oxmultilang ident=$ident }]
             </td>
             <td class="edittext">
             <input type="text" class="editinput" size="20" maxlength="64" name="dynvalue[[{$value->name}]]" value="[{ $value->value}]" [{ $readonly}]>

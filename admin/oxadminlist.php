@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadminlist.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: oxadminlist.php 34906 2011-04-22 13:05:51Z linas.kukulskis $
  */
 
 /**
@@ -57,7 +57,7 @@ class oxAdminList extends oxAdminView
     protected $_iCurrListPos = 0;
 
     /**
-     * Size of objetc list (default 0).
+     * Size of object list (default 0).
      *
      * @var integer
      */

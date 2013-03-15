@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxshopcontrol.php 34115 2011-04-01 08:50:06Z sarunas $
+ * @version   SVN: $Id: oxshopcontrol.php 37947 2011-08-04 10:32:55Z rimvydas.paskevicius $
  */
 
 /**
@@ -116,9 +116,13 @@ class oxShopControl extends oxSuperCfg
             //possible reason: class does not exist etc. --> just redirect to start page
             if ( $this->_isDebugMode() ) {
                 oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
+                $this->_process( 'exceptionError', 'displayExceptionError' );
             }
             $oEx->debugOut();
-            oxUtils::getInstance()->redirect( $myConfig->getShopHomeUrl() .'cl=start' );
+
+            if ( !$myConfig->getConfigParam( 'iDebug' ) ) {
+                oxUtils::getInstance()->redirect( $myConfig->getShopHomeUrl() .'cl=start' );
+            }
         } catch ( oxCookieException $oEx ) {
             // redirect to start page and display the error
             if ( $this->_isDebugMode() ) {
@@ -126,6 +130,16 @@ class oxShopControl extends oxSuperCfg
             }
             oxUtils::getInstance()->redirect( $myConfig->getShopHomeUrl() .'cl=start' );
         }
+
+        catch ( oxException $oEx) {
+            //catching other not cought exceptions
+            if ( $this->_isDebugMode() ) {
+                oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
+                $this->_process( 'exceptionError', 'displayExceptionError' );
+                $oEx->debugOut();
+            }
+        }
+
     }
 
     /**

@@ -30,18 +30,18 @@
 class VoucherSerie_Generate extends VoucherSerie_Main
 {
     /**
-     * Export class name
+     * Voucher generator class name
      *
      * @var string
      */
     public $sClassDo = "voucherserie_generate";
 
     /**
-     * Number of records to export per tick
+     * Number of vouchers to generate per tick
      *
      * @var int
      */
-    public $iExportPerTick = 100;
+    public $iGeneratePerTick = 100;
 
     /**
      * Current class template name
@@ -65,9 +65,9 @@ class VoucherSerie_Generate extends VoucherSerie_Main
     protected $_iGenerated = false;
 
     /**
-     * Does Export line by line on position iCnt
+     * Generates vouchers by offset iCnt
      *
-     * @param integer $iCnt export position
+     * @param integer $iCnt voucher offset
      *
      * @return bool
      */
@@ -81,11 +81,11 @@ class VoucherSerie_Generate extends VoucherSerie_Main
     }
 
     /**
-     * Writes voucher number information to export file and returns number of written records info
+     * Generates and saves vouchers. Returns number of saved records
      *
-     * @param int $iCnt exported records counter
+     * @param int $iCnt voucher counter offset
      *
-     * @return int
+     * @return int saved record count
      */
     public function generateVoucher( $iCnt )
     {
@@ -113,7 +113,7 @@ class VoucherSerie_Generate extends VoucherSerie_Main
     }
 
     /**
-     * Runs export
+     * Runs voucher generation
      *
      * @return null
      */
@@ -125,7 +125,7 @@ class VoucherSerie_Generate extends VoucherSerie_Main
         // file is open
         $iStart = oxConfig::getParameter("iStart");
 
-        for ( $i = $iStart; $i < $iStart + $this->iExportPerTick; $i++) {
+        for ( $i = $iStart; $i < $iStart + $this->iGeneratePerTick; $i++) {
             if ( ( $iExportedItems = $this->nextTick( $i ) ) === false ) {
                 // end reached
                 $this->stop( ERR_SUCCESS );

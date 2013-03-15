@@ -4,7 +4,7 @@
     <title>[{ oxmultilang ident="LOGIN_TITLE" }]</title>
     <meta http-equiv="Content-Type" content="text/html; charset=[{$charset}]">
     <meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
-    <link rel="shortcut icon" href="[{ $oViewConf->getBaseDir() }]favicon.ico">
+    <link rel="shortcut icon" href="[{$oViewConf->getImageUrl()}]favicon.ico">
     <style type="text/css">
         html,body{background:#fff;height:100%;padding:0;margin:0;font:11px Trebuchet MS, Tahoma, Verdana, Arial, Helvetica, sans-serif;}
         div.box{width:330px;height:200px;padding:20px;background:#fff url([{$oViewConf->getImageUrl()}]login.png) no-repeat;position:absolute;top:50%;margin-top:-127px;left:50%;margin-left:-190px;}

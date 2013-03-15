@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: tags.php 32965 2011-02-07 12:22:04Z vilma $
+ * @version   SVN: $Id: tags.php 36595 2011-06-28 12:22:20Z arvydas.vapsva $
  */
 
 /**
@@ -33,6 +33,21 @@ class Tags extends oxUBase
      * @var string
      */
     protected $_sThisTemplate = "page/tags/tags.tpl";
+
+    /**
+     * If tags are ON - returns parent::render() value, else - displays 404 
+     * page, as tags are off
+     *
+     * @return string
+     */
+    public function render()
+    {
+        // if tags are off - showing 404 page
+        if ( !$this->showTags()  ) {
+            error_404_handler();
+        }
+        return parent::render();
+    }
 
     /**
      * Returns tag cloud manager class
@@ -88,6 +103,7 @@ class Tags extends oxUBase
         $aCatPath = array();
 
         $aCatPath['title'] = oxLang::getInstance()->translateString( 'TAGS', oxLang::getInstance()->getBaseLanguage(), false );
+        $aCatPath['link']  = $this->getLink();
         $aPaths[] = $aCatPath;
 
         return $aPaths;

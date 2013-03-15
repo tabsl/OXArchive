@@ -34,7 +34,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  $Id: oxemosadapter.php 32923 2011-02-04 14:35:22Z vilma $
+ *  $Id: oxemosadapter.php 37969 2011-08-04 15:47:32Z tomas $
  */
 
 
@@ -93,8 +93,7 @@ class oxEmosAdapter extends oxSuperCfg
      */
     protected function _getScriptPath()
     {
-        $myConfig = $this->getConfig();
-        $sShopUrl = $myConfig->isSsl() ? $myConfig->getConfigParam( 'sSSLShopURL' ) : $myConfig->getConfigParam( 'sShopURL' );
+        $sShopUrl = $this->getConfig()->getCurrentShopUrl();
         return "{$sShopUrl}modules/econda/out/";
     }
 
@@ -120,16 +119,16 @@ class oxEmosAdapter extends oxSuperCfg
 
             // make output more readable
             $this->_oEmos->prettyPrint();
-            $this->_oEmos->setSid( $this->getSession()->getId() );
+            //$this->_oEmos->setSid( $this->getSession()->getId() );
 
             // set page id
-            $this->_oEmos->addPageID( $this->_getEmosPageId( $this->_getTplName() ) );
+            $this->_oEmos->addPageId( $this->_getEmosPageId( $this->_getTplName() ) );
 
             // language id
-            $this->_oEmos->addLangID( oxLang::getInstance()->getBaseLanguage() );
+            $this->_oEmos->addLangId( oxLang::getInstance()->getBaseLanguage() );
 
             // set site ID
-            $this->_oEmos->addSiteID( $this->getConfig()->getShopId() );
+            $this->_oEmos->addSiteId( $this->getConfig()->getShopId() );
         }
 
         return $this->_oEmos;
@@ -164,7 +163,7 @@ class oxEmosAdapter extends oxSuperCfg
     protected function _convProd2EmosItem( $oProduct, $sCatPath = "NULL", $iQty = 1 )
     {
         $oItem = $this->_getNewEmosItem();
-        $oItem->productID   = ( isset( $oProduct->oxarticles__oxartnum->value ) && $oProduct->oxarticles__oxartnum->value ) ? $oProduct->oxarticles__oxartnum->value : $oProduct->getId();
+        $oItem->productId   = ( isset( $oProduct->oxarticles__oxartnum->value ) && $oProduct->oxarticles__oxartnum->value ) ? $oProduct->oxarticles__oxartnum->value : $oProduct->getId();
         $oItem->productName = $this->_prepareProductTitle( $oProduct );
 
         // #810A
@@ -417,7 +416,12 @@ class oxEmosAdapter extends oxSuperCfg
                     //ECONDA FIX only track first search page, not the following pages
                     // #1184M - specialchar search
                     $sSearchParamForLink = rawurlencode( oxConfig::getParameter( 'searchparam', true ) );
-                    $sOutput .= $oEmos->addSearch( $sSearchParamForLink, $oSmarty->_tpl_vars['pageNavigation']->iArtCnt );
+                    //$sOutput .= $oEmos->addSearch( $sSearchParamForLink, $oSmarty->_tpl_vars['d']->iArtCnt );
+                    $iSearchCount = 0;
+                    if (($oSmarty->_tpl_vars['oView']) && $oSmarty->_tpl_vars['oView']->getArticleCount()) {
+                        $iSearchCount = $oSmarty->_tpl_vars['oView']->getArticleCount();
+                    }
+                    $sOutput .= $oEmos->addSearch( $sSearchParamForLink, $iSearchCount);
                 }
                 break;
             case 'alist':
@@ -554,7 +558,7 @@ class oxEmosAdapter extends oxSuperCfg
                             //$sPath = $this->_getDeepestCategoryPath( $oProduct );
                             $sPath = $this->_getBasketProductCatPath( $oProduct );
                             $oEmos->removeFromBasket( $this->_convProd2EmosItem( $oProduct, $sPath, ( $aItemData['oldam'] - $aItemData['am'] ) ) );
-                            $oEmos->appendPreScript($aItemData['oldam'].'->'.$aItemData['am'].':'.$oProduct->load( $aItemData['aid']));
+                            //$oEmos->appendPreScript($aItemData['oldam'].'->'.$aItemData['am'].':'.$oProduct->load( $aItemData['aid']));
                         } elseif ( $aItemData['oldam'] < $aItemData['am'] && $oProduct->load( $aItemData['aid'] )) {
                             $sPath = $this->_getBasketProductCatPath( $oProduct );
                             $oEmos->addToBasket( $this->_convProd2EmosItem( $oProduct, $sPath, $aItemData['am'] -  $aItemData['oldam']) );

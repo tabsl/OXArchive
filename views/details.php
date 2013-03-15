@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: details.php 34331 2011-04-06 16:11:30Z sarunas $
+ * @version   SVN: $Id: details.php 36706 2011-07-04 15:02:30Z arvydas.vapsva $
  */
 
 /**
@@ -249,6 +249,12 @@ class Details extends oxUBase
     protected $_iPriceAlarmStatus = null;
 
     /**
+     * Search parameter for Html
+     * @var string
+     */
+    protected $_sSearchParamForHtml = null;
+
+    /**
      * Returns current product parent article object if it is available
      *
      * @param string $sParentId parent product id
@@ -278,14 +284,11 @@ class Details extends oxUBase
         if ( $this->_aVariantList === null ) {
             $oProduct = $this->getProduct();
 
-            //loading full list of variants
-            $this->_aVariantList = $oProduct->getVariants( false );
-
             //if we are child and do not have any variants then let's load all parent variants as ours
-            if ( ( $oParent = $this->_getParentProduct( $oProduct->oxarticles__oxparentid->value ) ) && count( $this->_aVariantList ) == 0 ) {
+            if ( $oParent = $oProduct->getParentArticle() ) {
                 $myConfig = $this->getConfig();
 
-                $this->_aVariantList = $oParent->getVariants( false );
+                $this->_aVariantList = $oParent->getFullVariants( false );
 
                 //lets additionally add parent article if it is sellable
                 if ( $myConfig->getConfigParam( 'blVariantParentBuyable' ) ) {
@@ -293,6 +296,9 @@ class Details extends oxUBase
                     $oParent->aSelectlist = $oParent->getSelectLists();
                     $this->_aVariantList = array_merge( array( $oParent ), $this->_aVariantList->getArray() );
                 }
+            } else {
+                //loading full list of variants
+                $this->_aVariantList = $oProduct->getFullVariants( false );
             }
 
             // setting link type for variants ..
@@ -351,28 +357,6 @@ class Details extends oxUBase
 
 
     /**
-     * Executes parent method parent::init() and newly loads article
-     * object if users language was changed.
-     *
-     * @return null
-     */
-    public function init()
-    {
-        parent::init();
-
-        $oProduct = $this->getProduct();
-
-        // assign template name
-        if ( $oProduct->oxarticles__oxtemplate->value ) {
-            $this->_sThisTemplate = $oProduct->oxarticles__oxtemplate->value;
-        }
-
-        if ( ( $sTplName = oxConfig::getParameter( 'tpl' ) ) ) {
-            $this->_sThisTemplate = basename ( $sTplName );
-        }
-    }
-
-    /**
      * If possible loads additional article info (oxarticle::getCrossSelling(),
      * oxarticle::getAccessoires(), oxarticle::getReviews(), oxarticle::GetSimilarProducts(),
      * oxarticle::GetCustomerAlsoBoughtThisProducts()), forms variants details
@@ -388,6 +372,15 @@ class Details extends oxUBase
         $myConfig = $this->getConfig();
 
         $oProduct = $this->getProduct();
+
+        // assign template name
+        if ( $oProduct->oxarticles__oxtemplate->value ) {
+            $this->_sThisTemplate = $oProduct->oxarticles__oxtemplate->value;
+        }
+
+        if ( ( $sTplName = oxConfig::getParameter( 'tpl' ) ) ) {
+            $this->_sThisTemplate = basename ( $sTplName );
+        }
 
         //loading amount price list
         $oProduct->loadAmountPriceInfo();
@@ -1441,16 +1434,24 @@ class Details extends oxUBase
 
             $aCatPath = array();
             $aCatPath['title'] = sprintf(oxLang::getInstance()->translateString( 'searchResult', oxLang::getInstance()->getBaseLanguage(), false ), oxConfig::getParameter( 'searchparam' ));
+            $sLink = $this->getViewConfig()->getSelfLink() . 'stoken=' . oxSession::getVar('sess_stoken')
+                   . "&amp;cl=search&amp;searchparam=" . oxConfig::getParameter( 'searchparam' );
+
+            $aCatPath['link']  = $sLink;
+
             $aPaths[] = $aCatPath;
 
         } elseif ( 'tag' == oxConfig::getParameter( 'listtype' ) ) {
 
             $aCatPath = array();
+
             $aCatPath['title'] = oxLang::getInstance()->translateString( 'TAGS', oxLang::getInstance()->getBaseLanguage(), false );
+            $aCatPath['link']  = oxSeoEncoder::getInstance()->getStaticUrl( $this->getViewConfig()->getSelfLink() . 'cl=tags' );
             $aPaths[] = $aCatPath;
 
             $oStr = getStr();
             $aCatPath['title'] = $oStr->ucfirst(oxConfig::getParameter( 'searchtag' ));
+            $aCatPath['link']  = oxSeoEncoderTag::getInstance()->getTagUrl( oxConfig::getParameter( 'searchtag' ) );
             $aPaths[] = $aCatPath;
 
         } elseif ( 'recommlist' == oxConfig::getParameter( 'listtype' ) ) {
@@ -1495,8 +1496,8 @@ class Details extends oxUBase
         //control captcha
         $sMac     = oxConfig::getParameter( 'c_mac' );
         $sMacHash = oxConfig::getParameter( 'c_mach' );
-        $oCaptcha = oxNew('oxCaptcha');
-        if (!$oCaptcha->pass($sMac, $sMacHash)) {
+        $oCaptcha = $this->getCaptcha();
+        if ( !$oCaptcha->pass( $sMac, $sMacHash ) ) {
             $this->_iPriceAlarmStatus = 2;
             return;
         }
@@ -1585,4 +1586,29 @@ class Details extends oxUBase
         }
         return $this->getProduct();
     }
+
+
+     /**
+     * Should "More tags" link be visible.
+     *
+     * @return bool
+     */
+    public function isMoreTagsVisible()
+    {
+        return true;
+    }
+
+     /**
+     * Template variable getter. Returns search parameter for Html
+     *
+     * @return string
+     */
+    public function getSearchParamForHtml()
+    {
+        if ( $this->_sSearchParamForHtml === null ) {
+            $this->_sSearchParamForHtml = oxConfig::getParameter( 'searchparam' );
+        }
+        return $this->_sSearchParamForHtml;
+    }
+
 }

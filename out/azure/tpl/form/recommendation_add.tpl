@@ -13,8 +13,8 @@
             </div>
             <ul class="form">
                 <li>
-                    <label class="onTop">[{ oxmultilang ident="ADD_RECOMM_SELECTLIST" }]:</label>
-                    <select class="recomm_input" name="recomm">
+                    <label>[{ oxmultilang ident="ADD_RECOMM_SELECTLIST" }]:</label>
+                    <select name="recomm">
                         [{foreach from=$oView->getRecommLists() item=oList}]
                             <option value="[{$oList->oxrecommlists__oxid->value}]">[{$oList->oxrecommlists__oxtitle->value}]</option>
                         [{/foreach}]

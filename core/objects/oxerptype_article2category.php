@@ -19,18 +19,18 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype_article2category.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: oxerptype_article2category.php 35102 2011-05-04 08:20:01Z rimvydas.paskevicius $
  */
 
 require_once 'oxerptype.php';
 
 /**
- * ERP article 2 category description class
+ * article2category relation type subclass
  */
 class oxERPType_Article2Category extends oxERPType
 {
     /**
-     * Class constructor
+     * class constructor
      *
      * @return null
      */
@@ -40,21 +40,12 @@ class oxERPType_Article2Category extends oxERPType
 
         $this->_sTableName = 'oxobject2category';
 
-        $this->_aFieldList = array(
-            'OXOBJECTID'    => 'OXOBJECTID',
-            'OXCATNID'      => 'OXCATNID',
-            'OXPOS'         => 'OXPOS',
-            'OXID'          => 'OXID',
-            'OXSHOPID'      => 'OXSHOPID',
-            'OXSHOPINCL'    => 'OXSHOPINCL',
-            'OXSHOPEXCL'    => 'OXSHOPEXCL'
-        );
-
         $this->_aKeyFieldList = array(
             'OXOBJECTID' => 'OXOBJECTID',
             'OXCATNID'   => 'OXCATNID',
             'OXSHOPID'   => 'OXSHOPID'
         );
-    }
 
+            unset($this->_aKeyFieldList['OXSHOPID']);
+    }
 }

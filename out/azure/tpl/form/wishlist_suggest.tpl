@@ -9,7 +9,7 @@
         [{/if}]
         [{assign var="editval" value=$oView->getEnteredData() }]
         <form action="[{ $oViewConf->getSelfActionLink() }]" method="post">
-            <div class="suggestForm">
+            <div>
             [{ $oViewConf->getHiddenSid() }]
             <input type="hidden" name="fnc" value="sendwishlist">
             <input type="hidden" name="cl" value="account_wishlist">

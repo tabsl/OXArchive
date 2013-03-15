@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: content.php 33532 2011-02-25 11:04:14Z sarunas $
+ * @version   SVN: $Id: content.php 35529 2011-05-23 07:31:20Z arunas.paskevicius $
  */
 
 /**
@@ -310,7 +310,8 @@ class Content extends oxUBase
         $aPaths = array();
         $aPath = array();
 
-        $aPath['title'] =  $oContent->oxcontents__oxtitle->value;
+        $aPath['title'] = $oContent->oxcontents__oxtitle->value;
+        $aPath['link']  = $this->getLink();
         $aPaths[] = $aPath;
 
         return $aPaths;

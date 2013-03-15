@@ -471,6 +471,18 @@ function showInvitations()
                 <div class="spacer"></div>
             </dl>
 
+             <dl>
+                <dt>
+            <input type=hidden name=confbools[blEnterNetPrice] value=false>
+            <input type=checkbox name=confbools[blEnterNetPrice] value=true  [{if ($confbools.blEnterNetPrice)}]checked[{/if}] [{ $readonly}]>
+            [{ oxinputhelp ident="HELP_SHOP_CONFIG_ENTERNETPRICE" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_ENTERNETPRICE" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
 
          </div>
     </div>
@@ -530,6 +542,17 @@ function showInvitations()
                 <div class="spacer"></div>
             </dl>
 
+            <dl>
+                <dt>
+                    <input type=hidden name=confbools[blShowTags] value=false>
+                    <input type=checkbox name=confbools[blShowTags] value=true  [{if ($confbools.blShowTags)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWTAGS" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_SHOWTAGS" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
          </div>
     </div>
 
@@ -637,6 +660,17 @@ function showInvitations()
     <div class="groupExp">
         <div>
             <a href="#" onclick="_groupExp(this);return false;" class="rc"><b>[{ oxmultilang ident="SHOP_OPTIONS_GROUP_FACEBOOK" }]</b></a>
+            <dl>
+                <dt>
+                    <input type=hidden name=confbools[blFacebookConfirmEnabled] value=false>
+                    <input type=checkbox name=confbools[blFacebookConfirmEnabled] value=true [{if ($confbools.blFacebookConfirmEnabled)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOP_CONFIG_FACEBOOKCONFIRM" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_FACEBOOKCONFIRM" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
 
             <dl>
                 <dt>
@@ -999,18 +1033,6 @@ function showInvitations()
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_DELIVERYCOSTS" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-            <dl>
-                <dt>
-            <input type=hidden name=confbools[blEnterNetPrice] value=false>
-            <input type=checkbox name=confbools[blEnterNetPrice] value=true  [{if ($confbools.blEnterNetPrice)}]checked[{/if}] [{ $readonly}]>
-            [{ oxinputhelp ident="HELP_SHOP_CONFIG_ENTERNETPRICE" }]
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_ENTERNETPRICE" }]
                 </dd>
                 <div class="spacer"></div>
             </dl>

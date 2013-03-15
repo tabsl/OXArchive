@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 34473 2011-04-08 15:12:40Z juergen.busch $
+ * @version   SVN: $Id: help_lang.php 37911 2011-08-03 07:37:54Z arvydas.vapsva $
  */
 
 /**
@@ -177,6 +177,8 @@ $aLang =  array(
                                                  'How to connect your website to Facebook, you can read in ' .
                                                  '<a href="http://wiki.oxidforge.org/Tutorials/Connecting_website_to_facebook" target="_blank" target="_blank">tutorial</a>.',
 
+'HELP_SHOP_CONFIG_SHOP_CONFIG_FACEBOOKCONFIRM'=> 'To protect customer privacy, the display of the Facebook social plugins must be explicitly confirmed. Only after confirmation data is shared with Facebook.',
+
 'HELP_SHOP_CONFIG_SHOP_CONFIG_FBSECRETKEY'    => 'To ensure secure connection between your site and facebook, you must ' .
                                                  'enter Secure Key which you get when registering your website to ' .
                                                  'Facebook. Read in <a href="http://wiki.oxidforge.org/Tutorials/Connecting_website_to_facebook" target="_blank" target="_blank">tutorial</a> ' .
@@ -199,6 +201,8 @@ $aLang =  array(
 
 
 'HELP_SHOP_CONFIG_ATTENTION'                  => 'Caution: Even if encryption is used, Credit Card contracts usually prohibit this strictly!',
+
+'HELP_SHOP_CONFIG_SHOWTAGS'                   => 'If not checked, no tags will be displayed in eShop. Pages that could be called via tag URL, are not accessible.',
 
 'HELP_SHOP_MALL_MALLMODE'                     => 'Here you can set what is shown as front page of this eShop:' .
                                                  '<ul><li><span class="navipath_or_inputname">Show shop selector</span>: A page where the different eShops can be selected is shown.</li>' .
@@ -278,9 +282,9 @@ $aLang =  array(
 
 'HELP_SHOP_MAIN_INFOEMAIL'                    => 'All e-mails sent via the contact page are sent to this e-mail address.',
 
-'HELP_SHOP_MAIN_ORDEREMAIL'                   => 'When users order they receive an email with a summary of the order. Answers to this e-mail are sent to <span class="navipath_or_inputname">Order E-mail reply</span>.',
+'HELP_SHOP_MAIN_ORDEREMAIL'                   => 'When users order they receive an e-mail with a summary of the order. Answers to this e-mail are sent to <span class="navipath_or_inputname">Order e-mail reply</span>.',
 
-'HELP_SHOP_MAIN_OWNEREMAIL'                   => 'When users order, you receive an e-mail with a summary of the order. These e-mails are sent to <span class="navipath_or_inputname">Order E-mails to</span>.',
+'HELP_SHOP_MAIN_OWNEREMAIL'                   => 'When users order, you receive an e-mail with a summary of the order. These e-mails are sent to <span class="navipath_or_inputname">Order e-mails to</span>.',
 
 'HELP_SHOP_MAIN_SMTPSERVER'                   => 'SMTP data is needed for sending e-mails (e.g. sending customers an order confirmation e-mail) Further information can be found in the <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/entering-smtp-data" target="_blank">accordant manual entry</a>.',
 
@@ -301,6 +305,10 @@ $aLang =  array(
 'HELP_ARTICLE_EXTEND_TPRICE'                  => 'In <span class="navipath_or_inputname">RRP</span> you can enter the recommended retail price of the manufacturer. If you enter the RRP it is shown to the users: Above the product price <span class="filename_filepath_or_italic">Reduced from RRP now only</span> is displayed.',
 
 'HELP_ARTICLE_EXTEND_QUESTIONEMAIL'           => 'At <span class="navipath_or_inputname">Alt. Contact</span> you can enter an e-mail address. If users submit questions on this product, they will be sent to this e-mail address. If no e-mail address is entered, the query will be send to the normal info e-mail address.',
+
+'HELP_ARTICLE_EXTEND_NONMATERIAL'             => 'Setting is inherited from Parent product to Variants and applies to the entire product.',
+
+'HELP_ARTICLE_EXTEND_FREESHIPPING'            => 'Setting is inherited from Parent product to Variants and applies to the entire product.',
 
 'HELP_ARTICLE_EXTEND_SKIPDISCOUNTS'           => 'If <span class="navipath_or_inputname">Skip all negative discounts</span> is active, negative allowances will not be calculated for this product. These include discounts and vouchers.',
 
@@ -324,11 +332,13 @@ $aLang =  array(
                                                  'You should upload picture with maximum resolution.  After uploading, the main picture, zoom picture, thumbnail and icon will be generated automatically.<br>' .
                                                  'Further information is available in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/product-images-basics" target="_blank">product pictures manual entry</a>.',
 
-'HELP_ARTICLE_PICTURES_ZOOM1'                 => 'Zoom pictures are extra large pictures which can be opened from the detail view of a product. </br>' .
+'HELP_ARTICLE_PICTURES_ZOOM1'                 => 'Zoom pictures are extra large pictures which can be opened from the detail view of a product. <br>' .
                                                  'You can upload zoom pictures in <span class="navipath_or_inputname">Zoom X upload</span>. After uploading, the filename is shown in <span class="navipath_or_inputname">Zoom X</span>. If no zoom picture is uploaded yet, <span class="userinput_or_code">nopic.jpg</span> is displayed.<br>' .
                                                  'Further information is available in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/product-images-basics" target="_blank">product pictures manual entry</a>.',
 
 
+
+'HELP_ARTICLE_STOCK_REMINDACTIV'              => 'Setting is inherited from Parent product to Variants and applies to the entire product.',
 
 'HELP_ARTICLE_STOCK_STOCKFLAG'                => 'At <span class="navipath_or_inputname">Delivery status</span> you can select from 4 settings:' .
                                                  '<ul><li><span class="userinput_or_code">Standard</span>: The product can then also be ordered if it is sold out.</li>' .
@@ -336,7 +346,7 @@ $aLang =  array(
                                                  '<li><span class="userinput_or_code">If out of stock, offline</span>: The product is not displayed if it is sold out.</li>' .
                                                  '<li><span class="userinput_or_code">If out of stock, not orderable</span>: The product is displayed if it is sold out but it cannot be ordered.</li></ul>',
 
-'HELP_ARTICLE_STOCK_REMINDACTIV'              => 'With <span class="navipath_or_inputname">Send e-mail if stock falls below value</span> you can specify that an e-mail will be sent as soon as the stock level falls below the value entered. Select the check box and then enter the level at which you want to be notified.',
+'HELP_ARTICLE_STOCK_REMINDAMAOUNT'            => 'With <span class="navipath_or_inputname">Send e-mail if stock falls below value</span> you can specify that an e-mail will be sent as soon as the stock level falls below the value entered. Select the check box and then enter the level at which you want to be notified.',
 
 'HELP_ARTICLE_STOCK_DELIVERY'                 => 'Here you can enter the date when the product will be available again if it is sold out. The format is year-month-day, e. g. 2009-02-16.',
 
@@ -538,11 +548,11 @@ $aLang =  array(
 
 
 
-'HELP_DYN_TRUSTED_RATINGS_ID'                 => 'You will receive your Trusted Shops ID for Customer Ratings in the order conformation email. If you are already a member of Trusted Shops, please use your known Trusted Shops ID. The green light indicates that the Customer Ratings have been verified and enabled after saving your settings.',
+'HELP_DYN_TRUSTED_RATINGS_ID'                 => 'You will receive your Trusted Shops ID for Customer Ratings in the order conformation e-mail. If you are already a member of Trusted Shops, please use your known Trusted Shops ID. The green light indicates that the Customer Ratings have been verified and enabled after saving your settings.',
 'HELP_DYN_TRUSTED_RATINGS_WIDGET'             => 'Enable the Customer Ratings Widget by switching this option on.',
 'HELP_DYN_TRUSTED_RATINGS_THANKYOU'           => 'Enable the button "Write a review!" on "Order completed" page subsequent to an order by switching this option on.',
-'HELP_DYN_TRUSTED_RATINGS_ORDEREMAIL'         => 'Enable the button "Write a review!" in "Order confirmation" email subsequent to an order by switching this option on.',
-'HELP_DYN_TRUSTED_RATINGS_ORDERSENDEMAIL'     => 'Enable the button "Write a review!" in "Order sent" email after dispatch of the order.',
+'HELP_DYN_TRUSTED_RATINGS_ORDEREMAIL'         => 'Enable the button "Write a review!" in "Order confirmation" e-mail subsequent to an order by switching this option on.',
+'HELP_DYN_TRUSTED_RATINGS_ORDERSENDEMAIL'     => 'Enable the button "Write a review!" in "Order sent" e-mail after dispatch of the order.',
 'HELP_DYN_TRUSTED_TSID'                       => 'Trusted Shops ID of the online shop (for language).',
 'HELP_DYN_TRUSTED_USER'                       => 'A user name (wsUser) for the Trusted Shops webservice is required if you offer the Trusted Shops Buyer Protection Excellence to your customers. Buyer Protection Classic does not require a user name.',
 'HELP_DYN_TRUSTED_PASSWORD'                   => 'A password (wsPassword) for the Trusted Shops webservice is required if you offer the Trusted Shops Buyer Protection Excellence to your customers. Buyer Protection Classic does not require a password.',

@@ -19,7 +19,7 @@
  * @package   setup
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 34394 2011-04-07 14:18:26Z ralf.trapp $
+ * @version   SVN: $Id: lang.php 36502 2011-06-21 13:36:30Z juergen.busch $
  */
 
 $aLang = array(
@@ -98,6 +98,7 @@ $aLang = array(
 'MOD_OPEN_SSL'                                  => 'OpenSSL',
 'MOD_SOAP'                                      => 'SOAP',
 'MOD_UNICODE_SUPPORT'                           => 'UTF-8 Unterstützung',
+'MOD_BUG53632'                                  => 'Mögliche Probleme mit Server durch PHP Bug #53632',
 
 'STEP_0_ERROR_TEXT'                             => 'Ihr System erfüllt nicht alle nötigen Systemvoraussetzungen',
 'STEP_0_ERROR_URL'                              => "http://www.oxid-esales.com/de/produkte/community-edition/systemvoraussetzungen",
@@ -124,7 +125,7 @@ $aLang = array(
 'STEP_2_TITLE'                                  => "Lizenzbedingungen",
 'BUTTON_RADIO_LICENCE_ACCEPT'                   => "Ich akzeptiere die Lizenzbestimmungen.",
 'BUTTON_RADIO_LICENCE_NOT_ACCEPT'               => "Ich akzeptiere die Lizenzbestimmungen nicht.",
-'BUTTON_LICENCE'                                => "Lizenzbedingungen annehmen",
+'BUTTON_LICENCE'                                => "Weiter",
 
 'STEP_3_TITLE'                                  => "Datenbank",
 'STEP_3_DESC'                                   => "Nun wird die Datenbank erstellt und mit den notwendigen Tabellen befüllt. Dazu benötigen wir einige Angaben von Ihnen:",

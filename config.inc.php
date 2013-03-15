@@ -33,12 +33,6 @@
         $this->sShopDir     = '<sShopDir_ce>';
         $this->sCompileDir  = '<sCompileDir_ce>';
 
-    // Template theme name, a directory in out/ folder containing all needed resources
-    // $this->sTheme = 'azure';
-
-    // Custom  theme, a directory in out/ folder containing only modified template files
-    // $this->sCustomTheme = null;
-
     // UTF-8 mode in shop 0 - off, 1 - on
     $this->iUtfMode  = '<iUtfMode>';
 
@@ -159,3 +153,21 @@
      * this is mainly intended for module writers in non productive environment
      */
     $this->blDebugTemplateBlocks = false;
+
+    /**
+     * should requests, coming via stdurl and not redirected to seo url be logged to seologs db table?
+     * note: only active if in productive mode, as the eShop in non productive more will always log such urls
+     */
+    $this->blSeoLogging = false;
+
+    /**
+     * To override oxubase::_aUserComponentNames use this array option:
+     * array keys are component(class) names and array values defines if component is cacheable (true/false)
+     * e.g. array("user_class" => false);
+     */
+    $this->aUserComponentNames = null;
+
+     /**
+     * saves subshopid in session
+     */
+    $this->blDeprecatedSubshopsInSessions = false;

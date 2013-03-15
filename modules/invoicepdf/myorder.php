@@ -19,7 +19,7 @@
  * @package   modules
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: myorder.php 32938 2011-02-07 08:02:21Z arvydas.vapsva $
+ * @version   SVN: $Id: myorder.php 35660 2011-05-30 10:06:48Z arunas.paskevicius $
  */
 
 /**
@@ -794,7 +794,7 @@ class MyOrder extends MyOrder_parent
         }
         $oPdf->setFont( 'Arial', '', 10 );
         $oPdf->text( 15, 59, $sSal);
-        $oPdf->text( 15, 63, $this->oxorder__oxbilllname->getRawValue().' '.$this->oxorder__oxbillfname->getRawValue() );
+        $oPdf->text( 15, 63, $this->oxorder__oxbillfname->getRawValue().' '.$this->oxorder__oxbilllname->getRawValue() );
         $oPdf->text( 15, 67, $this->oxorder__oxbillcompany->getRawValue() );
         $oPdf->text( 15, 71, $this->oxorder__oxbillstreet->getRawValue().' '.$this->oxorder__oxbillstreetnr->value );
         $oPdf->setFont( 'Arial', 'B', 10 );

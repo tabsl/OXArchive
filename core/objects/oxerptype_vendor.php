@@ -19,62 +19,18 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype_vendor.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: oxerptype_vendor.php 35102 2011-05-04 08:20:01Z rimvydas.paskevicius $
  */
 
 require_once 'oxerptype.php';
 
 /**
- * ERP vendor description class
+ * vendor erp type subclass
  */
 class oxERPType_Vendor extends oxERPType
 {
     /**
-     * object fields description
-     * @var array
-     */
-    protected $_aFieldListVersions = array(
-        '1' => array(
-            'OXID'           => 'OXID',
-            'OXSHOPID'       => 'OXSHOPID',
-            'OXSHOPINCL'     => 'OXSHOPINCL',
-            'OXSHOPEXCL'     => 'OXSHOPEXCL',
-            'OXACTIV'        => 'OXACTIV',
-            'OXICON'         => 'OXICON',
-            'OXTITLE'        => 'OXTITLE',
-            'OXSHORTDESC'    => 'OXSHORTDESC',
-            'OXTITLE_1'     => 'OXTITLE_1',
-            'OXSHORTDESC_1' => 'OXSHORTDESC_1',
-            'OXTITLE_2'     => 'OXTITLE_2',
-            'OXSHORTDESC_2' => 'OXSHORTDESC_2',
-            'OXTITLE_3'     => 'OXTITLE_3',
-            'OXSHORTDESC_3' => 'OXSHORTDESC_3',
-            'OXSEOID'       => 'OXSEOID',
-            'OXSEOID_1'     => 'OXSEOID_1',
-            'OXSEOID_2'     => 'OXSEOID_2',
-            'OXSEOID_3'     => 'OXSEOID_3'
-        ),
-        '2' => array(
-            'OXID' => 'OXID',
-            'OXSHOPID' => 'OXSHOPID',
-            'OXSHOPINCL' => 'OXSHOPINCL',
-            'OXSHOPEXCL' => 'OXSHOPEXCL',
-            'OXACTIVE' => 'OXACTIVE',
-            'OXICON' => 'OXICON',
-            'OXTITLE' => 'OXTITLE',
-            'OXSHORTDESC' => 'OXSHORTDESC',
-            'OXTITLE_1' => 'OXTITLE_1',
-            'OXSHORTDESC_1' => 'OXSHORTDESC_1',
-            'OXTITLE_2' => 'OXTITLE_2',
-            'OXSHORTDESC_2' => 'OXSHORTDESC_2',
-            'OXTITLE_3' => 'OXTITLE_3',
-            'OXSHORTDESC_3' => 'OXSHORTDESC_3',
-            'OXSHOWSUFFIX' => 'OXSHOWSUFFIX',
-        ),
-    );
-
-    /**
-     * Class constructor
+     * class constructor
      *
      * @return null
      */
@@ -84,32 +40,5 @@ class oxERPType_Vendor extends oxERPType
 
         $this->_sTableName = 'oxvendor';
         $this->_sShopObjectName = 'oxvendor';
-    }
-
-    /**
-     * return sql column name of given table column
-     *
-     * @param string $sField    object field anme
-     * @param int    $iLanguage language id
-     * @param int    $iShopID   shop id
-     *
-     * @return string
-     */
-    protected function getSqlFieldName($sField, $iLanguage = 0, $iShopID = 1)
-    {
-        if ('1' == oxERPBase::getUsedDbFieldsVersion()) {
-            switch ($sField) {
-                case 'OXSEOID':
-                case 'OXSEOID_1':
-                case 'OXSEOID_2':
-                case 'OXSEOID_3':
-                    return "'' as $sField";
-                    break;
-                case 'OXACTIV':
-                    return "OXACTIVE as OXACTIV";
-                    break;
-            }
-        }
-        return parent::getSqlFieldName($sField, $iLanguage, $iShopID);
     }
 }

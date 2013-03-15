@@ -64,4 +64,3 @@ ALTER TABLE `oxmanufacturers` MODIFY `OXTITLE_2` varchar(255) NOT NULL default '
 ALTER TABLE `oxmanufacturers` MODIFY `OXSHORTDESC_2` varchar(255) NOT NULL default '';
 ALTER TABLE `oxmanufacturers` MODIFY `OXTITLE_3` varchar(255) NOT NULL default '';
 ALTER TABLE `oxmanufacturers` MODIFY `OXSHORTDESC_3` varchar(255) NOT NULL default '';
-

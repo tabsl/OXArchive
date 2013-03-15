@@ -104,7 +104,11 @@
                       </tr>
                       <tr onclick="JavaScript:document.getElementsByName('wrapping[[{$basketindex}]]')['[{$ictr}]'].checked=true;">
                         <td></td>
-                        <td colspan="2"><img src="[{$wrapping->getPictureUrl()}]0/[{$wrapping->oxwrapping__oxpic->value}]" alt="[{$wrapping->oxwrapping__oxname->value}]"></td>
+                        <td colspan="2">
+                        [{if $wrapping->oxwrapping__oxpic->value}]
+                            <img src="[{$wrapping->getPictureUrl()}]" alt="[{$wrapping->oxwrapping__oxname->value}]">
+                        [{/if}]
+                        </td>
                       </tr>
                       [{assign var="ictr" value="`$ictr+1`"}]
                     [{/foreach}]
@@ -161,9 +165,11 @@
                             <input id="test_CardItem_[{$smarty.foreach.GreetCards.iteration}]" type="radio" class="chbox" name="chosencard" value="[{$card->oxwrapping__oxid->value}]" [{ if $oxcmp_basket->getCardId() == $card->oxwrapping__oxid->value}]CHECKED[{/if}]>
                             <span id="test_CardItemNamePrice_[{$smarty.foreach.GreetCards.iteration}]">[{$card->oxwrapping__oxname->value}] ([{$card->getFPrice() }] [{ $currency->sign}])</span>
                         </div>
+                        [{if $card->oxwrapping__oxpic->value}]
                         <div class="card_body">
-                            <img src="[{$card->getPictureUrl()}]0/[{$card->oxwrapping__oxpic->value}]" alt="[{$card->oxwrapping__oxname->value}]">
+                            <img src="[{$card->getPictureUrl()}]" alt="[{$card->oxwrapping__oxname->value}]">
                         </div>
+                        [{/if}]
                      </div>
 
                      [{assign var="icounter" value="`$icounter+1`"}]

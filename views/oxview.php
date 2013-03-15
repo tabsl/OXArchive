@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxview.php 34114 2011-04-01 08:32:47Z sarunas $
+ * @version   SVN: $Id: oxview.php 37947 2011-08-04 10:32:55Z rimvydas.paskevicius $
  */
 
 /**
@@ -518,7 +518,7 @@ class oxView extends oxSuperCfg
                 // was not executed on any level ?
                 if ( !$this->_blIsComponent ) {
                     $oEx = oxNew( 'oxSystemComponentException' );
-                    $oEx->setMessage( 'EXCEPTION_SYSTEMCOMPONENT_FUNCTIONNOTFOUND' );
+                    $oEx->setMessage( 'ERROR_MESSAGE_SYSTEMCOMPONENT_FUNCTIONNOTFOUND' );
                     $oEx->setComponent( $sFunction );
                     throw $oEx;
                 }

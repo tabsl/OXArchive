@@ -14,14 +14,14 @@
       [{$edit->oxcategories__oxtitle->value }] [{ oxmultilang ident="GENERAL_THUMB" }]
       [{if $edit->oxcategories__oxthumb->value }]
         :<br><br>
-        <img src="[{$oViewConf->getPictureDir()}]/0/[{$edit->oxcategories__oxthumb->value }]" border="0" hspace="0" vspace="0">
+        <img src="[{$edit->getThumbUrl()}]" border="0" hspace="0" vspace="0">
       [{/if}]
     </td>
     <td valign="top" class="edittext">
       [{$edit->oxcategories__oxtitle->value }] [{ oxmultilang ident="GENERAL_ICON" }]
       [{if $edit->oxcategories__oxicon->value }]
         :<br><br>
-        <img src="[{$oViewConf->getPictureDir()}]/icon/[{$edit->oxcategories__oxicon->value }]" border="0" hspace="0" vspace="0">
+        <img src="[{$edit->getIconUrl()}]" border="0" hspace="0" vspace="0">
       [{/if}]
     </td>
 </tr>

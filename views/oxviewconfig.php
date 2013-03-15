@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxviewconfig.php 34356 2011-04-07 10:22:52Z arvydas.vapsva $
+ * @version   SVN: $Id: oxviewconfig.php 36720 2011-07-05 11:09:24Z linas.kukulskis $
  */
 
 /**
@@ -537,11 +537,15 @@ class oxViewConfig extends oxSuperCfg
     /**
      * Returns image url
      *
+     * @param string $sFile Image file name
+     *
      * @return string
      */
-    public function getImageUrl()
+    public function getImageUrl( $sFile = null )
     {
-        if ( ( $sValue = $this->getViewConfigParam( 'imagedir' ) ) === null ) {
+        if ($sFile) {
+           $sValue = $this->getConfig()->getImageUrl( $this->isAdmin(), null, null, $sFile );
+        } elseif ( ( $sValue = $this->getViewConfigParam( 'imagedir' ) ) === null ) {
             $sValue = $this->getConfig()->getImageUrl( $this->isAdmin() );
             $this->setViewConfigParam( 'imagedir', $sValue );
         }

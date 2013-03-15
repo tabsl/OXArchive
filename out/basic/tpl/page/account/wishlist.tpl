@@ -102,7 +102,7 @@
                 [{assign var="wishlist_class" value="inlist"}]
               [{/if}]
 
-              [{include file="inc/product.tpl" product=$product size="thin" class=$wishlist_class removeFunction="towishlist" toBasketFunction="wl_tobasket" owishid=$oxcmp_user->oxuser__oxid->value testid="WishList_`$smarty.foreach.wishlist.iteration`" }]
+              [{include file="inc/product.tpl" product=$product size="thin" class=$wishlist_class removeFunction="towishlist" toBasketFunction="tobasket" owishid=$oxcmp_user->oxuser__oxid->value testid="WishList_`$smarty.foreach.wishlist.iteration`" }]
 
               [{if !$smarty.foreach.wishlist.last }]
                 <div class="separator"></div>

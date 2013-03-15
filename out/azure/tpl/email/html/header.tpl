@@ -1,21 +1,15 @@
-<div id="header" class="clear">
-    [{include file="widget/header/languages.tpl"}]
-    [{include file="widget/header/currencies.tpl"}]
-    <ul id="topMenu">
-        <li class="login flyout[{if $oxcmp_user->oxuser__oxpassword->value}] logged[{/if}]">
-            [{include file="widget/header/loginbox.tpl"}] 
-        </li>
-        <li>
-            <a href="#" title="Registrieren">Registrieren</a>
-        </li>
-        <li>
-            <a href="#" title="Service">Service</a>
-        </li>
-    </ul>
-    <a id="logo" href="[{$oViewConf->getHomeLink()}]" title="[{$oxcmp_shop->oxshops__oxtitleprefix->value}]"><img src="[{$oViewConf->getImageUrl()}]logo.png" alt="[{$oxcmp_shop->oxshops__oxtitleprefix->value}]"></a>[{include file="widget/header/topcategories.tpl"}]
-    [{include file="widget/header/minibasket.tpl"}]
-    [{include file="widget/header/search.tpl"}]
-</div>[{if $oView->getClassName()=='start'}]
-<div id="promotions">
-    <img src="[{$oViewConf->getImageUrl()}]promo-demo.jpg" height="220" width="940" alt="Promotions demo">
-</div>[{/if}]
+<!DOCTYPE HTML>
+<html>
+  <head>
+      <title>[{$title}]</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=[{$oEmailView->getCharset()}]">
+  </head>
+
+  <body bgcolor="#ffffff" link="#355222" alink="#18778E" vlink="#389CB4" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+
+    <div width="600" style="width: 600px">
+
+        <div style="padding: 10px 0;">
+            <img src="[{$oViewConf->getImageUrl('logo_email.png')}]" border="0" hspace="0" vspace="0" alt="[{ $shop->oxshops__oxname->value }]" align="texttop">
+        </div>
+

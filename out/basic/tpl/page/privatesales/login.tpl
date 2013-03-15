@@ -39,7 +39,7 @@
         a.language { margin-left: 10px; margin-top: 5px; float:right; }
         a.language img { border: none; }
         a.language.act img { opacity:.7; }
-        a.link { background: url([{ $oViewConf->getResourceUrl() }]bg/oxid_ce_.gif) no-repeat 0 -384px;padding-left:14px;font-size:11px;text-decoration:none;color:#777 !important; line-height:1.1em; }
+        a.link { background: url([{ $oViewConf->getResourceUrl() }]bg/oxid_.gif) no-repeat 0 -384px;padding-left:14px;font-size:11px;text-decoration:none;color:#777 !important; line-height:1.1em; }
         a.link:hover { text-decoration: underline; }
 
     </style>

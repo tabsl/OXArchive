@@ -8,7 +8,7 @@
     <dd id="tm.basket.dd" class="dropdown">
         [{strip}]
         <ul id="basket_menu" class="menue vertical">
-            <li><a href="[{ oxgetseourl ident=$oViewConf->getSslSelfLink()|cat:"cl=basket" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_TOBASKET" }]</a></li>
+            <li><a href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=basket" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_TOBASKET" }]</a></li>
             [{if $oxcmp_user->oxuser__oxpassword->value && $oView->isLowOrderPrice()}]
             <li><a href="[{ oxgetseourl ident=$oViewConf->getSslSelfLink()|cat:"cl=payment" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_TOPAYMENT" }]</a></li>
             [{/if}]
@@ -25,7 +25,7 @@
              <th>[{ oxmultilang ident="INC_CMP_BASKET_QUANTITY" }]</th>
              <td id="test_TopBasketItems">[{ $oxcmp_basket->getItemsCount()}]</td>
           </tr>
-          [{if $oxcmp_basket->getFDeliveryCosts() }]
+          [{if $oxcmp_basket->getDeliveryCosts() }]
           <tr>
              <th>[{ oxmultilang ident="INC_CMP_BASKET_SHIPPING" }]</th>
              <td id="test_TopBasketShipping">[{ $oxcmp_basket->getFDeliveryCosts() }] [{ $currency->sign}]</td>

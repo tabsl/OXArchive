@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_seo.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: article_seo.php 36601 2011-06-28 12:47:56Z arunas.paskevicius $
  */
 
 /**
@@ -149,14 +149,14 @@ class Article_Seo extends Object_Seo
      */
     protected function _getCategoryList( $oArticle )
     {
+        $iLang = $this->getEditLang();        
         if ( $this->_oArtCategories === null && $oArticle ) {
             // adding categories
             $sO2CView = getViewName( 'oxobject2category');
             $oDb = oxDb::getDb( true );
             $sQ = "select oxobject2category.oxcatnid as oxid from $sO2CView as oxobject2category where oxobject2category.oxobjectid="
                   . $oDb->quote( $oArticle->getId() ) . " union ".$oArticle->getSqlForPriceCategories('oxid');
-
-            $iLang = $this->getEditLang();
+            
             $this->_oArtCategories = oxNew( "oxList" );
             $rs = $oDb->execute( $sQ );
             if ( $rs != false && $rs->recordCount() > 0 ) {

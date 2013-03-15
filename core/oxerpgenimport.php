@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerpgenimport.php 28184 2010-06-07 12:40:28Z vilma $
+ * @version   SVN: $Id: oxerpgenimport.php 35133 2011-05-05 12:26:36Z rimvydas.paskevicius $
  */
 
 /**
@@ -278,7 +278,7 @@ class oxErpGenImport extends oxErpCsv
         } else {
 
             //user does not have sufficient rights for shop
-            throw new Exception( self::$ERROR_USER_NO_RIGHTS);
+            throw new Exception( self::ERROR_USER_NO_RIGHTS);
         }
 
         $this->_resetIdx();

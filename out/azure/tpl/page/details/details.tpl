@@ -2,11 +2,7 @@
   [{assign var="oDetailsProduct" value=$oView->getProduct()}]
   [{assign var="oPictureProduct" value=$oView->getPicturesProduct()}]
   [{assign var="currency" value=$oView->getActCurrency()}]
-  [{capture append="oxidBlock_pagePopup"}]
-    <div>
-      [{include file="page/details/inc/zoompopup.tpl"}]
-    </div>
-  [{/capture}]
+  [{assign var="sPageHeadTitle" value=$oDetailsProduct->oxarticles__oxtitle->value|cat:' '|cat:$oDetailsProduct->oxarticles__oxvarselect->value}]
 
     [{if $oView->getPriceAlarmStatus() == 1}]
         [{assign var="_statusMessage1" value="PAGE_DETAILS_THANKYOUMESSAGE1"|oxmultilangassign|cat:" "|cat:$oxcmp_shop->oxshops__oxname->value}]
@@ -23,7 +19,7 @@
         [{include file="message/error.tpl" statusMessage=`$_statusMessage1``$_statusMessage2`}]
     [{/if}]
 
-    <div id="details" class="hreview-aggregate hproduct">
+    <div id="details">
         [{ if $oView->getSearchTitle() }]
           [{ assign var="detailsLocation" value=$oView->getSearchTitle()}]
         [{else}]
@@ -37,9 +33,11 @@
 
 
         [{* details locator  *}]
-        <h2 class="pageHead category">[{$detailsLocation}]</h2>
-
         [{assign var="actCategory" value=$oView->getActiveCategory()}]
+        <div id="overviewLink">
+            <a href="[{ $actCategory->toListLink }]" class="overviewLink">[{ oxmultilang ident="WIDGET_BREADCRUMB_OVERVIEW" }]</a>
+        </div>
+        <h2 class="pageHead">[{$sPageHeadTitle|truncate:80}]</h2>
         <div class="detailsParams listRefine bottomRound">
             <div class="pager refineParams clear" id="detailsItemsPager">
                 [{if $actCategory->prevProductLink}]<a id="linkPrevArticle" class="prev" href="[{$actCategory->prevProductLink}]">[{oxmultilang ident="DETAILS_LOCATOR_PREVIUOSPRODUCT"}]</a>[{/if}]
@@ -50,9 +48,10 @@
             </div>
         </div>
 
-        <div id="productinfo">
+        <div id="productinfo" itemscope itemtype="http://schema.org/Product">
             [{include file="page/details/inc/fullproductinfo.tpl"}]
         </div>
     </div>
+    [{ insert name="oxid_tracker" title="DETAILS_PRODUCTDETAILS"|oxmultilangassign product=$oDetailsProduct cpath=$oView->getCatTreePath() }]
 [{/capture}]
 [{include file="layout/page.tpl" sidebar="Left"}]

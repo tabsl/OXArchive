@@ -19,5 +19,6 @@
     [{else }]
         [{ oxmultilang ident="PAGE_WISHLIST_PRODUCTS_WISHLISTEMPTY" }]
     [{/if }]
+    [{ insert name="oxid_tracker"}]
 [{/capture}]
 [{include file="layout/page.tpl" sidebar="Left" }]

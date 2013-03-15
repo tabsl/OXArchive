@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 34471 2011-04-08 15:05:28Z juergen.busch $
+ * @version   SVN: $Id: help_lang.php 37911 2011-08-03 07:37:54Z arvydas.vapsva $
  */
 
 /**
@@ -174,13 +174,15 @@ $aLang =  array(
                                                  'Weitere Informationen finden Sie im ' .
                                                  '<a href="http://wiki.oxidforge.org/Tutorials/Connecting_website_to_facebook" target="_blank" target="_blank">Tutorial</a>.',
 
+'HELP_SHOP_CONFIG_SHOP_CONFIG_FACEBOOKCONFIRM'=> 'Um die Privatsphäre des Kunden zu schützen, muss die Anzeige der Facebook Social Plugins explizit bestätigt werden. Erst nach Bestätigung werden Daten mit Facebook ausgetauscht.',
+
 'HELP_SHOP_CONFIG_SHOP_CONFIG_FBSECRETKEY'    => 'Um die Verbindung zwischen eShop und Facebook abzusichern, geben Sie den \'Secure Key\' hier ein. ' .
                                                  'Weitere Informationen finden Sie im ' .
                                                  '<a href="http://wiki.oxidforge.org/Tutorials/Connecting_website_to_facebook" target="_blank" target="_blank">Tutorial</a>.',
 
 'HELP_SHOP_CONFIG_FBCOMMENTS'                 => 'Erlaubt den Shopbesuchern, Kommentare zu Produkten abzugeben.',
 
-'HELP_SHOP_CONFIG_FBFACEPILE'                 => 'Zeigt Ihren Shopbesuchern wer von deren Freunden in Facebook ein Freund Ihres Shops ist.',
+'HELP_SHOP_CONFIG_FBFACEPILE'                 => 'Zeigt Ihren Shopbesuchern, wer von deren Freunden in Facebook ein Freund Ihres Shops ist.',
 
 'HELP_SHOP_CONFIG_FBLIVESTREAM'               => 'Lässt die Besucher Ihres Shops miteinander in Echtzeit über Produkte Ihres Shops diskutieren',
 
@@ -188,11 +190,13 @@ $aLang =  array(
 
 'HELP_SHOP_CONFIG_FBSHARE'                    => 'Zeigt Facebooks \'Share button\'.',
 
-'HELP_SHOP_CONFIG_FBLIKE'                     => 'Zeigt Facebooks \'Like button\' mit dem die Besucher Ihres Shops in Facebook bekannt geben, dass Sie Ihren Shop mögen.',
+'HELP_SHOP_CONFIG_FBLIKE'                     => 'Zeigt Facebooks \'Like button\', mit dem die Besucher Ihres Shops in Facebook bekannt geben, dass sie Ihren Shop mögen.',
 
-'HELP_SHOP_CONFIG_FACEBOOKCONNECT'            => 'Facebook Connect anzeigen damit Anwender sich mit ihren Facebook-Profildaten im Shop anmelden können.',
+'HELP_SHOP_CONFIG_FACEBOOKCONNECT'            => 'Facebook Connect anzeigen, damit Anwender sich mit ihren Facebook-Profildaten im Shop anmelden können.',
 
 'HELP_SHOP_CONFIG_ATTENTION'                  => 'ACHTUNG! Üblicherweise ist in den Verträgen mit MasterCard und VISA die Speicherung der Daten ausdrücklich verboten.',
+
+'HELP_SHOP_CONFIG_SHOWTAGS'                   => 'Wenn nicht angehakt, werden keine Tags im eShop angezeigt. Auf Seiten, die über Tag URL aufgerufen werden könnten, kann nicht zugegriffen werden.',
 
 'HELP_SHOP_MALL_MALLMODE'                     => 'Hier stellen Sie ein, was auf der Startseite dieses eShops angezeigt werden soll: '.
                                                  '<ul><li><span class="navipath_or_inputname">Shop-Auswahlseite</span>: Eine Seite wird angezeigt, auf der Kunden zwischen den verschiedenen Shops wählen können.</li>' .
@@ -267,7 +271,7 @@ $aLang =  array(
 
 'HELP_SHOP_MAIN_PRODUCTIVE'                   => 'So lange diese Einstellung <span class="warning_or_important_hint">nicht</span> aktiv ist, werden am unteren Ende jeder Seite Informationen zu Ladezeiten angezeigt. Außerdem werden Debug-Informationen angezeigt. Diese Informationen sind für Entwickler wichtig, wenn sie den OXID eShop anpassen.<br>' .
                                                  '<span class="warning_or_important_hint">Aktivieren Sie diese Einstellung, bevor ihr eShop öffentlich zugänglich gemacht wird! Dadurch wird den Benutzern nur der eShop ohne die zusätzlichen Informationen angezeigt.</span><br>',
-                                                 'Weitere wichtige Hinweise für den Livegang des OXID eShop finden Sie in unserer <a href="http://wiki.oxidforge.org/Tutorials/Check_vor_dem_Livegang" target="_blank">OXIDforge</a>.', 
+                                                 'Weitere wichtige Hinweise für den Livegang des OXID eShop finden Sie in unserer <a href="http://wiki.oxidforge.org/Tutorials/Check_vor_dem_Livegang" target="_blank">OXIDforge</a>.',
 
 'HELP_SHOP_MAIN_ACTIVE'                       => 'Mit <span class="navipath_or_inputname">Aktiv</span> können Sie ihren kompletten eShop ein- und ausschalten. Wenn ihr eShop ausgeschaltet ist, wird Ihren Kunden eine Meldung angezeigt, dass der eShop vorübergehend offline ist. Das kann für Wartungsarbeiten am eShop nützlich sein.',
 
@@ -297,7 +301,12 @@ $aLang =  array(
 
 'HELP_ARTICLE_EXTEND_QUESTIONEMAIL'           => 'Bei <span class="navipath_or_inputname">Alt. Anspr.partn.</span> können Sie eine E-Mail Adresse eingeben. Wenn die Benutzer eine Frage zu diesem Artikel absenden, wird Sie an diese E-Mail Adresse geschickt. Wenn keine E-Mail Adresse eingetragen ist, wird die Anfrage an die normale Info E-Mail Adresse geschickt.',
 
+
 'HELP_ARTICLE_EXTEND_SKIPDISCOUNTS'           => 'Wenn <span class="navipath_or_inputname">Alle neg. Nachlässe ignorieren</span> aktiviert ist, werden für diesen Artikel keine negativen Nachlässe berechnet. Das sind z. B. Rabatte und Gutscheine.',
+
+'HELP_ARTICLE_EXTEND_NONMATERIAL'             => 'Einstellung wird vom Vater-Artikel an die Varianten vererbt und gilt für den gesamten Artikel.',
+
+'HELP_ARTICLE_EXTEND_FREESHIPPING'            => 'Einstellung wird vom Vater-Artikel an die Varianten vererbt und gilt für den gesamten Artikel.',
 
 'HELP_ARTICLE_EXTEND_TEMPLATE'                => 'Sie können die Detailansicht des Artikels mit einem anderen Template anzeigen lassen. Tragen Sie dazu den Dateinamen des Templates ein, das verwendet werden soll. Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/bestimmte-artikel-oder-kategorien-mit-anderen-templates-anzeigen" target="_blank">eShop Handbuch</a>.',
 
@@ -320,11 +329,13 @@ $aLang =  array(
                                                  'Sie sollten ein Bild mit maximaler Auflösung hochladen. Danach wird aus diesem Bild automatisch das Artikelbild, Zoombild, Thumbnail und Icon generiert.<br>' .
                                                  'Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/artikelbilder-grundlagen" target="_blank">Artikelbilder-Kapitel des Handbuchs</a>.',
 
-'HELP_ARTICLE_PICTURES_ZOOM1'                 => 'Zoom-Bilder sind extra große Artikelbilder, Die in der Detailansicht eines Artikels verlinkt werden. </br>' .
+'HELP_ARTICLE_PICTURES_ZOOM1'                 => 'Zoom-Bilder sind extra große Artikelbilder, Die in der Detailansicht eines Artikels verlinkt werden. <br>' .
                                                  'Zoom-Bilder können Sie bei <span class="navipath_or_inputname">Zoom X hochladen</span> hochladen. Bei <span class="navipath_or_inputname">Zoom X</span> wird nach dem Hochladen der Dateiname des Zoom-Bildes angezeigt, wenn noch kein Zoom-Bild hochgeladen wurde, wird <span class="userinput_or_code">nopic.jpg</span> angezeigt.<br>' .
                                                  'Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/artikelbilder-grundlagen" target="_blank">Artikelbilder-Kapitel des Handbuchs</a>.',
 
 
+
+'HELP_ARTICLE_STOCK_REMINDACTIV'              => 'Einstellung wird vom Vater-Artikel an die Varianten vererbt und gilt für den gesamten Artikel.',
 
 'HELP_ARTICLE_STOCK_STOCKFLAG'                => 'Hier können Sie einstellen, wie sich der eShop verhält, wenn der Artikel ausverkauft ist:<br>' .
                                                  '<ul><li>Standard: Der Artikel kann auch dann bestellt werden, wenn er ausverkauft ist.</li>' .
@@ -332,7 +343,7 @@ $aLang =  array(
                                                  '<li>Wenn Ausverkauft offline: Der Artikel wird nicht angezeigt, wenn er ausverkauft ist.</li>' .
                                                  '<li>Wenn Ausverkauft nicht bestellbar: Der Artikel wird angezeigt, wenn er ausverkauft ist, aber er kann nicht bestellt werden.</li></ul>',
 
-'HELP_ARTICLE_STOCK_REMINDACTIV'              => 'Hier können Sie einrichten, dass Ihnen eine E-Mail gesendet wird, sobald der der Lagerbestand unter den hier eingegebenen Wert sinkt. Dadurch werden Sie rechtzeitig informiert, wenn der Artikel fast ausverkauft ist. Setzen Sie hierzu das Häkchen und geben Sie den Bestand ein, ab dem Sie informiert werden wollen.',
+'HELP_ARTICLE_STOCK_REMINDAMAOUNT'            => 'Hier können Sie einrichten, dass Ihnen eine E-Mail gesendet wird, sobald der der Lagerbestand unter den hier eingegebenen Wert sinkt. Dadurch werden Sie rechtzeitig informiert, wenn der Artikel fast ausverkauft ist. Setzen Sie hierzu das Häkchen und geben Sie den Bestand ein, ab dem Sie informiert werden wollen.',
 
 'HELP_ARTICLE_STOCK_DELIVERY'                 => 'Hier können Sie eingeben, ab wann ein Artikel wieder lieferbar ist, wenn er ausverkauft ist. Das Format ist Jahr-Monat-Tag, z. B. 2008-10-21.',
 

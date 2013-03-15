@@ -1,10 +1,12 @@
 [{assign var="_additionalParams" value=$oView->getAdditionalParams()}]
-<div class="dropDown" id="itemsPerPage">
+[{oxscript include="js/widgets/oxdropdown.js" priority=10 }]
+[{oxscript add="$('div.dropDown p').oxDropDown();"}]
+<div class="dropDown js-fnLink" id="itemsPerPage">
     <p>
         <label>[{oxmultilang ident="WIDGET_PRODUCT_LOCATOR_ARTICLE_PER_PAGE"}]</label>
         <span>
-            [{if  $oViewConf->getArtPerPageCount() }]
-                [{  $oViewConf->getArtPerPageCount() }]
+            [{if $oViewConf->getArtPerPageCount() }]
+                [{ $oViewConf->getArtPerPageCount() }]
             [{else}]
                 [{oxmultilang ident="WIDGET_LOCATOR_CHOOSE"}]
             [{/if}]

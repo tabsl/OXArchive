@@ -10,7 +10,7 @@
 [{else}]
   [{assign var=showDiv value='false'}]
 [{/if}]
-
+[{oxscript include="js/widgets/oxcountrystateselect.js" priority=10 }]
 [{oxscript add="$( '#`$countrySelectId`' ).oxCountryStateSelect({selectedStateId:'`$selectedStateId`'});"}]
 
 <script type="text/javascript"><!--
@@ -38,6 +38,6 @@
 --></script>
 <span id="[{$divId}]" class=stateSelector>
   <select name="[{$stateSelectName}]" id="[{$stateSelectId}]">
-      <option name="promtString" value="">[{oxmultilang ident="FORM_FIELDSET_STATE_PROMTSTRING"}]</option>
+      <option value="">[{oxmultilang ident="FORM_FIELDSET_STATE_PROMTSTRING"}]</option>
   </select>
 </span>

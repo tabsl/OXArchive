@@ -1,6 +1,8 @@
 [{ oxmultilang ident="PAGE_ACCOUNT_FORGOTPWD_FORGOTPWD" }]<br>
 [{ oxmultilang ident="PAGE_ACCOUNT_FORGOTPWD_WEWILLSENDITTOYOU" }]<br><br>
-<form class="oxValidate" action="[{ $oViewConf->getSelfActionLink() }]" name="order" method="post">
+[{oxscript include="js/widgets/oxinputvalidator.js" priority=10 }]
+[{oxscript add="$('form.js-oxValidate').oxInputValidator();"}]
+<form class="js-oxValidate" action="[{ $oViewConf->getSelfActionLink() }]" name="order" method="post">
   [{ $oViewConf->getHiddenSid() }]
   [{ $oViewConf->getNavFormParams() }]
   <input type="hidden" name="fnc" value="forgotpassword">
@@ -8,10 +10,10 @@
   <ul class="form clear">
     <li>
         <label>[{ oxmultilang ident="PAGE_ACCOUNT_FORGOTPWD_YOUREMAIL" }]</label>
-        <input id="forgotPasswordUserLoginName" type="text" name="lgn_usr" value="[{$oView->getActiveUsername()}]" class="oxValidate oxValidate_notEmpty oxValidate_email">
+        <input id="forgotPasswordUserLoginName[{$idPrefix}]" type="text" name="lgn_usr" value="[{$oView->getActiveUsername()}]" class="js-oxValidate js-oxValidate_notEmpty js-oxValidate_email">
         <p class="oxValidateError">
-            <span class="oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
-            <span class="oxError_email">[{ oxmultilang ident="EXCEPTION_INPUT_NOVALIDEMAIL" }]</span>
+            <span class="js-oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
+            <span class="js-oxError_email">[{ oxmultilang ident="EXCEPTION_INPUT_NOVALIDEMAIL" }]</span>
             [{include file="message/inputvalidation.tpl" aErrors=$aErrors.oxuser__oxusername}]
         </p>
     </li>

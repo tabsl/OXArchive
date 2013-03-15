@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 34200 2011-04-04 11:56:38Z linas.kukulskis $
+ * @version   SVN: $Id: oxubase.php 37871 2011-08-01 12:15:05Z arvydas.vapsva $
  */
 
 /**
@@ -40,6 +40,12 @@ define( 'VIEW_INDEXSTATE_NOINDEXFOLLOW', 2 );   //  no index / follow
 class oxUBase extends oxView
 {
     /**
+     * Facebook widget status marker
+     * @var bool
+     */
+    protected $_blFbWidgetsOn = null;
+
+    /**
      * Checks if feature is enabled
      *
      * @param string $sName feature name
@@ -49,6 +55,25 @@ class oxUBase extends oxView
     public function isActive( $sName )
     {
         return $this->getConfig()->getConfigParam( "bl".$sName."Enabled" );
+    }
+
+    /**
+     * Returns TRUE if facebook widgets are on
+     *
+     * @return boolean
+     */
+    public function isFbWidgetWisible()
+    {
+        if ( $this->_blFbWidgetsOn === null ) {
+            $oUtils = oxUtilsServer::getInstance();
+
+            // reading ..
+            $this->_blFbWidgetsOn = (bool) $oUtils->getOxCookie( "fbwidgetson" );
+
+            // .. and setting back
+            $oUtils->setOxCookie( "fbwidgetson", $this->_blFbWidgetsOn ? 1 : 0 );
+        }
+        return $this->_blFbWidgetsOn;
     }
 
     /**
@@ -409,9 +434,10 @@ class oxUBase extends oxView
 
     /**
      * Url parameters which block redirection
+     *
      * @return null
      */
-    protected $_aBlockRedirectParams = array( 'fnc' );
+    protected $_aBlockRedirectParams = array( 'fnc', 'stoken', 'force_sid', 'force_admin_sid' );
 
     /**
      * Vendorlist for search
@@ -535,6 +561,39 @@ class oxUBase extends oxView
     protected $_sActiveUsername = null;
 
     /**
+     * Components which needs to be initialized/rendered (depending
+     * on cache and its cache status)
+     * @var array
+     */
+    protected static $_aCollectedComponentNames = null;
+
+    /**
+     * Returns component names
+     *
+     * @return array
+     */
+    protected function _getComponentNames()
+    {
+        if ( self::$_aCollectedComponentNames === null ) {
+            self::$_aCollectedComponentNames = array_merge( $this->_aComponentNames, $this->_aUserComponentNames );
+
+            // #1721: custom component handling. At the moment it is not possible to override this variable in oxubase,
+            // so we added this array to config.inc.php file
+            if ( ( $aUserCmps = $this->getConfig()->getConfigParam( 'aUserComponentNames' ) ) ) {
+                self::$_aCollectedComponentNames = array_merge( self::$_aCollectedComponentNames, $aUserCmps );
+            }
+
+            if ( oxConfig::getParameter( '_force_no_basket_cmp' ) ) {
+                unset( self::$_aCollectedComponentNames['oxcmp_basket'] );
+            }
+        }
+
+        // resetting array pointer
+        reset( self::$_aCollectedComponentNames );
+        return self::$_aCollectedComponentNames;
+    }
+
+    /**
      * In non admin mode checks if request was NOT processed by seo handler.
      * If NOT, then tries to load alternative SEO url and if url is available -
      * redirects to it. If no alternative path was found - 404 header is emitted
@@ -552,18 +611,20 @@ class oxUBase extends oxView
             // fetching standard url and looking for it in seo table
             if ( $this->_canRedirect() && ( $sRedirectUrl = oxSeoEncoder::getInstance()->fetchSeoUrl( $sStdUrl ) ) ) {
                 $myUtils->redirect( $this->getConfig()->getCurrentShopUrl() . $sRedirectUrl, false );
-            } else {
+            } elseif (VIEW_INDEXSTATE_INDEX == $this->noIndex()) {
                 // forcing to set noindex/follow meta
                 $this->_forceNoIndex();
 
-                $sShopId = $this->getConfig()->getShopId();
-                $sLangId = oxLang::getInstance()->getBaseLanguage();
-                $sIdent  = md5( strtolower( $sStdUrl ) . $sShopId . $sLangId );
+                if (!$this->getConfig()->isProductiveMode() || $this->getConfig()->getConfigParam('blSeoLogging')) {
+                    $sShopId = $this->getConfig()->getShopId();
+                    $sLangId = oxLang::getInstance()->getBaseLanguage();
+                    $sIdent  = md5( strtolower( $sStdUrl ) . $sShopId . $sLangId );
 
-                // logging "not found" url
-                $oDb = oxDb::getDb();
-                $oDb->execute( "replace oxseologs ( oxstdurl, oxident, oxshopid, oxlang )
-                                values ( " . $oDb->quote( $sStdUrl ) . ", '{$sIdent}', '{$sShopId}', '{$sLangId}' ) " );
+                    // logging "not found" url
+                    $oDb = oxDb::getDb();
+                    $oDb->execute( "replace oxseologs ( oxstdurl, oxident, oxshopid, oxlang )
+                                    values ( " . $oDb->quote( $sStdUrl ) . ", '{$sIdent}', '{$sShopId}', '{$sLangId}' ) " );
+                }
             }
         }
     }
@@ -578,22 +639,12 @@ class oxUBase extends oxView
     {
         $this->_processRequest();
 
-        if ( oxConfig::getParameter( '_force_no_basket_cmp' ) ) {
-            unset( $this->_aComponentNames['oxcmp_basket'] );
-        }
-
-        // as the objects are cached by dispatcher we have to watch out, that we don't add these components twice
-        if ( !$this->_blCommonAdded ) {
-            $this->_aComponentNames = array_merge( $this->_aComponentNames, $this->_aUserComponentNames );
-            $this->_blCommonAdded = true;
-        }
-
         // storing current view
         $blInit = true;
 
 
         // init all components if there are any
-        foreach ( $this->_aComponentNames as $sComponentName => $blNotCacheable ) {
+        foreach ( $this->_getComponentNames() as $sComponentName => $blNotCacheable ) {
             // do not override initiated components
             if ( !isset( $this->_oaComponents[$sComponentName] ) ) {
                 // component objects MUST be created to support user called functions
@@ -925,6 +976,16 @@ class oxUBase extends oxView
             }
         }
         return $this->_blDontShowEmptyCats;
+    }
+
+    /**
+     * Returns true if empty categories are not loaded
+     *
+     * @return bool
+     */
+    public function showCategoryArticlesCount()
+    {
+        return $this->getConfig()->getConfigParam( 'bl_perfShowActionCatArticleCnt' );
     }
 
     /**
@@ -1622,6 +1683,15 @@ class oxUBase extends oxView
     }
 
     /**
+     * Returns title page suffix used in template in lists
+     *
+     * @return string
+     */
+    public function getTitlePageSuffix()
+    {
+    }
+
+    /**
      * Returns title prefix used in template
      *
      * @return string
@@ -1631,6 +1701,8 @@ class oxUBase extends oxView
     {
         return $this->getConfig()->getActiveShop()->oxshops__oxtitleprefix->value;
     }
+
+
 
     /**
      * returns object, assosiated with current view.
@@ -3150,4 +3222,23 @@ class oxUBase extends oxView
 
     }
 
+    /**
+     * Returns added basket item notification message type
+     *
+     * @return int
+     */
+    public function getNewBasketItemMsgType()
+    {
+        return (int) $this->getConfig()->getConfigParam( "iNewBasketItemMessage" );
+    }
+
+    /**
+     * Returns true if tags are ON
+     *
+     * @return boolean
+     */
+    public function showTags()
+    {
+        return (bool) $this->getConfig()->getConfigParam( "blShowTags" );
+    }
 }

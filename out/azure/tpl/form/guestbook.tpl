@@ -1,3 +1,5 @@
+[{oxscript include="js/widgets/oxreview.js" priority=10 }]
+[{oxscript add="$( '#writeNewReview' ).oxReview();"}]
 [{if $oxcmp_user}]
     [{if !$oView->floodProtection() }]
         <form action="[{$oViewConf->getSelfActionLink()}]" method="post" id="rating">
@@ -13,7 +15,6 @@
             </div>
         </form>
         <a id="writeNewReview" rel="nofollow"><b>[{oxmultilang ident="FORM_GUESTBOOK_CLICKHERETOWRITEENTRY"}]</b></a>
-        [{oxscript add="$(function(){oxid.initNewReview();});"}]
     [{/if}]
 [{else}]
     <a href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account" params="sourcecl="|cat:$oViewConf->getActiveClassName()|cat:$oViewConf->getNavUrlParams() }]" rel="nofollow"><b>[{ oxmultilang ident="FORM_GUESTBOOK_YOUHAVETOBELOGGED" }]</b></a>

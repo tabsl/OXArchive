@@ -105,7 +105,7 @@
 
 [{else}]
       [{assign var="hitsfor" value="RECOMMLIST_HITSFOR"|oxmultilangassign }]
-      [{assign var="title" value=$oView->getArticleCount()|cat:" "|cat:$hitsfor|cat:" &quot;"|cat:$oView->getRecommSearch()|cat:"&quot;" }]
+      [{assign var="title" value=$oView->getArticleCount()|cat:" "|cat:$hitsfor|cat:" &quot;"|cat:$oView->getSearchForHtml()|cat:"&quot;" }]
       [{include file="inc/recomm_lists.tpl" template_title=$title}]
 [{/if}]
 

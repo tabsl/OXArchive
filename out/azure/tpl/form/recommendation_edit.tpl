@@ -1,5 +1,5 @@
 <form action="[{ $oViewConf->getSelfActionLink() }]" name="saverecommlist" method="post">
-    <div class="listmaniaAdd clear">
+    <div class="clear">
         [{ $oViewConf->getHiddenSid() }]
         [{ $oViewConf->getNavFormParams() }]
         <input type="hidden" name="fnc" value="saveRecommList">
@@ -12,7 +12,7 @@
         [{/if}]
         <ul class="form clear">
             <li>
-                <label>[{ oxmultilang ident="FORM_RECOMMENDATION_EDIT_LISTTITLE" }]:<span class="req">*</span></label>
+                <label class="req">[{ oxmultilang ident="FORM_RECOMMENDATION_EDIT_LISTTITLE" }]:</label>
                 <input type="text" name="recomm_title" size=73 maxlength=73 value="[{$actvrecommlist->oxrecommlists__oxtitle->value}]" >
             </li>
             <li>

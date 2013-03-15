@@ -19,48 +19,93 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype_artextends.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: oxerptype_artextends.php 35102 2011-05-04 08:20:01Z rimvydas.paskevicius $
  */
+
 
 require_once 'oxerptype.php';
 
 /**
- * ERP article extended data description class
+ * Article extends type subclass
  */
 class oxERPType_Artextends extends oxERPType
 {
     /**
-     * object fields description
-     * @var array
-     */
-    protected $_aFieldListVersions = array (
-        '2' => array(
-            'OXID' => 'OXID',
-            'OXLONGDESC'       => 'OXLONGDESC',
-            'OXLONGDESC_1'     => 'OXLONGDESC_1',
-            'OXLONGDESC_2'     => 'OXLONGDESC_2',
-            'OXLONGDESC_3'     => 'OXLONGDESC_3',
-            'OXTAGS'           => 'OXTAGS',
-            'OXTAGS_1'         => 'OXTAGS_1',
-            'OXTAGS_2'         => 'OXTAGS_2',
-            'OXTAGS_3'         => 'OXTAGS_3',
-    ),
-    );
-
-    /**
-     * Class constructor
+     * class constructor
      *
      * @return null
      */
     public function __construct()
     {
         parent::__construct();
-
         $this->_sTableName      = 'oxartextends';
-
-        if (oxERPBase::getRequestedVersion() < 2) {
-            $this->_sTableName = '';
-            $this->_aFieldList = array();
-        }
     }
+    
+    /**
+     * prepares object for saving in shop
+     * returns true if save can proceed further
+     *
+     * @param oxBase $oShopObject shop object
+     * @param array  $aData       data for importing
+     *
+     * @return boolean
+     */
+    protected function _preSaveObject($oShopObject, $aData)
+    {
+        return true;
+    }
+
+    /**
+     * saves data by calling object saving
+     *
+     * @param array $aData               data for saving
+     * @param bool  $blAllowCustomShopId allow custom shop id
+     *
+     * @return string | false
+     */
+    public function saveObject($aData, $blAllowCustomShopId)
+    {
+        $oShopObject = oxNew('oxi18n');
+        $oShopObject->init('oxartextends');
+        $oShopObject->setLanguage( 0 );
+        $oShopObject->setEnableMultilang(false);
+
+        foreach ($aData as $key => $value) {
+            // change case to UPPER
+            $sUPKey = strtoupper($key);
+            if (!isset($aData[$sUPKey])) {
+                unset($aData[$key]);
+                $aData[$sUPKey] = $value;
+            }
+        }
+
+
+        $blLoaded = false;
+        if ($aData['OXID']) {
+            $blLoaded = $oShopObject->load( $aData['OXID']);
+        }
+
+        $aData = $this->_preAssignObject( $oShopObject, $aData, $blAllowCustomShopId );
+
+        if ($blLoaded) {
+            $this->checkWriteAccess($oShopObject, $aData);
+        } else {
+            $this->checkCreateAccess($aData);
+        }
+
+        $oShopObject->assign( $aData );
+
+        if ($blAllowCustomShopId) {
+            $oShopObject->setIsDerived(false);
+        }
+
+        if ($this->_preSaveObject($oShopObject, $aData)) {
+            // store
+            if ( $oShopObject->save()) {
+                return $this->_postSaveObject($oShopObject, $aData);
+            }
+        }
+
+        return false;
+    }    
 }

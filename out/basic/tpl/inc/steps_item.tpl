@@ -39,12 +39,15 @@
 
     <dl[{ if $highlight == 3}] class="active"[{/if}]>
         <dt>
-            [{if $showStepLinks}]<a id="test_Step3" rel="nofollow" href="[{ if $oViewConf->getActiveClassName() == "user"}]javascript:document.forms.order.submit();[{else}][{ oxgetseourl ident=$oViewConf->getPaymentLink() }][{/if}]">[{/if}]
+            [{if $showStepLinks}]<a id="test_Step3" rel="nofollow" href="[{ if $oViewConf->getActiveClassName() == "user"}]javascript:document.getElementById('test_UserNextStepTop').click();[{else}][{ oxgetseourl ident=$oViewConf->getPaymentLink() }][{/if}]">[{/if}]
             <big>3.</big> [{ oxmultilang ident="INC_STEPS_ITEM_PAY" }]
-            [{if $showStepLinks}]</a>[{/if}]
+            [{if $showStepLinks}]
+                </a>
+                
+            [{/if}]            
         </dt>
         <dd>
-            [{if $showStepLinks}]<a id="test_Step3_Text" rel="nofollow" href="[{ if $oViewConf->getActiveClassName() == "user"}]javascript:document.forms.order.submit();[{else}][{ oxgetseourl ident=$oViewConf->getPaymentLink() }][{/if}]">[{/if}][{ oxmultilang ident="INC_STEPS_ITEM_SELECTSHIPPINGANDPAYMENT" }][{if $showStepLinks}]</a>[{/if}]
+            [{if $showStepLinks}]<a id="test_Step3_Text" rel="nofollow" href="[{ if $oViewConf->getActiveClassName() == "user"}]javascript:document.getElementById('test_UserNextStepTop').click();[{else}][{ oxgetseourl ident=$oViewConf->getPaymentLink() }][{/if}]">[{/if}][{ oxmultilang ident="INC_STEPS_ITEM_SELECTSHIPPINGANDPAYMENT" }][{if $showStepLinks}]</a>[{/if}]
         </dd>
     </dl>
 

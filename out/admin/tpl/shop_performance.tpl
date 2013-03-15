@@ -92,17 +92,6 @@
 
         <tr class="conftext[{cycle}]">
          <td valign="top">
-            <input type=hidden name=confbools[blLoadFullTree] value=false>
-            <input type=checkbox name=confbools[blLoadFullTree] value=true  [{if ($confbools.blLoadFullTree)}]checked[{/if}] [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_SHOP_PERF_LOADFULLTREE" }]
-         </td>
-         <td valign="top" width="100%">
-          [{ oxmultilang ident="SHOP_PERF_LOADFULLTREE" }]
-         </td>
-        </tr>
-
-        <tr class="conftext[{cycle}]">
-         <td valign="top">
             <input type=hidden name=confbools[blDontShowEmptyCategories] value=false>
             <input type=checkbox class="confinput" name=confbools[blDontShowEmptyCategories] value=true  [{if ($confbools.blDontShowEmptyCategories)}]checked[{/if}] [{ $readonly }]>
             [{ oxinputhelp ident="HELP_SHOP_PERF_DONTSHOWEMTYCATEGORIES" }]
@@ -295,34 +284,12 @@
 
             <tr>
              <td valign="top" class="conftext">
-                <input type=hidden name=confbools[bl_perfLoadTreeForSearch] value=false>
-                <input type=checkbox name=confbools[bl_perfLoadTreeForSearch] value=true  [{if ($confbools.bl_perfLoadTreeForSearch)}]checked[{/if}] [{ $readonly }]>
-                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADTREEFORSEARCH" }]
-             </td>
-             <td valign="top" class="conftext" width="100%">
-              [{ oxmultilang ident="SHOP_PERF_LOADTREEFORSEARCH" }]
-             </td>
-            </tr>
-
-            <tr>
-             <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfShowActionCatArticleCnt] value=false>
                 <input type=checkbox name=confbools[bl_perfShowActionCatArticleCnt] value=true  [{if ($confbools.bl_perfShowActionCatArticleCnt)}]checked[{/if}] [{ $readonly }]>
                 [{ oxinputhelp ident="HELP_SHOP_PERF_SHOWACTCATARTCOUNT" }]
              </td>
              <td valign="top" class="conftext" width="100%">
               [{ oxmultilang ident="SHOP_PERF_SHOWACTCATARTCOUNT" }]
-             </td>
-            </tr>
-
-            <tr>
-             <td valign="top" class="conftext">
-                <input type=hidden name=confbools[bl_perfLoadCatTree] value=false>
-                <input type=checkbox name=confbools[bl_perfLoadCatTree] value=true  [{if ($confbools.bl_perfLoadCatTree)}]checked[{/if}] [{ $readonly }]>
-                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADCATTREE" }]
-             </td>
-             <td valign="top" class="conftext" width="100%">
-              [{ oxmultilang ident="SHOP_PERF_LOADCATTREE" }]
              </td>
             </tr>
 

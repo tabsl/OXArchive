@@ -1,3 +1,4 @@
+[{oxscript add="$('a.js-external').attr('target', '_blank');"}]
 [{capture append="oxidBlock_content"}]
 [{assign var="search_title" value="PAGE_SEARCH_SEARCH_TITLE"|oxmultilangassign}]
 [{assign var="searchparamforhtml" value=$oView->getSearchParamForHtml() }]
@@ -6,8 +7,8 @@
 [{assign var="search_head" value=$oView->getArticleCount()|cat:" "|cat:$search_head|cat:" &quot;"|cat:$oView->getSearchParamForHtml()|cat:"&quot;"}]
 [{assign var='rsslinks' value=$oView->getRssLinks() }]
 [{if $rsslinks.searchArticles}]
-    [{assign var="imgUrl" value=$oViewConf->getImageUrl()|cat:"rss.png"}]
-        [{assign var="search_head" value="`$search_head` <a class=\"rss external\" id=\"rssSearchProducts\" href=\"`$rsslinks.searchArticles.link`\" title=\"`$rsslinks.searchArticles.title`\"><img src=\"$imgUrl\" alt=\"`$rsslinks.searchArticles.title`\"><span class=\"FXgradOrange corners glowShadow\">`$rsslinks.searchArticles.title`</span></a>"}]
+    [{assign var="imgUrl" value=$oViewConf->getImageUrl('rss.png')}]
+        [{assign var="search_head" value="`$search_head` <a class=\"rss js-external\" id=\"rssSearchProducts\" href=\"`$rsslinks.searchArticles.link`\" title=\"`$rsslinks.searchArticles.title`\"><img src=\"$imgUrl\" alt=\"`$rsslinks.searchArticles.title`\"><span class=\"FXgradOrange corners glowShadow\">`$rsslinks.searchArticles.title`</span></a>"}]
 [{/if}]
 
   <h1 class="pageHead">[{$search_head}]</h1>
@@ -19,11 +20,11 @@
         [{/block}]
     </div>
   [{else}]
-    <div class="msg">[{ oxmultilang ident="PAGE_SEARCH_SEARCH_NOITEMSFOUND" }]</div>
+    <div>[{ oxmultilang ident="PAGE_SEARCH_SEARCH_NOITEMSFOUND" }]</div>
   [{/if}]
   [{if $oView->getArticleList() }]
     [{foreach from=$oView->getArticleList() name=search item=product}]
-      [{include file="widget/product/list.tpl" type=$oView->getListDisplayType() listId="searchList" products=$oView->getArticleList() }]
+      [{include file="widget/product/list.tpl" type=$oView->getListDisplayType() listId="searchList" products=$oView->getArticleList() showMainLink=true }]
     [{/foreach}]
   [{/if}]
   [{if $oView->getArticleCount() }]

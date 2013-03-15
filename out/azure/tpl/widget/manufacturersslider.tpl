@@ -13,15 +13,19 @@
     [{/foreach}]
 [{/capture}]
 [{if $slideCount > 6 }]
-    [{oxscript include="js/jquery.jcarousellite.js"}]
+    [{oxscript include="js/libs/jcarousellite.js"}]
+    [{oxscript include="js/widgets/oxmanufacturerslider.js" priority=10 }]
     [{oxscript add="$( '#manufacturerSlider' ).oxManufacturerSlider();"}]
     <div class="itemSlider">
-        <a class="prevItem slideNav" href="#" rel="nofollow"><strong>[{ oxmultilang ident="WIDGET_MANUFACTURERS_SLIDER_OURBRANDS" }]</strong><span>&laquo;</span></a>
-        <a class="nextItem slideNav" href="#" rel="nofollow"><span>&raquo;</span></a>
+        <div class="leftHolder">            
+            <div class="titleBlock slideNav"><strong>[{ oxmultilang ident="WIDGET_MANUFACTURERS_SLIDER_OURBRANDS" }]</strong></div>
+            <a class="prevItem slideNav" href="#" rel="nofollow"><span class="slidePointer">&laquo;</span><span class="slideBg"></span></a>
+        </div>
+        <a class="nextItem slideNav" href="#" rel="nofollow"><span class="slidePointer">&raquo;</span><span class="slideBg"></span></a>
         <div id="manufacturerSlider">
             <ul>
                 [{$smarty.capture.slides}]
             </ul>
         </div>
-    </div>
+    </div>  
 [{/if}]

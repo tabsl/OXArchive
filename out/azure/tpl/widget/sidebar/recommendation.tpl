@@ -1,3 +1,4 @@
+[{oxscript add="$('a.js-external').attr('target', '_blank');"}]
 [{assign var="_oRecommendationList" value=$oView->getSimilarRecommLists()}]
 
 [{ if $_oRecommendationList || $oView->getRecommSearch() }]
@@ -5,8 +6,8 @@
     <h3>[{ oxmultilang ident="WIDGET_RECOMMENDATIONLIST_HEADER" }]
     [{assign var='rsslinks' value=$oView->getRssLinks() }]
     [{if $rsslinks.recommlists}]
-        <a class="rss external" id="rssRecommLists" href="[{$rsslinks.recommlists.link}]" title="[{$rsslinks.recommlists.title}]">
-            <img src="[{$oViewConf->getImageUrl()}]rss.png" alt="[{$rsslinks.recommlists.title}]"><span class="FXgradOrange corners glowShadow">[{$rsslinks.recommlists.title}]</span>
+        <a class="rss js-external" id="rssRecommLists" href="[{$rsslinks.recommlists.link}]" title="[{$rsslinks.recommlists.title}]">
+            <img src="[{$oViewConf->getImageUrl('rss.png')}]" alt="[{$rsslinks.recommlists.title}]"><span class="FXgradOrange corners glowShadow">[{$rsslinks.recommlists.title}]</span>
         </a>
     [{/if}]
     </h3>
@@ -35,12 +36,12 @@
         [{/if}]
             [{ if $_oRecommendationList || $oView->getRecommSearch() }]
             <li>
-                <form name="basket" class="recommendationsSearchForm" action="[{ $oViewConf->getSelfActionLink() }]" method="post" class="recommlistsearch">
+                <form name="basket" class="recommendationsSearchForm" action="[{ $oViewConf->getSelfActionLink() }]" method="post">
                     <div>
                         <input type="hidden" name="cl" value="recommlist">
                         [{ $oViewConf->getHiddenSid() }]
                     </div>
-                    <label class="onTop">[{ oxmultilang ident="WIDGET_RECOMMENDATIONLIST_SEARCHFORLISTS" }]</label>
+                    <label>[{ oxmultilang ident="WIDGET_RECOMMENDATIONLIST_SEARCHFORLISTS" }]</label>
                     <input type="text" name="searchrecomm" id="searchRecomm" value="[{$oView->getRecommSearch()}]" class="searchInput">
                     <button class="submitButton largeButton" type="submit">[{ oxmultilang ident="WIDGET_RECOMMENDATIONLIST_SEARCHBUTTON" }]</button>
                 </form>

@@ -186,7 +186,7 @@ function editThis( sID )
                 </td>
                 <td class="text">
                     [{assign var="sIconFile" value=$edit->getPictureFieldValue("oxicon")}]
-                    [{if "nopic_ico.jpg" == $sIconFile || "" == $sIconFile }]
+                    [{if "nopic_ico.jpg" == $sIconFile || "nopic.jpg" == $sIconFile || "" == $sIconFile }]
                     -------
                     [{else}]
                     [{assign var="blIcoUplodaded" value=true}]

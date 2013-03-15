@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxprice.php 28590 2010-06-23 11:03:50Z alfonsas $
+ * @version   SVN: $Id: oxprice.php 35010 2011-04-28 12:05:24Z sarunas $
  */
 
 /**
@@ -113,10 +113,12 @@ class oxPrice extends oxSuperCfg
      * if bruttoMode then BruttoPrice =(BruttoPrice - oldVAT% ) + newVat;
      * oldVAT = newVat;
      * finally recalculate;
-     * USE ONLY TO CHANGE BASE VAT (in case then local VAT differs from use VAT),
-     * USE setVAT in usual case !!!
+     * USE ONLY TO CHANGE BASE VAT (in case when local VAT differs from user VAT),
+     * USE setVat() in usual case !!!
      *
      * @param double $newVat vat percent
+     *
+     * @see setVat()
      *
      * @return null
      */
@@ -354,8 +356,7 @@ class oxPrice extends oxSuperCfg
     }
 
     /**
-     * Converts Brutto price to Netto
-     * using formula:
+     * Converts Brutto price to Netto using formula:
      * X + $dVat% = $dBrutto
      * X/100 = $dBrutto/(100+$dVAT)
      * X= ($dBrutto/(100+$dVAT))/100
@@ -374,7 +375,6 @@ class oxPrice extends oxSuperCfg
             return 0;
         }
 
-        $dBrutto = oxUtils::getInstance()->fRound($dBrutto);
         return (double) ((double) $dBrutto*100.0)/(100.0 + (double) $dVat);
 
         // Old (alternative) formulas
@@ -384,9 +384,8 @@ class oxPrice extends oxSuperCfg
     }
 
     /**
-     * Converts Netto price to Brotto
-     * using formula:
-     * X = $dBrutto + $dVat%
+     * Converts Netto price to Brutto using formula:
+     * X = $dNetto + $dVat%
      * returns X
      *
      * @param double $dNetto netto price
@@ -396,7 +395,6 @@ class oxPrice extends oxSuperCfg
      */
     public static function netto2Brutto($dNetto, $dVat)
     {
-        $dNetto = oxUtils::getInstance()->fRound($dNetto);
         return (double) $dNetto + self::percent($dNetto, $dVat);
     }
 
@@ -413,12 +411,13 @@ class oxPrice extends oxSuperCfg
             // rounding base price in netto mode
             $this->_dNetto  = oxUtils::getInstance()->fRound( $this->_dNetto );
             $this->_dBrutto = self::netto2Brutto($this->_dNetto, $this->_dVat);
+
+            // rounding brutto price value after each operation
+            $this->_dBrutto = oxUtils::getInstance()->fRound( $this->_dBrutto );
         } else {
+            $this->_dBrutto = oxUtils::getInstance()->fRound( $this->_dBrutto );
             $this->_dNetto  = self::brutto2Netto($this->_dBrutto, $this->_dVat);
         }
-
-        // rounding brutto price value after each operation
-        $this->_dBrutto = oxUtils::getInstance()->fRound( $this->_dBrutto );
     }
 
     /**

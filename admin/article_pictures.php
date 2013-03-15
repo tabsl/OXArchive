@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_pictures.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: article_pictures.php 37103 2011-07-15 14:27:06Z arvydas.vapsva $
  */
 
 /**
@@ -82,22 +82,12 @@ class Article_Pictures extends oxAdminDetails
         }
 
 
-        $soxId = $this->getEditObjectId();
-        $aParams = oxConfig::getParameter( "editval");
-
         $oArticle = oxNew( "oxarticle");
-        $oArticle->load( $soxId );
-
-        // deleting master and all related images
-        $aIndexes = $this->_getUploadedMasterPicIndexes();
-        foreach ( $aIndexes as $iIndex ) {
-            $this->_resetMasterPicture( $oArticle, $iIndex, true );
+        if ( $oArticle->load( $this->getEditObjectId() ) ) {
+            $oArticle->assign( oxConfig::getParameter( "editval") );
+            oxUtilsFile::getInstance()->processFiles( $oArticle );
+            $oArticle->save();
         }
-
-        $oArticle->assign( $aParams );
-        $oArticle = oxUtilsFile::getInstance()->processFiles( $oArticle );
-        $oArticle->oxarticles__oxpicsgenerated = new oxField( 0 );
-        $oArticle->save();
     }
 
     /**
@@ -224,6 +214,8 @@ class Article_Pictures extends oxAdminDetails
     /**
      * Returns uploaded master image indexes
      *
+     * @deprecated not used since 20110506
+     *
      * @return array
      */
     protected function _getUploadedMasterPicIndexes()
@@ -260,7 +252,7 @@ class Article_Pictures extends oxAdminDetails
         $sIcon  = $oArticle->oxarticles__oxicon->value;
         $sThumb = $oArticle->oxarticles__oxthumb->value;
 
-        if ( $sIcon == "nopic_ico.jpg" ) {
+        if ( $sIcon == "nopic.jpg" ) {
             $oArticle->oxarticles__oxicon = new oxField();
         }
 

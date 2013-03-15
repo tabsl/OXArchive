@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvendor.php 32881 2011-02-03 11:45:36Z sarunas $
+ * @version   SVN: $Id: oxvendor.php 37101 2011-07-15 14:26:31Z arvydas.vapsva $
  */
 
 /**
@@ -95,6 +95,8 @@ class oxVendor extends oxI18n implements oxIUrl
      * Extra getter to guarantee compatibility with templates
      *
      * @param string $sName name of variable to return
+     *
+     * @deprecated since 2011.05.25, must be used related getters instead
      *
      * @return mixed
      */
@@ -352,8 +354,8 @@ class oxVendor extends oxI18n implements oxIUrl
      */
     public function delete( $sOXID = null)
     {
-        if (parent::delete($sOXID)) {
-            oxSeoEncoderVendor::getInstance()->onDeleteVendor($this);
+        if ( parent::delete( $sOXID ) ) {
+            oxSeoEncoderVendor::getInstance()->onDeleteVendor( $this );
             return true;
         }
         return false;
@@ -367,8 +369,14 @@ class oxVendor extends oxI18n implements oxIUrl
      */
     public function getIconUrl()
     {
-        if ( $this->oxvendor__oxicon->value ) {
-           return $this->getConfig()->getIconUrl( 'icon/' . $this->oxvendor__oxicon->value );
+        if ( ( $sIcon = $this->oxvendor__oxicon->value ) ) {
+            $oConfig = $this->getConfig();
+            $sSize = $oConfig->getConfigParam( 'sManufacturerIconsize' );
+            if ( !isset( $sSize ) ) {
+                $sSize = $oConfig->getConfigParam( 'sIconsize' );
+            }
+
+            return oxPictureHandler::getInstance()->getPicUrl( "vendor/icon/", $sIcon, $sSize );
         }
     }
 

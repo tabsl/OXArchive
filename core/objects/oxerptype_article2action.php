@@ -19,18 +19,18 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype_article2action.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: oxerptype_article2action.php 35102 2011-05-04 08:20:01Z rimvydas.paskevicius $
  */
 
 require_once 'oxerptype.php';
 
 /**
- * ERP article2action description class
+ * Article2Action type subclass
  */
 class oxERPType_Article2Action extends oxERPType
 {
     /**
-     * Class constructor
+     * class constructor
      *
      * @return null
      */
@@ -40,21 +40,6 @@ class oxERPType_Article2Action extends oxERPType
 
         $this->_sTableName = 'oxactions2article';
         $this->_blRestrictedByShopId = true;
-
-
-        $this->_aFieldList = array(
-            'OXSHOPID'       => 'OXSHOPID',
-            'OXACTIONID'     => 'OXACTIONID',
-            'OXARTID'        => 'OXARTID',
-            'OXSORT'         => 'OXSORT',
-            'OXID'           => 'OXID'
-        );
-
-        $this->_aKeyFieldList = array(
-            'OXACTIONID' => 'OXACTIONID',
-            'OXARTID'    => 'OXARTID',
-            'OXSHOPID'   => 'OXSHOPID'
-        );
     }
 
 }

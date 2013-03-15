@@ -1,10 +1,10 @@
 [{if $oView->showSearch() }]
     <strong class="h2 search">[{ oxmultilang ident="INC_LEFTITEM_PRODUCTSEARCH" }]</strong>
-    <form action="[{ $oViewConf->getSelfActionLink() }]" method="get" class="search" id="f.search">
+    <form action="[{ $oViewConf->getSelfActionLink() }]" method="get" name="search" class="search" id="f.search">
         <p>
             [{ $oViewConf->getHiddenSid() }]
             <input type="hidden" name="cl" value="search">
-            <input type="text" name="searchparam" value="[{$oView->getSearchParamForHtml()}]" size="21" id="f.search.param" name="search" class="txt">
+            <input type="text" name="searchparam" value="[{$oView->getSearchParamForHtml()}]" size="21" id="f.search.param" class="txt">
 
             [{if $oView->getSearchCatTree() }]
             <select id="test_searchCategorySelect" class="search_input" name="searchcnid" [{if $oViewConf->isAutoSearchOnCat() }]onchange="oxid.search('f.search','f.search.param');"[{/if}]>

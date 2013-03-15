@@ -180,7 +180,7 @@
 
     [{oxhasrights ident="SHOWARTICLEPRICE"}]
         <div class="cost">
-            [{if $product->getFTPrice() }]
+            [{if $product->getFTPrice() > $product->getFPrice()}]
                 <b class="old">[{ oxmultilang ident="DETAILS_REDUCEDFROM" }] <del>[{ $product->getFTPrice()}] [{ $currency->sign}]</del></b>
                 <span class="desc">[{ oxmultilang ident="DETAILS_REDUCEDTEXT" }]</span><br>
                 <sub class="only">[{ oxmultilang ident="DETAILS_NOWONLY" }]</sub>

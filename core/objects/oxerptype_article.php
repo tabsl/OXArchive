@@ -19,361 +19,181 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype_article.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxerptype_article.php 35102 2011-05-04 08:20:01Z rimvydas.paskevicius $
  */
+
 
 require_once 'oxerptype.php';
 
+$sArticleClass = oxUtilsObject::getInstance()->getClassName('oxarticle');
+
+
+eval("class oxErpArticle450_parent extends $sArticleClass {};");
+
 /**
- * ERP article description class
+ * article class, used inside erp for 4.5.0 eShop version
+ * hotfixe for article long description saving (bug#0002741)
  */
-class oxERPType_Article extends oxERPType
+class oxErpArticle450 extends oxErpArticle450_parent
 {
     /**
-     * object fields description
-     * @var array
-     */
-    protected $_aFieldListVersions = array (
-        '1' => array(
-            'OXSHOPID'         => 'OXSHOPID',
-            'OXSHOPINCL'       => 'OXSHOPINCL',
-            'OXSHOPEXCL'       => 'OXSHOPEXCL',
-            'OXPARENTID'       => 'OXPARENTID',
-            'OXACTIV'          => 'OXACTIV',
-            'OXACTIVFROM'      => 'OXACTIVFROM',
-            'OXACTIVTO'        => 'OXACTIVTO',
-            'OXARTNUM'         => 'OXARTNUM',
-            'OXEAN'            => 'OXEAN',
-            'OXDISTEAN'        => 'OXDISTEAN',
-            'OXMPN'            => 'OXMPN',
-            'OXTITLE'          => 'OXTITLE',
-            'OXSHORTDESC'      => 'OXSHORTDESC',
-            'OXLONGDESC'       => 'OXLONGDESC',
-            'OXPRICE'          => 'OXPRICE',
-            'OXBLFIXEDPRICE'   => 'OXBLFIXEDPRICE',
-            'OXPRICEA'         => 'OXPRICEA',
-            'OXPRICEB'         => 'OXPRICEB',
-            'OXPRICEC'         => 'OXPRICEC',
-            'OXBPRICE'         => 'OXBPRICE',
-            'OXTPRICE'         => 'OXTPRICE',
-            'OXUNITNAME'       => 'OXUNITNAME',
-            'OXUNITQUANTITY'   => 'OXUNITQUANTITY',
-            'OXEXTURL'         => 'OXEXTURL',
-            'OXURLDESC'        => 'OXURLDESC',
-            'OXURLIMG'         => 'OXURLIMG',
-            'OXVAT'            => 'OXVAT',
-            'OXTHUMB'          => 'OXTHUMB',
-            'OXICON'         => 'OXICON',
-            'OXPIC1'         => 'OXPIC1',
-            'OXPIC2'         => 'OXPIC2',
-            'OXPIC3'         => 'OXPIC3',
-            'OXPIC4'         => 'OXPIC4',
-            'OXPIC5'         => 'OXPIC5',
-            'OXPIC6'         => 'OXPIC6',
-            'OXPIC7'         => 'OXPIC7',
-            'OXPIC8'         => 'OXPIC8',
-            'OXPIC9'         => 'OXPIC9',
-            'OXPIC10'         => 'OXPIC10',
-            'OXPIC11'         => 'OXPIC11',
-            'OXPIC12'         => 'OXPIC12',
-            'OXZOOM1'         => 'OXZOOM1',
-            'OXZOOM2'         => 'OXZOOM2',
-            'OXZOOM3'         => 'OXZOOM3',
-            'OXZOOM4'         => 'OXZOOM4',
-            'OXWEIGHT'        => 'OXWEIGHT',
-            'OXSTOCK'         => 'OXSTOCK',
-            'OXSTOCKFLAG'     => 'OXSTOCKFLAG',
-            'OXSTOCKTEXT'     => 'OXSTOCKTEXT',
-            'OXNOSTOCKTEXT'   => 'OXNOSTOCKTEXT',
-            'OXDELIVERY'     => 'OXDELIVERY',
-            'OXINSERT'       => 'OXINSERT', //always now()
-            'OXTIMESTAMP'    => 'OXTIMESTAMP',
-            'OXLENGTH'       => 'OXLENGTH',
-            'OXWIDTH'        => 'OXWIDTH',
-            'OXHEIGHT'       => 'OXHEIGHT',
-            'OXAKTION'       => 'OXAKTION',
-            'OXFILE'         => 'OXFILE',
-            'OXSEARCHKEYS'   => 'OXSEARCHKEYS',
-            'OXTEMPLATE'     => 'OXTEMPLATE',
-            'OXQUESTIONEMAIL'=> 'OXQUESTIONEMAIL',
-            'OXISSEARCH'     => 'OXISSEARCH',
-            'OXVARNAME'      => 'OXVARNAME',
-            'OXVARSTOCK'     => 'OXVARSTOCK',
-            'OXVARCOUNT'     => 'OXVARCOUNT',
-            'OXVARSELECT'    => 'OXVARSELECT',
-            'OXVARNAME_1'    => 'OXVARNAME_1',
-            'OXVARSELECT_1'  => 'OXVARSELECT_1',
-            'OXVARNAME_2'   =>'OXVARNAME_2',
-            'OXVARSELECT_2' =>'OXVARSELECT_2',
-            'OXVARNAME_3'   =>'OXVARNAME_3',
-            'OXVARSELECT_3' =>'OXVARSELECT_3',
-            'OXTITLE_1'     =>'OXTITLE_1',
-            'OXSHORTDESC_1' =>'OXSHORTDESC_1',
-            'OXLONGDESC_1'  =>'OXLONGDESC_1',
-            'OXURLDESC_1'   =>'OXURLDESC_1',
-            'OXSEARCHKEYS_1'=>'OXSEARCHKEYS_1',
-            'OXTITLE_2'     =>'OXTITLE_2',
-            'OXSHORTDESC_2' =>'OXSHORTDESC_2',
-            'OXLONGDESC_2'  =>'OXLONGDESC_2',
-            'OXURLDESC_2'   =>'OXURLDESC_2',
-            'OXSEARCHKEYS_2'=>'OXSEARCHKEYS_2',
-            'OXTITLE_3'     =>'OXTITLE_3',
-            'OXSHORTDESC_3' =>'OXSHORTDESC_3',
-            'OXLONGDESC_3'  =>'OXLONGDESC_3',
-            'OXURLDESC_3'   =>'OXURLDESC_3',
-            'OXSEARCHKEYS_3'=>'OXSEARCHKEYS_3',
-            'OXFOLDER'      =>'OXFOLDER',
-            'OXSUBCLASS'    =>'OXSUBCLASS',
-            'OXSTOCKTEXT_1' =>'OXSTOCKTEXT_1',
-            'OXSTOCKTEXT_2' =>'OXSTOCKTEXT_2',
-            'OXSTOCKTEXT_3' =>'OXSTOCKTEXT_3',
-            'OXNOSTOCKTEXT_1'=>'OXNOSTOCKTEXT_1',
-            'OXNOSTOCKTEXT_2'=>'OXNOSTOCKTEXT_2',
-            'OXNOSTOCKTEXT_3'=>'OXNOSTOCKTEXT_3',
-            'OXSORT'         => 'OXSORT',
-            'OXSOLDAMOUNT'   => 'OXSOLDAMOUNT',
-            'OXNONMATERIAL'  => 'OXNONMATERIAL',
-            'OXFREESHIPPING' => 'OXFREESHIPPING',
-            'OXREMINDACTIV'  => 'OXREMINDACTIV',
-            'OXREMINDAMOUNT' => 'OXREMINDAMOUNT',
-            'OXAMITEMID'    =>'OXAMITEMID',
-            'OXAMTASKID'    =>'OXAMTASKID',
-            'OXVENDORID'    =>'OXVENDORID',
-            'OXSKIPDISCOUNTS'=> 'OXSKIPDISCOUNTS',
-            'OXORDERINFO'   =>'OXORDERINFO',
-            'OXSEOID'       =>'OXSEOID',
-            'OXSEOID_1'     =>'OXSEOID_1',
-            'OXSEOID_2'     =>'OXSEOID_2',
-            'OXSEOID_3'     =>'OXSEOID_3',
-            'OXPIXIEXPORT'   => 'OXPIXIEXPORT',
-            'OXPIXIEXPORTED' => 'OXPIXIEXPORTED',
-            'OXVPE'          => 'OXVPE',
-            'OXID'           => 'OXID',
-        ),
-        '2' => array(
-            'OXID' => 'OXID',
-            'OXSHOPID' => 'OXSHOPID',
-            'OXSHOPINCL' => 'OXSHOPINCL',
-            'OXSHOPEXCL' => 'OXSHOPEXCL',
-            'OXPARENTID' => 'OXPARENTID',
-            'OXACTIVE' => 'OXACTIVE',
-            'OXACTIVEFROM' => 'OXACTIVEFROM',
-            'OXACTIVETO' => 'OXACTIVETO',
-            'OXARTNUM' => 'OXARTNUM',
-            'OXEAN' => 'OXEAN',
-            'OXDISTEAN' => 'OXDISTEAN',
-            'OXMPN' => 'OXMPN',
-            'OXTITLE' => 'OXTITLE',
-            'OXSHORTDESC' => 'OXSHORTDESC',
-            'OXPRICE' => 'OXPRICE',
-            'OXBLFIXEDPRICE' => 'OXBLFIXEDPRICE',
-            'OXPRICEA' => 'OXPRICEA',
-            'OXPRICEB' => 'OXPRICEB',
-            'OXPRICEC' => 'OXPRICEC',
-            'OXBPRICE' => 'OXBPRICE',
-            'OXTPRICE' => 'OXTPRICE',
-            'OXUNITNAME' => 'OXUNITNAME',
-            'OXUNITQUANTITY' => 'OXUNITQUANTITY',
-            'OXEXTURL' => 'OXEXTURL',
-            'OXURLDESC' => 'OXURLDESC',
-            'OXURLIMG' => 'OXURLIMG',
-            'OXVAT' => 'OXVAT',
-            'OXTHUMB' => 'OXTHUMB',
-            'OXICON' => 'OXICON',
-            'OXPIC1' => 'OXPIC1',
-            'OXPIC2' => 'OXPIC2',
-            'OXPIC3' => 'OXPIC3',
-            'OXPIC4' => 'OXPIC4',
-            'OXPIC5' => 'OXPIC5',
-            'OXPIC6' => 'OXPIC6',
-            'OXPIC7' => 'OXPIC7',
-            'OXPIC8' => 'OXPIC8',
-            'OXPIC9' => 'OXPIC9',
-            'OXPIC10' => 'OXPIC10',
-            'OXPIC11' => 'OXPIC11',
-            'OXPIC12' => 'OXPIC12',
-            'OXZOOM1' => 'OXZOOM1',
-            'OXZOOM2' => 'OXZOOM2',
-            'OXZOOM3' => 'OXZOOM3',
-            'OXZOOM4' => 'OXZOOM4',
-            'OXWEIGHT' => 'OXWEIGHT',
-            'OXSTOCK' => 'OXSTOCK',
-            'OXSTOCKFLAG' => 'OXSTOCKFLAG',
-            'OXSTOCKTEXT' => 'OXSTOCKTEXT',
-            'OXNOSTOCKTEXT' => 'OXNOSTOCKTEXT',
-            'OXDELIVERY' => 'OXDELIVERY',
-            'OXINSERT' => 'OXINSERT',
-            'OXTIMESTAMP' => 'OXTIMESTAMP',
-            'OXLENGTH' => 'OXLENGTH',
-            'OXWIDTH' => 'OXWIDTH',
-            'OXHEIGHT' => 'OXHEIGHT',
-            'OXFILE' => 'OXFILE',
-            'OXSEARCHKEYS' => 'OXSEARCHKEYS',
-            'OXTEMPLATE' => 'OXTEMPLATE',
-            'OXQUESTIONEMAIL' => 'OXQUESTIONEMAIL',
-            'OXISSEARCH' => 'OXISSEARCH',
-            'OXVARNAME' => 'OXVARNAME',
-            'OXVARSTOCK' => 'OXVARSTOCK',
-            'OXVARCOUNT' => 'OXVARCOUNT',
-            'OXVARSELECT' => 'OXVARSELECT',
-            'OXVARMINPRICE' => 'OXVARMINPRICE',
-            'OXVARNAME_1' => 'OXVARNAME_1',
-            'OXVARSELECT_1' => 'OXVARSELECT_1',
-            'OXVARNAME_2' => 'OXVARNAME_2',
-            'OXVARSELECT_2' => 'OXVARSELECT_2',
-            'OXVARNAME_3' => 'OXVARNAME_3',
-            'OXVARSELECT_3' => 'OXVARSELECT_3',
-            'OXTITLE_1' => 'OXTITLE_1',
-            'OXSHORTDESC_1' => 'OXSHORTDESC_1',
-            'OXURLDESC_1' => 'OXURLDESC_1',
-            'OXSEARCHKEYS_1' => 'OXSEARCHKEYS_1',
-            'OXTITLE_2' => 'OXTITLE_2',
-            'OXSHORTDESC_2' => 'OXSHORTDESC_2',
-            'OXURLDESC_2' => 'OXURLDESC_2',
-            'OXSEARCHKEYS_2' => 'OXSEARCHKEYS_2',
-            'OXTITLE_3' => 'OXTITLE_3',
-            'OXSHORTDESC_3' => 'OXSHORTDESC_3',
-            'OXURLDESC_3' => 'OXURLDESC_3',
-            'OXSEARCHKEYS_3' => 'OXSEARCHKEYS_3',
-            'OXFOLDER' => 'OXFOLDER',
-            'OXSUBCLASS' => 'OXSUBCLASS',
-            'OXSTOCKTEXT_1' => 'OXSTOCKTEXT_1',
-            'OXSTOCKTEXT_2' => 'OXSTOCKTEXT_2',
-            'OXSTOCKTEXT_3' => 'OXSTOCKTEXT_3',
-            'OXNOSTOCKTEXT_1' => 'OXNOSTOCKTEXT_1',
-            'OXNOSTOCKTEXT_2' => 'OXNOSTOCKTEXT_2',
-            'OXNOSTOCKTEXT_3' => 'OXNOSTOCKTEXT_3',
-            'OXSORT' => 'OXSORT',
-            'OXSOLDAMOUNT' => 'OXSOLDAMOUNT',
-            'OXNONMATERIAL' => 'OXNONMATERIAL',
-            'OXFREESHIPPING' => 'OXFREESHIPPING',
-            'OXREMINDACTIVE' => 'OXREMINDACTIVE',
-            'OXREMINDAMOUNT' => 'OXREMINDAMOUNT',
-            'OXAMITEMID' => 'OXAMITEMID',
-            'OXAMTASKID' => 'OXAMTASKID',
-            'OXVENDORID' => 'OXVENDORID',
-            'OXSKIPDISCOUNTS' => 'OXSKIPDISCOUNTS',
-            'OXORDERINFO' => 'OXORDERINFO',
-            'OXPIXIEXPORT' => 'OXPIXIEXPORT',
-            'OXPIXIEXPORTED' => 'OXPIXIEXPORTED',
-            'OXVPE' => 'OXVPE',
-            'OXRATING' => 'OXRATING',
-            'OXRATINGCNT' => 'OXRATINGCNT',
-            'OXLONGDESC'       => 'OXLONGDESC',
-            'OXLONGDESC_1'     => 'OXLONGDESC_1',
-            'OXLONGDESC_2'     => 'OXLONGDESC_2',
-            'OXLONGDESC_3'     => 'OXLONGDESC_3',
-            'OXBUNDLEID'       => 'OXBUNDLEID',
-            'OXMANUFACTURERID' => 'OXMANUFACTURERID',
-        ),
-    );
-
-    /**
-     * Class constructor
+     * Sets article parameter
+     *
+     * @param string $sName  name of parameter to set
+     * @param mixed  $sValue parameter value
      *
      * @return null
      */
-    public function __construct()
+    public function __set($sName, $sValue) 
     {
-
-        parent::__construct();
-
-        $this->_sTableName      = 'oxarticles';
-        $this->_sShopObjectName = 'oxarticle';
-
+        if (strpos($sName, 'oxarticles__oxlongdesc') === 0) {
+            if ($this->_blEmployMultilanguage) {
+                return parent::__set($sName, $sValue);
+            }
+            $this->$sName = $sValue;
+        } else {
+            parent::__set($sName, $sValue);
+        }
     }
 
     /**
-     * return sql column name of given table column
+     * inserts article long description to artextends table
      *
-     * @param string $sField    object field anme
-     * @param int    $iLanguage language id
-     * @param int    $iShopID   shop id
-     *
-     * @return string
+     * @return null
      */
-    protected function getSqlFieldName($sField, $iLanguage = 0, $iShopID = 1)
+    protected function _saveArtLongDesc() 
     {
-        switch ($sField) {
-            // oxlongdesc is valid in all versions
-            case 'OXLONGDESC':
-            case 'OXLONGDESC_1':
-            case 'OXLONGDESC_2':
-            case 'OXLONGDESC_3':
-                // take from oxartextends
-                return "(select $sField from oxartextends where ".$this->getTableName($iShopID).".oxid = oxartextends.oxid limit 1) as $sField";
-                break;
+        if ($this->_blEmployMultilanguage) {
+            return parent::_saveArtLongDesc();
         }
 
-        if ('1' == oxERPBase::getUsedDbFieldsVersion()) {
-            switch ($sField) {
-                case 'OXAKTION':
-                case 'OXSEOID':
-                case 'OXSEOID_1':
-                case 'OXSEOID_2':
-                case 'OXSEOID_3':
-                    return "'' as $sField";
-                    break;
-                case 'OXACTIV':
-                    return "OXACTIVE as OXACTIV";
-                    break;
-                case 'OXACTIVFROM':
-                    return "OXACTIVEFROM as OXACTIVFROM";
-                    break;
-                case 'OXACTIVTO':
-                    return "OXACTIVETO as OXACTIVTO";
-                    break;
-            }
+
+        $oArtExt = oxNew('oxi18n');
+        $oArtExt->setEnableMultilang(false);
+        $oArtExt->init('oxartextends');
+        $aObjFields = $oArtExt->_getAllFields(true);
+        if (!$oArtExt->load($this->getId())) {
+            $oArtExt->setId($this->getId());
         }
 
-        return parent::getSqlFieldName($sField, $iLanguage, $iShopID);
-    }
-
-    /**
-     * issued before saving an object. Includes fix for multilanguage article long description saving
-     *
-     * @param oxBase $oShopObject         shop object
-     * @param array  $aData               data used in assign
-     * @param bool   $blAllowCustomShopId if TRUE - custom shop id is allowed
-     *
-     * @return array
-     */
-    protected function _preAssignObject($oShopObject, $aData, $blAllowCustomShopId)
-    {
-        $oCompat = oxNew('OXERPCompatability');
-        if ( !$oCompat->isArticleNullLongDescComatable() ) {
-
-            $aLongDescriptionFields = array('OXLONGDESC_1', 'OXLONGDESC_2', 'OXLONGDESC_3');
-
-            foreach ( $aLongDescriptionFields as $iKey => $sField ) {
-                if ( in_array($sField, $this->_aFieldList ) ) {
-                    unset($aLongDescriptionFields[$iKey]);
-                }
-            }
-
-            if ( count($aLongDescriptionFields ) ) {
-                $oArtExt = oxNew('oxbase');
-                $oArtExt->init('oxartextends');
-
-                if ( $oArtExt->load($aData['OXID']) ) {
-                    foreach ($aLongDescriptionFields as $sField) {
-                        $sFieldName = $oArtExt->getCoreTableName()."__".strtolower( $sField );
-                        $sLongDesc  = null;
-
-                        if ($oArtExt->$sFieldName instanceof oxField) {
-                            $sLongDesc = $oArtExt->$sFieldName->getRawValue();
-                        } elseif (is_object($oArtExt->$sFieldName)) {
-                            $sLongDesc = $oArtExt->$sFieldName->value;
-                        }
-
-                        if ( isset($sLongDesc) ) {
-                            $aData[$sField] = $sLongDesc;
-                        }
+        foreach ($aObjFields as $sKey => $sValue) {
+            if (preg_match('/^oxlongdesc(_(\d{1,2}))?$/', $sKey)) {
+                $sField = $this->_getFieldLongName($sKey);
+                if (isset($this->$sField)) {
+                    $sLongDesc = null;
+                    if ($this->$sField instanceof oxField) {
+                        $sLongDesc = $this->$sField->getRawValue();
+                    } elseif (is_object($this->$sField)) {
+                        $sLongDesc = $this->$sField->value;
+                    }
+                    if (isset($sLongDesc)) {
+                        $sAEField = $oArtExt->_getFieldLongName($sKey);
+                        $oArtExt->$sAEField = new oxField($sLongDesc, oxField::T_RAW);
                     }
                 }
             }
         }
 
-        return parent::_preAssignObject($oShopObject, $aData, $blAllowCustomShopId);
+        $oArtExt->save();
     }
+
+}
+
+$sArticleClass = 'oxErpArticle450';
+
+eval("class oxErpArticle_parent extends $sArticleClass {};");
+
+
+
+/**
+ * article class, used inside erp
+ * includes variants loading disabling functionality
+ */
+class oxErpArticle extends oxErpArticle_parent
+{
+    /**
+     * disable variant loading
+     *
+     * @var bool
+     */
+    protected $_blLoadVariants = false;
+}
+
+
+/**
+ * article type subclass
+ */
+class oxERPType_Article extends oxERPType
+{
+    /**
+     * class constructor
+     *
+     * @return null
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->_sTableName      = 'oxarticles';
+        $this->_sShopObjectName = 'oxErpArticle';
+    }
+
+    /**
+     * issued before saving an object. can modify aData for saving
+     *
+     * @param oxBase $oShopObject         shop object
+     * @param array  $aData               data to prepare
+     * @param bool   $blAllowCustomShopId if allow custom shop id
+     *
+     * @return array
+     */
+    protected function _preAssignObject($oShopObject, $aData, $blAllowCustomShopId)
+    {
+        if (!isset($aData['OXSTOCKFLAG'])) {
+            if (!$aData['OXID'] || !$oShopObject->exists( $aData['OXID'] )) {
+                // default value is 1 according to eShop admin functionality
+                $aData['OXSTOCKFLAG'] = 1;
+            }
+        }
+
+        $aData = parent::_preAssignObject($oShopObject, $aData, $blAllowCustomShopId);
+
+        return $aData;
+    }
+
+    /**
+     * post saving hook. can finish transactions if needed or ajust related data
+     *
+     * @param oxBase $oShopObject shop object
+     * @param data   $aData       data to save
+     *
+     * @return mixed data to return
+     */
+    protected function _postSaveObject($oShopObject, $aData)
+    {
+        $sOXID = $oShopObject->getId();
+        
+        $oShopObject->onChange(null, $sOXID, $sOXID);
+
+        // returning ID on success
+        return $sOXID;
+    }
+
+    /**
+     * Basic access check for writing data. For oxarticle we allow super admin to change
+     * subshop oxarticle fields discribed in config option aMultishopArticleFields.
+     *
+     * @param oxBase $oObj  loaded shop object
+     * @param array  $aData fields to be written, null for default
+     *
+     * @throws Exception on now access
+     *
+     * @return null
+     */
+    public function checkWriteAccess($oObj, $aData = null)
+    {
+            return;
+
+    }
+
 }

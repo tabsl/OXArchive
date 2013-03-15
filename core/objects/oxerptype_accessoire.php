@@ -19,38 +19,27 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype_accessoire.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: oxerptype_accessoire.php 35102 2011-05-04 08:20:01Z rimvydas.paskevicius $
  */
+
 
 require_once 'oxerptype.php';
 
 /**
- * ERP accessoire description class
+ * Accessoire type subclass
  */
 class oxERPType_Accessoire extends oxERPType
 {
     /**
-     * Class constructor
+     * class constructor
      *
      * @return null
      */
     public function __construct()
     {
         parent::__construct();
-
+        
         $this->_sTableName = 'oxaccessoire2article';
-
-        $this->_aFieldList = array(
-            'OXOBJECTID'     => 'OXOBJECTID',
-            'OXARTICLENID'   => 'OXARTICLENID',
-            'OXSORT'         => 'OXSORT',
-            'OXID'           => 'OXID'
-        );
-
-        $this->_aKeyFieldList = array(
-            'OXARTICLENID' => 'OXARTICLENID',
-            'OXOBJECTID'   => 'OXOBJECTID'
-        );
     }
 
 }

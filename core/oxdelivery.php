@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdelivery.php 33244 2011-02-14 15:40:18Z sarunas $
+ * @version   SVN: $Id: oxdelivery.php 34908 2011-04-22 13:30:17Z linas.kukulskis $
  */
 
 /**
@@ -181,9 +181,21 @@ class oxDelivery extends oxI18n
     /**
      * Checks if delivery has assigned articles
      *
+     * @deprecated since 2011-04-22 (4.5.1) mistyping function name
+     * @see #hasArticles()
      * @return bool
      */
     public function hasArtices()
+    {
+        return ( bool ) count( $this->getArticles() );
+    }
+
+    /**
+     * Checks if delivery has assigned articles
+     *
+     * @return bool
+     */
+    public function hasArticles()
     {
         return ( bool ) count( $this->getArticles() );
     }
@@ -356,7 +368,7 @@ class oxDelivery extends oxI18n
     public function isForBasket( $oBasket )
     {
         // amount for conditional check
-        $blHasArticles   = $this->hasArtices();
+        $blHasArticles   = $this->hasArticles();
         $blHasCategories = $this->hasCategories();
         $blUse = true;
         $iAmount = 0;

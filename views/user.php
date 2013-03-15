@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: user.php 33900 2011-03-22 17:06:44Z vilma $
+ * @version   SVN: $Id: user.php 35529 2011-05-23 07:31:20Z arunas.paskevicius $
  */
 
 /**
@@ -174,8 +174,6 @@ class User extends oxUBase
             $this->_sOrderRemark = false;
             if ( $sOrderRemark = oxSession::getVar( 'ordrem' ) ) {
                 $this->_sOrderRemark = oxConfig::checkSpecialChars( $sOrderRemark );
-            } elseif ( $sOrderRemark = oxConfig::getParameter( 'order_remark' ) ) {
-                $this->_sOrderRemark = $sOrderRemark;
             }
         }
         return $this->_sOrderRemark;
@@ -267,6 +265,8 @@ class User extends oxUBase
         $aPath = array();
 
         $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_CHECKOUT_USER', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPath['link']  = $this->getLink();
+        
         $aPaths[] = $aPath;
 
         return $aPaths;

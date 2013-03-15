@@ -121,8 +121,10 @@ function editThis( sID )
                   [{ oxmultilang ident="ARTICLE_STOCK_REMINDACTIV" }]
                 </td>
                 <td class="edittext">
-                  <input type="checkbox" class="editinput" name="editval[oxarticles__oxremindactive]" value='[{if $edit->oxarticles__oxremindactive->value }][{ $edit->oxarticles__oxremindactive->value }][{else}]1[{/if}]' [{if $edit->oxarticles__oxremindactive->value }]checked[{/if}] [{ $readonly }]><input type="text" class="editinput" size="20" maxlength="[{$edit->oxarticles__oxremindamount->fldmax_length}]" name="editval[oxarticles__oxremindamount]" value="[{$edit->oxarticles__oxremindamount->value}]" [{ $readonly }]>
+                  <input type="checkbox" class="editinput" name="editval[oxarticles__oxremindactive]" value='[{if $edit->oxarticles__oxremindactive->value }][{ $edit->oxarticles__oxremindactive->value }][{else}]1[{/if}]' [{if $edit->oxarticles__oxremindactive->value }]checked[{/if}] [{ $readonly }] [{if $oxparentid }]readonly disabled[{/if}]>
                   [{ oxinputhelp ident="HELP_ARTICLE_STOCK_REMINDACTIV" }]
+                  <input type="text" class="editinput" size="20" maxlength="[{$edit->oxarticles__oxremindamount->fldmax_length}]" name="editval[oxarticles__oxremindamount]" value="[{$edit->oxarticles__oxremindamount->value}]" [{ $readonly }]>
+                  [{ oxinputhelp ident="HELP_ARTICLE_STOCK_REMINDAMAOUNT" }]
                 </td>
               </tr>
               <tr>

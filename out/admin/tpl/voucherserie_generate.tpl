@@ -32,7 +32,7 @@
             [{ oxmultilang ident="GENERAL_SUM" }]:
         </td>
         <td class="edittext">
-            <b>[{ $status.total }]</b>
+            <b>[{$status.total|default:"0"}]</b>
         </td>
     </tr>
     <tr>
@@ -40,7 +40,7 @@
             [{ oxmultilang ident="VOUCHERSERIE_MAIN_AVAILABLE" }]:
             </td>
             <td class="edittext">
-            <b>[{$status.available}]</b>
+            <b>[{$status.available|default:"0"}]</b>
         </td>
     </tr>
     <tr>
@@ -48,7 +48,7 @@
             [{ oxmultilang ident="VOUCHERSERIE_MAIN_USED" }]:
             </td>
             <td class="edittext">
-            <b>[{$status.used}]</b>
+            <b>[{$status.used|default:"0"}]</b>
         </td>
     </tr>
 [{/if}]

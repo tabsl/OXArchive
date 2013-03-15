@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxemail.php 33545 2011-02-25 13:17:37Z vilma $
+ * @version   SVN: $Id: oxemail.php 37142 2011-07-19 11:28:29Z arvydas.vapsva $
  */
 /**
  * Includes PHP mailer class.
@@ -377,7 +377,7 @@ class oxEmail extends PHPMailer
         $this->setCharSet();
 
         if ( $this->_getUseInlineImages() ) {
-            $this->_includeImages( $myConfig->getImageDir(), $myConfig->getImageUrl( isAdmin() ), $myConfig->getPictureUrl(null, false),
+            $this->_includeImages( $myConfig->getImageDir(), $myConfig->getImageUrl( false, false ), $myConfig->getPictureUrl(null, false),
                                    $myConfig->getImageDir(), $myConfig->getPictureDir(false));
         }
 
@@ -1023,6 +1023,7 @@ class oxEmail extends PHPMailer
         $oLang = oxLang::getInstance();
         $oSmarty = $this->_getSmarty();
         $this->setViewData( "order", $oOrder );
+        $this->setViewData( "shopTemplateDir", $myConfig->getTemplateDir(false) );
 
         //deprecated var
         $oUser = oxNew( 'oxuser' );
@@ -1040,9 +1041,11 @@ class oxEmail extends PHPMailer
         $oLang->setBaseLanguage( $iOrderLang );
 
         $oSmarty->security_settings['INCLUDE_ANY'] = true;
-
-        $this->setBody( $oSmarty->fetch( $myConfig->getTemplatePath( $this->_sSenedNowTemplate, false ) ) );
-        $this->setAltBody( $oSmarty->fetch( $myConfig->getTemplatePath( $this->_sSenedNowTemplatePlain, false ) ) );
+        // force non admin to get correct paths (tpl, img)
+        $myConfig->setAdminMode( false );
+        $this->setBody( $oSmarty->fetch( $this->_sSenedNowTemplate ) );
+        $this->setAltBody( $oSmarty->fetch( $this->_sSenedNowTemplatePlain ) );
+        $myConfig->setAdminMode( true );
         $oLang->setTplLanguage( $iOldTplLang );
         $oLang->setBaseLanguage( $iOldBaseLang );
         // set it back
@@ -1251,7 +1254,6 @@ class oxEmail extends PHPMailer
         $oArticle = oxNew( "oxarticle" );
         $oArticle->setSkipAbPrice( true );
         $oArticle->loadInLang( $iAlarmLang, $aParams['aid'] );
-
         $oLang = oxLang::getInstance();
 
         // create messages
@@ -1313,7 +1315,7 @@ class oxEmail extends PHPMailer
         $this->setSubject( $oShop->oxshops__oxname->value );
 
         if ( $sBody === null ) {
-            $sBody  = $oSmarty->fetch( $this->getConfig()->getTemplatePath( $this->_sPricealamrCustomerTemplate, true ) );
+            $sBody = $oSmarty->fetch( $this->_sPricealamrCustomerTemplate );
         }
 
         $this->setBody( $sBody );
@@ -1356,6 +1358,7 @@ class oxEmail extends PHPMailer
                 $aImageCache = array();
                 $myUtils = oxUtils::getInstance();
                 $myUtilsObject = oxUtilsObject::getInstance();
+                $oImgGenerator = oxNew( "oxDynImgGenerator" );
 
                 foreach ($matches as $aImage) {
 
@@ -1369,7 +1372,11 @@ class oxEmail extends PHPMailer
                         $sFileName = $oFileUtils->normalizeDir( $sAbsImageDir ) . str_replace( $sImageDirNoSSL, '', $image );
                     }
 
-                    if ($sFileName && @is_file($sFileName)) {
+                    if ( $sFileName && !@is_readable( $sFileName ) ) {
+                        $sFileName = $oImgGenerator->getImagePath( $sFileName );
+                    }
+
+                    if ( $sFileName ) {
                         $sCId = '';
                         if ( isset( $aImageCache[$sFileName] ) && $aImageCache[$sFileName] ) {
                             $sCId = $aImageCache[$sFileName];

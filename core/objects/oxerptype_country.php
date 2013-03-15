@@ -19,66 +19,18 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype_country.php 25542 2010-02-02 11:28:16Z alfonsas $
+ * @version   SVN: $Id: oxerptype_country.php 35102 2011-05-04 08:20:01Z rimvydas.paskevicius $
  */
 
 require_once 'oxerptype.php';
 
 /**
- * ERP country description class
+ * country erp type subclass
  */
 class oxERPType_Country extends oxERPType
 {
     /**
-     * object fields description
-     * @var array
-     */
-    protected $_aFieldListVersions = array(
-        '1' => array(
-            'OXID'           => 'OXID',
-            'OXACTIV'       => 'OXACTIV',
-            'OXTITLE'       => 'OXTITLE',
-            'OXISOALPHA2'   => 'OXISOALPHA2',
-            'OXISOALPHA3'   => 'OXISOALPHA3',
-            'OXUNNUM3'      => 'OXUNNUM3',
-            'OXORDER'       => 'OXORDER',
-            'OXSHORTDESC'   => 'OXSHORTDESC',
-            'OXLONGDESC'    => 'OXLONGDESC',
-            'OXTITLE_1'     => 'OXTITLE_1',
-            'OXTITLE_2'     => 'OXTITLE_2',
-            'OXTITLE_3'     => 'OXTITLE_3',
-            'OXSHORTDESC_1' => 'OXSHORTDESC_1',
-            'OXSHORTDESC_2' => 'OXSHORTDESC_2',
-            'OXSHORTDESC_3' => 'OXSHORTDESC_3',
-            'OXLONGDESC_1'  => 'OXLONGDESC_1',
-            'OXLONGDESC_2'  => 'OXLONGDESC_2',
-            'OXLONGDESC_3'  => 'OXLONGDESC_3'
-         ),
-        '2' => array(
-            'OXID' => 'OXID',
-            'OXACTIVE' => 'OXACTIVE',
-            'OXTITLE' => 'OXTITLE',
-            'OXISOALPHA2' => 'OXISOALPHA2',
-            'OXISOALPHA3' => 'OXISOALPHA3',
-            'OXUNNUM3' => 'OXUNNUM3',
-            'OXORDER' => 'OXORDER',
-            'OXSHORTDESC' => 'OXSHORTDESC',
-            'OXLONGDESC' => 'OXLONGDESC',
-            'OXTITLE_1' => 'OXTITLE_1',
-            'OXTITLE_2' => 'OXTITLE_2',
-            'OXTITLE_3' => 'OXTITLE_3',
-            'OXSHORTDESC_1' => 'OXSHORTDESC_1',
-            'OXSHORTDESC_2' => 'OXSHORTDESC_2',
-            'OXSHORTDESC_3' => 'OXSHORTDESC_3',
-            'OXLONGDESC_1' => 'OXLONGDESC_1',
-            'OXLONGDESC_2' => 'OXLONGDESC_2',
-            'OXLONGDESC_3' => 'OXLONGDESC_3',
-            'OXVATSTATUS' => 'OXVATSTATUS'
-        ),
-    );
-
-    /**
-     * Class constructor
+     * class constructor
      *
      * @return null
      */
@@ -88,26 +40,5 @@ class oxERPType_Country extends oxERPType
 
         $this->_sTableName = 'oxcountry';
         $this->_sShopObjectName = 'oxcountry';
-    }
-
-    /**
-     * return sql column name of given table column
-     *
-     * @param string $sField    object field anme
-     * @param int    $iLanguage language id
-     * @param int    $iShopID   shop id
-     *
-     * @return string
-     */
-    protected function getSqlFieldName($sField, $iLanguage = 0, $iShopID = 1)
-    {
-        if ('1' == oxERPBase::getUsedDbFieldsVersion()) {
-            switch ($sField) {
-                case 'OXACTIV':
-                    return "OXACTIVE as OXACTIV";
-                    break;
-            }
-        }
-        return parent::getSqlFieldName($sField, $iLanguage, $iShopID);
     }
 }

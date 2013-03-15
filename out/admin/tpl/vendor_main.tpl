@@ -87,7 +87,7 @@ window.onload = function ()
             [{ oxmultilang ident="VENDOR_MAIN_ICONUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}]):<br>
             </td>
             <td class="edittext">
-            <input class="editinput" name="myfile[ICO@oxvendor__oxicon]" type="file" [{ $readonly }]>
+            <input class="editinput" name="myfile[VICO@oxvendor__oxicon]" type="file" [{ $readonly }]>
             [{ oxinputhelp ident="HELP_VENDOR_MAIN_ICONUPLOAD" }]
             </td>
         </tr>

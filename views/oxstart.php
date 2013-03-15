@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxstart.php 33128 2011-02-10 10:28:24Z arvydas.vapsva $
+ * @version   SVN: $Id$
  */
 
 /**

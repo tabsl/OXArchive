@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: category_main.php 33736 2011-03-10 15:36:39Z arvydas.vapsva $
+ * @version   SVN: $Id: category_main.php 35290 2011-05-10 10:21:11Z linas.kukulskis $
  */
 
 /**
@@ -102,13 +102,14 @@ class Category_Main extends oxAdminDetails
      */
     public function getSortableFields()
     {
-        $aSkipFields = array( "OXID", "OXSHOPID", "OXPARENTID", "OXACTIVE", "OXSHORTDESC"
+        $aSkipFields = array( "OXID", "OXSHOPID", "OXSHOPINCL", "OXSHOPEXCL", "OXPARENTID", "OXACTIVE", "OXACTIVEFROM"
+            , "OXACTIVETO", "OXSHORTDESC"
             , "OXUNITNAME", "OXUNITQUANTITY", "OXEXTURL", "OXURLDESC", "OXURLIMG", "OXVAT"
             , "OXTHUMB", "OXPICSGENERATED", "OXPIC1", "OXPIC2", "OXPIC3", "OXPIC4", "OXPIC5"
             , "OXPIC6", "OXPIC7", "OXPIC8", "OXPIC9", "OXPIC10", "OXPIC11", "OXPIC12", "OXSTOCKFLAG"
             , "OXSTOCKTEXT", "OXNOSTOCKTEXT", "OXDELIVERY", "OXFILE", "OXSEARCHKEYS", "OXTEMPLATE"
             , "OXQUESTIONEMAIL", "OXISSEARCH", "OXISCONFIGURABLE", "OXBUNDLEID", "OXFOLDER", "OXSUBCLASS"
-            , "OXSOLDAMOUNT", "OXREMINDACTIVE", "OXREMINDAMOUNT", "OXVENDORID", "OXMANUFACTURERID", "OXSKIPDISCOUNTS"
+            , "OXREMINDACTIVE", "OXREMINDAMOUNT", "OXVENDORID", "OXMANUFACTURERID", "OXSKIPDISCOUNTS"
             , "OXBLFIXEDPRICE", "OXICON", "OXVARSELECT", "OXAMITEMID", "OXAMTASKID", "OXPIXIEXPORT", "OXPIXIEXPORTED"
         );
 
@@ -170,6 +171,8 @@ class Category_Main extends oxAdminDetails
         if ( isset( $aParams["oxcategories__oxlongdesc"] ) ) {
             $aParams["oxcategories__oxlongdesc"] = $this->_processLongDesc( $aParams["oxcategories__oxlongdesc"] );
         }
+
+
         $oCategory->assign( $aParams );
         $oCategory->setLanguage($this->_iEditLang);
 

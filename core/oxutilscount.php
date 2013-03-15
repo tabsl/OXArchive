@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilscount.php 31954 2010-12-17 13:33:40Z sarunas $
+ * @version   SVN: $Id: oxutilscount.php 37882 2011-08-01 15:01:39Z linas.kukulskis $
  */
 
 /**
@@ -203,12 +203,9 @@ class oxUtilsCount extends oxSuperCfg
         $oArticle = oxNew( 'oxarticle' );
         $sTable   = $oArticle->getViewName();
 
-        $sSubSelect  = "select if( oxparentid='', oxid, oxparentid ) as id from {$sTable} where oxprice >= 0 ";
-        $sSubSelect .= $dPriceTo ? "and oxprice <= " . (double)$dPriceTo . " " : " ";
-        $sSubSelect .= $dPriceFrom ? "group by id having min( oxprice ) >= " . (double)$dPriceFrom . " " : " ";
-
-        $sSelect  = "select count({$sTable}.oxid) from {$sTable} where ";
-        $sSelect .= "{$sTable}.oxid in ($sSubSelect) ";
+        $sSelect  = "select count({$sTable}.oxid) from {$sTable} where oxvarminprice >= 0 ";
+        $sSelect .= $dPriceTo ? "and oxvarminprice <= " . (double)$dPriceTo . " " : " ";
+        $sSelect .= $dPriceFrom ? "and oxvarminprice  >= " . (double)$dPriceFrom . " " : " ";
         $sSelect .= "and {$sTable}.oxissearch = 1 and ".$oArticle->getSqlActiveSnippet();
 
         $aCache[$sCatId][$sActIdent] = oxDb::getDb()->getOne( $sSelect );

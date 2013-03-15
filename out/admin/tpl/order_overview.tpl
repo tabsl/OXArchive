@@ -154,9 +154,11 @@
             [{ if $paymentType->aDynValues }]
                 <table cellspacing="0" cellpadding="0" border="0">
                 [{foreach from=$paymentType->aDynValues item=value}]
+                [{assign var="ident" value='ORDER_OVERVIEW_'|cat:$value->name}]
+                [{assign var="ident" value=$ident|oxupper }]
                 <tr>
                     <td class="edittext">
-                    [{ $value->name}] :&nbsp;
+                    [{ oxmultilang ident=$ident }]:&nbsp;
                     </td>
                     <td class="edittext">
                        [{ $value->value}]

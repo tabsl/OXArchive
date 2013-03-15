@@ -104,7 +104,7 @@
         <tr>
           <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px;" valign="top">
             <b>[{ oxmultilang ident="EMAIL_ORDER_OWNER_HTML_ATENTIONGREETINGCARD" }]</b><br>
-            <img src="[{$basket->oCard->getNoSslDynImageDir()}]/0/[{$basket->oCard->oxwrapping__oxpic->value}]" alt="[{$basket->oCard->oxwrapping__oxname->value}]" hspace="0" vspace="0" border="0" align="top"><br><br>
+            <img src="[{$basket->oCard->getPictureUrl()}]" alt="[{$basket->oCard->oxwrapping__oxname->value}]" hspace="0" vspace="0" border="0" align="top"><br><br>
           </td>
           <td style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 10px;" valign="top">
             [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_YOURMESSAGE" }]<br>
@@ -352,9 +352,13 @@
     [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_PAYMENTMETHOD" }] [{ $payment->oxpayments__oxdesc->value }] [{ if $basket->getPaymentCosts() }]([{ $basket->getFPaymentCosts() }] [{ $currency->sign}])[{/if}]<br>
     [{ $payment->oxpayments__oxlongdesc->value }]<br><br>
     [{ oxmultilang ident="EMAIL_ORDER_OWNER_HTML_PAYMENTINFOOFF" }]<br>
-    [{ * foreach from=$payment->aDynValues item=value *}]
-      [{ * $value->name * }]: [{ * $value->value *}]  <br>
-    [{* /foreach *}]
+    [{*
+    [{foreach from=$payment->aDynValues item=value}]
+    [{assign var="ident" value='EMAIL_ORDER_OWNER_HTML_'|cat:$value->name}]
+    [{assign var="ident" value=$ident|oxupper}]
+      [{oxmultilang ident=$ident }]: [{ $value->value }]  <br>
+    [{/foreach}]
+    *}]
     [{/if}]
     <br>
     [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_EMAILADDRESS" }] [{ $user->oxuser__oxusername->value }]<br><br>
