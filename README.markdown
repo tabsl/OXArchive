@@ -12,6 +12,6 @@ It allows for the following workflow:
 
 If you want to see a list of available versions, just type:
 
-   git tag;
+    git tag;
 
 If you have any suggestions/improvements, feel free to send a pull request.
