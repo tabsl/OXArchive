@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxoutput.php 13914 2008-10-30 11:12:55Z arvydas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxoutput.php 14502 2008-12-05 12:03:14Z vilma $
  */
 
 /**
@@ -87,6 +87,8 @@ class oxOutput extends oxSuperCfg
         // DISPLAY IT
         $sVersion = $this->getConfig()->getActiveShop()->oxshops__oxversion->value;
 
+
+            $sOutput = preg_replace("/<\/head>/i", "</head>\n  <!-- OXID eShop Community Edition, Version $sVersion, Shopsystem \251 OXID eSales AG 2003-2008 - http://www.oxid-esales.com -->", $sOutput);
 
 
         return $sOutput;

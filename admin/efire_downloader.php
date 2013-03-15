@@ -17,7 +17,7 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
+ * @copyright © OXID eSales AG 2003-2009
  * $Id: efire_downloader.php 12555 2008-09-29 13:07:20Z tomas $
  */
 
@@ -36,6 +36,23 @@ class EFire_Downloader extends oxAdminView
         $this->_aViewData['sEfiPassword'] = htmlspecialchars($this->getConfig()->getConfigParam('sEfiPassword'));
 
         return parent::render();
+    }
+
+    /**
+     * Returns list of admin users
+     *
+     * @return oxuserlist
+     */
+    public function getAdminList()
+    {
+        $oUserList = oxNew( "oxUserList" );
+        $oUser = $oUserList->getBaseObject();
+
+        $sQ  = "select ".$oUser->getSelectFields()." from oxuser ";
+        $sQ .= "where oxuser.oxrights != 'user' ";
+
+        $oUserList->selectString( $sQ );
+        return $oUserList;
     }
 
     /**

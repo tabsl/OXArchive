@@ -79,46 +79,46 @@
             <tr>
             <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_INETTO" }]</td>
             <td class="edittext" align="right"><b>[{ $edit->ftotalnetsum }]</b></td>
-            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
+            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
             </tr>
             <tr>
             <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_IBRUTTO" }]</td>
             <td class="edittext" align="right"><b>[{ $edit->ftotalbrutsum }]</b></td>
-            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
+            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
             </tr>
             [{if $edit->totalvouchers}]
             <tr>
             <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_VOUCHERS" }]</td>
             <td class="edittext" align="right"><b>- [{ $edit->totalvouchers }]</b></td>
-            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
+            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
             </tr>
             [{/if}]
             <tr>
             <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_DELIVERYCOST" }]&nbsp;&nbsp;</td>
             <td class="edittext" align="right"><b>[{ $edit->fdelcost }]</b></td>
-            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
+            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
             </tr>
             <tr>
             <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_PAYCOST" }]&nbsp;&nbsp;</td>
             <td class="edittext" align="right"><b>[{ $edit->fpaycost }]</b></td>
-            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
+            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
             </tr>
             <tr>
             <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_DISCOUNT" }]&nbsp;&nbsp;</td>
             <td class="edittext" align="right"><b>- [{ $edit->fdiscount }]</b></td>
-            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
+            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
             </tr>
             [{if $edit->oxorder__oxwrapcost->value }]
             <tr>
             <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_CARD" }]&nbsp;[{if $giftCard}]([{$giftCard->oxwrapping__oxname->value}])[{/if}]&nbsp;</td>
             <td class="edittext" align="right"><b>[{ $edit->fwrapcost }]</b></td>
-            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
+            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
             </tr>
             [{/if}]
             <tr>
             <td class="edittext" height="25">[{ oxmultilang ident="GENERAL_SUMTOTAL" }]&nbsp;&nbsp;</td>
             <td class="edittext" align="right"><b>[{ $edit->ftotalorder }]</b></td>
-            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
+            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
             </tr>
             </table>
 
@@ -176,7 +176,7 @@
                 </form>
             [{/if}]
             [{ if $edit && $edit->oxorder__oxtransstatus->value }]
-                [{ oxmultilang ident="ORDER_OVERVIEW_INTSTATUS" }]:&nbsp;<b>[{ $edit->oxorder__oxtransstatus->value }]</b> [{ $currency->sign}]<br>
+                [{ oxmultilang ident="ORDER_OVERVIEW_INTSTATUS" }]:&nbsp;<b>[{ $edit->oxorder__oxtransstatus->value }]</b><br>
             [{/if}]
             [{ if $edit->oxorder__oxphisphorder->value }]<br>
             [{ oxmultilang ident="ORDER_OVERVIEW_PRICEHAMORDER" }] <b>[{if $edit->oxorder__oxphapproved->value != "0000-00-00 00:00:00"}][{ $edit->oxorder__oxphapproved|oxformdate }][{else}]NEIN[{ oxmultilang ident="GENERAL_SUMTOTAL" }][{/if}]</b><br>
@@ -198,7 +198,7 @@
                 [{ oxmultilang ident="ORDER_OVERVIEW_ORDERSUMTODAY" }]:
                 </td>
                 <td class="edittext">
-                &nbsp;<b>[{ $ordersum }]</b> [{ $currency->sign}]
+                &nbsp;<b>[{ $ordersum }]</b> [{ $currency->name}]
                 </td>
             </tr>
             <tr>
@@ -214,7 +214,7 @@
                 [{ oxmultilang ident="ORDER_OVERVIEW_ORDERSUMTOTAL" }]:
                 </td>
                 <td class="edittext">
-                &nbsp;<b>[{ $ordertotalsum }]</b> [{ $currency->sign}]
+                &nbsp;<b>[{ $ordertotalsum }]</b> [{ $currency->name}]
                 </td>
             </tr>
             </table>
@@ -285,7 +285,7 @@
               </table>
               </form>
 
-              [{ if $edit }]
+              [{ if $edit && $oView->canExport() }]
               <br>
               <table cellspacing="0" cellpadding="0" style="padding-top: 5px; padding-left: 5px; padding-right: 5px; padding-bottom: 5px; border : 1px #A9A9A9; border-style : solid solid solid solid;" width="220">
               <form name="myedit2" id="myedit2" action="[{ $shop->selflink }]" method="post" target="expPDF">

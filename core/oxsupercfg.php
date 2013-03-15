@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxsupercfg.php 14392 2008-11-26 16:50:36Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxsupercfg.php 14641 2008-12-11 14:11:43Z vilma $
  */
 class oxSuperCfg
 {
@@ -169,11 +169,18 @@ class oxSuperCfg
             if ( isset( $this->unitCustModUser ) ) {
                 return $this->unitCustModUser;
             }
-            return oxUser::getActiveUser();
+            $oUser = oxNew( 'oxuser' );
+            if ( $oUser->loadActiveUser() ) {
+                return $oUser;
+            }
+            return false;
         }
 
         if ( self::$_oActUser == null ) {
-            self::$_oActUser = oxUser::getActiveUser();
+            $oUser = oxNew( 'oxuser' );
+            if ( $oUser->loadActiveUser() ) {
+                self::$_oActUser = $oUser;
+            }
         }
 
         return self::$_oActUser;

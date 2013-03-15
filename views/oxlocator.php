@@ -17,7 +17,7 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2008
+ * @copyright © OXID eSales AG 2003-2009
  * $Id: oxlocator.php 13629 2008-10-24 11:33:47Z vilma $
  */
 

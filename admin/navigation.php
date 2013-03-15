@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
- * $Id: navigation.php 13688 2008-10-26 08:21:22Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: navigation.php 14757 2008-12-16 09:00:48Z arvydas $
  */
 
 /**
@@ -80,7 +80,7 @@ class Navigation extends oxAdminView
         if ( !$blisMallAdmin) {
             // we only allow to see our shop
             $sShopID = oxSession::getVar( "actshop" );
-            $sWhere = "where  and oxshops.oxid = '$sShopID'";
+            $sWhere = "where oxshops.oxid = '$sShopID'";
         }
 
         $oShoplist->selectString( "select ".$oBaseShop->getSelectFields()." from " . $oBaseShop->getViewName() . " $sWhere" );

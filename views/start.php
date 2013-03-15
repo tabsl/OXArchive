@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2008
- * $Id: start.php 13614 2008-10-24 09:36:52Z sarunas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: start.php 14784 2008-12-16 16:44:30Z rimvydas.paskevicius $
  */
 
 /**
@@ -134,17 +134,24 @@ class Start extends oxUBase
         if ( $myConfig->getConfigParam( 'bl_perfLoadAktion' ) ) {
             // loading actions
             $this->_loadActions();
+            
+            $sMetaDescription = '';
+            $sMetaKeywords = '';
+            $blDescTag = false;
 
             //setting meta keywords and meta description for top article
             //T2008-02-26
             //get long description directly from the db in order not to trigger longdescr field lazy load
             //$sLongDescr = $oArtList->current()->oxarticles__oxlongdesc->value;
             if ( $oArt = $this->getFirstArticle() ) {
-                $sLongDescr = $oArt->oxarticles__oxlongdesc->value;
-                $this->setMetaKeywords( $sLongDescr );
-                $this->setMetaDescription( $oArt->oxarticles__oxtitle->value . ' - ' . $sLongDescr, 200, true );
+                $sMetaKeywords = $oArt->oxarticles__oxlongdesc->value;
+                $sMetaDescription = $oArt->oxarticles__oxtitle->value . ' - ' . $sMetaKeywords;
+                $blDescTag = true;
             }
-
+            
+            $this->setMetaKeywords( $sMetaKeywords );
+            $this->setMetaDescription( $sMetaDescription, 200, $blDescTag );
+            
             if ( $oArtList = $this->getCatOfferArticleList() ) {
                 foreach ( $oArtList as $oCatArticle ) {
                     $oCatArticle->oCategory = $oCatArticle->getCategory();

@@ -17,7 +17,7 @@
  *
  * @link http://www.oxid-esales.com
  * @package smartyPlugins
- * @copyright © OXID eSales AG 2003-2008
+ * @copyright © OXID eSales AG 2003-2009
  * $Id: modifier.oxmultilangassign.php 13723 2008-10-26 22:59:58Z alfonsas $
  */
 

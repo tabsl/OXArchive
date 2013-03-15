@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxseoencoder.php 14368 2008-11-26 07:36:13Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxseoencoder.php 14649 2008-12-11 15:36:13Z arvydas $
  */
 
 /**
@@ -114,7 +114,7 @@ class oxSeoEncoder extends oxSuperCfg
         $sType     = $sType?"oxtype = {$sType} and":'';
 
         // moving
-        $sSub = "select {$sObjectid}, oxident, oxshopid, oxlang, now() from oxseo where {$sType} oxobjectid = {$sId} and oxshopid = {$iShopId} and oxlang = {$iLang} limit 1";
+        $sSub = "select {$sObjectid}, MD5( LOWER( oxseourl ) ), oxshopid, oxlang, now() from oxseo where {$sType} oxobjectid = {$sId} and oxshopid = {$iShopId} and oxlang = {$iLang} limit 1";
         $sQ   = "replace oxseohistory ( oxobjectid, oxident, oxshopid, oxlang, oxinsert ) {$sSub}";
         oxDb::getDb()->execute( $sQ );
     }
@@ -128,15 +128,10 @@ class oxSeoEncoder extends oxSuperCfg
     protected function _getAddParams()
     {
         // performance
-        if ( $this->_sAddParams ) {
-            return $this->_sAddParams;
+        if ( $this->_sAddParams === null ) {
+            $this->_sAddParams = $this->_getAddParamsFnc( oxConfig::getParameter('currency'), $this->getConfig()->getShopId() );
         }
-
-        $myConfig = $this->getConfig();
-        $iCur = oxConfig::getParameter('currency');
-        $sActShop = $myConfig->getShopId();
-
-        return $this->_getAddParamsFnc( $iCur, $sActShop );
+        return $this->_sAddParams;
     }
 
     /**
@@ -207,13 +202,13 @@ class oxSeoEncoder extends oxSuperCfg
      *
      * @return string
      */
-    public function getLanguageParam( $iObjectLang )
+    public function getLanguageParam( $iObjectLang, $blForce = false )
     {
         $iDefLang = (int) $this->getConfig()->getConfigParam( 'iDefSeoLang' );
         $aLangIds = oxLang::getInstance()->getLanguageIds();
         $sLang = '';
 
-        if ( $iObjectLang != $iDefLang && isset( $aLangIds[$iObjectLang] ) ) {
+        if ( $blForce || ( $iObjectLang != $iDefLang && isset( $aLangIds[$iObjectLang] ) ) ) {
 
             $sLang = $aLangIds[$iObjectLang] . '/';
         }
@@ -245,7 +240,7 @@ class oxSeoEncoder extends oxSuperCfg
      */
     protected function _getSeoIdent( $sSeoUrl, $iLang )
     {
-        return md5( strtolower( $this->getLanguageParam( $iLang ) . $sSeoUrl ) );
+        return md5( strtolower( $this->getLanguageParam( $iLang, true ) . $sSeoUrl ) );
     }
 
     /**
@@ -347,7 +342,7 @@ class oxSeoEncoder extends oxSuperCfg
         $sType = $oDb->quote( $sType );
         $iLang = (int) $iLang;
 
-        $sQ = "select oxfixed, oxseourl, oxexpired from oxseo where oxtype = {$sType}
+        $sQ = "select oxfixed, oxseourl, oxexpired, oxtype from oxseo where oxtype = {$sType}
                and oxobjectid = {$sId} and oxshopid = {$iShopId} and oxlang = {$iLang}";
 
         if ($sParams) {
@@ -362,8 +357,14 @@ class oxSeoEncoder extends oxSuperCfg
         $sSeoUrl = false;
         $oRs = $oDb->execute( $sQ );
         if ( $oRs && $oRs->recordCount() > 0 && !$oRs->EOF ) {
-            // if seo url is available and is valid
-            if ( !$oRs->fields['oxexpired'] || $oRs->fields['oxfixed'] ) {
+            // moving expired static urls to history ..
+            if ( $oRs->fields['oxexpired'] && ( $oRs->fields['oxtype'] == 'static' || $oRs->fields['oxtype'] == 'dynamic' ) ) {
+                // if expired - copying to history, marking as not expired
+                $this->_copyToHistory( $sId, $iShopId, $iLang );
+                $oDb->execute( "update oxseo set oxexpired = 0 where oxobjectid = {$sId} and oxlang = '{$iLang}' " );
+                $sSeoUrl = $oRs->fields['oxseourl'];
+            } elseif ( !$oRs->fields['oxexpired'] || $oRs->fields['oxfixed'] ) {
+                // if seo url is available and is valid
                 $sSeoUrl = $oRs->fields['oxseourl'];
             }
         }
@@ -471,7 +472,7 @@ class oxSeoEncoder extends oxSuperCfg
 
         $blFixed = (int) $blFixed;
         // transferring old url, thus current url will be regenerated
-        $sQ  = "select oxfixed, oxexpired, oxstdurl like {$sStdUrl} as samestdurl, oxseourl like {$sSeoUrl} as sameseourl from oxseo where oxtype = {$sType} and oxobjectid = {$sObjectId} and oxshopid = {$iShopId} and oxlang = {$iLang} ";
+        $sQ  = "select oxfixed, oxexpired, ( oxstdurl like {$sStdUrl} and oxexpired != 2 ) as samestdurl, oxseourl like {$sSeoUrl} as sameseourl from oxseo where oxtype = {$sType} and oxobjectid = {$sObjectId} and oxshopid = {$iShopId} and oxlang = {$iLang} ";
         $sQ .= $sParams?" and oxparams = '{$sParams}' " : '';
         $sQ .= "limit 1";
 
@@ -601,21 +602,22 @@ class oxSeoEncoder extends oxSuperCfg
     /**
      * Marks object seo records as expired
      *
-     * @param string $sId     changed object id. If null is passed, object dependency is not checked
-     * @param int    $iShopId active shop id. Shop id must be passed uf you want to do shop level update (default null)
-     * @param int    $iLang   active language (optiona;)
-     * @param string $sParams additional params
+     * @param string $sId      changed object id. If null is passed, object dependency is not checked
+     * @param int    $iShopId  active shop id. Shop id must be passed uf you want to do shop level update (default null)
+     * @param int    $iExpStat expiration status: 1 - standard expiration, 2 - seo primary language id expiration
+     * @param int    $iLang    active language (optiona;)
+     * @param string $sParams  additional params
      *
      * @return null
      */
-    public function markAsExpired( $sId, $iShopId = null, $iLang = null, $sParams = null )
+    public function markAsExpired( $sId, $iShopId = null, $iExpStat = 1, $iLang = null, $sParams = null )
     {
-        $sWhere = $sId ? "where oxobjectid = '{$sId}'" : '';
+        $sWhere  = $sId ? "where oxobjectid = '{$sId}'" : '';
         $sWhere .= isset( $iShopId ) ? ( $sWhere ? " and oxshopid = '{$iShopId}'" : "where oxshopid = '{$iShopId}'" ) : '';
         $sWhere .= $iLang ? ( $sWhere ? " and oxlang = '{$iLang}'" : "where oxlang = '{$iLang}'" ) : '';
         $sWhere .= $sParams ? ( $sWhere ? " and {$sParams}" : "where {$sParams}" ) : '';
 
-        $sQ = "update oxseo set oxexpired = '1' $sWhere ";
+        $sQ = "update oxseo set oxexpired = '{$iExpStat}' $sWhere ";
         oxDb::getDb()->execute( $sQ );
     }
 
@@ -657,7 +659,7 @@ class oxSeoEncoder extends oxSuperCfg
     /**
      * Static url encoder
      *
-     * @param array $aStaticUrl aratic url info (contains standard URL and urls for each language)
+     * @param array $aStaticUrl static url info (contains standard URL and urls for each language)
      * @param int   $iShopId    active shop id
      * @param int   $iLang      active language
      *
@@ -741,7 +743,7 @@ class oxSeoEncoder extends oxSuperCfg
         if ( $iShopId != $iBaseShopId ) {
             foreach (array_keys(oxLang::getInstance()->getLanguageIds()) as $iLang) {
                 $iLang = (int) $iLang;
-                $sPrfx = $this->getLanguageParam($iLang);
+                $sPrfx = $this->getLanguageParam($iLang, true);
                 $sQ = "insert into oxseo ( oxobjectid, oxident, oxshopid, oxlang, oxstdurl, oxseourl, oxtype )
                        select MD5( LOWER( CONCAT( '{$iShopId}', oxstdurl ) ) ), MD5( LOWER(  CONCAT( '{$sPrfx}', oxseourl ) ) ),
                        '$iShopId', oxlang, oxstdurl, oxseourl, oxtype from oxseo where oxshopid = '{$iBaseShopId}' and oxtype = 'static' and oxlang='$iLang' ";

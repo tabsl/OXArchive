@@ -17,7 +17,7 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
+ * @copyright © OXID eSales AG 2003-2009
  * $Id: dynexportbase.php 13619 2008-10-24 09:40:23Z sarunas $
  */
 

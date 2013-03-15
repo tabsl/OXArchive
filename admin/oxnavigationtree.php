@@ -17,7 +17,7 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
+ * @copyright © OXID eSales AG 2003-2009
  * $Id: oxnavigationtree.php 14197 2008-11-13 14:33:19Z rimvydas.paskevicius $
  */
 

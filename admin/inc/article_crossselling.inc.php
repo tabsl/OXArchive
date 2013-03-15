@@ -17,7 +17,7 @@
  *
  * @link http://www.oxid-esales.com
  * @package inc
- * @copyright © OXID eSales AG 2003-2008
+ * @copyright © OXID eSales AG 2003-2009
  * $Id: article_crossselling.inc.php 14409 2008-11-28 16:01:58Z arvydas $
  */
 

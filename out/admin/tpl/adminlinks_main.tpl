@@ -30,7 +30,7 @@ function UpdateList( sID)
 </form>
 
       <table cellspacing="0" cellpadding="0" border="0" width="98%">
-        <colgroup><col width="30%"><col width="5%"><col width="65%"></colgroup>
+        <colgroup><col width="20%"><col width="5%"><col width="75%"></colgroup>
         <form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post" onSubmit="copyLongDesc( 'oxlinks__oxurldesc' );">
         [{ $shop->hiddensid }]
         <input type="hidden" name="cl" value="adminlinks_main">
@@ -86,7 +86,7 @@ function UpdateList( sID)
               </tr>
             </table>
           </td>
-
+        <td></td>
         <!-- Anfang rechte Seite -->
           <td valign="top" class="edittext vr" align="left">
 

@@ -17,7 +17,7 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2008
+ * @copyright © OXID eSales AG 2003-2009
  * $Id: payment.php 13742 2008-10-27 07:12:06Z vilma $
  */
 

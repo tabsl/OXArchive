@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxadmindetails.php 13721 2008-10-26 22:32:51Z alfonsas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxadmindetails.php 14554 2008-12-08 15:37:05Z vilma $
  */
 
 /**
@@ -130,6 +130,10 @@ class oxAdminDetails extends oxAdminView
         
         // enabling upload
         $this->_oEditor->upload = true;
+
+        //#M432 enabling deleting files and folders
+        $this->_oEditor->deleteFiles = true;
+        $this->_oEditor->deleteFolders = true;
 
         // allowed image extensions
         $this->_oEditor->allowedImageExtensions = '.jpg, .jpeg, .gif, .png';

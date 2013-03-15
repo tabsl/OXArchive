@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxnewsletter.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxnewsletter.php 14507 2008-12-05 12:20:06Z vilma $
  */
 
 /**
@@ -248,8 +248,9 @@ class oxNewsletter extends oxBase
             if ( $oUser->load( $sUserid ) ) {
                 $this->_oUser = $oUser;
             }
-        } else
+        } else {
             $this->_oUser = $sUserid;   // we expect a full and valid user object
+        }
     }
 
     /**

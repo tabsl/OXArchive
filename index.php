@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package main
- * @copyright © OXID eSales AG 2003-2008
- * $Id: index.php 13819 2008-10-27 19:38:11Z tomas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: index.php 14787 2008-12-16 17:22:35Z tomas $
  */
 
 // Setting error reporting mode
@@ -98,7 +98,7 @@ if (isSearchEngineUrl()) {
 //strips magics quote if any
 oxUtils::getInstance()->stripGpcMagicQuotes();
 //Starting the shop
-$oShopControl = new oxShopControl();
+$oShopControl = oxNew('oxShopControl');
 
 startProfile('start');
 $oShopControl->start();

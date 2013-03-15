@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxvendor.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxvendor.php 14482 2008-12-05 08:34:48Z arvydas $
  */
 
 /**
@@ -97,19 +97,21 @@ class oxVendor extends oxI18n
             case 'openlink':
             case 'closelink':
             case 'link':
-                return $this->getLink();
+                $sValue = $this->getLink();
                 break;
             case 'iArtCnt':
-                return $this->getNrOfArticles();
+                $sValue = $this->getNrOfArticles();
                 break;
             case 'isVisible':
-                return $this->getIsVisible();
+                $sValue = $this->getIsVisible();
                 break;
             case 'hasVisibleSubCats':
-                return $this->getHasVisibleSubCats();
+                $sValue = $this->getHasVisibleSubCats();
                 break;
+            default:
+                $sValue = parent::__get( $sName );
         }
-        return parent::__get( $sName );
+        return $sValue;
     }
 
     /**
@@ -177,27 +179,28 @@ class oxVendor extends oxI18n
      *
      * @return string
      */
-    public function getLink($iLang = null)
+    public function getLink( $iLang = null )
     {
-        if (isset($iLang)) {
+        if ( isset( $iLang ) ) {
             $iLang = (int) $iLang;
-            if ($iLang == (int) $this->getLanguage()) {
+            if ( $iLang == (int) $this->getLanguage() ) {
                 $iLang = null;
             }
         }
-        if ( $this->link === null || isset($iLang) ) {
+
+        if ( $this->link === null || isset( $iLang ) ) {
 
             if ( oxUtils::getInstance()->seoIsActive() ) {
-                $link = oxSeoEncoderVendor::getInstance()->getVendorUrl( $this, $iLang );
+                $sLink = oxSeoEncoderVendor::getInstance()->getVendorUrl( $this, $iLang );
             } else {
-                $link = $this->getStdLink($iLang);
+                $sLink = $this->getStdLink( $iLang );
             }
 
-            if (isset($iLang)) {
-                return $link;
-            } else {
-                $this->link = $link;
+            if ( isset( $iLang ) ) {
+                return $sLink;
             }
+
+            $this->link = $sLink;
         }
 
         return $this->link;

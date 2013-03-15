@@ -17,7 +17,7 @@
  *
  * @link http://www.oxid-esales.com
  * @package lang
- * @copyright © OXID eSales AG 2003-2008
+ * @copyright © OXID eSales AG 2003-2009
  * $Id: help_lang.php 14249 2008-11-18 09:48:58Z philipp.grashoff $
  */
 

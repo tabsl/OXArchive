@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxutilsview.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxutilsview.php 14484 2008-12-05 08:36:16Z arvydas $
  */
 
 /**
@@ -145,7 +145,6 @@ class oxUtilsView extends oxSuperCfg
      * @param string    $sCustomDestination  defines a name of the view variable containing the messages, overrides Parameter 'CustomError' ("default")
      *
      * @return null
-     *
      */
     public function addErrorToDisplay( $oEr, $blFull = false, $blCustomDestination = false, $sCustomDestination = "" )
     {
@@ -168,22 +167,22 @@ class oxUtilsView extends oxSuperCfg
              $oEx->setValues( $oEr->getValues() );
              $oEx->setStackTrace( $oEr->getTraceAsString() );
              $oEx->setDebug( $blFull );
-             $oEr=$oEx;
-        } elseif ( ! ( $oEr instanceof oxDisplayErrorInterface ) ) {
+             $oEr = $oEx;
+        } elseif ( $oEr && ! ( $oEr instanceof oxDisplayErrorInterface ) ) {
             // assuming that a string was given
             $sTmp = $oEr;
             $oEr = oxNew( 'oxDisplayError' );
             $oEr->setMessage( $sTmp );
         } elseif ( $oEr instanceof oxDisplayErrorInterface ) {
             // take the object
-            continue;
         } else {
             $oEr = null;
         }
 
-        $aEx[$sDestination][] = serialize( $oEr );
-
-        oxSession::setVar( 'Errors', $aEx );
+        if ( $oEr ) {
+            $aEx[$sDestination][] = serialize( $oEr );
+            oxSession::setVar( 'Errors', $aEx );
+        }
     }
 
     /**
@@ -236,13 +235,7 @@ class oxUtilsView extends oxSuperCfg
         $myConfig = $this->getConfig();
 
         $oSmarty->php_handling = SMARTY_PHP_REMOVE;
-        $oSmarty->security = false;
-
-        // Additional demoshop behaviour
-        if ( $myConfig->isDemoShop() ) {
-            $oSmarty->security     = true;
-            $oSmarty->php_handling =  SMARTY_PHP_REMOVE;
-        }
+        $oSmarty->security = $myConfig->isDemoShop()? true : false;
 
         $oSmarty->left_delimiter  = '[{';
         $oSmarty->right_delimiter = '}]';
@@ -259,13 +252,7 @@ class oxUtilsView extends oxSuperCfg
         $oSmarty->compile_dir  = $myConfig->getConfigParam( 'sCompileDir' );
         $oSmarty->cache_dir    = $myConfig->getConfigParam( 'sCompileDir' );
         $oSmarty->template_dir = $myConfig->getTemplateDir( $this->isAdmin() );
-
-        $sShopId = 'admin';
-        if ( !$this->isAdmin() ) {
-            $sShopId = $myConfig->getShopId();
-        }
-
-        $oSmarty->compile_id = md5($oSmarty->template_dir);
+        $oSmarty->compile_id   = md5( $oSmarty->template_dir );
 
         $iDebug = $myConfig->getConfigParam( 'iDebug' );
         if (  $iDebug == 1 || $iDebug == 3 || $iDebug == 4 ) {

@@ -1,7 +1,7 @@
 [{include file="headitem.tpl" box="list"
     title="NEWSLETTER_SEND_TITLE"|oxmultilangassign box="list" 
     meta_refresh_sec="2" 
-    meta_refresh_url="`$shop->selflink`?cl=newsletter_send&iStart=`$iStart`&user=`$user`&id=`$id``"
+    meta_refresh_url="`$shop->selflink`?cl=newsletter_send&iStart=`$iStart`&user=`$user`&id=`$id`"
 }]
 
 <script type="text/javascript">

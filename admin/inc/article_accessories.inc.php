@@ -17,7 +17,7 @@
  *
  * @link http://www.oxid-esales.com
  * @package inc
- * @copyright © OXID eSales AG 2003-2008
+ * @copyright © OXID eSales AG 2003-2009
  * $Id: article_accessories.inc.php 14035 2008-11-06 14:48:53Z arvydas $
  */
 

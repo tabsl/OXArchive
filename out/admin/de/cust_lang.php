@@ -17,7 +17,7 @@
  *
  * @link http://www.oxid-esales.com
  * @package lang
- * @copyright © OXID eSales AG 2003-2008
+ * @copyright © OXID eSales AG 2003-2009
  * $Id: cust_lang.php 13616 2008-10-24 09:38:15Z sarunas $
  */
 

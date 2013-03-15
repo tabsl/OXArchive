@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
- * $Id: order_main.php 14024 2008-11-06 13:41:48Z arvydas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: order_main.php 14542 2008-12-08 14:24:48Z vilma $
  */
 
 /**
@@ -99,15 +99,21 @@ class Order_Main extends oxAdminDetails
         $aParams    = oxConfig::getParameter( "editval");
         $aDynvalues = oxConfig::getParameter( "dynvalue");
 
+        $blChangeDelivery = false;
+
             // shopid
             $sShopID = oxSession::getVar( "actshop");
             $aParams['oxorder__oxshopid'] = $sShopID;
 
         $oOrder = oxNew( "oxorder" );
-        if ( $soxId != "-1")
+        if ( $soxId != "-1") {
             $oOrder->load( $soxId);
-        else
+            if ( $oOrder->oxorder__oxdelcost->value != $aParams['oxorder__oxdelcost'] ) {
+                $blChangeDelivery = true;
+            }
+        } else {
             $aParams['oxorder__oxid'] = null;
+        }
 
         $oOrder->assign( $aParams);
 
@@ -120,6 +126,8 @@ class Order_Main extends oxAdminDetails
         }
 
         $oOrder->save();
+
+        $oOrder->recalculateOrder( array(), $blChangeDelivery );
 
         // set oxid if inserted
         if ( $soxId == "-1")
@@ -210,7 +218,7 @@ class Order_Main extends oxAdminDetails
     {
         $soxId  = oxConfig::getParameter( "oxid");
         $oOrder = oxNew( "oxorder" );
-        if ($oOrder->Load( $soxId)) {
+        if ($oOrder->load( $soxId)) {
             $sPayment = oxConfig::getParameter( "setPayment");
             $oOrder->oxorder__oxpaymenttype->setValue($sPayment);
             $oOrder->save();

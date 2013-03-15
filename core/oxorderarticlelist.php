@@ -17,7 +17,7 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
+ * @copyright © OXID eSales AG 2003-2009
  * $Id: oxorderarticlelist.php 14392 2008-11-26 16:50:36Z vilma $
  */
 

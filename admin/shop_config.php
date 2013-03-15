@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
- * $Id: shop_config.php 14154 2008-11-11 15:48:34Z arvydas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: shop_config.php 14841 2008-12-19 10:51:54Z arvydas $
  */
 
 /**
@@ -196,6 +196,12 @@ class Shop_Config extends oxAdminDetails
                 $myConfig->saveShopConfVar("arr", $sVarName, $sValue, $soxId);
             }
         }
+
+        // on language array change all shop SEO urls must be revalidated
+        if ( isset( $aConfAarrs['aLanguages'] ) && serialize( $this->_multilineToAarray( $aConfAarrs['aLanguages'] ) ) != serialize( $myConfig->getShopConfVar( 'aLanguages', $soxId ) ) ) {
+            $this->resetSeoData( $soxId );
+        }
+
         if ( is_array( $aConfAarrs ) ) {
             foreach ( $aConfAarrs as $sVarName => $sVarVal ) {
                 $myConfig->saveShopConfVar( "aarr", $sVarName, serialize( $this->_multilineToAarray( $sVarVal ) ), $soxId );

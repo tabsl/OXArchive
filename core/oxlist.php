@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxlist.php 14388 2008-11-26 15:43:17Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxlist.php 14506 2008-12-05 12:19:39Z vilma $
  */
 
 /**
@@ -345,7 +345,7 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
      *
      * @param array $aAssignCallbackPrepend callback array
      *
-     * @return nill
+     * @return null
      */
     public function setAssignCallbackPrepend($aAssignCallbackPrepend)
     {
@@ -407,8 +407,8 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
             $oSaved->setLanguage( $this->getBaseObject()->getLanguage() );
         }
 
-        if ( $this->_aAssignCallbackPrepend ) {
-            call_user_func( array( $oSaved, $this->_aAssignCallbackPrepend ) );
+        if ( $this->_aAssignCallbackPrepend && is_callable($this->_aAssignCallbackPrepend)) {
+            call_user_func( $this->_aAssignCallbackPrepend, $oSaved);
         }
 
         if ($rs != false && $rs->recordCount() > 0) {
@@ -418,8 +418,8 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
 
                 $oListObject->assign( $rs->fields);
 
-                if ( $this->_aAssignCallBack ) {
-                    call_user_func( array( $oListObject, $this->_aAssignCallBack ) );
+                if ( $this->_aAssignCallback ) {
+                    call_user_func( $this->_aAssignCallback, $oListObject );
                 }
 
                 if ($oListObject->getId()) {
@@ -445,19 +445,6 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
     {
         $this->_aSqlLimit[0] = $iStart;
         $this->_aSqlLimit[1] = $iRecords;
-    }
-
-    /**
-     * Set's callback array for lists objects, will be called upon loadind
-     * see call_user_func for more info
-     *
-     * @param array $aCallbackArray Callback array
-     *
-     * @return null;
-     */
-    public function setObjectCallback( $aCallbackArray)
-    {
-        $this->_aAssignCallback = $aCallbackArray;
     }
 
     /**

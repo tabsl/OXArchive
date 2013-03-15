@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxarticlelist.php 14388 2008-11-26 15:43:17Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxarticlelist.php 14567 2008-12-09 12:17:14Z vilma $
  */
 
 /**
@@ -90,7 +90,7 @@ class oxArticleList extends oxList
     public function selectString( $sSelect )
     {
         if ( !$this->isAdmin() ) {
-            $this->_aAssignCallbackPrepend = ( !$this->_blLoadPrice )?'disablePriceLoad':null;
+            $this->_aAssignCallbackPrepend = ( !$this->_blLoadPrice )?array( oxNew("oxarticle"), 'disablePriceLoad'):null;
         }
 
         startProfile("loadinglists");

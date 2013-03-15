@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
- * $Id: object_seo.php 13646 2008-10-24 13:30:18Z arvydas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: object_seo.php 14813 2008-12-18 09:03:34Z arvydas $
  */
 
 /**
@@ -137,7 +137,7 @@ class Object_Seo extends oxAdminDetails
             $oEncoder = oxSeoEncoder::getInstance();
             $oEncoder->addSeoEntry( $sOxid, $iShopId, $this->_iEditLang, $this->_getStdUrl( $sOxid ),
                                     $aSeoData['oxseourl'], $this->_getType(), $aSeoData['oxfixed'],
-                                    $aSeoData['oxkeywords'], $aSeoData['oxdescription'], $aSeoData['oxparams'] );
+                                    trim( $aSeoData['oxkeywords'] ), trim( $aSeoData['oxdescription'] ), $aSeoData['oxparams'] );
 
         }
 

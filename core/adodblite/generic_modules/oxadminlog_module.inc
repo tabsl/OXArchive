@@ -22,10 +22,12 @@ class oxadminlog_ADOConnection extends mysql_oxadminlog_EXTENDER
 
             if ( $blInsert && $sSearch ) {
 
-                $oUser = oxUser::getAdminUser();
-
-                // collecting log info
-                $sUserId = $oUser?$oUser->getId():'';
+                $oUser = oxNew( 'oxuser' );
+                if ( $oUser->loadAdminUser() ) {
+                    $sUserId = $oUser->getId();
+                } else {
+                    $sUserId = '';
+                }
 
 
                     $sQ = "insert into oxadminlog ( oxuserid, oxsql )

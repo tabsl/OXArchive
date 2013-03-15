@@ -116,7 +116,7 @@ function UpdateList( sID)
             </td>
             <td class="edittext">
             <select class="editinput" name="editval[oxorder__oxbillcountryid]" [{ $readonly }]>
-               <option value='-1'>---</option>
+               <option value=''>---</option>
                [{ foreach from=$countrylist item=oCountry}]
                <option value="[{$oCountry->oxcountry__oxid->value}]" [{if $oCountry->oxcountry__oxid->value == $edit->oxorder__oxbillcountryid->value}]selected[{/if}]>[{$oCountry->oxcountry__oxtitle->value}]</option>
                [{/foreach}]
@@ -223,7 +223,7 @@ function UpdateList( sID)
             </td>
             <td class="edittext">
             <select class="editinput" name="editval[oxorder__oxdelcountryid]" [{ $readonly }]>
-               <option value='-1'>---</option>
+               <option value=''>---</option>
                [{ foreach from=$countrylist item=oCountry}]
                <option value="[{$oCountry->oxcountry__oxid->value}]" [{if $oCountry->oxcountry__oxid->value == $edit->oxorder__oxdelcountryid->value}]selected[{/if}]>[{$oCountry->oxcountry__oxtitle->value}]</option>
                [{/foreach}]

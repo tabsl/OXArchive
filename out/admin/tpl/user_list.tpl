@@ -157,7 +157,7 @@ window.onLoad = top.reloadEditFrame();
     <td valign="top" class="[{ $listclass}]"><div class="listitemfloating"><a href="Javascript:EditThis('[{ $listitem->oxuser__oxid->value }]');" class="[{ $listclass}]">[{ $listitem->oxuser__oxcustnr->value }]</a></div></td>
 
     <td class="[{ $listclass}]">
-        [{ if !$listitem->isinternal && !$readonly  && !$listitem->blPreventDelete}]
+        [{ if !$listitem->isOx() && !$readonly  && !$listitem->blPreventDelete}]
         <a href="Javascript:DeleteThis('[{ $listitem->oxuser__oxid->value }]');" class="delete" id="del.[{$_cnt}]" [{include file="help.tpl" helpid=item_delete}]></a>
         [{ /if }]
     </td>
@@ -169,8 +169,8 @@ window.onLoad = top.reloadEditFrame();
 [{assign var="blWhite" value="2"}]
 [{/if}]
 [{/foreach}]
-</table>
 [{include file="pagenavisnippet.tpl" colspan="8"}]
+</table>
 </div>
 
 [{include file="pagetabsnippet.tpl"}]

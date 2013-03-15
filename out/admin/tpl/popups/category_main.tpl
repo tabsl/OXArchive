@@ -67,7 +67,7 @@
         </tr>
         <tr class="edittext">
             <td align="center"><b>[{ oxmultilang ident="CATEGORY_MAIN_ALLITEMS" }]</b></td>
-            <td align="center"><b>[{ oxmultilang ident="CATEGORY_MAIN_ITEMSINGROUP" }]</b></td>
+            <td align="center"><b>[{ oxmultilang ident="CATEGORY_MAIN_ITEMSINCATEGORY" }]</b></td>
         </tr>
         <tr>
             <td style="padding-left:4px;padding-right:10px">

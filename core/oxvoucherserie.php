@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxvoucherserie.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxvoucherserie.php 14481 2008-12-05 08:34:10Z arvydas $
  */
 
 /**
@@ -76,15 +76,13 @@ class oxVoucherSerie extends oxBase
      */
     public function setUserGroups()
     {
-        if( isset( $this->_oGroups ) ) {
-            return $this->_oGroups;
+        if( $this->_oGroups === null ) {
+            $this->_oGroups = oxNew( 'oxlist' );
+            $this->_oGroups->init( 'oxgroups' );
+            $sSelect  = 'select gr.* from oxgroups as gr, oxobject2group as o2g where ';
+            $sSelect .= 'o2g.oxobjectid = "'. $this->getId() .'" and gr.oxid = o2g.oxgroupsid ';
+            $this->_oGroups->selectString( $sSelect );
         }
-
-        $this->_oGroups = oxNew( 'oxlist' );
-        $this->_oGroups->init( 'oxgroups' );
-        $sSelect  = 'select gr.* from oxgroups as gr, oxobject2group as o2g where ';
-        $sSelect .= 'o2g.oxobjectid = "'. $this->getId() .'" and gr.oxid = o2g.oxgroupsid ';
-        $this->_oGroups->selectString( $sSelect );
 
         return $this->_oGroups;
     }

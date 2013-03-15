@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxuserbasketitem.php 14388 2008-11-26 15:43:17Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxuserbasketitem.php 14490 2008-12-05 08:41:17Z arvydas $
  */
 
 /**
@@ -96,46 +96,45 @@ class oxUserBasketItem extends oxBase
             throw $oEx;
         }
 
-        if ( $this->_oArticle ) {
-            return $this->_oArticle;
-        }
+        if ( $this->_oArticle === null ) {
 
-        $this->_oArticle = oxNew( 'oxarticle' );
+            $this->_oArticle = oxNew( 'oxarticle' );
 
-        // performance
-        if ( $this->_blParentBuyable ) {
-            $this->_oArticle->setSkipAbPrice( true );
-            $this->_oArticle->setNoVariantLoading( true );
-        }
+            // performance
+            if ( $this->_blParentBuyable ) {
+                $this->_oArticle->setSkipAbPrice( true );
+                $this->_oArticle->setNoVariantLoading( true );
+            }
 
-        if ( !$this->_oArticle->load( $this->oxuserbasketitems__oxartid->value ) ) {
-            return false;
-        }
+            if ( !$this->_oArticle->load( $this->oxuserbasketitems__oxartid->value ) ) {
+                return false;
+            }
 
-        $aSelList = $this->getSelList();
-        if ( ( $aSelectlist = $this->_oArticle->getSelectLists() ) && is_array( $aSelList ) ) {
-            foreach ( $aSelList as $iKey => $iSel ) {
+            $aSelList = $this->getSelList();
+            if ( ( $aSelectlist = $this->_oArticle->getSelectLists() ) && is_array( $aSelList ) ) {
+                foreach ( $aSelList as $iKey => $iSel ) {
 
-                if ( isset( $aSelectlist[$iKey][$iSel] ) ) {
-                    // cloning select list information
-                    $aSelectlist[$iKey][$iSel] = clone $aSelectlist[$iKey][$iSel];
-                    $aSelectlist[$iKey][$iSel]->selected = 1;
+                    if ( isset( $aSelectlist[$iKey][$iSel] ) ) {
+                        // cloning select list information
+                        $aSelectlist[$iKey][$iSel] = clone $aSelectlist[$iKey][$iSel];
+                        $aSelectlist[$iKey][$iSel]->selected = 1;
+                    }
+                }
+                $this->_oArticle->setSelectlist( $aSelectlist );
+            }
+            // formatting title if variant
+            if ( $this->_oArticle->oxarticles__oxparentid->value ) {
+                $oParent = oxNew( 'oxarticle' );
+                if ( $oParent->load( $this->_oArticle->oxarticles__oxparentid->value ) ) {
+                    if ( $this->_oArticle->oxarticles__oxvarselect->value ) {
+                        $this->_oArticle->oxarticles__oxtitle->value .= ', '.$this->_oArticle->oxarticles__oxvarselect->value;
+                    }
                 }
             }
-            $this->_oArticle->setSelectlist( $aSelectlist );
-        }
-        // formatting title if variant
-        if ( $this->_oArticle->oxarticles__oxparentid->value ) {
-            $oParent = oxNew( 'oxarticle' );
-            if ( $oParent->load( $this->_oArticle->oxarticles__oxparentid->value ) ) {
-                if ( $this->_oArticle->oxarticles__oxvarselect->value ) {
-                    $this->_oArticle->oxarticles__oxtitle->value .= ', '.$this->_oArticle->oxarticles__oxvarselect->value;
-                }
-            }
-        }
 
-        // generating item key
-        $this->_oArticle->setItemKey( $sItemKey );
+            // generating item key
+            $this->_oArticle->setItemKey( $sItemKey );
+        }
 
         return $this->_oArticle;
 

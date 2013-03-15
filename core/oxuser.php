@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxuser.php 14392 2008-11-26 16:50:36Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxuser.php 14801 2008-12-17 12:57:24Z arvydas $
  */
 
 /**
@@ -131,14 +131,20 @@ class oxUser extends oxBase
      protected $_sUpdateKey = null;
 
     /**
+     * User loaded from cookie
+     *
+     * @var bool
+     */
+     protected $_blLoadedFromCookie  = null;
+
+    /**
      * Class constructor, initiates parent constructor (parent::oxBase()).
      *
      * @return null
      */
     public function __construct()
     {
-        $myConfig = $this->getConfig();
-        $this->setMallUsersStatus( $myConfig->getConfigParam( 'blMallUsers' ) );
+        $this->setMallUsersStatus( $this->getConfig()->getConfigParam( 'blMallUsers' ) );
 
         parent::__construct();
         $this->init( 'oxuser' );
@@ -300,48 +306,46 @@ class oxUser extends oxBase
      *
      * @return string $sAddressId
      */
-    public function getSelectedAddress( $sWishId = false)
+    public function getSelectedAddress( $sWishId = false )
     {
         $sAddressId = oxConfig::getParameter( "oxaddressid");
         if ( !$sAddressId ) {
             $sAddressId = oxSession::getVar( "deladrid" );
         }
+
         if ( $sAddressId ) {
             $sWishId = null;
         }
 
-        if ( !isset( $this->_oAddresses ) ) {
-            $this->getUserAddresses();
-        }
-
-        if ( $sWishId && $this->_oAddresses->count()) {
-            foreach ( $this->_oAddresses as $oAddress ) {
+        $oAddresses = $this->getUserAddresses();
+        if ( $sWishId && $oAddresses->count()) {
+            foreach ( $oAddresses as $oAddress ) {
                 $oAddress->selected = 0;
                 if ( $oAddress->oxaddress__oxaddressuserid->value == $sWishId ) {
                     $oAddress->selected = 1;
-                    return $oAddress->oxaddress__oxid->value;
+                    return $oAddress->getId();
                 }
             }
         }
 
-        if ( !$sAddressId && $this->_oAddresses->count()) {
-            $this->_oAddresses->rewind();
-            $oCurAdress = $this->_oAddresses->current();
-            if ( isset( $oCurAdress)) {
-                $sAddressId = $oCurAdress->oxaddress__oxid->value;
+        if ( !$sAddressId && $oAddresses->count() ) {
+            $oAddresses->rewind();
+            if ( ( $oCurAdress = $oAddresses->current() ) ) {
+                $sAddressId = $oCurAdress->getId();
             }
         }
 
         // #597A
         if ( $sAddressId ) {
-            foreach ( $this->_oAddresses as $oAddress ) {
+            foreach ( $oAddresses as $oAddress ) {
                 $oAddress->selected = 0;
-                if ( $oAddress->oxaddress__oxid->value == $sAddressId ) {
+                if ( $oAddress->getId() == $sAddressId ) {
                     $oAddress->selected = 1;
                     break;
                 }
             }
         }
+
         return $sAddressId;
     }
 
@@ -354,24 +358,23 @@ class oxUser extends oxBase
      */
     public function getUserPayments( $sOXID = null )
     {
-        if ( $this->_oPayments !== null ) {
-            return $this->_oPayments;
-        }
+        if ( $this->_oPayments === null ) {
 
-        if ( !$sOXID ) {
-            $sOXID = $this->getId();
-        }
+            if ( !$sOXID ) {
+                $sOXID = $this->getId();
+            }
 
-        $sSelect = 'select * from oxuserpayments where oxuserid ="'. $sOXID .'"';
+            $sSelect = 'select * from oxuserpayments where oxuserid ="'. $sOXID .'"';
 
-        $this->_oPayments = oxNew( 'oxlist' );
-        $this->_oPayments->init( 'oxUserPayment' );
-        $this->_oPayments->selectString( $sSelect );
+            $this->_oPayments = oxNew( 'oxlist' );
+            $this->_oPayments->init( 'oxUserPayment' );
+            $this->_oPayments->selectString( $sSelect );
 
-        //while ( list( $key, $val ) = each( $oPayments ) ) {
-        foreach ( $this->_oPayments as $oPayment ) {
-            // add custom fields to this class
-            $oPayment = oxUtils::getInstance()->assignValuesFromText( $val->oxuserpayments__oxvalue->value );
+            //while ( list( $key, $val ) = each( $oPayments ) ) {
+            foreach ( $this->_oPayments as $oPayment ) {
+                // add custom fields to this class
+                $oPayment = oxUtils::getInstance()->assignValuesFromText( $val->oxuserpayments__oxvalue->value );
+            }
         }
 
         return $this->_oPayments;
@@ -427,11 +430,12 @@ class oxUser extends oxBase
      */
     public function inGroup( $sGroupID )
     {
-         if( !( $oGroups = $this->getUserGroups() ) ) {
-            return false;
+         $blIn = false;
+         if( ( $oGroups = $this->getUserGroups() ) ) {
+            $blIn = isset( $oGroups[ $sGroupID ] );
          }
 
-         return isset( $oGroups[ $sGroupID ] );
+         return $blIn;
     }
 
     /**
@@ -628,8 +632,11 @@ class oxUser extends oxBase
             $sDeliveryCountry = $oDelAddress->oxaddress__oxcountryid->value;
         } elseif ( $this->getId() ) {
             $sDeliveryCountry = $this->oxuser__oxcountryid->value;
-        } elseif ( $oUser = self::getActiveUser() ) {
-            $sDeliveryCountry = $oUser->oxuser__oxcountryid->value;
+        } else {
+            $oUser = oxNew( 'oxuser' );
+            if ( $oUser->loadActiveUser() ) {
+                $sDeliveryCountry = $oUser->oxuser__oxcountryid->value;
+            }
         }
 
         return $sDeliveryCountry;
@@ -644,47 +651,37 @@ class oxUser extends oxBase
      */
     public function createUser()
     {
-        $myConfig = $this->getConfig();
         $oDB = oxDb::getDb();
-
-        $sShopSelect = '';
-        $sShopID = $myConfig->getShopId();
-        if ( !$this->_blMallUsers ) {
-            $sShopSelect = ' and oxshopid = "'.$sShopID.'" ';
-        }
+        $sShopID = $this->getConfig()->getShopId();
 
         // check if user exists AND there is no password - in this case we update otherwise we try to insert
-        $sSelect = 'select oxid from oxuser where oxusername = "'.$this->oxuser__oxusername->value.'" and oxpassword = "" '.$sShopSelect;
-        $sOXID   = $oDB->getOne( $sSelect );
+        $sSelect = "select oxid from oxuser where oxusername = '{$this->oxuser__oxusername->value}' and oxpassword = '' ";
+        if ( !$this->_blMallUsers ) {
+            $sSelect .= " and oxshopid = '{$sShopID}' ";
+        }
+        $sOXID = $oDB->getOne( $sSelect );
 
         // user without password found - lets use
-        $blOK = false;
-
         if ( isset( $sOXID ) && $sOXID ) {
-
             // try to update
             $this->setId( $sOXID );
-        } else {
-            // must be sure if there is no dublicate user
-            if ( $this->_blMallUsers ) {
-                $sQ = 'select oxid from oxuser where oxusername = "'.$this->oxuser__oxusername->value.'" and oxusername != "" ';
-                if ( $oDB->getOne( $sQ ) ) {
-                    $oEx = oxNew( 'oxUserException' );
-                    $oEx->setMessage('EXCEPTION_USER_USEREXISTS');
-                    throw $oEx;
-                }
+        } elseif ( $this->_blMallUsers ) { // must be sure if there is no dublicate user
+            $sQ = "select oxid from oxuser where oxusername = '{$this->oxuser__oxusername->value}' and oxusername != '' ";
+            if ( $oDB->getOne( $sQ ) ) {
+                $oEx = oxNew( 'oxUserException' );
+                $oEx->setMessage('EXCEPTION_USER_USEREXISTS');
+                throw $oEx;
             }
         }
 
-        $this->oxuser__oxshopid = new oxField($sShopID, oxField::T_RAW);
-        $blOK = $this->save();
-
-        if ( $blOK ) { // dropping/cleaning old delivery address/payment info
-            $oDB->execute( 'delete from oxaddress where oxaddress.oxuserid = "'.$this->oxuser__oxid->value.'" ' );
-            $oDB->execute( 'update oxuserpayments set oxuserpayments.oxuserid = "'.$this->oxuser__oxusername->value.'" where oxuserpayments.oxuserid = "'.$this->oxuser__oxid->value.'" ' );
+        $this->oxuser__oxshopid = new oxField( $sShopID, oxField::T_RAW );
+        if ( ( $blOK = $this->save() ) ) {
+            // dropping/cleaning old delivery address/payment info
+            $oDB->execute( "delete from oxaddress where oxaddress.oxuserid = '{$this->oxuser__oxid->value}' " );
+            $oDB->execute( "update oxuserpayments set oxuserpayments.oxuserid = '{$this->oxuser__oxusername->value}' where oxuserpayments.oxuserid = '{$this->oxuser__oxid->value}' " );
         } else {
             $oEx = oxNew( 'oxUserException' );
-            $oEx->setMessage('EXCEPTION_USER_USERCREATIONFAILED');
+            $oEx->setMessage( 'EXCEPTION_USER_USERCREATIONFAILED' );
             throw $oEx;
         }
 
@@ -875,34 +872,31 @@ class oxUser extends oxBase
      *
      * @return bool
      */
-    public function addDynGroup($sDynGoup, $aDeniedDynGroups)
+    public function addDynGroup( $sDynGoup, $aDeniedDynGroups )
     {
         // preparing input
         $sDynGoup = strtolower( trim( $sDynGoup ) );
 
+        // setting denied groups from admin settings also
+        $aDisabledDynGroups = array_merge( array( 'oxidadmin' ), (array) $aDeniedDynGroups );
+
+        // default state ..
+        $blAdd = false;
+
         // user assignment to dyn group is not allowed
         if ( $this->oxuser__oxdisableautogrp->value || !$sDynGoup ) {
-            oxSession::deleteVar( 'dgr' );
-            return false;
+            $blAdd = false;
+        } elseif ( in_array( $sDynGoup, $aDisabledDynGroups ) ) {
+            // trying to add user to prohibited user group?
+            $blAdd = false;
+        } elseif ( $this->addToGroup( $sDynGoup ) ) {
+            $blAdd = true;
         }
 
-        // setting denied groups from admin settings also
-        $aDisabledDynGroups[] = 'oxidadmin';
-        if ( is_array( $aDeniedDynGroups ) ) {
-            $aDisabledDynGroups = array_merge( $aDisabledDynGroups, $aDeniedDynGroups );
-        }
+        // cleanup
+        oxSession::deleteVar( 'dgr' );
 
-        // trying to add user to prohibited user group
-        if ( in_array( $sDynGoup, $aDisabledDynGroups ) ) {
-            oxSession::deleteVar( 'dgr' );
-            return false;
-        }
-
-        if ( $this->addToGroup( $sDynGoup ) ) {
-            oxSession::deleteVar( 'dgr' );
-            return true;
-        }
-        return false;
+        return $blAdd;
     }
 
     /**
@@ -1069,16 +1063,14 @@ class oxUser extends oxBase
         if ( ( isset( $aDelAddress['oxaddress__oxfname'] ) && $aDelAddress['oxaddress__oxfname'] ) ||
              ( isset( $aDelAddress['oxaddress__oxlname'] ) && $aDelAddress['oxaddress__oxlname'] ) ) {
 
-            $aDelAddress['oxaddress__oxid'] = oxConfig::getParameter( 'oxaddressid' );
-            if ( $aDelAddress['oxaddress__oxid'] == -1 || $aDelAddress['oxaddress__oxid'] == -2 ) {
-                $aDelAddress['oxaddress__oxid'] = null;
-            }
+            $sAddressId = oxConfig::getParameter( 'oxaddressid' );
+            $aDelAddress['oxaddress__oxid'] = ( $sAddressId === null || $sAddressId == -1 || $sAddressId == -2 ) ?  null : $sAddressId;
 
             $oAddress = oxNew( 'oxbase' );
             $oAddress->init( 'oxaddress' );
             $oAddress->assign( $aDelAddress );
-            $oAddress->oxaddress__oxuserid = new oxField($this->getId(), oxField::T_RAW);
-            $oAddress->oxaddress__oxcountry = $this->getUserCountry( $oAddress->oxaddress__oxcountryid->value);
+            $oAddress->oxaddress__oxuserid  = new oxField( $this->getId(), oxField::T_RAW );
+            $oAddress->oxaddress__oxcountry = $this->getUserCountry( $oAddress->oxaddress__oxcountryid->value );
             $oAddress->save();
 
             // resetting addresses
@@ -1115,33 +1107,25 @@ class oxUser extends oxBase
         $myConfig = $this->getConfig();
         if ( $sPassword ) {
 
-            $sShopID = $myConfig->getShopID();
+            $sShopID = $myConfig->getShopId();
+            $oDb = oxDb::getDb();
+
+            $sUserSelect = is_numeric( $sUser ) ? "oxuser.oxcustnr = {$sUser} " : "oxuser.oxusername = " . $oDb->quote( $sUser );
+            $sPassSelect = " oxuser.oxpassword = MD5( CONCAT( ".$oDb->quote( $sPassword ).", UNHEX( oxuser.oxpasssalt ) ) ) ";
             $sShopSelect = "";
+
 
             // admin view: can only login with higher than 'user' rights
             if ( $this->isAdmin() ) {
                 $sShopSelect = " and ( oxrights != 'user' ) ";
             }
 
-            $sPasswdHash = oxUtils::getInstance()->strMan( $sPassword, $myConfig->getConfigParam( 'sConfigKey' ) );
+            $sWhat = "oxid";
 
-            $sPasswdSelect  = "oxuser.oxpassword = '$sPasswdHash' or oxuser.oxpassword = '".$this->_encodePassword( $sPassword )."'";
-
-            if ( strpos( $sPassword, "ox_" ) === false ) {
-                $sPasswdSelect .= " or oxuser.oxpassword = " . oxDb::getDb()->Quote( $sPassword );
-            }
-
-                $sWhat =  "oxid";
-
-            if ( is_numeric( $sUser ) ) {
-                $sSelect =  "select $sWhat from oxuser where oxuser.oxactive = 1 and ($sPasswdSelect) and oxuser.oxcustnr = $sUser $sShopSelect";
-            } else {
-                $sSelect =  "select $sWhat from oxuser where oxuser.oxactive = 1 and ($sPasswdSelect) and oxuser.oxusername = " . oxDb::getDb()->Quote( $sUser ) . " $sShopSelect";
-            }
-
+            $sSelect =  "select $sWhat from oxuser where oxuser.oxactive = 1 and {$sPassSelect} and {$sUserSelect} {$sShopSelect} ";
             if ( $myConfig->isDemoShop() && $this->isAdmin() ) {
                 if ( $sPassword == "admin" && $sUser == "admin" ) {
-                    $sSelect =  "select $sWhat from oxuser where oxrights = 'malladmin' $sShopSelect ";
+                    $sSelect = "select $sWhat from oxuser where oxrights = 'malladmin' {$sShopSelect} ";
                 } else {
                     $oEx = oxNew( 'oxUserException' );
                     $oEx->setMessage( 'EXCEPTION_USER_NOVALIDLOGIN' );
@@ -1150,7 +1134,7 @@ class oxUser extends oxBase
             }
 
             // load from DB
-            $aData = oxDb::getDb()->GetAll( $sSelect );
+            $aData = $oDb->getAll( $sSelect );
             $sOXID = @$aData[0][0];
             if ( isset( $sOXID ) && $sOXID && !@$aData[0][1] ) {
 
@@ -1173,7 +1157,7 @@ class oxUser extends oxBase
 
             // cookie must be set ?
             if ( $blCookie ) {
-                $this->_setUserCookie( $this->oxuser__oxusername->value, $this->oxuser__oxpassword->value, $myConfig->getShopID() );
+                oxUtilsServer::getInstance()->setUserCookie( $this->oxuser__oxusername->value, $this->oxuser__oxpassword->value, $myConfig->getShopId() );
             }
             return true;
         } else {
@@ -1199,7 +1183,7 @@ class oxUser extends oxBase
         // oxSession::deleteVar( 'deladrid' );
 
         // delete cookie
-        $this->_deleteUserCookie( $this->getConfig()->getShopID() );
+        oxUtilsServer::getInstance()->deleteUserCookie( $this->getConfig()->getShopID() );
 
         // unsetting global user
         $this->setUser( null );
@@ -1213,9 +1197,9 @@ class oxUser extends oxBase
      *
      * @return bool
      */
-    public static function getAdminUser()
+    public function loadAdminUser()
     {
-        return self::getActiveUser( true );
+        return $this->loadActiveUser( true );
     }
 
     /**
@@ -1226,7 +1210,7 @@ class oxUser extends oxBase
      *
      * @return bool
      */
-    public static function getActiveUser( $blForceAdmin = false )
+    public function loadActiveUser( $blForceAdmin = false )
     {
         $myConfig = oxConfig::getInstance();
 
@@ -1234,19 +1218,13 @@ class oxUser extends oxBase
         $oDB = oxDb::getDb();
 
         // first - checking session info
-        if ( $blAdmin )
-            $sUserID = oxSession::getVar( 'auth' );
-        else
-            $sUserID = oxSession::getVar( 'usr' );
-
+        $sUserID = $blAdmin ? oxSession::getVar( 'auth' ) : oxSession::getVar( 'usr' );
         $blFoundInCookie = false;
 
         //trying automatic login (by 'remember me' cookie)
         if ( !$sUserID && !$blAdmin ) {
             $sShopID = $myConfig->getShopId();
-            $sSet = self::_getUserCookie( $sShopID );
-
-            if ( $sSet ) {
+            if ( ( $sSet = oxUtilsServer::getInstance()->getUserCookie( $sShopID ) ) ) {
                 $aData = explode( '@@@', $sSet );
                 $sUser = $oDB->quote( $aData[0] );
                 $sPWD  = @$aData[1];
@@ -1273,9 +1251,7 @@ class oxUser extends oxBase
 
         // checking user results
         if ( $sUserID ) {
-            $oUser = new oxuser;
-            if ( $oUser->load( $sUserID ) ) {
-
+            if ( $this->load( $sUserID ) ) {
                 // storing into session
                 if ($blAdmin) {
                     oxSession::setVar( 'auth', $sUserID );
@@ -1284,9 +1260,8 @@ class oxUser extends oxBase
                 }
 
                 // marking the way user was loaded
-                $oUser->blLoadedFromCookie = $blFoundInCookie;
-
-                return $oUser;
+                $this->_blLoadedFromCookie = $blFoundInCookie;
+                return true;
             }
         } else {
             // no user
@@ -1458,6 +1433,11 @@ class oxUser extends oxBase
      */
     protected function _update()
     {
+        //V #M418: for not registered users, don't change boni during update
+        if (!$this->oxuser__oxpassword->value && $this->oxuser__oxregister->value < 1) {
+            $this->_aSkipSaveFields[] = 'oxboni';
+        }
+
         // don't change this field
         $this->_aSkipSaveFields[] = 'oxcreate';
         if ( !$this->isAdmin() ) {
@@ -1539,11 +1519,7 @@ class oxUser extends oxBase
         $iShopId = $myConfig->getShopId();
         $blExists = false;
 
-        $sPassHash = oxUtils::getInstance()->strMan( '', $myConfig->getConfigParam( 'sConfigKey' ) );
-
-        $sQ = 'select oxshopid, oxrights, oxpassword, oxpassword like "ox_%", oxpassword like "'.$sPassHash.'"
-               from oxuser where oxusername = '. $oDB->quote( $sEmail );
-
+        $sQ = 'select oxshopid, oxrights, oxpassword from oxuser where oxusername = '. $oDB->quote( $sEmail );
         if ( ( $sOxid = $this->getId() ) ) {
             $sQ .= " and oxid <> '$sOxid' ";
         }
@@ -1554,7 +1530,7 @@ class oxUser extends oxBase
             if ( $this->_blMallUsers ) {
 
                 $blExists = true;
-                if ( $oRs->fields[1] == 'user' && ( ( !$oRs->fields[3] && !$oRs->fields[2] ) || ( $oRs->fields[3] && $oRs->fields[4] ) ) ) {
+                if ( $oRs->fields[1] == 'user' && !$oRs->fields[2] ) {
 
                     // password is not set - allow to override
                     $blExists = false;
@@ -1568,7 +1544,7 @@ class oxUser extends oxBase
                         // exists admin with same login - must not allow
                         $blExists = true;
                         break;
-                    } elseif ( $oRs->fields[0] == $iShopId && $oRs->fields[2] && !$oRs->fields[4] ) {
+                    } elseif ( $oRs->fields[0] == $iShopId && $oRs->fields[2] ) {
 
                         // exists same login (with password) in same shop
                         $blExists = true;
@@ -1854,6 +1830,8 @@ class oxUser extends oxBase
     /**
      * Sets user info into cookie
      *
+     * @deprecated should be used oxUtilsServer::setUserCookie()
+     *
      * @param string  $sUser     user ID
      * @param string  $sPassword password
      * @param string  $sShopId   shop ID (default null)
@@ -1863,17 +1841,13 @@ class oxUser extends oxBase
      */
     protected function _setUserCookie( $sUser, $sPassword,  $sShopId = null, $iTimeout = 31536000 )
     {
-        if ( !$sShopId ) {
-            $sShopId = $this->getConfig()->getShopID();
-        }
-
-        self::$_aUserCookie[$sShopId] = $sUser . '@@@' . crypt( $sPassword, 'ox' );
-        oxUtilsServer::getInstance()->setOxCookie( 'oxid_'.$sShopId, self::$_aUserCookie[$sShopId], time() + $iTimeout, '/' );
-        //oxUtils::getInstance()->setCookie( 'oxid_'.$sShopId, $sSet);
+        oxUtilsServer::getInstance()->setUserCookie( $sUser, $sPassword, $sShopId, $iTimeout );
     }
 
     /**
      * Deletes user cookie data
+     *
+     * @deprecated should be used oxUtilsServer::deleteUserCookie()
      *
      * @param string $sShopId shop ID (default null)
      *
@@ -1881,16 +1855,13 @@ class oxUser extends oxBase
      */
     protected function _deleteUserCookie( $sShopId = null )
     {
-        if ( !$sShopId ) {
-            $sShopId = $this->getConfig()->getShopID();
-        }
-
-        self::$_aUserCookie[$sShopId] = '';
-        oxUtilsServer::getInstance()->setOxCookie( 'oxid_'.$sShopId, '', time() - 3600, '/' );
+        oxUtilsServer::getInstance()->deleteUserCookie( $sShopId );
     }
 
     /**
      * Returns cookie stored used login data
+     *
+     * @deprecated should be used oxUtilsServer::getUserCookie()
      *
      * @param string $sShopId shop ID (default null)
      *
@@ -1898,21 +1869,7 @@ class oxUser extends oxBase
      */
     protected static function _getUserCookie( $sShopId = null )
     {
-        if (self::$_aUserCookie[$sShopId] !== null) {
-            if (!self::$_aUserCookie[$sShopId]) {
-                // cookie has been deleted
-                return null;
-            }
-            return self::$_aUserCookie[$sShopId];
-        }
-
-        if ( !$sShopId ) {
-            $sShopId = parent::getConfig()->getShopID();
-        }
-
-        self::$_aUserCookie[$sShopId] = oxUtilsServer::getInstance()->getOxCookie( 'oxid_'.$sShopId );
-
-        return self::$_aUserCookie[$sShopId];
+        return oxUtilsServer::getInstance()->getUserCookie( $sShopId );
     }
 
 
@@ -1972,7 +1929,7 @@ class oxUser extends oxBase
      *
      * @return bool
      */
-    public function isExpiredUpdateKey( $sKey )
+    public function isExpiredUpdateId( $sKey )
     {
         $oDb = oxDb::getDb();
         $sQ = "select 1 from ".$this->getViewName()." where oxupdateexp >= UNIX_TIMESTAMP() and MD5( CONCAT( oxid, oxshopid, oxupdatekey ) ) = ".$oDb->quote( $sKey );
@@ -2000,9 +1957,34 @@ class oxUser extends oxBase
      *
      * @return string
      */
-    protected function _encodePassword( $sPassword )
+    public function encodePassword( $sPassword, $sSalt )
     {
-        return md5( $sPassword . oxConfig::getInstance()->getConfigParam( 'sPasswdSalt' ) );
+        $oDb = oxDb::getDb();
+        return $oDb->getOne( "select MD5( CONCAT( ".$oDb->quote( $sPassword ).", UNHEX( '{$sSalt}' ) ) )" );
+    }
+
+    /**
+     * Returns safe salt value (heximal representation)
+     *
+     * @param string $sSalt any unique string value
+     *
+     * @return string
+     */
+    public function prepareSalt( $sSalt )
+    {
+        return ( $sSalt ? oxDb::getDb()->getOne( "select HEX( '{$sSalt}' )" ) : '' );
+    }
+
+    /**
+     * Returns plains password salt representation
+     *
+     * @param string $sSaltHex heximal representation of password salt value
+     *
+     * @return string
+     */
+    public function decodeSalt( $sSaltHex )
+    {
+    	return ( $sSaltHex ? oxDb::getDb()->getOne( "select UNHEX( '{$sSaltHex}' )" ) : '' );
     }
 
     /**
@@ -2014,9 +1996,14 @@ class oxUser extends oxBase
      */
     public function setPassword( $sPassword = null )
     {
+        // setting salt if password is not empty
+        $sSalt = $sPassword ? $this->prepareSalt( oxUtilsObject::getInstance()->generateUID() ) : '';
+
         // encoding only if password was not empty (e.g. user registration without pass)
-        $sPassword = $sPassword ? $this->_encodePassword( $sPassword ) : '';
+        $sPassword = $sPassword ? $this->encodePassword( $sPassword, $sSalt ) : '';
+
         $this->oxuser__oxpassword = new oxField( $sPassword, oxField::T_RAW );
+        $this->oxuser__oxpasssalt = new oxField( $sSalt, oxField::T_RAW );
     }
 
      /**
@@ -2028,9 +2015,70 @@ class oxUser extends oxBase
       */
     public function isSamePassword( $sNewPass )
     {
-        $oMyUtils = oxUtils::getInstance();
-        return ( $oMyUtils->strMan( $sNewPass, $this->getConfig()->getConfigParam( 'sConfigKey' ) ) == $this->oxuser__oxpassword->value ) ||
-               ( $sNewPass == $this->oxuser__oxpassword->value && strpos( $sNewPass, 'ox_' ) === false ) ||
-               ( $this->_encodePassword( $sNewPass ) == $this->oxuser__oxpassword->value );
+        return $this->encodePassword( $sNewPass, $this->oxuser__oxpasssalt->value ) == $this->oxuser__oxpassword->value;
+    }
+
+     /**
+      * Returns if user was loaded from cookie
+      *
+      * @return bool
+      */
+    public function isLoadedFromCookie()
+    {
+        return $this->_blLoadedFromCookie;
+    }
+
+    /**
+     * Returns password hash. In case password in db is plain or decodable
+     * password is processed and hash returned
+     *
+     * @return string
+     */
+    public function getPasswordHash()
+    {
+    	$sHash = null;
+        if ( $this->oxuser__oxpassword->value ) {
+            if ( strpos( $this->oxuser__oxpassword->value, 'ox_' ) === 0 ) {
+                // decodable pass ?
+                $this->setPassword( oxUtils::getInstance()->strRem( $this->oxuser__oxpassword->value ) );
+            } elseif ( strlen( $this->oxuser__oxpassword->value ) < 32 ) {
+                // plain pass ?
+                $this->setPassword( $this->oxuser__oxpassword->value );
+            }
+            $sHash = $this->oxuser__oxpassword->value;
+    	}
+        return $sHash;
+    }
+
+    /**
+     * Loads active admin user object (if possible). If
+     * user is not available - returns false.
+     *
+     * @deprecated use non static method loadAdminUser
+     *
+     * @return bool
+     */
+    public static function getAdminUser()
+    {
+        return self::getActiveUser( true );
+    }
+
+    /**
+     * Loads active user object. If
+     * user is not available - returns false.
+     *
+     * @param bool $blForceAdmin (default false)
+     * @deprecated use non static method loadActiveUser
+     *
+     * @return bool
+     */
+    public static function getActiveUser( $blForceAdmin = false )
+    {
+        $oUser = oxNew( 'oxuser' );
+        if ( $oUser->loadActiveUser( $blForceAdmin ) ) {
+            return $oUser;
+        } else {
+            return false;
+        }
     }
 }

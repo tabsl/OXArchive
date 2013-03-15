@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxwrapping.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxwrapping.php 14480 2008-12-05 08:33:26Z arvydas $
  */
 
 /**
@@ -78,14 +78,15 @@ class oxWrapping extends oxI18n
      */
     public function __get($sName)
     {
-        switch ($sName) {
+        switch ( $sName ) {
             case 'fprice':
-                return $this->getFPrice();
+                $sValue = $this->getFPrice();
                 break;
-
+            default:
+                $sValue = parent::__get( $sName );
         }
 
-        return parent::__get( $sName );
+        return $sValue;
     }
 
     /**

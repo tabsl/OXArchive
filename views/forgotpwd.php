@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2008
- * $Id: forgotpwd.php 14391 2008-11-26 16:00:50Z arvydas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: forgotpwd.php 14516 2008-12-05 14:31:07Z arvydas $
  */
 
 /**
@@ -162,7 +162,7 @@ class ForgotPwd extends oxUBase
     public function isExpiredLink()
     {
         if ( ( $sKey = $this->getUpdateId() ) ) {
-            $blExpired = oxNew( 'oxuser' )->isExpiredUpdateKey( $sKey );
+            $blExpired = oxNew( 'oxuser' )->isExpiredUpdateId( $sKey );
         }
 
         return $blExpired;

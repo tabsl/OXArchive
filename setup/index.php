@@ -17,70 +17,93 @@
  *
  * @link http://www.oxid-esales.com
  * @package setup
- * @copyright © OXID eSales AG 2003-2008
- * $Id: index.php 13991 2008-11-05 10:20:23Z birute $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: index.php 14926 2009-01-05 09:27:56Z arvydas $
  */
 
+
+global $aSetupSteps;
+$aSetupSteps['STEP_SYSTEMREQ']  = 100;      // 0
+$aSetupSteps['STEP_WELCOME']    = 200;      // 1
+$aSetupSteps['STEP_LICENSE']    = 300;      // 2
+$aSetupSteps['STEP_DB_INFO']    = 400;      // 3
+$aSetupSteps['STEP_DB_CONNECT'] = 410;      // 31
+$aSetupSteps['STEP_DB_CREATE']  = 420;      // 32
+$aSetupSteps['STEP_DIRS_INFO']  = 500;      // 4
+$aSetupSteps['STEP_DIRS_WRITE'] = 510;      // 41
+$aSetupSteps['STEP_FINISH'] = 700;          // 6
+
+ob_start();
 
 $sVerPrefix = '';
 
     $sVerPrefix = '_ce';
 
+
+    $sBaseShopId = 'oxbaseshop';
+
 // Session Handling
-$sSID = @$_GET['sid'];
-if ( !isset( $sSID))
-    $sSID = @$_POST['sid'];
+$sSID = null;
+if ( isset( $_GET['sid'] ) ) {
+    $sSID = $_GET['sid'];
+} elseif ( isset( $_POST['sid'] ) ) {
+	$sSID = $_POST['sid'];
+}
 
 // creating array to store persistent data
 global $aPersistentData;
 $aPersistentData = array();
 
 //decoding data from "sid" variable
-if ( isset( $sSID) && strlen( $sSID)) {
-    $aSIDData = base64_decode( $sSID);
-    if ( $aSIDData !== false) {
+if ( isset( $sSID ) && strlen( $sSID ) ) {
+    $aSIDData = base64_decode( $sSID );
+    if ( $aSIDData !== false ) {
         // unserializing persistent data
-        $aPersistentData = unserialize( $aSIDData);
+        $aPersistentData = unserialize( $aSIDData );
     }
 }
 $sSetupLang = getSetupLang();
 include_once $sSetupLang . '/lang.php';
 
 //storring country value settings to session
-if ( isset( $_POST['country_lang'] )) {
+if ( isset( $_POST['country_lang'] ) ) {
     // store to session
     $aPersistentData['country_lang'] = $_POST['country_lang'];
 }
 
 //storring dyn pages settings to session
-if ( isset( $_POST['use_dynamic_pages'] )) {
+if ( isset( $_POST['use_dynamic_pages'] ) ) {
     // store to session
     $aPersistentData['use_dynamic_pages'] = $_POST['use_dynamic_pages'];
 }
 
 // startup
-$istep = @$_GET['istep'];
-if ( !isset( $istep))
-    $istep = @$_POST['istep'];
-if ( !isset( $istep))
-    $istep = "1";
+if ( isset( $_GET['istep'] ) && $_GET['istep'] ) {
+    $istep = $_GET['istep'];
+} elseif ( isset( $_POST['istep'] ) && $_POST['istep'] ) {
+    $istep = $_POST['istep'];
+} else {
+	$istep = $aSetupSteps['STEP_SYSTEMREQ'];
+}
 
 // store eula to session
-$iEula = @$_POST['iEula'];
-if ( isset( $iEula)) {
+if ( isset( $_POST['iEula'] ) ) {
     // store to session
-    $aPersistentData['eula'] = $iEula;
-} else
-    $iEula = @$aPersistentData['eula'];
+    $aPersistentData['eula'] = $iEula = $_POST['iEula'];
+} elseif ( isset( $aPersistentData['eula'] ) ) {
+    $iEula = $aPersistentData['eula'];
+} else {
+	$iEula = 0;
+}
 
 // routing table
-if ( !$iEula && $istep > 2)
-    $istep = "1";
+if ( !$iEula && $istep > $aSetupSteps['STEP_LICENSE'] ) {
+    $istep = $aSetupSteps['STEP_WELCOME'];
+}
 
-    //print_r( $_SESSION);
-
-function getSetupLang() {
-    global $aPersistentData;
+function getSetupLang()
+{
+    global $aPersistentData, $aSetupSteps;
 
     $aLangs = array( 'en', 'de' );
 
@@ -91,7 +114,7 @@ function getSetupLang() {
         $aPersistentData['setup_lang'] = $_POST['setup_lang'];
         if (!empty($_POST['setup_lang_submit'])) {
             //updating setup language, so disabling redirect to next step, just reloading same step
-            $_GET['istep'] = $_POST['istep'] = "1";
+            $_GET['istep'] = $_POST['istep'] = $aSetupSteps['STEP_WELCOME'];
         }
     } elseif ( empty($aPersistentData['setup_lang'])  ) {
         $aPersistentData['setup_lang'] = $sBrowserLang;
@@ -100,25 +123,25 @@ function getSetupLang() {
     return $aPersistentData['setup_lang'];
 }
 
-function checkFileOrDirectory( $sPath)
+function checkFileOrDirectory( $sPath )
 {
-    global $aLang;
+    global $aLang, $aSetupSteps;
 
     $sMessage = "";
     if ( !file_exists( $sPath) ) {
         global $iRedir2Step;
-        $iRedir2Step = 4;
+        $iRedir2Step = $aSetupSteps['STEP_DIRS_INFO'];
         $sMessage .= sprintf( $aLang['ERROR_NOT_AVAILABLE'], $sPath ) . "<br>";
         return $sMessage;
     }
     if ( !@chmod( $sPath, 0755)) {
         global $iRedir2Step;
-        $iRedir2Step = 4;
+        $iRedir2Step = $aSetupSteps['STEP_DIRS_INFO'];
         $sMessage .= sprintf( $aLang['ERROR_CHMOD'], $sPath ) . "<br>";
     }
     if ( !is_writable( $sPath) ) {
         global $iRedir2Step;
-        $iRedir2Step = 4;
+        $iRedir2Step = $aSetupSteps['STEP_DIRS_INFO'];
         $sMessage .= sprintf( $aLang['ERROR_NOT_WRITABLE'], $sPath ) . "<br>";
         return $sMessage;
     }
@@ -167,12 +190,12 @@ function ParseQuery( $sSQL)
 
 function OpenDatabase( $aDB)
 {
-    global $aLang;
+    global $aLang, $aSetupSteps;
 
     // ok open DB
     $oDB = @mysql_connect( $aDB['dbHost'], $aDB['dbUser'], $aDB['dbPwd']);
     if ( !$oDB) {
-        $iRedir2Step = 3;
+        $iRedir2Step = $aSetupSteps['STEP_DB_INFO'];
         $sMessage = $aLang['ERROR_DB_CONNECT'] . " - " . mysql_error();
         include("headitem.php");
         include("bottomitem.php");
@@ -185,14 +208,14 @@ function OpenDatabase( $aDB)
 
 function QueryFile( $sFilename, $aDB)
 {
-    global $aLang;
+    global $aLang, $aSetupSteps;
 
     $sProblems= "";
 
     $fp = @fopen( $sFilename, "r");
     if ( !$fp) {
         // problems with file
-        $iRedir2Step = 3;
+        $iRedir2Step = $aSetupSteps['STEP_DB_INFO'];
         $sMessage = sprintf( $aLang['ERROR_OPENING_SQL_FILE'], $sFilename );
         include("headitem.php");
         include("bottomitem.php");
@@ -334,12 +357,296 @@ class Conf
 {
     function Conf()
     {
-        require_once("../core/oxconfk.php");
+        require("../core/oxconfk.php");
+    }
+}
+
+/**
+ * Translates module name
+ *
+ * @param string $sModuleName name of module
+ *
+ * @return string
+ */
+function getModuleName( $sModuleName )
+{
+    global $aLang;
+    return $aLang['MOD_'.strtoupper( $sModuleName ) ];
+}
+
+/**
+ * Parses and calculates given string form byte syze value
+ *
+ * @param string $sBytes string form byte value (64M, 32K etc)
+ *
+ * @return int
+ */
+function getBytes( $sBytes )
+{
+    $sBytes = trim( $sBytes );
+    $sLast = strtolower($sBytes[strlen($sBytes)-1]);
+    switch( $sLast ) {
+        // The 'G' modifier is available since PHP 5.1.0
+        case 'g':
+            $sBytes *= 1024;
+        case 'm':
+            $sBytes *= 1024;
+        case 'k':
+            $sBytes *= 1024;
+    }
+
+    return $sBytes;
+}
+
+/**
+ * Runs through modules array and checks if current system fits requirements.
+ * Returns array with module info:
+ *   array( $sGroup, $sModuleName, $sModuleState ):
+ *     $sGroup       - group of module
+ *     $sModuleName  - name of checked module
+ *     $sModuleState - module state:
+ *       -1 - unable to datect, should not block
+ *        0 - missing, blocks setup
+ *        1 - fits min requirements
+ *        2 - exists required or better
+ *
+ * @return array
+ */
+function getNextModuleInfo()
+{
+    static $aRequiredModules;
+    if ( $aRequiredModules == null ) {
+        $aRequiredPHPExtensions = array(
+            'phpversion',
+            'libxml2',
+            'php-xml',
+            'json',
+            'iconv',
+            'tokenizer',
+            'mysql_connect',
+            'gd_info'
+            );
+
+            $aRequiredPHPExtensions[] = 'bcmath';
+
+         $aRequiredPHPConfigs = array(
+            'allow_url_fopen',
+            'php4_compat',
+            'request_uri',
+            'ini_set',
+            'register_globals',
+            'memory_limit'
+         );
+
+         $aRequiredServerConfigs = array(
+            'mod_rewrite'
+         );
+
+
+        $aRequiredModules = array_fill_keys($aRequiredPHPExtensions,'php_extennsions') +
+                            array_fill_keys($aRequiredPHPConfigs,'php_config') +
+                            array_fill_keys($aRequiredServerConfigs,'server_config');
+    }
+
+    if ( (  $sModule = key( $aRequiredModules ) ) ) {
+        $sGroup = current( $aRequiredModules );
+        $iModStat = null;
+        switch ( $sModule ) {
+            case 'mod_rewrite':
+                // mod_rewrite extension
+                if ( function_exists( 'apache_get_modules' ) ) {
+                    $iModStat = in_array( 'mod_rewrite', apache_get_modules() ) ? 2 : 0;
+                } else {
+                    $iModStat = -1;
+                }
+                break;
+            case 'allow_url_fopen':
+                // Activated allow_url_fopen or fsockopen on port 80 possible
+                $iModStat = @ini_get('allow_url_fopen');
+                $iModStat = ( $iModStat && strcasecmp( '1', $iModStat ) ) ? 2 : 1;
+                if ( $iModStat == 1 ) {
+                    $iErrNo  = 0;
+                    $sErrStr = '';
+                    if ( $oRes = @fsockopen( 'www.oxid-esales.com', 80, $iErrNo, $sErrStr, 10 ) ) {
+                        $iModStat = 2;
+                        fclose( $oRes );
+                    }
+                }
+                $iModStat = ( !$iModStat ) ? 1 : $iModStat;
+                break;
+            case 'php4_compat':
+                // PHP4 compatibility mode must be set off. (zend.ze1_compatibility_mode = Off)
+                $sZendStatus = ( strtolower( (string) @ini_get( 'zend.ze1_compatibility_mode' ) ) );
+                $iModStat = in_array( $sZendStatus, array( 'on', '1' ) ) ? 0 : 2;
+                break;
+            case 'phpversion':
+                // PHP 5.2.0 or higher. Due to performance matters, PHP 5.2.6 recommended.
+                $iModStat = ( version_compare( PHP_VERSION, '5.1', '>' ) ) ? 1 : 0;
+                $iModStat = ( $iModStat == 0 ) ? $iModStat : ( version_compare( PHP_VERSION, '5.2', '>=' ) ? 2 : 1 );
+                break;
+            case 'request_uri':
+                // Apache server variables REQUEST_URI or SCRIPT_URI must be set
+                $iModStat = ( isset( $_SERVER['REQUEST_URI'] ) || isset( $_SERVER['SCRIPT_URI'] ) ) ? 2 : 0;
+                break;
+            case 'libxml2':
+                // libxml2
+                $iModStat = class_exists( 'DOMDocument' ) ? 2 : 0;
+                break;
+            case 'php-xml':
+                // php-xml
+                $iModStat = class_exists( 'DOMDocument' ) ? 2 : 0;
+                break;
+            case 'json':
+                // JSON
+                $iModStat = extension_loaded( 'json' ) ? 2 : 0;
+                break;
+            case 'iconv':
+                // iconv-extension
+                $iModStat = extension_loaded( 'iconv' ) ? 2 : 0;
+                break;
+            case 'tokenizer':
+                // tokenizer
+                $iModStat = extension_loaded( 'tokenizer' ) ? 2 : 0;
+                break;
+            case 'bcmath':
+                // bcmath
+                $iModStat = extension_loaded( 'bcmath' ) ? 2 : 1;
+                break;
+            case 'mysql_connect':
+                // MySQL module for MySQL5
+                $iModStat = extension_loaded( 'mysql' ) ? 2 : 0;
+                // client version must be >=5
+                $iModStat = ( $iModStat == 0 || !function_exists( 'mysql_get_client_info' ) ) ? $iModStat : ( version_compare( mysql_get_client_info(), '5', '>=' ) ? 2 : 0 );
+                break;
+            case 'gd_info':
+                // GDlib version
+                $iModStat = extension_loaded( 'gd' ) ? 1 : 0;
+                $iModStat = function_exists( 'imagecreatetruecolor' ) ? 2 : $iModStat;
+                $iModStat = function_exists( 'imagecreatefromjpeg' ) ? $iModStat : 0;
+                break;
+            case 'ini_set':
+                // ini set allowed
+                $iModStat = ( @ini_set('session.name', 'sid' ) !== false ) ? 2 : 0;
+                break;
+            case 'register_globals':
+                // register_globals off
+                $sGlobStatus = ( strtolower( (string) @ini_get( 'register_globals' ) ) );
+                $iModStat = in_array( $sGlobStatus, array( 'on', '1' ) ) ? 0 : 2;
+                break;
+            case 'memory_limit':
+                if ( $sMemLimit = @ini_get('memory_limit') ) {
+
+                        // CE - PE at least to 14 MB. We recomend a memory_limit of 30MB.
+                        $sDefLimit = '14M';
+                        $sRecLimit = '30M';
+
+
+                    $iMemLimit = getBytes( $sMemLimit );
+                    $iModStat = ( $iMemLimit >= getBytes( $sDefLimit ) ) ? 1 : 0;
+                    $iModStat = $iModStat ? ( ( $iMemLimit >= getBytes( $sRecLimit ) ) ? 2 : $iModStat ) : $iModStat;
+
+                } else {
+                    $iModStat = -1;
+                }
+
+                break;
+        }
+
+
+        next( $aRequiredModules );
+        return array( $sGroup, $sModule, $iModStat );
     }
 }
 
 // startpage, licence
-if ( $istep == 1) {
+if ( $istep == $aSetupSteps['STEP_SYSTEMREQ'] ) {
+
+    // ---------------------------------------------------------
+    // WELCOME
+    // ---------------------------------------------------------
+    $title = $aLang['STEP_0_TITLE'];
+    include "headitem.php";
+?>
+<strong><?php echo( $aLang['STEP_0_DESC'] ) ?></strong><br><br>
+
+<table cellpadding="1" cellspacing="0">
+    <tr>
+        <td nowrap><?php echo($aLang['SELECT_SETUP_LANG']) ?>: </td>
+        <td>
+            <form action="index.php" id="langSelectionForm" method="post">
+            <select name="setup_lang" onChange="document.getElementById('langSelectionForm').submit();" style="font-size: 11px;">
+                <option value="en">English</option>
+                <option value="de" <?php if ($aPersistentData['setup_lang'] == 'de') echo 'selected'; ?>>Deutsch</option>
+            </select>
+            <noscript>
+            <input type="submit" name="setup_lang_submit" value="<?php echo($aLang['SELECT_SETUP_LANG_SUBMIT']) ?>" style="font-size: 11px;">
+            </noscript>
+            <input type="hidden" name="sid" value="<?php echo( getSID()); ?>">
+            <input type="hidden" name="istep" value="<?php echo $aSetupSteps['STEP_SYSTEMREQ']; ?>">
+            </form>
+        </td>
+    </tr>
+</table>
+<br>
+
+    <ul class="req">
+    <?php
+    $blContinue = true;
+    $sPrevGroup = null;
+    while ( list( $sGroup, $sModule, $iModuleState ) = getNextModuleInfo() ) {
+        // translating
+        $sModuleName = getModuleName( $sModule );
+        $sGroupName  = getModuleName( $sGroup );
+        if($sPrevGroup != $sGroup){
+            if(!is_null($sPrevGroup)){
+                echo "</ul></li>";
+            }
+            echo "<li class='group'>{$sGroupName}<ul>";
+            $sPrevGroup = $sGroup;
+        }
+
+        /**
+         * $iModuleState - module status:
+         * -1 - unable to datect, should not block
+         *  0 - missing, blocks setup
+         *  1 - fits min requirements
+         *  2 - exists required or better
+         */
+        switch ( $iModuleState ) {
+            case 2:
+                $sClass = 'pass';
+                break;
+            case 1:
+                $sClass = 'pmin';
+                break;
+            case -1:
+                $sClass = 'null';
+                break;
+            default:
+                $sClass = 'fail';
+                break;
+        }
+
+        $blContinue = $blContinue && ( bool ) abs( $iModuleState );
+        echo "<li id=\"$sModule\" class=\"{$sClass}\">{$sModuleName}</li>\n";
+    }
+    ?>
+    </li></ul></li><li class="clear"></li></ul>
+
+    <?php echo( $aLang['STEP_0_TEXT'] ) ?>
+    <br><br>
+
+    <?php if ( $blContinue ) { ?>
+    <form action="index.php" method="post">
+    <input type="hidden" name="sid" value="<?php echo( getSID()); ?>">
+    <input type="hidden" name="istep" value="<?php echo $aSetupSteps['STEP_WELCOME']; ?>">
+    <input type="submit" id="step0Submit" class="edittext" value="<?php echo( $aLang['BUTTON_PROCEED_INSTALL'] ) ?>">
+    </form>
+    <?php } else {
+              echo '<b>',$aLang['STEP_0_ERROR_TEXT'],'</b>';
+          }
+// startpage, licence
+} elseif ( $istep == $aSetupSteps['STEP_WELCOME'] ) {
     // ---------------------------------------------------------
     // WELCOME
     // ---------------------------------------------------------
@@ -377,19 +684,6 @@ if ( $istep == 1) {
 <br>
 <form action="index.php" method="post">
 <table cellpadding="1" cellspacing="0">
-    <tr>
-        <td nowrap><?php echo($aLang['SELECT_SETUP_LANG']) ?>: </td>
-        <td>
-            <select name="setup_lang" onChange="this.form.setup_lang_submit.value='1'; this.form.submit();" style="font-size: 11px;">
-                <option value="en">English</option>
-                <option value="de" <?php if ($aPersistentData['setup_lang'] == 'de') echo 'selected'; ?>>Deutsch</option>
-            </select>
-            <input type="hidden" name="setup_lang_submit" value="">
-            <noscript>
-            <input type="submit" name="setup_lang_submit" value="<?php echo($aLang['SELECT_SETUP_LANG_SUBMIT']) ?>" style="font-size: 11px;">
-            </noscript>
-        </td>
-    </tr>
     <tr>
         <td style="padding-top: 5px;"><?php echo($aLang['SELECT_COUNTRY_LANG']) ?>: </td>
         <td>
@@ -436,20 +730,20 @@ if ( $istep == 1) {
 
     <br>
 
-    <input type="hidden" name="istep" value="2">
+    <input type="hidden" name="istep" value="<?php echo $aSetupSteps['STEP_LICENSE']; ?>">
     <input type="hidden" name="sid" value="<?php echo( getSID()); ?>">
     <input type="submit" id="step1Submit" class="edittext" value="<?php echo( $aLang['BUTTON_BEGIN_INSTALL'] ) ?>">
 </form>
 
 <?PHP
-} elseif( $istep == 2) {
+} elseif ( $istep == $aSetupSteps['STEP_LICENSE'] ) {
     // ---------------------------------------------------------
     // LICENCE
     // ---------------------------------------------------------
     $title = $aLang['STEP_2_TITLE'];
     include "headitem.php";
 ?>
-<textarea cols="180" rows="20" class="edittext" style="width: 858px; padding: 7px;">
+<textarea cols="180" rows="20" class="edittext" style="width: 98%; padding: 7px;">
 <?php
     $sLicenseFile = "lizenz.txt";
 
@@ -459,14 +753,14 @@ if ( $istep == 1) {
 ?>
 </textarea>
 <form action="index.php" method="post">
-  <input type="hidden" name="istep" value="3">
+  <input type="hidden" name="istep" value="<?php echo $aSetupSteps['STEP_DB_INFO']; ?>">
   <input type="radio" name="iEula" value="1"><?php echo( $aLang['BUTTON_RADIO_LICENCE_ACCEPT'] ) ?><br>
   <input type="radio" name="iEula" value="0" checked><?php echo( $aLang['BUTTON_RADIO_LICENCE_NOT_ACCEPT'] ) ?><br><br>
   <input type="hidden" name="sid" value="<?php echo( getSID()); ?>">
   <input type="submit" id="step2Submit" class="edittext" value="<?php echo( $aLang['BUTTON_LICENCE'] ) ?>">
 </form>
 <?PHP
-} elseif ( $istep == 3) {
+} elseif ( $istep == $aSetupSteps['STEP_DB_INFO'] ) {
     // ---------------------------------------------------------
     // ENTER DATABASE INFO
     // ---------------------------------------------------------
@@ -488,7 +782,7 @@ if ( $istep == 1) {
 <?php echo( $aLang['STEP_3_DESC'] ) ?><br>
 <br>
 <form action="index.php" method="post">
-<input type="hidden" name="istep" value="31">
+<input type="hidden" name="istep" value="<?php echo $aSetupSteps['STEP_DB_CONNECT']; ?>">
 
 <table cellpadding="0" cellspacing="5" border="0">
   <tr>
@@ -519,7 +813,7 @@ if ( $istep == 1) {
 <input type="submit" id="step3Submit" class="edittext" value="<?php echo( $aLang['BUTTON_DB_INSTALL'] ) ?>">
 </form>
 <?PHP
-} elseif ( $istep == 31) {
+} elseif ( $istep == $aSetupSteps['STEP_DB_CONNECT'] ) {
     // ---------------------------------------------------------
     // CHECK DATABASE
     // ---------------------------------------------------------
@@ -530,7 +824,7 @@ if ( $istep == 1) {
 
     // check if iportant parameters are set
     if ( !$aDB['dbHost'] || !$aDB['dbName'] ) {
-        $iRedir2Step = 3;
+        $iRedir2Step = $aSetupSteps['STEP_DB_INFO'];
         $sMessage = $aLang['ERROR_FILL_ALL_FIELDS'];
         include "headitem.php";
         include "bottomitem.php";
@@ -539,7 +833,7 @@ if ( $istep == 1) {
     // ok check DB Connection
     $oDB = @mysql_connect( $aDB['dbHost'], $aDB['dbUser'], $aDB['dbPwd']);
     if ( !$oDB) {
-        $iRedir2Step = 3;
+        $iRedir2Step = $aSetupSteps['STEP_DB_INFO'];
         $sMessage = $aLang['ERROR_COULD_NOT_CONNECT_TO_DB'] . " - ". mysql_error();
         include "headitem.php";
         include "bottomitem.php";
@@ -551,7 +845,7 @@ if ( $istep == 1) {
         // try to create one
         if ( !mysql_query( "create database ". $aDB['dbName'], $oDB)) {
             // no success !
-            $iRedir2Step = 3;
+            $iRedir2Step = $aSetupSteps['STEP_DB_INFO'];
             $sMessage = sprintf($aLang['ERROR_COULD_NOT_CREATE_DB'], $aDB['dbName']) . " - ". mysql_error();
             include "headitem.php";
             include "bottomitem.php";
@@ -562,13 +856,13 @@ if ( $istep == 1) {
     // success !
     mysql_close( $oDB);
 
-    $iRedir2Step = 32;
+    $iRedir2Step = $aSetupSteps['STEP_DB_CREATE'];
     include "headitem.php";
     echo( "<b>" . $aLang['STEP_3_1_DB_CONNECT_IS_OK'] . "</b><br>");
     if ( $blCreated)
         echo( "<b>" . sprintf($aLang['STEP_3_1_DB_CREATE_IS_OK'], $aDB['dbName']) . "</b><br>");
     echo( "<br>" . $aLang['STEP_3_1_CREATING_TABLES'] . "<br>");
-} elseif ( $istep == 32) {
+} elseif ( $istep == $aSetupSteps['STEP_DB_CREATE'] ) {
     // ---------------------------------------------------------
     // CREATE DATABASE
     // ---------------------------------------------------------
@@ -583,7 +877,7 @@ if ( $istep == 1) {
     if ( !$blOverwrite && mysql_query( "select * from oxconfig", $oDB) != false) {
         // DB already UP ?
         $sMessage = sprintf($aLang['ERROR_DB_ALREADY_EXISTS'], $aDB['dbName']);
-        $sMessage .= "<br><br>" . $aLang['STEP_3_2_CONTINUE_INSTALL_OVER_EXISTING_DB'] . " <a href=\"index.php?sid=".getSID()."&istep=32&ow=1\" id=\"step3Continue\" style=\"text-decoration: underline;\">" . $aLang['HERE'] . "</a>";
+        $sMessage .= "<br><br>" . $aLang['STEP_3_2_CONTINUE_INSTALL_OVER_EXISTING_DB'] . " <a href=\"index.php?sid=".getSID()."&istep=".$aSetupSteps['STEP_DB_CREATE']."&ow=1\" id=\"step3Continue\" style=\"text-decoration: underline;\">" . $aLang['HERE'] . "</a>";
         include "headitem.php";
         include "bottomitem.php";
         exit();
@@ -615,12 +909,12 @@ if ( $istep == 1) {
     //update dyn pages / shop country config options (from first step)
     saveDynPagesSettings();
 
-    $iRedir2Step = 4;
+    $iRedir2Step = $aSetupSteps['STEP_DIRS_INFO'];
     $sMessage = $aLang['STEP_3_2_CREATING_DATA'];
     include "headitem.php";
     include "bottomitem.php";
     exit();
-} elseif ( $istep == 4) {
+} elseif ( $istep == $aSetupSteps['STEP_DIRS_INFO'] ) {
     $title =  $aLang['STEP_4_TITLE'];
     include "headitem.php";
 
@@ -665,7 +959,7 @@ if ( $istep == 1) {
 <?php echo( $aLang['STEP_4_DESC'] ) ?><br>
 <br>
 <form action="index.php" method="post">
-<input type="hidden" name="istep" value="41">
+<input type="hidden" name="istep" value="<?php echo $aSetupSteps['STEP_DIRS_WRITE']; ?>">
 
 <table cellpadding="0" cellspacing="5" border="0">
   <tr>
@@ -689,7 +983,7 @@ if ( $istep == 1) {
 <input type="submit" id="step4Submit" class="edittext" value="<?php echo( $aLang['BUTTON_WRITE_DATA'] ) ?>">
 </form>
 <?PHP
-} elseif ( $istep == 41) {
+} elseif ( $istep == $aSetupSteps['STEP_DIRS_WRITE'] ) {
     // ---------------------------------------------------------
     // CHECK PATH
     // ---------------------------------------------------------
@@ -719,7 +1013,7 @@ if ( $istep == 1) {
 
     // check if important parameters are set
     if ( !$aPath['sURL'] || !$aPath['sDIR'] || !$aPath['sTMP']) {
-        $iRedir2Step = 4;
+        $iRedir2Step = $aSetupSteps['STEP_DIRS_INFO'];
         $sMessage = $aLang['ERROR_FILL_ALL_FIELDS'];
         include "headitem.php";
         include "bottomitem.php";
@@ -786,7 +1080,7 @@ if ( $istep == 1) {
         @chmod( $sConfPath, 0755);
     } else {
         // error ? strange !?
-        $iRedir2Step = 4;
+        $iRedir2Step = $aSetupSteps['STEP_DIRS_INFO'];
         $sMessage = sprintf($aLang['ERROR_CONFIG_FILE_IS_NOT_WRITABLE'], $aPath['sDIR']);
         include "headitem.php";
         include "bottomitem.php";
@@ -794,18 +1088,25 @@ if ( $istep == 1) {
     }
 
 
-        $iRedir2Step = 6;
+        $iRedir2Step = $aSetupSteps['STEP_FINISH'];
 
     $sMessage = $aLang['STEP_4_1_DATA_WAS_WRITTEN'];
     include "headitem.php";
     include "bottomitem.php";
     exit();
 
-} elseif ( $istep == 5) {
+} elseif ( $istep == $aSetupSteps['STEP_SERIAL'] ) {
 
-} elseif ( $istep == 51) {
 
-} elseif ( $istep == 6) {
+
+
+
+} elseif ( $istep == $aSetupSteps['STEP_SERIAL_SAVE'] ) {
+
+
+
+
+} elseif ( $istep == $aSetupSteps['STEP_FINISH'] ) {
     // ---------------------------------------------------------
     // END
     // ---------------------------------------------------------
@@ -825,7 +1126,9 @@ if ( $istep == 1) {
 </tr>
 <tr>
     <td><?php echo( $aLang['STEP_6_LINK_TO_SHOP_ADMIN_AREA'] ) ?>: </td>
-    <td><a href="<?php echo( $aPath['sURL']); ?>/admin/" target="_new" id="linkToAdmin" style="text-decoration: underline"><strong><?php echo( $aLang['STEP_6_TO_SHOP_ADMIN'] ) ?></strong></a></td>
+    <td><a href="<?php echo( $aPath['sURL']); ?>/admin/" target="_new" id="linkToAdmin" style="text-decoration: underline"><strong><?php echo( $aLang['STEP_6_TO_SHOP_ADMIN'] ) ?></strong></a>
+    ( <?php echo( $aLang['STEP_6_ADDITIONAL_LOGIN_INFO'] ) ?> )
+    </td>
 </tr>
 </table>
 <br>
@@ -862,3 +1165,5 @@ if ( $istep == 1) {
 }
 
 include "bottomitem.php";
+
+ob_end_flush();

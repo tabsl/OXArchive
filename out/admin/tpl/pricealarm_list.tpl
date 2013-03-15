@@ -172,7 +172,7 @@ window.onLoad = top.reloadEditFrame();
     <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:EditThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->iStatus==1}]listitemred[{elseif $listitem->iStatus==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->fpricealarmprice }]&nbsp;[{ $listitem->oxpricealarm__oxcurrency->value }]</a></div></td>
     <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:EditThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->iStatus==1}]listitemred[{elseif $listitem->iStatus==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->fprice }]&nbsp;[{ $listitem->oxpricealarm__oxcurrency->value }]</a></div></td>
     <td class="[{$listclass}]">
-      [{ if !$listitem->isinternal }]
+      [{ if !$listitem->isOx() }]
         [{ if $readonly == ""}]
           <a href="Javascript:DeleteThis('[{ $listitem->oxpricealarm__oxid->value }]');" class="delete" id="del.[{$_cnt}]" [{include file="help.tpl" helpid=item_delete}]></a>
         [{/if}]

@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxrecommlist.php 14388 2008-11-26 15:43:17Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxrecommlist.php 14520 2008-12-05 16:06:26Z vilma $
  */
 
 /**
@@ -242,24 +242,14 @@ class oxRecommList extends oxBase
 
             $oRecommList->setSqlLimit( 0, $iCnt );
 
-            $sSelect = "SELECT distinct lists.*
-                    FROM oxobject2list AS o2l_lists
-                    LEFT JOIN oxobject2list AS o2l_count
-                        ON o2l_lists.oxlistid = o2l_count.oxlistid
-                    LEFT JOIN oxrecommlists as lists
-                        ON o2l_lists.oxlistid = lists.oxid
-                    WHERE o2l_lists.oxobjectid
-                        IN (
-                        '$sIds'
-                        ) and lists.oxshopid ='$iShopId'
-                    GROUP BY lists.oxid
-                    order by (
-                            SELECT count( order1.oxobjectid )
-                            FROM oxobject2list AS order1
-                            WHERE order1.oxobjectid IN ('$sIds')
-                                AND o2l_lists.oxlistid = order1.oxlistid
-                        ) DESC,
-                        count( lists.oxid ) DESC";
+            $sSelect = "SELECT distinct lists.* FROM oxobject2list AS o2l_lists";
+            $sSelect.= " LEFT JOIN oxobject2list AS o2l_count ON o2l_lists.oxlistid = o2l_count.oxlistid";
+            $sSelect.= " LEFT JOIN oxrecommlists as lists ON o2l_lists.oxlistid = lists.oxid";
+            $sSelect.= " WHERE o2l_lists.oxobjectid IN ('$sIds') and lists.oxshopid ='$iShopId'";
+            $sSelect.= " GROUP BY lists.oxid order by (";
+            $sSelect.= " SELECT count( order1.oxobjectid ) FROM oxobject2list AS order1";
+            $sSelect.= " WHERE order1.oxobjectid IN ('$sIds') AND o2l_lists.oxlistid = order1.oxlistid";
+            $sSelect.= " ) DESC, count( lists.oxid ) DESC";
 
             $oRecommList->selectString( $sSelect );
 
@@ -377,10 +367,10 @@ class oxRecommList extends oxBase
         $iShopId    = $this->getConfig()->getShopId();
         $sSearchStr = oxDb::getDb()->quote( "%$sSearchStr%" );
 
-        $sSelect = "select distinct rl.* from oxrecommlists as rl
-                    inner join oxobject2list as o2l on o2l.oxlistid = rl.oxid
-                    where ( rl.oxtitle like $sSearchStr or rl.oxdesc like $sSearchStr
-                    or o2l.oxdesc like $sSearchStr ) and rl.oxshopid = '$iShopId'";
+        $sSelect = "select distinct rl.* from oxrecommlists as rl";
+        $sSelect.= " inner join oxobject2list as o2l on o2l.oxlistid = rl.oxid";
+        $sSelect.= " where ( rl.oxtitle like $sSearchStr or rl.oxdesc like $sSearchStr";
+        $sSelect.= " or o2l.oxdesc like $sSearchStr ) and rl.oxshopid = '$iShopId'";
 
         return $sSelect;
     }

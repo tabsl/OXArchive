@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package modules
- * @copyright © OXID eSales AG 2003-2008
- * $Id: myorder.php 13615 2008-10-24 09:37:42Z sarunas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: myorder.php 14511 2008-12-05 12:55:44Z vilma $
  */
 
 /**
@@ -779,7 +779,7 @@ class MyOrder extends MyOrder_parent
     protected function _setOrderArticlesToPdf( $oPdf, &$iStartPos, $blShowPrice = true )
     {
         if (!$this->_oArticles) {
-            $this->_oArticles = $this->getOrderArticles();
+            $this->_oArticles = $this->getOrderArticles(true);
         }
 
         // product list
@@ -792,13 +792,6 @@ class MyOrder extends MyOrder_parent
                 $oPdf->setFont( 'Arial', '', 10 );
             } else {
                 $iStartPos = $iStartPos + 4;
-            }
-
-            // notice for canceled order
-            if ( $oOrderArt->oxorderarticles__oxstorno->value == 1 ) {
-                $oOrderArt->oxorderarticles__oxbrutprice->setValue(0);
-                $oOrderArt->oxorderarticles__oxnetprice->setValue(0);
-                $oOrderArt->oxorderarticles__oxtitle->value .= '    '.$this->translate( 'ORDER_OVERVIEW_PDF_STORNO' );
             }
 
             // sold amount
@@ -1131,5 +1124,28 @@ class MyOrder extends MyOrder_parent
     public function getSelectedLang()
     {
         return $this->_iSelectedLang;
+    }
+
+    /**
+     * Assigns data, stored in oxorderarticles to oxorder object .
+     *
+     * @return null
+     */
+    public function getOrderArticles( $blStorno = false )
+    {
+        if ( $this->_oArticles == null ) {
+            // order articles
+            $this->_oArticles = oxNew( 'oxlist' );
+            $this->_oArticles->init( 'oxorderarticle' );
+
+            $sSelect = 'select oxorderarticles.* from oxorderarticles where oxorderarticles.oxorderid="'.$this->getId().'"';
+            if ( $blStorno ) {
+                $sSelect.= ' and oxstorno = 0';
+            }
+            $sSelect.= ' order by oxorderarticles.oxartid';
+            $this->_oArticles->selectString( $sSelect );
+        }
+
+        return $this->_oArticles;
     }
 }

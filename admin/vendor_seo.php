@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
- * $Id: vendor_seo.php 14266 2008-11-19 10:12:51Z arvydas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: vendor_seo.php 14637 2008-12-11 12:17:09Z arvydas $
  */
 
 /**
@@ -112,7 +112,7 @@ class Vendor_Seo extends Object_Seo
                 $oVendor->save();
 
                 // marking page links as expired
-                oxSeoEncoderVendor::getInstance()->markAsExpired( $sOxid, oxConfig::getInstance()->getShopId(), $this->_iEditLang, "oxparams != '' " );
+                oxSeoEncoderVendor::getInstance()->markAsExpired( $sOxid, oxConfig::getInstance()->getShopId(), 1, $this->_iEditLang, "oxparams != '' " );
             }
         }
 

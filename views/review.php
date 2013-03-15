@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2008
- * $Id: review.php 14147 2008-11-11 14:21:30Z arvydas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: review.php 14630 2008-12-11 10:04:12Z vilma $
  */
 
 /**
@@ -206,7 +206,8 @@ class Review extends oxUBase
         }
 
         $sReviewText = trim( ( string ) oxConfig::getParameter( 'rvw_txt' ) );
-        $dRating     = oxConfig::getParameter( 'rating' );
+        $dRating     = ( oxConfig::getParameter( 'rating' ) ) ? oxConfig::getParameter( 'rating' ) : oxConfig::getParameter( 'artrating' );
+
         if ($dRating < 0 || $dRating > 5) {
             $dRating = null;
         }

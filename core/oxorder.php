@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxorder.php 14388 2008-11-26 15:43:17Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxorder.php 14542 2008-12-08 14:24:48Z vilma $
  */
 
 /**
@@ -581,12 +581,12 @@ class oxOrder extends oxBase
      *
      * @param array $aArticleList article list
      *
-     * @return array $articlelist
+     * @return null
      */
     protected function _setOrderArticles( $aArticleList )
     {
         // reset articles list
-        $this->_oArticles = null;
+        $this->_oArticles = oxNew( 'oxlist' );
         $iCurrLang = $this->getOrderLanguage();
 
         // add all the products we have on basket to the order
@@ -661,7 +661,7 @@ class oxOrder extends oxBase
             $oOrderArticle->oProduct = $oProduct;
 
             // simulatin order article list
-            $this->_oArticles[$oOrderArticle->getId()] = $oOrderArticle;
+            $this->_oArticles->offsetSet( $oOrderArticle->getId(), $oOrderArticle );
         }
     }
 
@@ -1054,17 +1054,17 @@ class oxOrder extends oxBase
      * If no errors, finishing transaction.
      *
      * @param array $aNewOrderArticles article list of new order
+     * @param bool  $blChangeDelivery  if delivery was changed in admin
      *
      * @return null
      */
-    public function recalculateOrder( $aNewOrderArticles = array() )
+    public function recalculateOrder( $aNewOrderArticles = array(), $blChangeDelivery = false )
     {
         oxDb::startTransaction();
 
         try {
             // deleting old order with order articles
             //load order articles and delete order and order articles
-            $this->_oArticles = $this->getOrderArticles();
             $this->delete();
 
             $oUser = oxNew( "oxuser" );
@@ -1074,19 +1074,28 @@ class oxOrder extends oxBase
             $oBasket = oxNew( "oxBasket" );
 
             $aCanceledArticles = array();
+            $aArticlesIds = array();
 
             // collect order articles ids's (oxarticles) and canceled order articles
-            foreach ( $this->_oArticles as $sOrderArticleId => $oOrderArticle ) {
-                //articles id's
-                $aArticlesIds[$sOrderArticleId] = $oOrderArticle->oxorderarticles__oxartid->value;
+            if ( $this->_oArticles = $this->getOrderArticles() ) {
+                $this->_oArticles->rewind();
+                while ( $oOrderArticle = $this->_oArticles->current() ) {
+                    $sOrderArticleId = $this->_oArticles->key();
 
-                // collect canceled order articles, they will not be included in recalculation articles list
-                // and will be saved back to order after recalculating and finalizieOrder()
-                if ( $oOrderArticle->oxorderarticles__oxstorno->value == '1') {
-                    $aCanceledArticles[$sOrderArticleId] = $oOrderArticle;
+                    //articles id's
+                    $aArticlesIds[$sOrderArticleId] = $oOrderArticle->oxorderarticles__oxartid->value;
 
-                    // unset canceled article from recalcualtion list
-                    unset( $this->_oArticles[$sOrderArticleId] );
+                    // collect canceled order articles, they will not be included in recalculation articles list
+                    // and will be saved back to order after recalculating and finalizieOrder()
+                    if ( $oOrderArticle->oxorderarticles__oxstorno->value == '1') {
+                        $aCanceledArticles[$sOrderArticleId] = $oOrderArticle;
+
+                        // unset canceled article from recalcualtion list
+                        //unset( $this->_oArticles[$sOrderArticleId] );
+                        $this->_oArticles->offsetUnset( $sOrderArticleId );
+                    } else {
+                  	    $this->_oArticles->next();
+                    }
                 }
             }
 
@@ -1097,10 +1106,8 @@ class oxOrder extends oxBase
                 $blIsOldOrderArticle = false;
 
                 //check, if added article already is in old order articles list
-                if ( is_array( $aArticlesIds ) ) {
-                    if ( ( $sNewOrderArtId = array_search( $oNewOrderArticle->oxorderarticles__oxartid->value, $aArticlesIds ) ) ) {
-                        $blIsOldOrderArticle = true;
-                    }
+                if ( ( $sNewOrderArtId = array_search( $oNewOrderArticle->oxorderarticles__oxartid->value, $aArticlesIds ) ) !== false ) {
+                    $blIsOldOrderArticle = true;
                 }
 
                 //check, if we are going to delete it
@@ -1110,7 +1117,8 @@ class oxOrder extends oxBase
                     if ( array_key_exists( $sNewOrderArtId, $aCanceledArticles) ) {
                         // add it back to recalculation list from canceled articles list
                         // to delete it in finalizeOrder()
-                        $this->_oArticles[$sNewOrderArtId] = $aCanceledArticles[$sNewOrderArtId];
+                        $this->_oArticles->offsetSet( $sNewOrderArtId, $aCanceledArticles[$sNewOrderArtId] );
+                        //$this->_oArticles[$sNewOrderArtId] = $aCanceledArticles[$sNewOrderArtId];
 
                         // and remove it from canceled articles, because they will be restored after recalculation
                         unset($aCanceledArticles[$sNewOrderArtId]);
@@ -1119,15 +1127,17 @@ class oxOrder extends oxBase
 
                 if ( $blIsOldOrderArticle ) {
                     //just update existing order article amount
-                    $this->_oArticles[$sNewOrderArtId]->oxorderarticles__oxamount = clone $oNewOrderArticle->oxorderarticles__oxamount;
+                    $this->_oArticles->offsetGet( $sNewOrderArtId )->oxorderarticles__oxamount = clone $oNewOrderArticle->oxorderarticles__oxamount;
+                    //$this->_oArticles[$sNewOrderArtId]->oxorderarticles__oxamount = clone $oNewOrderArticle->oxorderarticles__oxamount;
                 } else {
                     //add new article to order articles
-                    $this->_oArticles[] = $oNewOrderArticle;
+                    $this->_oArticles->offsetSet( $oNewOrderArticle->getId(), $oNewOrderArticle );
+                    //$this->_oArticles[] = $oNewOrderArticle;
                 }
             }
 
             // add this order articles to virtual basket and recalculates basket
-            $oBasket = $this->_addOrderArticlesToBasket( $oUser, $this->_oArticles );
+            $oBasket = $this->_addOrderArticlesToBasket( $oUser, $this->_oArticles, $blChangeDelivery );
 
             //finalizing order (skipping payment execution, vouchers marking and mail sending)
             $iRet = $this->finalizeOrder( $oBasket, $oUser, true );
@@ -1270,11 +1280,12 @@ class oxOrder extends oxBase
      */
     public function getOrderSum( $blToday = false )
     {
-        $sSelect  = 'select sum(oxtotalordersum) from oxorder where ';
+        $sSelect  = 'select sum(oxtotalordersum / oxcurrate) from oxorder where ';
         $sSelect .= 'oxshopid = "'.$this->getConfig()->getShopId().'" and oxorder.oxstorno != "1" ';
 
-        if ( $blToday )
+        if ( $blToday ) {
             $sSelect .= 'and oxorderdate like "'.date( 'Y-m-d').'%" ';
+        }
 
         return ( double ) oxDb::getDb()->getOne( $sSelect );
     }
@@ -1529,12 +1540,13 @@ class oxOrder extends oxBase
     /**
      * Adds order articles back to virtual basket. Needed for recalculating order.
      *
-     * @param oxUser $oUser          basket user object
-     * @param array  $aOrderArticles order articles
+     * @param oxUser $oUser            basket user object
+     * @param array  $aOrderArticles   order articles
+     * @param bool   $blChangeDelivery if delivery was changed in admin
      *
      * @return oxBasket
      */
-    protected function _addOrderArticlesToBasket( $oUser = null, $aOrderArticles = null )
+    protected function _addOrderArticlesToBasket( $oUser = null, $aOrderArticles = null, $blChangeDelivery = false )
     {
         $myConfig = $this->getConfig();
 
@@ -1595,7 +1607,11 @@ class oxOrder extends oxBase
 
         //set shipping
         $oBasket->setShipping( $this->oxorder__oxdeltype->value );
-
+        //V #M429: Shipping and total prices were not calculated correct 
+        //when user changed delivery costs in admin 
+        if ( $blChangeDelivery ) {
+            $oBasket->setDeliveryPrice( $this->getOrderDeliveryPrice() );
+        }
         //set basket payment
         $oBasket->setPayment( $this->oxorder__oxpaymenttype->value );
 

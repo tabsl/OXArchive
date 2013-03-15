@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package lang
- * @copyright © OXID eSales AG 2003-2008
- * $Id: lang.php 14421 2008-12-01 12:37:55Z rimvydas.paskevicius $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: lang.php 14911 2008-12-30 13:37:54Z ralf $
  */
 
 $sLangName  = "Deutsch";
@@ -843,7 +843,7 @@ $aLang = array(
 'PAYMENT_AUTHORIZATIONFAILED'                     => "Aus techn. Gründen Zahlungsweise nicht möglich. Bitte wählen Sie ggf. eine andere Zahlungsart.",
 'PAYMENT_UNAVAILABLEPAYMENT'                      => "Aus techn. Gründen Zahlungsweise nicht möglich. Bitte wählen Sie ggf. eine andere Zahlungsart.",
 'PAYMENT_ERRUNAVAILABLEPAYMENT'                   => "Aus techn. Gründen Zahlungsweise nicht möglich. Bitte wählen Sie ggf. eine andere Zahlungsart (Fehler:",
-'PAYMENT_NOSHIPPINGFOUND'                         => "Keine Versandkosten Sets gefunden. Bitte melden Sie sich bei unserem Support Team.",
+'PAYMENT_NOSHIPPINGFOUND'                         => "Keine Versandarten gefunden. Bitte kontaktieren Sie uns telefonisch oder per E-Mail.",
 'PAYMENT_PAYMENT'                                 => "Zahlungsart",
 'PAYMENT_PLUSCODCHARGE1'                          => "zuzüglich",
 'PAYMENT_PLUSCODCHARGE2'                          => "Nachnahmegebühr",

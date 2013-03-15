@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxbase.php 14392 2008-11-26 16:50:36Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxbase.php 14504 2008-12-05 12:09:52Z vilma $
  */
 
 /**
@@ -1365,6 +1365,20 @@ class oxBase extends oxSuperCfg
             return true;
         }
 
+        return false;
+    }
+
+    /**
+     * Checks if object ID's first two chars are 'o' and 'x'. Returns true or false
+     *
+     * @return bool
+     */
+    public function isOx()
+    {
+        $sOxId = $this->getId();
+        if ( $sOxId[0] == 'o' && $sOxId[1] == 'x' ) {
+            return true;
+        }
         return false;
     }
 

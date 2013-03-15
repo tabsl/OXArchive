@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxsession.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxsession.php 14604 2008-12-10 14:45:26Z vilma $
  */
 
 
@@ -215,8 +215,8 @@ class oxSession extends oxSuperCfg
             $this->initNewSession();
         }
 
-        $sClass    = $this->getConfig()->getActiveView()->getClassName();
-        $sFunction = $this->getConfig()->getActiveView()->getFncName();
+        $sClass    = oxConfig::getParameter( 'cl' );
+        $sFunction = oxConfig::getParameter( 'fnc' );
         //check if we have mandatory cookie support
         if ( !$this->_checkMandatoryCookieSupport( $sClass, $sFunction ) ) {
             $oEx = oxNew( 'oxCookieException' );

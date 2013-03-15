@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxrssfeed.php 14342 2008-11-25 09:13:13Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxrssfeed.php 14520 2008-12-05 16:06:26Z vilma $
  */
 
 /**
@@ -161,10 +161,7 @@ class oxRssFeed extends oxSuperCfg
      */
     protected function _saveToCache($name, $aContent)
     {
-        $aData = array(
-                'timestamp' => time(),
-                'content'   => $aContent
-            );
+        $aData = array( 'timestamp' => time(), 'content'   => $aContent );
         return oxUtils::getInstance()->toFileCache($this->_getCacheId($name), $aData);
     }
 

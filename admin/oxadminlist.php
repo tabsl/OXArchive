@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxadminlist.php 13619 2008-10-24 09:40:23Z sarunas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxadminlist.php 14553 2008-12-08 15:31:46Z vilma $
  */
 
 /**
@@ -146,9 +146,6 @@ class oxAdminList extends oxAdminView
             $this->_oList->clear();
             $this->_oList->init( $this->_sListClass );
 
-            // callback for setting OX
-            $this->_oList->setObjectCallback( array( &$this, 'isOx' ) );
-
             $aWhere = $this->buildWhere();
 
             $oListObject = $this->_oList->getBaseObject();
@@ -213,6 +210,11 @@ class oxAdminList extends oxAdminView
                 $oSearchKeys->$sFieldName = $sValue;
             }
             $this->_aViewData['where'] = $oSearchKeys;
+            //#M430: Pagination in admin list loses category parameter  
+            $sChosenCat  = oxConfig::getParameter( "art_category");
+            if ( $sChosenCat ) {
+                $sWhereParam .= "&amp;art_category=".$sChosenCat;
+            }
             $this->_aViewData['whereparam'] = $sWhereParam;
         }
 
@@ -227,23 +229,6 @@ class oxAdminList extends oxAdminView
         $this->_aViewData['sort'] = $this->_aSort[0];
 
         return $sReturn;
-    }
-
-    /**
-     * Checks if object ID's first two chars are 'o' and 'x'. Returns same object
-     *
-     * @param object $oObject Object to check.
-     *
-     * @return object
-     */
-    public function isOx( $oObject )
-    {
-        $sOxId = $oObject->getId();
-        if ( $sOxId[0] == 'o' && $sOxId[1] == 'x' ) {
-            $oObject->isinternal = true;
-        }
-
-        return $oObject;
     }
 
     /**

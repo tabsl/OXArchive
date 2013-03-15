@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxbasket.php 14392 2008-11-26 16:50:36Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxbasket.php 14775 2008-12-16 14:36:44Z vilma $
  */
 
 /**
@@ -207,6 +207,13 @@ class oxBasket extends oxSuperCfg
      * @var boolean
      */
     protected $_blSkipDiscounts = false;
+
+    /**
+     * User set delivery costs
+     *
+     * @var array
+     */
+    protected $_oDeliveryPrice = null;
 
     /**
      * Checks if configuration allows basket usage or if user agent is search engine
@@ -613,6 +620,9 @@ class oxBasket extends oxSuperCfg
      */
     protected function _calcDeliveryCost()
     {
+        if ( $this->_oDeliveryPrice !== null ) {
+            return $this->_oDeliveryPrice;
+        }
         $myConfig  = $this->getConfig();
         $oDeliveryPrice = oxNew( 'oxprice' );
         $oDeliveryPrice->setBruttoPriceMode();
@@ -1444,6 +1454,19 @@ class oxBasket extends oxSuperCfg
     public function setShipping( $sShippingSetId = null )
     {
         $this->_sShippingSetId = $sShippingSetId;
+        oxSession::setVar( 'sShipSet', $sShippingSetId );
+    }
+
+    /**
+     * Set basket shipping price
+     *
+     * @param string $oShippingPrice delivery costs
+     *
+     * @return null
+     */
+    public function setDeliveryPrice( $oShippingPrice = null )
+    {
+        $this->_oDeliveryPrice = $oShippingPrice;
     }
 
     /**

@@ -68,6 +68,15 @@ window.onLoad = top.reloadEditFrame();
       <td valign="top" class="edittext">
 
         <table cellspacing="0" cellpadding="0" border="0">
+          [{ if $errorsavingtprice }]
+            <tr>
+              <td colspan="2">
+                [{ if $errorsavingtprice eq 1 }]
+                <div class="errorbox">[{ oxmultilang ident="ARTICLE_MAIN_ERRORSAVINGTPRICE" }]</div>
+                [{/if}]
+              </td>
+            </tr>
+          [{ /if}]
           [{ if $oxparentid }]
           <tr>
             <td class="edittext" width="120">

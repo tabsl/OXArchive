@@ -98,7 +98,7 @@ window.onLoad = top.reloadEditFrame();
     [{ /if}]
     <td valign="top" class="[{ $listclass}]" height="15"><div class="listitemfloating">&nbsp;<a href="Javascript:EditThis('[{ $listitem->oxnewsletter__oxid->value}]');" class="[{ $listclass}]">[{ $listitem->oxnewsletter__oxtitle->value }]</a></div></td>
     <td class="[{ $listclass}]">
-    [{ if !$listitem->isinternal }]
+    [{ if !$listitem->isOx() }]
         <a href="Javascript:DeleteThis('[{ $listitem->oxnewsletter__oxid->value }]');" class="delete" id="del.[{$_cnt}]" align="middle" [{include file="help.tpl" helpid=item_delete}]></a></td>
     [{/if}]
 </tr>

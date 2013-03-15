@@ -104,6 +104,7 @@ tr.conftext2 td {background-color:#f0f0f0;}
 .tabs .disabled .b1 a {color:#fff;}
 
 .error {color:#F00000;font-weight: bold;}
+.errorbox {color:#F00000;font-weight: bold;padding: 3px;background: #ffe;border: solid gray 1px;margin:1px 0;}
 
 a.pagenavigation {padding-left:0.5em;padding-right:0.2em;}
 a.pagenavigationactive {font-weight: bold;}

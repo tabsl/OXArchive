@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxcmp_user.php 14361 2008-11-25 15:40:16Z arvydas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxcmp_user.php 14641 2008-12-11 14:11:43Z vilma $
  */
 
 /**
@@ -142,7 +142,7 @@ class oxcmp_user extends oxView
         }
 
         // TODO: we need todo something with this !!!
-        if ( $oUser->blLoadedFromCookie ) {
+        if ( $oUser->isLoadedFromCookie() ) {
 
                 // #1678 R
                 if ( !$myConfig->getConfigParam( 'blPerfNoBasketSaving' ) ) {
@@ -418,6 +418,13 @@ class oxcmp_user extends oxView
             $this->_afterLogin( $oUser );
         } elseif ( $this->login() == 'user' ) {
             return false;
+        }
+
+        // order remark
+        //V #427: order remark for new users 
+        $sOrd_Remark = oxConfig::getParameter( 'order_remark' );
+        if ( $sOrd_Remark ) {
+            oxSession::setVar( 'ordrem', $sOrd_Remark );
         }
 
         // send register eMail

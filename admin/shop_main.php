@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
- * $Id: shop_main.php 14016 2008-11-06 13:31:20Z arvydas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: shop_main.php 14655 2008-12-11 18:17:37Z tomas $
  */
 
 

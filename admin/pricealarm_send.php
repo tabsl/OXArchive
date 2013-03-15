@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
- * $Id: pricealarm_send.php 14016 2008-11-06 13:31:20Z arvydas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: pricealarm_send.php 14667 2008-12-12 09:27:42Z vilma $
  */
 
 /**
@@ -149,7 +149,7 @@ class PriceAlarm_Send extends oxAdminList
 
         // #889C - Netto prices in Admin
         // (we have to call $oArticle->getPrice() to get price with VAT)
-        $oArticle->oxarticles__oxprice->setValue($oArticle->getPrice() * $oThisCurr->rate);
+        $oArticle->oxarticles__oxprice->setValue($oArticle->getPrice()->getBruttoPrice() * $oThisCurr->rate);
         $oArticle->fprice = oxLang::getInstance()->formatCurrency( $oArticle->oxarticles__oxprice->value, $oThisCurr);
         $oAlarm->fpricealarmprice = oxLang::getInstance()->formatCurrency( $oAlarm->oxpricealarm__oxprice->value, $oThisCurr);
 

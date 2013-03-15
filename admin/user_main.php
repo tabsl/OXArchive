@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
- * $Id: user_main.php 14361 2008-11-25 15:40:16Z arvydas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: user_main.php 14641 2008-12-11 14:11:43Z vilma $
  */
 
 /**
@@ -46,7 +46,8 @@ class User_Main extends oxAdminDetails
         parent::render();
 
         // malladmin stuff
-        $oAuthUser = oxUser::getAdminUser();
+        $oAuthUser = oxNew( 'oxuser' );
+        $oAuthUser->loadAdminUser();
         $blisMallAdmin = $oAuthUser->oxuser__oxrights->value == "malladmin";
 
             // all usergroups

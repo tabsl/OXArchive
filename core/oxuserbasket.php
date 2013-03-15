@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxuserbasket.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxuserbasket.php 14486 2008-12-05 08:38:39Z arvydas $
  */
 
 /**
@@ -199,14 +199,17 @@ class oxUserBasket extends oxBase
         $aItems   = $this->getItems();
         $sItemKey = $this->_getItemKey( $sProductId, $aSelList );
 
+        $oItem = null;
         // returning existing item
         if ( isset( $aItems[$sProductId] )) {
-            return $aItems[$sProductId];
+            $oItem = $aItems[$sProductId];
         } elseif ( isset( $aItems[$sItemKey] ) ) {
-            return $aItems[$sItemKey];
+            $oItem = $aItems[$sItemKey];
         } else {
-            return $this->_createItem( $sProductId, $aSelList );
+            $oItem = $this->_createItem( $sProductId, $aSelList );
         }
+
+        return $oItem;
     }
 
     /**
@@ -290,11 +293,9 @@ class oxUserBasket extends oxBase
         if ( !$sOXID ) {
             $sOXID = $this->getId();
         }
-        if ( !$sOXID ) {
-            return false;
-        }
 
-        if ( ( $blDelete = parent::delete( $sOXID ) ) ) {
+        $blDelete = false;
+        if ( $sOXID && ( $blDelete = parent::delete( $sOXID ) ) ) {
             // cleaning up related data
             $sQ = "delete from oxuserbasketitems where oxbasketid = '$sOXID' ";
             oxDb::getDb()->execute( $sQ );

@@ -54,9 +54,31 @@ function EditThis( sID)
 
 <p>
 <input type=Submit>
-
 </form>
-
+<br />
+[{assign var="blWhite" value=""}]
+[{assign var="ctr" value="1"}]
+<table cellspacing="0" cellpadding="0" border="0" width="100%">
+  <tr>
+    <td class="listheader first" height="15" colspan="4">[{ oxmultilang ident="EFIRE_USERDETAILS" }]</td>
+    <td class="listheader">[{ oxmultilang ident="EFIRE_USERPASSHASH" }]</td>
+  </tr>
+[{foreach from=$oView->getAdminList() item=oUser }]
+  <tr>
+    <td class="listitem[{ $blWhite }]">&nbsp;[{ $ctr }]&nbsp;</td>
+    <td class="listitem[{ $blWhite }]">&nbsp;[{ $oUser->oxuser__oxusername->value }]</td>
+    <td class="listitem[{ $blWhite }]">&nbsp;[{ $oUser->oxuser__oxfname->value }]</td>
+    <td class="listitem[{ $blWhite }]">&nbsp;[{ $oUser->oxuser__oxlname->value }]</td>
+    <td class="listitem[{ $blWhite }]">&nbsp;[{ $oUser->getPasswordHash() }]</td>
+  </tr>
+[{if $blWhite == "2"}]
+[{assign var="blWhite" value=""}]
+[{else}]
+[{assign var="blWhite" value="2"}]
+[{/if}]
+[{assign var="ctr" value=`$ctr+1`}]
+[{/foreach}]
+</table>
 
 [{include file="bottomnaviitem.tpl"}]
 

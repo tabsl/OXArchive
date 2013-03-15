@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package lang
- * @copyright © OXID eSales AG 2003-2008
- * $Id: lang.php 14421 2008-12-01 12:37:55Z rimvydas.paskevicius $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: lang.php 14911 2008-12-30 13:37:54Z ralf $
  */
 
 $sLangName  = "English";
@@ -844,7 +844,7 @@ $aLang = array(
 'PAYMENT_AUTHORIZATIONFAILED'                     => "The payment authorization failed. Please verify your input.",
 'PAYMENT_UNAVAILABLEPAYMENT'                      => "Due to technical problems this payment method is unavailable. Please select a different payment method.",
 'PAYMENT_ERRUNAVAILABLEPAYMENT'                   => "Due to technical problems this payment method is unavailable. Please select a different payment method. (Error:",
-'PAYMENT_NOSHIPPINGFOUND'                         => "No Shipping Carrier found. Please contact our Support Team.",
+'PAYMENT_NOSHIPPINGFOUND'                         => "No shipping methods found. Please contact us by phone or email.",
 'PAYMENT_PAYMENT'                                 => "Payment Method",
 'PAYMENT_PLUSCODCHARGE1'                          => "plus",
 'PAYMENT_PLUSCODCHARGE2'                          => "COD Charge",

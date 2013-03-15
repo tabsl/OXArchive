@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxadminview.php 14197 2008-11-13 14:33:19Z rimvydas.paskevicius $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxadminview.php 14839 2008-12-19 10:22:19Z arvydas $
  */
 
 /**
@@ -89,7 +89,7 @@ class oxAdminView extends oxView
      * @var string
      */
     protected $_sServiceUrl = null;
-    
+
     /**
      * Creates oxshop object and loads shop data, sets title of shop
      */
@@ -101,7 +101,7 @@ class oxAdminView extends oxView
         if ( $sShopID = $myConfig->getShopId() ) {
             $oShop = oxNew( 'oxshop' );
             if ( $oShop->load( $sShopID ) ) {
-                
+
                 // passing shop info
                 $this->_sShopTitle   = $oShop->oxshops__oxname->value;
                 $this->_sShopVersion = $oShop->oxshops__oxversion->value;
@@ -194,26 +194,26 @@ class oxAdminView extends oxView
     {
         if ( !empty($this->_sServiceUrl) )
             return $this->_sServiceUrl;
-        
+
         $myConfig = $this->getConfig();
-        
-        
-        
+
+
+
             $sUrl = 'http://admin.oxid-esales.com/CE/';
-        
+
         $sShopVersionNr = $this->_getShopVersionNr();
         $sCountry = $this->_getCountryByCode( $myConfig->getConfigParam( 'sShopCountry' ) );
-        
+
         if (!$iLang) {
             $iLang = oxLang::getInstance()->getTplLanguage();
             $aLanguages = oxLang::getInstance()->getLanguageArray();
             $sLangAbbr = $aLanguages[$iLang]->abbr;
         }
-        
+
         $sUrl .= "{$sShopVersionNr}/{$sCountry}/{$sLangAbbr}/";
-        
+
         $this->_sServiceUrl = $sUrl;
-         
+
         return $this->_sServiceUrl;
     }
 
@@ -230,7 +230,7 @@ class oxAdminView extends oxView
             $sQ = "select oxversion from oxshops where oxid = '$sShopID' ";
             $sVersion = oxDb::getDb()->getOne( $sQ );
         }
-        
+
         $sVersion = preg_replace( "/(^[^0-9]+)(.+)$/", "$2", $sVersion );
         return trim( $sVersion );
     }
@@ -429,14 +429,14 @@ class oxAdminView extends oxView
     }
 
     /**
-     * Get english country name by country iso alpha 2 code  
+     * Get english country name by country iso alpha 2 code
      *
      * @return boolean
      */
     protected function _getCountryByCode( $sCountryCode )
     {
         $myConfig = $this->getConfig();
-        
+
         //default country
         $sCountry = 'international';
 
@@ -447,7 +447,7 @@ class oxAdminView extends oxView
 
         return strtolower( $sCountry );
     }
-    
+
     /**
      * performs authorization of admin user
      *
@@ -494,5 +494,20 @@ class oxAdminView extends oxView
         $this->getConfig()->setShopId( $sActShop );
         oxSession::setVar( "shp", $sActShop);
         oxSession::setVar( 'currentadminshop', $sActShop );
+    }
+
+    /**
+     * Marks seo entires as expired (oxseo::oxexpired = 2), leans up tag couds cache
+     *
+     * @return null
+     */
+    public function resetSeoData( $sShopId )
+    {
+        $oEncoder = oxSeoEncoder::getInstance();
+        $oEncoder->markAsExpired( null, $sShopId, 2 );
+
+        // resetting tag cache
+        $oTagCloud = oxNew('oxtagcloud');
+        $oTagCloud->resetTagCache();
     }
 }

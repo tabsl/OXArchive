@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxdeliverysetlist.php 14368 2008-11-26 07:36:13Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxdeliverysetlist.php 14612 2008-12-10 17:48:29Z tomas $
  */
 
 /**
@@ -310,7 +310,7 @@ class oxDeliverySetList extends oxList
     }
 
     /**
-     * Get current user object. If user is not setted, try to get current user.
+     * Get current user object. If user is not set, try to get current user.
      *
      * @return oxUser
      */

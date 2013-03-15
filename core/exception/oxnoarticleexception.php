@@ -17,7 +17,7 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
+ * @copyright © OXID eSales AG 2003-2009
  * $Id: oxnoarticleexception.php, v 1.0 2007.8.9 16.00.19 mfiedler  Exp
  */
 

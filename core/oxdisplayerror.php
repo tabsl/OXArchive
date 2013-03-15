@@ -17,7 +17,7 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
+ * @copyright © OXID eSales AG 2003-2009
  * $Id: oxdisplayerror.php, v 1.0 2007.8.23 17.34.22 mathiasf Exp
  */
 

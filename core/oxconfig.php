@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxconfig.php 14392 2008-11-26 16:50:36Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxconfig.php 14627 2008-12-11 09:00:33Z tomas $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -226,7 +226,7 @@ class oxConfig extends oxSuperCfg
      * @var int
      */
     protected $_iShopId = null;
-    
+
 
     /**
      * Out dir name
@@ -400,10 +400,10 @@ class oxConfig extends oxSuperCfg
         $sCoreDir = $this->getConfigParam( 'sShopDir' );
         $this->setConfigParam( 'sCoreDir', $sCoreDir.'/core/' );
 
-        //starting up the session
-        $this->getSession()->start();
-
         try {
+            //starting up the session
+            $this->getSession()->start();
+
             $sShopID = $this->getShopId();
 
             // load now
@@ -420,6 +420,10 @@ class oxConfig extends oxSuperCfg
                 header( "Location: offline.html");
                 header( "Connection: close");
             }
+        } catch ( oxCookieException $oEx ) {
+            // redirect to start page and display the error
+            oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
+            oxUtils::getInstance()->redirect( $this->getShopHomeURL() .'cl=start' );
         }
 
         //application initialization
@@ -698,7 +702,7 @@ class oxConfig extends oxSuperCfg
 
         //additional special handling for profihost customers
         if ( isset( $aServerVars['HTTP_X_FORWARDED_SERVER'] ) &&
-             ( strpos( $aServerVars['HTTP_X_FORWARDED_SERVER'], 'ssl' ) !== false || 
+             ( strpos( $aServerVars['HTTP_X_FORWARDED_SERVER'], 'ssl' ) !== false ||
              strpos( $aServerVars['HTTP_X_FORWARDED_SERVER'], 'secure-online-shopping.de' ) !== false ) ) {
             $blIsssl = true;
         }

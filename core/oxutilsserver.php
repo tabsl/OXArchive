@@ -17,14 +17,14 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxutilsserver.php 13617 2008-10-24 09:38:46Z sarunas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxutilsserver.php 14577 2008-12-09 14:01:56Z arvydas $
  */
 
 /**
  * Server data manipulation class
  */
-class oxUtilsServer
+class oxUtilsServer extends oxSuperCfg
 {
     /**
      * oxUtils class instance.
@@ -32,6 +32,13 @@ class oxUtilsServer
      * @var oxutils* instance
      */
     private static $_instance = null;
+
+    /**
+     * user cookies
+     *
+     * @var array
+     */
+    protected $_aUserCookie = array();
 
     /**
      * Returns server utils instance
@@ -89,18 +96,19 @@ class oxUtilsServer
      *
      * @param string $sName cookie param name
      *
-     * @return string
+     * @return mixed
      */
     public function getOxCookie( $sName = null )
     {
+        $sValue = null;
         if ( $sName && isset( $_COOKIE[$sName] ) ) {
-            return oxConfig::checkSpecialChars($_COOKIE[$sName]);
+            $sValue = oxConfig::checkSpecialChars($_COOKIE[$sName]);
         } elseif ( $sName && !isset( $_COOKIE[$sName] ) ) {
-            return null;
+            $sValue = null;
         } elseif ( !$sName && isset( $_COOKIE ) ) {
-            return $_COOKIE;
+            $sValue = $_COOKIE;
         }
-        return null;
+        return $sValue;
     }
 
     /**
@@ -129,14 +137,66 @@ class oxUtilsServer
      */
     public function getServerVar( $sServVar = null )
     {
+        $sValue = null;
         if ( isset( $_SERVER ) ) {
             if ( $sServVar && isset( $_SERVER[$sServVar] ) ) {
-                return $_SERVER[$sServVar];
-            } elseif (!$sServVar) {
-                return $_SERVER;
+                $sValue = $_SERVER[$sServVar];
+            } elseif ( !$sServVar ) {
+                $sValue = $_SERVER;
             }
         }
-        return null;
+        return $sValue;
     }
 
+    /**
+     * Sets user info into cookie
+     *
+     * @param string  $sUser     user ID
+     * @param string  $sPassword password
+     * @param string  $sShopId   shop ID (default null)
+     * @param integer $iTimeout  timeout value (default 31536000)
+     *
+     * @return null
+     */
+    public function setUserCookie( $sUser, $sPassword,  $sShopId = null, $iTimeout = 31536000 )
+    {
+        $sShopId = ( !$sShopId ) ? $this->getConfig()->getShopId() : $sShopId;
+        $this->_aUserCookie[$sShopId] = $sUser . '@@@' . crypt( $sPassword, 'ox' );
+        $this->setOxCookie( 'oxid_' . $sShopId, $this->_aUserCookie[$sShopId], oxUtilsDate::getInstance()->getTime() + $iTimeout, '/' );
+    }
+
+    /**
+     * Deletes user cookie data
+     *
+     * @param string $sShopId shop ID (default null)
+     *
+     * @return null
+     */
+    public function deleteUserCookie( $sShopId = null )
+    {
+        $sShopId = ( !$sShopId ) ? $this->getConfig()->getShopId() : $sShopId;
+        $this->_aUserCookie[$sShopId] = '';
+        $this->setOxCookie( 'oxid_'.$sShopId, '', oxUtilsDate::getInstance()->getTime() - 3600, '/' );
+    }
+
+    /**
+     * Returns cookie stored used login data
+     *
+     * @param string $sShopId shop ID (default null)
+     *
+     * @return string
+     */
+    public function getUserCookie( $sShopId = null )
+    {
+        $sShopId = ( !$sShopId ) ? parent::getConfig()->getShopID() : $sShopId;
+        if ( $this->_aUserCookie[$sShopId] !== null ) {
+            if ( !$this->_aUserCookie[$sShopId] ) {
+                // cookie has been deleted
+                return null;
+            }
+            return $this->_aUserCookie[$sShopId];
+        }
+
+        return $this->_aUserCookie[$sShopId] = $this->getOxCookie( 'oxid_'.$sShopId );
+    }
 }

@@ -1348,7 +1348,7 @@ CREATE TABLE `oxpayments` (
 # Daten für Tabelle `oxpayments`
 #
 INSERT INTO `oxpayments` VALUES('oxidcashondel', 1, 'Nachnahme', 7.5, 'abs', 0, 0, 1000000, '', '1', 'COD cash on delivery', '', '', '', '', '', '', '', '', '', 0);
-INSERT INTO `oxpayments` VALUES('oxidcreditcard', 1, 'Kreditkarte', 20.9, 'abs', 500, 0, 1000000, 'kktype__@@kknumber__@@kkmonth__@@kkyear__@@kkname__@@kkpruef__@@', '1', 'Credit Card', 'kktype__@@kknumber__@@kkmonth__@@kkyear__@@kkname__@@kkpruef__@@', '', '', '', '', 'Die Belastung Ihres Kreditkarte erfolgt mit dem Abschluss der Bestellung.', 'Your Credit Card is charged when you submit the order.', '', '', 0);
+INSERT INTO `oxpayments` VALUES('oxidcreditcard', 1, 'Kreditkarte', 20.9, 'abs', 500, 0, 1000000, 'kktype__@@kknumber__@@kkmonth__@@kkyear__@@kkname__@@kkpruef__@@', '1', 'Credit Card', 'kktype__@@kknumber__@@kkmonth__@@kkyear__@@kkname__@@kkpruef__@@', '', '', '', '', 'Die Belastung Ihrer Kreditkarte erfolgt mit dem Abschluss der Bestellung.', 'Your Credit Card is charged when you submit the order.', '', '', 0);
 INSERT INTO `oxpayments` VALUES('oxiddebitnote', 1, 'Bankeinzug/Lastschrift', 0, 'abs', 0, 0, 1000000, 'lsbankname__@@lsblz__@@lsktonr__@@lsktoinhaber__@@', '0', 'Wire Transfer', 'lsbankname__@@lsblz__@@lsktonr__@@lsktoinhaber__@@', '', '', '', '', 'Die Belastung Ihres Kontos erfolgt mit dem Versand der Ware.', 'Your account is charged when the order is shipped.', '', '', 0);
 INSERT INTO `oxpayments` VALUES('oxidpayadvance', 1, 'Vorauskasse 2% Skonto', -2, '%', 0, 0, 1000000, '', '1', 'Payment in advance 2% Skonto', '', '', '', '', '', '', '', '', '', 0);
 INSERT INTO `oxpayments` VALUES('oxidinvoice', 1, 'Rechnung', 0, 'abs', 800, 0, 1000000, '', '0', 'Invoice', '', '', '', '', '', '', '', '', '', 0);
@@ -1598,7 +1598,7 @@ CREATE TABLE `oxshops` (
 # Daten für Tabelle `oxshops`
 #
 
-INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 1, 1, 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Shop', '', '', 'online kaufen', 'buy online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'Ihre Info e-Mail Adresse', 'Ihre Bestell Reply e-Mail Adresse', 'Ihre Bestell e-Mail Adresse', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order from OXID eShop', 'Thank you for your registration in OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', 'Tragen Sie bitte hier Ihren SMTP Server ein', '', '', 'Ihr Firmenname', 'Musterstr. 10', '79098', 'Musterstadt', 'Deutschland', 'Volksbank Musterstadt', '1234567890', '900 1234567', 'DE651234567', '', '', 'Hans', 'Mustermann', '0800 1234567', '0800 1234567', 'www.meineshopurl.com', '8a142c3e60a535f16.78077188', '', '', '', '', '', '', '', 'CE', '4.0.0.1', 1, 1, 0, 0);
+INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 1, 1, 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Shop', '', '', 'online kaufen', 'buy online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'Ihre Info e-Mail Adresse', 'Ihre Bestell Reply e-Mail Adresse', 'Ihre Bestell e-Mail Adresse', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order from OXID eShop', 'Thank you for your registration in OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', 'Tragen Sie bitte hier Ihren SMTP Server ein', '', '', 'Ihr Firmenname', 'Musterstr. 10', '79098', 'Musterstadt', 'Deutschland', 'Volksbank Musterstadt', '1234567890', '900 1234567', 'DE651234567', '', '', 'Hans', 'Mustermann', '0800 1234567', '0800 1234567', 'www.meineshopurl.com', '8a142c3e60a535f16.78077188', '', '', '', '', '', '', '', 'CE', '4.0.0.2', 1, 1, 0, 0);
 
 #
 # Tabellenstruktur für Tabelle `oxstatistics`
@@ -1628,6 +1628,7 @@ CREATE TABLE `oxuser` (
   `OXSHOPID` char( 32 ) NOT NULL default '',
   `OXUSERNAME` varchar(255) NOT NULL default '',
   `OXPASSWORD` varchar(128) NOT NULL default '',
+  `OXPASSSALT` char(128) NOT NULL,
   `OXCUSTNR` int(11) NOT NULL default '0',
   `OXUSTID` VARCHAR( 255 ) NOT NULL default '',
   `OXCOMPANY` varchar(255) NOT NULL default '',
@@ -1651,7 +1652,7 @@ CREATE TABLE `oxuser` (
   `OXURL` varchar(255) NOT NULL default '',
   `OXDISABLEAUTOGRP` tinyint(1) NOT NULL default '0',
   `OXUPDATEKEY` CHAR( 32 ) NOT NULL default '',
-  `OXUPDATEEXP` int(11) NOT NULL default '0',
+  `OXUPDATEEXP` int(11) NOT NULL default '0',  
   PRIMARY KEY  (`OXID`),
   UNIQUE `OXUSERNAME` (`OXUSERNAME`, `OXSHOPID`),
   KEY `OXPASSWORD` (`OXPASSWORD`),
@@ -1662,7 +1663,7 @@ CREATE TABLE `oxuser` (
 # Daten für Tabelle `oxuser`
 #
 
-INSERT INTO `oxuser` VALUES ('oxdefaultadmin', '1', 'malladmin', 'oxbaseshop', 'admin', 'ox_BBpaRCslUU8u', 1, '', 'Ihr Firmenname', 'Hans', 'Mustermann', 'Musterstr.', '10', '', 'Musterstadt', 'a7c40f631fc920687.20179984', '79098', '0800 1234567', '0800 1234567', 'Herr', 1000, '2003-01-01 00:00:00', '2003-01-01 00:00:00', '', '', '0000-00-00', '', '0', '', '0');
+INSERT INTO `oxuser` VALUES ('oxdefaultadmin', '1', 'malladmin', 'oxbaseshop', 'admin', 'f6fdffe48c908deb0f4c3bd36c032e72', '61646D696E', 1, '', 'Ihr Firmenname', 'Hans', 'Mustermann', 'Musterstr.', '10', '', 'Musterstadt', 'a7c40f631fc920687.20179984', '79098', '0800 1234567', '0800 1234567', 'Herr', 1000, '2003-01-01 00:00:00', '2003-01-01 00:00:00', '', '', '0000-00-00', '', '0', '', '0');
 
 #
 # Tabellenstruktur für Tabelle `oxuserpayments`
@@ -1865,116 +1866,116 @@ INSERT INTO `oxseo` VALUES ('c855234180a3b4056b496120d229ea68', '023abc17c853f9b
 INSERT INTO `oxseo` VALUES ('340d4f29f63cc0efc504915c0b94a44a', '0361774676321abf3204a44e167ffe40', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=info&amp;tpl=security_info.tpl', 'help/data-protection/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('2e17757c0aaf8ed9ef2ba30317fa1faf', '0469752d03d80da379a679aaef4c0546', 'oxbaseshop', 1, 'index.php?cl=suggest', 'recommend/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('057ef382f23bdbb84991d049af2baba9', '063c82502d9dd528ce2cc40ceb76ade7', 'oxbaseshop', 1, 'index.php?cl=compare', 'my-product-comparison/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('23e2b46bdc9cd26023fd8020c5dff9a2', '0aaaa47d75da6581736b76eb4b4e62a3', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=review', 'hilfe/bewertungen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('23e2b46bdc9cd26023fd8020c5dff9a2', '21806222bd140d89bee0618b715c2c27', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=review', 'hilfe/bewertungen/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('41e797927a0b4318bc7fbc6c6702e194', '0f454924e8a9e54d99df911b3c8202ce', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_order', 'help/order-history/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('41e797927a0b4318bc7fbc6c6702e194', '116b37d6d0aa3bc10d40c0972e46dc17', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_order', 'hilfe/bestellhistorie/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('41e797927a0b4318bc7fbc6c6702e194', '7b29f08cc652fe0a3733657892c11eca', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_order', 'hilfe/bestellhistorie/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('7bc8a506bbca225a2f95b6eac66020bf', '1368f5e45468ca1e1c7c84f174785c35', 'oxbaseshop', 1, 'index.php?cl=account_noticelist', 'my-wish-list/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('dda3486f1349724e085c363ae7d50785', '13fa69b27f1eb104d5664b68af4b2b13', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=info&amp;tpl=impressum.tpl', 'help/about-us/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('dd1a86d489a8b312737f59ab2cac0eb4', '1701ec08c0928b603e5290078f8ab724', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=details', 'help/product-details/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('1a583d63681ba48d989bdfd0bea8ade7', '192ce04536d8c1ea3d530825bc06bff9', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_wishlist', 'hilfe/mein-wunschzettel/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('c855234180a3b4056b496120d229ea68', '1f30ae9b1c78b7dc89d3e5fe9eb0de59', 'oxbaseshop', 0, 'index.php?cl=account_wishlist', 'mein-wunschzettel/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('9ba8be21e759c0fb18ed36d2d12b34ad', '281a927fd36ff57e9d5cd21a6ad83145', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=help', 'hilfe/hilfe/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('39e6808919a5c2cfea2c2733d9de60f8', '310a5b38352aecfde5a28d30ecaf2cb2', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=compare', 'hilfe/mein-produktvergleich/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('1a583d63681ba48d989bdfd0bea8ade7', '24abae6113f500216f90cb0bd45a6efe', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_wishlist', 'hilfe/mein-wunschzettel/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('c855234180a3b4056b496120d229ea68', '227eee0ce73ae96a3baf55cb15ed4aa1', 'oxbaseshop', 0, 'index.php?cl=account_wishlist', 'mein-wunschzettel/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('9ba8be21e759c0fb18ed36d2d12b34ad', '6b8e23145c8f5070adadaae23d204527', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=help', 'hilfe/hilfe/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('39e6808919a5c2cfea2c2733d9de60f8', 'ef7926974a07be9272498ffc2edd0b64', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=compare', 'hilfe/mein-produktvergleich/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('1f28bd0d08f97dea49898ba2f5de8cb2', '34191c32cedbe8832d6aebb58b4555b3', 'oxbaseshop', 1, 'index.php?cl=info&amp;tpl=delivery_info.tpl', 'shipping-and-charges/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('4e0a1c1634b39b25dc36fd17e72046f0', '352dd404dd24e284e60006ce1da9a3ae', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=vendorlist', 'hilfe/nach-hersteller/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('5b8e55f5ac0e8e720498dc4dab16c04a', '36152357000b7b33d50feadcd8838e05', 'oxbaseshop', 0, 'index.php?cl=info&amp;tpl=security_info.tpl', 'datenschutz/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('4e0a1c1634b39b25dc36fd17e72046f0', 'ce0e46c8ed9d681acfddf3be6cb40a63', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=vendorlist', 'hilfe/nach-hersteller/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('5b8e55f5ac0e8e720498dc4dab16c04a', '94ff198356f06184ea13d024e808b0c4', 'oxbaseshop', 0, 'index.php?cl=info&amp;tpl=security_info.tpl', 'datenschutz/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('23e2b46bdc9cd26023fd8020c5dff9a2', '367a5b40fadd01331bb3a12e5cb0bef9', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=review', 'help/product-review/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('e56acdd347b0516f68a0afdd811e2382', '3a41965fb36fb45df7f4f9a4377f6364', 'oxbaseshop', 1, 'index.php?cl=newsletter', 'newsletter/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('ab459c0dc911137e9cc024d9fba5a68b', '3bdd64bd8073d044d8fd60334ed9b725', 'oxbaseshop', 1, 'index.php?cl=start', 'home/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('be0df35ba37af88c6c09527f1e2d7180', '3c8229b33f16cfe0fc5db6c8177c18bb', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_noticelist', 'hilfe/mein-merkzettel/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('be0df35ba37af88c6c09527f1e2d7180', '7041a08f003afa8277bc8e6a31a5bb7c', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_noticelist', 'hilfe/mein-merkzettel/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('b88b7ae13f9b7d571f9f4893a8d17c3f', '3ce579b1eb8d9b7387e93de042f0630e', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=info&amp;tpl=customer_right_of_withdrawal.tpl', 'help/right-of-withdrawal/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('af8dad40e0bfb012be008efc3826fb54', '3e2a46c6550d9f8ec5a7f3216d023db2', 'oxbaseshop', 1, 'index.php?cl=info&amp;tpl=impressum.tpl', 'about-us/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('ab459c0dc911137e9cc024d9fba5a68b', '43e0a1f539e00dcfa1a6bc4d4fee4fc2', 'oxbaseshop', 0, 'index.php?cl=start', 'home/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('b88b7ae13f9b7d571f9f4893a8d17c3f', '44f621e49831ece86b22ea69dde82f2a', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=customer_right_of_withdrawal.tpl', 'hilfe/widerrufsrecht/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('ab459c0dc911137e9cc024d9fba5a68b', '3370c42c70f328adb7046c6677cbb0c6', 'oxbaseshop', 0, 'index.php?cl=start', 'home/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('b88b7ae13f9b7d571f9f4893a8d17c3f', '13fcab89715b955a73e0ee1f06011259', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=customer_right_of_withdrawal.tpl', 'hilfe/widerrufsrecht/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('d35db2901a428b971c0d7d53d64c4f77', '44fec8ed8396c63e0d958ae78996d1e4', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account', 'help/my-account/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('efaf9266cf7de3a8c84cea167285eb83', '4a70a4cd11d63fdce96fbe4ba8e714e6', 'oxbaseshop', 1, 'index.php?cnid=oxmore&amp;cl=alist', 'more/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('9ba8be21e759c0fb18ed36d2d12b34ad', '4ac8d6f8819076dd8fac958a264e04ff', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=help', 'help/help/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('7ae7ab3bc27e81b92a56a54a7e02fdec', '4baf9bd95ca982018c1ec6527669aef7', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=basket', 'help/cart/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('0a4d2f80aea0951a6ceef92a50b846cd', '4cbe8290a912fa8241167a13b5ac0b46', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=order_info.tpl', 'hilfe/wie-bestellen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('efaf9266cf7de3a8c84cea167285eb83', '4d3d4d70b09b5d2bd992991361374c67', 'oxbaseshop', 0, 'index.php?cnid=oxmore&amp;cl=alist', 'mehr/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('0a4d2f80aea0951a6ceef92a50b846cd', '4e22468cd0f70f11708f213dec548639', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=order_info.tpl', 'hilfe/wie-bestellen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('efaf9266cf7de3a8c84cea167285eb83', '0f39b1d9a5ed613883e969188723f319', 'oxbaseshop', 0, 'index.php?cnid=oxmore&amp;cl=alist', 'mehr/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('18f64cbbc296a32fb84b3bbe31dfed09', '510fef34e5d9b86f6a77af949d15950e', 'oxbaseshop', 1, 'index.php?cl=account', 'my-account/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('ace1e168a1e8183a2aa79c2243171a29', '5668048844927ca2767140c219e04efc', 'oxbaseshop', 1, 'index.php?cl=account_user', 'my-address/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('63914909be6a4f61f7744b87876c20ee', '585f263995b6a8216d1d49c10bdea22f', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=contact', 'hilfe/kontakt/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('63914909be6a4f61f7744b87876c20ee', '3745ade3beda811ea4269bbf3f233a75', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=contact', 'hilfe/kontakt/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('0f8b225c4476bfb9f9f06072591caf0c', '5a0b0a570076f900c44f160a797832ef', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_newsletter', 'help/newsletter-settings/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('0563ce7f6a400737ce0e1c2b2c733e49', '5cc081514a72b0ce3d7eec4fb1e6f1dd', 'oxbaseshop', 1, 'index.php?cl=forgotpwd', 'forgot-password/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('002a90a450bc0eba234f80b0b27636ff', '5e82443daf55ddc38b24aefe8ec0daa5', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=newsletter', 'help/newsletter/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('6d9b5b3ee58bca1bd7be188f71e80ef2', '5eb126725ba500e6bbf1aecaa876dc48', 'oxbaseshop', 1, 'index.php?cl=review', 'product-review/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('8f44d31988a8962c87e3a0b7dda28ea2', '5f58b1965cb91c573ecd3d34c784c2e4', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_user', 'hilfe/rechnungs-und-liefereinstellungen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('8f44d31988a8962c87e3a0b7dda28ea2', '30e8baa521d867c0943f2c17891e7649', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_user', 'hilfe/rechnungs-und-liefereinstellungen/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('7189adecf13cac2a3e0a085aa8c276d6', '6203915d115d00aacaa2a9ea3bc67cda', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=register', 'help/open-account/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('6c3129355426de70051cc3c08a675bcd', '669be6da2be5edc1da4ece61b2dc72c2', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=start', 'hilfe/home/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('6c3129355426de70051cc3c08a675bcd', '23080fb15eeafe59c79ff6e2ab8ea621', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=start', 'hilfe/home/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('8f44d31988a8962c87e3a0b7dda28ea2', '670524bc5a2b2334c83839396da5b10b', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_user', 'help/billings-and-shipping-settings/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('be0df35ba37af88c6c09527f1e2d7180', '6a1a92c6e19cb0923edc299fd7d0c19b', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_noticelist', 'help/my-wish-list/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('f560b18b547bca23752a154b45120980', '6b30b01fe01b80894efc0f29610e5215', 'oxbaseshop', 0, 'index.php?cl=account_password', 'mein-passwort/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('bde12a1bdd3b9c77bdc694a7de4c0dea', '6c3658516be12443e6778f253d9a6945', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=alist', 'hilfe/kategorien/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('3819af3b86a45723369d4a926e62b910', '6c573bd394bfe2aae1a4dd9b0b65cef9', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=delivery_info.tpl', 'hilfe/versand-und-kosten/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('f560b18b547bca23752a154b45120980', '20a645ec8834b8f17e25d98e6eba955f', 'oxbaseshop', 0, 'index.php?cl=account_password', 'mein-passwort/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('bde12a1bdd3b9c77bdc694a7de4c0dea', '504f74cb03df1d9e7c0aaa4f0eb8b5eb', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=alist', 'hilfe/kategorien/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('3819af3b86a45723369d4a926e62b910', '0571f3d5743683d8bc072eba3c326f97', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=delivery_info.tpl', 'hilfe/versand-und-kosten/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('f560b18b547bca23752a154b45120980', '6c890ac1255a99f8d1eb46f1193843d6', 'oxbaseshop', 1, 'index.php?cl=account_password', 'my-password/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('4e0a1c1634b39b25dc36fd17e72046f0', '6d01ef2701d240d4b80250d176cc6ffa', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=vendorlist', 'help/by-manufacturer/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('730781c5e392155012ef2f055eedce00', '74a7a5557c373f3a9b8268714abfd89c', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_password', 'help/my-password/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('5b8e55f5ac0e8e720498dc4dab16c04a', '74e1551c34749343e6d17d302cea3f73', 'oxbaseshop', 1, 'index.php?cl=info&amp;tpl=security_info.tpl', 'data-protection/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('04abcb465a8d3a4441df4c480838d23d', '7685924d3f3fb7e9bda421c57f665af4', 'oxbaseshop', 1, 'index.php?cl=contact', 'contact/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('d12b7badee1037e7c1a5a7a245a14e11', '7c8aa72aa16b7d4a859b22d8b8328412', 'oxbaseshop', 0, 'index.php?cl=guestbook', 'gaestebuch/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('0f8b225c4476bfb9f9f06072591caf0c', '7ea6f0334b42ae9efcf7272cc6c5d8bd', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_newsletter', 'hilfe/newslettereinstellungen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('2e17757c0aaf8ed9ef2ba30317fa1faf', '82dd672d68d8f6c943f98ccdaecda691', 'oxbaseshop', 0, 'index.php?cl=suggest', 'empfehlen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('d12b7badee1037e7c1a5a7a245a14e11', 'de2061c4d303d4809887e79c2bdc6e2d', 'oxbaseshop', 0, 'index.php?cl=guestbook', 'gaestebuch/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('0f8b225c4476bfb9f9f06072591caf0c', '4593a66b9c543e4a7e377fe2f729e68d', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_newsletter', 'hilfe/newslettereinstellungen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('2e17757c0aaf8ed9ef2ba30317fa1faf', '971a7c8eb524102bef9c53df3f447f01', 'oxbaseshop', 0, 'index.php?cl=suggest', 'empfehlen/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('6c3129355426de70051cc3c08a675bcd', '8480daf667f0c1fe8dd5c4dd66955e10', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=start', 'help/home/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('d35db2901a428b971c0d7d53d64c4f77', '878b29f193adb05133109d82eb4d9a88', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account', 'hilfe/mein-konto/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('dd1a86d489a8b312737f59ab2cac0eb4', '878fb0ccc48bca3194436cc19c3200e1', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=details', 'hilfe/produktdetails/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('18f64cbbc296a32fb84b3bbe31dfed09', '89c5e6bf1b5441599c4815281debe8df', 'oxbaseshop', 0, 'index.php?cl=account', 'mein-konto/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('7ae7ab3bc27e81b92a56a54a7e02fdec', '8db8366788784126550dfc537f794190', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=basket', 'hilfe/warenkorb/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('dda3486f1349724e085c363ae7d50785', '9382a6c9f0c47028b6037adbfcf4138d', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=impressum.tpl', 'hilfe/impressum/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('343c043546b3d653647e75d2e246ce94', '9508bb0d70121d49e4d4554c5b1af81d', 'oxbaseshop', 0, 'index.php?cl=links', 'links/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('1f28bd0d08f97dea49898ba2f5de8cb2', '9876fe6d7ae54b3eb7c6085b26ad4980', 'oxbaseshop', 0, 'index.php?cl=info&amp;tpl=delivery_info.tpl', 'versand-und-kosten/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('d35db2901a428b971c0d7d53d64c4f77', 'd0beca6b07e62caa9a3d1b6644b103b8', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account', 'hilfe/mein-konto/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('dd1a86d489a8b312737f59ab2cac0eb4', '700c180f8feeae8bab7ce12a649a87af', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=details', 'hilfe/produktdetails/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('18f64cbbc296a32fb84b3bbe31dfed09', 'f26665f77cbbec90083d5e8868e55900', 'oxbaseshop', 0, 'index.php?cl=account', 'mein-konto/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('7ae7ab3bc27e81b92a56a54a7e02fdec', 'adf8e6c86b7c874fa3918bcb09a483b7', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=basket', 'hilfe/warenkorb/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('dda3486f1349724e085c363ae7d50785', 'ceb487c3b9a88b6eb579f39cfff5044f', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=impressum.tpl', 'hilfe/impressum/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('343c043546b3d653647e75d2e246ce94', '90b7d798b6d75b9daa43e657b8ea9909', 'oxbaseshop', 0, 'index.php?cl=links', 'links/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('1f28bd0d08f97dea49898ba2f5de8cb2', '6bb7b5fd9a74f88b704e0016b148b4cc', 'oxbaseshop', 0, 'index.php?cl=info&amp;tpl=delivery_info.tpl', 'versand-und-kosten/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('39e6808919a5c2cfea2c2733d9de60f8', '9fc9811fd88eaf807b1036e07dbfa85c', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=compare', 'help/my-product-comparison/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('610f7fc243c7409cb5448b30029431fe', '9ff5c21cbc84dbfe815013236e132baf', 'oxbaseshop', 1, 'index.php?cl=account_order', 'order-history/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('7189adecf13cac2a3e0a085aa8c276d6', 'a1322f6c88d2e16960433bbeb1c6c3da', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=register', 'hilfe/konto-eroeffnen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('7189adecf13cac2a3e0a085aa8c276d6', '268d14282abf6078cf33be20b0a4e93e', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=register', 'hilfe/konto-eroeffnen/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('98964bf04c7edae2d658c5f3b3233ca1', 'a1b330b85c6f51fd9b50b1eb19707d84', 'oxbaseshop', 1, 'index.php?cl=register', 'open-account/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('7bc8a506bbca225a2f95b6eac66020bf', 'a24b03f1a3f73c325a7647e6039e2359', 'oxbaseshop', 0, 'index.php?cl=account_noticelist', 'mein-merkzettel/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('71db5a32d74e4095f390ce401f158a14', 'a626f6f9942488da7ab0939c3585e58b', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=guestbook', 'hilfe/gaestebuch/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('ace1e168a1e8183a2aa79c2243171a29', 'a7d5ab5a4e87693998c5aec066dda6e6', 'oxbaseshop', 0, 'index.php?cl=account_user', 'meine-adressen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('0563ce7f6a400737ce0e1c2b2c733e49', 'a9afb500184c584fb5ab2ad9b4162e96', 'oxbaseshop', 0, 'index.php?cl=forgotpwd', 'passwort-vergessen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('98964bf04c7edae2d658c5f3b3233ca1', 'acddcfef9c25bcae3b96eb00669541ff', 'oxbaseshop', 0, 'index.php?cl=register', 'konto-eroeffnen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('6ba1f9c600305c7c92573cb6d1555797', 'af3d70b061ae02da3d6ce248c497dc32', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=links', 'hilfe/links/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('002a90a450bc0eba234f80b0b27636ff', 'b61bd555494657d24f309799e30827ec', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=newsletter', 'hilfe/newsletter/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('9c5ba516eb1e3313ed2eb2e4bb7759e3', 'b914c7bc2a782ad879f09eb654122cf3', 'oxbaseshop', 0, 'index.php?cl=info&amp;tpl=customer_right_of_withdrawal.tpl', 'widerrufsrecht/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('4e58f0c5e7a51ae60f857cc53734ef6e', 'c0e5670e15fe3235dd7fd9b6e343a074', 'oxbaseshop', 0, 'index.php?cl=info&amp;tpl=agb.tpl', 'agb/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('7bc8a506bbca225a2f95b6eac66020bf', '996c970b92476dfa910c57967445ef0a', 'oxbaseshop', 0, 'index.php?cl=account_noticelist', 'mein-merkzettel/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('71db5a32d74e4095f390ce401f158a14', '4cea770b083e7d9d2fdd1de5775df087', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=guestbook', 'hilfe/gaestebuch/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('ace1e168a1e8183a2aa79c2243171a29', 'c886c2d8c327562c73057a905685566f', 'oxbaseshop', 0, 'index.php?cl=account_user', 'meine-adressen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('0563ce7f6a400737ce0e1c2b2c733e49', '3e7b670420ebd96b913f631d9f628df6', 'oxbaseshop', 0, 'index.php?cl=forgotpwd', 'passwort-vergessen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('98964bf04c7edae2d658c5f3b3233ca1', 'fb85a91f316934306639f53e4bb470e8', 'oxbaseshop', 0, 'index.php?cl=register', 'konto-eroeffnen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('6ba1f9c600305c7c92573cb6d1555797', 'e379faf8b085c953ef88533e0b86d2ff', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=links', 'hilfe/links/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('002a90a450bc0eba234f80b0b27636ff', 'c4540acfb4595542d9d18330ae1e4cda', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=newsletter', 'hilfe/newsletter/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('9c5ba516eb1e3313ed2eb2e4bb7759e3', '4976d430aaaaa06f8ac857603d6fae83', 'oxbaseshop', 0, 'index.php?cl=info&amp;tpl=customer_right_of_withdrawal.tpl', 'widerrufsrecht/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('4e58f0c5e7a51ae60f857cc53734ef6e', 'b0f4345db0ca78975119af0fc89cfcc9', 'oxbaseshop', 0, 'index.php?cl=info&amp;tpl=agb.tpl', 'agb/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('c69fce7ee6fe530a7afb651a296b3507', 'c1298d664559e5c887e3e18c7cda5133', 'oxbaseshop', 1, 'index.php?cl=info&amp;tpl=order_info.tpl', 'how-to-order/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('4e58f0c5e7a51ae60f857cc53734ef6e', 'c7f0defa518f67f01b85b8474f1a43ea', 'oxbaseshop', 1, 'index.php?cl=info&amp;tpl=agb.tpl', 'terms/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('6d9b5b3ee58bca1bd7be188f71e80ef2', 'cc28156a4f728c1b33e7e02fd846628e', 'oxbaseshop', 0, 'index.php?cl=review', 'bewertungen/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('af8dad40e0bfb012be008efc3826fb54', 'd3df023041bb144df4fd756a27d01d44', 'oxbaseshop', 0, 'index.php?cl=info&amp;tpl=impressum.tpl', 'impressum/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('6d9b5b3ee58bca1bd7be188f71e80ef2', 'e2520d9f64e72c42a4d19731370bd8cd', 'oxbaseshop', 0, 'index.php?cl=review', 'bewertungen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('af8dad40e0bfb012be008efc3826fb54', '266052f24e302ece95e23616a7eb479e', 'oxbaseshop', 0, 'index.php?cl=info&amp;tpl=impressum.tpl', 'impressum/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('12a669e9545e42567814a598de816691', 'd41f984132c321d4e06ad1f2a72d5882', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=info&amp;tpl=agb.tpl', 'help/terms/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('bde12a1bdd3b9c77bdc694a7de4c0dea', 'd7abe1fb6fb1e9e6003b45844b0c0f09', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=alist', 'help/categories/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('c4345f215c2f7b50549ca896b5c17f13', 'da3c1a52ac30056f0e020469a5d35d99', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=forgotpwd', 'hilfe/passwort-vergessen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('c4345f215c2f7b50549ca896b5c17f13', '19be6a4ba5077441a1c643e9edaf3f67', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=forgotpwd', 'hilfe/passwort-vergessen/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('57cb6b2fafc870810cd48b8e1d28cf91', 'da6c5523f7c91d108cadb0be7757c27f', 'oxbaseshop', 1, 'index.php?cl=tags', 'tags/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('d12b7badee1037e7c1a5a7a245a14e11', 'ded4f3786c6f4d6d14e3034834ebdcaf', 'oxbaseshop', 1, 'index.php?cl=guestbook', 'guestbook/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('bc8df5696a42291e47f47478442ce2a8', 'e098f2c231bce2c60473c04f4cded5dd', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=suggest', 'help/recommend/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('057ef382f23bdbb84991d049af2baba9', 'e0dd29a75947539da6b1924d31c9849f', 'oxbaseshop', 0, 'index.php?cl=compare', 'mein-produktvergleich/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('12a669e9545e42567814a598de816691', 'e1f3096e6be9f09d19a7b5416cf75ffd', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=agb.tpl', 'hilfe/agb/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('e56acdd347b0516f68a0afdd811e2382', 'e604233c5a2804d21ec0252a445e93d3', 'oxbaseshop', 0, 'index.php?cl=newsletter', 'newsletter/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('38efc02f0f6b6a6d54cfef1fcdb99d70', 'e6331d115f5323610c639ef2f0369f8a', 'oxbaseshop', 0, 'index.php?cl=basket', 'warenkorb/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('730781c5e392155012ef2f055eedce00', 'e6c20bf0d1d929f570f919f35a25bff1', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_password', 'hilfe/mein-passwort/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('057ef382f23bdbb84991d049af2baba9', '18c71da9d3b5ac6ccd74ca049c037412', 'oxbaseshop', 0, 'index.php?cl=compare', 'mein-produktvergleich/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('12a669e9545e42567814a598de816691', 'b759b3e94d8c98a063a1514c0f06182a', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=agb.tpl', 'hilfe/agb/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('e56acdd347b0516f68a0afdd811e2382', 'f9dcd2596025daac36d6e339312ef610', 'oxbaseshop', 0, 'index.php?cl=newsletter', 'newsletter/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('38efc02f0f6b6a6d54cfef1fcdb99d70', '55af7ecae92b23e9ddf2c21c4fbeda06', 'oxbaseshop', 0, 'index.php?cl=basket', 'warenkorb/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('730781c5e392155012ef2f055eedce00', 'a8776f0f4d02c0e6a42c453c62d6f654', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_password', 'hilfe/mein-passwort/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('c4345f215c2f7b50549ca896b5c17f13', 'e7d3640dc365932ea39a5845017451f1', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=forgotpwd', 'help/forgot-password/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('3819af3b86a45723369d4a926e62b910', 'e8cccc9bd869610593e416da1a066e19', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=info&amp;tpl=delivery_info.tpl', 'help/shipping-and-charges/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('9c5ba516eb1e3313ed2eb2e4bb7759e3', 'e91d3f4809b713664045f30d900b789a', 'oxbaseshop', 1, 'index.php?cl=info&amp;tpl=customer_right_of_withdrawal.tpl', 'right-of-withdrawal/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('1a583d63681ba48d989bdfd0bea8ade7', 'e9c2c9ccc91911acd7e4e399c2c8838d', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_wishlist', 'help/my-gift-registry/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('610f7fc243c7409cb5448b30029431fe', 'eb692d07ec8608d943db0a3bca29c4ce', 'oxbaseshop', 0, 'index.php?cl=account_order', 'bestellhistorie/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('610f7fc243c7409cb5448b30029431fe', 'ba779c79ae16cd11f415addf3e16fc86', 'oxbaseshop', 0, 'index.php?cl=account_order', 'bestellhistorie/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('38efc02f0f6b6a6d54cfef1fcdb99d70', 'ecaf0240f9f46bbee5ffc6dd73d0b7f0', 'oxbaseshop', 1, 'index.php?cl=basket', 'cart/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('bc8df5696a42291e47f47478442ce2a8', 'ed33aefc08d7a8b31ad3dcb61ba5d1b5', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=suggest', 'hilfe/empfehlen/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('bc8df5696a42291e47f47478442ce2a8', 'aba3afe14ff943be455a39fff259fd9c', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=suggest', 'hilfe/empfehlen/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('63914909be6a4f61f7744b87876c20ee', 'efbdcce791ae8fecc0a45ff7e1c92ca6', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=contact', 'help/contact/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('57cb6b2fafc870810cd48b8e1d28cf91', 'f409502ee6998d6b48588958fde3cd6f', 'oxbaseshop', 0, 'index.php?cl=tags', 'tags/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('57cb6b2fafc870810cd48b8e1d28cf91', 'aaed1f510a4a24565da51d002f31f78e', 'oxbaseshop', 0, 'index.php?cl=tags', 'tags/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('0a4d2f80aea0951a6ceef92a50b846cd', 'f460d530b15e5dfba1194eb4a32b87c5', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=info&amp;tpl=order_info.tpl', 'help/how-to-order/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('343c043546b3d653647e75d2e246ce94', 'f80ace8f87e1d7f446ab1fa58f275f4c', 'oxbaseshop', 1, 'index.php?cl=links', 'links/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('71db5a32d74e4095f390ce401f158a14', 'f8e48035979bf62e5bbc15504f9d81fa', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=guestbook', 'help/guestbook/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('04abcb465a8d3a4441df4c480838d23d', 'f9d1a02ab749dc360c4e21f21de1beaf', 'oxbaseshop', 0, 'index.php?cl=contact', 'kontakt/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('340d4f29f63cc0efc504915c0b94a44a', 'fda981a292e074f1b8ed3aa0937938b8', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=security_info.tpl', 'hilfe/datenschutz/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('04abcb465a8d3a4441df4c480838d23d', 'c90694370996cdb1f98ba0b0f660913d', 'oxbaseshop', 0, 'index.php?cl=contact', 'kontakt/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('340d4f29f63cc0efc504915c0b94a44a', '40d12bb84dfa8695926d07bba448cd38', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=info&amp;tpl=security_info.tpl', 'hilfe/datenschutz/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('6ba1f9c600305c7c92573cb6d1555797', 'ffd0f3c469cdb59bb32a4e647152dca7', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=links', 'help/links/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('61c5d6965b480012aabb3a6701254b75', 'a4e5995182ade3cf039800c0ec2d512d', 'oxbaseshop', 0, 'index.php?cl=recommlist', 'Empfehlungslisten/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('61c5d6965b480012aabb3a6701254b75', '40d2121e58d09f118c87686e5e8d3293', 'oxbaseshop', 0, 'index.php?cl=recommlist', 'Empfehlungslisten/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('61c5d6965b480012aabb3a6701254b75', '347333f119c147545287d02ff8954b8e', 'oxbaseshop', 1, 'index.php?cl=recommlist', 'Recomendation-Lists/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('f6bd7f77caae70afad276584caa6450a', '5d752e9e8302eeb21df24d1aee573234', 'oxbaseshop', 0, 'index.php?cl=wishlist', 'wunschzettel/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('f6bd7f77caae70afad276584caa6450a', '89ee021abccf9643eabd57cc366acbcd', 'oxbaseshop', 0, 'index.php?cl=wishlist', 'wunschzettel/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('f6bd7f77caae70afad276584caa6450a', 'b93b703d313e89662773cffaab750f1d', 'oxbaseshop', 1, 'index.php?cl=wishlist', 'gift-registry/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('9a545b8f4ebd5c1458b5aae08812b60f', 'f156d24d4a67d1a00e3423d7381ebfe8', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=wishlist', 'hilfe/wunschzettel-oxid/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('9a545b8f4ebd5c1458b5aae08812b60f', 'b39e68bb68079920047a347b52b305ce', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=wishlist', 'hilfe/wunschzettel-oxid/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('9a545b8f4ebd5c1458b5aae08812b60f', 'c2d486a828d484a863b69e53078de31f', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=wishlist', 'help/gift-registry/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('05c0f9a36dc4eaf3df528f0da18664d8', 'baa3b653a618696b06c70a6dda95ebde', 'oxbaseshop', 0, 'index.php?cl=account_recommlist', 'meine-lieblingslisten/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('05c0f9a36dc4eaf3df528f0da18664d8', '568d7ba71d88d6286f5735db4038f023', 'oxbaseshop', 0, 'index.php?cl=account_recommlist', 'meine-lieblingslisten/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('05c0f9a36dc4eaf3df528f0da18664d8', '8e7ebaebb0a810576453082e1f8f2fa3', 'oxbaseshop', 1, 'index.php?cl=account_recommlist', 'my-listmania-list/', 'static', 0, '', '', 0, '');
-INSERT INTO `oxseo` VALUES ('a0ee4fb33f618ef2bef24e20d12d572f', '968c80a5b47daa4a4c7e5f1ac7c1925a', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_recommlist', 'hilfe/meine-lieblingslisten/', 'static', 0, '', '', 0, '');
+INSERT INTO `oxseo` VALUES ('a0ee4fb33f618ef2bef24e20d12d572f', 'b2101f25345a55d7154f8c85f7ed5081', 'oxbaseshop', 0, 'index.php?cl=help&amp;page=account_recommlist', 'hilfe/meine-lieblingslisten/', 'static', 0, '', '', 0, '');
 INSERT INTO `oxseo` VALUES ('a0ee4fb33f618ef2bef24e20d12d572f', 'dd78cb9b34d9cd30f8a848005c402ba6', 'oxbaseshop', 1, 'index.php?cl=help&amp;page=account_recommlist', 'help/my-listmania-list/', 'static', 0, '', '', 0, '');
 
 # table oxseohistory for tracking old SEO urls
@@ -2025,7 +2026,3 @@ CREATE TABLE `oxmediaurls` (
  PRIMARY KEY ( `OXID` ) ,
  INDEX ( `OXOBJECTID` )
 ) ENGINE = MYISAM ;
-
-# inserting salt for password encryption
-REPLACE `oxconfig` (`OXID`, `OXSHOPID`, `OXVARNAME`, `OXVARTYPE`, `OXVARVALUE`)
-SELECT CONCAT( '6c914914e95082ddc2', oxshops.OXID), oxshops.OXID, 'sPasswdSalt', 'str', UUID() FROM oxshops;

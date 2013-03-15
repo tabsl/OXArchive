@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package views
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxview.php 14431 2008-12-01 14:43:08Z rimvydas.paskevicius $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxview.php 14645 2008-12-11 14:52:57Z arvydas $
  */
 
 /**
@@ -1486,7 +1486,7 @@ class oxView extends oxSuperCfg
         if ( $oDisplayObj ) {
             return $oDisplayObj->getLink( $iLang );
         } else {
-            $myConfig = oxConfig::getInstance();
+            $myConfig = $this->getConfig();
 
             if ( $blTrySeo ) {
                 $oEncoder = oxSeoEncoder::getInstance();
@@ -1897,7 +1897,7 @@ class oxView extends oxSuperCfg
         }
         return $this->_blDemoShop;
     }
-    
+
     /**
      * Returns RSS links
      *

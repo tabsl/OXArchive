@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
- * $Id: adminlinks_main.php 14017 2008-11-06 13:32:23Z arvydas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: adminlinks_main.php 14610 2008-12-10 17:46:54Z tomas $
  */
 
 /**
@@ -107,10 +107,6 @@ class Adminlinks_Main extends oxAdminDetails
             else
                 $aParams['oxlinks__oxinsert'] = $sDate;
         }
-
-            // shopid
-            $sShopID = oxSession::getVar( "actshop");
-            $aParams['oxlinks__oxshopid'] = $sShopID;
 
         $iEditLanguage = oxConfig::getParameter("editlanguage");
         $oLinks = oxNew( "oxlinks", getViewName( 'oxlinks'));

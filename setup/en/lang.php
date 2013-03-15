@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package lang
- * @copyright © OXID eSales AG 2003-2008
- * $Id: lang.php 13913 2008-10-30 11:09:11Z philipp.grashoff $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: lang.php 14900 2008-12-29 15:36:27Z ralf $
  */
 
 $aLang = array(
@@ -28,6 +28,7 @@ $aLang = array(
 'HEADER_TEXT_SETUP_NOT_RUNS_AUTOMATICLY'          => "If setup does not continue in a few seconds, please click ",
 'FOOTER_OXID_ESALES'                              => "&copy; OXID eSales AG 2008",
 
+'TAB_0_TITLE'                                     => "System Requirements",
 'TAB_1_TITLE'                                     => "Welcome",
 'TAB_2_TITLE'                                     => "License conditions",
 'TAB_3_TITLE'                                     => "Database",
@@ -35,6 +36,7 @@ $aLang = array(
 'TAB_5_TITLE'                                     => "License",
 'TAB_6_TITLE'                                     => "Finish",
 
+'TAB_0_DESC'                                      => "Checking if your system fits the requirements",
 'TAB_1_DESC'                                      => "Welcome to OXID eShop installation wizard",
 'TAB_2_DESC'                                      => "Confirm license conditions",
 'TAB_3_DESC'                                      => "Test database connection, building tables",
@@ -59,6 +61,38 @@ $aLang = array(
 'ERROR_BAD_SERIAL_NUMBER'                         => "ERROR: Wrong license key!",
 'ERROR_COULD_NOT_OPEN_CONFIG_FILE'                => "Could not open %s for reading! Please consult our FAQ, forum or contact OXID Support staff!",
 
+'MOD_PHP_EXTENNSIONS'                             => 'PHP extensions',
+'MOD_PHP_CONFIG'                                  => 'PHP configuration',
+'MOD_SERVER_CONFIG'                               => 'Server configutation',
+
+'MOD_MOD_REWRITE'                                 => 'apache mod_rewrite module',
+'MOD_ALLOW_URL_FOPEN'                             => 'allow_url_fopen or fsockopen to port 80',
+'MOD_PHP4_COMPAT'                                 => 'Zend compatibility mode off',
+'MOD_PHPVERSION'                                  => 'PHP version at least 5.2.0',
+'MOD_REQUEST_URI'                                 => 'REQUEST_URI set',
+'MOD_LIBXML2'                                     => 'LIB XML2',
+'MOD_PHP-XML'                                     => 'PHP XML',
+'MOD_JSON'                                        => 'JSON',
+'MOD_ICONV'                                       => 'ICONV',
+'MOD_TOKENIZER'                                   => 'Tokenizer',
+'MOD_BCMATH'                                      => 'BCMath',
+'MOD_MYSQL_CONNECT'                               => 'MySQL module for MySQL 5',
+'MOD_GD_INFO'                                     => 'GDlib v2 [v1] incl. JPEG support',
+'MOD_INI_SET'                                     => 'ini_set allowed',
+'MOD_REGISTER_GLOBALS'                            => 'register_globals off',
+'MOD_ZEND_OPTIMIZER'                              => 'Zend Optimizer installed',
+'MOD_ZEND_PLATFORM'                               => 'Zend Platform installed',
+
+'STEP_0_ERROR_TEXT'                               => 'Your system does not fit system requirements',
+'STEP_0_TEXT'                                     => '<ul class="req">'.
+                                                     '<li class="pass"> - Your system fits the requirement.</li>'.
+                                                     '<li class="pmin"> - The requirement is not or only partly fit. The OXID eShop will work anyway and can be installed..</li>'.
+                                                     '<li class="fail"> - Your system doesn\'t fit the requirement. The OXID eShop will not work without it and cannot be installed.</li>'.
+                                                     '<li class="null"> - The requirement could  not be checked.'.
+                                                     '</ul>',
+'STEP_0_DESC'                                     => 'In this step we check if your system fits the requirements:',
+'STEP_0_TITLE'                                    => 'System requirements check',
+
 'STEP_1_TITLE'                                    => "Welcome",
 'STEP_1_DESC'                                     => "Welcome to installation wizard of OXID eShop",
 'STEP_1_TEXT'                                     => "Please read carefully the following instructions to guarantee a smooth installation.
@@ -68,6 +102,7 @@ $aLang = array(
                                                       79098 Freiburg<br>
                                                       Deutschland<br>",
 'BUTTON_BEGIN_INSTALL'                            => "Start installation",
+'BUTTON_PROCEED_INSTALL'                          => "Proceed with setup",
 
 'STEP_2_TITLE'                                    => "License conditions",
 'BUTTON_RADIO_LICENCE_ACCEPT'                     => "I acceppt license conditions.",
@@ -121,6 +156,7 @@ $aLang = array(
 'STEP_6_LINK_TO_SHOP_ADMIN_AREA'                  => "Continue to your OXID eShop admin interface",
 'STEP_6_TO_SHOP'                                  => "To Shop",
 'STEP_6_TO_SHOP_ADMIN'                            => "To admin interface",
+'STEP_6_ADDITIONAL_LOGIN_INFO'                    => 'Use login "admin" and password "admin" to login.',
 
 'ATTENTION'                                       => "Attention, important",
 'SETUP_DIR_DELETE_NOTICE'                         => "Due to security reasons remove setup directory if not yet done during installation.",
@@ -128,12 +164,12 @@ $aLang = array(
 'SELECT_SETUP_LANG'                               => "Please choose your language",
 'SELECT_COUNTRY_LANG'                             => "Please choose your country",
 'SELECT_SETUP_LANG_SUBMIT'                        => "Select",
-'USE_DYNAMIC_PAGES'                               => "To improve your bussiness get additional information from OXID's server. <br>Learn about our ",
-'PRIVACY_POLICY'                                  => "privacy policy",
+'USE_DYNAMIC_PAGES'                               => "To increase your business success get additional information from OXID's server. You find more information in our ",
+'PRIVACY_POLICY'                                  => "privacy statements",
 
-'LOAD_DYN_CONTENT_NOTICE'                         => "<p>If checkbox &quot;more information&quot; is set, you will see an additonal menu in admin area of your OXID eShop.</p><p>In that menu you get further information about E-Commerce Services like Google productsearch.</p> <p>You can change this settings at any time.</p>",
+'LOAD_DYN_CONTENT_NOTICE'                         => "<p>If checkbox &quot;more information&quot; is set, you will see an additional menu in the admin area of your OXID eShop.</p><p>In that menu you get further information about e-commerce services like Google product search.</p> <p>You can change these settings at any time.</p>",
 
 
 );
 
-?>
+$aLang['MOD_MEMORY_LIMIT']                        = 'PHP Memory limit (min. 14MB, 30MB recommended)';

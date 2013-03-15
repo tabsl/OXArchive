@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxuserpayment.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxuserpayment.php 14485 2008-12-05 08:37:35Z arvydas $
  */
 
 /**
@@ -81,18 +81,21 @@ class oxUserPayment extends oxBase
     {
         //due to compatibility with templates
         if ( $sName == 'oxpayments__oxdesc' ) {
-            if ( !$this->_oPayment ) {
+            if ( $this->_oPayment === null ) {
                 $this->_oPayment = oxNew( 'oxpayment' );
                 $this->_oPayment->load( $this->oxuserpayments__oxpaymentsid->value );
             }
             return $this->_oPayment->oxpayments__oxdesc;
         }
+
         if ( $sName == 'aDynValues' ) {
-            if ( !$this->_aDynValues ) {
+            if ( $this->_aDynValues === null ) {
                 $this->_aDynValues = $this->getDynValues();
             }
             return $this->_aDynValues;
         }
+
+        return parent::__get( $sName );
     }
 
     /**
@@ -194,29 +197,24 @@ class oxUserPayment extends oxBase
 
     /**
      * Get user payment by payment id
-     * 
+     *
      * @param oxUser $oUser        user object
-     * @param string $sPaymentType payment type 
+     * @param string $sPaymentType payment type
      *
      * @return bool
      */
     public function getPaymentByPaymentType( $oUser = null, $sPaymentType = null )
     {
-        $sOxId = null;
-        
-        if ( $oUser && !empty($sPaymentType) ) {
-            $sSelect  = 'select oxid from oxuserpayments where oxpaymentsid="'.$sPaymentType.'" and oxuserid="'.$oUser->getId().'" ';
-            
-            $sOxId = oxDb::getDb()->getOne( $sSelect );
+        $blGet = false;
+        if ( $oUser && $sPaymentType != null ) {
+            $sSelect  = 'select oxid from oxuserpayments where oxpaymentsid="' . $sPaymentType . '" and oxuserid="' . $oUser->getId() . '" ';
+            if ( ( $sOxId = oxDb::getDb()->getOne( $sSelect ) ) ) {
+                $blGet = $this->load( $sOxId );
+            }
         }
-        
-        if ( $sOxId ) {
-            $this->load( $sOxId );
-            return true;
-        } else {
-            return false;
-        }
-    }    
+
+        return $blGet;
+    }
 
     /**
      * Returns an array of dyn payment values
@@ -228,7 +226,7 @@ class oxUserPayment extends oxBase
         if ( !$this->getStoreCreditCardInfo() && $this->oxuserpayments__oxpaymentsid->value == 'oxidcreditcard' ) {
             return null;
         }
-        
+
         if ( !$this->_aDynValues ) {
             $this->_aDynValues = oxUtils::getInstance()->assignValuesFromText( $this->oxuserpayments__oxvalue->value );
         }

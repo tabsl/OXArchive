@@ -103,8 +103,8 @@
             <td colspan="2">[{ oxmultilang ident="GENERAL_AJAX_DESCRIPTION" }]<br>[{ oxmultilang ident="GENERAL_FILTERING" }]<br /><br /></td>
         </tr>
         <tr class="edittext">
-            <td align="center"><b>[{ oxmultilang ident="ARTICLE_EXTEND_ALLGROUPS" }]</b></td>
-            <td align="center"><b>[{ oxmultilang ident="ARTICLE_EXTEND_ARTINGROUPS" }]</b></td>
+            <td align="center"><b>[{ oxmultilang ident="ARTICLE_EXTEND_ALLCATS" }]</b></td>
+            <td align="center"><b>[{ oxmultilang ident="ARTICLE_EXTEND_ARTINCATS" }]</b></td>
         </tr>
         <tr>
             <td valign="top" id="container1"></td>

@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package core
- * @copyright © OXID eSales AG 2003-2008
- * $Id: oxtagcloud.php 14378 2008-11-26 13:59:41Z vilma $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: oxtagcloud.php 14771 2008-12-16 12:43:14Z rimvydas.paskevicius $
  */
 
 if (!defined('OXTAGCLOUD_MINFONT')) {
@@ -116,7 +116,7 @@ class oxTagCloud extends oxSuperCfg
         $sField = "oxartextends.oxtags".oxLang::getInstance()->getLanguageTag();
 
         $sArtView = getViewName('oxarticles');
-        $sQ = "select $sField as oxtags from $sArtView as oxarticles left join oxartextends on oxarticles.oxid=oxartextends.oxid where $sArticleSelect";
+        $sQ = "select $sField as oxtags from $sArtView as oxarticles left join oxartextends on oxarticles.oxid=oxartextends.oxid where oxarticles.oxactive=1 AND $sArticleSelect";
         //$sQ = "select $sField from oxartextends where $sArticleSelect";
         $rs = oxDb::getDb(true)->execute($sQ);
         $aTags = array();

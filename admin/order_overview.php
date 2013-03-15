@@ -17,8 +17,8 @@
  *
  * @link http://www.oxid-esales.com
  * @package admin
- * @copyright © OXID eSales AG 2003-2008
- * $Id: order_overview.php 14024 2008-11-06 13:41:48Z arvydas $
+ * @copyright © OXID eSales AG 2003-2009
+ * $Id: order_overview.php 14511 2008-12-05 12:55:44Z vilma $
  */
 
     // DTAUS
@@ -71,6 +71,8 @@ class Order_Overview extends oxAdminDetails
         $this->_aViewData["afolder"] = $myConfig->getConfigParam( 'aOrderfolder' );
             $this->_aViewData["alangs"] = oxLang::getInstance()->getLanguageNames();
 
+
+        $this->_aViewData["currency"] = $oCur;
 
         return "order_overview.tpl";
     }
@@ -218,5 +220,19 @@ class Order_Overview extends oxAdminDetails
 
         $oOrder->oxorder__oxsenddate->setValue("0000-00-00 00:00:00");
         $oOrder->save();
+    }
+
+    /**
+     * Returns pdf export state - can export or not
+     *
+     * @return bool
+     */
+    public function canExport()
+    {
+        $oDb = oxDb::getDb();
+        $sOrderId = oxConfig::getParameter( "oxid" );
+        $sTable = getViewName( "oxorderarticles" );
+        $sQ = "select count(oxid) from {$sTable} where oxorderid = ".$oDb->quote( $sOrderId )." and oxstorno = 0";
+        return (bool) $oDb->getOne( $sQ );
     }
 }

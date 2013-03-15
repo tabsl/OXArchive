@@ -158,7 +158,7 @@ window.onLoad = top.reloadEditFrame();
 
     <td class="[{ $listclass}]">
         [{if !$readonly }]
-            [{ if !$listitem->isinternal }]
+            [{ if !$listitem->isOx() }]
             <a href="Javascript:DeleteThis('[{ $listitem->oxwrapping__oxid->value }]');" class="delete" id="del.[{$_cnt}]" title="" [{include file="help.tpl" helpid=item_delete}]></a>
             [{ /if }]
         [{/if}]

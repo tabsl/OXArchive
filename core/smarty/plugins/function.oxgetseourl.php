@@ -17,7 +17,7 @@
  *
  * @link http://www.oxid-esales.com
  * @package smartyPlugins
- * @copyright © OXID eSales AG 2003-2008
+ * @copyright © OXID eSales AG 2003-2009
  * $Id: function.oxgetseourl.php 14410 2008-11-28 16:02:31Z arvydas $
  */
 

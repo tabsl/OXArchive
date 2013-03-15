@@ -134,7 +134,7 @@ function _groupExp(el) {
 
             <dl>
                 <dt>
-            <input type=text class="txtfield" style="width:70" name=confstrs[sStockWarningLimit] value="[{$confstrs.sStockWarningLimit}]" [{ $readonly}]>
+            <input type=text class="txt" name=confstrs[sStockWarningLimit] value="[{$confstrs.sStockWarningLimit}]" [{ $readonly}]>
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_STOCKWARNINGLIMIT" }]
