@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: wrapping.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: wrapping.php 33715 2011-03-09 16:17:08Z linas.kukulskis $
  */
 
 /**
@@ -147,15 +147,16 @@ class Wrapping extends oxUBase
     public function changeWrapping()
     {
         $aWrapping = oxConfig::getParameter( 'wrapping' );
-        if ( $this->getViewConfig()->getShowGiftWrapping() &&
-             is_array( $aWrapping ) && count( $aWrapping ) ) {
+        if ( $this->getViewConfig()->getShowGiftWrapping() ) {
             $oBasket = $this->getSession()->getBasket();
 
             // setting wrapping info
-            foreach ( $oBasket->getContents() as $sKey => $oBasketItem ) {
-                // wrapping ?
-                if ( isset( $aWrapping[$sKey] ) ) {
-                    $oBasketItem->setWrapping( $aWrapping[$sKey] );
+            if ( is_array( $aWrapping ) && count( $aWrapping ) ) {
+                foreach ( $oBasket->getContents() as $sKey => $oBasketItem ) {
+                    // wrapping ?
+                    if ( isset( $aWrapping[$sKey] ) ) {
+                        $oBasketItem->setWrapping( $aWrapping[$sKey] );
+                    }
                 }
             }
 

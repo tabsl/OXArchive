@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 31354 2010-11-30 16:23:35Z linas.kukulskis $
+ * @version   SVN: $Id: lang.php 33884 2011-03-22 13:46:32Z dainius.bigelis $
  */
 
 
@@ -1136,7 +1136,7 @@ $aLang = array(
 'USER_OPTION3'                                    => "Option 3",
 'USER_OPENPERSONALACCOUNT1'                       => "Persönliches Kunden-<br>Konto eröffnen.",
 'USER_OPENPERSONALACCOUNT2'                       => "Mit einem Kundenaccount",
-'USER_OPENPERSONALACCOUNT3'                       => "haben sie folgende Vorteile:",
+'USER_OPENPERSONALACCOUNT3'                       => "haben Sie folgende Vorteile:",
 'USER_OPENPERSONALACCOUNT4'                       => "- Verwaltung der Lieferadressen",
 'USER_OPENPERSONALACCOUNT5'                       => "- Prüfung des Bestellstatus",
 'USER_OPENPERSONALACCOUNT6'                       => "- Bestellhistorie",

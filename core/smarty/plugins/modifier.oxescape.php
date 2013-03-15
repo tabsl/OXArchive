@@ -42,6 +42,6 @@ require_once $smarty->_get_plugin_filepath( 'modifier', 'escape' );
  */
 function smarty_modifier_oxescape( $sString, $sEscType = 'html', $sCharSet = null )
 {
-    $sCharSet = $sCharSet ? $sCharSet : oxLang::getInstance()->translateString( 'charset' );
+    $sCharSet = $sCharSet ? $sCharSet : oxConfig::getInstance()->getActiveView()->getCharSet();
     return smarty_modifier_escape( $sString, $sEscType, $sCharSet );
 }

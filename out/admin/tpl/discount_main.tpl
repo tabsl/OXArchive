@@ -121,9 +121,11 @@ function ChangeDiscountType(oObj)
                   <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_CHANGEPRODUCT" }]" class="edittext" onclick="JavaScript:showDialog('&cl=discount_main&aoc=2&oxid=[{ $oxid }]');">
                   [{ oxinputhelp ident="HELP_DISCOUNT_MAIN_EXTRA" }]
                 </td>
+              </tr>
               <tr>
                 <td>[{ oxmultilang ident="DISCOUNT_MAIN_MULTIPLY_DISCOUNT_AMOUNT" }]</td>
                 <td><input type="text" class="editinput" size="5" maxlength="[{$edit->oxdiscount__oxitmamount->fldmax_length}]" name="editval[oxdiscount__oxitmamount]" value="[{$edit->oxdiscount__oxitmamount->value}]" [{ $readonly }]></td>
+              </tr>
               <tr>
                 <td>[{ oxmultilang ident="DISCOUNT_MAIN_MULTIPLY_DISCOUNT_ARTICLES" }]</td>
                 <td>

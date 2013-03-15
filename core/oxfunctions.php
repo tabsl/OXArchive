@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxfunctions.php 31569 2010-12-08 12:17:56Z sarunas $
+ * @version   SVN: $Id: oxfunctions.php 33847 2011-03-21 08:07:36Z sarunas $
  */
 
 /**
@@ -229,42 +229,46 @@ function cmpart( $a, $b )
     return ( $a->cnt < $b->cnt ) ? -1 : 1;
 }
 
-/**
- * Start profiling
- *
- * @param string $sProfileName name of profile
- *
- * @return null
- */
-function startProfile( $sProfileName )
-{
-    global $aStartTimes;
-    global $aExecutionCounts;
-    if (!isset($aExecutionCounts[$sProfileName])) {
-        $aExecutionCounts[$sProfileName] = 0;
+if ( !function_exists( 'startProfile' ) ) {
+    /**
+     * Start profiling
+     *
+     * @param string $sProfileName name of profile
+     *
+     * @return null
+     */
+    function startProfile( $sProfileName )
+    {
+        global $aStartTimes;
+        global $aExecutionCounts;
+        if (!isset($aExecutionCounts[$sProfileName])) {
+            $aExecutionCounts[$sProfileName] = 0;
+        }
+        if (!isset($aStartTimes[$sProfileName])) {
+            $aStartTimes[$sProfileName] = 0;
+        }
+        $aExecutionCounts[$sProfileName]++;
+        $aStartTimes[$sProfileName] = microtime(true);
     }
-    if (!isset($aStartTimes[$sProfileName])) {
-        $aStartTimes[$sProfileName] = 0;
-    }
-    $aExecutionCounts[$sProfileName]++;
-    $aStartTimes[$sProfileName] = microtime(true);
 }
 
-/**
- * Stop profiling
- *
- * @param string $sProfileName name of profile
- *
- * @return null
- */
-function stopProfile( $sProfileName )
-{
-    global $aProfileTimes;
-    global $aStartTimes;
-    if (!isset($aProfileTimes[$sProfileName])) {
-        $aProfileTimes[$sProfileName] = 0;
+if ( !function_exists( 'stopProfile' ) ) {
+    /**
+     * Stop profiling
+     *
+     * @param string $sProfileName name of profile
+     *
+     * @return null
+     */
+    function stopProfile( $sProfileName )
+    {
+        global $aProfileTimes;
+        global $aStartTimes;
+        if (!isset($aProfileTimes[$sProfileName])) {
+            $aProfileTimes[$sProfileName] = 0;
+        }
+        $aProfileTimes[$sProfileName] += microtime( true ) - $aStartTimes[$sProfileName];
     }
-    $aProfileTimes[$sProfileName] += microtime( true ) - $aStartTimes[$sProfileName];
 }
 
 /**

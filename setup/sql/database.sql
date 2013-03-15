@@ -294,7 +294,7 @@ CREATE TABLE `oxuserbaskets` (
   `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL,
   `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '',
   `OXTITLE` varchar(255) NOT NULL default '',
-  `OXCREATE` timestamp(14) NOT NULL,
+  `OXCREATE` timestamp NOT NULL,
   `OXPUBLIC` tinyint(1) DEFAULT '1' NOT NULL,
   `OXUPDATE` INT NOT NULL default 0,
   PRIMARY KEY  (`OXID`),
@@ -1394,7 +1394,7 @@ CREATE TABLE `oxorderarticles` (
   `OXSTOCK` double NOT NULL default '-1',
   `OXDELIVERY` date NOT NULL default '0000-00-00',
   `OXINSERT` date NOT NULL default '0000-00-00',
-  `OXTIMESTAMP` timestamp(14) NOT NULL,
+  `OXTIMESTAMP` timestamp NOT NULL,
   `OXLENGTH` double NOT NULL default '0',
   `OXWIDTH` double NOT NULL default '0',
   `OXHEIGHT` double NOT NULL default '0',
@@ -1693,7 +1693,7 @@ CREATE TABLE `oxshops` (
 # Data for table `oxshops`
 #
 
-INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Store', '', '', 'online kaufen', 'purchase online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'info@myoxideshop.com', 'reply@myoxideshop.com', 'order@myoxideshop.com', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order at OXID eShop', 'Thank you for your registration at OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', '', '', '', 'Your Company Name', '2425 Maple Street', '9041', 'Any City, CA', 'United States', 'Bank of America', '1234567890', '900 1234567', '', '', '', 'John', 'Doe', '217-8918712', '217-8918713', 'www.myoxideshop.com', '', '', '', '', '', '', '', '', 'CE', '4.4.7', 1, 1, 0, 0);
+INSERT INTO `oxshops` VALUES ('oxbaseshop', 1, 0, '', 0, 'OXID eShop 4', 'OXID Geschenke Shop', 'OXID Gift Store', '', '', 'online kaufen', 'purchase online', '', '', 'Originelle, witzige Geschenkideen - Lifestyle, Trends, Accessoires', 'Gift Ideas - Original, Funny Presents - Lifestyle, Trends, Accessories', '', '', 'info@myoxideshop.com', 'reply@myoxideshop.com', 'order@myoxideshop.com', 'Ihre Bestellung bei OXID eSales', 'Vielen Dank für Ihre Registrierung im OXID eShop', 'Ihr Passwort im OXID eShop', 'Ihre OXID eSales Bestellung wurde versandt', 'Your order at OXID eShop', 'Thank you for your registration at OXID eShop', 'Your OXID eShop password', 'Your OXID eSales Order has been shipped', '', '', '', '', '', '', '', '', '', '', '', 'Your Company Name', '2425 Maple Street', '9041', 'Any City, CA', 'United States', 'Bank of America', '1234567890', '900 1234567', '', '', '', 'John', 'Doe', '217-8918712', '217-8918713', 'www.myoxideshop.com', '', '', '', '', '', '', '', '', 'CE', '4.4.8', 1, 1, 0, 0);
 
 #
 # Table structure for table `oxstatistics`

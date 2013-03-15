@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlist.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxlist.php 33836 2011-03-18 11:06:18Z sarunas $
  */
 
 /**
@@ -406,15 +406,16 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
             $rs = oxDb::getDb(true)->Execute( $sSql);
         }
 
-        $oSaved = clone $this->getBaseObject();
-
-        // this code is deprecated and will be removed:
-        if ( $this->_aAssignCallbackPrepend && is_callable($this->_aAssignCallbackPrepend)) {
-            call_user_func( $this->_aAssignCallbackPrepend, $oSaved);
-        }
-        // end of deprecated code
-
         if ($rs != false && $rs->recordCount() > 0) {
+
+            $oSaved = clone $this->getBaseObject();
+
+            // this code is deprecated and will be removed:
+            if ( $this->_aAssignCallbackPrepend && is_callable($this->_aAssignCallbackPrepend)) {
+                call_user_func( $this->_aAssignCallbackPrepend, $oSaved);
+            }
+            // end of deprecated code
+
             while (!$rs->EOF) {
 
                 $oListObject = clone $oSaved;

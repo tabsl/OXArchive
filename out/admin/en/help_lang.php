@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 31373 2010-12-01 10:02:42Z linas.kukulskis $
+ * @version   SVN: $Id: help_lang.php 33651 2011-03-04 09:45:34Z linas.kukulskis $
  */
 
 /**
@@ -540,6 +540,8 @@ $aLang =  array(
 'HELP_VOUCHERSERIE_MAIN_RANDOMNUM'              =>  'If this setting is active a random number is calculated for each coupon.',
 
 'HELP_VOUCHERSERIE_MAIN_VOUCHERNUM'             =>  'Here you can enter a coupon number. This number is used when creating new coupons if <span class="navipath_or_inputname">Random Numbers</span> is deactivated. All Coupons get the same coupon number.',
+
+'HELP_VOUCHERSERIE_MAIN_CALCULATEONCE'          =>  'If you assign products or categories to your coupon, deactivate this option to calculate this coupon to each product per cart position. Activate if the coupon shall be valid only once per cart position.',
 
 'HELP_WRAPPING_MAIN_PICTURE'                    =>  'With <span class="navipath_or_inputname">Picture</span> and <span class="navipath_or_inputname">Upload Picture</span> you can upload a picture for the gift wrapping. In <span class="navipath_or_inputname">Upload Picture</span>, select the picture to upload. When clicking on <span class="navipath_or_inputname">Save</span>, the picture is uploaded. After uploading, the filename is shown in <span class="navipath_or_inputname">Picture</span>.',
 

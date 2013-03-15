@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxshopcontrol.php 32617 2011-01-20 15:23:58Z sarunas $
+ * @version   SVN: $Id: oxshopcontrol.php 33881 2011-03-22 12:58:15Z alfonsas $
  */
 
 /**
@@ -289,57 +289,14 @@ class oxShopControl extends oxSuperCfg
         $oViewObject->executeFunction( $oViewObject->getFncName() );
 
 
-        // get Smarty is important here as it sets template directory correct
-        $oSmarty = oxUtilsView::getInstance()->getSmarty();
-
         // if no cache was stored before we should generate it
         if ( !$blIsCached ) {
-
-            // render it
-            $sTemplateName = $oViewObject->render();
-
-            // check if template dir exists
-            $sTemplateFile = $myConfig->getTemplatePath( $sTemplateName, $this->isAdmin() ) ;
-            if ( !file_exists( $sTemplateFile)) {
-                $oEx = oxNew( 'oxSystemComponentException' );
-                $oLang = oxLang::getInstance();
-                $oEx->setMessage( sprintf($oLang->translateString( 'EXCEPTION_SYSTEMCOMPONENT_TEMPLATENOTFOUND', $oLang->getBaseLanguage() ), $sTemplateFile) );
-                $oEx->setComponent( $sTemplateName );
-                throw $oEx;
-            }
-            $aViewData = $oViewObject->getViewData();
-
-            //Output processing. This is useful for modules. As sometimes you may want to process output manually.
-            $oOutput = oxNew( 'oxoutput' );
-            $aViewData = $oOutput->processViewArray( $aViewData, $oViewObject->getClassName() );
-            $oViewObject->setViewData( $aViewData );
-
-            //add all exceptions to display
-            if ( ( $aErrors = oxSession::getVar( 'Errors' ) ) ) {
-                oxUtilsView::getInstance()->passAllErrorsToView( $aViewData, $aErrors );
-
-                // resetting errors after displaying them
-                oxSession::setVar( 'Errors', array() );
-            }
-
-            foreach ( array_keys( $aViewData ) as $sViewName ) {
-                $oSmarty->assign_by_ref( $sViewName, $aViewData[$sViewName] );
-            }
-
-            // passing current view object to smarty
-            $oSmarty->oxobject = $oViewObject;
-
-
-            $sOutput = $oSmarty->fetch( $sTemplateName, $oViewObject->getViewId() );
-
-            //Output processing - useful for modules as sometimes you may want to process output manually.
-            $sOutput = $oOutput->process( $sOutput, $oViewObject->getClassName() );
-            $sOutput = $oOutput->addVersionTags( $sOutput );
+            $sOutput = $this->_render($oViewObject, $blIsCachable);
         }
 
 
         // #M1047 Firefox duplicated GET fix
-        $myUtils->setHeader( "Content-Type: text/html; charset=".oxLang::getInstance()->translateString( 'charset' ) );
+        $myUtils->setHeader( "Content-Type: text/html; charset=".$oViewObject->getCharSet() );
 
         // show output
         $this->_output( $sOutput );
@@ -348,6 +305,62 @@ class oxShopControl extends oxSuperCfg
 
         // stopping resource monitor
         $this->_stopMonitor( $blIsCachable, $blIsCached, $sViewID, $oViewObject->getViewData() );
+    }
+
+    /**
+     * render oxView object
+     *
+     * @param oxView  $oViewObject      view object to render
+     * @param boolean $blRenderForCache should _render4cache be set in templates?
+     *
+     * @return string
+     */
+    protected function _render($oViewObject, $blRenderForCache = false)
+    {
+        // get Smarty is important here as it sets template directory correct
+        $oSmarty = oxUtilsView::getInstance()->getSmarty();
+
+        // render it
+        $sTemplateName = $oViewObject->render();
+
+        // check if template dir exists
+        $sTemplateFile = $this->getConfig()->getTemplatePath( $sTemplateName, $this->isAdmin() ) ;
+        if ( !file_exists( $sTemplateFile)) {
+            $oEx = oxNew( 'oxSystemComponentException' );
+            $oLang = oxLang::getInstance();
+            $oEx->setMessage( sprintf($oLang->translateString( 'EXCEPTION_SYSTEMCOMPONENT_TEMPLATENOTFOUND', $oLang->getBaseLanguage() ), $sTemplateFile) );
+            $oEx->setComponent( $sTemplateName );
+            throw $oEx;
+        }
+        $aViewData = $oViewObject->getViewData();
+
+        //Output processing. This is useful for modules. As sometimes you may want to process output manually.
+        $oOutput = oxNew( 'oxoutput' );
+        $aViewData = $oOutput->processViewArray( $aViewData, $oViewObject->getClassName() );
+        $oViewObject->setViewData( $aViewData );
+
+        //add all exceptions to display
+        if ( ( $aErrors = oxSession::getVar( 'Errors' ) ) ) {
+            oxUtilsView::getInstance()->passAllErrorsToView( $aViewData, $aErrors );
+
+            // resetting errors after displaying them
+            oxSession::setVar( 'Errors', array() );
+        }
+
+        foreach ( array_keys( $aViewData ) as $sViewName ) {
+            $oSmarty->assign_by_ref( $sViewName, $aViewData[$sViewName] );
+        }
+
+        // passing current view object to smarty
+        $oSmarty->oxobject = $oViewObject;
+
+
+        $sOutput = $oSmarty->fetch( $sTemplateName, $oViewObject->getViewId() );
+
+        //Output processing - useful for modules as sometimes you may want to process output manually.
+        $sOutput = $oOutput->process( $sOutput, $oViewObject->getClassName() );
+
+        return $oOutput->addVersionTags( $sOutput );
     }
 
     /**

@@ -137,11 +137,11 @@ function changeFnc( fncName )
         <tr>
             <td class="edittext">
             [{ oxmultilang ident="VOUCHERSERIE_MAIN_CALCULATEONCE" }]
-            [{ oxinputhelp ident="HELP_VOUCHERSERIE_MAIN_CALCULATEONCE" }]
             </td>
             <td class="edittext">
             <input type="hidden" name="editval[oxvoucherseries__oxcalculateonce]" value="0" [{ $readonly }]>
             <input type="checkbox" name="editval[oxvoucherseries__oxcalculateonce]" value="1" [{if $edit->oxvoucherseries__oxcalculateonce->value}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_VOUCHERSERIE_MAIN_CALCULATEONCE" }]
             </td>
         </tr>
         <tr>
