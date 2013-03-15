@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: user_main.php 26086 2010-02-26 08:47:42Z arvydas $
+ * @version   SVN: $Id: user_main.php 27018 2010-04-06 06:45:15Z arvydas $
  */
 
 /**
@@ -105,7 +105,7 @@ class User_Main extends oxAdminDetails
 
         // passing country list
         $oCountryList = oxNew( "oxCountryList" );
-        $oCountryList->loadActiveCountries( $iTplLang );
+        $oCountryList->loadActiveCountries( $oLang->getObjectTplLanguage() );
 
         $this->_aViewData["countrylist"] = $oCountryList;
 

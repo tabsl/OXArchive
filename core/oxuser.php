@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 26374 2010-03-08 15:53:00Z arvydas $
+ * @version   SVN: $Id: oxuser.php 27205 2010-04-14 12:32:25Z arvydas $
  */
 
 /**
@@ -69,11 +69,11 @@ class oxUser extends oxBase
     protected $_oGroups;
 
     /**
-     * User address list
+     * User address list array
      *
      * @var oxlist
      */
-    protected $_oAddresses;
+    protected $_aAddresses = array();
 
     /**
      * User payment list
@@ -187,7 +187,7 @@ class oxUser extends oxBase
                 return $this->_iCntRecommLists = $this->getRecommListsCount();
                 break;
             case 'oAddresses':
-                return $this->_oAddresses = $this->getUserAddresses();
+                return $this->getUserAddresses();
                 break;
             case 'oPayments':
                 return $this->_oPayments = $this->getUserPayments();
@@ -307,20 +307,18 @@ class oxUser extends oxBase
      */
     public function getUserAddresses( $sUserId = null )
     {
-
-        if ( $this->_oAddresses == null ) {
-
-            $sUserId = ( $sUserId ) ? $sUserId : $this->getId();
+        $sUserId = isset( $sUserId ) ? $sUserId : $this->getId();
+        if ( !isset( $this->_aAddresses[$sUserId] ) ) {
             $sSelect = "select * from oxaddress where oxaddress.oxuserid = " . oxDb::getDb()->quote( $sUserId ) . "";
 
             //P
-            $this->_oAddresses = oxNew( 'oxlist' );
-            $this->_oAddresses->init( "oxaddress" );
-            $this->_oAddresses->selectString( $sSelect );
+            $this->_aAddresses[$sUserId] = oxNew( 'oxlist' );
+            $this->_aAddresses[$sUserId]->init( "oxaddress" );
+            $this->_aAddresses[$sUserId]->selectString( $sSelect );
 
             // marking selected
             if ( $sAddressId = $this->getSelectedAddressId() ) {
-                foreach ( $this->_oAddresses as $oAddress ) {
+                foreach ( $this->_aAddresses[$sUserId] as $oAddress ) {
                     $oAddress->selected = 0;
                     if ( $oAddress->getId() === $sAddressId ) {
                         $oAddress->selected = 1;
@@ -329,7 +327,7 @@ class oxUser extends oxBase
                 }
             }
         }
-        return $this->_oAddresses;
+        return $this->_aAddresses[$sUserId];
     }
 
     /**
@@ -363,7 +361,7 @@ class oxUser extends oxBase
     }
 
     /**
-     * Sets in the array oxuser::_oAddresses selected address.
+     * Sets in the array oxuser::_aAddresses selected address.
      * Returns user selected Address id.
      *
      * @param bool $sWishId wishlist user id
@@ -1096,13 +1094,11 @@ class oxUser extends oxBase
      */
     public function addUserAddress( $oUser )
     {
-
         if ( $this->_hasUserAddress( $oUser->getId() ) ) {
             return false;
         }
 
         $oAddress = oxNew( 'oxaddress' );
-
         $oAddress->oxaddress__oxuserid        = new oxField($this->getId(), oxField::T_RAW);
         $oAddress->oxaddress__oxaddressuserid = new oxField($oUser->getId(), oxField::T_RAW);
         $oAddress->oxaddress__oxfname         = new oxField($oUser->oxuser__oxfname->value, oxField::T_RAW);
@@ -1118,7 +1114,7 @@ class oxUser extends oxBase
         // adding new address
         if ( $oAddress->save() ) {
             // resetting addresses
-            $this->_oAddresses = null;
+            $this->_aAddresses = null;
             return $oAddress->getId();
         }
     }
@@ -1143,7 +1139,7 @@ class oxUser extends oxBase
             $oAddress->save();
 
             // resetting addresses
-            $this->_oAddresses = null;
+            $this->_aAddresses = null;
 
             // saving delivery Address for later use
             oxSession::setVar( 'deladrid', $oAddress->getId() );

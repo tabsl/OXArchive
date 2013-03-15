@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_categories.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxcmp_categories.php 27131 2010-04-09 13:46:44Z arvydas $
  */
 
 /**
@@ -129,7 +129,7 @@ class oxcmp_categories extends oxView
             $myConfig = $this->getConfig();
 
             $sActManufacturer = $myConfig->getConfigParam( 'bl_perfLoadManufacturerTree' ) ? $sActManufacturer : null;
-            $sActVendor = ( $myConfig->getConfigParam( 'bl_perfLoadVendorTree' ) && preg_match( '/^v_.?/i', $sActCat ) ) ? $sActCat : null;
+            $sActVendor = ( $myConfig->getConfigParam( 'bl_perfLoadVendorTree' ) && getStr()->preg_match( '/^v_.?/i', $sActCat ) ) ? $sActCat : null;
 
             $sActCat = $this->_addAdditionalParams( $oProduct, $sActCat, $sActManufacturer, $sActCont, $sActTag, $sActVendor );
         }

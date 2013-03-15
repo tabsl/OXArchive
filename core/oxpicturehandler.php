@@ -350,7 +350,7 @@ class oxPictureHandler extends oxSuperCfg
      */
     public function getIconName( $sFilename )
     {
-        $sIconName = preg_replace( '/(\.jpg|\.gif|\.png)$/i', '_ico\\1', basename($sFilename) );
+        $sIconName = getStr()->preg_replace( '/(\.jpg|\.gif|\.png)$/i', '_ico\\1', basename($sFilename) );
 
         return $sIconName;
     }
@@ -365,7 +365,7 @@ class oxPictureHandler extends oxSuperCfg
     public function getMainIconName( $sMasterImageFile )
     {
         $sMasterImageFile = $this->_getBaseMasterImageFileName( $sMasterImageFile );
-        $sIconName = preg_replace( '/(\.jpg|\.gif|\.png)$/i', '_ico\\1', $sMasterImageFile );
+        $sIconName = getStr()->preg_replace( '/(\.jpg|\.gif|\.png)$/i', '_ico\\1', $sMasterImageFile );
 
         return $sIconName;
     }
@@ -380,7 +380,7 @@ class oxPictureHandler extends oxSuperCfg
     public function getThumbName( $sMasterImageFile )
     {
         $sMasterImageFile = $this->_getBaseMasterImageFileName( $sMasterImageFile );
-        $sThumbName = preg_replace( '/(\.jpg|\.gif|\.png)$/i', '_th\\1', $sMasterImageFile );
+        $sThumbName = getStr()->preg_replace( '/(\.jpg|\.gif|\.png)$/i', '_th\\1', $sMasterImageFile );
 
         return $sThumbName;
     }
@@ -396,7 +396,7 @@ class oxPictureHandler extends oxSuperCfg
     public function getZoomName( $sMasterImageFile, $iIndex )
     {
         $sMasterImageFile = $this->_getBaseMasterImageFileName( $sMasterImageFile );
-        $sZoomName = preg_replace( '/(\.jpg|\.gif|\.png)$/i', '_z'.$iIndex.'\\1', $sMasterImageFile );
+        $sZoomName = getStr()->preg_replace( '/(\.jpg|\.gif|\.png)$/i', '_z'.$iIndex.'\\1', $sMasterImageFile );
 
         return $sZoomName;
     }
@@ -410,7 +410,7 @@ class oxPictureHandler extends oxSuperCfg
      */
     protected function _getBaseMasterImageFileName( $sMasterImageFile )
     {
-        $sMasterImageFile = preg_replace( '/_p\d+(\.jpg|\.gif|\.png)$/i', '\\1', $sMasterImageFile );
+        $sMasterImageFile = getStr()->preg_replace( '/_p\d+(\.jpg|\.gif|\.png)$/i', '\\1', $sMasterImageFile );
 
         return basename( $sMasterImageFile );
     }

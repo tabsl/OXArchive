@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: list_review.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: list_review.php 27134 2010-04-09 13:50:28Z arvydas $
  */
 
 /**
@@ -130,6 +130,7 @@ class List_Review extends Article_List
      */
     protected function _prepareWhereQuery( $aWhere, $sSql )
     {
+        $oStr = getStr();
         $sArtTable = getViewName('oxarticles');
         $sArtTitleField = "{$sArtTable}.oxtitle";
         $sSqlForTitle = null;
@@ -139,12 +140,12 @@ class List_Review extends Article_List
 
         //removing parent id checking from sql
         $sStr = "/\s+and\s+".getViewName( 'oxarticles' )."\.oxparentid\s*=\s*''/";
-        $sSql = preg_replace( $sStr, " ", $sSql );
+        $sSql = $oStr->preg_replace( $sStr, " ", $sSql );
 
         // if searching in article title field, updating sql for this case
         if ( $this->_aWhere[$sArtTitleField] ) {
             $sSqlForTitle = " (CONCAT( {$sArtTable}.oxtitle{$sLangTag}, if(isnull(oxparentarticles.oxtitle{$sLangTag}), '', oxparentarticles.oxtitle{$sLangTag}), {$sArtTable}.oxvarselect{$sLangTag})) ";
-            $sSql = preg_replace( "/{$sArtTable}\.oxtitle\s+like/", "$sSqlForTitle like", $sSql );
+            $sSql = $oStr->preg_replace( "/{$sArtTable}\.oxtitle\s+like/", "$sSqlForTitle like", $sSql );
         }
 
         return " $sSql and {$sArtTable}.oxid is not null ";

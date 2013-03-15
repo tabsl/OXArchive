@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsession.php 26589 2010-03-16 19:51:45Z tomas $
+ * @version   SVN: $Id: oxsession.php 27187 2010-04-13 12:11:49Z arvydas $
  */
 
 DEFINE('_DB_SESSION_HANDLER', getShopBasePath() . 'core/adodblite/session/adodb-session.php');
@@ -142,13 +142,6 @@ class oxSession extends oxSuperCfg
      * @var array
      */
     protected $_aPersistentParams = array("actshop", "lang", "currency", "language", "tpllanguage");
-
-    /**
-     * session challenge put in request (not in cookies) to prevent csrf
-     *
-     * @var string
-     */
-    protected $_sSessionChallenge = '';
 
     /**
      * get oxSession object instance (create if needed)
@@ -287,19 +280,7 @@ class oxSession extends oxSuperCfg
      */
     public function getRequestChallengeToken()
     {
-        if ($this->_sSessionChallenge) {
-            return $this->_sSessionChallenge;
-        }
-        // TODO: use oxConfig::getParameter AFTER it does not take value from session (removed deprecated code)
-        if (isset( $_SERVER['REQUEST_METHOD'] )) {
-            if ( $_SERVER['REQUEST_METHOD'] == 'POST' && isset( $_POST['stoken'] ) ) {
-                $this->_sSessionChallenge = $_POST['stoken'];
-            } elseif ( $_SERVER['REQUEST_METHOD'] == 'GET' && isset( $_GET['stoken'] ) ) {
-                $this->_sSessionChallenge = $_GET['stoken'];
-            }
-            $this->_sSessionChallenge = preg_replace('/[^a-z0-9]/i', '', $this->_sSessionChallenge);
-        }
-        return $this->_sSessionChallenge;
+        return preg_replace('/[^a-z0-9]/i', '', oxConfig::getParameter('stoken'));
     }
 
     /**
@@ -309,10 +290,10 @@ class oxSession extends oxSuperCfg
      */
     public function getSessionChallengeToken()
     {
-        $sRet = preg_replace('/[^a-z0-9]/i', '', self::getVar('stoken'));
+        $sRet = preg_replace('/[^a-z0-9]/i', '', self::getVar('sess_stoken'));
         if (!$sRet) {
             $this->_initNewSessionChallenge();
-            $sRet = self::getVar('stoken');
+            $sRet = self::getVar('sess_stoken');
         }
         return $sRet;
     }
@@ -336,8 +317,7 @@ class oxSession extends oxSuperCfg
      */
     protected function _initNewSessionChallenge()
     {
-        $this->_sSessionChallenge = sprintf('%X', crc32(oxUtilsObject::getInstance()->generateUID()));
-        self::setVar('stoken', $this->_sSessionChallenge);
+        self::setVar('sess_stoken', sprintf('%X', crc32(oxUtilsObject::getInstance()->generateUID())));
     }
 
     /**
@@ -621,6 +601,11 @@ class oxSession extends oxSuperCfg
     {
         if ( $this->_oBasket === null ) {
             $sBasket = self::getVar( $this->_getBasketName() );
+
+            //init oxbasketitem class first
+            //#1746
+            oxNew('oxbasketitem');
+
             if ( $sBasket && $oBasket = unserialize( $sBasket ) ) {
                 $this->setBasket( $oBasket );
             } else {
@@ -663,6 +648,108 @@ class oxSession extends oxSuperCfg
     public function isNewSession()
     {
         return self::$_blIsNewSession;
+    }
+
+    /**
+     * Checks if cookies are not available. Returns TRUE of sid needed
+     *
+     * @param string $sUrl if passed domain does not match current - returns true (optional)
+     *
+     * @return bool
+     */
+    public function isSidNeeded( $sUrl = null )
+    {
+        if ( $blUseCookies && $this->_getCookieSid() ) {
+            // switching from ssl to non ssl or vice versa?
+            if ( ( strpos( $sUrl, "https:" ) === 0 && !$this->getConfig()->isSsl() ) ||
+                 ( strpos( $sUrl, "http:" ) === 0 && $this->getConfig()->isSsl() ) ) {
+                return true;
+            }
+        }
+
+        if ( $sUrl && !$this->getConfig()->isCurrentUrl( $sUrl ) ) {
+            return true;
+        } elseif ( $this->_blSidNeeded === null ) {
+            // setting initial state
+            $this->_blSidNeeded = false;
+
+            // no SIDs for seach engines
+            if ( !oxUtils::getInstance()->isSearchEngine() ) {
+                // cookie found - SID is not needed
+                if ( oxUtilsServer::getInstance()->getOxCookie( $this->getName() ) ) {
+                    $this->_blSidNeeded = false;
+                } elseif ( $this->_forceSessionStart() ) {
+                    $this->_blSidNeeded = true;
+                } else {
+                    // no cookie, so must check session
+                    if ( $blSidNeeded = self::getVar( 'blSidNeeded' ) ) {
+                        $this->_blSidNeeded = true;
+                    } elseif ( $this->_isSessionRequiredAction() ) {
+                        $this->_blSidNeeded = true;
+
+                        // storing to session, performance..
+                        self::setVar( 'blSidNeeded', $this->_blSidNeeded  );
+                    }
+                }
+            }
+        }
+
+        return $this->_blSidNeeded;
+    }
+
+    /**
+     * Appends url with session ID, but only if oxSession::_isSidNeeded() returns true
+     * Direct usage of this method to retrieve end url result is discouraged - instead
+     * see oxUtilsUrl::processUrl
+     *
+     * @param string $sUrl url to append with sid
+     *
+     * @see oxUtilsUrl::processUrl
+     *
+     * @return string
+     */
+    public function processUrl( $sUrl )
+    {
+        if (!$this->isAdmin()) {
+            $sSid = '';
+            if ( $this->isSidNeeded( $sUrl ) ) {
+                // only if sid is not yet set and we have something to append
+                $sSid = $this->sid( true );
+            } else {
+                $sSid = $this->sid();
+            }
+            if ($sSid) {
+                $oStr = getStr();
+                if ( !$oStr->preg_match('/(\?|&(amp;)?)sid=/i', $sUrl) && (false === $oStr->strpos($sUrl, $sSid))) {
+                    if (!$oStr->preg_match('/(\?|&(amp;)?)$/', $sUrl)) {
+                        $sUrl .= ( $oStr->strstr( $sUrl, '?' ) !== false ?  '&amp;' : '?' );
+                    }
+                    $sUrl .= $sSid . '&amp;';
+                }
+            }
+        }
+        return $sUrl;
+    }
+
+    /**
+     * Returns remote access key. With this key (called over "remotekey" URL parameter) and session id (sid parameter) you can access
+     * session from another client.
+     * The key is generated once per session after the first request.
+     *
+     * @param bool $blGenerateNew Should new token be generated
+     *
+     * @return string
+     */
+    public function getRemoteAccessToken($blGenerateNew = true)
+    {
+        $sToken = $this->getVar('_rtoken');
+        if (!$sToken && $blGenerateNew) {
+            $sToken = md5(rand() . $this->getId());
+            $sToken = substr($sToken, 0, 8);
+            $this->setVar('_rtoken', $sToken);
+        }
+
+        return $sToken;
     }
 
     /**
@@ -717,7 +804,7 @@ class oxSession extends oxSuperCfg
         $myUtilsServer = oxUtilsServer::getInstance();
 
         // check only for non search engines
-        if ( !oxUtils::getInstance()->isSearchEngine() && !$myUtilsServer->isTrustedClientIp() ) {
+        if ( !oxUtils::getInstance()->isSearchEngine() && !$myUtilsServer->isTrustedClientIp() && !$this->_isValidRemoteAccessToken()) {
 
             $myConfig = $this->getConfig();
 
@@ -763,38 +850,6 @@ class oxSession extends oxSuperCfg
     }
 
     /**
-     * Checking by timeout ( 60 minutes inactive, then kick him )
-     * Global session Timeout in oxconfig::StartupDatabase is set to 1 hour
-     *
-     * @return bool
-     */
-    /*
-    protected function _checkByTimeOut()
-    {
-        $myConfig = $this->getConfig();
-        $iTimeStamp = oxUtilsDate::getInstance()->getTime();
-
-        // #660
-        $iSessionTimeout = null;
-        if( $this->isAdmin() )
-            $iSessionTimeout = $myConfig->getConfigParam( 'iSessionTimeoutAdmin' );
-        if ( !$this->isAdmin() || !$iSessionTimeout )
-            $iSessionTimeout = $myConfig->getConfigParam( 'iSessionTimeout' );
-        if (!$iSessionTimeout)
-            $iSessionTimeout = 60;
-
-        $iTimeout = 60 * $iSessionTimeout;
-        $iExistingTimeStamp = self::getVar( "sessiontimestamp");
-        if ( $iExistingTimeStamp && ( $iExistingTimeStamp + $iTimeout < $iTimeStamp ) ) {
-            $this->_sErrorMsg = "Shop timeout($iTimeStamp - $iExistingTimeStamp = ".($iTimeStamp - $iExistingTimeStamp)." ),
-                                                                                                creating new SID...<br>";
-            return true;
-        }
-        self::setVar("sessiontimestamp", $iTimeStamp);
-        return false;
-    }*/
-
-    /**
      * Checking if this sid is old
      *
      * @return bool
@@ -825,13 +880,13 @@ class oxSession extends oxSuperCfg
      */
     protected function _checkCookies( $sCookieSid, $aSessCookieSetOnce )
     {
-        $myConfig   = $this->getConfig();
-        $blSwapped  = false;
+        $blSwapped = false;
+        $myConfig  = $this->getConfig();
+        $sCurrUrl  = $myConfig->isSsl() ? $myConfig->getSslShopUrl( 0 ) : $myConfig->getShopUrl( 0 );
 
-        if ( isset( $aSessCookieSetOnce[$myConfig->getCurrentShopURL()] ) ) {
-            $blSessCookieSetOnce = $aSessCookieSetOnce[$myConfig->getCurrentShopURL()];
-        } else {
-            $blSessCookieSetOnce = false;
+        $blSessCookieSetOnce = false;
+        if ( isset( $aSessCookieSetOnce[$sCurrUrl] ) ) {
+            $blSessCookieSetOnce = $aSessCookieSetOnce[$sCurrUrl];
         }
 
         //if cookie was there once but now is gone it means we have to reset
@@ -840,14 +895,14 @@ class oxSession extends oxSuperCfg
                 $this->_sErrorMsg  = "Cookie not found, creating new SID...<br>";
                 $this->_sErrorMsg .= "Cookie: $sCookieSid<br>";
                 $this->_sErrorMsg .= "Session: $blSessCookieSetOnce<br>";
-                $this->_sErrorMsg .= "URL: ".$myConfig->getCurrentShopURL()."<br>";
+                $this->_sErrorMsg .= "URL: ".$sCurrUrl."<br>";
             }
             $blSwapped = true;
         }
 
         //if we detect the cookie then set session var for possible later use
         if ( $sCookieSid == "oxid" && !$blSessCookieSetOnce ) {
-            $aSessCookieSetOnce[$myConfig->getCurrentShopURL()] = "ox_true";
+            $aSessCookieSetOnce[$sCurrUrl] = "ox_true";
             self::setVar( "sessioncookieisset", $aSessCookieSetOnce );
         }
 
@@ -969,87 +1024,6 @@ class oxSession extends oxSuperCfg
     }
 
     /**
-     * Checks if cookies are not available. Returns TRUE of sid needed
-     *
-     * @param string $sUrl if passed domain does not match current - returns true (optional)
-     *
-     * @return bool
-     */
-    public function isSidNeeded( $sUrl = null )
-    {
-        if ( $blUseCookies && $this->_getCookieSid() ) {
-            // switching from ssl to non ssl or vice versa?
-            if ( ( strpos( $sUrl, "https:" ) === 0 && !$this->getConfig()->isSsl() ) ||
-                 ( strpos( $sUrl, "http:" ) === 0 && $this->getConfig()->isSsl() ) ) {
-                return true;
-            }
-        }
-
-        if ( $sUrl && !$this->getConfig()->isCurrentUrl( $sUrl ) ) {
-            return true;
-        } elseif ( $this->_blSidNeeded === null ) {
-            // setting initial state
-            $this->_blSidNeeded = false;
-
-            // no SIDs for seach engines
-            if ( !oxUtils::getInstance()->isSearchEngine() ) {
-                // cookie found - SID is not needed
-                if ( oxUtilsServer::getInstance()->getOxCookie( $this->getName() ) ) {
-                    $this->_blSidNeeded = false;
-                } elseif ( $this->_forceSessionStart() ) {
-                    $this->_blSidNeeded = true;
-                } else {
-                    // no cookie, so must check session
-                    if ( $blSidNeeded = self::getVar( 'blSidNeeded' ) ) {
-                        $this->_blSidNeeded = true;
-                    } elseif ( $this->_isSessionRequiredAction() ) {
-                        $this->_blSidNeeded = true;
-
-                        // storing to session, performance..
-                        self::setVar( 'blSidNeeded', $this->_blSidNeeded  );
-                    }
-                }
-            }
-        }
-
-        return $this->_blSidNeeded;
-    }
-
-    /**
-     * Appends url with session ID, but only if oxSession::_isSidNeeded() returns true
-     * Direct usage of this method to retrieve end url result is discouraged - instead
-     * see oxUtilsUrl::processUrl
-     *
-     * @param string $sUrl url to append with sid
-     *
-     * @see oxUtilsUrl::processUrl
-     *
-     * @return string
-     */
-    public function processUrl( $sUrl )
-    {
-        if (!$this->isAdmin()) {
-            $sSid = '';
-            if ( $this->isSidNeeded( $sUrl ) ) {
-                // only if sid is not yet set and we have something to append
-                $sSid = $this->sid( true );
-            } else {
-                $sSid = $this->sid();
-            }
-            if ($sSid) {
-                if ( !preg_match('/(\?|&(amp;)?)sid=/i', $sUrl) && (false === strpos($sUrl, $sSid))) {
-                    if (!preg_match('/(\?|&(amp;)?)$/', $sUrl)) {
-                        $oStr = getStr();
-                        $sUrl .= ( $oStr->strstr( $sUrl, '?' ) !== false ?  '&amp;' : '?' );
-                    }
-                    $sUrl .= $sSid . '&amp;';
-                }
-            }
-        }
-        return $sUrl;
-    }
-
-    /**
      * return cookies usage for sid possibilities
      *
      * @return bool
@@ -1057,5 +1031,20 @@ class oxSession extends oxSuperCfg
     protected function _getSessionUseCookies()
     {
         return $this->isAdmin() || $this->getConfig()->getConfigParam( 'blSessionUseCookies');
+    }
+
+    /**
+     * Checks if token supplied over 'rtoken' parameter match remote accecss session token.
+     *
+     * @return bool
+     */
+    protected function _isValidRemoteAccessToken()
+    {
+        $sInputToken = oxConfig::getInstance()->getParameter('rtoken');
+        $sToken = $this->getRemoteAccessToken(false);
+        $blTokenEqual = !(bool)strcmp($sInputToken, $sToken);
+        $blValid = $sInputToken && $blTokenEqual;
+
+        return $blValid;
     }
 }

@@ -25,6 +25,7 @@ function ChangeExternal( sLocation, sPos)
 
 <div class="liste">
 <form name="search" id="search" action="[{ $shop->selflink }]" method="post">
+    [{ $shop->hiddensid }]
     <input type="hidden" name="cl" value="dynscreen_list">
     <input type="hidden" name="actedit" value="[{ $actedit }]">
     <input type="hidden" name="oxid" value="1">

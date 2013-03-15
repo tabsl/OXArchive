@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 26310 2010-03-05 08:57:22Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxubase.php 27130 2010-04-09 13:44:30Z arvydas $
  */
 
 /**
@@ -1393,7 +1393,7 @@ class oxUBase extends oxView
             // some special cases
             $sMeta = str_replace( ' ,', ',', $sMeta );
             $aPattern = array( "/,[\s\+\-\*]*,/", "/\s+,/" );
-            $sMeta = preg_replace( $aPattern, ',', $sMeta );
+            $sMeta = $oStr->preg_replace( $aPattern, ',', $sMeta );
             $sMeta = oxUtilsString::getInstance()->minimizeTruncateString( $sMeta, $iLength );
 
             return trim( $sMeta );
@@ -1632,6 +1632,7 @@ class oxUBase extends oxView
         }
 
         $oDisplayObj = null;
+        $blTrySeo = false;
         if ( oxUtils::getInstance()->seoIsActive() ) {
             $blTrySeo = true;
             $oDisplayObj = $this->_getSubject( $iLang );

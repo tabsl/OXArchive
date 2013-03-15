@@ -34,7 +34,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  $Id: oxemosadapter.php 22510 2009-09-22 10:38:27Z arvydas $
+ *  $Id: oxemosadapter.php 27143 2010-04-09 14:40:03Z arvydas $
  */
 
 
@@ -358,6 +358,7 @@ class oxEmosAdapter extends oxSuperCfg
 
         // current currency
         $oCur = $myConfig->getActShopCurrencyObject();
+        $oStr = getStr();
 
         // treat the different PageTypes
         switch ( $this->_getEmosCl() ) {
@@ -388,7 +389,7 @@ class oxEmosAdapter extends oxSuperCfg
                     default:
                         $oEmos->addContent( 'Shop/Kaufprozess/Kundendaten' );
                         $oEmos->addOrderProcess( '2_Kundendaten' );
-                    break;
+                        break;
                 }
                 break;
             case 'payment':
@@ -440,7 +441,8 @@ class oxEmosAdapter extends oxSuperCfg
             case 'search':
                 $oEmos->addContent( 'Shop/Suche' );
                 $iPage = oxConfig::getParameter( 'pgNr' );
-                if ( !$iPage ) { //ECONDA FIX only track first search page, not the following pages
+                if ( !$iPage ) {
+                    //ECONDA FIX only track first search page, not the following pages
                     // #1184M - specialchar search
                     $sSearchParamForLink = rawurlencode( oxConfig::getParameter( 'searchparam', true ) );
                     $sOutput .= $oEmos->addSearch( $sSearchParamForLink, $oSmarty->_tpl_vars['pageNavigation']->iArtCnt );
@@ -453,23 +455,14 @@ class oxEmosAdapter extends oxSuperCfg
                 $oEmos->addContent( 'Service/Wunschzettel' );
                 break;
             case 'contact':
-                if ( !$oCurrView->getContactSendStatus() ) {
-                    $oEmos->addContent( 'Service/Kontakt/Form' );
-                    $oEmos->addContact( 'Kontakt' );
-                } else {
-                    $oEmos->addContent( 'Service/Kontakt/Success' );
-                    $oEmos->addContact( 'Kontakt' );
-                }
+                $oEmos->addContent( $oCurrView->getContactSendStatus() ? 'Service/Kontakt/Success' : 'Service/Kontakt/Form' );
+                $oEmos->addContact( 'Kontakt' );
                 break;
             case 'help':
                 $oEmos->addContent( 'Service/Hilfe' );
                 break;
             case 'newsletter':
-                if ( !$oCurrView->getNewsletterStatus() ) {
-                    $oEmos->addContent( 'Service/Newsletter/Form' );
-                } else {
-                    $oEmos->addContent( 'Service/Newsletter/Success' );
-                }
+                $oEmos->addContent( $oCurrView->getNewsletterStatus() ? 'Service/Newsletter/Success' : 'Service/Newsletter/Form' );
                 break;
             case 'guestbook':
                 $oEmos->addContent( 'Service/Gaestebuch' );
@@ -495,17 +488,13 @@ class oxEmosAdapter extends oxSuperCfg
                         $oEmos->addContent( 'Info/Sicherheit' );
                         break;
                     default:
-                        $oEmos->addContent( 'Content/'.preg_replace( '/\.tpl$/', '', $sTplName ) );
+                        $oEmos->addContent( 'Content/'.$oStr->preg_replace( '/\.tpl$/', '', $sTplName ) );
                         break;
                 }
                 break;
             case 'account':
                 if ( $sFnc ) {
-                    if ( $sFnc != 'logout' ) {
-                        $oEmos->addContent( 'Login/Uebersicht' );
-                    } else {
-                        $oEmos->addContent( 'Login/Formular/Logout' );
-                    }
+                    $oEmos->addContent( ( $sFnc != 'logout' ) ? 'Login/Uebersicht' : 'Login/Formular/Logout' );
                 } else {
                     $oEmos->addContent( 'Login/Formular/Login' );
                 }
@@ -570,7 +559,7 @@ class oxEmosAdapter extends oxSuperCfg
 
                 break;
             default:
-                $oEmos->addContent( 'Content/'.preg_replace( '/\.tpl$/', '', $sTplName ) );
+                $oEmos->addContent( 'Content/'.$oStr->preg_replace( '/\.tpl$/', '', $sTplName ) );
                 break;
         }
 

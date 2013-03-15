@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: user_extend.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: user_extend.php 27019 2010-04-06 06:45:49Z arvydas $
  */
 
 /**
@@ -48,7 +48,7 @@ class User_Extend extends oxAdminDetails
 
             //show country in active language
             $oCountry = oxNew( "oxCountry" );
-            $oCountry->loadInLang( oxLang::getInstance()->getTplLanguage(), $oUser->oxuser__oxcountryid->value );
+            $oCountry->loadInLang( oxLang::getInstance()->getObjectTplLanguage(), $oUser->oxuser__oxcountryid->value );
             $oUser->oxuser__oxcountry = new oxField( $oCountry->oxcountry__oxtitle->value);
 
             $this->_aViewData["edit"] =  $oUser;

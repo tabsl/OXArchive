@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: newsletter.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: newsletter.php 27207 2010-04-14 13:11:41Z vilma $
  */
 
 /**
@@ -168,9 +168,14 @@ class Newsletter extends oxUBase
             //removing user from subscribe list before adding
             $oUser->setNewsSubscription( false, false );
 
-            if ( $oUser->setNewsSubscription( true, true ) ) {
-                // done, confirmation required
-                $this->_iNewsletterStatus = 1;
+            $blOrderOptInEmail = $this->getConfig()->getConfigParam( 'blOrderOptInEmail' );
+            if ( $oUser->setNewsSubscription( true, $blOrderOptInEmail ) ) {
+                // done, confirmation required?
+                if ( $blOrderOptInEmail ) {
+                    $this->_iNewsletterStatus = 1;
+                } else {
+                    $this->_iNewsletterStatus = 2;
+                }
             } else {
                 oxUtilsView::getInstance()->addErrorToDisplay('NEWSLETTER_NOTABLETOSENDEMAIL');
             }

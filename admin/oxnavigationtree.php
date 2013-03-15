@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxnavigationtree.php 26678 2010-03-19 14:30:27Z arvydas $
+ * @version   SVN: $Id: oxnavigationtree.php 27134 2010-04-09 13:50:28Z arvydas $
  */
 
 /**
@@ -208,10 +208,11 @@ class OxNavigationTree extends oxSuperCfg
 
         $oXPath = new DomXPath( $oDom );
         $oNodeList = $oXPath->query( "//OXMENU/*[@url]" );
+        $oStr = getStr();
         foreach ( $oNodeList as $oNode ) {
             $sLocalUrl = $oNode->getAttribute( 'url' );
             if (strpos($sLocalUrl, 'index.php?') === 0) {
-                $sLocalUrl = preg_replace('#^index.php\?#', $sURL, $sLocalUrl);
+                $sLocalUrl = $oStr->preg_replace('#^index.php\?#', $sURL, $sLocalUrl);
                 $oNode->setAttribute( 'url', $sLocalUrl );
             }
         }
@@ -561,10 +562,11 @@ class OxNavigationTree extends oxSuperCfg
      */
     protected function _processCachedFile($sCacheContents)
     {
+        $oStr = getStr();
         $sNewUrl = htmlentities($this->_getAdminUrl());
         $sTok    = preg_quote("stoken=", '@');
-        $sSearch = preg_replace('@'.preg_quote($sTok, '@').'[A-Z0-9]+@i', "{$sTok}[A-Z0-9]+", preg_quote($sNewUrl, '@'));
-        return preg_replace("@$sSearch@i", $sNewUrl, $sCacheContents);
+        $sSearch = $oStr->preg_replace('@'.preg_quote($sTok, '@').'[A-Z0-9]+@i', "{$sTok}[A-Z0-9]+", preg_quote($sNewUrl, '@'));
+        return $oStr->preg_replace("@$sSearch@i", $sNewUrl, $sCacheContents);
 
     }
 
@@ -862,7 +864,7 @@ class OxNavigationTree extends oxSuperCfg
         $oLang = oxLang::getInstance();
 
         $iDynLang = $myConfig->getConfigParam( 'iDynInterfaceLanguage' );
-        $iDynLang = isset( $iDynLang )?$iDynLang:( $oLang->getTplLanguage() );
+        $iDynLang = isset( $iDynLang )?$iDynLang:( $oLang->getObjectTplLanguage() );
 
         $aLanguages = $oLang->getLanguageArray();
         $sLangAbr = $aLanguages[$iDynLang]->abbr;

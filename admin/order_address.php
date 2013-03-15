@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: order_address.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: order_address.php 27023 2010-04-06 06:49:16Z arvydas $
  */
 
 /**
@@ -61,7 +61,7 @@ class Order_Address extends oxAdminDetails
         }
 
         $oCountryList = oxNew( "oxCountryList" );
-        $oCountryList->loadActiveCountries( oxLang::getInstance()->getTplLanguage() );
+        $oCountryList->loadActiveCountries( oxLang::getInstance()->getObjectTplLanguage() );
 
         $this->_aViewData["countrylist"] = $oCountryList;
 

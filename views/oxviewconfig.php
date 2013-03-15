@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxviewconfig.php 26319 2010-03-05 09:58:47Z sarunas $
+ * @version   SVN: $Id: oxviewconfig.php 27171 2010-04-12 15:41:49Z tomas $
  */
 
 /**
@@ -71,7 +71,7 @@ class oxViewConfig extends oxSuperCfg
             }
 
             if ( !$sValue ) {
-                $sValue = preg_replace('#index.php\??$#', '', $this->getSelfLink());
+                $sValue = getStr()->preg_replace('#index.php\??$#', '', $this->getSelfLink());
             }
 
             $this->setViewConfigParam( 'homeLink', $sValue );
@@ -578,7 +578,7 @@ class oxViewConfig extends oxSuperCfg
 
 
     /**
-     * Returns users ip address
+     * Returns visitor ip address
      *
      * @return string
      */
@@ -1071,8 +1071,16 @@ class oxViewConfig extends oxSuperCfg
         return $sVarValue;
     }
 
-    /*public funtion getLogoutLink()
+    /**
+     * Returns session Remote Access token. Later you can pass the token over rtoken URL param
+     * when you want to access the shop, for example, from different client.
+     *
+     * @return string
+     */
+    public function getRemoteAccessToken()
     {
-        //return parent::getLogoutLink() . 'xxx';
-    }*/
+        $sRaToken = oxSession::getInstance()->getRemoteAccessToken();
+
+        return $sRaToken;
+    }
 }

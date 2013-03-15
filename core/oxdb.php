@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdb.php 26784 2010-03-23 16:07:09Z tomas $
+ * @version   SVN: $Id: oxdb.php 27127 2010-04-09 13:42:33Z arvydas $
  */
 
 
@@ -330,10 +330,11 @@ class oxDb extends oxSuperCfg
         }
 
         $blDefDateFound = false;
+        $oStr = getStr();
 
         // looking for default values that are formatted by MySQL
         foreach ( array_keys( $aDefDatePatterns ) as $sDefDatePattern ) {
-            if ( preg_match( $sDefDatePattern, $sDate)) {
+            if ( $oStr->preg_match( $sDefDatePattern, $sDate)) {
                 $blDefDateFound = true;
                 break;
             }
@@ -352,7 +353,7 @@ class oxDb extends oxSuperCfg
 
         // looking for date field
         foreach ( $aDatePatterns as $sPattern => $sType) {
-            if ( preg_match( $sPattern, $sDate, $aDateMatches)) {
+            if ( $oStr->preg_match( $sPattern, $sDate, $aDateMatches)) {
                 $blDateFound = true;
 
                 // now we know the type of passed date
@@ -374,7 +375,7 @@ class oxDb extends oxSuperCfg
 
         // looking for time field
         foreach ( $aTimePatterns as $sPattern => $sType) {
-            if ( preg_match( $sPattern, $sDate, $aTimeMatches)) {
+            if ( $oStr->preg_match( $sPattern, $sDate, $aTimeMatches)) {
                 $blTimeFound = true;
 
                 // now we know the type of passed time
@@ -429,13 +430,14 @@ class oxDb extends oxSuperCfg
         $sSQLTimeStampPattern = "/^([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})$/";
         $sISOTimeStampPattern = "/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/";
         $aMatches = array();
+        $oStr = getStr();
 
         // preparing value to save
         if ( $blToTimeStamp) {
             // reformatting value to ISO
             $this->convertDBDateTime( $oObject, $blToTimeStamp );
 
-            if ( preg_match( $sISOTimeStampPattern, $oObject->value, $aMatches)) {
+            if ( $oStr->preg_match( $sISOTimeStampPattern, $oObject->value, $aMatches)) {
                 // changing layout
                 $oObject->setValue($aMatches[1].$aMatches[2].$aMatches[3].$aMatches[4].$aMatches[5].$aMatches[6]);
                 $oObject->fldmax_length = strlen( $oObject->value);
@@ -445,7 +447,7 @@ class oxDb extends oxSuperCfg
             // loading and formatting value
             // checking and parsing SQL timestamp value
             //$sSQLTimeStampPattern = "/^([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})$/";
-            if ( preg_match( $sSQLTimeStampPattern, $oObject->value, $aMatches ) ) {
+            if ( $oStr->preg_match( $sSQLTimeStampPattern, $oObject->value, $aMatches ) ) {
                 $iTimestamp = mktime( $aMatches[4], //h
                                         $aMatches[5], //m
                                         $aMatches[6], //s
@@ -560,7 +562,7 @@ class oxDb extends oxSuperCfg
      */
     public function isValidFieldName( $sField )
     {
-        return ( boolean ) preg_match( "#^[\w\d\._]*$#", $sField );
+        return ( boolean ) getStr()->preg_match( "#^[\w\d\._]*$#", $sField );
     }
 
     /**
@@ -579,9 +581,10 @@ class oxDb extends oxSuperCfg
         $aDefTimePatterns = $this->_defaultTimePattern();
         $aDFormats  = $this->_defineDateFormattingRules();
         $aTFormats  = $this->_defineTimeFormattingRules();
+        $oStr = getStr();
 
         foreach ( array_keys( $aDefTimePatterns ) as $sDefTimePattern ) {
-            if ( preg_match( $sDefTimePattern, $sDate ) ) {
+            if ( $oStr->preg_match( $sDefTimePattern, $sDate ) ) {
                 $blDefTimeFound = true;
                 break;
             }

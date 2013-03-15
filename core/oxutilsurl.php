@@ -107,9 +107,9 @@ class oxUtilsUrl extends oxSuperCfg
             return $sUrl;
         }
 
-        $sUrl = preg_replace('/(force_)?(admin_)?sid=[a-z0-9\._]*&?(amp;)?/i', '', $sUrl);
-
         $oStr = getStr();
+        $sUrl = $oStr->preg_replace('/(force_)?(admin_)?sid=[a-z0-9\._]*&?(amp;)?/i', '', $sUrl);
+
         if ($qpos = $oStr->strpos($sUrl, '?')) {
             if ($qpos == $oStr->strlen($sUrl)-1) {
                 $sSep = '';
@@ -120,12 +120,12 @@ class oxUtilsUrl extends oxSuperCfg
             $sSep = '?';
         }
 
-        if (!preg_match('/[&?](amp;)?lang=[0-9]+/i', $sUrl)) {
+        if ( !$oStr->preg_match('/[&?](amp;)?lang=[0-9]+/i', $sUrl)) {
             $sUrl .= "{$sSep}lang=".oxLang::getInstance()->getBaseLanguage();
             $sSep = '&amp;';
         }
 
-        if (!preg_match('/[&?](amp;)?cur=[0-9]+/i', $sUrl)) {
+        if ( !$oStr->preg_match('/[&?](amp;)?cur=[0-9]+/i', $sUrl)) {
             $iCur = (int) oxConfig::getParameter('currency');
             if ( $iCur ) {
                 $sUrl .= "{$sSep}cur=".$iCur;
@@ -146,24 +146,43 @@ class oxUtilsUrl extends oxSuperCfg
      */
     protected function _appendUrl( $sUrl, $aAddParams )
     {
+        $oStr = getStr();
         $sSep = '&amp;';
-        if ( getStr()->strpos( $sUrl, '?' ) === false ) {
+        if ( $oStr->strpos( $sUrl, '?' ) === false ) {
             $sSep = '?';
         }
 
         if ( count( $aAddParams ) ) {
-
             foreach ( $aAddParams as $sName => $sValue ) {
-                if ( $sValue && !preg_match("/\?(.*&(amp;)?)?$sName=/", $sUrl)) {
+                if ( isset( $sValue ) && !$oStr->preg_match("/\?(.*&(amp;)?)?$sName=/", $sUrl ) ) {
                     $sUrl .= $sSep . $sName . "=" . $sValue;
                     $sSep = '&amp;';
                 }
             }
         }
-        if ($sUrl) {
-            return $sUrl.$sSep;
+        return $sUrl ? $sUrl.$sSep : '';
+    }
+
+    /**
+     * Removes any or specified dynamic parameter from given url
+     *
+     * @param string $sUrl    url to clean
+     * @param array  $aParams parameters to remove [optional]
+     *
+     * @return string
+     */
+    public function cleanUrl( $sUrl, $aParams = null )
+    {
+        $oStr = getStr();
+        if ( is_array( $aParams ) ) {
+            foreach ( $aParams as $sParam ) {
+                $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)'.$sParam.'=[a-z0-9\.]+&?(amp;)?/i', '\1', $sUrl );
+            }
+        } else {
+            $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?).+/i', '\1', $sUrl );
         }
-        return '';
+
+        return trim( $sUrl, "?" );
     }
 
     /**
@@ -185,8 +204,8 @@ class oxUtilsUrl extends oxSuperCfg
 
         $ret = oxSession::getInstance()->processUrl(
                     oxLang::getInstance()->processUrl(
-                        $this->_appendUrl( 
-                                $sUrl, 
+                        $this->_appendUrl(
+                                $sUrl,
                                 $aAddParams
                         ),
                         $iLang
@@ -194,7 +213,7 @@ class oxUtilsUrl extends oxSuperCfg
                 );
 
         if ($blFinalUrl) {
-            $ret = preg_replace('/(\?|&(amp;)?)$/', '', $ret);
+            $ret = getStr()->preg_replace('/(\?|&(amp;)?)$/', '', $ret);
         }
         return $ret;
     }
@@ -209,7 +228,7 @@ class oxUtilsUrl extends oxSuperCfg
     public function processSeoUrl( $sUrl )
     {
         $ret = $this->getSession()->processUrl( $this->_appendUrl( $sUrl, $this->getAddUrlParams() ) );
-        $ret = preg_replace('/(\?|&(amp;)?)$/', '', $ret);
+        $ret = getStr()->preg_replace('/(\?|&(amp;)?)$/', '', $ret);
         return $ret;
     }
 
@@ -241,11 +260,12 @@ class oxUtilsUrl extends oxSuperCfg
      */
     public function appendParamSeparator($sUrl)
     {
-        if (preg_match('/(\?|&(amp;)?)$/i', $sUrl)) {
+        $oStr = getStr();
+        if ( $oStr->preg_match('/(\?|&(amp;)?)$/i', $sUrl ) ) {
             // it is already ok
             return $sUrl;
         }
-        if (strpos($sUrl, '?') === false) {
+        if ( $oStr->strpos($sUrl, '?') === false ) {
             return $sUrl.'?';
         }
         return $sUrl.'&amp;';

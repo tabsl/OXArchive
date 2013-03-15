@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: content.php 26777 2010-03-23 15:32:19Z sarunas $
+ * @version   SVN: $Id: content.php 27129 2010-04-09 13:43:47Z arvydas $
  */
 
 /**
@@ -252,7 +252,7 @@ class Content extends oxUBase
             $sTplName = basename( $sTplName );
 
             //checking if it is template name, not content id
-            if ( !preg_match("/\.tpl$/", $sTplName) ) {
+            if ( !getStr()->preg_match("/\.tpl$/", $sTplName) ) {
                 $sTplName = null;
             }
         }

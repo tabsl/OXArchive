@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: list_order.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: list_order.php 27134 2010-04-09 13:50:28Z arvydas $
  */
 
 /**
@@ -78,11 +78,13 @@ class List_Order extends Order_List
      */
     protected function _calcListItemsCount( $sSql )
     {
+        $oStr = getStr();
+
         // count SQL
-        $sSql = preg_replace( '/select .* from/', 'select count(*) from ', $sSql );
+        $sSql = $oStr->preg_replace( '/select .* from/', 'select count(*) from ', $sSql );
 
         // removing order by
-        $sSql = preg_replace( '/order by .*$/', '', $sSql );
+        $sSql = $oStr->preg_replace( '/order by .*$/', '', $sSql );
 
         // con of list items which fits current search conditions
         $this->_iListSize = oxDb::getDb()->getOne( "select count(*) from ( $sSql ) as test" );
@@ -113,7 +115,7 @@ class List_Order extends Order_List
     protected function _prepareOrderByQuery( $sSql = null )
     {
         // calculating sum
-        $sSumQ = preg_replace("/select .*? from/", "select round( sum(oxorderarticles.oxbrutprice*oxorder.oxcurrate),2) from", $sSql );
+        $sSumQ = getStr()->preg_replace("/select .*? from/", "select round( sum(oxorderarticles.oxbrutprice*oxorder.oxcurrate),2) from", $sSql );
         $this->_aViewData["sumresult"] = oxDb::getDb()->getOne( $sSumQ );
 
         $sSql = " $sSql group by oxorderarticles.oxartnum";

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: article_list.php 26619 2010-03-17 13:44:29Z arvydas $
+ * @version   SVN: $Id: article_list.php 27134 2010-04-09 13:50:28Z arvydas $
  */
 
 /**
@@ -105,6 +105,30 @@ class Article_List extends oxAdminList
         }
 
         // parent categorie tree
+        $this->_aViewData["cattree"] = $this->getCategoryList($sType, $sValue);
+
+        // manufacturer list
+        $this->_aViewData["mnftree"] = $this->getManufacturerlist($sType, $sValue);
+
+        // vendor list
+        $this->_aViewData["vndtree"] = $this->getVendorList($sType, $sValue);
+
+        return "article_list.tpl";
+    }
+
+    /**
+     * Load category list, mark active category;
+     *
+     * @param string $sType  active list type
+     * @param string $sValue active list item id
+     *
+     * @return oxCategoryList
+     */
+    public function getCategoryList($sType, $sValue)
+    {
+        $myConfig = $this->getConfig();
+
+        // parent categorie tree
         $oCatTree = oxNew( "oxCategoryList");
         $oCatTree->buildList( $myConfig->getConfigParam( 'bl_perfLoadCatTree' ) );
         if ( $sType === 'cat' ) {
@@ -115,9 +139,20 @@ class Article_List extends oxAdminList
                 }
             }
         }
-        $this->_aViewData["cattree"] = $oCatTree;
 
-       // manufacturer list
+        return $oCatTree;
+    }
+
+    /**
+     * Load manufacturer list, mark active category;
+     *
+     * @param string $sType  active list type
+     * @param string $sValue active list item id
+     *
+     * @return oxManufacturerList
+     */
+    public function getManufacturerList($sType, $sValue)
+    {
         $oMnfTree = oxNew( "oxManufacturerList");
         $oMnfTree->loadManufacturerList();
         if ( $sType === 'mnf' ) {
@@ -128,9 +163,20 @@ class Article_List extends oxAdminList
                 }
             }
         }
-        $this->_aViewData["mnftree"] = $oMnfTree;
 
-        // vendor list
+        return $oMnfTree;
+    }
+
+    /**
+     * Load vendor list, mark active category;
+     *
+     * @param string $sType  active list type
+     * @param string $sValue active list item id
+     *
+     * @return oxVendorList
+     */
+    public function getVendorList($sType, $sValue)
+    {
         $oVndTree = oxNew( "oxVendorList");
         $oVndTree->loadVendorList();
         if ( $sType === 'vnd' ) {
@@ -141,9 +187,8 @@ class Article_List extends oxAdminList
                 }
             }
         }
-        $this->_aViewData["vndtree"] = $oVndTree;
 
-        return "article_list.tpl";
+        return $oVndTree;
     }
 
     /**
@@ -164,9 +209,10 @@ class Article_List extends oxAdminList
         switch ($sType) {
             // add category
             case 'cat':
+                $oStr = getStr();
                 $sO2CView = getViewName( "oxobject2category" );
                 $sInsert  = "from $sTable left join $sO2CView on $sTable.oxid = $sO2CView.oxobjectid where $sO2CView.oxcatnid = ".oxDb::getDb()->quote($sValue)." and ";
-                $sSql = preg_replace( "/from\s+$sTable\s+where/i", $sInsert, $sSql);
+                $sSql = $oStr->preg_replace( "/from\s+$sTable\s+where/i", $sInsert, $sSql);
                 break;
             // add category
             case 'mnf':

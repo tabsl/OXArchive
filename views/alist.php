@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: alist.php 26303 2010-03-04 16:11:37Z sarunas $
+ * @version   SVN: $Id: alist.php 27199 2010-04-14 07:59:38Z arvydas $
  */
 
 /**
@@ -542,7 +542,7 @@ class aList extends oxUBase
                 $sDesc = strip_tags( trim( $oStr->strtolower( $oProduct->getArticleLongDesc()->value ) ) );
 
                 //removing dots from string (they are not cleaned up during general string cleanup)
-                $sDesc = preg_replace( "/\./", " ", $sDesc );
+                $sDesc = $oStr->preg_replace( "/\./", " ", $sDesc );
 
                 if ( $oStr->strlen( $sDesc ) > $iMaxTextLength ) {
                     $sMidText = $oStr->substr( $sDesc, 0, $iMaxTextLength );
@@ -677,7 +677,7 @@ class aList extends oxUBase
         $oActCat = $this->getActCategory();
         if ( !$aSorting && $oActCat && $oActCat->oxcategories__oxdefsort->value ) {
             $sSortBy  = getViewName( 'oxarticles' ).".{$oActCat->oxcategories__oxdefsort->value}";
-            $sSortDir = ( $oActCat->oxcategories__oxdefsortmode->value ) ? " desc " : null;
+            $sSortDir = ( $oActCat->oxcategories__oxdefsortmode->value ) ? "desc" : null;
 
             $this->setItemSorting( $sCnid, $sSortBy, $sSortDir );
             $aSorting = array ( 'sortby' => $sSortBy, 'sortdir' => $sSortDir );

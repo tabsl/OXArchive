@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_cur.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxcmp_cur.php 27138 2010-04-09 14:30:51Z arvydas $
  */
 
 /**
@@ -80,83 +80,25 @@ class oxcmp_cur extends oxView
 
             // recalc basket
             $oBasket = $this->getSession()->getBasket();
-
             $oBasket->onUpdate();
         }
 
         $iActCur = $myConfig->getShopCurrency();
         $this->aCurrencies = $myConfig->getCurrencyArray( $iActCur );
 
-        $this->_oActCur     = $this->aCurrencies[$iActCur];
+        $this->_oActCur = $this->aCurrencies[$iActCur];
 
         //setting basket currency (M:825)
         if ( !isset( $oBasket ) ) {
             $oBasket = $this->getSession()->getBasket();
         }
-
         $oBasket->setBasketCurrency( $this->_oActCur );
 
-        $sClass = $this->getConfig()->getActiveView()->getClassName();
-        $sURL  = $myConfig->getShopCurrentURL();
-        $sURL .= "cl={$sClass}";
-
-        // #921 S
-        // name of function
-        $sVal = oxConfig::getParameter( 'fnc' );
-        $aFnc = array( 'tobasket', 'login_noredirect', 'addVoucher' );
-        if ( $sVal && in_array( $sVal, $aFnc ) ) {
-            $sVal = '';
-        }
-
-        if ( $sVal ) {
-            $sURL .= "&amp;fnc={$sVal}";
-        }
-
-        // active category
-        if ( $sVal = oxConfig::getParameter( 'cnid' ) ) {
-            $sURL .= "&amp;cnid={$sVal}";
-        }
-
-        // active article
-        if ( $sVal= oxConfig::getParameter( 'anid' ) ) {
-            $sURL .= "&amp;anid={$sVal}";
-        }
-
-        // active template
-        if ( $sVal = basename( oxConfig::getParameter( 'tpl' ) ) ) {
-            $sURL .= "&amp;tpl={$sVal}";
-        }
-
-        // number of active page
-        $iPgNr = ( int ) oxConfig::getParameter( 'pgNr' );
-        if ( $iPgNr > 0 ) {
-            $sURL .= "&amp;pgNr={$iPgNr}";
-        }
-
-        // #1184M - specialchar search
-        // search parameter
-        if ( $sVal = rawurlencode( oxConfig::getParameter( 'searchparam', true ) ) ) {
-            $sURL .= "&amp;searchparam={$sVal}";
-        }
-
-        // search category
-        if ( $sVal = oxConfig::getParameter( 'searchcnid' ) ) {
-            $sURL .= "&amp;searchcnid={$sVal}";
-        }
-
-        // search vendor
-        if ( $sVal = oxConfig::getParameter( 'searchvendor' ) ) {
-            $sURL .= "&amp;searchvendor={$sVal}";
-        }
-
-        // search manufacturer
-        if ( $sVal = oxConfig::getParameter( 'searchmanufacturer' ) ) {
-            $sURL .= "&amp;searchmanufacturer={$sVal}";
-        }
-
+        $oUrlUtils = oxUtilsUrl::getInstance();
+        $sUrl = $oUrlUtils->cleanUrl( $this->getParent()->getLink(), array( "cur" ) );
         reset( $this->aCurrencies );
         while ( list( , $oItem ) = each( $this->aCurrencies ) ) {
-            $oItem->link = oxUtilsUrl::getInstance()->processUrl("{$sURL}&amp;cur={$oItem->id}");
+            $oItem->link = $oUrlUtils->processUrl( $sUrl, true, array( "cur" => $oItem->id ) );
         }
 
         parent::init();

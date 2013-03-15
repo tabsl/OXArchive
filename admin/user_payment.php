@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: user_payment.php 26254 2010-03-03 15:25:21Z arvydas $
+ * @version   SVN: $Id: user_payment.php 27017 2010-04-06 06:44:03Z arvydas $
  */
 
 /**
@@ -192,13 +192,12 @@ class User_Payment extends oxAdminDetails
     public function getPaymentTypes()
     {
         if ( $this->_oPaymentTypes == null ) {
-            $sTplLang = oxLang::getInstance()->getTplLanguage();
 
             // all paymenttypes
             $this->_oPaymentTypes = oxNew( "oxlist" );
             $this->_oPaymentTypes->init( "oxpayment");
             $oListObject = $this->_oPaymentTypes->getBaseObject();
-            $oListObject->setLanguage( $sTplLang );
+            $oListObject->setLanguage( oxLang::getInstance()->getObjectTplLanguage() );
             $this->_oPaymentTypes->getList();
         }
         return $this->_oPaymentTypes;
@@ -246,7 +245,7 @@ class User_Payment extends oxAdminDetails
         if ( $this->_oUserPayments == null ) {
             $this->_oUserPayments = false;
             if ( $oUser = $this->getUser() ) {
-                $sTplLang = oxLang::getInstance()->getTplLanguage();
+                $sTplLang = oxLang::getInstance()->getObjectTplLanguage();
                 $sPaymentId = $this->getPaymentId();
                 $this->_oUserPayments = $oUser->getUserPayments();
                 // generate selected

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseodecoder.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxseodecoder.php 27116 2010-04-09 13:36:14Z arvydas $
  */
 
 /**
@@ -250,12 +250,14 @@ class oxSeoDecoder extends oxSuperCfg
      */
     protected function _getParams( $sRequest, $sPath )
     {
-        $sParams = preg_replace( '/\?.*/', '', $sRequest );
+        $oStr = getStr();
+
+        $sParams = $oStr->preg_replace( '/\?.*/', '', $sRequest );
         $sPath   = preg_quote($sPath, '/');
-        $sParams = preg_replace( "/^$sPath/", '', $sParams );
+        $sParams = $oStr->preg_replace( "/^$sPath/", '', $sParams );
 
         // this should not happen on most cases, because this redirect is handled by .htaccess
-        if ( $sParams && !preg_match( '/\.html$/', $sParams ) && !preg_match( '/\/$/', $sParams ) ) {
+        if ( $sParams && !$oStr->preg_match( '/\.html$/', $sParams ) && !$oStr->preg_match( '/\/$/', $sParams ) ) {
             oxUtils::getInstance()->redirect( $this->getConfig()->getShopURL() . $sParams . '/', false );
         }
 

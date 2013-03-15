@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 26557 2010-03-16 08:38:14Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxconfig.php 27083 2010-04-07 13:44:32Z arvydas $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -1082,20 +1082,24 @@ class oxConfig extends oxSuperCfg
         $sBase    = $this->getOutDir( $blAbsolute );
         $sAbsBase = $this->getOutDir();
 
-        $oLang = oxLang::getInstance(); //getTplLanguage
+        $sLang = '-';
+        // FALSE means skip language folder check
+        if ( $iLang !== false ) {
+            $oLang = oxLang::getInstance();
 
-        if ( is_null($iLang) ) {
-            $iLang = $oLang->getEditLanguage();
+            if ( is_null( $iLang ) ) {
+                $iLang = $oLang->getEditLanguage();
+            }
+
+            $sLang = $oLang->getLanguageAbbr( $iLang );
         }
-
-        $sLang = $oLang->getLanguageAbbr( $iLang );
 
         if ( is_null($iShop) ) {
             $iShop = $this->getShopId();
         }
 
         //Load from
-        $sPath = "$sTheme/$iShop/$sLang/$sDir/$sFile";
+        $sPath = "{$sTheme}/{$iShop}/{$sLang}/{$sDir}/{$sFile}";
         $sCacheKey = $sPath . "_{$blIgnoreCust}{$blAbsolute}";
 
         if ( ( $sReturn = oxutils::getInstance()->fromStaticCache( $sCacheKey ) ) !== null ) {
@@ -1124,7 +1128,7 @@ class oxConfig extends oxSuperCfg
 
         //test theme language level ..
         $sPath = "$sTheme/$sLang/$sDir/$sFile";
-        if ( !$sReturn && ( is_readable( $sAbsBase.$sPath ) || is_dir( realpath( $sAbsBase.$sPath )) ) ) {
+        if ( !$sReturn && $iLang !== false && ( is_readable( $sAbsBase.$sPath ) || is_dir( realpath( $sAbsBase.$sPath )) ) ) {
             $sReturn = $sBase . $sPath;
         }
 
@@ -1136,7 +1140,7 @@ class oxConfig extends oxSuperCfg
 
         //test out language level ..
         $sPath = "$sLang/$sDir/$sFile";
-        if ( !$sReturn && ( is_readable( $sAbsBase.$sPath ) || is_dir( realpath( $sAbsBase.$sPath )) ) ) {
+        if ( !$sReturn &&  $iLang !== false && ( is_readable( $sAbsBase.$sPath ) || is_dir( realpath( $sAbsBase.$sPath )) ) ) {
             $sReturn = $sBase . $sPath;
         }
 
@@ -1429,7 +1433,12 @@ class oxConfig extends oxSuperCfg
      */
     public function getStdLanguagePath( $sFile, $blAdmin, $iLang = null )
     {
-        return $this->getDir( $sFile, oxLang::getInstance()->getLanguageAbbr( $iLang ), $blAdmin, $iLang, null, $this->getConfigParam( "sTheme" ), true, true );
+        $sDir = null;
+        if ( $iLang !== false ) {
+            $sDir = oxLang::getInstance()->getLanguageAbbr( $iLang );
+        }
+
+        return $this->getDir( $sFile, $sDir, $blAdmin, $iLang, null, $this->getConfigParam( "sTheme" ), true, true );
     }
 
     /**

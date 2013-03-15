@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutils.php 26909 2010-03-26 17:27:59Z tomas $
+ * @version   SVN: $Id: oxutils.php 27113 2010-04-09 13:32:58Z arvydas $
  */
 
 /**
@@ -237,7 +237,7 @@ class oxUtils extends oxSuperCfg
         if (!$oActCur) {
             $oActCur = $this->getConfig()->getActShopCurrencyObject();
         }
-        $sFormated = number_format( $dValue, $oActCur->decimal, $oActCur->dec, $oActCur->thousand);
+        $sFormated = number_format( (double)$dValue, $oActCur->decimal, $oActCur->dec, $oActCur->thousand);
 
         return $sFormated;
     }
@@ -316,7 +316,7 @@ class oxUtils extends oxSuperCfg
     {
         $blValid = true;
         if ( $sEmail != 'admin' ) {
-            $blValid = ( preg_match( $this->_sEmailTpl, $sEmail ) != 0 );
+            $blValid = ( getStr()->preg_match( $this->_sEmailTpl, $sEmail ) != 0 );
         }
 
         return $blValid;
@@ -520,6 +520,11 @@ class oxUtils extends oxSuperCfg
     public function toPhpFileCache($sKey, $mContents)
     {
         $sFilePath = $this->getCacheFilePath( $sKey, false, 'php' );
+
+        if (!$sFilePath) {
+            return;
+        }
+
         $sDate = date("Y-m-d H:i:s");
         $sVarName = '$_aCacheContents';
 
@@ -867,7 +872,7 @@ class oxUtils extends oxSuperCfg
      */
     public function isValidAlpha( $sField )
     {
-        return (boolean) preg_match( "#^[\w]*$#", $sField );
+        return (boolean) getStr()->preg_match( "#^[\w]*$#", $sField );
     }
 
     /**
@@ -1040,7 +1045,7 @@ class oxUtils extends oxSuperCfg
             }
         } elseif ( isset( $aPrice[0] ) && isset($aPrice[1] ) ) {
             // A. removing unused part of information
-            $aName[0] = preg_replace( "/!P!.*/", "", $aName[0] );
+            $aName[0] = getStr()->preg_replace( "/!P!.*/", "", $aName[0] );
         }
 
         $oObject->name  = $aName[0];
@@ -1181,6 +1186,11 @@ class oxUtils extends oxSuperCfg
             $sVersionPrefix = 'pe';
 
         $sPath = realpath($this->getConfig()->getConfigParam( 'sCompileDir' ));
+
+        if (!$sPath) {
+            return false;
+        }
+
         return $blPathOnly ? "{$sPath}/" : "{$sPath}/ox{$sVersionPrefix}c_{$sCacheName}." . $sExtension;
     }
 
@@ -1225,7 +1235,7 @@ class oxUtils extends oxSuperCfg
      */
     public function checkUrlEndingSlash( $sUrl )
     {
-        if ( !preg_match("/\/$/", $sUrl) ) {
+        if ( !getStr()->preg_match("/\/$/", $sUrl) ) {
             $sUrl .= '/';
         }
 

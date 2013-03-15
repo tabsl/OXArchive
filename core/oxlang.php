@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlang.php 26574 2010-03-16 13:50:09Z alfonsas $
+ * @version   SVN: $Id: oxlang.php 27197 2010-04-13 14:59:58Z tomas $
  */
 
 /**
@@ -77,6 +77,20 @@ class oxLang extends oxSuperCfg
     protected $_aAdminLangCache = array();
 
     /**
+     * Array containing possible admin template translations
+     *
+     * @var array
+     */
+    protected $_aAdminTplLanguageArray = null;
+
+    /**
+     * Language abbreviation array
+     *
+     * @var array
+     */
+    protected $_aLangAbbr = null;
+
+    /**
      * resturns a single instance of this class
      *
      * @return oxLang
@@ -118,66 +132,79 @@ class oxLang extends oxSuperCfg
      */
     public function getBaseLanguage()
     {
-        $myConfig = $this->getConfig();
-        //$this->_iBaseLanguageId = null;
+        if ( $this->_iBaseLanguageId === null ) {
+            $myConfig = $this->getConfig();
+            $blAdmin = $this->isAdmin();
 
-        if ( $this->_iBaseLanguageId !== null ) {
-            return $this->_iBaseLanguageId;
-        }
+            // languages and search engines
+            if ( $blAdmin && ( ( $iSeLang = oxConfig::getParameter( 'changelang' ) ) !== null ) ) {
+                $this->_iBaseLanguageId = $iSeLang;
+            }
 
-        $blAdmin = $this->isAdmin();
+            if ( is_null( $this->_iBaseLanguageId ) ) {
+                $this->_iBaseLanguageId = oxConfig::getParameter( 'lang' );
+            }
 
-        // languages and search engines
-        if ( $blAdmin && ( ( $iSeLang = oxConfig::getParameter( 'changelang' ) ) !== null ) ) {
-            $this->_iBaseLanguageId = $iSeLang;
-        }
+            //or determining by domain
+            $aLanguageUrls = $myConfig->getConfigParam( 'aLanguageURLs' );
 
-        if ( is_null( $this->_iBaseLanguageId ) ) {
-            $this->_iBaseLanguageId = oxConfig::getParameter( 'lang' );
-        }
-
-        //or determining by domain
-        $aLanguageUrls = $myConfig->getConfigParam( 'aLanguageURLs' );
-
-        if ( !$blAdmin && is_array( $aLanguageUrls ) ) {
-            foreach ( $aLanguageUrls as $iId => $sUrl ) {
-                if ( $myConfig->isCurrentUrl( $sUrl ) ) {
-                    $this->_iBaseLanguageId = $iId;
-                    break;
+            if ( !$blAdmin && is_array( $aLanguageUrls ) ) {
+                foreach ( $aLanguageUrls as $iId => $sUrl ) {
+                    if ( $myConfig->isCurrentUrl( $sUrl ) ) {
+                        $this->_iBaseLanguageId = $iId;
+                        break;
+                    }
                 }
             }
-        }
 
-        if ( is_null( $this->_iBaseLanguageId ) ) {
-            $this->_iBaseLanguageId = oxConfig::getParameter( 'language' );
-        }
-
-        // if language still not setted and not search engine browsing,
-        // getting language from browser
-        if ( is_null( $this->_iBaseLanguageId ) && !$blAdmin && !oxUtils::getInstance()->isSearchEngine() ) {
-
-            // getting from cookie
-            $this->_iBaseLanguageId = oxUtilsServer::getInstance()->getOxCookie( 'language' );
-
-            // getting from browser
             if ( is_null( $this->_iBaseLanguageId ) ) {
-                $this->_iBaseLanguageId = $this->detectLanguageByBrowser();
+                $this->_iBaseLanguageId = oxConfig::getParameter( 'language' );
+            }
+
+            // if language still not setted and not search engine browsing,
+            // getting language from browser
+            if ( is_null( $this->_iBaseLanguageId ) && !$blAdmin && !oxUtils::getInstance()->isSearchEngine() ) {
+
+                // getting from cookie
+                $this->_iBaseLanguageId = oxUtilsServer::getInstance()->getOxCookie( 'language' );
+
+                // getting from browser
+                if ( is_null( $this->_iBaseLanguageId ) ) {
+                    $this->_iBaseLanguageId = $this->detectLanguageByBrowser();
+                }
+            }
+
+            if ( is_null( $this->_iBaseLanguageId ) ) {
+                $this->_iBaseLanguageId = $myConfig->getConfigParam( 'sDefaultLang' );
+            }
+
+            $this->_iBaseLanguageId = (int) $this->_iBaseLanguageId;
+
+            // validating language
+            $this->_iBaseLanguageId = $this->validateLanguage( $this->_iBaseLanguageId );
+
+            // setting language to cookie
+            oxUtilsServer::getInstance()->setOxCookie( 'language', $this->_iBaseLanguageId );
+        }
+        return $this->_iBaseLanguageId;
+    }
+
+    /**
+     * Returns language id used to load objects according to current template language
+     *
+     * @return int
+     */
+    public function getObjectTplLanguage()
+    {
+        if ( $this->_iObjectTplLanguageId === null ) {
+            $this->_iObjectTplLanguageId = $this->getTplLanguage();
+            $aLanguages = $this->getAdminTplLanguageArray();
+            if ( !isset( $aLanguages[$this->_iObjectTplLanguageId] ) ||
+                 $aLanguages[$this->_iObjectTplLanguageId]->active == 0 ) {
+                $this->_iObjectTplLanguageId = key( $aLanguages );
             }
         }
-
-        if ( is_null( $this->_iBaseLanguageId ) ) {
-            $this->_iBaseLanguageId = $myConfig->getConfigParam( 'sDefaultLang' );
-        }
-
-        $this->_iBaseLanguageId = (int) $this->_iBaseLanguageId;
-
-        // validating language
-        $this->_iBaseLanguageId = $this->validateLanguage( $this->_iBaseLanguageId );
-
-        // setting language to cookie
-        oxUtilsServer::getInstance()->setOxCookie( 'language', $this->_iBaseLanguageId );
-
-        return $this->_iBaseLanguageId;
+        return $this->_iObjectTplLanguageId;
     }
 
     /**
@@ -190,22 +217,8 @@ class oxLang extends oxSuperCfg
     public function getTplLanguage()
     {
         if ( $this->_iTplLanguageId === null ) {
-            if ( !$this->isAdmin() ) {
-                $this->_iTplLanguageId = $this->getBaseLanguage();
-            } else {
-
-                //admin area
-                if ( is_null( $this->_iTplLanguageId ) ) {
-                    $this->_iTplLanguageId = oxSession::getVar( 'tpllanguage' );
-                }
-
-                if ( is_null( $this->_iTplLanguageId ) ) {
-                    $this->_iTplLanguageId = $this->getBaseLanguage();
-                }
-            }
-
-            // validating language
-            $this->_iTplLanguageId = $this->validateLanguage( $this->_iTplLanguageId );
+            $iSessLang = oxSession::getVar( 'tpllanguage' );
+            $this->_iTplLanguageId = $this->isAdmin() ? $this->setTplLanguage( $iSessLang ) : $this->getBaseLanguage();
         }
         return $this->_iTplLanguageId;
     }
@@ -283,27 +296,19 @@ class oxLang extends oxSuperCfg
                     }
                 }
 
-                if ( $val) {
+                if ( $val ) {
                     $oLang = new oxStdClass();
-                    if ( isset($aLangParams[$key]['baseId']) ) {
-                        $oLang->id  = $aLangParams[$key]['baseId'];
-                    } else {
-                        $oLang->id  = $i;
-                    }
-                    $oLang->oxid    = $key;
-                    $oLang->abbr    = $key;
-                    $oLang->name    = $val;
+                    $oLang->id   = isset($aLangParams[$key]['baseId']) ? $aLangParams[$key]['baseId'] : $i;
+                    $oLang->oxid = $key;
+                    $oLang->abbr = $key;
+                    $oLang->name = $val;
 
-                    if ( is_array($aLangParams) ) {
-                        $oLang->active  = $aLangParams[$key]['active'];
+                    if ( is_array( $aLangParams ) ) {
+                        $oLang->active = $aLangParams[$key]['active'];
                         $oLang->sort   = $aLangParams[$key]['sort'];
                     }
 
-                    if ( isset( $iLanguage ) && $oLang->id == $iLanguage ) {
-                        $oLang->selected = 1;
-                    } else {
-                        $oLang->selected = 0;
-                    }
+                    $oLang->selected = ( isset( $iLanguage ) && $oLang->id == $iLanguage ) ? 1 : 0;
                     $aLanguages[$oLang->id] = $oLang;
                 }
                 ++$i;
@@ -318,25 +323,78 @@ class oxLang extends oxSuperCfg
     }
 
     /**
-     * Returns selected language abbervation
+     * Returns languages array containing possible admin template translations
      *
-     * @param int $iLanguage language number
-     *
-     * @access public
-     * @return string
+     * @return array
      */
-    public function getLanguageAbbr( $iLanguage = null)
+    public function getAdminTplLanguageArray()
     {
-        $myConfig = $this->getConfig();
+        if ( $this->_aAdminTplLanguageArray === null ) {
 
-        if ( !isset($iLanguage) ) {
-            $iLanguage = $this->_iBaseLanguageId;
+            // #656 add admin languages
+            $aLangData = array();
+            $aLangIds  = $this->getLanguageIds();
+
+            $sSourceDir = $this->getConfig()->getStdLanguagePath( "", true, false );
+            foreach ( glob( $sSourceDir."*", GLOB_ONLYDIR ) as $sDir ) {
+                $sFilePath = "{$sDir}/lang.php";
+                if ( file_exists( $sFilePath ) && is_readable( $sFilePath ) ) {
+                    $sLangName = "";
+                    $sAbbr = strtolower( basename( $sDir ) );
+                    if ( !in_array( $sAbbr, $aLangIds ) ) {
+                        include $sFilePath;
+                        $aLangData[$sAbbr] = new oxStdClass();
+                        $aLangData[$sAbbr]->name = $sLangName;
+                        $aLangData[$sAbbr]->abbr = $sAbbr;
+                    }
+                }
+            }
+
+            $this->_aAdminTplLanguageArray = $this->getLanguageArray();
+            if ( count( $aLangData ) ) {
+
+                // sorting languages for selection list view
+                ksort( $aLangData );
+                $iSort = max( array_keys( $this->_aAdminTplLanguageArray ) );
+
+                // appending other languages
+                foreach ( $aLangData as $oLang ) {
+                    $oLang->id = $oLang->sort = ++$iSort;
+                    $oLang->selected = 0;
+                    $oLang->active   = 0;
+                    $this->_aAdminTplLanguageArray[$iSort] = $oLang;
+                }
+            }
         }
 
-        $aLangAbbr = $this->getLanguageIds();
+        // moving pointer to beginning
+        reset( $this->_aAdminTplLanguageArray );
+        return $this->_aAdminTplLanguageArray;
+    }
 
-        if ( isset($iLanguage,$aLangAbbr[$iLanguage]) ) {
-            return $aLangAbbr[$iLanguage];
+    /**
+     * Returns selected language abbervation
+     *
+     * @param int $iLanguage language id [optional]
+     *
+     * @return string
+     */
+    public function getLanguageAbbr( $iLanguage = null )
+    {
+        if ( $this->_aLangAbbr === null ) {
+            $this->_aLangAbbr = array();
+            if ( $this->isAdmin() ) {
+                foreach ( $this->getAdminTplLanguageArray() as $oLang ) {
+                    $this->_aLangAbbr[$oLang->id] = $oLang->abbr;
+                }
+            } else {
+                $this->_aLangAbbr = $this->getLanguageIds();
+            }
+        }
+
+        $iLanguage = isset( $iLanguage ) ? (int) $iLanguage : $this->getBaseLanguage();
+        if ( isset( $this->_aLangAbbr[$iLanguage] ) ) {
+            $iLanguage = $this->_aLangAbbr[$iLanguage];
         }
 
         return $iLanguage;
@@ -350,7 +408,6 @@ class oxLang extends oxSuperCfg
      */
     public function getLanguageNames()
     {
-
         $aConfLanguages = $this->getConfig()->getConfigParam( 'aLanguages' );
         $aLangIds = $this->getLanguageIds();
         $aLanguages = array();
@@ -367,21 +424,21 @@ class oxLang extends oxSuperCfg
      */
     public function getLanguageIds()
     {
-        $aLangParams = $this->getConfig()->getConfigParam( 'aLanguageParams' );
+        $myConfig = $this->getConfig();
+        $aIds = array();
 
         //if exists language parameters array, extract lang id's from there
-        if ( is_array($aLangParams) ) {
-
-            $aIds = array();
-
+        $aLangParams = $myConfig->getConfigParam( 'aLanguageParams' );
+        if ( is_array( $aLangParams ) ) {
             foreach ( $aLangParams as $sAbbr => $aValue ) {
                 $iBaseId = (int) $aValue['baseId'];
                 $aIds[$iBaseId] = $sAbbr;
             }
-            return $aIds;
+        } else {
+            $aIds = array_keys( $myConfig->getConfigParam( 'aLanguages' ) );
         }
 
-        return array_keys( $this->getConfig()->getConfigParam( 'aLanguages' ));
+        return $aIds;
     }
 
     /**
@@ -422,7 +479,7 @@ class oxLang extends oxSuperCfg
         if ( !$oActCur ) {
             $oActCur = $this->getConfig()->getActShopCurrencyObject();
         }
-        return number_format( $dValue, $oActCur->decimal, $oActCur->dec, $oActCur->thousand );
+        return number_format( (double)$dValue, $oActCur->decimal, $oActCur->dec, $oActCur->thousand );
     }
 
     /**
@@ -444,7 +501,7 @@ class oxLang extends oxSuperCfg
 
         $oActCur = $oActCur ? $oActCur : $this->getConfig()->getActShopCurrencyObject();
         $iDecPos = ( $iDecPos < $oActCur->decimal ) ? $iDecPos : $oActCur->decimal;
-        return number_format( $dValue, $iDecPos, $oActCur->dec, $oActCur->thousand );
+        return number_format( (double)$dValue, $iDecPos, $oActCur->dec, $oActCur->thousand );
     }
 
     /**
@@ -510,7 +567,7 @@ class oxLang extends oxSuperCfg
     }
 
     /**
-     * Set templates language id
+     * Validates and sets templates language id
      *
      * @param int $iLang Language id
      *
@@ -518,17 +575,20 @@ class oxLang extends oxSuperCfg
      */
     public function setTplLanguage( $iLang = null )
     {
-        if ( is_null($iLang) ) {
-            $iLang = $this->getTplLanguage();
-        } else {
-            $this->_iTplLanguageId = (int) $iLang;
+        $this->_iTplLanguageId = isset( $iLang ) ? (int) $iLang : $this->getBaseLanguage();
+        if ( $this->isAdmin() ) {
+            $aLanguages = $this->getAdminTplLanguageArray();
+            if ( !isset( $aLanguages[$this->_iTplLanguageId] ) ) {
+                $this->_iTplLanguageId = key( $aLanguages );
+            }
         }
 
         if ( defined( 'OXID_PHP_UNIT' ) ) {
             modSession::getInstance();
         }
 
-        oxSession::setVar( 'tpllanguage', $iLang );
+        oxSession::setVar( 'tpllanguage', $this->_iTplLanguageId );
+        return $this->_iTplLanguageId;
     }
 
     /**
@@ -613,28 +673,26 @@ class oxLang extends oxSuperCfg
             $sBaseCharset = false;
             foreach ( $aLangFiles as $sLangFile ) {
 
-                if (!file_exists($sLangFile)) {
-                    continue;
-                }
+                if ( file_exists( $sLangFile ) && is_readable( $sLangFile ) ) {
+                    include $sLangFile;
 
-                include $sLangFile;
+                    // including only (!) thoose, which has charset defined
+                    if ( isset( $aLang['charset'] ) ) {
 
-                // including only (!) thoose, which has charset defined
-                if ( isset( $aLang['charset'] ) ) {
+                        // recoding only in utf
+                        if ( $myConfig->isUtf() ) {
+                            $aLang = $this->_recodeLangArray( $aLang, $aLang['charset'] );
 
-                    // recoding only in utf
-                    if ( $myConfig->isUtf() ) {
-                        $aLang = $this->_recodeLangArray( $aLang, $aLang['charset'] );
+                            // overriding charset
+                            $aLang['charset'] = 'UTF-8';
+                        }
 
-                        // overriding charset
-                        $aLang['charset'] = 'UTF-8';
+                        if ( !$sBaseCharset ) {
+                            $sBaseCharset = $aLang['charset'];
+                        }
+
+                        $aLangCache[$iLang] = array_merge( $aLangCache[$iLang], $aLang );
                     }
-
-                    if ( !$sBaseCharset ) {
-                        $sBaseCharset = $aLang['charset'];
-                    }
-
-                    $aLangCache[$iLang] = array_merge( $aLangCache[$iLang], $aLang );
                 }
             }
 
@@ -681,15 +739,12 @@ class oxLang extends oxSuperCfg
      */
     protected function _getLangTranslationArray( $iLang = null, $blAdmin = null )
     {
-        startProfile("<b>_getLangTranslationArray</b>");
+        startProfile("_getLangTranslationArray");
 
         $blAdmin = isset( $blAdmin ) ? $blAdmin : $this->isAdmin();
         $iLang = $this->_getCacheLanguageId( $blAdmin, $iLang );
-
         $aLangCache = $blAdmin ? $this->_aAdminLangCache : $this->_aLangCache;
-
         if ( !isset( $aLangCache[$iLang] ) ) {
-
             // loading lang file data
             $aLangCache = $this->_getLanguageFileData( $blAdmin, $iLang );
             if ( $blAdmin ) {
@@ -699,7 +754,7 @@ class oxLang extends oxSuperCfg
             }
         }
 
-        stopProfile("<b>_getLangTranslationArray</b>");
+        stopProfile("_getLangTranslationArray");
 
         // if language array exists ..
         return ( isset( $aLangCache[$iLang] ) ? $aLangCache[$iLang] : array() );
@@ -719,15 +774,11 @@ class oxLang extends oxSuperCfg
         $blIsAdmin = isset( $blIsAdmin ) ? $blIsAdmin : $this->isAdmin();
         $iLang  = ( $iLang === null && $blIsAdmin)?$this->getTplLanguage():$iLang;
         if ( !isset( $iLang ) ) {
-            $iLang = $this->getBaseLanguage();
-            if ( !isset( $iLang ) ) {
-                $iLang = 0;
-            }
+            $iLang = (int) $this->getBaseLanguage();
         }
 
         $sFileName = $this->getConfig()->getLanguagePath('lang.txt', $blIsAdmin, $iLang);
-
-        if ( is_file ( $sFileName ) ) {
+        if ( is_file ( $sFileName ) && is_readable( $sFileName ) ) {
 
             static $aUserLangCache = array();
 
@@ -759,7 +810,7 @@ class oxLang extends oxSuperCfg
             }
 
             if ( isset( $aLang[$sStringToTranslate] ) ) {
-                return $aLang[$sStringToTranslate];
+                $sStringToTranslate = $aLang[$sStringToTranslate];
             }
         }
 
@@ -796,9 +847,11 @@ class oxLang extends oxSuperCfg
      */
     public function getFormLang()
     {
+        $sLang = null;
         if ( !$this->isAdmin()) {
-            return "<input type=\"hidden\" name=\"".$this->getName()."\" value=\"". $this->getBaseLanguage() . "\">";
+            $sLang = "<input type=\"hidden\" name=\"".$this->getName()."\" value=\"". $this->getBaseLanguage() . "\">";
         }
+        return $sLang;
     }
 
     /**
@@ -810,10 +863,12 @@ class oxLang extends oxSuperCfg
      */
     public function getUrlLang( $iLang = null )
     {
+        $sLang = null;
         if ( !$this->isAdmin()) {
             $iLang = isset( $iLang ) ? $iLang : $this->getBaseLanguage();
-            return $this->getName()."=". $iLang;
+            $sLang = $this->getName()."=". $iLang;
         }
+        return $sLang;
     }
 
     /**
@@ -835,17 +890,17 @@ class oxLang extends oxSuperCfg
 
         if ( !$this->isAdmin() ) {
             $sParam = $this->getUrlLang( $iLang );
-            if (!preg_match('/(\?|&(amp;)?)lang=[0-9]+/', $sUrl)  && ($iLang != oxConfig::getInstance()->getConfigParam( 'sDefaultLang' ))) {
+            if ( !$oStr->preg_match('/(\?|&(amp;)?)lang=[0-9]+/', $sUrl)  && ($iLang != oxConfig::getInstance()->getConfigParam( 'sDefaultLang' ))) {
                 if ( $sUrl ) {
                     if ($oStr->strpos( $sUrl, '?') === false) {
                         $sUrl .= "?";
-                    } elseif (!preg_match('/(\?|&(amp;)?)$/', $sUrl)) {
+                    } elseif ( !$oStr->preg_match('/(\?|&(amp;)?)$/', $sUrl ) ) {
                         $sUrl .= "&amp;";
                     }
                 }
                 $sUrl .= $sParam."&amp;";
             } else {
-                $sUrl = preg_replace('/(\?|&(amp;)?)lang=[0-9]+/', '\1'.$sParam, $sUrl);
+                $sUrl = getStr()->preg_replace('/(\?|&(amp;)?)lang=[0-9]+/', '\1'.$sParam, $sUrl);
             }
         }
 

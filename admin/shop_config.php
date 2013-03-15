@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_config.php 26303 2010-03-04 16:11:37Z sarunas $
+ * @version   SVN: $Id: shop_config.php 27133 2010-04-09 13:48:22Z arvydas $
  */
 
 /**
@@ -143,7 +143,7 @@ class Shop_Config extends oxAdminDetails
 
         // #251A passing country list
         $oCountryList = oxNew( "oxCountryList" );
-        $oCountryList->loadActiveCountries( oxLang::getInstance()->getTplLanguage() );
+        $oCountryList->loadActiveCountries( oxLang::getInstance()->getObjectTplLanguage() );
 
         if ( isset($aConfArrs["aHomeCountry"]) && count($aConfArrs["aHomeCountry"]) && count($oCountryList)) {
             foreach ( $oCountryList as $sCountryId => $oCountry) {
@@ -295,11 +295,12 @@ class Shop_Config extends oxAdminDetails
      */
     protected function _multilineToAarray( $sMultiline )
     {
+        $oStr = getStr();
         $aArr = array();
         $aLines = explode( "\n", $sMultiline );
         foreach ( $aLines as $sLine ) {
             $sLine = trim( $sLine );
-            if ( $sLine != "" && preg_match( "/(.+)=>(.+)/", $sLine, $aRegs ) ) {
+            if ( $sLine != "" && $oStr->preg_match( "/(.+)=>(.+)/", $sLine, $aRegs ) ) {
                 $sKey = trim( $aRegs[1] );
                 $sVal = trim( $aRegs[2] );
                 if ( $sKey != "" && $sVal != "" ) {

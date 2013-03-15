@@ -19,11 +19,10 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 26930 2010-03-29 13:30:53Z alfonsas $
+ * @version   SVN: $Id: lang.php 27208 2010-04-14 13:19:10Z vilma $
  */
 
 $sLangName  = 'Deutsch';
-$iLangNr    = 0;
 // -------------------------------
 // RESOURCE IDENTITFIER = STRING
 // -------------------------------
@@ -1237,7 +1236,7 @@ $aLang = array(
 'SHOP_CONFIG_NUMBEROFCROSSSELLARTICLES'         => 'Anzahl von Crossselling-Artikeln und Zubehör, die bei einem Artikel angezeigt werden',
 'SHOP_CONFIG_ORDERFOLDER'                       => 'Ordner in der Bestellungsverwaltung - hier löschen oder hinzufügen',
 'SHOP_CONFIG_OVERRIDEZEROABCPRICES'             => 'Den normalen Artikelpreis verwenden, wenn keine A, B, C Preise vorhanden sind',
-'SHOP_CONFIG_ORDEROPTINEMAIL'                   => 'Double-Opt-In verwenden, wenn sich ein Kunde im Bestellprozess für den Newsletter anmeldet',
+'SHOP_CONFIG_ORDEROPTINEMAIL'                   => 'Double-Opt-In verwenden, wenn sich ein Kunde für den Newsletter anmeldet',
 'SHOP_CONFIG_SHOWBIRTHDAYFIELDS'                => 'Eingabefeld für das Geburtsdatum anzeigen, wenn Benutzer ihre Daten eingeben',
 'SHOP_CONFIG_SORTITEMSLIST'                     => 'Benutzer können Artikellisten sortieren',
 'SHOP_CONFIG_SORTFIELDS'                        => 'Felder, nach denen Artikellisten sortiert werden können',

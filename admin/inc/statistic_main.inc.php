@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: statistic_main.inc.php 25640 2010-02-05 06:42:24Z alfonsas $
+ * @version   SVN: $Id: statistic_main.inc.php 27145 2010-04-09 14:41:44Z arvydas $
  */
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
                                         array( 'oxtitle', 'oxstat', 1, 0, 0 ),
@@ -61,10 +61,11 @@ class ajaxComponent extends ajaxListComponent
 
         $aData = array();
         $iCnt = 0;
+        $oStr = getStr();
 
         // filter data
         $aFilter = oxConfig::getParameter( "aFilter" );
-        $sFilter = (is_array( $aFilter ) && isset( $aFilter['_0'] ) )? preg_replace( '/^\*/', '%', $aFilter['_0'] ) : null;
+        $sFilter = (is_array( $aFilter ) && isset( $aFilter['_0'] ) )? $oStr->preg_replace( '/^\*/', '%', $aFilter['_0'] ) : null;
 
         foreach ( $aReports as $oReport ) {
 
@@ -77,7 +78,7 @@ class ajaxComponent extends ajaxListComponent
             }
 
             // checking filter
-            if ( $sFilter && !preg_match( "/^" . preg_quote( $sFilter ) . "/i", $oReport->name) ) {
+            if ( $sFilter && !$oStr->preg_match( "/^" . preg_quote( $sFilter ) . "/i", $oReport->name) ) {
                 continue;
             }
 

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: navigation.php 26850 2010-03-25 15:33:10Z arvydas $
+ * @version   SVN: $Id: navigation.php 27134 2010-04-09 13:50:28Z arvydas $
  */
  /**
  * Administrator GUI navigation manager class.
@@ -177,6 +177,7 @@ class Navigation extends oxAdminView
                 $sPath = $myConfig->getConfigParam('sCompileDir') . "/" . md5( $sUrl ) . '.html';
                 if ( $myUtils->getRemoteCachePath( $sUrl, $sPath ) ) {
 
+                    $oStr = getStr();
                     $sVersion = $myConfig->getVersion();
                     $sEdition = $myConfig->getFullEdition();
                     $sCurYear = date( "Y" );
@@ -185,10 +186,10 @@ class Navigation extends oxAdminView
                     $sOutput = file_get_contents( $sPath );
 
                     // Fix base path
-                    $sOutput = preg_replace( "/<\/head>/i", "<base href=\"".dirname( $sUrl ).'/'."\"></head>\n  <!-- OXID eShop {$sEdition}, Version {$sVersion}, Shopping Cart System (c) OXID eSales AG 2003 - {$sCurYear} - http://www.oxid-esales.com -->", $sOutput );
+                    $sOutput = $oStr->preg_replace( "/<\/head>/i", "<base href=\"".dirname( $sUrl ).'/'."\"></head>\n  <!-- OXID eShop {$sEdition}, Version {$sVersion}, Shopping Cart System (c) OXID eSales AG 2003 - {$sCurYear} - http://www.oxid-esales.com -->", $sOutput );
 
                     // Fix self url's
-                    $myUtils->showMessageAndExit( preg_replace( "/href=\"#\"/i", 'href="javascript::void();"', $sOutput ) );
+                    $myUtils->showMessageAndExit( $oStr->preg_replace( "/href=\"#\"/i", 'href="javascript::void();"', $sOutput ) );
                 }
             } else {
                 // Caching not allowed, redirecting

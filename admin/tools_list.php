@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: tools_list.php 25640 2010-02-05 06:42:24Z alfonsas $
+ * @version   SVN: $Id: tools_list.php 27133 2010-04-09 13:48:22Z arvydas $
  */
 
 /**
@@ -179,10 +179,10 @@ class Tools_List extends oxAdminList
         $oStr = getStr();
 
         //removing "mysqldump" application comments
-        while ( preg_match( "/^\-\-.*\n/", $sSQL ) )
-            $sSQL = trim( preg_replace( "/^\-\-.*\n/", "", $sSQL ) );
-        while ( preg_match( "/\n\-\-.*\n/", $sSQL ) )
-            $sSQL = trim( preg_replace( "/\n\-\-.*\n/", "\n", $sSQL ) );
+        while ( $oStr->preg_match( "/^\-\-.*\n/", $sSQL ) )
+            $sSQL = trim( $oStr->preg_replace( "/^\-\-.*\n/", "", $sSQL ) );
+        while ( $oStr->preg_match( "/\n\-\-.*\n/", $sSQL ) )
+            $sSQL = trim( $oStr->preg_replace( "/\n\-\-.*\n/", "\n", $sSQL ) );
 
         for ( $iPos = 0; $iPos < $iSQLlen; ++$iPos ) {
             $sChar = $sSQL[$iPos];
@@ -244,7 +244,7 @@ class Tools_List extends oxAdminList
                 $sSQL[$iPos] = ' ';
         }
 
-        if ( !empty( $sSQL ) && preg_match( "/[^[:space:]]+/", $sSQL ) ) {
+        if ( !empty( $sSQL ) && $oStr->preg_match( "/[^[:space:]]+/", $sSQL ) ) {
             $this->aSQLs[] = $sSQL;
         }
         return true;

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsysrequirements.php 26930 2010-03-29 13:30:53Z alfonsas $
+ * @version   SVN: $Id: oxsysrequirements.php 27169 2010-04-12 15:40:12Z tomas $
  */
 
 /**
@@ -101,6 +101,41 @@ class oxSysRequirements
                                   'OXPAYMENTSID',
                                   'OXORDERID',
                                   'OXVOUCHERSERIEID');
+
+    /**
+     * Installation info url
+     *
+     * @var string
+     */
+    protected $_sReqInfoUrl = "http://www.oxidforge.org/wiki/Installation";
+
+    /**
+     * Module or system configuration mapping with installation info url anchor
+     *
+     * @var array
+     */
+    protected $_aInfoMap    = array( "php_version"        => "PHP_version_at_least_5.2.0",
+                                     "lib_xml2"           => "LIB_XML2",
+                                     "php_xml"            => "DOM",
+                                     "j_son"              => "JSON",
+                                     "i_conv"             => "ICONV",
+                                     "tokenizer"          => "Tokenizer",
+                                     "mysql_connect"      => "MySQL_module_for_MySQL_5",
+                                     "gd_info"            => "GDlib_v2_.5Bv1.5D_incl._JPEG_support",
+                                     "mb_string"          => "mbstring",
+                                     "bc_math"            => "BCMath",
+                                     "allow_url_fopen"    => "allow_url_fopen_or_fsockopen_to_port_80",
+                                     "php4_compat"        => "Zend_compatibility_mode_must_be_off",
+                                     "request_uri"        => "REQUEST_URI_set",
+                                     "ini_set"            => "ini_set_allowed",
+                                     "register_globals"   => "register_globals_must_be_off",
+                                     "memory_limit"       => "PHP_Memory_limit_.28min._14MB.2C_30MB_recommended.29",
+                                     "unicode_support"    => "UTF-8_support",
+                                     "mod_rewrite"        => "apache_mod_rewrite_module",
+                                     "server_permissions" => "Files_.26_Folder_Permission_Setup",
+                                     "zend_optimizer"     => "Zend_Optimizer"
+                                     // "zend_platform_or_server"
+                                      );
 
     /**
      * Class constructor. The constructor is defined in order to be possible to call parent::__construct() in modules.
@@ -225,8 +260,11 @@ class oxSysRequirements
 
             if ( is_dir( $sFullPath ) ) {
                 // adding subfolders
-                foreach ( glob( $sFullPath."*", GLOB_ONLYDIR ) as $sNewFolder ) {
-                    $aPathsToCheck[] = str_replace( $sPath, "", $sNewFolder ) . "/";
+                $aSubF = glob( $sFullPath."*", GLOB_ONLYDIR );
+                if (is_array($aSubF)) {
+                    foreach ( $aSubF as $sNewFolder ) {
+                        $aPathsToCheck[] = str_replace( $sPath, "", $sNewFolder ) . "/";
+                    }
                 }
             }
 
@@ -421,7 +459,7 @@ class oxSysRequirements
             }
             if (strpos($sClientVersion, 'mysqlnd') !== false) {
                 // PHP 5.3 includes new mysqlnd extension
-                $iModStat = 1;
+                $iModStat = 2;
             }
         }
         return $iModStat;
@@ -712,6 +750,26 @@ class oxSysRequirements
 
             return $iModStat;
         }
+    }
+
+    /**
+     * Returns or prints url for info about missing web service configuration
+     *
+     * @param string $sIdent Module identifier
+     *
+     * @return mixed
+     */
+    public function getReqInfoUrl( $sIdent)
+    {
+        $sUrl = $this->_sReqInfoUrl;
+        $aInfoMap = $this->_aInfoMap;
+
+        // only known will be anchored
+        if ( isset( $aInfoMap[$sIdent] ) ) {
+            $sUrl .= "#".$aInfoMap[$sIdent];
+        }
+
+        return $sUrl;
     }
 
     /**

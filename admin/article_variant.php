@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: article_variant.php 26928 2010-03-29 11:36:02Z arvydas $
+ * @version   SVN: $Id: article_variant.php 27008 2010-04-02 08:09:46Z arvydas $
  */
 
 /**
@@ -30,6 +30,13 @@
  */
 class Article_Variant extends oxAdminDetails
 {
+    /**
+     * Variant parent product object
+     *
+     * @var oxarticle
+     */
+    protected $_oProductParent = null;
+
     /**
      * Loads article variants data, passes it to Smarty engine and returns name of
      * template file "article_variant.tpl".
@@ -78,11 +85,9 @@ class Article_Variant extends oxAdminDetails
             }
 
             if ( $oArticle->oxarticles__oxparentid->value) {
-                $oParentArticle = oxNew( "oxarticle");
-                $oParentArticle->load( $oArticle->oxarticles__oxparentid->value);
-                $this->_aViewData["parentarticle"] =  $oParentArticle;
-                $this->_aViewData["oxparentid"] =  $oArticle->oxarticles__oxparentid->value;
-                $this->_aViewData["issubvariant"] = 1;
+                $this->_aViewData["parentarticle"] =  $this->_getProductParent( $oArticle->oxarticles__oxparentid->value );
+                $this->_aViewData["oxparentid"]    =  $oArticle->oxarticles__oxparentid->value;
+                $this->_aViewData["issubvariant"]  = 1;
                 // A. disable variant information editing for variant
                 $this->_aViewData["readonly"] = 1;
             }
@@ -157,6 +162,26 @@ class Article_Variant extends oxAdminDetails
 
 
         $oArticle->save();
+    }
+
+    /**
+     * Returns variant parent object
+     *
+     * @param string $sParentId parent product id
+     *
+     * @return oxarticle
+     */
+    protected function _getProductParent( $sParentId )
+    {
+        if ( $this->_oProductParent === null ||
+             ( $this->_oProductParent !== false && $this->_oProductParent->getId() != $sParentId ) ) {
+            $this->_oProductParent = false;
+            $oProduct = oxNew( "oxarticle" );
+            if ( $oProduct->load( $sParentId ) ) {
+                $this->_oProductParent = $oProduct;
+            }
+        }
+        return $this->_oProductParent;
     }
 
     /**

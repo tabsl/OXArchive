@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxfunctions.php 26922 2010-03-29 08:21:45Z tomas $
+ * @version   SVN: $Id: oxfunctions.php 27122 2010-04-09 13:39:58Z arvydas $
  */
 
 /**
@@ -428,12 +428,13 @@ if ( !function_exists( 'getRequestUrl' ) ) {
             // trying to resolve controller file name
             if ( $sRequest && ( $iPos = stripos( $sRequest, '?' ) ) !== false ) {
 
+                $oStr = getStr();
                 // formatting request url
-                $sRequest = 'index.php' . getStr()->substr( $sRequest, $iPos );
+                $sRequest = 'index.php' . $oStr->substr( $sRequest, $iPos );
 
                 // removing possible session id
-                $sRequest = preg_replace( '/(&|\?){1}sid=[^&]*&?/', '$1', $sRequest );
-                $sRequest = preg_replace( '/&$/', '', $sRequest );
+                $sRequest = $oStr->preg_replace( '/(&|\?){1}sid=[^&]*&?/', '$1', $sRequest );
+                $sRequest = $oStr->preg_replace( '/&$/', '', $sRequest );
                 return str_replace( '&', '&amp;', $sRequest );
             }
         }

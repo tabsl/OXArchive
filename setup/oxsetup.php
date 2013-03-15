@@ -46,6 +46,22 @@ if ( !function_exists( 'getShopBasePath' ) ) {
     }
 }
 
+if ( !function_exists( 'getInstallPath' ) ) {
+    /**
+     * Returns shop installation directory
+     *
+     * @return string
+     */
+    function getInstallPath()
+    {
+        if ( defined( 'OXID_PHP_UNIT' ) ) {
+            return getShopBasePath();
+        } else {
+            return "../";
+        }
+    }
+}
+
 if ( !function_exists( 'getSystemReqCheck' ) ) {
     /**
      * Returns class responsible for system requirements check
@@ -57,7 +73,7 @@ if ( !function_exists( 'getSystemReqCheck' ) ) {
         if ( defined( 'OXID_PHP_UNIT' ) ) {
             include_once getShopBasePath()."core/oxsysrequirements.php";
         } else {
-            include_once "../core/oxsysrequirements.php";
+            include_once getInstallPath()."core/oxsysrequirements.php";
         }
         return new oxSysRequirements();
     }
@@ -75,25 +91,9 @@ if ( !function_exists( 'getCountryList' ) ) {
         if ( defined( 'OXID_PHP_UNIT' ) ) {
             include getShopBasePath()."admin/shop_countries.php";
         } else {
-            include "../admin/shop_countries.php";
+            include getInstallPath()."admin/shop_countries.php";
         }
         return $aCountries;
-    }
-}
-
-if ( !function_exists( 'getInstallPath' ) ) {
-    /**
-     * Returns shop installation directory
-     *
-     * @return string
-     */
-    function getInstallPath()
-    {
-        if ( defined( 'OXID_PHP_UNIT' ) ) {
-            return getShopBasePath();
-        } else {
-            return "../";
-        }
     }
 }
 
@@ -135,7 +135,7 @@ class Config
      */
     public function __construct()
     {
-        include "../config.inc.php";;
+        include getInstallPath()."config.inc.php";;
     }
 }
 }
@@ -156,7 +156,7 @@ class Conf
         if ( defined( 'OXID_PHP_UNIT' ) ) {
             include getShopBasePath()."core/oxconfk.php";
         } else {
-            include "../core/oxconfk.php";
+            include getInstallPath()."core/oxconfk.php";
         }
     }
 }
@@ -1492,41 +1492,6 @@ class oxSetupView extends oxSetupCore
 
 
     /**
-     * Installation info url
-     *
-     * @var string
-     */
-    protected $_sReqInfoUrl = "http://www.oxidforge.org/wiki/Installation";
-
-    /**
-     * Module or system configuration mapping with installation info url anchor
-     *
-     * @var array
-     */
-    protected $_aInfoMap    = array( "php_version"        => "PHP_version_at_least_5.2.0",
-                                     "lib_xml2"           => "LIB_XML2",
-                                     "php_xml"            => "DOM",
-                                     "j_son"              => "JSON",
-                                     "i_conv"             => "ICONV",
-                                     "tokenizer"          => "Tokenizer",
-                                     "mysql_connect"      => "MySQL_module_for_MySQL_5",
-                                     "gd_info"            => "GDlib_v2_.5Bv1.5D_incl._JPEG_support",
-                                     "mb_string"          => "mbstring",
-                                     "bc_math"            => "BCMath",
-                                     "allow_url_fopen"    => "allow_url_fopen_or_fsockopen_to_port_80",
-                                     "php4_compat"        => "Zend_compatibility_mode_must_be_off",
-                                     "request_uri"        => "REQUEST_URI_set",
-                                     "ini_set"            => "ini_set_allowed",
-                                     "register_globals"   => "register_globals_must_be_off",
-                                     "memory_limit"       => "PHP_Memory_limit_.28min._14MB.2C_30MB_recommended.29",
-                                     "unicode_support"    => "UTF-8_support",
-                                     "mod_rewrite"        => "apache_mod_rewrite_module",
-                                     "server_permissions" => "Files_.26_Folder_Permission_Setup",
-                                     "zend_optimizer"     => "Zend_Optimizer"
-                                     // "zend_platform_or_server"
-                                      );
-
-    /**
      * Displayes current setup step template
      *
      * @param string $sTemplate name of template to display
@@ -1696,7 +1661,7 @@ class oxSetupView extends oxSetupCore
      */
     public function getImageDir()
     {
-        return '../out/admin/img';
+        return getInstallPath().'out/admin/img';
     }
 
     /**
@@ -1712,7 +1677,7 @@ class oxSetupView extends oxSetupCore
 
         if ( isset( $aSetupConfig['blDelSetupDir'] ) && $aSetupConfig['blDelSetupDir'] ) {
             // removing setup files
-            $blDeleted = $this->getInstance( "oxSetupUtils" )->removeDir( "../setup", true );
+            $blDeleted = $this->getInstance( "oxSetupUtils" )->removeDir( getInstallPath()."setup", true );
         }
         return $blDeleted;
     }
@@ -1721,18 +1686,14 @@ class oxSetupView extends oxSetupCore
      * Returns or prints url for info about missing web service configuration
      *
      * @param string $sIdent  module identifier
-     * @param bool   $blPrint prints result if TRUE [optional]
+     * @param bool   $blPrint prints result if TRUE
      *
      * @return mixed
      */
     public function getReqInfoUrl( $sIdent, $blPrint = true )
     {
-        $sUrl = $this->_sReqInfoUrl;
-
-        // only known will be anchored
-        if ( isset( $this->_aInfoMap[$sIdent] ) ) {
-            $sUrl .= "#".$this->_aInfoMap[$sIdent];
-        }
+        $oSysReq = new oxSysRequirements();
+        $sUrl = $oSysReq->getReqInfoUrl($sIdent);
 
         return $blPrint ? print( $sUrl ) : $sUrl;
     }
@@ -1822,8 +1783,8 @@ class oxSetupController extends oxSetupCore
         $oSession = $this->getInstance( "oxSetupSession" );
 
         //setting admin area default language
-        $iAdminLang = ( $oSession->getSessionParam('setup_lang') == 'en' ) ? 1 : 0;
-        $this->getInstance( "oxSetupUtils" )->setCookie( "oxidadminlanguage", $iAdminLang, time() + 31536000, $iExpireDate, "/" );
+        $sAdminLang = $oSession->getSessionParam('setup_lang');
+        $this->getInstance( "oxSetupUtils" )->setCookie( "oxidadminlanguage", $sAdminLang, time() + 31536000, "/" );
 
         $oView = $this->getView();
         $oView->setTitle( 'STEP_1_TITLE' );
@@ -2223,7 +2184,7 @@ class oxSetupDispatcher extends oxSetupCore
 /**
  * APS setup class
  */
-class OxSetupAps extends oxSetupCore
+class oxSetupAps extends oxSetupCore
 {
     /**
      * Unknown setup command
@@ -2335,6 +2296,11 @@ class OxSetupAps extends oxSetupCore
         // install demo data?
         if ( $blInstallDemoData ) {
             $oDb->queryFile( "demodata.sql" );
+        }
+
+        //swap database to english
+        if ( $aParams["country_lang"] != "de" ) {
+            $oDb->queryFile( "en.sql" );
         }
 
         //update dyn pages / shop country config options (from first step)

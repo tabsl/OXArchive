@@ -19,11 +19,10 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: cust_lang.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: cust_lang.php 27027 2010-04-06 07:05:01Z arvydas $
  */
 
 $sLangName  = "Deutsch";
-$iLangNr    = 0;
 // -------------------------------
 // RESOURCE IDENTITFIER = STRING
 // -------------------------------

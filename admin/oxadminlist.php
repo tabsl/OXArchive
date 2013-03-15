@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadminlist.php 25640 2010-02-05 06:42:24Z alfonsas $
+ * @version   SVN: $Id: oxadminlist.php 27134 2010-04-09 13:50:28Z arvydas $
  */
 
 /**
@@ -311,11 +311,13 @@ class oxAdminList extends oxAdminView
      */
     protected function _calcListItemsCount( $sSql )
     {
+        $oStr = getStr();
+
         // count SQL
-        $sSql = preg_replace( '/select .* from/', 'select count(*) from ', $sSql );
+        $sSql = $oStr->preg_replace( '/select .* from/', 'select count(*) from ', $sSql );
 
         // removing order by
-        $sSql = preg_replace( '/order by .*$/', '', $sSql );
+        $sSql = $oStr->preg_replace( '/order by .*$/', '', $sSql );
 
         // con of list items which fits current search conditions
         $this->_iListSize = oxDb::getDb()->getOne( $sSql );
@@ -454,9 +456,11 @@ class oxAdminList extends oxAdminView
      */
     protected function _processFilter( $sFieldValue )
     {
+        $oStr = getStr();
+
         //removing % symbols
-        $sFieldValue = preg_replace( "/^%|%$/", "", trim( $sFieldValue ) );
-        return preg_replace( "/\s+/", " ", $sFieldValue);
+        $sFieldValue = $oStr->preg_replace( "/^%|%$/", "", trim( $sFieldValue ) );
+        return $oStr->preg_replace( "/\s+/", " ", $sFieldValue );
     }
 
     /**
@@ -491,7 +495,8 @@ class oxAdminList extends oxAdminView
     {
         //check if this is search string (conatains % sign at begining and end of string)
         $blIsSearchValue = false;
-        if ( preg_match( '/^%/', $sFieldValue ) && preg_match( '/%$/', $sFieldValue ) ) {
+        $oStr = getStr();
+        if ( $oStr->preg_match( '/^%/', $sFieldValue ) && $oStr->preg_match( '/%$/', $sFieldValue ) ) {
             $blIsSearchValue = true;
         }
 
@@ -592,6 +597,7 @@ class oxAdminList extends oxAdminView
 
         if ( $this->_oList && is_array( $aWhere ) ) {
 
+            $oStr = getStr();
             foreach ( $aWhere as $sName => $sValue ) {
                 if ( $sValue || '0' === ( string ) $sValue ) {
 
@@ -603,7 +609,7 @@ class oxAdminList extends oxAdminView
 
                     // test if field is multilang
                     if ( $oListObject instanceof oxI18n ) {
-                        $sFldName = strtolower( preg_replace('/(.+)\./', '', $sName ) );
+                        $sFldName = strtolower( $oStr->preg_replace('/(.+)\./', '', $sName ) );
                         if ( $oListObject->isMultilingualField( $sFldName ) && $iLanguage ) {
                             $sName .=  "_$iLanguage";
                         }
@@ -612,7 +618,7 @@ class oxAdminList extends oxAdminView
                     // #M1260: if field is date
                     $sLocalDateFormat = $this->getConfig()->getConfigParam( 'sLocalDateFormat' );
                     if ( $sLocalDateFormat && $sLocalDateFormat != 'ISO') {
-                        $sFldName = strtolower( preg_replace('/(.+)\./', '', $sName ) );
+                        $sFldName = strtolower( $oStr->preg_replace('/(.+)\./', '', $sName ) );
                         $sLongName = $sTable."__".$sFldName;
                         $sFldType = $oListObject->$sLongName->fldtype;
                         if ( $sFldType && ( $sFldType == "datetime" || $sFldType == "date" ) ) {
@@ -685,8 +691,9 @@ class oxAdminList extends oxAdminView
 
         // looking for date field
         $aDateMatches = array();
+        $oStr = getStr();
         foreach ( $aDatePatterns as $sPattern => $sType) {
-            if ( preg_match( $sPattern, $sDate, $aDateMatches)) {
+            if ( $oStr->preg_match( $sPattern, $sDate, $aDateMatches)) {
                 $sDate = $aDateMatches[$aDFormats[$sType][0]] . "-" . $aDateMatches[$aDFormats[$sType][1]];
                 break;
             }
@@ -708,10 +715,11 @@ class oxAdminList extends oxAdminView
         $oConvObject = new oxField();
         $oConvObject->setValue($sDate);
         oxDb::getInstance()->convertDBDate( $oConvObject, true);
+        $oStr = getStr();
 
         // looking for time field
         $sTime = substr( $sFullDate, 11);
-        if ( preg_match( "/([0-9]{2}):([0-9]{2}) ([AP]{1}[M]{1})$/", $sTime, $aTimeMatches ) ) {
+        if ( $oStr->preg_match( "/([0-9]{2}):([0-9]{2}) ([AP]{1}[M]{1})$/", $sTime, $aTimeMatches ) ) {
             if ( $aTimeMatches[3] == "PM") {
                 $iIntVal = (int) $aTimeMatches[1];
                 if ( $iIntVal < 13) {
@@ -720,7 +728,7 @@ class oxAdminList extends oxAdminView
             } else {
                 $sTime = $aTimeMatches[1] . ":" . $aTimeMatches[2];
             }
-        } elseif ( preg_match( "/([0-9]{2}) ([AP]{1}[M]{1})$/", $sTime, $aTimeMatches ) ) {
+        } elseif ( $oStr->preg_match( "/([0-9]{2}) ([AP]{1}[M]{1})$/", $sTime, $aTimeMatches ) ) {
             if ( $aTimeMatches[2] == "PM") {
                 $iIntVal = (int) $aTimeMatches[1];
                 if ( $iIntVal < 13) {

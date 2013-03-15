@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorderarticle.php 26878 2010-03-26 12:44:47Z vilma $
+ * @version   SVN: $Id: oxorderarticle.php 27234 2010-04-15 13:18:02Z arvydas $
  */
 
 /**
@@ -691,6 +691,9 @@ class oxOrderArticle extends oxBase implements oxIArticle
            if ( $myConfig->getConfigParam( 'blUseStock' ) ) {
                $this->updateArticleStock( $this->oxorderarticles__oxamount->value * (-1), $myConfig->getConfigParam( 'blAllowNegativeStock' ) );
            }
+
+           // marking object as "non new" disable further stock changes
+           $this->setIsNewOrderItem( false );
        }
 
        return $blSave;

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: gui.php 26795 2010-03-24 12:10:56Z alfonsas $
+ * @version   SVN: $Id: gui.php 27013 2010-04-02 09:45:32Z alfonsas $
  */
 
 /**
@@ -150,7 +150,7 @@ class Gui extends oxAdminView
             $aUserColors = array();
             $aUserStyles = array();
 
-            $this->loadUserSettings(&$sTheme, &$aUserColors, &$aUserStyles);
+            $this->loadUserSettings($sTheme, $aUserColors, $aUserStyles);
 
             $aThemes = $this->getThemes();
             $aColors = array();
@@ -301,13 +301,13 @@ class Gui extends oxAdminView
     /**
      * Loads user setting from php file
      *
-     * @param string $sTheme  Theme id
-     * @param string $aColors Color palette
-     * @param string $aStyles Element styles
+     * @param string &$sTheme  Theme id
+     * @param string &$aColors Color palette
+     * @param string &$aStyles Element styles
      *
      * @return null
      */
-    public function loadUserSettings($sTheme, $aColors, $aStyles)
+    public function loadUserSettings(&$sTheme, &$aColors, &$aStyles)
     {
         $sFilePath = $this->_sSrcDir.$this->_sUserGui;
         if (is_readable($sFilePath)) {
@@ -331,7 +331,7 @@ class Gui extends oxAdminView
             $sConst  = $oGif->getAttribute('const');
 
             $aGifStyles = $this->fillColors( $this->getResColors('gif', $sTpl), $aStyles );
-            $aGifUrl    = $sAdminUrl.'?cl=gui&fnc=previewGif&gif='.$sTpl;
+            $aGifUrl    = $sAdminUrl.'&cl=gui&fnc=previewGif&gif='.$sTpl;
 
             foreach ($aGifStyles as $i => $c) {
                 $aGifUrl .= "&p[{$i}]=".urlencode($c);

@@ -19,7 +19,7 @@
  * @package   smarty_plugins
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: modifier.oxaddparams.php 25774 2010-02-11 08:55:28Z sarunas $
+ * @version   SVN: $Id: modifier.oxaddparams.php 27132 2010-04-09 13:47:36Z arvydas $
  */
 
 /**
@@ -36,9 +36,10 @@
  */
 function smarty_modifier_oxaddparams( $sUrl, $sDynParams )
 {
+    $oStr = getStr();
     // removing empty parameters
-    $sDynParams = $sDynParams?preg_replace( array( '/([\?&])[\w;]=&/', '/[\w;]+=$/', '/^[\w]+=$/', '/&(?!amp;)/' ), array( '{1}', '', '', '&amp;' ), $sDynParams ):false;
-    $sDynParams = $sDynParams?preg_replace( array( '/^\?/', '/^\&(amp;)?$/' ), '', $sDynParams ):false;
+    $sDynParams = $sDynParams?$oStr->preg_replace( array( '/([\?&])[\w;]=&/', '/[\w;]+=$/', '/^[\w]+=$/', '/&(?!amp;)/' ), array( '{1}', '', '', '&amp;' ), $sDynParams ):false;
+    $sDynParams = $sDynParams?$oStr->preg_replace( array( '/^\?/', '/^\&(amp;)?$/' ), '', $sDynParams ):false;
     if ( $sDynParams ) {
         $sUrl .= ( ( strpos( $sUrl, '?' ) !== false ) ? "&amp;":"?" ) . $sDynParams;
     }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 26878 2010-03-26 12:44:47Z vilma $
+ * @version   SVN: $Id: oxarticle.php 27211 2010-04-14 13:39:28Z rimvydas.paskevicius $
  */
 
 // defining supported link types
@@ -1427,10 +1427,31 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
 
 
         $aRet = array();
-        $iHitMax = 0;
+
         if ($rs != false && $rs->recordCount() > 0) {
             while (!$rs->EOF) {
                 $aRet[] = $rs->fields['oxcatnid'];
+                $rs->moveNext();
+            }
+        }
+
+        // adding price categories if such exists
+        $sSql = $this->getSqlForPriceCategories();
+
+        $oDB = oxDb::getDb( true );
+        $rs = $oDB->execute( $sSql );
+
+        if ($rs != false && $rs->recordCount() > 0) {
+            while (!$rs->EOF) {
+
+                if ( is_array( $rs->fields ) ) {
+                   $rs->fields = array_change_key_case( $rs->fields, CASE_LOWER );
+                }
+
+
+                if ( !$aRet[$rs->fields['oxid']] ) {
+                    $aRet[] = $rs->fields['oxid'];
+                }
                 $rs->moveNext();
             }
         }

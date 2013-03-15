@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: article_pictures.php 26699 2010-03-20 12:41:56Z arvydas $
+ * @version   SVN: $Id: article_pictures.php 27134 2010-04-09 13:50:28Z arvydas $
  */
 
 /**
@@ -272,10 +272,11 @@ class Article_Pictures extends oxAdminDetails
     {
         if ( isset( $_FILES['myfile']['name'] ) ) {
             $iIndex = $this->getConfig()->getConfigParam( 'iPicCount' );
+            $oStr = getStr();
 
             while ( list( $sKey, $sValue ) = each( $_FILES['myfile']['name'] ) ) {
                 if ( !empty($sValue) ) {
-                    preg_match( "/^M(\d+)/", $sKey, $aMatches );
+                    $oStr->preg_match( "/^M(\d+)/", $sKey, $aMatches );
                     $iPicIndex = $aMatches[1];
                     $iIndex = ( $iIndex > $iPicIndex ) ? $iPicIndex : $iIndex;
                 }
@@ -342,7 +343,7 @@ class Article_Pictures extends oxAdminDetails
     {
         $iPicIndex = 0;
 
-        if ( preg_match( "/^M(\d+)/", $sFileType, $aMatches ) ) {
+        if ( getStr()->preg_match( "/^M(\d+)/", $sFileType, $aMatches ) ) {
             $iPicIndex = $aMatches[1];
         }
 

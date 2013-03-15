@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: article_main.php 26695 2010-03-20 11:52:45Z arvydas $
+ * @version   SVN: $Id: article_main.php 27047 2010-04-06 11:46:08Z alfonsas $
  */
 
 /**
@@ -230,20 +230,9 @@ class Article_Main extends oxAdminDetails
         // set oxid if inserted
         if ( $soxId == "-1") {
             $this->_sSavedId = $oArticle->getId();
-
             $sFastCat = oxConfig::getParameter( "art_category");
-
             if ( $sFastCat != "-1") {
-                $oNew = oxNew( "oxbase");
-                $oNew->init( "oxobject2category" );
-                $oNew->oxobject2category__oxtime = new oxField(time());
-                $oNew->oxobject2category__oxobjectid = new oxField($oArticle->getId());
-                $oNew->oxobject2category__oxcatnid = new oxField($sFastCat);
-
-                $oNew->save();
-
-                    // resetting amount of articles in category
-                    $this->resetCounter( "catArticle", $sFastCat );
+                $this->addToCategory($sFastCat, $oArticle->getId());
             }
         }
 
@@ -252,9 +241,34 @@ class Article_Main extends oxAdminDetails
 
         //saving tags
         $sTags = $aParams['tags'];
-        if (!trim($sTags))
+        if (!trim($sTags)) {
             $sTags = $oArticle->oxarticles__oxsearchkeys->value;
+        }
         $oArticle->saveTags($sTags);
+    }
+
+    /**
+     * Add article to category.
+     *
+     * @param string $sCatID Category id
+     * @param string $sOXID  Article id
+     *
+     * @return null
+     */
+    public function addToCategory($sCatID, $sOXID)
+    {
+        $myConfig  = $this->getConfig();
+
+        $oNew = oxNew( "oxbase");
+        $oNew->init( "oxobject2category" );
+        $oNew->oxobject2category__oxtime = new oxField(time());
+        $oNew->oxobject2category__oxobjectid = new oxField($sOXID);
+        $oNew->oxobject2category__oxcatnid = new oxField($sCatID);
+
+        $oNew->save();
+
+            // resetting amount of articles in category
+            $this->resetCounter( "catArticle", $sCatID );
     }
 
     /**

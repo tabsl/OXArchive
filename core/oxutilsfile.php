@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsfile.php 26578 2010-03-16 15:16:08Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxutilsfile.php 27114 2010-04-09 13:35:02Z arvydas $
  */
 
 /**
@@ -273,6 +273,8 @@ class oxUtilsFile extends oxSuperCfg
 
             if ( isset( $sFileType ) ) {
 
+                $oStr = getStr();
+
                 // unallowed files ?
                 if ( in_array( $sFileType, $this->_aBadFiles ) || ( $blDemo && !in_array( $sFileType, $this->_aAllowedFiles ) ) ) {
                     oxUtils::getInstance()->showMessageAndExit( "We don't play this game, go away" );
@@ -285,12 +287,12 @@ class oxUtilsFile extends oxSuperCfg
 
                 $sFName = '';
                 if ( isset( $aFilename[0] ) ) {
-                    $sFName = preg_replace( '/[^a-zA-Z0-9()_\.-]/', '', implode( '.', $aFilename ) );
+                    $sFName = $oStr->preg_replace( '/[^a-zA-Z0-9()_\.-]/', '', implode( '.', $aFilename ) );
                 }
 
                 // removing sufix from main pictures, only zoom pictures, thumbnails
                 // and icons will have it.
-                $sSufix = ( preg_match( "/P\d+/", $sType ) ) ? "" : "_".strtolower( $sType );
+                $sSufix = ( $oStr->preg_match( "/P\d+/", $sType ) ) ? "" : "_".strtolower( $sType );
 
                 $sValue = $this->_getUniqueFileName( $sImagePath, "{$sFName}", $sFileType, $sSufix );
             }
@@ -358,12 +360,13 @@ class oxUtilsFile extends oxSuperCfg
     {
         $oUtilsPic = oxUtilspic::getInstance();
         $oPictureHandler = oxPictureHandler::getInstance();
+        $oStr = getStr();
 
         // picture type
-        $sPicType = preg_replace( "/\d*$/", "", $sType );
+        $sPicType = $oStr->preg_replace( "/\d*$/", "", $sType );
 
         // numper of processable picture
-        $iPicNum  = (int) preg_replace( "/^\D*/", "", $sType );
+        $iPicNum  = (int) $oStr->preg_replace( "/^\D*/", "", $sType );
         $iPicNum = $iPicNum ? abs( $iPicNum ) : 1;
 
         $aSize = false;
@@ -488,6 +491,7 @@ class oxUtilsFile extends oxSuperCfg
         if ( isset( $aFiles['myfile']['name'] ) ) {
 
             $oConfig = $this->getConfig();
+            $oStr = getStr();
 
             // A. protection for demoshops - strictly defining allowed file extensions
             $blDemo = (bool) $oConfig->isDemoShop();
@@ -508,7 +512,7 @@ class oxUtilsFile extends oxSuperCfg
                 //if uplading master image, master image name will be with
                 //sufics "p" (eg. image_p1.jpg). This is because of compatibility
                 //with previous versions
-                if ( preg_match("/(M)(\d+)/", $sType, $aMatches ) ) {
+                if ( $oStr->preg_match("/(M)(\d+)/", $sType, $aMatches ) ) {
                     $sMasterImageType = "P" . $aMatches[2];
                 }
 
@@ -640,7 +644,7 @@ class oxUtilsFile extends oxSuperCfg
         }
 
         //wrong chars in file name?
-        if ( !preg_match('/^[\-_a-z0-9\.]+$/i', $aFileInfo['name'] ) ) {
+        if ( !getStr()->preg_match('/^[\-_a-z0-9\.]+$/i', $aFileInfo['name'] ) ) {
             throw new oxException( 'EXCEPTION_FILENAMEINVALIDCHARS' );
         }
 
@@ -688,13 +692,14 @@ class oxUtilsFile extends oxSuperCfg
         $sFilePath     = $this->normalizeDir( $sFilePath );
         $iFileCounter  = 0;
         $sTempFileName = $sFileName;
+        $oStr = getStr();
 
         //file exists ?
         while ( file_exists( $sFilePath . "/" . $sFileName . $sSufix . "." . $sFileExt ) ) {
             $iFileCounter++;
 
             //removing "(any digit)" from file name end
-            $sTempFileName = preg_replace("/\(".$iFileCounter."\)/", "", $sTempFileName );
+            $sTempFileName = $oStr->preg_replace("/\(".$iFileCounter."\)/", "", $sTempFileName );
 
             $sFileName = $sTempFileName . "($iFileCounter)";
         }

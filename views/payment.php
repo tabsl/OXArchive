@@ -19,13 +19,8 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: payment.php 26591 2010-03-16 19:53:04Z tomas $
+ * @version   SVN: $Id: payment.php 27229 2010-04-15 11:57:07Z arvydas $
  */
-
-/**
- * Includes credit card validation class.
- */
-require_once oxConfig::getInstance()->getConfigParam( 'sCoreDir' ) . "ccval/ccval.php";
 
 /**
  * Payment manager.

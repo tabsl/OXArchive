@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxrssfeed.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxrssfeed.php 27117 2010-04-09 13:36:58Z arvydas $
  */
 
 /**
@@ -259,8 +259,9 @@ class oxRssFeed extends oxSuperCfg
     protected function _getShopUrl()
     {
         $sUrl = $this->getConfig()->getShopUrl();
-        if (strpos($sUrl, '?') !== false ) {
-            if (!preg_match('/[?&](amp;)?$/i', $sUrl)) {
+        $oStr = getStr();
+        if ( $oStr->strpos($sUrl, '?') !== false ) {
+            if ( !$oStr->preg_match('/[?&](amp;)?$/i', $sUrl)) {
                 $sUrl .= '&amp;';
             }
         } else {

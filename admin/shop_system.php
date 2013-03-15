@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_system.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: shop_system.php 27021 2010-04-06 06:47:37Z arvydas $
  */
 
 /**
@@ -50,10 +50,9 @@ class Shop_System extends Shop_Config
         $aConfArrs = array();
 
         $oLang = oxLang::getInstance();
-        $iLang = $oLang->getTplLanguage();
 
         $aLanguages = $oLang->getLanguageArray();
-        $sLangAbbr = $aLanguages[$iLang]->abbr;
+        $sLangAbbr  = $aLanguages[$oLang->getObjectTplLanguage()]->abbr;
 
         // loading shop location countries list (defines in which country shop exists)
         include "shop_countries.php";

@@ -45,7 +45,7 @@
         <label for="lng">[{ oxmultilang ident="LOGIN_LANGUAGE" }]</label>
         <select name="chlanguage" id="lng">
             [{foreach from=$aLanguages item=oLang key=iLang}]
-            <option value="[{$iLang}]" [{ if $oLang->blSelected }]SELECTED[{/if}]>[{ $oLang->sValue }]</option>
+            <option value="[{ $oLang->id }]" [{ if $oLang->selected }]SELECTED[{/if}]>[{ $oLang->name }]</option>
             [{/foreach}]
         </select><br>
 

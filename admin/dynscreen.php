@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: dynscreen.php 26430 2010-03-09 15:05:54Z sarunas $
+ * @version   SVN: $Id: dynscreen.php 27134 2010-04-09 13:50:28Z arvydas $
  */
 
 /**
@@ -60,7 +60,7 @@ class Dynscreen extends oxAdminList
 
         // edit url
         $sEditUrl = $myAdminNavig->getEditUrl( $sNode, $iActTab ).$sActTab;
-        if ( !preg_match( "/^http(s)?:\/\//", $sEditUrl ) ) {
+        if ( !getStr()->preg_match( "/^http(s)?:\/\//", $sEditUrl ) ) {
             //internal link, adding path
             $sEditUrl = oxUtilsUrl::getInstance()->appendParamSeparator($this->getViewConfig()->getViewConfigParam( 'selflink' )) . $sEditUrl;
         }

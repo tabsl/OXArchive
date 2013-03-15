@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_utils.php 26434 2010-03-09 16:25:56Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxcmp_utils.php 27252 2010-04-16 08:52:31Z tomas $
  */
 
 /**
@@ -48,6 +48,10 @@ class oxcmp_utils extends oxView
     {
         $myConfig = $this->getConfig();
         $myUtils  = oxUtils::getInstance();
+
+        if (!$myConfig->getConfigParam("blAllowRemoteArticleInfo"))
+            return false;
+
 
         $sOutput  = 'OXID__Problem : no valid oxid !';
         $oProduct = null;

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoder.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxseoencoder.php 27115 2010-04-09 13:35:42Z arvydas $
  */
 
 /**
@@ -395,7 +395,7 @@ class oxSeoEncoder extends oxSuperCfg
         $sConstEnd = $this->_getUrlExtension();
         if ($sConstEnd === null) {
             $aMatched = array();
-            if ( preg_match('/\.html?$/i', $sSeoUrl, $aMatched ) ) {
+            if ( $oStr->preg_match('/\.html?$/i', $sSeoUrl, $aMatched ) ) {
                 $sConstEnd = $aMatched[0];
             } else {
                 if ($sSeoUrl{$oStr->strlen($sSeoUrl)-1} != '/') {
@@ -412,7 +412,7 @@ class oxSeoEncoder extends oxSuperCfg
         } else {
             $sAdd = '_' . self::$_sPrefix;
         }
-        $sSeoUrl = preg_replace( "#^(/*)(".implode('|', $this->_getReservedEntryKeys()).")/#i", "\$1\$2$sAdd/", $sSeoUrl );
+        $sSeoUrl = $oStr->preg_replace( "#^(/*)(".implode('|', $this->_getReservedEntryKeys()).")/#i", "\$1\$2$sAdd/", $sSeoUrl );
 
         $sBaseSeoUrl = $sSeoUrl;
         if ( $sConstEnd && $oStr->substr( $sSeoUrl, 0 - $oStr->strlen( $sConstEnd ) ) == $sConstEnd ) {
@@ -559,8 +559,9 @@ class oxSeoEncoder extends oxSuperCfg
         if (!isset(self::$_aReservedEntryKeys) && !is_array(self::$_aReservedEntryKeys)) {
             $sDir = getShopBasePath();
             self::$_aReservedEntryKeys = array();
+            $oStr = getStr();
             foreach (glob("$sDir/*") as $file) {
-                if (preg_match('/^(.+)\.php[0-9]*$/i', basename($file), $m)) {
+                if ( $oStr->preg_match('/^(.+)\.php[0-9]*$/i', basename($file), $m)) {
                     self::$_aReservedEntryKeys[] = $m[0];
                     self::$_aReservedEntryKeys[] = $m[1];
                 } elseif (is_dir($file)) {
@@ -585,13 +586,14 @@ class oxSeoEncoder extends oxSuperCfg
 
         // basic string preparation
         $sUri = strip_tags( $sUri );
+        $oStr = getStr();
 
         $sSeparator = self::$_sSeparator;
         $sPrefix    = self::$_sPrefix;
         // 'fixing' reserved words
         foreach ( self::$_aReservedWords as $sWord ) {
             // this probably possible to do in one regexp
-            $sUri = preg_replace( array( "/(\s$sWord)$/i", "/^($sWord\s)/i", "/(\s$sWord\s)/i", "/^($sWord)$/i",
+            $sUri = $oStr->preg_replace( array( "/(\s$sWord)$/i", "/^($sWord\s)/i", "/(\s$sWord\s)/i", "/^($sWord)$/i",
                                          "/(\/$sWord)$/i", "/^($sWord\/)/i", "/(\/$sWord\/)/i"),
                                          " \$1{$sSeparator}{$sPrefix}{$sSeparator} ", $sUri );
         }
@@ -600,7 +602,7 @@ class oxSeoEncoder extends oxSuperCfg
         $sExt = '';
         $oStr = getStr();
         $aMatched = array();
-        if ( preg_match( '/\.html?$/i', $sUri, $aMatched ) ) {
+        if ( $oStr->preg_match( '/\.html?$/i', $sUri, $aMatched ) ) {
             $sExt   = $oStr->substr( $sUri, 0 - $oStr->strlen( $aMatched[0] ) );
             $sUri = $oStr->substr( $sUri, 0, $oStr->strlen( $sUri ) - $oStr->strlen( $aMatched[0] ) );
         }
@@ -743,11 +745,12 @@ class oxSeoEncoder extends oxSuperCfg
     protected function _trimUrl( $sUrl, $iLang = null )
     {
         $myConfig = $this->getConfig();
+        $oStr = getStr();
         $sUrl = str_replace( array( $myConfig->getShopUrl( $iLang ), $myConfig->getSslShopUrl( $iLang ) ), '', $sUrl );
-        $sUrl = preg_replace( '/(\?|&(amp;)?)(force_)?(admin_)?sid=[a-z0-9\.]+&?(amp;)?/i', '\1', $sUrl );
-        $sUrl = preg_replace( '/(\?|&(amp;)?)shp=[0-9]+&?(amp;)?/i', '\1', $sUrl );
-        $sUrl = preg_replace( '/(\?|&(amp;)?)lang=[0-9]+&?(amp;)?/i', '\1', $sUrl );
-        $sUrl = preg_replace( '/(\?|&(amp;)?)&(amp;)?/i', '\1', $sUrl );
+        $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)(force_)?(admin_)?sid=[a-z0-9\.]+&?(amp;)?/i', '\1', $sUrl );
+        $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)shp=[0-9]+&?(amp;)?/i', '\1', $sUrl );
+        $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)lang=[0-9]+&?(amp;)?/i', '\1', $sUrl );
+        $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)&(amp;)?/i', '\1', $sUrl );
         return $sUrl;
     }
 
@@ -1080,7 +1083,7 @@ class oxSeoEncoder extends oxSuperCfg
         $oDb = oxDb::getDb();
 
         $iShopId = ( !isset( $iShopId ) ) ? $this->getConfig()->getShopId():$iShopId;
-        $iLang   = ( !isset( $iLang ) ) ? oxLang::getInstance()->getTplLanguage():((int) $iLang);
+        $iLang   = ( !isset( $iLang ) ) ? oxLang::getInstance()->getObjectTplLanguage():((int) $iLang);
         $sParams = ( !isset( $sParams ) ) ? "order by oxparams" : "and oxparams=".$oDb->quote( $sParams );
 
         return $oDb->getOne( "select {$sMetaType} from oxseo where oxobjectid = " . $oDb->quote( $sObjectId ) . " and oxshopid = " . $oDb->quote( $iShopId )." and oxlang = '{$iLang}' {$sParams}" );

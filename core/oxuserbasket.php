@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuserbasket.php 26434 2010-03-09 16:25:56Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxuserbasket.php 27215 2010-04-14 14:24:54Z rimvydas.paskevicius $
  */
 
 /**
@@ -85,6 +85,9 @@ class oxUserBasket extends oxBase
         if ( !isset( $this->oxuserbaskets__oxpublic->value ) ) {
             $this->oxuserbaskets__oxpublic = new oxField(1, oxField::T_RAW);
         }
+
+        // set oxcreate
+        $this->oxuserbaskets__oxcreate = new oxField( oxUtilsDate::getInstance()->getTime() );
 
         return parent::_insert();
     }

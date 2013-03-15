@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_user.php 26827 2010-03-25 09:29:41Z arvydas $
+ * @version   SVN: $Id: oxcmp_user.php 27207 2010-04-14 13:11:41Z vilma $
  */
 
 // defining login/logout states
@@ -424,7 +424,7 @@ class oxcmp_user extends oxView
 
             // assigning to newsletter
             $blOptin = oxConfig::getParameter( 'blnewssubscribed' );
-            $this->_blNewsSubscriptionStatus = $oUser->setNewsSubscription( $blOptin, true );
+            $this->_blNewsSubscriptionStatus = $oUser->setNewsSubscription( $blOptin, $this->getConfig()->getConfigParam( 'blOrderOptInEmail' ) );
 
             $oUser->addToGroup( 'oxidnotyetordered' );
             $oUser->logout();

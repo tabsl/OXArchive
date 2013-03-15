@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilspic.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxutilspic.php 27124 2010-04-09 13:40:47Z arvydas $
  */
 
 /**
@@ -154,7 +154,7 @@ class oxUtilsPic extends oxSuperCfg
             }
 
             // additionally deleting icon ..
-            $sIconFile = preg_replace( "/(\.[a-z0-9]*$)/i", "_ico\\1", $sFile );
+            $sIconFile = getStr()->preg_replace( "/(\.[a-z0-9]*$)/i", "_ico\\1", $sFile );
 
             if ( file_exists( $sIconFile ) && is_file( $sIconFile ) ) {
                 unlink( $sIconFile );

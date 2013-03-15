@@ -13,7 +13,7 @@
         [{foreach from=$aModules item=iModuleState key=sModule}]
             <ul>
                 [{assign var="class" value=$oView->getModuleClass($iModuleState)}]
-                <li id="[{$sModule}]" class="[{ $class }]">[{ oxmultilang ident="SYSREQ_"|cat:$sModule|oxupper }]</li>
+                <li id="[{$sModule}]" class="[{ $class }]"><a href=[{$oView->getReqInfoUrl($sModule)}] target="_blank">[{ oxmultilang ident="SYSREQ_"|cat:$sModule|oxupper }]</a></li>
             </ul>
         [{/foreach}]
     </li>

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 26442 2010-03-10 08:34:20Z alfonsas $
+ * @version   SVN: $Id: oxorder.php 26999 2010-04-01 12:41:33Z vilma $
  */
 
 /**
@@ -1755,7 +1755,7 @@ class oxOrder extends oxBase
     public function getTotalOrderSum()
     {
         $oCur = $this->getConfig()->getActShopCurrencyObject();
-        return number_format( $this->oxorder__oxtotalordersum->value, $oCur->decimal, '.', '');
+        return number_format( (double)$this->oxorder__oxtotalordersum->value, $oCur->decimal, '.', '');
     }
 
     /**

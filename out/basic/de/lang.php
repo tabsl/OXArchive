@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 26901 2010-03-26 15:56:26Z rimvydas.paskevicius $
+ * @version   SVN: $Id: lang.php 27196 2010-04-13 13:59:06Z arvydas $
  */
 
 
@@ -32,7 +32,7 @@ http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/editing-language-f
 */
 
 $sLangName  = "Deutsch";
-$iLangNr    = 0;
+
 // -------------------------------
 // RESOURCE IDENTITFIER = STRING
 // -------------------------------
@@ -905,8 +905,8 @@ $aLang = array(
 'RECOMMLIST_STAR'                                 => "Stern",
 'RECOMMLIST_STARS'                                => "Sterne",
 'REGISTER_SUCCESS_MYACCOUNT'                      => "Mein Konto",
-'REGISTER_SUCCESS_WELCOME'                        => "Herzlich Willkommen als Mitglied im OXID eshop!",
-'REGISTER_SUCCESS_EMAILCONFIRMATION'              => "Sie haben eine E-mail von uns erhalten welche Ihre Mitgliedschaft bestätigt.<br><br>Vielen Dank.",
+'REGISTER_SUCCESS_WELCOME'                        => "Herzlich willkommen als Mitglied im OXID eShop!",
+'REGISTER_SUCCESS_EMAILCONFIRMATION'              => "Sie haben eine E-Mail von uns erhalten, die Ihre Mitgliedschaft bestätigt.<br><br>Vielen Dank.",
 'REGISTER_SUCCESS_ACTIVATIONEMAIL'                => "Sie haben soeben eine E-Mail erhalten, mit der Sie unseren Newsletter freischalten können.<br><br>Vielen Dank.",
 'REGISTER_SUCCESS_NOTABLETOSENDEMAIL'             => "Leider konnten wir Ihnen keine E-Mail zur Bestätigung des Newsletterempfanges zustellen. <br>Bitte kontrollieren Sie doch die E-Mail-Adresse.<br>",
 'REGISTER_SUCCESS_BACKTOSHOP'                     => "Zurück zum Shop",

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * @version   SVN: $Id: sysreq_main.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: sysreq_main.php 27173 2010-04-12 15:43:40Z tomas $
  */
 
 /**
@@ -71,5 +71,20 @@ class sysreq_main extends oxAdminDetails
                 break;
         }
         return $sClass;
+    }
+
+    /**
+     * Returns hint URL
+     *
+     * @param string $sIdent Module ident
+     *
+     * @return string
+     */
+    public function getReqInfoUrl($sIdent)
+    {
+        $oSysReq = new oxSysRequirements();
+        $sUrl = $oSysReq->getReqInfoUrl($sIdent);
+
+        return $sUrl;
     }
 }
