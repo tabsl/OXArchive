@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsession.php 43979 2012-04-16 16:45:39Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxsession.php 45395 2012-05-18 13:09:44Z alfonsas $
  */
 
 DEFINE('_DB_SESSION_HANDLER', getShopBasePath() . 'core/adodblite/session/adodb-session.php');
@@ -624,7 +624,14 @@ class oxSession extends oxSuperCfg
             //#1746
             oxNew('oxbasketitem');
 
-            $oBasket = ( $sBasket && ( $oBasket = unserialize( $sBasket ) ) ) ? $oBasket : oxNew( 'oxbasket' );
+            $oBasket = ( $sBasket && ( $oBasket = unserialize( $sBasket ) ) ) ? $oBasket : null;
+
+            //#3908
+            $oEmptyBasket = oxNew('oxbasket');
+            if ( !$oBasket || ( get_class($oBasket) !== get_class($oEmptyBasket) ) ) {
+                $oBasket = $oEmptyBasket;
+            }
+
             $this->_validateBasket($oBasket);
             $this->setBasket( $oBasket );
         }

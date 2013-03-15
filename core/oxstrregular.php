@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxstrregular.php 34145 2011-04-01 15:51:13Z sarunas $
+ * @version   SVN: $Id: oxstrregular.php 44498 2012-04-30 06:58:51Z saulius.stasiukaitis $
  */
 
 /**
@@ -305,7 +305,7 @@ class oxStrRegular
 
     /**
      * Replaces special characters with passed char.
-     * Special chars are: " ' : ! ? \n \r \t x95 xa0 ;
+     * Special chars are: \n \r \t x95 xa0 ;
      *
      * @param string $sStr      string to cleanup
      * @param object $sCleanChr which character should be used as a replacement (default is empty space)
@@ -314,7 +314,7 @@ class oxStrRegular
      */
     public function cleanStr( $sStr, $sCleanChr = ' ')
     {
-        return $this->preg_replace( "/\"|\'|\:|\!|\?|\n|\r|\t|\x95|\xa0|;/", $sCleanChr, $sStr );
+        return $this->preg_replace( "/\n|\r|\t|\x95|\xa0|;/", $sCleanChr, $sStr );
     }
 
     /**

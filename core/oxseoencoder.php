@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoder.php 44046 2012-04-18 15:40:36Z linas.kukulskis $
+ * @version   SVN: $Id: oxseoencoder.php 44336 2012-04-25 10:40:22Z linas.kukulskis $
  */
 
 /**
@@ -441,7 +441,7 @@ class oxSeoEncoder extends oxSuperCfg
     }
 
     /**
-     * Loads seo dada from cache for active view (in non admin mode)
+     * Loads seo data from cache for active view (in non admin mode)
      *
      * @param string $sCacheIdent cache identifier
      * @param string $sType       object type

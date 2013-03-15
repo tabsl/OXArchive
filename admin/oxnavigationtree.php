@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxnavigationtree.php 39646 2011-10-28 12:09:05Z arvydas.vapsva $
+ * @version   SVN: $Id: oxnavigationtree.php 44281 2012-04-24 14:31:04Z vilma $
  */
 
 /**
@@ -907,7 +907,7 @@ class OxNavigationTree extends oxSuperCfg
         $oLang = oxLang::getInstance();
 
         $iDynLang = $myConfig->getConfigParam( 'iDynInterfaceLanguage' );
-        $iDynLang = isset( $iDynLang )?$iDynLang:( $oLang->getObjectTplLanguage() );
+        $iDynLang = isset( $iDynLang )?$iDynLang:( $oLang->getTplLanguage() );
 
         $aLanguages = $oLang->getLanguageArray();
         $sLangAbr = $aLanguages[$iDynLang]->abbr;

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxrssfeed.php 43075 2012-03-22 08:57:11Z linas.kukulskis $
+ * @version   SVN: $Id: oxrssfeed.php 45469 2012-05-21 10:51:35Z vaidas.matulevicius $
  */
 
 /**
@@ -194,7 +194,13 @@ class oxRssFeed extends oxSuperCfg
             $oItem->title                   = strip_tags($oArticle->oxarticles__oxtitle->value . $sPrice);
             $oItem->guid     = $oItem->link = $myUtilsUrl->prepareUrlForNoSession($oArticle->getLink());
             $oItem->isGuidPermalink         = true;
-            $oItem->description             = $oArticle->getArticleLongDesc()->value; //oxarticles__oxshortdesc->value;
+            //$oItem->description             = $oArticle->getArticleLongDesc()->value; //oxarticles__oxshortdesc->value;
+            if ( oxConfig::getInstance()->getConfigParam( 'bl_perfParseLongDescinSmarty' ) ) {
+                $oItem->description         = $oArticle->getLongDesc();
+            } else {
+                $oItem->description         = $oArticle->getArticleLongDesc()->value;//$oArticle->getLongDescription()->value;
+            }
+            
             if (trim(str_replace('&nbsp;', '', (strip_tags($oItem->description)))) == '') {
                 $oItem->description             = $oArticle->oxarticles__oxshortdesc->value;
             }

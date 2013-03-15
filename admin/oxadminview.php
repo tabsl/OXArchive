@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadminview.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
+ * @version   SVN: $Id: oxadminview.php 44281 2012-04-24 14:31:04Z vilma $
  */
 
 /**
@@ -249,7 +249,7 @@ class oxAdminView extends oxView
 
             if ( !$sLangAbbr ) {
                 $oLang = oxLang::getInstance();
-                $sLangAbbr = $oLang->getLanguageAbbr( $oLang->getObjectTplLanguage() );
+                $sLangAbbr = $oLang->getLanguageAbbr( $oLang->getTplLanguage() );
             }
 
             if ( $sLangAbbr != "de" ) {
@@ -515,7 +515,10 @@ class oxAdminView extends oxView
             if ( false !== $iEnglishId ) {
                 $sViewName = getViewName( "oxcountry", $iEnglishId );
                 $sQ = "select oxtitle from {$sViewName} where oxisoalpha2 = " . oxDb::getDb()->quote( $sCountryCode );
-                $sCountry = oxDb::getDb()->getOne( $sQ );
+                $sCountryName = oxDb::getDb()->getOne( $sQ );
+                if ( $sCountryName ) {
+                    $sCountry = $sCountryName;
+                }
             } else {
                 // handling when english language is deleted
                 switch ( $sCountryCode ) {
@@ -526,7 +529,6 @@ class oxAdminView extends oxView
                 }
             }
         }
-
         return strtolower( $sCountry );
     }
 

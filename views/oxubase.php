@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 44205 2012-04-23 14:40:51Z tomas $
+ * @version   SVN: $Id: oxubase.php 44498 2012-04-30 06:58:51Z saulius.stasiukaitis $
  */
 
 /**
@@ -1082,16 +1082,14 @@ class oxUBase extends oxView
 
             $sCnid = oxConfig::getParameter( 'cnid' );
 
+
             $sSortBy  = oxConfig::getParameter( $this->getSortOrderByParameterName() );
             $sSortDir = oxConfig::getParameter( $this->getSortOrderParameterName() );
 
             $oStr = getStr();
-            if ( (!$sSortBy ||
-                !in_array( $oStr->strtolower($sSortBy), $aSortColumns) ||
-                !in_array( $oStr->strtolower($sSortDir), $aSortDir) ) &&
-                $aSorting = $this->getSorting( "category" ) ) {
-                    $sSortBy  = $aSorting['sortby'];
-                    $sSortDir = $aSorting['sortdir'];
+            if ( (!$sSortBy || !in_array( $oStr->strtolower($sSortBy), $aSortColumns) || !in_array( $oStr->strtolower($sSortDir), $aSortDir) ) && $aSorting = $this->getSorting( $sCnid ) ) {
+                $sSortBy  = $aSorting['sortby'];
+                $sSortDir = $aSorting['sortdir'];
             }
 
             if ( $sSortBy && oxDb::getInstance()->isValidFieldName( $sSortBy ) &&
@@ -1101,7 +1099,7 @@ class oxUBase extends oxView
                 $this->_sListOrderDir = $sSortDir;
 
                 // caching sorting config
-                $this->setItemSorting( "category", $sSortBy, $sSortDir );
+                $this->setItemSorting( $sCnid, $sSortBy, $sSortDir );
             }
         }
     }
@@ -1509,6 +1507,7 @@ class oxUBase extends oxView
             $aPattern = array( "/,[\s\+\-\*]*,/", "/\s+,/" );
             $sMeta = $oStr->preg_replace( $aPattern, ',', $sMeta );
             $sMeta = oxUtilsString::getInstance()->minimizeTruncateString( $sMeta, $iLength );
+            $sMeta = $oStr->htmlspecialchars( $sMeta );
 
             return trim( $sMeta );
         }
@@ -1727,19 +1726,19 @@ class oxUBase extends oxView
                     $sRet .= "&amp;searchparam={$sSearchParamForLink}";
                 }
 
-                if ( ( $sVar = oxConfig::getParameter( 'searchcnid' ) ) ) {
+                if ( ( $sVar = oxConfig::getParameter( 'searchcnid', true ) ) ) {
                     $sRet .= '&amp;searchcnid='.rawurlencode( rawurldecode( $sVar ) );
                 }
-                if ( ( $sVar = oxConfig::getParameter( 'searchvendor' ) ) ) {
+                if ( ( $sVar = oxConfig::getParameter( 'searchvendor', true ) ) ) {
                     $sRet .= '&amp;searchvendor='.rawurlencode( rawurldecode( $sVar ) );
                 }
-                if ( ( $sVar = oxConfig::getParameter( 'searchmanufacturer' ) ) ) {
+                if ( ( $sVar = oxConfig::getParameter( 'searchmanufacturer', true ) ) ) {
                     $sRet .= '&amp;searchmanufacturer='.rawurlencode( rawurldecode( $sVar ) );
                 }
                 break;
             case 'tag':
                 $sRet .= "&amp;listtype={$sListType}";
-                if ( $sParam = rawurlencode( oxConfig::getParameter( 'searchtag', 1 ) ) ) {
+                if ( $sParam = rawurlencode( oxConfig::getParameter( 'searchtag', true ) ) ) {
                     $sRet .= "&amp;searchtag={$sParam}";
                 }
                 break;

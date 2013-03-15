@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxpdf.php 25471 2010-02-01 14:35:11Z alfonsas $
+ * @version   SVN: $Id: oxpdf.php 44655 2012-05-08 10:33:14Z mindaugas.rimgaila $
  */
 
 $myConfig = oxConfig::getInstance();
@@ -303,7 +303,7 @@ class oxPDF extends TCPDF
         }
 
         if ( $tag=='A' ) {
-            $this->HREF = $attr['HREF'];
+            $this->HREF = (is_array($attr) && isset($attr['HREF'])) ? $attr['HREF'] : '';
         }
 
         if ( $tag=='BR' ) {
