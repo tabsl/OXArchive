@@ -218,7 +218,7 @@ var oxid = {
         input  : null,
 
         select : function(e){
-            oxid.tags.input.value += ' ' + this.innerHTML;
+            oxid.tagsInput.value += ' ' + this.innerHTML;
             this.className = 'sel';
             this.removeAttribute('onclick');
         },
@@ -227,7 +227,7 @@ var oxid = {
             var tg = document.getElementById(id);
             var ed = document.getElementById(input);
             if(tg && ed) {
-                oxid.tags.input = ed;
+                oxid.tagsInput = ed;
                 for (var i=0; i<tg.childNodes.length; i++) {
                     if(tg.childNodes[i].tagName && tg.childNodes[i].tagName.toUpperCase() == 'A'){
                        tg.childNodes[i].onclick = oxid.tags.select;
@@ -311,12 +311,12 @@ var oxid = {
     sellist: {
         set : function(name,value){
             //selectlist
-            var _slist = document.getElementById("slist");
+            var _slist = document.getElementById("linkToNoticeList");
             if ( _slist !== null) {
                 _slist.href = _slist.href + "&" + name + "=" + value;
             }
             //wishlist
-            var _wlist = document.getElementById("wlist");
+            var _wlist = document.getElementById("linkToWishList");
             if ( _wlist !== null) {
                 _wlist.href = _wlist.href + "&" + name + "=" + value;
             }
@@ -445,7 +445,7 @@ var oxid = {
 
         getMdSelectNameById: function(id)
         {
-            var name = 'mdvariantselect_' + id;
+            var name = 'mdVariantSelect_' + id;
             return name;
         },
 
@@ -493,10 +493,10 @@ var oxid = {
         },
 
         showMdRealVariant: function() {
-            document.getElementById('md_variant_box').innerHTML = '';
+            document.getElementById('mdVariantBox').innerHTML = '';
             var selectedId = oxid.mdVariants.getSelectedMdRealVariant();
-            if (selectedId && document.getElementById('mdvariant_' + selectedId)) {
-                document.getElementById('md_variant_box').innerHTML = document.getElementById('mdvariant_' + selectedId).innerHTML;
+            if (selectedId && document.getElementById('mdVariant_' + selectedId)) {
+                document.getElementById('mdVariantBox').innerHTML = document.getElementById('mdVariant_' + selectedId).innerHTML;
             }
 
         }

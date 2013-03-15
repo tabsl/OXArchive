@@ -25,16 +25,16 @@ function ChangeDiscountType(oObj)
     [{assign var="readonly" value=""}]
 [{/if}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="oxidCopy" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="discount_main">
     <input type="hidden" name="language" value="[{ $actlang }]">
 </form>
 
-<form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
-[{ $shop->hiddensid }]
+<form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="discount_main">
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -100,7 +100,7 @@ function ChangeDiscountType(oObj)
             [{ oxmultilang ident="DISCOUNT_MAIN_REBATE" }]
             </td>
             <td class="edittext">
-            <input type="text" class="editinput" size="15" maxlength="[{$edit->oxdiscount__oxaddsum->fldmax_length}]" name="editval[oxdiscount__oxaddsum]" id="editval[oxdiscount__oxaddsum]" value="[{$edit->oxdiscount__oxaddsum->value }]" style="display: [{if $itm_disp == ""}]none[{/if}];" [{ $readonly }]>
+            <input type="text" class="editinput" size="15" maxlength="[{$edit->oxdiscount__oxaddsum->fldmax_length}]" name="editval[oxdiscount__oxaddsum]" id="editval[oxdiscount__oxaddsum]" value="[{$edit->oxdiscount__oxaddsum->value }]" [{if $edit->oxdiscount__oxaddsumtype->value == "itm" }] style="display:none;"[{/if}][{ $readonly }]>
                 <select name="editval[oxdiscount__oxaddsumtype]" class="editinput" onChange="Javascript:ChangeDiscountType(this);" [{ $readonly }]>
                 [{foreach from=$sumtype item=sum}]
                 <option value="[{ $sum }]" [{ if $sum == $edit->oxdiscount__oxaddsumtype->value}]SELECTED[{/if}]>[{ $sum }]</option>

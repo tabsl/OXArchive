@@ -1,5 +1,15 @@
 [{include file="headitem.tpl" title="SHOWLIST_TITLE"|oxmultilangassign box=" "}]
 
+[{assign var="where" value=$oView->getListFilter()}]
+[{assign var="whereparam" value=""}]
+[{foreach from=$where item=aField key=sTable}]
+  [{foreach from=$aField item=sFilter key=sField}]
+    [{assign var="whereparam" value=$whereparam|cat:"where["|cat:$sTable|cat:"]["|cat:$sField|cat:"]="|cat:$sFilter|cat:"&amp;"}]
+  [{/foreach}]
+[{/foreach}]
+[{assign var="viewListSize" value=$oView->getViewListSize()}]
+[{assign var="whereparam" value=$whereparam|cat:"viewListSize="|cat:$viewListSize}]
+
 <script type="text/javascript">
 <!--
 function editThis ( sID )
@@ -52,8 +62,8 @@ function changeLanguage()
 //-->
 </script>
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="">
     <input type="hidden" name="updatelist" value="1">
@@ -68,10 +78,9 @@ function changeLanguage()
 [{/if}]
 
 <div id="liste">
-<form name="showlist" id="showlist" action="[{ $shop->selflink }]" method="post">
-[{ $shop->hiddensid }]
+<form name="showlist" id="showlist" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="list_review">
-<input type="hidden" name="sort" value="">
 <input type="hidden" name="language" value="[{ $actlang }]">
 <input type="hidden" name="editlanguage" value="[{ $actlang }]">
 
@@ -80,12 +89,12 @@ function changeLanguage()
 <tr>
     <td class="listfilter first">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxreviews.oxcreate]" value="[{ $where->oxreviews__oxcreate }]">
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxreviews][oxcreate]" value="[{ $where.oxreviews.oxcreate }]">
         </div></div>
     </td>
     <td class="listfilter">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxreviews.oxtext]" value="[{ $where->oxreviews__oxtext }]">
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxreviews][oxtext]" value="[{ $where.oxreviews.oxtext }]">
         </div></div>
     </td>
     <td class="listfilter" nowrap>
@@ -104,16 +113,16 @@ function changeLanguage()
             <input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]">
         </div>
 
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[[{$articleListTable}].oxtitle]" value="[{ $where->oxarticles__oxtitle }]">
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxarticles][oxtitle]" value="[{ $where.oxarticles.oxtitle }]">
 
         </div>
       </div>
     </td>
 </tr>
 <tr>
-    <td class="listheader first"><a href="javascript:document.forms.showlist.sort.value='oxreviews.oxcreate';document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxcreate" }]</a></td>
-    <td class="listheader"><a href="javascript:document.forms.showlist.sort.value='oxreviews.oxtext';document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxtext" }]</a></td>
-    <td class="listheader"><a href="javascript:document.forms.showlist.sort.value='arttitle ';document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxtitle" }]</a></td>
+    <td class="listheader first"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxreviews', 'oxcreate', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxcreate" }]</a></td>
+    <td class="listheader"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxreviews', 'oxtext', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxtext" }]</a></td>
+    <td class="listheader"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, '', 'arttitle', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpreviewlistoxtitle" }]</a></td>
 </tr>
 
 [{assign var="blWhite" value=""}]

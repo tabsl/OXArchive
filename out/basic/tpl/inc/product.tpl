@@ -1,3 +1,4 @@
+[{assign var="currency" value=$oView->getActCurrency()}]
 <div [{if $test_Cntr}]id="test_cntr_[{$test_Cntr}]_[{$product->oxarticles__oxartnum->value}]"[{/if}] class="product hproduct[{if $head}] head[{/if}] [{$size|default:''}] [{$class|default:''}]">
     [{if $showMainLink}]
         [{assign var='_productLink' value=$product->getMainLink()}]
@@ -22,12 +23,16 @@
         <a id="test_title_[{$testid}]" class="fn" href="[{ $_productLink }]" rel="product[{if $oView->noIndex() }] nofollow[{/if}]">[{$product->oxarticles__oxtitle->value}] [{$product->oxarticles__oxvarselect->value}]</a>
         <br>
         <tt class="identifier" id="test_no_[{$testid}]">
-            [{if $product->oxarticles__oxweight->value }]
-            <span class="type" title="weight">[{ oxmultilang ident="INC_PRODUCTITEM_ARTWEIGHT" }]</span>
-            <span class="value">[{ $product->oxarticles__oxweight->value }] [{ oxmultilang ident="INC_PRODUCTITEM_ARTWEIGHT2" }]</span>
+            [{if $product->getPricePerUnit()}]
+                <div id="test_product_price_unit_[{$testid}]" class="pperunit">
+                    [{$product->oxarticles__oxunitquantity->value}] [{$product->oxarticles__oxunitname->value}] | [{$product->getPricePerUnit()}] [{ $currency->sign}]/[{$product->oxarticles__oxunitname->value}]
+                </div>
+            [{elseif $product->oxarticles__oxweight->value  }]
+                <span class="type" title="weight">[{ oxmultilang ident="INC_PRODUCTITEM_ARTWEIGHT" }]</span>
+                <span class="value">[{ $product->oxarticles__oxweight->value }] [{ oxmultilang ident="INC_PRODUCTITEM_ARTWEIGHT2" }]</span>
             [{else}]
-            <span class="type" title="sku">[{ oxmultilang ident="INC_PRODUCTITEM_ARTNOMBER2" }]</span>
-            <span class="value">[{ $product->oxarticles__oxartnum->value }]</span>
+                <span class="type" title="sku">[{ oxmultilang ident="INC_PRODUCTITEM_ARTNOMBER2" }]</span>
+                <span class="value">[{ $product->oxarticles__oxartnum->value }]</span>
             [{/if}]
         </tt>
 
@@ -47,8 +52,8 @@
 
     <div [{if $test_Cntr}]id="test_cntr_[{$test_Cntr}]"[{/if}] class="actions">
         <a id="test_details_[{$testid}]" href="[{ $_productLink }]"[{if $oView->noIndex() }] rel="nofollow"[{/if}]>[{ oxmultilang ident="INC_PRODUCTITEM_MOREINFO2" }]</a>
-        [{if $isfiltering && $oViewConf->getShowCompareList()}]
-            [{oxid_include_dynamic file="dyn/compare_links.tpl" testid="_`$testid`" type="compare" aid=$product->oxarticles__oxid->value anid=$altproduct in_list=$product->blIsOnComparisonList page=$pageNavigation->actPage-1 text_to_id="INC_PRODUCTITEM_COMPARE2" text_from_id="INC_PRODUCTITEM_REMOVEFROMCOMPARELIST2"}]
+        [{if $oViewConf->getShowCompareList()}]
+            [{oxid_include_dynamic file="dyn/compare_links.tpl" testid="_`$testid`" type="compare" aid=$product->oxarticles__oxid->value anid=$altproduct in_list=$product->isOnComparisonList() page=$oView->getActPage() text_to_id="INC_PRODUCTITEM_COMPARE2" text_from_id="INC_PRODUCTITEM_REMOVEFROMCOMPARELIST2"}]
         [{/if}]
     </div>
 
@@ -67,6 +72,7 @@
             [{else}]
               <big>&nbsp;</big>
             [{/if}]
+
         </div>
     [{/oxhasrights}]
     [{/capture}]
@@ -76,9 +82,7 @@
     <div class="variants">
     [{ $oViewConf->getHiddenSid() }]
     [{ $oViewConf->getNavFormParams() }]
-
     <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
-
     [{if $owishid}]
       <input type="hidden" name="owishid" value="[{$owishid}]">
     [{/if}]
@@ -96,51 +100,49 @@
     [{/if}]
 
     [{if $recommid}]
-    <input type="hidden" name="recommid" value="[{ $recommid }]">
+        <input type="hidden" name="recommid" value="[{ $recommid }]">
     [{/if}]
-    <input type="hidden" name="pgNr" value="[{ $pageNavigation->actPage-1 }]">
+    <input type="hidden" name="pgNr" value="[{ $oView->getActPage() }]">
 
     [{if $size!='thin' && $size!='thinest'}]
     <input id="test_am_[{$testid}]" type="hidden" name="am" value="1">
     [{/if}]
 
-    [{ if $product->getVariantList() && ($size!='thinest') }]
-      <label>[{ $product->oxarticles__oxvarname->value }]:</label>
+    [{if $product->getVariantList() && ($size!='thinest') }]
+        <label>[{ $product->oxarticles__oxvarname->value }]:</label>
 
-      [{ if $product->hasMdVariants() }]
-      <select id="mdVariant_[{$testid}]" name="mdVariant_[{$testid}]">
-        [{ if !$product->isParentNotBuyable()}]
-          <option value="[{$product->getId()}]">[{ $product->oxarticles__oxvarselect->value }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $product->getFPrice() }] [{ $currency->sign|strip_tags}]*[{/oxhasrights}]</option>
+        [{if $product->hasMdVariants() }]
+            <select id="mdVariant_[{$testid}]" name="mdVariant_[{$testid}]">
+            [{if !$product->isParentNotBuyable()}]
+              <option value="[{$product->getId()}]">[{ $product->oxarticles__oxvarselect->value }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $product->getFPrice() }] [{ $currency->sign|strip_tags}]*[{/oxhasrights}]</option>
+            [{/if}]
+
+            [{foreach from=$product->getMdSubvariants() item=mdVariant}]
+              <option value="[{$mdVariant->getLink()}]">[{ $mdVariant->getName() }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $mdVariant->getFPrice()|strip_tags }]* [{/oxhasrights}]</option>
+            [{/foreach}]
+            </select>
+        [{else}]
+            <select id="varSelect_[{$testid}]" name="aid">
+            [{ if !$product->isParentNotBuyable()}]
+                <option value="[{$product->getId()}]">[{ $product->oxarticles__oxvarselect->value }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $product->getFPrice() }] [{ $currency->sign|strip_tags}]*[{/oxhasrights}]</option>
+            [{/if}]
+            [{foreach from=$product->getVariantList() item=variant}]
+                <option value="[{$variant->getId()}]">[{ $variant->oxarticles__oxvarselect->value }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $variant->getFPrice() }] [{ $currency->sign|strip_tags}]* [{/oxhasrights}]</option>
+            [{/foreach}]
+            </select>
         [{/if}]
-
-        [{foreach from=$product->getMdSubvariants() item=mdVariant}]
-          <option value="[{$mdVariant->getLink()}]">[{ $mdVariant->getName() }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $mdVariant->getFPrice()|strip_tags }]* [{/oxhasrights}]</option>
-        [{/foreach}]
-      </select>
-      [{else}]
-      <select id="test_varSelect_[{$testid}]" name="aid">
-        [{ if !$product->isParentNotBuyable()}]
-          <option value="[{$product->getId()}]">[{ $product->oxarticles__oxvarselect->value }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $product->getFPrice() }] [{ $currency->sign|strip_tags}]*[{/oxhasrights}]</option>
-        [{/if}]
-        [{foreach from=$product->getVariantList() item=variant}]
-          <option value="[{$variant->getId()}]">[{ $variant->oxarticles__oxvarselect->value }] [{oxhasrights ident="SHOWARTICLEPRICE"}] [{ $variant->getFPrice() }] [{ $currency->sign|strip_tags}]* [{/oxhasrights}]</option>
-        [{/foreach}]
-      </select>
-      [{/if}]
-
     [{elseif $product->getDispSelList()}]
-      [{foreach key=iSel from=$product->selectlist item=oList}]
+        [{foreach key=iSel from=$product->getDispSelList() item=oList}]
         <label>[{ $oList.name }] :</label>
-        <select id="test_sellist_[{$testid}]_[{$iSel}]" name="sel[[{$iSel}]]" onchange="oxid.sellist.set(this.name,this.value);">
+        <select id="selectList_[{$testid}]_[{$iSel}]" name="sel[[{$iSel}]]" onchange="oxid.sellist.set(this.name,this.value);">
           [{foreach key=iSelIdx from=$oList item=oSelItem}]
             [{ if $oSelItem->name }]
               <option value="[{$iSelIdx}]"[{if $oSelItem->selected }]SELECTED[{/if }]>[{ $oSelItem->name }]</option>
             [{/if}]
           [{/foreach}]
         </select>
-      [{/foreach}]
+        [{/foreach}]
     [{/if}]
-
     </div>
 
     [{if $size!='big'}] [{$smarty.capture.product_price}] [{/if}]
@@ -165,7 +167,7 @@
 
     </form>
 
-    [{if $removeFunction && (($owishid && ($owishid==$oxcmp_user->oxuser__oxid->value)) || (($wishid==$oxcmp_user->oxuser__oxid->value))) }]
+    [{if $removeFunction && (($owishid && ($owishid==$oxcmp_user->oxuser__oxid->value)) || (($oView->getWishlistUserId()==$oxcmp_user->oxuser__oxid->value))) }]
     <form action="[{ $oViewConf->getSelfActionLink() }]" method="post">
       <div>
           [{ $oViewConf->getHiddenSid() }]
@@ -180,6 +182,8 @@
       </div>
     </form>
     [{/if}]
+
+
 
     [{if $removeFunction && $recommid }]
     <form action="[{ $oViewConf->getSelfActionLink() }]" method="post">

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: links.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: links.php 32930 2011-02-04 16:08:29Z vilma $
  */
 
 /**
@@ -34,31 +34,13 @@ class Links extends oxUBase
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'links.tpl';
+    protected $_sThisTemplate = 'page/info/links.tpl';
 
     /**
      * Links list.
      * @var object
      */
     protected $_oLinksList = null;
-
-    /**
-     * Executes parent::render(), loads links list and passes it to
-     * template engine. Returns name of template to render links::_sThisTemplate.
-     *
-     * Template variables:
-     * <b>linkslist</b>
-     *
-     * @return  string  $this->_sThisTemplate   current template file name
-     */
-    public function render()
-    {
-        parent::render();
-
-        $this->_aViewData['linkslist'] = $this->getLinksList();
-
-        return $this->_sThisTemplate;
-    }
 
     /**
      * Template variable getter. Returns links list
@@ -76,6 +58,18 @@ class Links extends oxUBase
             $this->_oLinksList = $oLinksList;
         }
         return $this->_oLinksList;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths[]['title'] = oxLang::getInstance()->translateString( 'PAGE_INFO_LINKS_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
+
+        return $aPaths;
     }
 
 }

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account_newsletter.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: account_newsletter.php 32923 2011-02-04 14:35:22Z vilma $
  */
 
 /**
@@ -34,7 +34,7 @@ class Account_Newsletter extends Account
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'account_newsletter.tpl';
+    protected $_sThisTemplate = 'page/account/newsletter.tpl';
 
     /**
      * Whether the newsletter option had been changed.
@@ -55,13 +55,11 @@ class Account_Newsletter extends Account
      * or if user is allready logged in - returns name of template
      * Account_Newsletter::_sThisTemplate
      *
-     * Template variables:
-     * <b>blnewsletter</b>, <b>actshop</b>
-     *
      * @return string
      */
     public function render()
     {
+
         parent::render();
 
         // is logged in ?
@@ -69,12 +67,6 @@ class Account_Newsletter extends Account
         if ( !$oUser ) {
             return $this->_sThisTemplate = $this->_sThisLoginTemplate;
         }
-
-        //to maintain compatibility we still set the old template variable using new getter in render
-        $this->_aViewData['blnewsletter'] = $this->isNewsletter();
-
-        //loading shop info
-        $this->_aViewData['actshop'] = $this->getConfig()->getActiveShop();
 
         return $this->_sThisTemplate;
     }
@@ -128,14 +120,6 @@ class Account_Newsletter extends Account
             $oSubscription->setOptInStatus( 1 );
             $this->_iSubscriptionStatus = 1;
         }
-
-        //to maintain compatibility we still set the old template variable using new getter
-        if ( $this->getSubscriptionStatus() == 1) {
-            $this->_aViewData['blsubscribed'] = true;
-        }
-        if ( $this->getSubscriptionStatus() == -1) {
-            $this->_aViewData['blsubscribed'] = false;
-        }
     }
 
     /**
@@ -147,5 +131,24 @@ class Account_Newsletter extends Account
     public function getSubscriptionStatus()
     {
         return $this->_iSubscriptionStatus;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_MY_ACCOUNT', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_NEWSLETTER_SETTINGS', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 }

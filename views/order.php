@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: order.php 29252 2010-08-06 13:40:48Z arvydas $
+ * @version   SVN: $Id: order.php 33087 2011-02-09 12:37:33Z arvydas.vapsva $
  */
 
 /**
@@ -107,7 +107,7 @@ class order extends oxUBase
      *
      * @var string
      */
-    protected $_sThisTemplate = 'order.tpl';
+    protected $_sThisTemplate = 'page/checkout/order.tpl';
 
     /**
      * Order step marker
@@ -149,11 +149,6 @@ class order extends oxUBase
      * data (oxorder::getDelAddressInfo()) and delivery sets info (oxorder::getShipping()).
      * Returns name of template to render order::_sThisTemplate.
      *
-     * Template variables:
-     * <b>payment</b>, <b>execute_fnc</b>, <b>order_remark</b>,
-     * <b>basketitemlist</b>, <b>iplog</b>,<b>oDelAdress</b>,
-     * <b>oShipSet</b>, <b>blConfirmAGB</b>
-     *
      * @return string
      */
     public function render()
@@ -184,35 +179,10 @@ class order extends oxUBase
 
         parent::render();
 
-        $this->_aViewData['payment']     = $this->getPayment();
-        $this->_aViewData['execute_fnc'] = $this->getExecuteFnc();
-
-        // user order remark
-        $this->_aViewData['order_remark'] = $this->getOrderRemark();
-
-        // passing basket articles
-        $this->_aViewData['basketitemlist'] = $this->getBasketArticles();
-
         // reload blocker
         if ( !oxSession::getVar( 'sess_challenge' ) ) {
             oxSession::setVar( 'sess_challenge', oxUtilsObject::getInstance()->generateUID() );
         }
-
-        // passing delivery address information
-        $this->_aViewData['oDelAdress'] = $this->getDelAddress();
-
-        // multiple shipping options
-        $this->_aViewData['oShipSet'] = $this->getShipSet();
-
-        //config options ( what order confirmation checkboxes must be displayed )
-        $this->_aViewData['blConfirmAGB']      = $this->isConfirmAGBActive();
-        $this->_aViewData['blConfirmCustInfo'] = $this->isConfirmCustInfoActive();
-
-        $this->_aViewData['agb_err']      = $this->isConfirmAGBError();
-        $this->_aViewData['custinfo_err'] = $this->isConfirmCustInfoError();
-
-        // for old templates
-        $this->_aViewData['iswishlist'] = (bool) $this->_aViewData['iswishlist'] & $this->isWrapping();
 
         return $this->_sThisTemplate;
     }
@@ -225,9 +195,6 @@ class order extends oxUBase
      * (oxorder::finalizeOrder()). According to sum for items automatically assigns user to
      * special user group ( oxuser::onOrderExecute(); if this option is not disabled in
      * admin). Finally you will be redirected to next page (order::_getNextStep()).
-     *
-     * Template variables:
-     * <b>agb_err</b>, <b>custinfo_err</b>
      *
      * @return string
      */
@@ -337,14 +304,14 @@ class order extends oxUBase
 
             // payment is set ?
             $sPaymentid = $oBasket->getPaymentId();
-            $aDynvalue  = oxConfig::getParameter( 'dynvalue' );
             $oPayment   = oxNew( 'oxpayment' );
 
-            //getting basket price form payment
-            $dBasketPrice = $oBasket->getPriceForPayment();
-
             if ( $sPaymentid && $oPayment->load( $sPaymentid ) &&
-                $oPayment->isValidPayment( $aDynvalue, $this->getConfig()->getShopId(), $oUser, $dBasketPrice, oxConfig::getParameter( 'sShipSet' ) ) ) {
+                $oPayment->isValidPayment( oxSession::getVar( 'dynvalue' ),
+                                           $this->getConfig()->getShopId(),
+                                           $oUser,
+                                           $oBasket->getPriceForPayment(),
+                                           oxSession::getVar( 'sShipSet' ) ) ) {
                 $this->_oPayment = $oPayment;
             }
         }
@@ -530,5 +497,22 @@ class order extends oxUBase
         }
 
         return (bool) $this->_iWrapCnt;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_CHECKOUT_ORDER', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 }

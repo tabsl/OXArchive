@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: actions_list.php 28470 2010-06-19 12:49:59Z arvydas $
+ * @version   SVN: $Id: actions_list.php 31961 2010-12-17 13:59:10Z sarunas $
  */
 
 /**
@@ -49,7 +49,7 @@ class Actions_List extends oxAdminList
      *
      * @var string
      */
-    protected $_sDefSort = 'oxactions.oxtitle';
+    protected $_sDefSortField = 'oxtitle';
 
     /**
      * Calls parent::render() and returns name of template to render

@@ -34,8 +34,8 @@ function editThis( sID )
 [{/if}]
 
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="article_stock">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
@@ -44,8 +44,8 @@ function editThis( sID )
 
 
         <table cellspacing="0" cellpadding="0" border="0" style="width:100%;">
-        <form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
-        [{ $shop->hiddensid }]
+        <form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post">
+        [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="cl" value="article_stock">
         <input type="hidden" name="fnc" value="">
         <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -174,7 +174,6 @@ function editThis( sID )
           </td>
     <!-- Anfang rechte Seite -->
           <td valign="top" class="edittext" style="padding-top:10px;padding-left:10px;width:50%">
-          [{ if $isstaffelpreis }]
             <fieldset title="[{ oxmultilang ident="ARTICLE_STOCK_AMOUNTPRICE_TITLE" }]" style="padding-left: 5px; padding-right: 5px;">
             <legend>[{ oxmultilang ident="ARTICLE_STOCK_AMOUNTPRICE_TITLE" }]</legend><br>
             <table cellspacing="0" cellpadding="1" border="0" >
@@ -198,7 +197,7 @@ function editThis( sID )
                   [{/if}]
                 </td>
                 <td class=listitem[{$oddclass}]>
-                  <a href="[{ $shop->selflink }]&cl=article_stock&priceid=[{$amountprice->oxprice2article__oxid->value}]&fnc=deleteprice&oxid=[{$oxid}]" onClick='return confirm("Wollen Sie diesen Eintrag wirklich l�schen ?")' class="delete"></a>
+                  <a href="[{ $oViewConf->getSelfLink() }]&cl=article_stock&priceid=[{$amountprice->oxprice2article__oxid->value}]&fnc=deleteprice&oxid=[{$oxid}]" onClick='return confirm("Wollen Sie diesen Eintrag wirklich l�schen ?")' class="delete"></a>
                 </td>
               </tr>
             [{/foreach}]
@@ -245,7 +244,6 @@ function editThis( sID )
                 </td>
               </tr>
             </table>
-            [{/if}]
           </td>
         </tr>
         </form>

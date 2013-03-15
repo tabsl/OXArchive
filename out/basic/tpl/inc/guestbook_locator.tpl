@@ -1,4 +1,4 @@
-
+[{assign var="pageNavigation" value=$oView->getPageNavigation()}]
   <div class="locator">
     [{if $pageNavigation->NrOfPages > 1}]
       <div class="lochead">
@@ -24,7 +24,7 @@
            <div class="left">
                [{ oxmultilang ident="INC_GUESTBOOK_LOCATOR_ENTRIESPERPAGE" }]
                [{foreach from=$oViewConf->getNrOfCatArticles() item=iArtPerPage}]
-                 <a href="[{ $oViewConf->getSelfLink() }]tpl=[{$tpl}]&amp;_artperpage=[{$iArtPerPage}]&amp;[{$additionalparams}]" class="[{if $oViewConf->getArtPerPageCount() == $iArtPerPage}]active[{/if}]" rel="nofollow">[{$iArtPerPage}]</a>
+                 <a href="[{ $oViewConf->getSelfLink() }]tpl=[{$oViewConf->getActTplName()}]&amp;_artperpage=[{$iArtPerPage}]&amp;[{$oView->getAdditionalParams()}]" class="[{if $oViewConf->getArtPerPageCount() == $iArtPerPage}]active[{/if}]" rel="nofollow">[{$iArtPerPage}]</a>
                [{/foreach}]
            </div>
            <div class="right">

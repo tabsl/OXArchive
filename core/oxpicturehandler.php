@@ -173,7 +173,7 @@ class oxPictureHandler extends oxSuperCfg
         $myUtilsPic = oxUtilsPic::getInstance();
         $oUtilsFile = oxUtilsFile::getInstance();
 
-        $sAbsDynImageDir = $myConfig->getAbsDynImageDir();
+        $sAbsDynImageDir = $myConfig->getPictureDir(false);
         $sMasterImage = basename( $oObject->{"oxarticles__oxpic".$iIndex}->value );
 
         if ( !$sMasterImage || $sMasterImage == "nopic.jpg" ) {
@@ -193,7 +193,7 @@ class oxPictureHandler extends oxSuperCfg
                           "sFileName" => $sMasterImage);
         }
 
-        $blDeleted = $myUtilsPic->safePictureDelete( $aPic["sFileName"], $myConfig->getAbsDynImageDir() . $aPic["sDir"], "oxarticles", $aPic["sField"] );
+        $blDeleted = $myUtilsPic->safePictureDelete( $aPic["sFileName"], $myConfig->getPictureDir(false) . $aPic["sDir"], "oxarticles", $aPic["sField"] );
 
         if ( $blDeleted ) {
             $this->deleteZoomPicture( $oObject, $iIndex );
@@ -225,7 +225,7 @@ class oxPictureHandler extends oxSuperCfg
                 }
             }
             foreach ( $aDelPics as $aPic ) {
-                $myUtilsPic->safePictureDelete( $aPic["sFileName"], $myConfig->getAbsDynImageDir() . $aPic["sDir"], "oxarticles", $aPic["sField"] );
+                $myUtilsPic->safePictureDelete( $aPic["sFileName"], $myConfig->getPictureDir(false) . $aPic["sDir"], "oxarticles", $aPic["sField"] );
             }
         }
 
@@ -260,7 +260,7 @@ class oxPictureHandler extends oxSuperCfg
         }
 
         $aDelPics = array();
-        $sAbsDynImageDir = $myConfig->getAbsDynImageDir();
+        $sAbsDynImageDir = $myConfig->getPictureDir(false);
 
         $aDelPics = array();
 
@@ -269,7 +269,7 @@ class oxPictureHandler extends oxSuperCfg
                       "sDir"      => $oUtilsFile->getImageDirByType( "ICO" ),
                       "sFileName" => $sMainIcon);
 
-        $myUtilsPic->safePictureDelete( $aPic["sFileName"], $myConfig->getAbsDynImageDir() . $aPic["sDir"], "oxarticles", $aPic["sField"] );
+        $myUtilsPic->safePictureDelete( $aPic["sFileName"], $myConfig->getPictureDir(false) . $aPic["sDir"], "oxarticles", $aPic["sField"] );
     }
 
     /**
@@ -287,7 +287,7 @@ class oxPictureHandler extends oxSuperCfg
         $oUtilsFile = oxUtilsFile::getInstance();
 
         $aDelPics = array();
-        $sAbsDynImageDir = $myConfig->getAbsDynImageDir();
+        $sAbsDynImageDir = $myConfig->getPictureDir(false);
         $sThumb = $oObject->oxarticles__oxthumb->value;
 
         if ( !$sThumb ) {
@@ -301,7 +301,7 @@ class oxPictureHandler extends oxSuperCfg
                       "sDir"      => $oUtilsFile->getImageDirByType( "TH" ),
                       "sFileName" => $sThumb);
 
-        $myUtilsPic->safePictureDelete( $aPic["sFileName"], $myConfig->getAbsDynImageDir() . $aPic["sDir"], "oxarticles", $aPic["sField"] );
+        $myUtilsPic->safePictureDelete( $aPic["sFileName"], $myConfig->getPictureDir(false) . $aPic["sDir"], "oxarticles", $aPic["sField"] );
     }
 
     /**
@@ -339,7 +339,7 @@ class oxPictureHandler extends oxSuperCfg
         $oUtilsFile = oxUtilsFile::getInstance();
 
         $aDelPics = array();
-        $sAbsDynImageDir = $myConfig->getAbsDynImageDir();
+        $sAbsDynImageDir = $myConfig->getPictureDir(false);
 
         if ( !$sZoomPicName ) {
             return;
@@ -352,7 +352,7 @@ class oxPictureHandler extends oxSuperCfg
                       "sDir"      => $oUtilsFile->getImageDirByType( "Z".$iIndex ),
                       "sFileName" => $sZoomPicName);
 
-        $myUtilsPic->safePictureDelete( $aPic["sFileName"], $myConfig->getAbsDynImageDir() . $aPic["sDir"], "oxarticles", $aPic["sField"] );
+        $myUtilsPic->safePictureDelete( $aPic["sFileName"], $myConfig->getPictureDir(false) . $aPic["sDir"], "oxarticles", $aPic["sField"] );
     }
 
     /**

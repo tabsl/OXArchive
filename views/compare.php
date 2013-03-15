@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: compare.php 29553 2010-08-27 14:48:10Z sarunas $
+ * @version   SVN: $Id: compare.php 33071 2011-02-09 09:14:01Z linas.kukulskis $
  */
 
 /**
@@ -86,7 +86,7 @@ class Compare extends oxUBase
      * Sign if to load and show top5articles action
      * @var bool
      */
-    protected $_blTop5Action = true;
+    protected $_blTop5Action = false;
 
     /**
      * Sign if to load and show bargain action
@@ -95,51 +95,17 @@ class Compare extends oxUBase
     protected $_blBargainAction = true;
 
     /**
+     * Show tags cloud
+     * @var bool
+     */
+    protected $_blShowTagCloud = false;
+
+
+    /**
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'compare.tpl';
-
-    /**
-     * Executes parent::render(). If filtering module is available loads
-     * comparable product list. Returns name of template to render
-     * compare::_sThisTemplate
-     *
-     * Template variables:
-     * <b>articlelist</b>, <b>allartattr</b>, <b>pageNavigation</b>, <b>pgNr</b>
-     *
-     * @return string   $this->_sThisTemplate   current template file name
-     */
-    public function render()
-    {
-        parent::render();
-
-        //add amount of compared items to view data
-        $this->_aViewData['oxcmp_compare'] = $this->getCompareItemsCnt();
-
-        $this->getCompArtList();
-        // load article list in comparison
-        $this->_aViewData['articlelist'] = $this->getCompArtList();
-
-        // load all attributes for articles
-        $this->_aViewData['allartattr'] = $this->getAttributeList();
-
-        // page navigation object
-        $this->_aViewData['pageNavigation'] = $this->getPageNavigation();
-
-        $this->_aViewData['pgNr'] = $this->getActPage();
-
-        // recomm products list
-        $this->_aViewData['similarrecommlist']  = $this->getSimilarRecommLists();
-
-        // calculating amount of orders made by user
-        $this->_aViewData['iordersmade'] = $this->getOrderCnt();
-
-        // loading actions
-        $this->_loadActions();
-
-        return $this->_sThisTemplate;
-    }
+    protected $_sThisTemplate = 'page/compare/compare.tpl';
 
     /**
      * moves current article to the left in compare items array
@@ -253,9 +219,13 @@ class Compare extends oxUBase
      */
     public function getCompareItems()
     {
+        
         if ( $this->_aCompItems === null ) {
-            $aItems = oxConfig::getParameter( 'aFiltcompproducts' );
+            
+            $aItems = oxSession::getVar( 'aFiltcompproducts' );
+            
             if ( is_array( $aItems ) && count( $aItems ) ) {
+                
                 $this->_aCompItems = $aItems;
             }
         }
@@ -276,6 +246,29 @@ class Compare extends oxUBase
     }
 
     /**
+     *  $_iArticlesPerPage setter
+     *
+     * @param int $iNumber article count in compare page
+     *
+     * @return null
+     */
+    protected function _setArticlesPerPage( $iNumber)
+    {
+        $this->_iArticlesPerPage = $iNumber;
+    }
+
+    /**
+     *  turn off paging
+     *
+     * @return null
+     */
+    public function setNoPaging()
+    {
+        $this->_setArticlesPerPage(0);
+    }
+
+
+    /**
      * Template variable getter. Returns comparison's article
      * list in order per page
      *
@@ -283,20 +276,32 @@ class Compare extends oxUBase
      */
     public function getCompArtList()
     {
+        
+        
         if ( $this->_oArtList === null ) {
-            if ( $aItems = $this->getCompareItems()) {
-                // counts how many pages
-                $oList = oxNew( 'oxarticlelist' );
-                $oList->loadIds( array_keys( $aItems ) );
-                $this->_iCntPages = round( $oList->count() / $this->_iArticlesPerPage + 0.49 );
 
-                // cut page articles
-                if ( $this->_iArticlesPerPage > 0 ) {
-                    $aItems = $this->_removeArticlesFromPage( $aItems, $oList );
-                }
+
+            if ( $aItems = $this->getCompareItems()) {
+
+
+                $oList = oxNew( 'oxarticlelist' );
+
+
+                // counts how many pages
+                $oList->loadIds( array_keys( $aItems ) );
+
+                    // cut page articles
+                    if ( $this->_iArticlesPerPage > 0 ) {
+                        $this->_iCntPages = round( $oList->count() / $this->_iArticlesPerPage + 0.49 );
+                        $aItems = $this->_removeArticlesFromPage( $aItems, $oList );
+                    }
+
                 $this->_oArtList = $this->_changeArtListOrder( $aItems, $oList );
+
             }
         }
+
+
         return $this->_oArtList;
     }
 
@@ -425,6 +430,25 @@ class Compare extends oxUBase
             }
         }
         return $this->_iOrderCnt;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_MY_ACCOUNT', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_PRODUCT_COMPARE_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 
 }

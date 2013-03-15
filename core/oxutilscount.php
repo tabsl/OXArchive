@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilscount.php 28606 2010-06-23 14:04:35Z tomas $
+ * @version   SVN: $Id: oxutilscount.php 31954 2010-12-17 13:33:40Z sarunas $
  */
 
 /**
@@ -344,17 +344,16 @@ class oxUtilsCount extends oxSuperCfg
      */
     public function getTagArticleCount( $sTag, $iLang )
     {
-        $sLangExt = oxLang::getInstance()->getLanguageTag( $iLang );
         $oDb = oxDb::getDb();
 
         $oArticle = oxNew("oxarticle");
         $sArticleTable  = $oArticle->getViewName();
         $sActiveSnippet = $oArticle->getSqlActiveSnippet();
+        $sViewName = getViewName( 'oxartextends', $iLang );
 
-        $sQ = "select count(*) from oxartextends inner join {$sArticleTable}
-               on {$sArticleTable}.oxid = oxartextends.oxid where {$sActiveSnippet}
-               and {$sArticleTable}.oxissearch = 1
-               and match(oxartextends.oxtags{$sLangExt})
+        $sQ = "select count(*) from {$sViewName} inner join {$sArticleTable}
+               on {$sArticleTable}.oxid = {$sViewName}.oxid where {$sActiveSnippet}
+               and {$sArticleTable}.oxissearch = 1 and match( {$sViewName}.oxtags )
                against ( ".$oDb->quote( $sTag )." IN BOOLEAN MODE ) ";
 
         return $oDb->getOne( $sQ );

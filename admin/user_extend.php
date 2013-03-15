@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: user_extend.php 27019 2010-04-06 06:45:49Z arvydas $
+ * @version   SVN: $Id: user_extend.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -40,7 +40,7 @@ class User_Extend extends oxAdminDetails
     {
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid" );
+        $soxId = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId ) ) {
             // load object
             $oUser = oxNew( "oxuser" );
@@ -69,7 +69,7 @@ class User_Extend extends oxAdminDetails
     public function save()
     {
 
-        $soxId = oxConfig::getParameter( "oxid" );
+        $soxId = $this->getEditObjectId();
 
         if ( !$this->_allowAdminEdit( $soxId ) )
             return false;
@@ -97,8 +97,6 @@ class User_Extend extends oxAdminDetails
         $oUser->save();
 
         // set oxid if inserted
-        if ( $soxId == "-1" ) {
-            oxSession::setVar( "saved_oxid", $oUser->getId() );
-        }
+        $this->setEditObjectId( $oUser->getId() );
     }
 }

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: delivery_main.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: delivery_main.php 33196 2011-02-11 08:55:06Z arvydas.vapsva $
  */
 
 /**
@@ -52,33 +52,23 @@ class Delivery_Main extends oxAdminDetails
         // Deliverytypes
         $aDelTypes = array();
         $oType = new oxStdClass();
-        $oType->typ     = "a";      // amount
-        $oType->Desc    = $oLang->translateString( "amount", $iLang );
+        $oType->sType     = "a";      // amount
+        $oType->sDesc    = $oLang->translateString( "amount", $iLang );
         $aDelTypes['a'] = $oType;
         $oType = new oxStdClass();
-        $oType->typ     = "s";      // Size
-        $oType->Desc    = $oLang->translateString( "size", $iLang );
+        $oType->sType     = "s";      // Size
+        $oType->sDesc    = $oLang->translateString( "size", $iLang );
         $aDelTypes['s'] = $oType;
         $oType = new oxStdClass();
-        $oType->typ     = "w";      // Weight
-        $oType->Desc    = $oLang->translateString( "weight", $iLang );
+        $oType->sType     = "w";      // Weight
+        $oType->sDesc    = $oLang->translateString( "weight", $iLang );
         $aDelTypes['w'] = $oType;
         $oType = new oxStdClass();
-        $oType->typ     = "p";      // Price
-        $oType->Desc    = $oLang->translateString( "price", $iLang );
+        $oType->sType     = "p";      // Price
+        $oType->sDesc    = $oLang->translateString( "price", $iLang );
         $aDelTypes['p'] = $oType;
 
-        $soxId = oxConfig::getParameter( "oxid");
-        // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($soxId == "-1" || !isset( $soxId)) && isset( $sSavedID) ) {
-            $soxId = $sSavedID;
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $soxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
-        }
-
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId)) {
             // load object
             $oDelivery = oxNew( "oxdelivery" );
@@ -132,7 +122,7 @@ class Delivery_Main extends oxAdminDetails
     public function save()
     {
 
-        $soxId   = oxConfig::getParameter( "oxid");
+        $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");
 
             // shopid
@@ -163,12 +153,9 @@ class Delivery_Main extends oxAdminDetails
         $oDelivery->setLanguage($this->_iEditLang);
         $oDelivery = oxUtilsFile::getInstance()->processFiles( $oDelivery );
         $oDelivery->save();
-        $this->_aViewData["updatelist"] = "1";
 
         // set oxid if inserted
-        if ( $soxId == "-1") {
-            oxSession::setVar( "saved_oxid", $oDelivery->oxdelivery__oxid->value);
-        }
+        $this->setEditObjectId( $oDelivery->getId() );
     }
 
     /**
@@ -178,8 +165,8 @@ class Delivery_Main extends oxAdminDetails
      */
     public function saveinnlang()
     {
-        $soxId     = oxConfig::getParameter( "oxid");
-        $aParams   = oxConfig::getParameter( "editval");
+        $soxId = $this->getEditObjectId();
+        $aParams = oxConfig::getParameter( "editval");
 
             // shopid
             $sShopID = oxSession::getVar( "actshop");
@@ -207,11 +194,8 @@ class Delivery_Main extends oxAdminDetails
         $oDelivery->setLanguage($this->_iEditLang);
         $oDelivery = oxUtilsFile::getInstance()->processFiles( $oDelivery );
         $oDelivery->save();
-        $this->_aViewData["updatelist"] = "1";
 
         // set oxid if inserted
-        if ( $soxId == "-1") {
-            oxSession::setVar( "saved_oxid", $oDelivery->oxdelivery__oxid->value);
-        }
+        $this->setEditObjectId( $oDelivery->getId() );
     }
 }

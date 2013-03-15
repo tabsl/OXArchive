@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: news_text.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: news_text.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -39,17 +39,7 @@ class News_Text extends oxAdminDetails
 
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid");
-        // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($soxId == "-1" || !isset( $soxId)) && isset( $sSavedID) ) {
-            $soxId = $sSavedID;
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $soxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
-        }
-
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId)) {
             // load object
             $oNews = oxNew( "oxnews" );
@@ -88,8 +78,8 @@ class News_Text extends oxAdminDetails
         $myConfig  = $this->getConfig();
 
 
-        $soxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
+        $soxId = $this->getEditObjectId();
+        $aParams = oxConfig::getParameter( "editval");
 
         $oNews = oxNew( "oxnews" );
 
@@ -113,8 +103,7 @@ class News_Text extends oxAdminDetails
 
         $oNews->save();
         // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oNews->oxnews__oxid->value);
+        $this->setEditObjectId( $oNews->getId() );
     }
 
 }

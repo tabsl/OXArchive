@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: category_list.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: category_list.php 32355 2011-01-04 13:49:52Z arvydas $
  */
 
 /**
@@ -46,16 +46,22 @@ class Category_List extends oxAdminList
     protected $_sListType = 'oxcategorylist';
 
     /**
-     * Sets SQL query parameters (such as sorting, etc.),
-     * executes parent method parent::Init().
+     * Returns sorting fields array
      *
-     * @return null
+     * @return array
      */
-    public function init()
+    public function getListSorting()
     {
-        $sCatView = getViewName('oxcategories');
-        $this->_sDefSort = "$sCatView.oxrootid desc, $sCatView.oxleft";
-        parent::Init();
+        if ( $this->_aCurrSorting === null && !oxConfig::getParameter( 'sort' )  && ( $oBaseObject = $this->getItemListBaseObject() ) ) {
+            $sCatView = $oBaseObject->getCoreTableName();
+
+            $this->_aCurrSorting[$sCatView]["oxrootid"] = "desc";
+            $this->_aCurrSorting[$sCatView]["oxleft"]   = "asc";
+
+            return $this->_aCurrSorting;
+        } else {
+            return parent::getListSorting();
+        }
     }
 
     /**
@@ -95,13 +101,10 @@ class Category_List extends oxAdminList
         }
 
         $oCatTree->assign( $aNewList );
-
-        $sCatView = getViewName( 'oxcategories' );
-
-        $aWhere  = oxConfig::getParameter( "where" );
-        if ( is_array( $aWhere ) && isset( $aWhere["{$sCatView}.oxparentid"] ) ) {
+        $aFilter = $this->getListFilter();
+        if ( is_array( $aFilter ) && isset( $aFilter["oxcategories"]["oxparentid"] ) ) {
             foreach ( $oCatTree as $oCategory ) {
-                if ( $oCategory->oxcategories__oxid->value == $aWhere["{$sCatView}.oxparentid"]) {
+                if ( $oCategory->oxcategories__oxid->value == $aFilter["oxcategories"]["oxparentid"] ) {
                     $oCategory->selected = 1;
                     break;
                 }
@@ -109,7 +112,6 @@ class Category_List extends oxAdminList
         }
 
         $this->_aViewData["cattree"] = $oCatTree;
-
         return "category_list.tpl";
     }
 }

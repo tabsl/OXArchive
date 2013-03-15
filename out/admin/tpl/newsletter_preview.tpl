@@ -3,23 +3,23 @@
 <head>
   <title></title>
   <meta http-equiv="Content-Type" content="text/html; charset=[{$charset}]">
-  <link rel="stylesheet" href="[{$shop->basetpldir}]preview.css">
+  <link rel="stylesheet" href="[{$oViewConf->getResourceUrl()}]preview.css">
 </head>
 <body>
 
 <div id="box">
 
-    <form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-        [{ $shop->hiddensid }]
+    <form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+        [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="oxid" value="[{ $oxid }]">
         <input type="hidden" name="cl" value="newsletter_preview">
         <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
     </form>
-    
+
     <b>[{ oxmultilang ident="NEWSLETTER_PREVIEW_PLAINTEXT" }]</b>:<br>
     <hr>
     <pre>[{ $previewtext }]</pre>
-    
+
     <b>[{ oxmultilang ident="NEWSLETTER_PREVIEW_HTML" }]</b>:<br>
     <hr>
     [{ $previewhtml }]

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_seo.php 31235 2010-11-25 13:53:04Z alfonsas $
+ * @version   SVN: $Id: article_seo.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -90,7 +90,7 @@ class Article_Seo extends Object_Seo
      */
     public function render()
     {
-        $oArticle = $this->_getObject( oxConfig::getParameter( 'oxid' ) );
+        $oArticle = $this->_getObject( $this->getEditObjectId() );
 
         $this->_aViewData["edit"] = $oArticle;
         $this->_aViewData["blShowCatSelect"] = true;
@@ -294,7 +294,7 @@ class Article_Seo extends Object_Seo
                     $this->_sActCatType = substr( $sData, 0, strpos( $sData, '#' ) );
                 }
             } else {
-                $oArticle = $this->_getObject( oxConfig::getParameter( 'oxid' ) );
+                $oArticle = $this->_getObject( $this->getEditObjectId() );
                 if ( ( $oList = $this->_getCategoryList( $oArticle ) ) && $oList->count() ) {
                     $this->_sActCatType = 'oxcategories';
                     $this->_sActCatId   = $oList->current()->getId();
@@ -481,7 +481,7 @@ class Article_Seo extends Object_Seo
     {
         $sId = '';
         if ( $sTag = $this->getTag() ) {
-            $oObject = $this->_getObject( oxConfig::getParameter( 'oxid' ) );
+            $oObject = $this->_getObject( $this->getEditObjectId() );
             $sId = md5( strtolower( $oObject->getShopId() . $this->_getStdUrl( $oObject->getId() ) ) );
         } else {
             $sId = parent::_getSeoEntryId();
@@ -496,7 +496,7 @@ class Article_Seo extends Object_Seo
      */
     protected function _getAltSeoEntryId()
     {
-        return oxConfig::getParameter( 'oxid' );
+        return $this->getEditObjectId();
     }
 
     /**

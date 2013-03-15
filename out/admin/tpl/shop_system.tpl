@@ -19,18 +19,18 @@ function _groupExp(el) {
 
 [{cycle assign="_clear_" values=",2" }]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="shop_system">
     <input type="hidden" name="fnc" value="">
-    <input type="hidden" name="actshop" value="[{ $shop->id }]">
+    <input type="hidden" name="actshop" value="[{$oViewConf->getActiveShopId()}]">
     <input type="hidden" name="updatenav" value="">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
 </form>
 
-<form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
-[{ $shop->hiddensid }]
+<form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="shop_system">
 <input type="hidden" name="fnc" value="save">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -42,36 +42,12 @@ function _groupExp(el) {
             <a href="#" onclick="_groupExp(this);return false;" class="rc"><b>[{ oxmultilang ident="SHOP_OPTIONS_GROUP_ORDER" }]</b></a>
             <dl>
                 <dt>
-                    <input type=hidden name=confbools[blShowFinalStep] value=false>
-                    <input type=checkbox name=confbools[blShowFinalStep] value=true  [{if ($confbools.blShowFinalStep)}]checked[{/if}] [{ $readonly }]>
-                    [{ oxinputhelp ident="HELP_SHOP_SYSTEM_SHOWFINALSTEP" }]
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_SYSTEM_SHOWFINALSTEP" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-            <dl>
-                <dt>
                     <input [{ $readonly }] type=hidden name=confbools[blOtherCountryOrder] value=false>
                     <input type=checkbox name=confbools[blOtherCountryOrder] value=true  [{if ($confbools.blOtherCountryOrder)}]checked[{/if}] [{ $readonly }]>
                     [{ oxinputhelp ident="HELP_SHOP_SYSTEM_OTHERCOUNTRYORDER" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_SYSTEM_OTHERCOUNTRYORDER" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-            <dl>
-                <dt>
-                    <input [{ $readonly }] type=hidden name=confbools[blDisableNavBars] value=false>
-                    <input type=checkbox name=confbools[blDisableNavBars] value=true  [{if ($confbools.blDisableNavBars)}]checked[{/if}] [{ $readonly }]>
-                    [{ oxinputhelp ident="HELP_SHOP_SYSTEM_DISABLENAVBARS" }]
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_SYSTEM_DISABLENAVBARS" }]
                 </dd>
                 <div class="spacer"></div>
             </dl>
@@ -249,22 +225,6 @@ function _groupExp(el) {
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_SYSTEM_ISERVERTIMESHIFT" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-            <dl>
-                <dt>
-                    <select class="select" name=confstrs[iNewBasketItemMessage] [{ $readonly }]>
-                        <option value="0"  [{if ($confstrs.iNewBasketItemMessage==0)}]selected[{/if}]>[{ oxmultilang ident="SHOP_SYSTEM_SHOWNEWBASKETITEMMESSAGE_NONE" }]</option>
-                        <option value="1"  [{if ($confstrs.iNewBasketItemMessage==1)}]selected[{/if}]>[{ oxmultilang ident="SHOP_SYSTEM_SHOWNEWBASKETITEMMESSAGE_MESSAGE" }]</option>
-                        <option value="2"  [{if ($confstrs.iNewBasketItemMessage==2)}]selected[{/if}]>[{ oxmultilang ident="SHOP_SYSTEM_SHOWNEWBASKETITEMMESSAGE_POPUP" }]</option>
-                        <option value="3"  [{if ($confstrs.iNewBasketItemMessage==3)}]selected[{/if}]>[{ oxmultilang ident="SHOP_SYSTEM_SHOWNEWBASKETITEMMESSAGE_TOBASKET" }]</option>
-                    </select>
-                    [{ oxinputhelp ident="HELP_SHOP_SYSTEM_SHOWNEWBASKETITEMMESSAGE" }]
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_SYSTEM_SHOWNEWBASKETITEMMESSAGE" }]
                 </dd>
                 <div class="spacer"></div>
             </dl>

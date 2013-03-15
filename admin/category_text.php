@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: category_text.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: category_text.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -42,17 +42,7 @@ class Category_Text extends oxAdminDetails
 
         $this->_aViewData['edit'] = $oCategory = oxNew( 'oxcategory' );
 
-        $soxId = oxConfig::getParameter( "oxid");
-        // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($soxId == "-1" || !isset( $soxId)) && isset( $sSavedID) ) {
-            $soxId = $sSavedID;
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $soxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
-        }
-
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId)) {
             // load object
             $iCatLang = oxConfig::getParameter("catlang");
@@ -88,8 +78,8 @@ class Category_Text extends oxAdminDetails
         $myConfig  = $this->getConfig();
 
 
-        $soxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
+        $soxId = $this->getEditObjectId();
+        $aParams = oxConfig::getParameter( "editval");
 
         $oCategory = oxNew( "oxcategory" );
         $iCatLang = oxConfig::getParameter("catlang");
@@ -108,8 +98,6 @@ class Category_Text extends oxAdminDetails
         $oCategory->save();
 
         // set oxid if inserted
-        if ( $soxId == "-1") {
-            oxSession::setVar( "saved_oxid", $oCategory->oxcategories__oxid->value);
-        }
+        $this->setEditObjectId( $oCategory->getId() );
     }
 }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorderarticle.php 28585 2010-06-23 09:23:38Z sarunas $
+ * @version   SVN: $Id: oxorderarticle.php 33402 2011-02-21 12:25:32Z linas.kukulskis $
  */
 
 /**
@@ -49,51 +49,6 @@ class oxOrderArticle extends oxBase implements oxIArticle
      * @var array
      */
     protected $_aStatuses = null;
-
-    /**
-     * ERP status info
-     *
-     * @deprecated use $_aStatuses instead
-     *
-     * @var array
-     */
-    public $aStatuses = null;
-
-    /**
-     * Persisten info
-     *
-     * @deprecated use $_aPersParam instead
-     *
-     * @var array
-     */
-    public $aPersParam = null;
-
-    /**
-     * Total brutto price
-     *
-     * @deprecated
-     *
-     * @var string
-     */
-    public $ftotbrutprice = null;
-
-    /**
-     * Brutto price
-     *
-     * @deprecated
-     *
-     * @var string
-     */
-    public $fbrutprice = null;
-
-    /**
-     * Netto price
-     *
-     * @deprecated
-     *
-     * @var string
-     */
-    public $fnetprice = null;
 
     /**
      * Order article selection list
@@ -155,7 +110,6 @@ class oxOrderArticle extends oxBase implements oxIArticle
     public function assign( $dbRecord )
     {
         parent::assign( $dbRecord );
-        $this->_setDeprecatedValues();
         $this->_setArticleParams();
     }
 
@@ -248,26 +202,6 @@ class oxOrderArticle extends oxBase implements oxIArticle
 
         // serializing persisten info stored while ordering
         $this->oxorderarticles__oxpersparam = new oxField(serialize( $aParams ), oxField::T_RAW);
-    }
-
-    /**
-     * Sets deprecate values
-     *
-     * @deprecated This method as well as all deprecated class variables is deprecated
-     *
-     * @return null
-     */
-    protected function _setDeprecatedValues()
-    {
-
-        $this->aPersParam = $this->getPersParams();
-
-        if ( $this->oxorderarticles__oxstorno->value != 1 ) {
-            $oLang = oxLang::getInstance();
-            $this->ftotbrutprice = $oLang->formatCurrency( $this->oxorderarticles__oxbrutprice->value );
-            $this->fbrutprice    = $oLang->formatCurrency( $this->oxorderarticles__oxbprice->value );
-            $this->fnetprice     = $oLang->formatCurrency( $this->oxorderarticles__oxnprice->value );
-        }
     }
 
     /**
@@ -641,14 +575,14 @@ class oxOrderArticle extends oxBase implements oxIArticle
     }
 
 
-   /**
-    * Sets order article storno value to 1 and if stock control is on -
-    * restores previous oxarticle stock state
-    *
-    * @return null
+    /**
+     * Sets order article storno value to 1 and if stock control is on -
+     * restores previous oxarticle stock state
+     *
+     * @return null
     */
-   public function cancelOrderArticle()
-   {
+    public function cancelOrderArticle()
+    {
         if ( $this->oxorderarticles__oxstorno->value == 0 ) {
             $myConfig = $this->getConfig();
             $this->oxorderarticles__oxstorno->setValue( 1 );
@@ -656,7 +590,7 @@ class oxOrderArticle extends oxBase implements oxIArticle
                 $this->updateArticleStock( $this->oxorderarticles__oxamount->value, $myConfig->getConfigParam('blAllowNegativeStock') );
             }
         }
-   }
+    }
 
     /**
      * Deletes order article object. If deletion succeded - updates
@@ -666,62 +600,106 @@ class oxOrderArticle extends oxBase implements oxIArticle
      *
      * @return bool
      */
-   public function delete( $sOXID = null)
-   {
-       if ( $blDelete = parent::delete( $sOXID ) ) {
-           $myConfig = $this->getConfig();
-           if ( $myConfig->getConfigParam( 'blUseStock' ) && $this->oxorderarticles__oxstorno->value != 1 ) {
-               $this->updateArticleStock( $this->oxorderarticles__oxamount->value, $myConfig->getConfigParam('blAllowNegativeStock') );
-           }
-       }
-       return $blDelete;
-   }
+    public function delete( $sOXID = null)
+    {
+        if ( $blDelete = parent::delete( $sOXID ) ) {
+            $myConfig = $this->getConfig();
+            if ( $myConfig->getConfigParam( 'blUseStock' ) && $this->oxorderarticles__oxstorno->value != 1 ) {
+                $this->updateArticleStock( $this->oxorderarticles__oxamount->value, $myConfig->getConfigParam('blAllowNegativeStock') );
+            }
+        }
+        return $blDelete;
+    }
 
-   /**
-    * Saves order article object. If saving succeded - updates
-    * article stock information if oxOrderArticle::isNewOrderItem()
-    * returns TRUE. Returns saving status
-    *
-    * @return bool
-    */
-   public function save()
-   {
-       // ordered articles
-       if ( ( $blSave = parent::save() ) && $this->isNewOrderItem() ) {
-           $myConfig = $this->getConfig();
-           if ( $myConfig->getConfigParam( 'blUseStock' ) ) {
-               if ($myConfig->getConfigParam( 'blPsBasketReservationEnabled' )) {
-                   $this->getSession()
-                           ->getBasketReservations()
-                           ->commitArticleReservation(
+    /**
+     * Saves order article object. If saving succeded - updates
+     * article stock information if oxOrderArticle::isNewOrderItem()
+     * returns TRUE. Returns saving status
+     *
+     * @return bool
+     */
+    public function save()
+    {
+        // ordered articles
+        if ( ( $blSave = parent::save() ) && $this->isNewOrderItem() ) {
+            $myConfig = $this->getConfig();
+            if ( $myConfig->getConfigParam( 'blUseStock' ) ) {
+                if ($myConfig->getConfigParam( 'blPsBasketReservationEnabled' )) {
+                    $this->getSession()
+                            ->getBasketReservations()
+                            ->commitArticleReservation(
                                    $this->oxorderarticles__oxartid->value,
                                    $this->oxorderarticles__oxamount->value
                            );
-               } else {
-                   $this->updateArticleStock( $this->oxorderarticles__oxamount->value * (-1), $myConfig->getConfigParam( 'blAllowNegativeStock' ) );
-               }
-           }
+                } else {
+                    $this->updateArticleStock( $this->oxorderarticles__oxamount->value * (-1), $myConfig->getConfigParam( 'blAllowNegativeStock' ) );
+                }
+            }
 
-           // marking object as "non new" disable further stock changes
-           $this->setIsNewOrderItem( false );
-       }
+            // marking object as "non new" disable further stock changes
+            $this->setIsNewOrderItem( false );
+        }
 
-       return $blSave;
-   }
+        return $blSave;
+    }
 
-   /**
-    * get used wrapping
-    *
-    * @return oxWrapping
-    */
-   public function getWrapping()
-   {
-       if ($this->oxorderarticles__oxwrapid->value) {
-           $oWrapping = oxNew('oxwrapping');
-           if ($oWrapping->load($this->oxorderarticles__oxwrapid->value)) {
-               return $oWrapping;
-           }
-       }
-       return null;
-   }
+    /**
+     * get used wrapping
+     *
+     * @return oxWrapping
+     */
+    public function getWrapping()
+    {
+        if ($this->oxorderarticles__oxwrapid->value) {
+            $oWrapping = oxNew('oxwrapping');
+            if ($oWrapping->load($this->oxorderarticles__oxwrapid->value)) {
+                return $oWrapping;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns true if ordered product is bundle
+     *
+     * @return bool
+     */
+    public function isBundle()
+    {
+        return ( bool ) $this->oxorderarticles__oxisbundle->value;
+    }
+
+    /**
+     * Get Total brut price formated
+     *
+     * @return string
+     */
+    public function getTotalBrutPriceFormated()
+    {
+        $oLang = oxLang::getInstance();
+        return $oLang->formatCurrency( $this->oxorderarticles__oxbrutprice->value );
+    }
+
+    /**
+     * Get  brut price formated
+     *
+     * @return string
+     */
+    public function getBrutPriceFormated()
+    {
+        $oLang = oxLang::getInstance();
+        return $oLang->formatCurrency(  $this->oxorderarticles__oxbprice->value );
+    }
+
+    /**
+     * Get Net price formated
+     *
+     * @return string
+     */
+    public function getNetPriceFormated()
+    {
+        $oLang = oxLang::getInstance();
+        return $oLang->formatCurrency(  $this->oxorderarticles__oxnprice->value );
+    }
+
 }

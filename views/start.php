@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: start.php 28209 2010-06-08 08:42:03Z arvydas $
+ * @version   SVN: $Id: start.php 32965 2011-02-07 12:22:04Z vilma $
  */
 
 /**
@@ -32,7 +32,7 @@ class Start extends oxUBase
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'start.tpl';
+    protected $_sThisTemplate = 'page/shop/start.tpl';
 
     /**
      * Start page meta description CMS ident
@@ -114,10 +114,6 @@ class Start extends oxUBase
      * (oxarticlelist::loadAktionArticles()). Returns name of
      * template file to render.
      *
-     * Template variables:
-     * <b>articlelist</b>, <b>firstarticle</b>, <b>toparticlelist</b>,
-     * <b>articlebargainlist</b>
-     *
      * @return  string  cuurent template file name
      */
     public function render()
@@ -130,8 +126,6 @@ class Start extends oxUBase
 
         $myConfig = $this->getConfig();
         if ( $myConfig->getConfigParam( 'bl_perfLoadAktion' ) ) {
-            // loading actions
-            $this->_loadActions();
             $myUtilsCount = oxUtilsCount::getInstance();
 
             if ( $oArtList = $this->getCatOfferArticleList() ) {
@@ -146,21 +140,7 @@ class Start extends oxUBase
                 }
             }
         }
-
-        $this->_aViewData['articlelist']     = $this->getArticleList();
-        $this->_aViewData['toparticlelist']  = $this->getTopArticleList();
-        $this->_aViewData['aNewestArticles'] = $this->getNewestArticles();
-        $this->_aViewData['firstarticle']    = $this->getFirstArticle();
-
-        $this->_aViewData['articlecatofferlist'] = $this->getCatOfferArticleList();
-        $this->_aViewData['articlecatoffer']     = $this->getCatOfferArticle();
-
         stopProfile("allarticles");
-
-        startProfile("tagCloud");
-        $this->_aViewData['tagCloud']   = $this->getTagCloud();
-        $this->_aViewData['blMoreTags'] = $this->isMoreTagsVisible();
-        stopProfile("tagCloud");
 
         $oRss = oxNew('oxrssfeed');
         if ($myConfig->getConfigParam( 'iTop5Mode' ) && $myConfig->getConfigParam( 'bl_rssTopShop' ) ) {
@@ -280,6 +260,9 @@ class Start extends oxUBase
         return $this->_aTopArticleList;
     }
 
+
+
+
     /**
      * Template variable getter. Returns newest article list
      *
@@ -360,23 +343,6 @@ class Start extends oxUBase
     }
 
     /**
-     * Template variable getter. Returns tag cloud
-     *
-     * @deprecated should be used start::getTagCloudManager()
-     *
-     * @return array
-     */
-    public function getTagCloud()
-    {
-        if ( $this->_sTagCloud === null ) {
-            $this->_sTagCloud = false;
-            $oTagHandler = oxNew('oxTagCloud');
-            $this->_sTagCloud = $oTagHandler->getTagCloud();
-        }
-        return $this->_sTagCloud;
-    }
-
-    /**
      * Returns tag cloud manager class
      *
      * @return oxTagCloud
@@ -416,5 +382,41 @@ class Start extends oxUBase
         if ( oxUtils::getInstance()->seoIsActive() && ( $oViewConf = $this->getViewConfig() ) ) {
             return oxUtilsUrl::getInstance()->prepareCanonicalUrl( $oViewConf->getHomeLink() );
         }
+    }
+
+
+    /**
+     * Returns active banner list
+     *
+     * @return objects
+     */
+    public function getBanners()
+    {
+
+        $oBannerList = null;
+
+        if ( $this->getConfig()->getConfigParam( 'bl_perfLoadAktion' ) ) {
+        $oBannerList = oxNew( 'oxActionList' );
+        $oBannerList->loadBanners();
+        }
+
+        return $oBannerList;
+    }
+
+    /**
+     * Returns manufacturer list for manufacturer slider
+     *
+     * @return objects
+     */
+    public function getManufacturerForSlider()
+    {
+
+        $oList = null;
+
+        if ( $this->getConfig()->getConfigParam( 'bl_perfLoadAktion' ) ) {
+            $oList = $this->getManufacturerlist();
+        }
+
+        return $oList;
     }
 }

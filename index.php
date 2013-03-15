@@ -19,7 +19,7 @@
  * @package   main
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: index.php 26911 2010-03-26 17:29:31Z tomas $
+ * @version   SVN: $Id: index.php 34114 2011-04-01 08:32:47Z sarunas $
  */
 
 // Setting error reporting mode
@@ -77,6 +77,9 @@ require_once getShopBasePath() . 'core/oxfunctions.php';
 // initializes singleton config class
 $myConfig = oxConfig::getInstance();
 
+//strips magics quote if any
+oxUtils::getInstance()->stripGpcMagicQuotes();
+
 // reset it so it is done with oxnew
 $iDebug = $myConfig->getConfigParam('iDebug');
 set_exception_handler(array(oxNew('oxexceptionhandler', $iDebug), 'handleUncaughtException'));
@@ -97,59 +100,4 @@ if (isSearchEngineUrl()) {
 
 //Starting the shop
 $oShopControl = oxNew('oxShopControl');
-
-startProfile('start');
 $oShopControl->start();
-stopProfile('start');
-
-
-//DEBUG INFO
-if (!isAdmin() && $iDebug) {
-    echo  "cl=".oxConfig::getInstance()->getActiveView()->getClassName();
-    if ($sFnc = oxConfig::getInstance()->getActiveView()->getFncName())
-        echo " fnc=$sFnc";
-
-    echo "<br>\n";
-}
-
-
-if (!isAdmin() && $iDebug && is_array($aProfileTimes)) {
-    echo "----------------------------------------------------------<br>".PHP_EOL;
-    $iTotalTime = $oShopControl->getTotalTime();
-    arsort($aProfileTimes);
-    echo "<table cellspacing='10px' style='border: 1px solid #000'>";
-    foreach ($aProfileTimes as $sKey => $sVal) {
-        echo "<tr><td style='border-bottom: 1px dotted #000;min-width:300px;'>Profile $sKey: </td><td style='border-bottom: 1px dotted #000;min-width:100px;'>" . round($sVal, 5) ."s</td>" ;
-        if ($iTotalTime) {
-            echo "<td style='border-bottom: 1px dotted #000;min-width:100px;'>".round($sVal*100/$iTotalTime, 2)."%</td>";
-        }
-        if ($aExecutionCounts[$sKey]) {
-            echo " <td style='border-bottom: 1px dotted #000;min-width:50px;padding-right:30px;' align='right'>" . $aExecutionCounts[$sKey] .  "</td>"
-                 ."<td style='border-bottom: 1px dotted #000;min-width:15px; '>*</td>"
-                 ."<td style='border-bottom: 1px dotted #000;min-width:100px;'>" . round($sVal / $aExecutionCounts[$sKey], 5) . "s</td></tr>" . PHP_EOL;
-        } else {
-            echo " <td colspan=3 style='border-bottom: 1px dotted #000;min-width:100px;'> not stopped correctly! </td></tr>" . PHP_EOL;
-        }
-    }
-    echo "</table>";
-}
-
-if (!isAdmin() && ($iDebug == 7)) {
-    echo "----------------------------------------------------------<br>".PHP_EOL;
-    echo "-- oxdebugdb --<br>".PHP_EOL;
-    $oDbgDb = oxNew('oxdebugdb');
-    $aWarnings = $oDbgDb->getWarnings();
-    $iNr = 1;
-    foreach ($aWarnings as $w) {
-        echo "{$w['check']}: {$w['time']} - <span style='color:#900000;margin:5px'>".htmlentities($w['sql'], ENT_QUOTES, 'UTF-8')."</span>";
-        echo "<div id='dbgdb_trace_$iNr' style='display:none'>".nl2br($w['trace'])."</div>";
-        echo "<a style='color:#00AA00;margin:5px;cursor:pointer' onclick='var el=document.getElementById(\"dbgdb_trace_$iNr\"); if (el.style.display==\"block\")el.style.display=\"none\"; else el.style.display = \"block\";'>TRACE (show/hide)</a><br><br>";
-        ++$iNr;
-    }
-}
-
-if (!isAdmin() && ($iDebug == 2 || $iDebug == 3 || $iDebug == 4)) {
-            $oPerfMonitor = @NewPerfMonitor( oxDb::getDb() );
-            if ( $oPerfMonitor )
-                $oPerfMonitor->UI( 5 );
-}

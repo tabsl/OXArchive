@@ -1,3 +1,4 @@
+[{assign var="pageNavigation" value=$oView->getPageNavigation()}]
   <div class="locator compare">
     [{if $pageNavigation->NrOfPages > 1}]
       <div class="lochead">

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_stock.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: article_stock.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -45,7 +45,7 @@ class Article_Stock extends oxAdminDetails
 
         $this->_aViewData["edit"] = $oArticle = oxNew( "oxarticle");
 
-        $soxId = oxConfig::getParameter( "oxid");
+        $soxId = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId)) {
 
             // load object
@@ -95,7 +95,7 @@ class Article_Stock extends oxAdminDetails
     public function save()
     {
 
-        $soxId   = oxConfig::getParameter( "oxid");
+        $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");
 
         // checkbox handling
@@ -134,7 +134,7 @@ class Article_Stock extends oxAdminDetails
         $myConfig = $this->getConfig();
 
 
-        $soxId   = oxConfig::getParameter( "oxid" );
+        $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval" );
 
         //replacing commas
@@ -189,7 +189,7 @@ class Article_Stock extends oxAdminDetails
 
         $oDb = oxDb::getDb();
         $sPriceId = $oDb->quote( oxConfig::getParameter("priceid" ) );
-        $sId = $oDb->quote( oxConfig::getParameter( "oxid" ) );
+        $sId = $oDb->quote( $this->getEditObjectId() );
         $oDb->execute( "delete from oxprice2article where oxid = {$sPriceId} and oxartid = {$sId}" );
     }
 

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxexception.php 25635 2010-02-04 21:29:50Z alfonsas $
+ * @version   SVN: $Id: oxexception.php 32880 2011-02-03 11:45:17Z sarunas $
  */
 
 /**
@@ -138,11 +138,9 @@ class oxException extends Exception
     /**
      * Prints exception in file EXCEPTION_LOG.txt
      *
-     * @param integer $iDebug current debug level. This parameter is deprecated.
-     *
      * @return null
      */
-    public function debugOut($iDebug = -1)
+    public function debugOut()
     {
         //We are most likely are already dealing with an exception so making sure no other exceptions interfere
         try {

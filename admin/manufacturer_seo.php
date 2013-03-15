@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: manufacturer_seo.php 27759 2010-05-14 10:10:17Z arvydas $
+ * @version   SVN: $Id: manufacturer_seo.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -35,7 +35,7 @@ class Manufacturer_Seo extends Object_Seo
     public function render()
     {
         $this->_aViewData['blShowSuffixEdit'] = true;
-        $this->_aViewData['blShowSuffix'] = $this->_getObject( oxConfig::getParameter( 'oxid' ) )->oxmanufacturers__oxshowsuffix->value;
+        $this->_aViewData['blShowSuffix'] = $this->_getObject( $this->getEditObjectId() )->oxmanufacturers__oxshowsuffix->value;
 
         return parent::render();
     }
@@ -84,7 +84,7 @@ class Manufacturer_Seo extends Object_Seo
      */
     public function save()
     {
-        if ( $sOxid = oxConfig::getParameter( 'oxid' ) ) {
+        if ( $sOxid = $this->getEditObjectId() ) {
             $oManufacturer = oxNew( 'oxbase' );
             $oManufacturer->init( 'oxmanufacturers' );
             if ( $oManufacturer->load( $sOxid ) ) {

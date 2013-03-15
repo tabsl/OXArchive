@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: newsletter_list.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: newsletter_list.php 31961 2010-12-17 13:59:10Z sarunas $
  */
 
 /**
@@ -48,5 +48,5 @@ class Newsletter_List extends oxAdminList
      *
      * @var string
      */
-    protected $_sDefSort = "oxnewsletter.oxtitle";
+    protected $_sDefSortField = "oxtitle";
 }

@@ -34,7 +34,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  $Id: oxemosadapter.php 27143 2010-04-09 14:40:03Z arvydas $
+ *  $Id: oxemosadapter.php 32923 2011-02-04 14:35:22Z vilma $
  */
 
 
@@ -96,33 +96,6 @@ class oxEmosAdapter extends oxSuperCfg
         $myConfig = $this->getConfig();
         $sShopUrl = $myConfig->isSsl() ? $myConfig->getConfigParam( 'sSSLShopURL' ) : $myConfig->getConfigParam( 'sShopURL' );
         return "{$sShopUrl}modules/econda/out/";
-    }
-
-    /**
-     * Searches for product category id
-     *
-     * @param oxarticle $oArticle article object to search for category
-     *
-     * @deprecated replaced by oxemosadapter::_getBasketProductCatPath()
-     *
-     * @return string
-     */
-    protected function _getDeepestCategoryPath( $oArticle )
-    {
-        $oLang = oxLang::getInstance();
-        $iLanguage = $oLang->getBaseLanguage();
-
-        $sSuffix  = $oLang->getLanguageTag( $iLanguage );
-        $sCatView = getViewName('oxcategories');
-        $sO2CView = getViewName('oxobject2category');
-
-        $oDb = oxDb::getDb();
-        $sSelect  = "select {$sCatView}.oxtitle{$sSuffix} from $sO2CView as oxobject2category left join {$sCatView}
-                     on {$sCatView}.oxid=oxobject2category.oxcatnid where
-                     oxobject2category.oxobjectid = ".$oDb->quote( $oArticle->getId() )." and
-                     {$sCatView}.oxid is not null order by oxobject2category.oxtime ";
-
-        return $oDb->getOne( $sSelect );
     }
 
     /**
@@ -224,7 +197,7 @@ class oxEmosAdapter extends oxSuperCfg
     protected function _getEmosCl()
     {
         $oActView = $this->getConfig()->getActiveView();
-        // special case when showLogin is called
+        // showLogin function is deprecated, but just in case if it is called
         if ( strcasecmp( 'showLogin', (string) $oActView->getFncName() ) == 0 ) {
             $sCl = 'account';
         } else {
@@ -268,8 +241,7 @@ class oxEmosAdapter extends oxSuperCfg
         if ( $oCategory = $oArticle->getCategory() ) {
             $sTable = $oCategory->getViewName();
             $oDb = oxDb::getDb(true);
-            $sLang = oxLang::getInstance()->getLanguageTag();
-            $sQ = "select {$sTable}.oxtitle{$sLang} as oxtitle from {$sTable}
+            $sQ = "select {$sTable}.oxtitle as oxtitle from {$sTable}
                        where {$sTable}.oxleft <= ".$oDb->quote( $oCategory->oxcategories__oxleft->value )." and
                              {$sTable}.oxright >= ".$oDb->quote( $oCategory->oxcategories__oxright->value )." and
                              {$sTable}.oxrootid = ".$oDb->quote( $oCategory->oxcategories__oxrootid->value )."

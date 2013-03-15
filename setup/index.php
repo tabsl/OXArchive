@@ -19,7 +19,7 @@
  * @package   setup
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: index.php 30098 2010-10-05 11:17:16Z sarunas $
+ * @version   SVN: $Id: index.php 30135 2010-10-07 14:10:36Z sarunas $
  */
 
 

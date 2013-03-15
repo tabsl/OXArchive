@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account.php 32734 2011-01-26 08:32:22Z arvydas.vapsva $
+ * @version   SVN: $Id: account.php 32923 2011-02-04 14:35:22Z vilma $
  */
 
 /**
@@ -29,6 +29,8 @@
  * is a link for logging out. Template includes Topoffer , bargain
  * boxes. OXID eShop -> MY ACCOUNT.
  */
+
+
 class Account extends oxUBase
 {
     /**
@@ -83,19 +85,19 @@ class Account extends oxUBase
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'account_main.tpl';
+    protected $_sThisTemplate = 'page/account/dashboard.tpl';
 
     /**
      * Current class login template name.
      * @var string
      */
-    protected $_sThisLoginTemplate = 'account_login.tpl';
+    protected $_sThisLoginTemplate = 'page/account/login.tpl';
 
     /**
      * Alternative login template name.
      * @var string
      */
-    protected $_sThisAltLoginTemplate = 'account_login_alt.tpl';
+    protected $_sThisAltLoginTemplate = 'page/privatesales/login.tpl';
 
     /**
      * Current view search engine indexing state
@@ -108,7 +110,7 @@ class Account extends oxUBase
      * Sign if to load and show top5articles action
      * @var bool
      */
-    protected $_blTop5Action = true;
+    protected $_blTop5Action = false;
 
     /**
      * Sign if to load and show bargain action
@@ -117,13 +119,14 @@ class Account extends oxUBase
     protected $_blBargainAction = true;
 
     /**
+     * Show tags cloud
+     * @var bool
+     */
+    protected $_blShowTagCloud = false;
+
+    /**
      * Loads action articles. If user is logged and returns name of
      * template to render account::_sThisTemplate
-     *
-     * Template variables:
-     * <b>searchparam</b>, <b>searchparamforhtml</b>,
-     * <b>searchcnid</b>, <b>searchvendor</b>, <b>listtype</b>,
-     * <b>searchmanufacturer</b>
      *
      * @return  string  $_sThisTemplate current template file name
      */
@@ -134,29 +137,11 @@ class Account extends oxUBase
         // performing redirect if needed
         $this->redirectAfterLogin();
 
-        // loading actions
-        $this->_loadActions();
-
-        //
-        if ( $sArtId = $this->getArticleId() ) {
-            $this->_aViewData['aid'] = $sArtId;
-            // #1834M - specialchar search
-            $this->_aViewData['searchparam']        = $this->getSearchParam();
-            $this->_aViewData['searchparamforhtml'] = $this->getSearchParamForHtml();
-            $this->_aViewData['searchcnid']         = $this->getSearchCatId();
-            $this->_aViewData['searchvendor']       = $this->getSearchVendor();
-            $this->_aViewData['searchmanufacturer'] = $this->getSearchManufacturer();
-            $this->_aViewData['listtype']           = $this->getListType();
-        }
-
         // is logged in ?
         $oUser = $this->getUser();
         if ( !$oUser || ( $oUser && !$oUser->oxuser__oxpassword->value ) ||
              ( $this->isEnabledPrivateSales() && $oUser && ( !$oUser->isTermsAccepted() || $this->confirmTerms() ) ) ) {
             $this->_sThisTemplate = $this->_getLoginTemplate();
-        } else {
-            // calculating amount of orders made by user
-            $this->_aViewData['iordersmade'] = $this->getOrderCnt();
         }
 
         return $this->_sThisTemplate;
@@ -374,5 +359,21 @@ class Account extends oxUBase
             }
         }
         return $this->_sListType;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        if ( $oUser = $this->getUser() ) {
+            $aPaths[]['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_DASHBOARD_MYACCOUNT', oxLang::getInstance()->getBaseLanguage(), false ) . $oUser->oxuser__oxusername->value;
+        } else {
+            $aPaths[]['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_INC_LOGIN_LOGIN', oxLang::getInstance()->getBaseLanguage(), false );
+        }
+
+        return $aPaths;
     }
 }

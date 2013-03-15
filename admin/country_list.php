@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: country_list.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: country_list.php 32373 2011-01-05 14:30:44Z arvydas $
  */
 
 /**
@@ -40,10 +40,10 @@ class Country_List extends oxAdminList
      *
      * @var string
      */
-    protected $_sDefSort = 'oxcountry.oxactive';
+    protected $_sDefSortField = 'oxactive';
 
     /**
-     * Enable/disable sorting by DESC (SQL) (defaultfalse - disable).
+     * Enable/disable sorting by DESC (SQL) (default false - disable).
      *
      * @var bool
      */

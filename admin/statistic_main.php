@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: statistic_main.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: statistic_main.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -44,20 +44,7 @@ class Statistic_Main extends oxAdminDetails
 
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid");
-        if (!$soxId)
-            $soxId = "-1";
-
-        // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($soxId == "-1" || !isset( $soxId)) && isset( $sSavedID) ) {
-            $soxId = $sSavedID;
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $soxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
-        }
-
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         $aReports = array();
         if ( $soxId != "-1" && isset( $soxId)) {
             // load object
@@ -118,7 +105,7 @@ class Statistic_Main extends oxAdminDetails
      */
     public function save()
     {
-        $soxId   = oxConfig::getParameter( "oxid");
+        $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");
 
         // shopid
@@ -136,11 +123,9 @@ class Statistic_Main extends oxAdminDetails
         $oStat->setReports($aAllreports);
         $oStat->assign($aParams);
         $oStat->save();
-        $this->_aViewData["updatelist"] = "1";
 
         // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oStat->oxstatistics__oxid->value);
+        $this->setEditObjectId( $oStat->getId() );
     }
 
     /**
@@ -152,7 +137,7 @@ class Statistic_Main extends oxAdminDetails
     {
         $myConfig  = $this->getConfig();
 
-        $soxId = oxConfig::getParameter( "oxid" );
+        $soxId = $this->getEditObjectId();
 
         // load object
         $oStat = oxNew( "oxstatistic" );

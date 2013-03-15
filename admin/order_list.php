@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: order_list.php 26511 2010-03-15 10:02:18Z arvydas $
+ * @version   SVN: $Id: order_list.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -49,7 +49,7 @@ class Order_List extends oxAdminList
      *
      * @var string
      */
-    protected $_sDefSort = "oxorder.oxorderdate";
+    protected $_sDefSortField = "oxorderdate";
 
     /**
      * Executes parent method parent::render() and returns name of template
@@ -153,11 +153,8 @@ class Order_List extends oxAdminList
      */
     public function storno()
     {
-        $myConfig = $this->getConfig();
-        $soxId    = oxConfig::getParameter( "oxid");
-
         $oOrder = oxNew( "oxorder" );
-        if ( $oOrder->load( $soxId ) ) {
+        if ( $oOrder->load( $this->getEditObjectId() ) ) {
             $oOrder->cancelOrder();
         }
 
@@ -167,20 +164,16 @@ class Order_List extends oxAdminList
     }
 
     /**
-     * Adds order by to SQL query string.
+     * Returns sorting fields array
      *
-     * @param string $sSql sql string
-     *
-     * @return string
+     * @return array
      */
-    protected function _prepareOrderByQuery( $sSql = null )
+    public function getListSorting()
     {
-        $sSortParam = oxConfig::getParameter( 'sort' );
-        //setting sort order as ASC for oxbilllname column
-        if ( $sSortParam && $sSortParam == 'oxorder.oxbilllname' ) {
-           $this->_blDesc = false;
+        $aSorting = parent::getListSorting();
+        if ( isset( $aSorting["oxorder"]["oxbilllname"] )) {
+            $this->_blDesc = false;
         }
-
-        return parent::_prepareOrderByQuery( $sSql );
+        return $aSorting;
     }
 }

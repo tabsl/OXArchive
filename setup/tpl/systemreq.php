@@ -40,6 +40,7 @@ require "_header.php"; ?>
             <input type="hidden" name="istep" value="<?php $this->getSetupStep( 'STEP_SYSTEMREQ' ); ?>">
             </form>
         </td>
+        <td style="padding: 0px 5px;"><?php $this->getText('SELECT_SETUP_LANG_HINT'); ?></td>
     </tr>
 </table>
 <br>

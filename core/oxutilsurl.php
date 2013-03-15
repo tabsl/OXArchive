@@ -85,7 +85,7 @@ class oxUtilsUrl extends oxSuperCfg
             $this->_aAddUrlParams = $this->getBaseAddUrlParams();
 
             // appending currency
-            if ( ( $iCur = oxConfig::getParameter( 'currency' ) ) ) {
+            if ( ( $iCur = $this->getConfig()->getShopCurrency() ) ) {
                 $this->_aAddUrlParams['cur'] = $iCur;
             }
         }
@@ -125,8 +125,9 @@ class oxUtilsUrl extends oxSuperCfg
             $sSep = '&amp;';
         }
 
+        $oConfig = $this->getConfig();
         if ( !$oStr->preg_match('/[&?](amp;)?cur=[0-9]+/i', $sUrl)) {
-            $iCur = (int) oxConfig::getParameter('currency');
+            $iCur = (int) $oConfig->getShopCurrency();
             if ( $iCur ) {
                 $sUrl .= "{$sSep}cur=".$iCur;
                 $sSep = '&amp;';
@@ -191,22 +192,6 @@ class oxUtilsUrl extends oxSuperCfg
             }
         }
         return $sUrl ? $sUrl.$sSep : '';
-    }
-
-    /**
-     * Appends url with given parameters
-     *
-     * @param atring $sUrl       url to append
-     * @param array  $aAddParams parameters to append
-     *
-     * @deprecated
-     * @see oxUtilsUrl::appendUrl()
-     *
-     * @return string
-     */
-    protected function _appendUrl( $sUrl, $aAddParams )
-    {
-        return $this->appendUrl( $sUrl, $aAddParams );
     }
 
     /**
@@ -276,25 +261,6 @@ class oxUtilsUrl extends oxSuperCfg
         $ret = $this->getSession()->processUrl( $this->appendUrl( $sUrl, $this->getAddUrlParams() ) );
         $ret = getStr()->preg_replace('/(\?|&(amp;)?)$/', '', $ret);
         return $ret;
-    }
-
-    /**
-     * Standard/dynamic url processor: adds various needed parameters, like language id, currency, shop id
-     * This method is deprecated, see oxUtilsUrl::processUrl instead
-     *
-     * @param string $sUrl           url to process
-     * @param array  $aParams        additional parameters add to url
-     * @param int    $iLang          url language id
-     * @param bool   $blAddLangParam add language parameter or not
-     *
-     * @deprecated
-     * @see oxUtilsUrl::processUrl
-     *
-     * @return string
-     */
-    public function processStdUrl( $sUrl, $aParams, $iLang, $blAddLangParam )
-    {
-        return $this->processUrl($sUrl, true, $aParams, $iLang);
     }
 
     /**

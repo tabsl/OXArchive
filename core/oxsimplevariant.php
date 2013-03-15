@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsimplevariant.php 28935 2010-07-23 13:03:14Z sarunas $
+ * @version   SVN: $Id: oxsimplevariant.php 32880 2011-02-03 11:45:17Z sarunas $
  */
 
 /**
@@ -306,22 +306,6 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
     public function getParent()
     {
         return $this->_oParent;
-    }
-
-    /**
-     * Returns parent price. Assuming variant parent has been assigned before function execution.
-     *
-     * @deprecated should be used $this->_oParent->getPrice();
-     *
-     * @return double
-     */
-    protected function _getParentPrice()
-    {
-        $dPrice = 0;
-        if (isset($this->_oParent->oxarticles__oxprice->value)) {
-            $dPrice = $this->_oParent->oxarticles__oxprice->value;
-        }
-        return $dPrice;
     }
 
     /**

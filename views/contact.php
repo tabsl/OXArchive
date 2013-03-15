@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: contact.php 26581 2010-03-16 15:59:53Z vilma $
+ * @version   SVN: $Id: contact.php 32930 2011-02-04 16:08:29Z vilma $
  */
 
 /**
@@ -65,7 +65,7 @@ class Contact extends oxUBase
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'contact.tpl';
+    protected $_sThisTemplate = 'page/info/contact.tpl';
 
     /**
      * Current view search engine indexing state
@@ -75,36 +75,8 @@ class Contact extends oxUBase
     protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXNOFOLLOW;
 
     /**
-     * Executes parent::render(), loads action articles and sets parameters
-     * (subject, message) used by template engine. Returns name
-     * of template to render contact::_sThisTemplate
-     *
-     * Template variables:
-     * <b>c_subject</b>, <b>c_message</b>, <b>editval</b>, <b>useantispam</b>
-     *
-     * @return string
-     */
-    public function render()
-    {
-        parent::render();
-
-        $this->_aViewData['editval']   = $this->getUserData();
-        $this->_aViewData['c_subject'] = $this->getContactSubject();
-        $this->_aViewData['c_message'] = $this->getContactMessage();
-
-        //captcha
-        $this->_aViewData['oCaptcha'] = $this->getCaptcha();
-        $this->_aViewData['success']  = $this->getContactSendStatus();
-
-        return $this->_sThisTemplate;
-    }
-
-    /**
      * Composes and sends user written message, returns false if some parameters
      * are missing.
-     *
-     * Template variables:
-     * <b>error</b>, <b>success</b>
      *
      * @return bool
      */
@@ -206,5 +178,21 @@ class Contact extends oxUBase
     public function getContactSendStatus()
     {
         return $this->_blContactSendStatus;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_INFO_CONTACT_TITLECONTACT', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 }

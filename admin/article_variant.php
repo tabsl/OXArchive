@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_variant.php 28061 2010-06-02 08:45:56Z michael.keiluweit $
+ * @version   SVN: $Id: article_variant.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -47,7 +47,7 @@ class Article_Variant extends oxAdminDetails
     {
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid");
+        $soxId = $this->getEditObjectId();
         $sSLViewName = getViewName('oxselectlist');
 
         // all selectlists
@@ -132,7 +132,7 @@ class Article_Variant extends oxAdminDetails
             $aParams['oxarticles__oxshopid'] = oxSession::getVar( "actshop" );
 
         // varianthandling
-        $soxparentId = oxConfig::getParameter( "oxid" );
+        $soxparentId = $this->getEditObjectId();
         if ( isset( $soxparentId) && $soxparentId && $soxparentId != "-1" ) {
             $aParams['oxarticles__oxparentid'] = $soxparentId;
         } else {
@@ -140,7 +140,7 @@ class Article_Variant extends oxAdminDetails
         }
 
         $oArticle = oxNew( "oxarticle");
-        
+
         /*
         //TODO: solve this from lazy loading point of view
         //acessing main fields for lazy loading mechnism to iniatialise them
@@ -223,7 +223,7 @@ class Article_Variant extends oxAdminDetails
      */
     public function changename()
     {
-        $soxId = oxConfig::getParameter( "oxid" );
+        $soxId = $this->getEditObjectId();
 
         $aParams = oxConfig::getParameter( "editval");
 
@@ -252,7 +252,7 @@ class Article_Variant extends oxAdminDetails
     {
         $oArticle = oxNew("oxarticle");
         $oArticle->setEnableMultilang( false );
-        if ( $oArticle->load( oxConfig::getParameter("oxid") ) ) {
+        if ( $oArticle->load( $this->getEditObjectId() ) ) {
 
 
 

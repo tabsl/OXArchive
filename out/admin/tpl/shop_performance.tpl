@@ -9,18 +9,18 @@
 
 [{cycle assign="_clear_" values=",2" }]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="shop_performance">
     <input type="hidden" name="fnc" value="">
-    <input type="hidden" name="actshop" value="[{ $shop->id }]">
+    <input type="hidden" name="actshop" value="[{$oViewConf->getActiveShopId()}]">
     <input type="hidden" name="updatenav" value="">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
 </form>
 
-<form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
-[{ $shop->hiddensid }]
+<form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="shop_performance">
 <input type="hidden" name="fnc" value="save">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -222,67 +222,12 @@
 
             <tr>
              <td valign="top" class="conftext">
-                <input type=hidden name=confbools[bl_perfLoadCompare] value=false>
-                <input type=checkbox name=confbools[bl_perfLoadCompare] value=true  [{if ($confbools.bl_perfLoadCompare)}]checked[{/if}] [{ $readonly }]>
-                [{ oxinputhelp ident="HELP_SHOP_PERF_COMPARE" }]
-             </td>
-             <td valign="top" class="conftext" width="100%">
-              [{ oxmultilang ident="SHOP_PERF_COMPARE" }]
-             </td>
-            </tr>
-
-            <tr>
-             <td valign="top" class="conftext">
-                <input type=hidden name=confbools[bl_perfLoadVendorTree] value=false>
-                <input type=checkbox class="confinput" name=confbools[bl_perfLoadVendorTree] value=true  [{if ($confbools.bl_perfLoadVendorTree)}]checked[{/if}] [{ $readonly }]>
-                [{ oxinputhelp ident="HELP_SHOP_PERF_LOADVENDORTREE" }]
-             </td>
-             <td valign="top" class="conftext" width="100%" >
-               [{ oxmultilang ident="SHOP_PERF_LOADVENDORTREE" }]
-             </td>
-            </tr>
-
-            <tr>
-             <td valign="top" class="conftext">
                 <input type=hidden name=confbools[bl_perfLoadManufacturerTree] value=false>
                 <input type=checkbox class="confinput" name=confbools[bl_perfLoadManufacturerTree] value=true  [{if ($confbools.bl_perfLoadManufacturerTree)}]checked[{/if}] [{ $readonly }]>
                 [{ oxinputhelp ident="HELP_SHOP_PERF_LOADMANUFACTURERTREE" }]
              </td>
              <td valign="top" class="conftext" width="100%" >
                [{ oxmultilang ident="SHOP_PERF_LOADMANUFACTURERTREE" }]
-             </td>
-            </tr>
-
-            <tr>
-             <td valign="top" class="conftext">
-                <input type=hidden name=confbools[bl_perfShowLeftBasket] value=false>
-                <input type=checkbox class="confinput" name=confbools[bl_perfShowLeftBasket] value=true  [{if ($confbools.bl_perfShowLeftBasket)}]checked[{/if}] [{ $readonly }]>
-                [{ oxinputhelp ident="HELP_SHOP_PERF_SHOWLEFTBASKET" }]
-             </td>
-             <td valign="top" class="conftext" width="100%" >
-               [{ oxmultilang ident="SHOP_PERF_SHOWLEFTBASKET" }]
-             </td>
-            </tr>
-
-            <tr>
-             <td valign="top" class="conftext">
-                <input type=hidden name=confbools[bl_perfShowRightBasket] value=false>
-                <input type=checkbox class="confinput" name=confbools[bl_perfShowRightBasket] value=true  [{if ($confbools.bl_perfShowRightBasket)}]checked[{/if}] [{ $readonly }]>
-                [{ oxinputhelp ident="HELP_SHOP_PERF_SHOWRIGHTBASKET" }]
-             </td>
-             <td valign="top" class="conftext" width="100%" >
-               [{ oxmultilang ident="SHOP_PERF_SHOWRIGHTBASKET" }]
-             </td>
-            </tr>
-
-            <tr>
-             <td valign="top" class="conftext">
-                <input type=hidden name=confbools[bl_perfShowTopBasket] value=false>
-                <input type=checkbox class="confinput" name=confbools[bl_perfShowTopBasket] value=true  [{if ($confbools.bl_perfShowTopBasket)}]checked[{/if}] [{ $readonly }]>
-                [{ oxinputhelp ident="HELP_SHOP_PERF_SHOWTOPBASKET" }]
-             </td>
-             <td valign="top" class="conftext" width="100%" >
-               [{ oxmultilang ident="SHOP_PERF_SHOWTOPBASKET" }]
              </td>
             </tr>
 

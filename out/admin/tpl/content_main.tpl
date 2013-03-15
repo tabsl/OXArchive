@@ -31,8 +31,8 @@ function ShowMenueFields( iVal)
     [{assign var="readonly" value=""}]
 [{/if}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="content_main">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
@@ -40,8 +40,8 @@ function ShowMenueFields( iVal)
 
         <table cellspacing="0" cellpadding="0" border="0" width="98%">
           <colgroup><col width="30%"><col width="5%"><col width="65%"></colgroup>
-          <form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post" onSubmit="copyLongDesc( 'oxcontents__oxcontent' );">
-          [{ $shop->hiddensid }]
+          <form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post" onSubmit="copyLongDesc( 'oxcontents__oxcontent' );">
+          [{ $oViewConf->getHiddenSid() }]
           <input type="hidden" name="cl" value="content_main">
           <input type="hidden" name="fnc" value="">
           <input type="hidden" name="oxid" value="[{ $oxid }]">

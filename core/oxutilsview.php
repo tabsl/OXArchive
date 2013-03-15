@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsview.php 28223 2010-06-08 12:28:06Z sarunas $
+ * @version   SVN: $Id: oxutilsview.php 34004 2011-03-25 12:50:15Z sarunas $
  */
 
 /**
@@ -166,11 +166,24 @@ class oxUtilsView extends oxSuperCfg
             $sDestination = 'default';
         }
 
+        //starting session if not yet started as all exception
+        //messages are stored in session
+        $oSession = $this->getSession();
+        if ( !$oSession->getId() && !$oSession->isHeaderSent() ) {
+            $oSession->setForceNewSession();
+            $oSession->start();
+        }
+
         $aEx = oxSession::getVar( 'Errors' );
         if ( $oEr instanceof oxException ) {
              $oEx = oxNew( 'oxExceptionToDisplay' );
              $oEx->setMessage( $oEr->getMessage() );
              $oEx->setExceptionType( get_class( $oEr ) );
+
+             if ( $oEr instanceof oxSystemComponentException ) {
+                $oEx->setMessageArgs( $oEr->getComponent() );
+             }
+
              $oEx->setValues( $oEr->getValues() );
              $oEx->setStackTrace( $oEr->getTraceAsString() );
              $oEx->setDebug( $blFull );
@@ -285,8 +298,6 @@ class oxUtilsView extends oxSuperCfg
             $this->setTemplateDir( $myConfig->getOutDir( true ) . $myConfig->getConfigParam( 'sTheme' ) . "/tpl/" );
         }
 
-        $this->setTemplateDir( $myConfig->getOutDir( true ) . "basic/tpl/" );
-
         return $this->_aTemplateDir;
     }
 
@@ -318,6 +329,9 @@ class oxUtilsView extends oxSuperCfg
 
         $oSmarty->default_template_handler_func = array(oxUtilsView::getInstance(),'_smartyDefaultTemplateHandler');
 
+        include_once dirname(__FILE__).'/smarty/plugins/prefilter.oxblock.php';
+        $oSmarty->register_prefilter('smarty_prefilter_oxblock');
+
         $iDebug = $myConfig->getConfigParam( 'iDebug' );
         if (  $iDebug == 1 || $iDebug == 3 || $iDebug == 4 ) {
             $oSmarty->debugging = true;
@@ -334,6 +348,7 @@ class oxUtilsView extends oxSuperCfg
             $oSmarty->security_settings['MODIFIER_FUNCS'][] = 'round';
             $oSmarty->security_settings['MODIFIER_FUNCS'][] = 'floor';
             $oSmarty->security_settings['MODIFIER_FUNCS'][] = 'trim';
+            $oSmarty->security_settings['MODIFIER_FUNCS'][] = 'implode';
             $oSmarty->security_settings['MODIFIER_FUNCS'][] = 'is_array';
             $oSmarty->security_settings['ALLOW_CONSTANTS'] = true;
             $oSmarty->secure_dir = $oSmarty->template_dir;
@@ -379,4 +394,65 @@ class oxUtilsView extends oxSuperCfg
         return false;
     }
 
+    /**
+     * retrieve module block contents
+     *
+     * @param string $sModule module name
+     * @param string $sFile   module block file name without .tpl ending
+     *
+     * @see getTemplateBlocks
+     * @throws oxException if block is not found
+     *
+     * @return string
+     */
+    protected function _getTemplateBlock($sModule, $sFile)
+    {
+        $sFileName = $this->getConfig()->getConfigParam( 'sShopDir' )."/modules/$sModule/out/blocks/$sFile.tpl";
+        if (file_exists($sFileName) && is_readable($sFileName)) {
+            return file_get_contents($sFileName);
+        } else {
+            throw new oxException("Template block file ($sFileName) not found for '$sModule' module.");
+        }
+    }
+
+    /**
+     * template blocks getter: retrieve sorted blocks for overriding in templates
+     *
+     * @param string $sFile filename of rendered template
+     *
+     * @see smarty_prefilter_oxblock
+     *
+     * @return array
+     */
+    public function getTemplateBlocks($sFile)
+    {
+        $oConfig = $this->getConfig();
+
+        $sTplDir = trim($oConfig->getConfigParam('_sTemplateDir'), '/\\');
+        $sFile = str_replace(array('\\', '//'), '/', $sFile);
+        if (preg_match('@/'.preg_quote($sTplDir, '@').'/(.*)$@', $sFile, $m)) {
+            $sFile = $m[1];
+        }
+
+        $sFileParam = oxDb::getDb()->quote($sFile);
+        $sShpIdParam = oxDb::getDb()->quote($oConfig->getShopId());
+        $sSql = "select * from oxtplblocks where oxactive=1 and oxshopid=$sShpIdParam and oxtemplate=$sFileParam order by oxpos asc";
+        $rs = oxDb::getDb(true)->Execute($sSql);
+        $aRet = array();
+        if ($rs != false && $rs->recordCount() > 0) {
+            while (!$rs->EOF) {
+                try {
+                    if (!is_array($aRet[$rs->fields['OXBLOCKNAME']])) {
+                        $aRet[$rs->fields['OXBLOCKNAME']] = array();
+                    }
+                    $aRet[$rs->fields['OXBLOCKNAME']][] = $this->_getTemplateBlock($rs->fields['OXMODULE'], $rs->fields['OXFILE']);
+                } catch (oxException $oE) {
+                    $oE->debugOut();
+                }
+
+                $rs->moveNext();
+            }
+        }
+        return $aRet;
+    }
 }

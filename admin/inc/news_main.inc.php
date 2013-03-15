@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: news_main.inc.php 25640 2010-02-05 06:42:24Z alfonsas $
+ * @version   SVN: $Id: news_main.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,  visible, multilanguage, ident
@@ -46,7 +46,7 @@ class ajaxComponent extends ajaxListComponent
     protected function _getQuery()
     {
         // active AJAX component
-        $sGroupTable = getViewName('oxgroups');
+        $sGroupTable = $this->_getViewName('oxgroups');
 
         $sDiscountId      = oxConfig::getParameter( 'oxid' );
         $sSynchDiscountId = oxConfig::getParameter( 'synchoxid' );
@@ -97,7 +97,7 @@ class ajaxComponent extends ajaxListComponent
         $soxId      = oxConfig::getParameter( 'synchoxid' );
 
         if ( oxConfig::getParameter( 'all' ) ) {
-            $sGroupTable = getViewName('oxgroups');
+            $sGroupTable = $this->_getViewName('oxgroups');
             $aAddGroups = $this->_getAll( $this->_addFilter( "select $sGroupTable.oxid ".$this->_getQuery() ) );
         }
         if ( $soxId && $soxId != "-1" && is_array( $aAddGroups ) ) {

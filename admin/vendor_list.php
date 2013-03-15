@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: vendor_list.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: vendor_list.php 31961 2010-12-17 13:59:10Z sarunas $
  */
 
 /**
@@ -42,14 +42,9 @@ class Vendor_List extends oxAdminList
     protected $_sListClass = 'oxvendor';
 
     /**
-     * Sets SQL query parameters (such as sorting),
-     * executes parent method parent::Init().
+     * Default SQL sorting parameter (default null).
      *
-     * @return null
+     * @var string
      */
-    public function init()
-    {
-        $this->_sDefSort = getViewName('oxvendor').".oxtitle";
-        parent::Init();
-    }
+    protected $_sDefSortField = 'oxtitle';
 }

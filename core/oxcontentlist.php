@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcontentlist.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxcontentlist.php 31954 2010-12-17 13:33:40Z sarunas $
  */
 
 /**
@@ -87,7 +87,7 @@ class oxContentList extends oxList
     {
         // load them
         $iType = (int)$iType;
-        $this->selectString( "select * from oxcontents where ".oxDb::getInstance()->getMultiLangFieldName( 'oxactive').
-        " = '1' and oxtype = '$iType' and oxsnippet = '0' and oxshopid = '$this->_sShopID' $sSQLAdd order by oxloadid" );
+        $sViewName = $this->getBaseObject()->getViewName();
+        $this->selectString( "select * from {$sViewName} where oxactive = '1' and oxtype = '$iType' and oxsnippet = '0' and oxshopid = '$this->_sShopID' $sSQLAdd order by oxloadid" );
     }
 }

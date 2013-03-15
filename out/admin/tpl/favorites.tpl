@@ -2,8 +2,8 @@
 <html id="top" >
 <head>
     <title>[{ oxmultilang ident="MAIN_TITLE" }]</title>
-    <link rel="stylesheet" href="[{$shop->basetpldir}]main.css">
-    <link rel="stylesheet" href="[{$shop->basetpldir}]colors.css">
+    <link rel="stylesheet" href="[{$oViewConf->getResourceUrl()}]main.css">
+    <link rel="stylesheet" href="[{$oViewConf->getResourceUrl()}]colors.css">
     <meta http-equiv="Content-Type" content="text/html; charset=[{$charset}]">
 </head>
 <body>
@@ -19,14 +19,14 @@
 </p>
 
 
-    <form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post" target="navigation">
-    [{ $shop->hiddensid }]
+    <form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post" target="navigation">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="cl" value="navigation">
     <input type="hidden" name="favorites[]" value="">
     <select size="25" name="favorites[]" multiple="multiple" style="min-width:30%">
     [{foreach from=$menustructure item=menuholder }]
         [{if $menuholder->nodeType == XML_ELEMENT_NODE && $menuholder->childNodes->length }]
-        
+
             [{foreach from=$menuholder->childNodes item=menuitem }]
                 [{if $menuitem->nodeType == XML_ELEMENT_NODE && $menuitem->childNodes->length }]
                 <optgroup label="[{ oxmultilang noerror=true ident=$menuitem->getAttribute('name')|default:$menuitem->getAttribute('id') }]">

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcategory.php 32866 2011-02-02 14:16:14Z linas.kukulskis $
+ * @version   SVN: $Id: oxcategory.php 33763 2011-03-15 09:02:55Z arvydas.vapsva $
  */
 
 /**
@@ -115,6 +115,8 @@ class oxCategory extends oxI18n implements oxIUrl
     /**
      * Category id's for sorting
      *
+     * @deprecated 2011.01.27 for v4.5.0
+     *
      * @var array
      */
     protected $_aIds = array();
@@ -196,28 +198,8 @@ class oxCategory extends oxI18n implements oxIUrl
      */
     public function assign( $dbRecord )
     {
-
-        parent::assign( $dbRecord );
-
-        // workaround for firefox showing &lang= as &9001;= entity, mantis#0001272
-        $this->oxcategories__oxlongdesc = new oxField( str_replace( '&lang=', '&amp;lang=', $this->oxcategories__oxlongdesc->value ), oxField::T_RAW);
-
-        startProfile("parseThroughSmarty");
-        // #1030C run through smarty
-        $myConfig = $this->getConfig();
-        if (!$this->_isInList() && !$this->isAdmin() && $myConfig->getConfigParam( 'bl_perfParseLongDescinSmarty' ) ) {
-            $this->oxcategories__oxlongdesc = new oxField( oxUtilsView::getInstance()->parseThroughSmarty( $this->oxcategories__oxlongdesc->value, $this->getId() ), oxField::T_RAW );
-        }
-
-        if ( !$this->isAdmin() && ( $myConfig->getConfigParam( 'bl_perfShowActionCatArticleCnt' ) || $myConfig->getConfigParam('blDontShowEmptyCategories')  ) ) {
-            if ( $this->isPriceCategory() ) {
-                $this->_iNrOfArticles = oxUtilsCount::getInstance()->getPriceCatArticleCount( $this->getId(), $this->oxcategories__oxpricefrom->value, $this->oxcategories__oxpriceto->value );
-            } else {
-                $this->_iNrOfArticles = oxUtilsCount::getInstance()->getCatArticleCount( $this->getId() );
-            }
-        }
-
-        stopProfile("parseThroughSmarty");
+        $this->_iNrOfArticles = null;
+        return parent::assign( $dbRecord );
     }
 
     /**
@@ -243,9 +225,11 @@ class oxCategory extends oxI18n implements oxIUrl
 
             // only delete empty categories
             // #1173M - not all pic are deleted, after article is removed
-            $myUtilsPic->safePictureDelete($this->oxcategories__oxthumb->value, $myConfig->getAbsDynImageDir().'/0', 'oxcategories', 'oxthumb' );
+            $myUtilsPic->safePictureDelete($this->oxcategories__oxthumb->value, $myConfig->getPictureDir(false).'/0', 'oxcategories', 'oxthumb' );
 
-            $myUtilsPic->safePictureDelete($this->oxcategories__oxicon->value, $myConfig->getAbsDynImageDir().'/icon', 'oxcategories', 'oxicon' );
+            $myUtilsPic->safePictureDelete($this->oxcategories__oxicon->value, $myConfig->getPictureDir(false).'/icon', 'oxcategories', 'oxicon' );
+
+            $myUtilsPic->safePictureDelete($this->oxcategories__oxpromoicon->value, $myConfig->getPictureDir(false).'/icon', 'oxcategories', 'oxpromoicon' );
 
             $sAdd = " and oxshopid = '" . $this->getShopId() . "' ";
 
@@ -301,7 +285,7 @@ class oxCategory extends oxI18n implements oxIUrl
     }
 
     /**
-     * Sets an array of sub cetegories, handles sorting and parent hasVisibleSubCats
+     * Sets an array of sub cetegories, also handles parent hasVisibleSubCats
      *
      * @param array $aCats array of categories
      *
@@ -316,8 +300,6 @@ class oxCategory extends oxI18n implements oxIUrl
                 $this->setHasVisibleSubCats( true );
             }
         }
-
-        $this->sortSubCats();
     }
 
     /**
@@ -325,7 +307,7 @@ class oxCategory extends oxI18n implements oxIUrl
      *
      * @param oxcategory $oCat          the category
      * @param string     $sKey          (optional, default=null)  the key for that category, without a key, the category isjust added to the array
-     * @param boolean    $blSkipSorting (optional, default=false) should we skip sorting now?
+     * @param boolean    $blSkipSorting (optional, default=false) should we skip sorting now? (deprecated on 2011.01.27 for v4.5.0)
      *
      * @return null
      */
@@ -343,14 +325,12 @@ class oxCategory extends oxI18n implements oxIUrl
         if ( $oCat->getIsVisible() ) {
             $this->setHasVisibleSubCats( true );
         }
-
-        if (!$blSkipSorting) {
-            $this->sortSubCats();
-        }
     }
 
     /**
      * Sorts sub categories
+     *
+     * @deprecated 2011.01.27 for v4.5.0
      *
      * @return null
      */
@@ -367,6 +347,8 @@ class oxCategory extends oxI18n implements oxIUrl
      *
      * @param oxcategory $a first  category
      * @param oxcategory $b second category
+     *
+     * @deprecated 2011.01.27 for v4.5.0
      *
      * @return integer
      */
@@ -391,6 +373,8 @@ class oxCategory extends oxI18n implements oxIUrl
      * categry sorted array
      *
      * @param array $aSorIds sorted category array
+     *
+     * @deprecated 2011.01.27 for v4.5.0
      *
      * @return null
      */
@@ -445,11 +429,23 @@ class oxCategory extends oxI18n implements oxIUrl
      */
     public function getNrOfArticles()
     {
-        if ( !$this->getConfig()->getConfigParam( 'bl_perfShowActionCatArticleCnt' ) && $this->getConfig()->getConfigParam( 'blDontShowEmptyCategories' ) ) {
-            return 0;
+        $myConfig = $this->getConfig();
+
+        if ( !isset($this->_iNrOfArticles)
+          && !$this->isAdmin()
+          && (
+                 $myConfig->getConfigParam( 'bl_perfShowActionCatArticleCnt' )
+              || $myConfig->getConfigParam('blDontShowEmptyCategories')
+             ) ) {
+
+            if ( $this->isPriceCategory() ) {
+                $this->_iNrOfArticles = oxUtilsCount::getInstance()->getPriceCatArticleCount( $this->getId(), $this->oxcategories__oxpricefrom->value, $this->oxcategories__oxpriceto->value );
+            } else {
+                $this->_iNrOfArticles = oxUtilsCount::getInstance()->getCatArticleCount( $this->getId() );
+            }
         }
 
-        return $this->_iNrOfArticles;
+        return (int)$this->_iNrOfArticles;
     }
 
     /**
@@ -474,7 +470,7 @@ class oxCategory extends oxI18n implements oxIUrl
         if (!isset( $this->_blIsVisible ) ) {
 
             if ( $this->getConfig()->getConfigParam( 'blDontShowEmptyCategories' ) ) {
-                $blEmpty = ($this->_iNrOfArticles < 1) && !$this->getHasVisibleSubCats();
+                $blEmpty = ($this->getNrOfArticles() < 1) && !$this->getHasVisibleSubCats();
             } else {
                 $blEmpty = false;
             }
@@ -576,11 +572,11 @@ class oxCategory extends oxI18n implements oxIUrl
      *
      * @return string
      */
-    public function getSqlActiveSnippet( $blForceCoreTable = false )
+    public function getSqlActiveSnippet( $blForceCoreTable = null )
     {
-            $sTable = $this->getCoreTableName();
-
         $sQ  = parent::getSqlActiveSnippet( $blForceCoreTable );
+
+        $sTable = $this->getViewName($blForceCoreTable);
         $sQ .= ( strlen( $sQ )? ' and ' : '' ) . " $sTable.oxhidden = '0' ";
 
 
@@ -634,7 +630,7 @@ class oxCategory extends oxI18n implements oxIUrl
             $this->_aStdUrls[$iLang] = $this->getBaseStdLink( $iLang );
         }
 
-        return oxUtilsUrl::getInstance()->processStdUrl( $this->_aStdUrls[$iLang], $aParams, $iLang, $iLang != $this->getLanguage() );
+        return oxUtilsUrl::getInstance()->processUrl( $this->_aStdUrls[$iLang], true, $aParams, $iLang );
     }
 
     /**
@@ -711,65 +707,12 @@ class oxCategory extends oxI18n implements oxIUrl
      */
     public function getAttributes()
     {
-        $sActCat        = $this->sOXID;
-        $aAttributes    = array();
-        $blActiveFilter = false;
+        $sActCat = $this->getId();
 
-        $aSessionFilter = oxSession::getVar( 'session_attrfilter' );
+        $oAttrList = oxNew( "oxAttributeList" );
+        $oAttrList->getCategoryAttributes( $sActCat, $this->getLanguage() );
 
-        $oArtList = oxNew( "oxarticlelist");
-        $oArtList->loadCategoryIDs( $sActCat, $aSessionFilter );
-
-        // Only if we have articles
-        if (count($oArtList) > 0 ) {
-            $oDb = oxDb::getDb();
-            $sArtIds = '';
-            foreach (array_keys($oArtList->getArray()) as $sId ) {
-                if ($sArtIds) {
-                    $sArtIds .= ',';
-                }
-                $sArtIds .= $oDb->quote($sId);
-            }
-            $sActCatQuoted = $oDb->quote($sActCat);
-            $sAttTbl = getViewName('oxattribute');
-            $sO2ATbl = getViewName('oxobject2attribute');
-            $sC2ATbl = getViewName('oxcategory2attribute');
-            $sLngSuf = oxLang::getInstance()->getLanguageTag($this->getLanguage());
-
-            $sSelect = "SELECT DISTINCT att.oxid, att.oxtitle{$sLngSuf}, o2a.oxvalue{$sLngSuf} ".
-                       "FROM $sAttTbl as att, $sO2ATbl as o2a ,$sC2ATbl as c2a ".
-                       "WHERE att.oxid = o2a.oxattrid AND c2a.oxobjectid = $sActCatQuoted AND c2a.oxattrid = att.oxid AND o2a.oxvalue{$sLngSuf} !='' AND o2a.oxobjectid IN ($sArtIds) ".
-                       "ORDER BY c2a.oxsort , att.oxpos, att.oxtitle{$sLngSuf}, o2a.oxvalue{$sLngSuf}";
-
-            $rs = $oDb->execute( $sSelect );
-            if ($rs != false && $rs->recordCount() > 0) {
-                $oStr = getStr();
-                while ( !$rs->EOF && list($sAttId,$sAttTitle, $sAttValue) = $rs->fields ) {
-                    if ( !isset( $aAttributes[$sAttId])) {
-                        $oAttribute           = new stdClass();
-                        $oAttribute->title    = $sAttTitle;
-                        $oAttribute->aValues  = array();
-                        $aAttributes[$sAttId] = $oAttribute;
-                    }
-                    $oValue             = new stdClass();
-                    $oValue->id         = $oStr->htmlspecialchars( $sAttValue );
-                    $oValue->value      = $oStr->htmlspecialchars( $sAttValue );
-                    $oValue->blSelected = isset($aSessionFilter[$sActCat][$sAttId]) && $aSessionFilter[$sActCat][$sAttId] == $sAttValue;
-
-                    $sAttValueId = md5( $sAttValue );
-
-                    $blActiveFilter = $blActiveFilter || $oValue->blSelected;
-                    $aAttributes[$sAttId]->aValues[$sAttValueId] = $oValue;
-                    $rs->moveNext();
-                }
-            }
-
-        }
-
-        if ( is_array($aSessionFilter[$sActCat]) && !$blActiveFilter ) {
-            oxSession::setVar( "session_attrfilter", false);
-        }
-        return $aAttributes;
+        return $oAttrList;
     }
 
     /**
@@ -1045,13 +988,51 @@ class oxCategory extends oxI18n implements oxIUrl
 
 
     /**
-     * Returns category icon picture
+     * Returns category icon picture url if exist, false - if not
      *
-     * @return string
+     * @return mixed
      */
     public function getIconUrl()
     {
-        return $this->getConfig()->getIconUrl( 'icon/'.$this->oxcategories__oxicon->value );
+        return $this->getPictureUrlForType( $this->oxcategories__oxicon->value, 'icon');
+    }
+
+    /**
+     * Returns category thumbnail picture url if exist, false - if not
+     *
+     * @return mixed
+     */
+    public function getThumbUrl()
+    {
+        return $this->getPictureUrlForType( $this->oxcategories__oxthumb->value, '0' );
+    }
+
+    /**
+     * Returns category promotion icon picture url if exist, false - if not
+     *
+     * @return mixed
+     */
+    public function getPromotionIconUrl()
+    {
+        return $this->getPictureUrlForType( $this->oxcategories__oxpromoicon->value, 'icon');
+    }
+
+    /**
+     * Retusnr category  picture url if exist, false - if not
+     *
+     * @param string $sPicName picture name
+     * @param string $sPicType picture type relatet with picture dir: icon - icon; 0 - image
+     *
+     * @return mixed
+     */
+    public function getPictureUrlForType($sPicName, $sPicType)
+    {
+
+        if ( $sPicName ) {
+            return $this->getPictureUrl() . $sPicType . '/' . $sPicName;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -1075,5 +1056,16 @@ class oxCategory extends oxI18n implements oxIUrl
     public function isPriceCategory()
     {
         return (bool) ( $this->oxcategories__oxpricefrom->value || $this->oxcategories__oxpriceto->value );
+    }
+
+    /**
+     * Returns long description, parsed through smarty. should only be used by exports or so.
+     * In templates use [{oxeval var=$oCategory->oxcategories__oxlongdesc->getRawValue()}]
+     *
+     * @return string
+     */
+    public function getLongDesc()
+    {
+        return oxUtilsView::getInstance()->parseThroughSmarty( $this->oxcategories__oxlongdesc->getRawValue(), $this->getId().$this->getLanguage() );
     }
 }

@@ -5,7 +5,7 @@
     [{assign var="_titleprefix" value=$_titleprefix|default:$oView->getTitlePrefix() }]
     [{assign var="title" value=$title|default:$oView->getTitle() }]
     <title>[{ $_titleprefix }][{if $title && $_titleprefix }] | [{/if}][{$title|strip_tags}][{if $_titlesuffix}] | [{$_titlesuffix}][{/if}][{if $titlepagesuffix}] | [{$titlepagesuffix}][{/if}]</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=[{$charset}]">
+    <meta http-equiv="Content-Type" content="text/html; charset=[{$oView->getCharSet()}]">
     [{if $oView->noIndex() == 1 }]
     <meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
     [{elseif $oView->noIndex() == 2 }]
@@ -19,6 +19,7 @@
     <!--[if IE 7]><link rel="stylesheet" type="text/css" href="[{ $oViewConf->getResourceUrl() }]oxid_ie7.css"><![endif]-->
     <!--[if IE 6]><link rel="stylesheet" type="text/css" href="[{ $oViewConf->getResourceUrl() }]oxid_ie6.css"><![endif]-->
 
+    [{assign var='rsslinks' value=$oView->getRssLinks() }]
     [{if $rsslinks}]
       [{foreach from=$rsslinks item='rssentry'}]
         <link rel="alternate" type="application/rss+xml" title="[{$rssentry.title|strip_tags}]" href="[{$rssentry.link}]">

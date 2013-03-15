@@ -35,8 +35,8 @@ window.onload = function ()
     [{assign var="readonly" value=""}]
 [{/if}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{$oViewConf->getHiddenSid()}]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="oxidCopy" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="article_main">
@@ -47,8 +47,8 @@ window.onload = function ()
 
 
       <table cellspacing="0" cellpadding="0" border="0" style="width:98%;">
-        <form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post" onSubmit="return copyLongDesc( 'oxarticles__oxlongdesc' );" style="padding: 0px;margin: 0px;height:0px;">
-        [{ $shop->hiddensid }]
+        <form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post" onSubmit="return copyLongDesc( 'oxarticles__oxlongdesc' );" style="padding: 0px;margin: 0px;height:0px;">
+        [{$oViewConf->getHiddenSid()}]
         <input type="hidden" name="cl" value="article_main">
         <input type="hidden" name="fnc" value="">
         <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -211,7 +211,7 @@ window.onload = function ()
                 </td>
               </tr>
 
-              [{if !$edit->blNotBuyableParent}]
+              [{if !$edit->isParentNotBuyable()}]
 
                 <tr>
                   <td class="edittext">
@@ -219,7 +219,7 @@ window.onload = function ()
                   </td>
                   <td class="edittext">
                     <input type="text" class="editinput" size="8" maxlength="[{$edit->oxarticles__oxprice->fldmax_length}]" name="editval[oxarticles__oxprice]" value="[{$edit->oxarticles__oxprice->value}]" [{ $readonly }]>
-                    &nbsp;<em>( [{$edit->fprice}] )</em>
+                    &nbsp;<em>( [{$edit->getFPrice()}] )</em>
                     [{ oxinputhelp ident="HELP_ARTICLE_MAIN_PRICE" }]
                   </td>
                 </tr>

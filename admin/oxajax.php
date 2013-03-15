@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxajax.php 32511 2011-01-14 13:54:24Z arvydas.vapsva $
+ * @version   SVN: $Id: oxajax.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
  */
 
 // shop path for includes
@@ -82,6 +82,14 @@ class ajaxListComponent extends oxSuperCfg
      * @var string
      */
     protected $_sContainer = null;
+
+    /**
+     * If true extended column selection will be build
+     * (currently checks if variants must be shown in lists and column name is "oxtitle")
+     *
+     * @var bool
+     */
+    protected $_blAllowExtColumns = false;
 
     /**
      * Initializes AJAX columns
@@ -276,31 +284,72 @@ class ajaxListComponent extends oxSuperCfg
      */
     protected function _getQueryCols()
     {
-        $sLangTag = oxLang::getInstance()->getLanguageTag();
-        $sQ = '';
-        $blSep = false;
-        $aVisiblecols = $this->_getVisibleColNames();
-        foreach ( $aVisiblecols as $iCnt => $aCol ) {
-            if ( $blSep )
-                $sQ .= ', ';
-
-            // multijanguage
-            $sCol = $aCol[3]?$aCol[0].$sLangTag:$aCol[0];
-            $sQ  .= getViewName( $aCol[1] ) . '.' . $sCol . ' as _' . $iCnt;
-            $blSep = true;
-        }
-
-        $aIdentCols = $this->_getIdentColNames();
-        foreach ( $aIdentCols as $iCnt => $aCol ) {
-            if ( $blSep )
-                $sQ .= ', ';
-
-            // multijanguage
-            $sCol = $aCol[3]?$aCol[0].$sLangTag:$aCol[0];
-            $sQ  .= getViewName( $aCol[1] ) . '.' . $sCol . ' as _' . $iCnt;
-        }
+        $sQ  = $this->_buildColsQuery( $this->_getVisibleColNames(), false ).", ";
+        $sQ .= $this->_buildColsQuery( $this->_getIdentColNames() );
 
         return " $sQ ";
+    }
+
+    /**
+     * Builds column selection query
+     *
+     * @param array $aIdentCols  columns
+     * @param bool  $blIdentCols if true, means ident columns part is build
+     *
+     * @return string
+     */
+    protected function _buildColsQuery( $aIdentCols, $blIdentCols = true )
+    {
+        $sQ = '';
+        foreach ( $aIdentCols as $iCnt => $aCol ) {
+            if ( $sQ ) {
+                $sQ .= ', ';
+            }
+
+            $sViewTable = $this->_getViewName( $aCol[1] );
+            if ( !$blIdentCols && $this->_isExtendedColumn( $aCol[0] ) ) {
+                $sQ .= $this->_getExtendedColQuery( $sViewTable, $aCol[0], $iCnt );
+            } else {
+                $sQ .=  $sViewTable. '.' . $aCol[0] . ' as _' . $iCnt;
+            }
+        }
+
+        return $sQ;
+    }
+
+    /**
+     * Checks if current column is extended
+     * (currently checks if variants must be shown in lists and column name is "oxtitle")
+     *
+     * @param string $sColumn column name
+     *
+     * @return bool
+     */
+    protected function _isExtendedColumn( $sColumn )
+    {
+        $blBuild = false;
+        if ( $this->_blAllowExtColumns && oxConfig::getInstance()->getConfigParam( 'blVariantsSelection' ) && $sColumn == 'oxtitle' ) {
+            $blBuild = true;
+        }
+
+        return $blBuild;
+    }
+
+    /**
+     * Returns extended query part for given view/column combination
+     * (if variants must be shown in lists and column name is "oxtitle")
+     *
+     * @param string $sViewTable view name
+     * @param string $sColumn    column name
+     * @param int    $iCnt       column count
+     *
+     * @return string
+     */
+    protected function _getExtendedColQuery( $sViewTable, $sColumn, $iCnt )
+    {
+        // multilanguage
+        $sVarSelect = "$sViewTable.oxvarselect";
+        return " IF( {$sViewTable}.{$sColumn} != '', {$sViewTable}.{$sColumn}, CONCAT((select oxart.{$sColumn} from {$sViewTable} as oxart where oxart.oxid = {$sViewTable}.oxparentid),', ',{$sVarSelect})) as _{$iCnt}";
     }
 
     /**
@@ -344,7 +393,6 @@ class ajaxListComponent extends oxSuperCfg
             $oLang = oxLang::getInstance();
             $oStr = getStr();
 
-            $sLangTag = $oLang->getLanguageTag();
             $blIsUtf  = $this->getConfig()->isUtf();
             $sCharset = $oLang->translateString( "charset" );
 
@@ -370,8 +418,7 @@ class ajaxListComponent extends oxSuperCfg
                     // possibility to search in the middle ..
                     $sValue = $oStr->preg_replace( '/^\*/', '%', $sValue );
 
-                    $sCol = $aCols[ $iCol ][3]?$aCols[ $iCol ][0].$sLangTag:$aCols[ $iCol ][0];
-                    $sQ .= getViewName( $aCols[ $iCol ][1] ) . '.' . $sCol;
+                    $sQ .= $this->_getViewName( $aCols[ $iCol ][1] ) . '.' . $aCols[ $iCol ][0];
                     $sQ .= ' like ' . $oDb->Quote( $sValue . '%' ). ' ';
                 }
 
@@ -508,6 +555,18 @@ class ajaxListComponent extends oxSuperCfg
         echo $sOut;
     }
 
+     /**
+     * Return the view name of the given table if a view exists, otherwise the table name itself
+     *
+     * @param string $sTable table name
+     *
+     * @return string
+     */
+    protected function _getViewName( $sTable )
+    {
+        return getViewName( $sTable, oxConfig::getParameter('editlanguage'));
+    }
+
     /**
      * Formats data array which later will be processed by _outputResponse method
      *
@@ -586,6 +645,8 @@ class ajaxListComponent extends oxSuperCfg
                 oxUtils::getInstance()->oxResetFileCache();
             }
     }
+
+
 
     /**
      * Resets counters values from cache. Resets price category articles, category articles,

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlocator.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: oxlocator.php 33870 2011-03-21 16:09:01Z sarunas $
  */
 
 /**
@@ -122,23 +122,16 @@ class oxLocator extends oxSuperCfg
 
             // active category
             $oLocatorTarget->setActiveCategory( $oCategory );
-            // for compatibility reasons for a while. will be removed in future
-            $oLocatorTarget->addTplParam( 'actCategory', $oLocatorTarget->getActiveCategory() );
 
             // category path
             if ( ( $oCatTree = $oLocatorTarget->getCategoryTree() ) ) {
                 $oLocatorTarget->setCatTreePath( $oCatTree->getPath() );
-                // for compatibility reasons for a while. will be removed in future
-                $oLocatorTarget->addTplParam( 'actCatpath', $oLocatorTarget->getCatTreePath() );
             }
         }
     }
 
     /**
      * Sets details locator data for articles that came from vendor list.
-     *
-     * Template variables:
-     * <b>actCatpath</b>
      *
      * @param oxubase   $oLocatorTarget oxubase object
      * @param oxarticle $oCurrArticle   current article
@@ -184,23 +177,16 @@ class oxLocator extends oxSuperCfg
 
             // active vendor
             $oLocatorTarget->setActiveCategory( $oVendor );
-            // for compatibility reasons for a while. will be removed in future
-            $oLocatorTarget->addTplParam( 'actCategory', $oLocatorTarget->getActiveCategory() );
 
             // vendor path
             if ( ( $oVendorTree = $oLocatorTarget->getVendorTree() ) ) {
                 $oLocatorTarget->setCatTreePath( $oVendorTree->getPath() );
-                // for compatibility reasons for a while. will be removed in future
-                $oLocatorTarget->addTplParam( 'actCatpath', $oLocatorTarget->getCatTreePath() );
             }
         }
     }
 
     /**
      * Sets details locator data for articles that came from Manufacturer list.
-     *
-     * Template variables:
-     * <b>actCatpath</b>
      *
      * @param oxubase   $oLocatorTarget oxubase object
      * @param oxarticle $oCurrArticle   current article
@@ -246,24 +232,16 @@ class oxLocator extends oxSuperCfg
 
             // active Manufacturer
             $oLocatorTarget->setActiveCategory( $oManufacturer );
-            // for compatibility reasons for a while. will be removed in future
-            $oLocatorTarget->addTplParam( 'actCategory', $oLocatorTarget->getActiveCategory() );
 
             // Manufacturer path
             if ( ( $oManufacturerTree = $oLocatorTarget->getManufacturerTree() ) ) {
                 $oLocatorTarget->setCatTreePath( $oManufacturerTree->getPath() );
-                // for compatibility reasons for a while. will be removed in future
-                $oLocatorTarget->addTplParam( 'actCatpath', $oLocatorTarget->getCatTreePath() );
             }
         }
     }
 
     /**
      * Sets details locator data for articles that came from search list.
-     *
-     * Template variables:
-     * <b>sSearchTitle</b>, <b>searchparam</b>,
-     * <b>searchparamforhtml</b>, <b>searchcnid</b>, <b>searchvendor</b>, <b>searchmanufacturer</b>
      *
      * @param oxubase   $oLocatorTarget oxubase object
      * @param oxarticle $oCurrArticle   current article
@@ -300,6 +278,8 @@ class oxLocator extends oxSuperCfg
             $iPage = $this->_findActPageNumber( $oLocatorTarget->getActPage(), $oIdList, $oCurrArticle );
 
             $sAddSearch = "searchparam={$sSearchLinkParam}";
+            $sAddSearch .= '&amp;listtype=search';
+
             if ( $sSearchCat !== null ) {
                 $sAddSearch .= "&amp;searchcnid={$sSearchCat}";
             }
@@ -323,26 +303,12 @@ class oxLocator extends oxSuperCfg
 
             $sFormat = oxLang::getInstance()->translateString( 'searchResult' );
             $oLocatorTarget->setSearchTitle( sprintf( $sFormat, $sSearchFormParam ) );
-            // for compatibility reasons for a while. will be removed in future
-            $oLocatorTarget->addTplParam( 'sSearchTitle', $oLocatorTarget->getSearchTitle() );
-
-            $oLocatorTarget->addTplParam( 'searchparam', $sSearchLinkParam );
-            $oLocatorTarget->addTplParam( 'searchcnid', $sSearchCat );
-            $oLocatorTarget->addTplParam( 'searchvendor', $sSearchVendor );
-            $oLocatorTarget->addTplParam( 'searchmanufacturer', $sSearchManufacturer );
-            $oLocatorTarget->addTplParam( 'searchparamforhtml', $sSearchFormParam );
-
             $oLocatorTarget->setActiveCategory( $oSearchCat );
-            // for compatibility reasons for a while. will be removed in future
-            $oLocatorTarget->addTplParam( 'actCategory', $oLocatorTarget->getActiveCategory() );
         }
     }
 
     /**
      * Sets details locator data for articles that came from tag list.
-     *
-     * Template variables:
-     * <b>sSearchTitle</b>, <b>searchparamforhtml</b>
      *
      * @param oxubase   $oLocatorTarget oxubase object
      * @param oxarticle $oCurrArticle   current article
@@ -387,12 +353,7 @@ class oxLocator extends oxSuperCfg
             $oTag->prevProductLink = $this->_oBackProduct?$this->_makeLink( $this->_oBackProduct->getLink(), $sAddSearch ):null;
             $oStr = getStr();
             $oLocatorTarget->setSearchTitle( $oLang->translateString('TAGS').' / '.$oStr->htmlspecialchars( $oStr->ucfirst( $oTag->sTag ) ) );
-            // for compatibility reasons for a while. will be removed in future
-            $oLocatorTarget->addTplParam( 'sSearchTitle', $oLocatorTarget->getSearchTitle() );
-            $oLocatorTarget->addTplParam( 'searchtagforhtml', null );
             $oLocatorTarget->setActiveCategory( $oTag );
-            // for compatibility reasons for a while. will be removed in future
-            $oLocatorTarget->addTplParam( 'actCategory', $oLocatorTarget->getActiveCategory() );
         }
     }
 
@@ -450,15 +411,9 @@ class oxLocator extends oxSuperCfg
             $sTitle = $oLang->translateString('RECOMMLIST');
             if ( $sSearchRecomm !== null ) {
                 $sTitle .= " / ".$oLang->translateString('RECOMMLIST_SEARCH').' "'.$sSearchFormRecomm.'"';
-                $oLocatorTarget->addTplParam( 'searchrecomm', $sSearchLinkRecomm );
-                $oLocatorTarget->addTplParam( 'searchrecommforhtml', $sSearchFormRecomm );
             }
             $oLocatorTarget->setSearchTitle( $sTitle );
-            // for compatibility reasons for a while. will be removed in future
-            $oLocatorTarget->addTplParam( 'sSearchTitle', $oLocatorTarget->getSearchTitle() );
             $oLocatorTarget->setActiveCategory( $oRecommList );
-            // for compatibility reasons for a while. will be removed in future
-            $oLocatorTarget->addTplParam( 'actCategory', $oLocatorTarget->getActiveCategory() );
         }
     }
 
@@ -572,6 +527,7 @@ class oxLocator extends oxSuperCfg
 
             if ( array_key_exists( $iPos-1, $aIds ) ) {
                 $oBackProduct = oxNew( 'oxarticle' );
+                $oBackProduct->modifyCacheKey('_locator');
                 $oBackProduct->setNoVariantLoading( true );
                 if ( $oBackProduct->load( $aIds[$iPos-1] ) ) {
                     $oBackProduct->setLinkType( $oLocatorTarget->getLinkType() );
@@ -581,6 +537,7 @@ class oxLocator extends oxSuperCfg
 
             if ( array_key_exists( $iPos+1, $aIds ) ) {
                 $oNextProduct = oxNew( 'oxarticle' );
+                $oNextProduct->modifyCacheKey('_locator');
                 $oNextProduct->setNoVariantLoading( true );
                 if ( $oNextProduct->load( $aIds[$iPos+1] ) ) {
                     $oNextProduct->setLinkType( $oLocatorTarget->getLinkType() );

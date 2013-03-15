@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_list.php 29893 2010-09-17 14:00:40Z rimvydas.paskevicius $
+ * @version   SVN: $Id: shop_list.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -42,7 +42,7 @@ class Shop_List extends oxAdminList
      *
      * @var string
      */
-    protected $_sDefSort = 'oxshops.oxname';
+    protected $_sDefSortField = 'oxname';
 
     /**
      * Name of chosen object class (default null).
@@ -66,11 +66,8 @@ class Shop_List extends oxAdminList
      */
     public function init()
     {
-        $this->_blEmployMultilanguage = false;
         parent::Init();
 
-
-        $this->_blEmployMultilanguage = true;
     }
 
     /**
@@ -85,19 +82,7 @@ class Shop_List extends oxAdminList
 
         parent::render();
 
-        $soxId = oxConfig::getParameter( 'oxid' );
-        if ( !$soxId ) {
-            $soxId = $myConfig->getShopId();
-        }
-
-        $sSavedID = oxConfig::getParameter( 'saved_oxid' );
-        if ( ( $soxId == '-1' || !isset( $soxId ) ) && isset( $sSavedID ) ) {
-            $soxId = $sSavedID;
-            oxSession::deleteVar( 'saved_oxid' );
-            // for reloading upper frame
-            $this->_aViewData['updatelist'] = '1';
-        }
-
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         if ( $soxId != '-1' && isset( $soxId ) ) {
             // load object
             $oShop = oxNew( 'oxshop' );
@@ -111,8 +96,6 @@ class Shop_List extends oxAdminList
         // default page number 1
         $this->_aViewData['default_edit'] = 'shop_main';
         $this->_aViewData['updatemain']   = $this->_blUpdateMain;
-
-        $this->_aViewData['oxid'] =  $soxId;
 
         if ( $this->_aViewData['updatenav'] ) {
             //skipping requirements checking when reloading nav frame
@@ -139,7 +122,7 @@ class Shop_List extends oxAdminList
         $this->_aWhere = parent::buildWhere();
         if ( !oxSession::getVar( 'malladmin' ) ) {
             // we only allow to see our shop
-            $this->_aWhere['oxshops.oxid'] = oxSession::getVar( "actshop" );
+            $this->_aWhere[ getViewName( "oxshops" ) . ".oxid" ] = oxSession::getVar( "actshop" );
         }
 
         return $this->_aWhere;

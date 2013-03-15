@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxnewsletter.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxnewsletter.php 31954 2010-12-17 13:33:40Z sarunas $
  */
 
 /**
@@ -115,11 +115,12 @@ class oxNewsletter extends oxBase
 
         // usergroups
         $this->_oGroups = oxNew( "oxList", "oxgroups" );
+        $sViewName = getViewName( "oxgroups" );
 
         // performance
-        $sSelect  = 'select oxgroups.* from oxgroups, oxobject2group ';
-        $sSelect .= 'where oxobject2group.oxobjectid="'.$this->getId().'" ';
-        $sSelect .= 'and oxobject2group.oxgroupsid=oxgroups.oxid ';
+        $sSelect = "select {$sViewName}.* from {$sViewName}, oxobject2group
+                    where oxobject2group.oxobjectid='".$this->getId()."'
+                    and oxobject2group.oxgroupsid={$sViewName}.oxid ";
         $this->_oGroups->selectString( $sSelect );
 
         return $this->_oGroups;

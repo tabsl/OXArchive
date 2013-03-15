@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_main.php 31235 2010-11-25 13:53:04Z alfonsas $
+ * @version   SVN: $Id: article_main.php 33736 2011-03-10 15:36:39Z arvydas.vapsva $
  */
 
 /**
@@ -31,13 +31,6 @@
  */
 class Article_Main extends oxAdminDetails
 {
-    /**
-     * Saved/active product id
-     *
-     * @var string
-     */
-    protected $_sSavedId = null;
-
     /**
      * Loads article parameters and passes them to Smarty engine, returns
      * name of template file "article_main.tpl".
@@ -51,7 +44,7 @@ class Article_Main extends oxAdminDetails
 
         $this->_aViewData['edit'] = $oArticle = oxNew( 'oxarticle' );
 
-        $soxId  = oxConfig::getParameter( "oxid" );
+        $soxId = $this->getEditObjectId();
         $svoxId = oxConfig::getParameter( "voxid" );
         $soxparentId = oxConfig::getParameter( "oxparentid" );
 
@@ -63,14 +56,6 @@ class Article_Main extends oxAdminDetails
             $this->_aViewData["oxparentid"] = $soxparentId;
 
             $this->_aViewData["oxid"] =  $soxId = "-1";
-        }
-
-        // check if we right now saved a new entry
-        if ( $this->_sSavedId ) {
-            $this->_aViewData["oxid"] = $soxId = $this->_sSavedId;;
-
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
         }
 
         if (  $soxId && $soxId != "-1") {
@@ -121,29 +106,49 @@ class Article_Main extends oxAdminDetails
     }
 
     /**
+     * Returns string which must be edited by editor
+     *
+     * @param oxbase $oObject object whifh field will be used for editing
+     * @param string $sField  name of editable field
+     *
+     * @return string
+     */
+    protected function _getEditValue( $oObject, $sField )
+    {
+        $sEditObjectValue = '';
+        if ( $oObject ) {
+            $oDescField = $oObject->getArticleLongDesc();
+            $sEditObjectValue = $this->_processEditValue( $oDescField->getRawValue() );
+            $oDescField = new oxField( $sEditObjectValue, oxField::T_RAW );
+        }
+
+        return $sEditObjectValue;
+    }
+
+    /**
      * Saves changes of article parameters.
      *
      * @return null
      */
     public function save()
     {
-        $myConfig  = $this->getConfig();
-        $myUtilsCount = oxUtilsCount::getInstance();
-
-        $soxId      = oxConfig::getParameter( "oxid" );
-        $aParams    = oxConfig::getParameter( "editval" );
+        $myConfig = $this->getConfig();
+        $soxId    = $this->getEditObjectId();
+        $aParams  = oxConfig::getParameter( "editval" );
 
 
         // checkbox handling
-        if ( !isset( $aParams['oxarticles__oxactive']))
+        if ( !isset( $aParams['oxarticles__oxactive'] ) ) {
             $aParams['oxarticles__oxactive'] = 0;
+        }
 
         // default values
-        $aParams = $this->addDefaultValues( $aParams);
+        $aParams = $this->addDefaultValues( $aParams );
 
         // null values
-        if ($aParams['oxarticles__oxvat'] === '')
+        if ($aParams['oxarticles__oxvat'] === '') {
             $aParams['oxarticles__oxvat'] = null;
+        }
 
         // varianthandling
         $soxparentId = oxConfig::getParameter( "oxparentid");
@@ -154,11 +159,11 @@ class Article_Main extends oxAdminDetails
         }
 
         $oArticle = oxNew( "oxarticle");
-
         $oArticle->setLanguage($this->_iEditLang);
-        if ( $soxId != "-1")
+
+        if ( $soxId != "-1") {
             $oArticle->loadInLang( $this->_iEditLang, $soxId);
-        else {
+        } else {
             $aParams['oxarticles__oxid']        = null;
             $aParams['oxarticles__oxissearch']  = 1;
             $aParams['oxarticles__oxstockflag'] = 1;
@@ -185,8 +190,8 @@ class Article_Main extends oxAdminDetails
 
             $aResetIds = array();
             if ( $aParams['oxarticles__oxactive'] != $oArticle->oxarticles__oxactive->value) {
-                //check categories
                 $oDb = oxDb::getDb();
+                //check categories
                 $sQ = "select oxcatnid from oxobject2category where oxobjectid = ".$oDb->quote( $oArticle->oxarticles__oxid->value );
                 $oRs = $oDb->execute($sQ);
                 if ( $oRs !== false && $oRs->recordCount() > 0 ) {
@@ -201,14 +206,14 @@ class Article_Main extends oxAdminDetails
                 $aResetIds['manufacturer'][$oArticle->oxarticles__oxmanufacturerid->value] = 1;
             }
 
-            // reset vendors
-            if ( isset( $aParams["oxarticles__oxvendorid"] ) && $aParams["oxarticles__oxvendorid"] != $oArticle->oxarticles__oxvendorid->value ) {
+            // vendors
+            if ( isset($aParams['oxarticles__oxvendorid']) && $aParams['oxarticles__oxvendorid'] != $oArticle->oxarticles__oxvendorid->value) {
                 $aResetIds['vendor'][$aParams['oxarticles__oxvendorid']] = 1;
                 $aResetIds['vendor'][$oArticle->oxarticles__oxvendorid->value] = 1;
             }
 
-            // reset Manufacturers
-            if ( isset($aParams["oxarticles__oxmanufacturerid"]) && $aParams["oxarticles__oxmanufacturerid"] != $oArticle->oxarticles__oxmanufacturerid->value) {
+            // manufacturers
+            if ( isset($aParams['oxarticles__oxmanufacturerid']) && $aParams['oxarticles__oxmanufacturerid'] != $oArticle->oxarticles__oxmanufacturerid->value ) {
                 $aResetIds['manufacturer'][$aParams['oxarticles__oxmanufacturerid']] = 1;
                 $aResetIds['manufacturer'][$oArticle->oxarticles__oxmanufacturerid->value] = 1;
             }
@@ -222,23 +227,18 @@ class Article_Main extends oxAdminDetails
         $aParams['oxarticles__oxtitle'] = trim( $aParams['oxarticles__oxtitle'] );
 
         $oArticle->assign( $aParams );
+        $oArticle->setArticleLongDesc( $this->_processLongDesc( $aParams['oxarticles__oxlongdesc'] ) );
         $oArticle->setLanguage($this->_iEditLang);
-
         $oArticle = oxUtilsFile::getInstance()->processFiles( $oArticle );
-
         $oArticle->save();
 
         // set oxid if inserted
         if ( $soxId == "-1") {
-            $this->_sSavedId = $oArticle->getId();
             $sFastCat = oxConfig::getParameter( "art_category");
             if ( $sFastCat != "-1") {
                 $this->addToCategory($sFastCat, $oArticle->getId());
             }
         }
-
-
-        $this->_aViewData["updatelist"] = "1";
 
         //saving tags
         $sTags = $aParams['tags'];
@@ -246,6 +246,26 @@ class Article_Main extends oxAdminDetails
             $sTags = $oArticle->oxarticles__oxsearchkeys->value;
         }
         $oArticle->saveTags($sTags);
+        $this->setEditObjectId( $oArticle->getId() );
+    }
+
+    /**
+     * Fixes html broken by html editor
+     *
+     * @param string $sValue value to fix
+     *
+     * @return string
+     */
+    protected function _processLongDesc( $sValue )
+    {
+        // TODO: the code below is redundant, optimize it, assignments should go smooth without conversions
+        // hack, if editor screws up text, htmledit tends to do so
+        $sValue = str_replace( '&amp;nbsp;', '&nbsp;', $sValue );
+        $sValue = str_replace( '&amp;', '&', $sValue );
+        $sValue = str_replace( '&quot;', '"', $sValue );
+        $sValue = str_replace( '&lang=', '&amp;lang=', $sValue);
+
+        return $sValue;
     }
 
     /**
@@ -285,7 +305,7 @@ class Article_Main extends oxAdminDetails
     {
         $myConfig = $this->getConfig();
 
-        $sOldId = $sOldId ? $sOldId : oxConfig::getParameter( 'oxid' );
+        $sOldId = $sOldId ? $sOldId : $this->getEditObjectId();
         $sNewId = $sNewId ? $sNewId : oxUtilsObject::getInstance()->generateUID();
 
         $oArticle = oxNew( 'oxbase' );
@@ -358,7 +378,7 @@ class Article_Main extends oxAdminDetails
             // only for top articles
             if ( !$sParentId ) {
 
-                $this->_sSavedId = $oArticle->getId();
+                $this->setEditObjectId( $oArticle->getId() );
 
                 //article number handling, warns for artnum dublicates
                 if ( $myConfig->getConfigParam( 'blWarnOnSameArtNums' ) &&
@@ -561,92 +581,7 @@ class Article_Main extends oxAdminDetails
      */
     public function saveinnlang()
     {
-        $soxId   = oxConfig::getParameter( "oxid" );
-        $aParams = oxConfig::getParameter( "editval" );
-
-        // checkbox handling
-        if ( !isset( $aParams['oxarticles__oxactive'] ) ) {
-            $aParams['oxarticles__oxactive'] = 0;
-        }
-
-        // default values
-        $aParams = $this->addDefaultValues( $aParams );
-
-        // null values
-        if ($aParams['oxarticles__oxvat'] === '') {
-            $aParams['oxarticles__oxvat'] = null;
-        }
-
-        // varianthandling
-        $soxparentId = oxConfig::getParameter( "oxparentid");
-        if ( isset( $soxparentId) && $soxparentId && $soxparentId != "-1") {
-            $aParams['oxarticles__oxparentid'] = $soxparentId;
-        }
-
-        $oArticle = oxNew( "oxarticle");
-        $oArticle->setLanguage($this->_iEditLang);
-
-        if ( $soxId != "-1") {
-            $oArticle->load( $soxId);
-        } else {
-            $aParams['oxarticles__oxid'] = null;
-                // shopid
-                $sShopId = oxSession::getVar( "actshop");
-                $aParams['oxarticles__oxshopid'] = $sShopId;
-        }
-
-            // #905A resetting article count in price categories if price has been changed
-            if ( isset($aParams["oxarticles__oxprice"]) && $aParams["oxarticles__oxprice"] != $oArticle->oxarticles__oxprice->value) {
-                $this->resetCounter( "priceCatArticle", $oArticle->oxarticles__oxprice->value );
-            }
-
-            $aResetIds = array();
-
-            if ( $aParams['oxarticles__oxactive'] != $oArticle->oxarticles__oxactive->value) {
-                $oDb = oxDb::getDb();
-                //check categories
-                $sQ = "select oxcatnid from oxobject2category where oxobjectid = ".$oDb->quote( $oArticle->oxarticles__oxid->value );
-                $oRs = $oDb->execute($sQ);
-                if ($oRs !== false && $oRs->recordCount() > 0)
-                    while (!$oRs->EOF) {
-                        $this->resetCounter( "catArticle", $oRs->fields[0] );
-                        $oRs->moveNext();
-                    }
-                // vendors
-                $aResetIds['vendor'][$oArticle->oxarticles__oxvendorid->value] = 1;
-                $aResetIds['manufacturer'][$oArticle->oxarticles__oxmanufacturerid->value] = 1;
-            }
-
-            // vendors
-            if ( isset($aParams['oxarticles__oxvendorid']) && $aParams['oxarticles__oxvendorid'] != $oArticle->oxarticles__oxvendorid->value) {
-                $aResetIds['vendor'][$aParams['oxarticles__oxvendorid']] = 1;
-                $aResetIds['vendor'][$oArticle->oxarticles__oxvendorid->value] = 1;
-            }
-
-            // manufacturers
-            if ( isset($aParams['oxarticles__oxmanufacturerid']) && $aParams['oxarticles__oxmanufacturerid'] != $oArticle->oxarticles__oxmanufacturerid->value ) {
-                $aResetIds['manufacturer'][$aParams['oxarticles__oxmanufacturerid']] = 1;
-                $aResetIds['manufacturer'][$oArticle->oxarticles__oxmanufacturerid->value] = 1;
-            }
-
-            $this->_resetCounts( $aResetIds );
-
-
-        $oArticle->setLanguage( 0 );
-        $oArticle->assign( $aParams );
-
-        // apply new language
-        $sNewLanguage = oxConfig::getParameter( "new_lang");
-        $oArticle->setLanguage( $sNewLanguage );
-        $oArticle->save();
-
-        // set for reload
-        oxSession::setVar( "new_lang", $sNewLanguage );
-
-        // set oxid if inserted
-        if ( $soxId == "-1" ) {
-            $this->_sSavedId = $oArticle->getId();
-        }
+        $this->save();
     }
 
     /**

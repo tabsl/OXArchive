@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: discount_articles.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: discount_articles.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -41,7 +41,7 @@ class Discount_Articles extends oxAdminDetails
     {
         parent::render();
 
-        $soxId = oxConfig::getParameter( 'oxid' );
+        $soxId = $this->getEditObjectId();
         if ( $soxId != '-1' && isset( $soxId)) {
             // load object
             $oDiscount = oxNew( 'oxdiscount' );

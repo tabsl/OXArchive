@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: payment.php 29252 2010-08-06 13:40:48Z arvydas $
+ * @version   SVN: $Id: payment.php 34000 2011-03-25 12:50:06Z sarunas $
  */
 
 /**
@@ -99,7 +99,7 @@ class Payment extends oxUBase
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'payment.tpl';
+    protected $_sThisTemplate = 'page/checkout/payment.tpl';
 
     /**
      * Order step marker
@@ -132,11 +132,6 @@ class Payment extends oxUBase
      * to configuration in admin, user profile data loads delivery sets,
      * and possible payment methods. Returns name of template to render
      * payment::_sThisTemplate.
-     *
-     * Template variables:
-     * <b>allShipsetsCnt</b>, <b>allShipsets</b>, <b>payments</b>,
-     * <b>payerror</b>, <b>payerrortext</b>, <b>dynvalue</b>,
-     * <b>defpaymentid</b>, <b>basket</b>, <b>deladr</b>
      *
      * @return  string  current template file name
      */
@@ -178,13 +173,6 @@ class Payment extends oxUBase
             }
         }
 
-        // passing payments to view
-        $this->_aViewData[ 'payments' ] = $this->getPaymentList();
-
-        // #955A. must recalculate count
-        $this->_aViewData['allShipsetsCnt'] = $this->getAllSetsCnt();
-        $this->_aViewData['allShipsets']    = $this->getAllSets();
-
         if ( !$this->getAllSetsCnt() ) {
             // no fitting shipping set found, setting default empty payment
             $this->_setDefaultEmptyPayment();
@@ -192,19 +180,6 @@ class Payment extends oxUBase
         }
 
         $this->_unsetPaymentErrors();
-
-        $this->_aViewData['oxemptypayment'] = $this->getEmptyPayment();
-        $this->_aViewData['payerror']       = $this->getPaymentError();
-        $this->_aViewData['payerrortext']   = $this->getPaymentErrorText();
-
-        $this->_aViewData['dynvalue']  = $this->getDynValue();
-
-        // get checked payment ID
-        $this->_aViewData['defpaymentid'] = $this->getCheckedPaymentId();
-        $this->_aViewData['paymencnt']    = $this->getPaymentCnt();
-
-        //add a array with current years for the credit card drop down box
-        $this->_aViewData['creditYears'] = $this->getCreditYears();
 
         return $this->_sThisTemplate;
     }
@@ -240,17 +215,20 @@ class Payment extends oxUBase
     protected function _unsetPaymentErrors()
     {
         $iPayError     = oxConfig::getParameter( 'payerror' );
-        $iPayErrorText = oxConfig::getParameter( 'payerrortext' );
+        $sPayErrorText = oxConfig::getParameter( 'payerrortext' );
+
+        if (!($iPayError || $sPayErrorText)) {
+            $iPayError     = oxSession::getVar( 'payerror' );
+            $sPayErrorText = oxSession::getVar( 'payerrortext' );
+        }
 
         if ( $iPayError ) {
             oxSession::deleteVar( 'payerror' );
             $this->_sPaymentError = $iPayError;
-            //QWERTY
         }
-        if ( $iPayErrorText ) {
+        if ( $sPayErrorText ) {
             oxSession::deleteVar( 'payerrortext' );
-            $this->_sPaymentErrorText = $iPayErrorText;
-            //QWERTY
+            $this->_sPaymentErrorText = $sPayErrorText;
         }
     }
 
@@ -264,10 +242,10 @@ class Payment extends oxUBase
     {
         $mySession = $this->getSession();
 
-        oxSession::setVar( 'sShipSet', oxConfig::getParameter( 'sShipSet' ) );
         $oBasket = $mySession->getBasket();
         $oBasket->setShipping( null );
         $oBasket->onUpdate();
+        oxSession::setVar( 'sShipSet', oxConfig::getParameter( 'sShipSet' ) );
     }
 
     /**
@@ -297,8 +275,12 @@ class Payment extends oxUBase
         if (! ($sShipSetId = oxConfig::getParameter( 'sShipSet' ))) {
             $sShipSetId = oxSession::getVar('sShipSet');
         }
-        $sPaymentId = oxConfig::getParameter( 'paymentid' );
-        $aDynvalue  = oxConfig::getParameter( 'dynvalue' );
+        if (! ($sPaymentId = oxConfig::getParameter( 'paymentid' ))) {
+            $sPaymentId = oxSession::getVar('paymentid');
+        }
+        if (! ($aDynvalue = oxConfig::getParameter( 'dynvalue' ))) {
+            $aDynvalue = oxSession::getVar('dynvalue');
+        }
 
         // A. additional protection
         if ( !$myConfig->getConfigParam( 'blOtherCountryOrder' ) && $sPaymentId == 'oxempty' ) {
@@ -358,12 +340,15 @@ class Payment extends oxUBase
             $this->_oPaymentList = false;
 
             $sActShipSet = oxConfig::getParameter( 'sShipSet' );
+            if ( !$sActShipSet ) {
+                 $sActShipSet = oxSession::getVar( 'sShipSet' );
+            }
+
             $oBasket = $this->getSession()->getBasket();
 
             // load sets, active set, and active set payment list
             list( $aAllSets, $sActShipSet, $aPaymentList ) = oxDeliverySetList::getInstance()->getDeliverySetData( $sActShipSet, $this->getUser(), $oBasket );
 
-            oxSession::setVar( 'sShipSet', $sActShipSet );
             $oBasket->setShipping( $sActShipSet );
 
             // calculating payment expences for preview for each payment
@@ -473,7 +458,7 @@ class Payment extends oxUBase
         if ( $this->_aDynValue === null ) {
             $this->_aDynValue = false;
 
-            // #1217 R
+            // flyspray#1217 (sarunas)
             if ( ( $aDynValue = oxSession::getVar( 'dynvalue' ) ) ) {
                 $this->_aDynValue  = $aDynValue;
             } else {
@@ -523,7 +508,10 @@ class Payment extends oxUBase
     public function getCheckedPaymentId()
     {
         if ( $this->_sCheckedPaymentId === null ) {
-            if ( ( $sPaymentID = oxConfig::getParameter( 'paymentid' ) ) ) {
+            if (! ($sPaymentID = oxConfig::getParameter( 'paymentid' ))) {
+                $sPaymentID = oxSession::getVar('paymentid');
+            }
+            if ( $sPaymentID ) {
                 $sCheckedId = $sPaymentID;
             } elseif ( ( $sSelectedPaymentID = oxSession::getVar( '_selected_paymentid' ) ) ) {
                 $sCheckedId = $sSelectedPaymentID;
@@ -670,6 +658,23 @@ class Payment extends oxUBase
             }
         }
         return $this->_sCheckedProductId;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_CHECKOUT_PAY', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 
 }

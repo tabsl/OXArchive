@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: category_main.php 33223 2011-02-14 08:41:46Z linas.kukulskis $
+ * @version   SVN: $Id: category_main.php 33736 2011-03-10 15:36:39Z arvydas.vapsva $
  */
 
 /**
@@ -44,20 +44,8 @@ class Category_Main extends oxAdminDetails
         parent::render();
 
         $this->_aViewData["edit"] = $oCategory = oxNew( "oxcategory" );;
-
-
-        $soxId = oxConfig::getParameter( "oxid");
         $sChosenArtCat = oxConfig::getParameter( "artcat");
-        // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($soxId == "-1" || !isset( $soxId)) && isset( $sSavedID) ) {
-            $soxId = $sSavedID;
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $soxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
-        }
-
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId)) {
 
             // generating category tree for select list
@@ -106,7 +94,7 @@ class Category_Main extends oxAdminDetails
         }
         return "category_main.tpl";
     }
-    
+
     /**
      * Returns an array of article object DB fields, without multilanguage and unsortible fields.
      *
@@ -115,19 +103,19 @@ class Category_Main extends oxAdminDetails
     public function getSortableFields()
     {
         $aSkipFields = array( "OXID", "OXSHOPID", "OXPARENTID", "OXACTIVE", "OXSHORTDESC"
-            , "OXUNITNAME", "OXUNITQUANTITY", "OXEXTURL", "OXURLDESC", "OXURLIMG", "OXVAT" 
+            , "OXUNITNAME", "OXUNITQUANTITY", "OXEXTURL", "OXURLDESC", "OXURLIMG", "OXVAT"
             , "OXTHUMB", "OXPICSGENERATED", "OXPIC1", "OXPIC2", "OXPIC3", "OXPIC4", "OXPIC5"
             , "OXPIC6", "OXPIC7", "OXPIC8", "OXPIC9", "OXPIC10", "OXPIC11", "OXPIC12", "OXSTOCKFLAG"
             , "OXSTOCKTEXT", "OXNOSTOCKTEXT", "OXDELIVERY", "OXFILE", "OXSEARCHKEYS", "OXTEMPLATE"
             , "OXQUESTIONEMAIL", "OXISSEARCH", "OXISCONFIGURABLE", "OXBUNDLEID", "OXFOLDER", "OXSUBCLASS"
             , "OXSOLDAMOUNT", "OXREMINDACTIVE", "OXREMINDAMOUNT", "OXVENDORID", "OXMANUFACTURERID", "OXSKIPDISCOUNTS"
-            , "OXBLFIXEDPRICE", "OXICON", "OXVARSELECT", "OXAMITEMID", "OXAMTASKID", "OXPIXIEXPORT", "OXPIXIEXPORTED"        
+            , "OXBLFIXEDPRICE", "OXICON", "OXVARSELECT", "OXAMITEMID", "OXAMTASKID", "OXPIXIEXPORT", "OXPIXIEXPORTED"
         );
-     
+
         $oDbHandler = oxNew( "oxDbMetaDataHandler" );
-        $aFields = array_merge( $oDbHandler->getMultilangFields( 'oxarticles' ), $oDbHandler->getSinglelangFields( 'oxarticles', 0 ) ); 
+        $aFields = array_merge( $oDbHandler->getMultilangFields( 'oxarticles' ), $oDbHandler->getSinglelangFields( 'oxarticles', 0 ) );
         $aFields = array_diff( $aFields, $aSkipFields );
-        
+
         return $aFields;
     }
 
@@ -141,8 +129,8 @@ class Category_Main extends oxAdminDetails
         $myConfig  = $this->getConfig();
 
 
-        $soxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
+        $soxId = $this->getEditObjectId();
+        $aParams = oxConfig::getParameter( "editval");
 
         // checkbox handling
         if ( !isset( $aParams['oxcategories__oxactive']))
@@ -158,6 +146,7 @@ class Category_Main extends oxAdminDetails
 
             // shopid
             $aParams['oxcategories__oxshopid'] = oxSession::getVar( "actshop" );
+
         $oCategory = oxNew( "oxcategory" );
 
         if ( $soxId != "-1") {
@@ -166,29 +155,41 @@ class Category_Main extends oxAdminDetails
             $oCategory->loadInLang( $this->_iEditLang, $soxId );
                 $myUtilsPic = oxUtilsPic::getInstance();
                 // #1173M - not all pic are deleted, after article is removed
-                $myUtilsPic->overwritePic( $oCategory, 'oxcategories', 'oxthumb', 'TC', '0', $aParams, $myConfig->getAbsDynImageDir() );
-                $myUtilsPic->overwritePic( $oCategory, 'oxcategories', 'oxicon', 'CICO', 'icon', $aParams, $myConfig->getAbsDynImageDir() );
+                $myUtilsPic->overwritePic( $oCategory, 'oxcategories', 'oxthumb', 'TC', '0', $aParams, $myConfig->getPictureDir(false) );
+                $myUtilsPic->overwritePic( $oCategory, 'oxcategories', 'oxicon', 'CICO', 'icon', $aParams, $myConfig->getPictureDir(false) );
+                $myUtilsPic->overwritePic( $oCategory, 'oxcategories', 'oxpromoicon', 'PICO', 'icon', $aParams, $myConfig->getPictureDir(false) );
 
         } else {
             //#550A - if new category is made then is must be default activ
             $aParams['oxcategories__oxactive'] = 1;
             $aParams['oxcategories__oxid'] = null;
         }
-        //$aParams = $oCategory->ConvertNameArray2Idx( $aParams);
 
 
         $oCategory->setLanguage(0);
-        $oCategory->assign( $aParams);
-
+        if ( isset( $aParams["oxcategories__oxlongdesc"] ) ) {
+            $aParams["oxcategories__oxlongdesc"] = $this->_processLongDesc( $aParams["oxcategories__oxlongdesc"] );
+        }
+        $oCategory->assign( $aParams );
         $oCategory->setLanguage($this->_iEditLang);
 
         $oCategory = oxUtilsFile::getInstance()->processFiles( $oCategory );
         $oCategory->save();
-        $this->_aViewData["updatelist"] = "1";
 
-        // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oCategory->oxcategories__oxid->value);
+        $this->setEditObjectId( $oCategory->getId() );
+    }
+
+    /**
+     * Fixes html broken by html editor
+     *
+     * @param string $sValue value to fix
+     *
+     * @return string
+     */
+    protected function _processLongDesc( $sValue )
+    {
+        // workaround for firefox showing &lang= as &9001;= entity, mantis#0001272
+        return str_replace( '&lang=', '&amp;lang=', $sValue );
     }
 
     /**
@@ -198,47 +199,6 @@ class Category_Main extends oxAdminDetails
      */
     public function saveinnlang()
     {
-
-        $soxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
-        // checkbox handling
-        if ( !isset( $aParams['oxcategories__oxactive']))
-            $aParams['oxcategories__oxactive'] = 0;
-        if ( !isset( $aParams['oxcategories__oxdefsortmode']))
-            $aParams['oxcategories__oxdefsortmode'] = 0;
-
-        // null values
-        if ($aParams['oxcategories__oxvat'] === '')
-            $aParams['oxcategories__oxvat'] = null;
-
-            // shopid
-            $aParams['oxcategories__oxshopid'] = oxSession::getVar( "actshop" );
-
-        $oCategory = oxNew( "oxcategory" );
-
-        if ( $soxId != "-1") {
-            $oCategory->loadInLang( $this->_iEditLang, $soxId );
-        } else {
-            $aParams['oxcategories__oxid'] = null;
-        }
-
-
-        //$aParams = $oCategory->ConvertNameArray2Idx( $aParams);
-        $oCategory->setLanguage(0);
-        $oCategory->assign( $aParams);
-
-        // apply new language
-        $sNewLanguage = oxConfig::getParameter( "new_lang");
-        $oCategory->setLanguage( $sNewLanguage);
-        $oCategory->save();
-        $this->_aViewData["updatelist"] = "1";
-
-        // set for reload
-        oxSession::setVar( "new_lang", $sNewLanguage);
-
-        // set oxid if inserted
-        if ( $soxId == "-1") {
-            oxSession::setVar( "saved_oxid", $oCategory->oxcategories__oxid->value);
-        }
+        $this->save();
     }
 }

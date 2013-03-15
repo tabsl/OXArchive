@@ -17,16 +17,16 @@ function ThisDate( sID)
 
 [{assign var="oCurr" value=$edit->getOrderCurrency() }]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="cur" value="[{ $oCurr->id }]">
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="order_main">
 </form>
 
 
-<form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
-[{ $shop->hiddensid }]
+<form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cur" value="[{ $oCurr->id }]">
 <input type="hidden" name="cl" value="order_main">
 <input type="hidden" name="fnc" value="save">
@@ -140,8 +140,8 @@ function ThisDate( sID)
             <td class="edittext">[{ oxmultilang ident="ORDER_MAIN_DELTYPE" }]:</td>
             <td class="edittext">
 
-        <form name="myedit2" id="myedit2" action="[{ $shop->selflink }]" method="post">
-        [{ $shop->hiddensid }]
+        <form name="myedit2" id="myedit2" action="[{ $oViewConf->getSelfLink() }]" method="post">
+        [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="cur" value="[{ $oCurr->id }]">
         <input type="hidden" name="cl" value="order_main">
         <input type="hidden" name="fnc" value="changeDelSet">
@@ -166,8 +166,8 @@ function ThisDate( sID)
             <td class="edittext">
 
         </form>
-        <form name="myedit3" id="myedit3" action="[{ $shop->selflink }]" method="post">
-        [{ $shop->hiddensid }]
+        <form name="myedit3" id="myedit3" action="[{ $oViewConf->getSelfLink() }]" method="post">
+        [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="cur" value="[{ $oCurr->id }]">
         <input type="hidden" name="cl" value="order_main">
         <input type="hidden" name="fnc" value="changePayment">
@@ -221,8 +221,8 @@ function ThisDate( sID)
 
         </form>
 
-        <form name="sendorder" id="sendorder" action="[{ $shop->selflink }]" method="post">
-        [{ $shop->hiddensid }]
+        <form name="sendorder" id="sendorder" action="[{ $oViewConf->getSelfLink() }]" method="post">
+        [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="cur" value="[{ $oCurr->id }]">
         <input type="hidden" name="cl" value="order_main">
         <input type="hidden" name="fnc" value="sendorder">
@@ -238,8 +238,8 @@ function ThisDate( sID)
         </tr>
         </form>
 
-        <form name="resetorder" id="resetorder" action="[{ $shop->selflink }]" method="post">
-        [{ $shop->hiddensid }]
+        <form name="resetorder" id="resetorder" action="[{ $oViewConf->getSelfLink() }]" method="post">
+        [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="cur" value="[{ $oCurr->id }]">
         <input type="hidden" name="cl" value="order_main">
         <input type="hidden" name="fnc" value="resetorder">

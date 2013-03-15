@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: selectlist_main.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: selectlist_main.php 33474 2011-02-23 13:29:51Z arvydas.vapsva $
  */
 
 DEFINE("ERR_SUCCESS", 1);
@@ -51,17 +51,7 @@ class SelectList_Main extends oxAdminDetails
         parent::render();
 
 
-        $sOxId = oxConfig::getParameter( "oxid");
-        // check if we right now saved a new entry
-        $sSavedId = oxConfig::getParameter( "saved_oxid");
-        if ( ($sOxId == "-1" || !isset( $sOxId)) && isset( $sSavedId) ) {
-            $sOxId = $sSavedId;
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $sOxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
-        }
-
+        $sOxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         $sArticleTable = getViewName('oxarticles');
 
         //create empty edit object
@@ -106,7 +96,7 @@ class SelectList_Main extends oxAdminDetails
                 $this->_aViewData["otherlang"][$id] = clone $oLang;
             }
 
-            $iErr = oxConfig::getParameter( "iErrorCode");
+            $iErr = oxSession::getVar( "iErrorCode");
             if (!$iErr)
                 $iErr = ERR_SUCCESS;
             $this->_aViewData["iErrorCode"] = $iErr;
@@ -132,7 +122,7 @@ class SelectList_Main extends oxAdminDetails
     public function save()
     {
 
-        $sOxId      = oxConfig::getParameter( "oxid");
+        $sOxId = $this->getEditObjectId();
         $aParams    = oxConfig::getParameter( "editval");
 
             // shopid
@@ -169,12 +159,9 @@ class SelectList_Main extends oxAdminDetails
 
         $oAttr->setLanguage($this->_iEditLang);
         $oAttr->save();
-        $this->_aViewData["updatelist"] = "1";
 
         // set oxid if inserted
-        if ( $sOxId == "-1") {
-            oxSession::setVar( "saved_oxid", $oAttr->oxselectlist__oxid->value);
-        }
+        $this->setEditObjectId( $oAttr->getId() );
     }
 
     /**
@@ -184,7 +171,7 @@ class SelectList_Main extends oxAdminDetails
      */
     public function saveinnlang()
     {
-        $sOxId      = oxConfig::getParameter( "oxid");
+        $sOxId = $this->getEditObjectId();
         $aParams    = oxConfig::getParameter( "editval");
 
             // shopid
@@ -203,17 +190,11 @@ class SelectList_Main extends oxAdminDetails
         $oObj->assign( $aParams);
 
         // apply new language
-        $sNewLanguage = oxConfig::getParameter( "new_lang");
-        $oObj->setLanguage( $sNewLanguage);
+        $oObj->setLanguage( oxConfig::getParameter( "new_lang" ) );
         $oObj->save();
-        $this->_aViewData["updatelist"] = "1";
-
-        // set for reload
-        oxSession::setVar( "new_lang", $sNewLanguage);
 
         // set oxid if inserted
-        if ( $sOxId == "-1")
-            oxSession::setVar( "saved_oxid", $oObj->oxselectlist__oxid->value);
+        $this->setEditObjectId( $oObj->getId() );
     }
 
     /**
@@ -224,7 +205,7 @@ class SelectList_Main extends oxAdminDetails
     public function delFields()
     {
         $oSelectlist = oxNew( "oxselectlist" );
-        if ( $oSelectlist->loadInLang( $this->_iEditLang, oxConfig::getParameter( "oxid" ) ) ) {
+        if ( $oSelectlist->loadInLang( $this->_iEditLang, $this->getEditObjectId() ) ) {
 
             $aDelFields = oxConfig::getParameter( "aFields" );
             $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oSelectlist->oxselectlist__oxvaldesc->getRawValue() );
@@ -252,7 +233,7 @@ class SelectList_Main extends oxAdminDetails
     public function addField()
     {
         $oSelectlist = oxNew( "oxselectlist" );
-        if ( $oSelectlist->loadInLang( $this->_iEditLang, oxConfig::getParameter( "oxid" ) ) ) {
+        if ( $oSelectlist->loadInLang( $this->_iEditLang, $this->getEditObjectId() ) ) {
 
 
             $sAddField = oxConfig::getParameter("sAddField");
@@ -296,7 +277,7 @@ class SelectList_Main extends oxAdminDetails
         if ( is_array( $aChangeFields ) && count( $aChangeFields ) ) {
 
             $oSelectlist = oxNew( "oxselectlist" );
-            if ( $oSelectlist->loadInLang( $this->_iEditLang, oxConfig::getParameter( "oxid" ) ) ) {
+            if ( $oSelectlist->loadInLang( $this->_iEditLang, $this->getEditObjectId() ) ) {
 
                 $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oSelectlist->oxselectlist__oxvaldesc->getRawValue() );
                 $sChangeFieldName = $this->parseFieldName( $aChangeFields[0] );

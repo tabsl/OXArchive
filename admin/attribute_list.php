@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: attribute_list.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: attribute_list.php 31961 2010-12-17 13:59:10Z sarunas $
  */
 
 /**
@@ -45,14 +45,9 @@ class Attribute_List extends oxAdminList
     protected $_sListClass = 'oxattribute';
 
     /**
-     * Sets SQL query parameters (sorting, etc),
-     * executes parent method parent::Init().
+     * Default SQL sorting parameter (default null).
      *
-     * @return null
+     * @var string
      */
-    public function init()
-    {
-        $this->_sDefSort = getViewName( 'oxattribute' ).".oxtitle";
-        parent::Init();
-    }
+    protected $_sDefSortField = 'oxtitle';
 }

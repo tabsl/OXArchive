@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsearch.php 25467 2010-02-01 14:14:26Z alfonsas $l
+ * @version   SVN: $Id: oxsearch.php 32008 2010-12-17 15:10:36Z sarunas $l
  */
 
 /**
@@ -111,7 +111,7 @@ class oxSearch extends oxSuperCfg
         if ( $sSelect ) {
 
             $sPartial = substr( $sSelect, strpos( $sSelect, ' from ' ) );
-            $sSelect  = "select count( ".getViewName( 'oxarticles' ).".oxid ) $sPartial ";
+            $sSelect  = "select count( ".getViewName( 'oxarticles', $this->_iLanguage ).".oxid ) $sPartial ";
 
             $iCnt = oxDb::getDb()->getOne( $sSelect );
         }
@@ -191,7 +191,7 @@ class oxSearch extends oxSuperCfg
         $sDescJoin  = '';
         if ( is_array( $aSearchCols = $this->getConfig()->getConfigParam( 'aSearchCols' ) ) ) {
             if ( in_array( 'oxlongdesc', $aSearchCols ) || in_array( 'oxtags', $aSearchCols ) ) {
-                $sDescView  = getViewName( 'oxartextends' );
+                $sDescView  = getViewName( 'oxartextends', $this->_iLanguage );
                 $sDescJoin  = " LEFT JOIN {$sDescView} ON {$sArticleTable}.oxid={$sDescView}.oxid ";
             }
         }
@@ -201,7 +201,7 @@ class oxSearch extends oxSuperCfg
 
         // must be additional conditions in select if searching in category
         if ( $sInitialSearchCat ) {
-            $sCatView = getViewName( 'oxcategories' );
+            $sCatView = getViewName( 'oxcategories', $this->_iLanguage );
             $sInitialSearchCatQuoted = $oDb->quote( $sInitialSearchCat );
             $sSelectCat  = "select oxid from {$sCatView} where oxid =  $sInitialSearchCatQuoted and (oxpricefrom != '0' or oxpriceto != 0)";
             if ( $oDb->getOne($sSelectCat) ) {
@@ -248,7 +248,7 @@ class oxSearch extends oxSuperCfg
         $oDb = oxDb::getDb();
         $myConfig = $this->getConfig();
         $blSep    = false;
-        $sArticleTable = getViewName( 'oxarticles' );
+        $sArticleTable = getViewName( 'oxarticles', $this->_iLanguage );
 
         $aSearchCols = $myConfig->getConfigParam( 'aSearchCols' );
         if ( !(is_array( $aSearchCols ) && count( $aSearchCols ) ) ) {
@@ -281,16 +281,11 @@ class oxSearch extends oxSuperCfg
                     $sSearch  .= ' or ';
                 }
 
-                $sLanguage = '';
-                if ( $this->_iLanguage && $oTempArticle->isMultilingualField( $sField ) ) {
-                    $sLanguage = $oLang->getLanguageTag( $this->_iLanguage );
-                }
-
                 // as long description now is on different table table must differ
                 if ( $sField == 'oxlongdesc' || $sField == 'oxtags' ) {
-                    $sSearchField = getViewName( 'oxartextends' ).".{$sField}{$sLanguage}";
+                    $sSearchField = getViewName( 'oxartextends', $this->_iLanguage ).".{$sField}";
                 } else {
-                    $sSearchField = "{$sArticleTable}.{$sField}{$sLanguage}";
+                    $sSearchField = "{$sArticleTable}.{$sField}";
                 }
 
                 $sSearch .= " {$sSearchField} like ".$oDb->quote( "%$sSearchString%" );

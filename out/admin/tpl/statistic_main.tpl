@@ -1,13 +1,13 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="statistic_main">
 </form>
 
-<form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post" target="edit">
-[{ $shop->hiddensid }]
+<form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post" target="edit">
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="statistic_main">
 <input type="hidden" name="fnc" value="save">
 <input type="hidden" name="oxid" value="[{$oxid}]">

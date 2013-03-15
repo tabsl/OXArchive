@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxshopcontrol.php 33881 2011-03-22 12:58:15Z alfonsas $
+ * @version   SVN: $Id: oxshopcontrol.php 34115 2011-04-01 08:50:06Z sarunas $
  */
 
 /**
@@ -42,6 +42,26 @@ class oxShopControl extends oxSuperCfg
      * @var double
      */
     protected $_dTimeEnd = null;
+
+    /**
+     * errors to be displayed/returned
+     *
+     * @see _getErrors
+     *
+     * @var array
+     */
+    protected $_aErrors = null;
+
+    /**
+     * output handler object
+     *
+     * @see _getOuput
+     *
+     * @var oxOutput
+     */
+    protected $_oOutput = null;
+
+    protected $_oCache = null;
 
     /**
      * Main shop manager, that sets shop status, executes configuration methods.
@@ -90,20 +110,20 @@ class oxShopControl extends oxSuperCfg
             oxSession::setVar( 'cl', $sClass );
         }
 
-        // baseshop always active if there is no mall
-        if ( !oxSession::getVar( 'actshop' ) ) {
-            oxSession::setVar( 'actshop', $myConfig->getShopId() );
-        }
-
         try {
             $this->_process( $sClass, $sFunction );
         } catch( oxSystemComponentException $oEx ) {
             //possible reason: class does not exist etc. --> just redirect to start page
-            oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
+            if ( $this->_isDebugMode() ) {
+                oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
+            }
+            $oEx->debugOut();
             oxUtils::getInstance()->redirect( $myConfig->getShopHomeUrl() .'cl=start' );
         } catch ( oxCookieException $oEx ) {
             // redirect to start page and display the error
-            oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
+            if ( $this->_isDebugMode() ) {
+                oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
+            }
             oxUtils::getInstance()->redirect( $myConfig->getShopHomeUrl() .'cl=start' );
         }
     }
@@ -151,9 +171,8 @@ class oxShopControl extends oxSuperCfg
      */
     protected function _startMonitor()
     {
-        if ( !$this->isAdmin() && $this->getConfig()->getConfigParam( 'iDebug' ) ) {
-            list ( $sUsec, $sSec ) = explode( ' ', microtime() );
-            $this->_dTimeStart = ( ( float ) $sUsec + ( float ) $sSec );
+        if ( $this->_isDebugMode() ) {
+            $this->_dTimeStart = microtime(true);
         }
     }
 
@@ -169,58 +188,41 @@ class oxShopControl extends oxSuperCfg
      */
     protected function _stopMonitor( $blIsCache = false, $blIsCached = false, $sViewID = null, $aViewData = array() )
     {
-        $myConfig = $this->getConfig();
-        if ( !$this->isAdmin() && $myConfig->getConfigParam( 'iDebug' ) != 0 ) {
-            $sLog = '<div align="left">';
+        if ( $this->_isDebugMode() ) {
+            $myConfig = $this->getConfig();
+            /* @var $oDebugInfo oxDebugInfo */
+            $oDebugInfo = oxNew('oxDebugInfo');
+
+            $blHidden = ($this->getConfig()->getConfigParam( 'iDebug' ) == -1);
+
+            $sLog = '';
+            $sLogId = md5(time().rand().rand());
+            $sLog .= "<div style='color:#630;margin:15px 0 0;cursor:pointer' onclick='var el=document.getElementById(\"debugInfoBlock_$sLogId\"); if (el.style.display==\"block\")el.style.display=\"none\"; else el.style.display = \"block\";'> ".$oDebugInfo->formatGeneralInfo()."(show/hide)</div>";
+            $sLog .= "<div id='debugInfoBlock_$sLogId' style='display:".($blHidden?'none':'block')."' class='debugInfoBlock' align='left'>";
 
             // outputting template params
             if ( $myConfig->getConfigParam( 'iDebug' ) == 4 ) {
-
-                reset( $aViewData );
-                while ( list( $sViewName, $oViewData ) = each( $aViewData ) ) {
-                    // show debbuging information
-                        $sLog .= "TemplateData[$sViewName] : <br />\n";
-                        print_r( $oViewData );
-                }
+                $sLog .= $oDebugInfo->formatTemplateData($aViewData);
             }
 
             // output timing
-            list( $sUsec, $sSec ) = explode( ' ', microtime() );
-            $this->_dTimeEnd = ( ( float ) $sUsec + ( float ) $sSec );
-            //getting rid of float precission shift
-            $dTimeSpent = ((int)( $this->_dTimeEnd * 10000 - $this->_dTimeStart * 10000 ) ) / 10000;
+            $this->_dTimeEnd = microtime(true);
 
-            $sLog .= 'Execution time :'.$dTimeSpent.'<br />';
 
-            // memory usage info
-            if ( function_exists( 'memory_get_usage' ) ) {
-                $iKb = ( int ) ( memory_get_usage() / 1024 );
-                $iMb = round($iKb / 1024, 3);
-                $sLog .= 'Memory usage: '.$iMb.' MB';
+            $sLog .= $oDebugInfo->formatMemoryUsage();
+            $sLog .= $oDebugInfo->formatExecutionTime($this->getTotalTime());
 
-                if ( function_exists( 'memory_get_peak_usage' ) ) {
-                    $iPeakKb = ( int ) ( memory_get_peak_usage() / 1024 );
-                    $iPeakMb = round($iPeakKb / 1024, 3);
-                    $sLog .= ' (peak: '.$iPeakMb.' MB)';
-                }
-                $sLog .= '<br />';
+            if (!isAdmin() && ($iDebug == 7)) {
+                $sLog .= $oDebugInfo->formatDbInfo();
+            }
 
-                if ( version_compare( PHP_VERSION, '5.2.0', '>=' ) ) {
-                    $iKb = ( int ) ( memory_get_usage( true ) / 1024 );
-                    $iMb = round($iKb / 1024, 3);
-                    $sLog .= 'System memory usage: '.$iMb.' MB';
-
-                    if ( function_exists( 'memory_get_peak_usage' ) ) {
-                        $iPeakKb = ( int ) ( memory_get_peak_usage( true ) / 1024 );
-                        $iPeakMb = round($iPeakKb / 1024, 3);
-                        $sLog .= ' (peak: '.$iPeakMb.' MB)';
-                    }
-                    $sLog .= '<br />';
-                }
+            if (!isAdmin() && ($iDebug == 2 || $iDebug == 3 || $iDebug == 4)) {
+                $sLog .= $oDebugInfo->formatAdoDbPerf();
             }
 
             $sLog .= '</div>';
-            $this->_output( $sLog );
+
+            $this->_getOutputManager()->output('debuginfo', $sLog);
         }
     }
 
@@ -255,6 +257,7 @@ class oxShopControl extends oxSuperCfg
      */
     protected function _process( $sClass, $sFunction )
     {
+        startProfile('process');
         $myConfig = $this->getConfig();
         $myUtils  = oxUtils::getInstance();
         $sViewID = null;
@@ -267,6 +270,57 @@ class oxShopControl extends oxSuperCfg
         // starting resource monitor
         $this->_startMonitor();
 
+        // caching params ...
+        $sOutput      = null;
+        $blIsCached   = false;
+
+        $oViewObject = $this->_initializeViewObject($sClass, $sFunction);
+
+        // executing user defined function
+        $oViewObject->executeFunction( $oViewObject->getFncName() );
+
+
+        // if no cache was stored before we should generate it
+        if ( !$blIsCached ) {
+            $sOutput = $this->_render($oViewObject);
+        }
+
+
+        $oOutput = $this->_getOutputManager();
+        $oOutput->setCharset($oViewObject->getCharSet());
+
+        if (oxConfig::getParameter('renderPartial')) {
+            $oOutput->setOutputFormat(oxOutput::OUTPUT_FORMAT_JSON);
+            $oOutput->output('errors', $this->_getFormattedErrors());
+        }
+
+        $oOutput->sendHeaders();
+
+        $oOutput->output('content', $sOutput);
+
+        $myConfig->pageClose();
+
+        stopProfile('process');
+
+        // stopping resource monitor
+        $this->_stopMonitor( $oViewObject->getIsCallForCache(), $blIsCached, $sViewID, $oViewObject->getViewData() );
+
+        // flush output (finalize)
+        $oOutput->flushOutput();
+    }
+
+    /**
+     * initialize and return view object
+     *
+     * @param string $sClass    view name
+     * @param string $sFunction function name
+     *
+     * @return oxView
+     */
+    protected function _initializeViewObject($sClass, $sFunction)
+    {
+        $myConfig = $this->getConfig();
+
         // creating current view object
         $oViewObject = oxNew( $sClass );
 
@@ -276,46 +330,42 @@ class oxShopControl extends oxSuperCfg
 
         $myConfig->setActiveView( $oViewObject );
 
-        // caching params ...
-        $sOutput      = null;
-        $blIsCached   = false;
-        $blIsCachable = false;
-
 
         // init class
         $oViewObject->init();
 
-        // executing user defined function
-        $oViewObject->executeFunction( $oViewObject->getFncName() );
+        return $oViewObject;
+    }
 
 
-        // if no cache was stored before we should generate it
-        if ( !$blIsCached ) {
-            $sOutput = $this->_render($oViewObject, $blIsCachable);
+    /**
+     * format error messages from _getErrors and return as array
+     *
+     * @return array
+     */
+    protected function _getFormattedErrors()
+    {
+        $aErrors = $this->_getErrors();
+        $aFmtErrors = array();
+        if ( is_array($aErrors) && count($aErrors) ) {
+            foreach ( $aErrors as $sLocation => $aEx2 ) {
+                foreach ( $aEx2 as $sKey => $oEr ) {
+                    $oErr = unserialize( $oEr );
+                    $aFmtErrors[$sLocation][$sKey] = $oErr->getOxMessage();
+                }
+            }
         }
-
-
-        // #M1047 Firefox duplicated GET fix
-        $myUtils->setHeader( "Content-Type: text/html; charset=".$oViewObject->getCharSet() );
-
-        // show output
-        $this->_output( $sOutput );
-
-        $myConfig->pageClose();
-
-        // stopping resource monitor
-        $this->_stopMonitor( $blIsCachable, $blIsCached, $sViewID, $oViewObject->getViewData() );
+        return $aFmtErrors;
     }
 
     /**
      * render oxView object
      *
-     * @param oxView  $oViewObject      view object to render
-     * @param boolean $blRenderForCache should _render4cache be set in templates?
+     * @param oxView $oViewObject view object to render
      *
      * @return string
      */
-    protected function _render($oViewObject, $blRenderForCache = false)
+    protected function _render($oViewObject)
     {
         // get Smarty is important here as it sets template directory correct
         $oSmarty = oxUtilsView::getInstance()->getSmarty();
@@ -328,23 +378,21 @@ class oxShopControl extends oxSuperCfg
         if ( !file_exists( $sTemplateFile)) {
             $oEx = oxNew( 'oxSystemComponentException' );
             $oLang = oxLang::getInstance();
-            $oEx->setMessage( sprintf($oLang->translateString( 'EXCEPTION_SYSTEMCOMPONENT_TEMPLATENOTFOUND', $oLang->getBaseLanguage() ), $sTemplateFile) );
+            $oEx->setMessage( 'EXCEPTION_SYSTEMCOMPONENT_TEMPLATENOTFOUND' );
             $oEx->setComponent( $sTemplateName );
             throw $oEx;
         }
         $aViewData = $oViewObject->getViewData();
 
-        //Output processing. This is useful for modules. As sometimes you may want to process output manually.
-        $oOutput = oxNew( 'oxoutput' );
+        // Output processing. This is useful for modules. As sometimes you may want to process output manually.
+        $oOutput = $this->_getOutputManager();
         $aViewData = $oOutput->processViewArray( $aViewData, $oViewObject->getClassName() );
         $oViewObject->setViewData( $aViewData );
 
         //add all exceptions to display
-        if ( ( $aErrors = oxSession::getVar( 'Errors' ) ) ) {
+        $aErrors = $this->_getErrors();
+        if ( is_array($aErrors) && count($aErrors) ) {
             oxUtilsView::getInstance()->passAllErrorsToView( $aViewData, $aErrors );
-
-            // resetting errors after displaying them
-            oxSession::setVar( 'Errors', array() );
         }
 
         foreach ( array_keys( $aViewData ) as $sViewName ) {
@@ -359,8 +407,20 @@ class oxShopControl extends oxSuperCfg
 
         //Output processing - useful for modules as sometimes you may want to process output manually.
         $sOutput = $oOutput->process( $sOutput, $oViewObject->getClassName() );
-
         return $oOutput->addVersionTags( $sOutput );
+    }
+
+    /**
+     * return output handler
+     *
+     * @return oxOutput
+     */
+    protected function _getOutputManager()
+    {
+        if (!$this->_oOutput) {
+            $this->_oOutput = oxNew('oxOutput');
+        }
+        return $this->_oOutput;
     }
 
     /**
@@ -368,11 +428,33 @@ class oxShopControl extends oxSuperCfg
      *
      * @param string $sOutput data to output
      *
+     * @deprecated from 4.5.0, when removing, use oxoutput directly
+     *
+     * @see oxOutput
+     *
      * @return null
      */
     protected function _output( $sOutput )
     {
         echo $sOutput;
+    }
+
+    /**
+     * return page errors array
+     *
+     * @return array
+     */
+    protected function _getErrors()
+    {
+        if (null === $this->_aErrors) {
+            $this->_aErrors = oxSession::getVar( 'Errors' );
+            if (null === $this->_aErrors) {
+                $this->_aErrors = array();
+            }
+            // resetting errors from session
+            oxSession::setVar( 'Errors', array() );
+        }
+        return $this->_aErrors;
     }
 
     /**
@@ -414,7 +496,7 @@ class oxShopControl extends oxSuperCfg
             $sTpl = false;
             // perform stuff - check if setup is still there
             if ( file_exists( $myConfig->getConfigParam( 'sShopDir' ) . '/setup/index.php' ) ) {
-                $sTpl = 'err_setup.tpl';
+                $sTpl = 'message/err_setup.tpl';
             }
 
             if ( $sTpl ) {
@@ -427,5 +509,19 @@ class oxShopControl extends oxSuperCfg
 
             oxSession::setVar( 'blRunOnceExecuted', true );
         }
+    }
+
+    /**
+     * Checks if shop is in debug mode
+     *
+     * @return bool
+     */
+    protected function _isDebugMode()
+    {
+        if ( !$this->isAdmin() && $this->getConfig()->getConfigParam( 'iDebug' ) ) {
+            return true;
+        }
+
+        return false;
     }
 }

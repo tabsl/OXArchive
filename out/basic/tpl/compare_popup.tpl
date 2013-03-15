@@ -1,4 +1,5 @@
 [{assign var="template_title" value="COMPARE_POPUP_TITLE"|oxmultilangassign}]
+[{assign var="currency" value=$oView->getActCurrency()}]
 [{include file="_header_plain.tpl" title=$template_title location=$template_title}]
 
    <div class="box compare">

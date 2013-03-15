@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: delivery_groups.inc.php 25640 2010-02-05 06:42:24Z alfonsas $
+ * @version   SVN: $Id: delivery_groups.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,  visible, multilanguage, ident
@@ -48,7 +48,7 @@ class ajaxComponent extends ajaxListComponent
         $myConfig = $this->getConfig();
 
         // active AJAX component
-        $sGroupTable = getViewName('oxgroups');
+        $sGroupTable = $this->_getViewName('oxgroups');
 
         $sId      = oxConfig::getParameter( 'oxid' );
         $sSynchId = oxConfig::getParameter( 'synchoxid' );
@@ -100,7 +100,7 @@ class ajaxComponent extends ajaxListComponent
 
         // adding
         if ( oxConfig::getParameter( 'all' ) ) {
-            $sGroupTable = getViewName('oxgroups');
+            $sGroupTable = $this->_getViewName('oxgroups');
             $aChosenCat = $this->_getAll( $this->_addFilter( "select $sGroupTable.oxid ".$this->_getQuery() ) );
         }
 

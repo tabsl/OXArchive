@@ -37,8 +37,8 @@ function LockAssignment(obj)
 //-->
 </script>
 <!-- END add to *.css file -->
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" id="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="category_main">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
@@ -56,9 +56,9 @@ function LockAssignment(obj)
     [{assign var="readonly_fields" value=""}]
 [{/if}]
 
-<form name="myedit" id="myedit" enctype="multipart/form-data" action="[{ $shop->selflink }]" method="post">
+<form name="myedit" id="myedit" enctype="multipart/form-data" action="[{ $oViewConf->getSelfLink() }]" method="post">
 <input type="hidden" name="MAX_FILE_SIZE" value="[{$iMaxUploadFileSize}]">
-[{ $shop->hiddensid }]
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="category_main">
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -136,7 +136,7 @@ function LockAssignment(obj)
         </tr>
         <tr>
             <td class="edittext">
-            [{ oxmultilang ident="CATEGORY_MAIN_THUMBUPLOAD" }]
+            [{ oxmultilang ident="CATEGORY_MAIN_THUMBUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
             </td>
             <td class="edittext" colspan="2">
             <input class="editinput" name="myfile[TC@oxcategories__oxthumb]" type="file"  size="26" [{$readonly}]>
@@ -158,10 +158,32 @@ function LockAssignment(obj)
         </tr>
         <tr>
             <td class="edittext">
-            [{ oxmultilang ident="CATEGORY_MAIN_ICONUPLOAD" }]
+            [{ oxmultilang ident="CATEGORY_MAIN_ICONUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
             </td>
             <td class="edittext" colspan="2">
             <input class="editinput" name="myfile[CICO@oxcategories__oxicon]" type="file" size="26" >
+            </td>
+        </tr>
+        <tr>
+            <td class="edittext">
+            [{ oxmultilang ident="CATEGORY_MAIN_PROMOTION_ICON" }]
+            </td>
+            <td class="edittext">
+            <input id="oxpromoicon" type="text" class="editinput" size="42" maxlength="[{$edit->oxcategories__oxpromoicon->fldmax_length}]" name="editval[oxcategories__oxpromoicon]" value="[{$edit->oxcategories__oxpromoicon->value}]">
+            [{ oxinputhelp ident="HELP_CATEGORY_MAIN_PROMOTION_ICON" }]
+            </td>
+            <td class="edittext">
+            [{ if (!($edit->oxcategories__oxpromoicon->value=="nopic.jpg" || $edit->oxcategories__oxpromoicon->value=="" || $edit->oxcategories__oxpromoicon->value=="nopic_ico.jpg")) }]
+            <a href="Javascript:DeletePic('oxpromoicon');" class="delete left" [{include file="help.tpl" helpid=item_delete}]></a>
+            [{/if}]
+            </td>
+        </tr>
+        <tr>
+            <td class="edittext">
+            [{ oxmultilang ident="CATEGORY_MAIN_ICONUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
+            </td>
+            <td class="edittext" colspan="2">
+            <input class="editinput" name="myfile[PICO@oxcategories__oxpromoicon]" type="file" size="26" >
             </td>
         </tr>
         <tr>

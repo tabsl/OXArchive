@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdb.php 27127 2010-04-09 13:42:33Z arvydas $
+ * @version   SVN: $Id: oxdb.php 32609 2011-01-20 15:17:15Z vilma $
  */
 
 
@@ -845,4 +845,29 @@ class oxDb extends oxSuperCfg
         return mysql_real_escape_string( $sString, $this->_getConnectionId() );
     }
 
+    /**
+     * Updates shop views
+     *
+     * @param array $aTables If you need to update specific tables, just pass its names as array [optional]
+     *
+     * @return null
+     */
+    public function updateViews( $aTables = null )
+    {
+        $myConfig  = $this->getConfig();
+
+        $oShopList = oxNew("oxshoplist" );
+        $oShopList->selectString( "select * from oxshops"); // Shop view may not exist at this point
+
+        $aTables = $aTables ? $aTables : $myConfig->getConfigParam( 'aMultiShopTables' );
+        foreach ( $oShopList as $key => $oShop ) {
+            $oShop->setMultiShopTables( $aTables );
+            $blMultishopInherit = $myConfig->getShopConfVar( 'blMultishopInherit_oxcategories', $oShop->sOXID );
+            $aMallInherit = array();
+            foreach ( $aTables as $sTable ) {
+                $aMallInherit[$sTable] = $myConfig->getShopConfVar( 'blMallInherit_' . $sTable, $oShop->sOXID );
+            }
+            $oShop->generateViews( $blMultishopInherit, $aMallInherit );
+        }
+    }
 }

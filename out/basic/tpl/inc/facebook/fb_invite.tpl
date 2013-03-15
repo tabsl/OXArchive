@@ -1,16 +1,14 @@
         [{if $oView->isActive('FbInvite') && $oViewConf->getFbAppId()}]
-        [{assign var="product" value=$oView->getProduct() }]
-
         <strong id="test_facebookInviteHead" class="boxhead">[{ oxmultilang ident="FACEBOOK_INVITE" }]</strong>
         <div class="box">
             <fb:serverfbml width="560px">
                 <script type="text/fbml">
                     <fb:fbml>
-                      <fb:request-form action="[{$product->getLink()}]"
+                      <fb:request-form action="[{$oView->getCanonicalUrl()}]"
                                 method="GET"
                                 invite="true"
                                 type="Facebook"
-                                content="[{ oxmultilang ident="FACEBOOK_INVITETEXT" }]<fb:req-choice url='[{$product->getLink()}]' label='[{ oxmultilang ident="FACEBOOK_INVITEBUTTONTEXT" }]'></fb:req-choice>">
+                                content="[{ oxmultilang ident="FACEBOOK_INVITETEXT" }]<fb:req-choice url='[{$oView->getCanonicalUrl()}]' label='[{ oxmultilang ident="FACEBOOK_INVITEBUTTONTEXT" }]'></fb:req-choice>">
                                 <fb:multi-friend-selector
                                     showborder="false"
                                     rows="3"

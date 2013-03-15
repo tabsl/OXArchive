@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxattribute.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: SVN: $Id: oxattribute.php 32776 2011-01-27 15:05:03Z linas.kukulskis $
  */
 
 /**
@@ -42,6 +42,28 @@ class oxAttribute extends oxI18n
      * @var string
      */
     protected $_sCoreTbl = 'oxattribute';
+
+
+    /**
+     * Selected attribute value  
+     *
+     * @var string
+     */
+    protected $_sActiveValue = null;
+    
+    /**
+     * Attribute title
+     *
+     * @var string
+     */
+    protected $_sTitle = null;
+    
+    /**
+     * Attribute values
+     *
+     * @var array
+     */
+    protected $_aValues = null;
 
     /**
      * Class constructor, initiates parent constructor (parent::oxBase()).
@@ -111,7 +133,8 @@ class oxAttribute extends oxI18n
                     }
                 }
             } else {
-                $oNewAssign = oxNew( "oxbase" );
+                $oNewAssign = oxNew( "oxi18n" );
+                $oNewAssign->setEnableMultilang( false );
                 $oNewAssign->init( "oxobject2attribute" );
                 $oNewAssign->oxobject2attribute__oxobjectid = new oxField($sVarId);
                 $oNewAssign->oxobject2attribute__oxattrid   = new oxField($sAttrId);
@@ -147,9 +170,10 @@ class oxAttribute extends oxI18n
      */
     protected function _createAttribute( $aSelTitle )
     {
-        $myLang    = oxLang::getInstance();
+        $myLang = oxLang::getInstance();
         $aConfLanguages = $myLang->getLanguageIds();
-        $oAttr = oxNew('oxbase');
+        $oAttr = oxNew('oxI18n');
+        $oAttr->setEnableMultilang( false );
         $oAttr->init('oxattribute');
         foreach ($aConfLanguages as $sKey => $sLang) {
            $sPrefix = $myLang->getLanguageTag($sKey);
@@ -186,4 +210,74 @@ class oxAttribute extends oxI18n
         }
         return $aIds;
     }
+    
+    
+    
+     /**
+     * Set attribute title
+     *
+     * @param string $sTitle - attribute title 
+     *
+     * @return null
+     */
+    public function setTitle( $sTitle )
+    {
+        $this->_sTitle = getStr()->htmlspecialchars( $sTitle );
+    }
+    
+    /**
+     * Get attribute Title
+     *
+     * @return String
+     */
+    public function getTitle()
+    {
+        return $this->_sTitle;
+    }
+    
+    /**
+     * Add attribute value
+     *
+     * @param string $sValue - attribute value 
+     *
+     * @return null
+     */      
+    public function addValue( $sValue )
+    {
+        $this->_aValues[] = getStr()->htmlspecialchars( $sValue );
+    }
+    
+     /**
+     * Set attribute selected value
+     *
+     * @param string $sValue - attribute value 
+     *
+     * @return null
+     */    
+    public function setActiveValue( $sValue )
+    {
+        $this->_sActiveValue = getStr()->htmlspecialchars( $sValue );
+    }
+    
+    /**
+     * Get attribute Selected value
+     *
+     * @return String
+     */
+    public function getActiveValue()
+    {
+            
+        return $this->_sActiveValue;
+    }
+    
+     /**
+     * Get attribute values
+     *
+     * @return Array
+     */
+    public function getValues()
+    {
+        return $this->_aValues;
+    }
+    
 }

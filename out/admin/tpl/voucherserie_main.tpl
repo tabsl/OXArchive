@@ -17,8 +17,8 @@ function changeFnc( fncName )
 //-->
 </script>
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="voucherserie_main">
 </form>
@@ -29,8 +29,8 @@ function changeFnc( fncName )
 <tr>
     <td valign="top" class="edittext" width="355">
 
-<form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
-[{ $shop->hiddensid }]
+<form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="voucherserie_main">
 <input type="hidden" name="fnc" value="save">
 <input type="hidden" name="oxid" value="[{$oxid}]">
@@ -160,15 +160,15 @@ function changeFnc( fncName )
 
         [{if $oxid != "-1" }]
 
-        <form name="myexport" id="myexport" action="[{ $shop->selflink }]" target="dynexport_do" method="post">
-        [{ $shop->hiddensid }]
+        <form name="myexport" id="myexport" action="[{ $oViewConf->getSelfLink() }]" target="dynexport_do" method="post">
+        [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="cl" value="">
         <input type="hidden" name="fnc" value="start">
         <input type="hidden" name="voucherid" value="[{$oxid}]">
 
         <fieldset title="[{ oxmultilang ident="VOUCHERSERIE_MAIN_VOUCHERSTATISTICS" }]" style="padding-left: 5px; padding-right: 5px;">
             <legend>[{ oxmultilang ident="VOUCHERSERIE_MAIN_VOUCHERSTATISTICS" }]</legend>
-            <iframe src="[{$shop->selflink}]&cl=[{$sClassDo}]&voucherid=[{$oxid}]" width="100%" height="80" frameborder="0" name="dynexport_do" align="left"></iframe>
+            <iframe src="[{$oViewConf->getSelfLink()}]&cl=[{$sClassDo}]&voucherid=[{$oxid}]" width="100%" height="80" frameborder="0" name="dynexport_do" align="left"></iframe>
         </fieldset>
         <br>
 

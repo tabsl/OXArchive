@@ -19,7 +19,7 @@
  * @package   smarty_plugins
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: function.oxscript.php 28124 2010-06-03 11:27:00Z alfonsas $
+ * @version   SVN: $Id: function.oxscript.php 34190 2011-04-04 09:25:35Z vilma $
  */
 
 /**
@@ -47,6 +47,7 @@ function smarty_function_oxscript($params, &$smarty)
     $sSufix    = ($smarty->_tpl_vars["__oxid_include_dynamic"])?'_dynamic':'';
     $sIncludes = 'includes'.$sSufix;
     $sScripts  = 'scripts'.$sSufix;
+    $iDefaultPriority = 3;
 
     $sScript  = (string) $myConfig->getGlobalParameter($sScripts);
     $aInclude = (array) $myConfig->getGlobalParameter($sIncludes);
@@ -57,17 +58,31 @@ function smarty_function_oxscript($params, &$smarty)
         $myConfig->setGlobalParameter($sScripts, $sScript);
 
     } elseif ( $params['include'] ) {
-        $sInclude = $params['include'];
-        $aInclude[] = $myConfig->getResourceUrl($sInclude);
-        $aInclude = array_unique($aInclude);
-        $myConfig->setGlobalParameter($sIncludes, $aInclude);
+        $sUrl = $params['include'];
+        if (!preg_match('#^https?://#', $sUrl)) {
+            $sUrl = $myConfig->getResourceUrl($sUrl);
+        }
 
+        $iPriority = ( $params['priority'] ) ? $params['priority'] : $iDefaultPriority;
+        if (!$sUrl) {
+            if ($myConfig->getConfigParam( 'iDebug' ) != 0) {
+                return "<div style='color:red;'>WARNING: javascript resource not found: ".  htmlspecialchars($params['include']).'</div>';
+            }
+        } else {
+            $aInclude[$iPriority][] = $sUrl;
+            $aInclude[$iPriority]   = array_unique($aInclude[$iPriority]);
+            $myConfig->setGlobalParameter($sIncludes, $aInclude);
+        }
     } else {
-        foreach ($aInclude as $sSrc) {
-            $sOutput .= '<script type="text/javascript" src="'.$sSrc.'"></script>'."\n";
+        ksort( $aInclude );
+
+        foreach ($aInclude as $aPriority) {
+            foreach ($aPriority as $sSrc) {
+                $sOutput .= '<script type="text/javascript" src="'.$sSrc.'"></script>'.PHP_EOL;
+            }
         }
         if (strlen($sScript)) {
-            $sOutput .= '<script type="text/javascript">'.$sScript.'</script>';
+            $sOutput .= '<script type="text/javascript">'.$sScript.'</script>'.PHP_EOL;
         }
     }
 

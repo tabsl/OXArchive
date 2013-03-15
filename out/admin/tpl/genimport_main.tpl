@@ -22,14 +22,14 @@
     [{ if $sNavStep == 2 || $sNavStep == 3 }]
         [{assign var="blLinkToFirstStep" value="1"}]
     [{/if}]
-    <li class="[{ if $sNavStep == 1}]active[{/if}][{ if $blLinkToFirstStep}] link[{/if}]">[{ if $blLinkToFirstStep}]<a href="[{$shop->selflink}]&cl=genimport_main">[{/if}][{ oxmultilang ident="GENIMPORT_STEP" }] 1[{ if $blLinkToFirstStep}]</a>[{/if}]</li>
+    <li class="[{ if $sNavStep == 1}]active[{/if}][{ if $blLinkToFirstStep}] link[{/if}]">[{ if $blLinkToFirstStep}]<a href="[{$oViewConf->getSelfLink()}]&cl=genimport_main">[{/if}][{ oxmultilang ident="GENIMPORT_STEP" }] 1[{ if $blLinkToFirstStep}]</a>[{/if}]</li>
     <li class="[{ if $sNavStep == 2}]active[{/if}]">[{ oxmultilang ident="GENIMPORT_STEP" }] 2</li>
     <li class="[{ if $sNavStep == 3}]active[{/if}]">[{ oxmultilang ident="GENIMPORT_FINISH" }]</li>
 </ul>
 
 <div id="genimportpage">
-    <form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-        [{ $shop->hiddensid }]
+    <form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+        [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="oxid" value="1">
         <input type="hidden" name="cl" value="">
     </form>
@@ -54,8 +54,8 @@
 
 
     <table cellspacing="0" cellpadding="0" border="0">
-        <form name="myedit" id="myedit" method="post" action="[{ $shop->selflink }]" enctype="multipart/form-data">
-        [{ $shop->hiddensid }]
+        <form name="myedit" id="myedit" method="post" action="[{ $oViewConf->getSelfLink() }]" enctype="multipart/form-data">
+        [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="cl" value="genimport_main">
         <input type="hidden" name="fnc" value="">
         <input type="hidden" name="sNavStep" value="[{ $sNavStep }]">
@@ -118,8 +118,8 @@
 
     <p>[{ oxmultilang ident="GENIMPORT_ASSIGNFIELDS" }] <b>"[{$sImportTable}]"</b></p>
     <table cellspacing="1" cellpadding="0" border="0" class="genImportFieldsAssign">
-        <form name="myedit" id="myedit" method="post" action="[{ $shop->selflink }]">
-        [{ $shop->hiddensid }]
+        <form name="myedit" id="myedit" method="post" action="[{ $oViewConf->getSelfLink() }]">
+        [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="cl" value="genimport_main">
         <input type="hidden" name="fnc" value="">
         <input type="hidden" name="sNavStep" value="[{ $sNavStep }]">

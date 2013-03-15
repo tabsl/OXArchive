@@ -26,7 +26,7 @@
         [{foreach name=outer item=percent from=$percents}]
          [{foreach key=key item=curr_point from=$percent}]
          <tr>
-          <td class="report_searchstrings_scale" style="height: 20px;width: 150px;">&nbsp;[{ $curr_point.nm }]&nbsp;</td><td colspan="[{$cols}]"><img src="[{ $shop->basedir }]/out/admin/img/slide.jpg" height="10" width="[{$curr_point.pc}]%"></td><td width="5"></td>
+          <td class="report_searchstrings_scale" style="height: 20px;width: 150px;">&nbsp;[{ $curr_point.nm }]&nbsp;</td><td colspan="[{$cols}]"><img src="[{ $oViewConf->getBaseDir() }]/out/admin/img/slide.jpg" height="10" width="[{$curr_point.pc}]%"></td><td width="5"></td>
          </tr>
          [{/foreach}]
         [{/foreach}]

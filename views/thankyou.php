@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: thankyou.php 28010 2010-05-28 09:23:10Z sarunas $
+ * @version   SVN: $Id: thankyou.php 33009 2011-02-07 16:18:12Z vilma $
  */
 
 /**
@@ -98,7 +98,7 @@ class Thankyou extends oxUBase
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'thankyou.tpl';
+    protected $_sThisTemplate = 'page/checkout/thankyou.tpl';
 
     /**
      * Executes parent::init(), loads basket from session
@@ -129,11 +129,6 @@ class Thankyou extends oxUBase
      * redirects to start page. Otherwise - executes parent::render()
      * and returns name of template to render thankyou::_sThisTemplate.
      *
-     * Template variables:
-     * <b>basket</b>, <b>mailerror</b>,
-     * <b>trusted_shopid</b>, <b>aLastProducts</b>, <b>shop</b>
-     * <b>order</b>, <b>convindex</b>
-     *
      * @return  string  current template file name
      */
     public function render()
@@ -150,34 +145,12 @@ class Thankyou extends oxUBase
             oxSession::deleteVar( 'dynvalue' );
         }
 
-        // passing basket copy
-        $this->_aViewData['basket'] = $this->getBasket();
-
         // loading order sometimes needed in template
         if ( $this->_oBasket->getOrderId() ) {
             // owners stock reminder
             $oEmail = oxNew( 'oxemail' );
             $oEmail->sendStockReminder( $this->_oBasket->getContents() );
         }
-
-        $this->_aViewData['order'] = $this->getOrder();
-
-        // loading actions
-        $this->_loadActions();
-
-        $this->_aViewData['mailerror']      = $this->getMailError();
-        $this->_aViewData['trusted_shopid'] = $this->getTrustedShopId();
-
-        //iPayment
-        $this->_aViewData['ipayment_basket']  = $this->getIPaymentBasket();
-        $this->_aViewData['ipayment_account'] = $this->getIPaymentAccount();
-        $this->_aViewData['ipayment_user']    = $this->getIPaymentUser();
-        $this->_aViewData['ipayment_pw']      = $this->getIPaymentPassword();
-
-        $this->_aViewData['convindex']  = $this->getCurrencyCovIndex();
-
-        $this->_aViewData['blShowFinalStep'] = $this->showFinalStep();
-        $this->_aViewData['aLastProducts']   = $this->getAlsoBoughtTheseProducts();
 
         // we must set active class as start
         $this->getViewConfig()->setViewConfigParam( 'cl', 'start' );
@@ -209,18 +182,6 @@ class Thankyou extends oxUBase
             }
         }
         return $this->_blShowFinalStep;
-    }
-
-    /**
-     * Template variable getter. Returns list of customer also bought thies products
-     *
-     * @deprecated use thankyou::getAlsoBoughtTheseProducts()
-     *
-     * @return object
-     */
-    public function getAlsoBoughtThiesProducts()
-    {
-        return $this->getAlsoBoughtTheseProducts();
     }
 
     /**
@@ -370,6 +331,23 @@ class Thankyou extends oxUBase
     public function getActionClassName()
     {
         return 'start';
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_CHECKOUT_THANKYOU', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 
 }

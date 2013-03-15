@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutils.php 32734 2011-01-26 08:32:22Z arvydas.vapsva $
+ * @version   SVN: $Id: oxutils.php 32880 2011-02-03 11:45:17Z sarunas $
  */
 
 /**
@@ -234,26 +234,6 @@ class oxUtils extends oxSuperCfg
             $sRet .= "@@";
         }
         return $sRet;
-    }
-
-    /**
-     * Returns formatted currency string, according to formatting standards.
-     *
-     * @param double $dValue  Plain price
-     * @param object $oActCur Object of active currency
-     *
-     * @deprecated use oxLang::formatCurrency
-     *
-     * @return string
-     */
-    public function formatCurrency( $dValue, $oActCur = null )
-    {
-        if (!$oActCur) {
-            $oActCur = $this->getConfig()->getActShopCurrencyObject();
-        }
-        $sFormated = number_format( (double)$dValue, $oActCur->decimal, $oActCur->dec, $oActCur->thousand);
-
-        return $sFormated;
     }
 
     /**
@@ -1307,41 +1287,6 @@ class oxUtils extends oxSuperCfg
         return strtr( $sStr, $sFrom, $sTo );
     }
 
-
-    /**
-     * prepareUrlForNoSession adds extra url params making it usable without session
-     * also removes sid=xxxx&
-     *
-     * @param string $sUrl given url
-     *
-     * @deprecated use oxUtilsUrl::prepareUrlForNoSession()
-     *
-     * @return string
-     */
-    public function prepareUrlForNoSession( $sUrl )
-    {
-        if ( $this->seoIsActive() ) {
-            return $sUrl;
-        }
-
-        return oxUtilsUrl::getInstance()->prepareUrlForNoSession( $sUrl );
-    }
-
-    /**
-     * Returns full path (including file name) to cache file
-     *
-     * @param string $sCacheName cache file name
-     * @param bool   $blPathOnly if TRUE, name parameter will be ignored and only cache folder will be returned (default FALSE)
-     *
-     * @deprecated use oxUtils::getCacheFilePath()
-     *
-     * @return string
-     */
-    protected function _getCacheFilePath( $sCacheName, $blPathOnly = false )
-    {
-        return $this->getCacheFilePath( $sCacheName, $blPathOnly );
-    }
-
     /**
      * Returns full path (including file name) to cache file
      *
@@ -1452,7 +1397,7 @@ class oxUtils extends oxSuperCfg
             $oView->init();
             $oView->render();
             $oView->addTplParam('sUrl', $sUrl);
-            if ($sRet = oxUtilsView::getInstance()->getTemplateOutput('err_404.tpl', $oView)) {
+            if ($sRet = oxUtilsView::getInstance()->getTemplateOutput('message/err_404.tpl', $oView)) {
                 $sReturn = $sRet;
             }
         } catch (Exception $e) {

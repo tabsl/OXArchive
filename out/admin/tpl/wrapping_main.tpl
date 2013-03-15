@@ -20,17 +20,17 @@ function DeletePic( sField )
     [{assign var="readonly" value=""}]
 [{/if}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="wrapping_main">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
 </form>
 
 
-<form name="myedit" id="myedit" enctype="multipart/form-data" action="[{ $shop->selflink }]" method="post">
+<form name="myedit" id="myedit" enctype="multipart/form-data" action="[{ $oViewConf->getSelfLink() }]" method="post">
 <input type="hidden" name="MAX_FILE_SIZE" value="[{$iMaxUploadFileSize}]">
-[{ $shop->hiddensid }]
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="wrapping_main">
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -96,7 +96,7 @@ function DeletePic( sField )
         </tr>
         <tr>
             <td class="edittext">
-            [{ oxmultilang ident="WRAPPING_MAIN_PICUPLOAD" }]
+            [{ oxmultilang ident="WRAPPING_MAIN_PICUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
             </td>
             <td class="edittext" colspan="2">
             <input class="editinput" name="myfile[WP@oxwrapping__oxpic]" size="26" type="file" [{ $readonly }]>
@@ -122,7 +122,7 @@ function DeletePic( sField )
         </table>
     </td>
     <td width="35">
-    <img src="[{ $shop->imagedir }]/grayline_vert.gif" width="2" height="270" alt="" border="0">
+    <img src="[{ $oViewConf->getImageUrl() }]/grayline_vert.gif" width="2" height="270" alt="" border="0">
     </td>
     <!-- Anfang rechte Seite -->
     <td valign="top" class="edittext" align="left" width="50%">
@@ -130,7 +130,7 @@ function DeletePic( sField )
 
             [{if $edit->oxwrapping__oxpic->value }]
             [{ oxmultilang ident="WRAPPING_MAIN_PICTURE" }] <br>
-            <img src="[{$edit->dimagedir}]/0/[{$edit->oxwrapping__oxpic->value }]" border="0" hspace="0" vspace="0">
+            <img src="[{$oViewConf->getPictureDir()}]/0/[{$edit->oxwrapping__oxpic->value }]" border="0" hspace="0" vspace="0">
             [{/if}]
 
         [{ /if}]

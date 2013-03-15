@@ -1,4 +1,5 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign box="list"}]
+[{assign var="where" value=$oView->getListFilter()}]
 
 [{ if $readonly}]
     [{assign var="readonly" value="readonly disabled"}]
@@ -16,7 +17,7 @@ function editThis( sID )
         var oInputElement = document.createElement( 'input' );
         oInputElement.setAttribute( 'name', 'listview');
         oInputElement.setAttribute( 'type', 'hidden' );
-        oInputElement.value = "[{ $shop->cl }]";
+        oInputElement.value = "[{$oViewConf->getActiveClassName()}]";
         oForm.appendChild( oInputElement );
 
         var oInputElement = document.createElement( 'input' );
@@ -49,17 +50,8 @@ window.onload = function ()
          //-->
 </script>
 
-<form name="search" id="search" action="[{ $shop->selflink }]" method="post">
-[{ $shop->hiddensid }]
-<input type="hidden" name="cl" value="shop_list">
-<input type="hidden" name="lstrt" value="[{ $lstrt }]">
-<input type="hidden" name="sort" value="[{ $sort }]">
-<input type="hidden" name="actedit" value="[{ $actedit }]">
-<input type="hidden" name="oxid" value="[{ $oxid }]">
-<input type="hidden" name="delshopid" value="">
-<input type="hidden" name="fnc" value="">
-<input type="hidden" name="updatenav" value="">
-
+<form name="search" id="search" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{include file="_formparams.tpl" cl="shop_list" lstrt=$lstrt actedit=$actedit oxid=$oxid fnc="" language=$actlang editlanguage=$actlang delshopid="" updatenav=""}]
 
 
 

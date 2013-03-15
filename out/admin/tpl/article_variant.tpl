@@ -50,15 +50,15 @@ function editThis( sID )
     [{assign var="readonly" value=""}]
 [{/if}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="article_variant">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
 </form>
 
-<form name="myedit1" id="myedit1" action="[{ $shop->selflink }]" method="post">
-[{ $shop->hiddensid }]
+<form name="myedit1" id="myedit1" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="article_variant">
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -79,8 +79,8 @@ function editThis( sID )
 
         <table cellspacing="0" cellpadding="0" border="0">
 
-          <form name="myedit3" id="myedit3" action="[{ $shop->selflink }]" method="post">
-          [{ $shop->hiddensid }]
+          <form name="myedit3" id="myedit3" action="[{ $oViewConf->getSelfLink() }]" method="post">
+          [{ $oViewConf->getHiddenSid() }]
           <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
           <input type="hidden" name="cl" value="article_variant">
           <input type="hidden" name="fnc" value="">
@@ -125,8 +125,8 @@ function editThis( sID )
       <td>&nbsp;</td>
       <td class="edittext" valign=top>
 
-        <form name="search" id="search" action="[{ $shop->selflink }]" method="post">
-        [{ $shop->hiddensid }]
+        <form name="search" id="search" action="[{ $oViewConf->getSelfLink() }]" method="post">
+        [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
         <input type="hidden" name="cl" value="article_variant">
         <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -135,7 +135,7 @@ function editThis( sID )
         <b>[{ oxmultilang ident="ARTICLE_VARIANT_VARNAME" }]</b><br>
         <input type="text" class="editinput" size="32" maxlength="[{$edit->oxarticles__oxvarname->fldmax_length}]" name="editval[oxarticles__oxvarname]" value="[{$edit->oxarticles__oxvarname->value}]" [{ $readonly }]>
         [{ oxinputhelp ident="HELP_ARTICLE_VARIANT_VARNAME" }]
-        [{if !$shop->buyableparent}]<input class="edittext" type="submit" value="[{ oxmultilang ident="ARTICLE_VARIANT_ARTSAVE" }]" [{ $readonly }]>[{/if}]
+        [{if !$oViewConf->isBuyableParent()}]<input class="edittext" type="submit" value="[{ oxmultilang ident="ARTICLE_VARIANT_ARTSAVE" }]" [{ $readonly }]>[{/if}]
         <br><br>
 
         <div style="overflow-x:auto;">
@@ -151,7 +151,7 @@ function editThis( sID )
             <td class="listheader" colspan="2">&nbsp;</td>
           </tr>
 
-          [{if $shop->buyableparent}]
+          [{if $oViewConf->isBuyableParent()}]
 
           <tr>
             <td class="[{ $listclass}]">&nbsp;</td>
@@ -176,8 +176,8 @@ function editThis( sID )
 
           </form>
 
-          <form name="myedit2" id="myedit2" action="[{ $shop->selflink }]" method="post">
-          [{ $shop->hiddensid }]
+          <form name="myedit2" id="myedit2" action="[{ $oViewConf->getSelfLink() }]" method="post">
+          [{ $oViewConf->getHiddenSid() }]
           <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
           <input type="hidden" name="cl" value="article_variant">
           <input type="hidden" name="fnc" value="savevariants">
@@ -189,7 +189,7 @@ function editThis( sID )
           <tr id="test_variant.[{$_cnt1}]">
             [{assign var="listclass" value=listitem$blWhite }]
             [{assign var="hasvariants" value=true }]
-            <td class="[{ $listclass}]"><a href="Javascript:editThis('[{ $listitem->oxarticles__oxid->value}]');" class="[{ $listclass}]" [{include file="help.tpl" helpid=editvariant}] [{ $readonly }]><img src="[{$shop->imagedir}]/editvariant.gif" width="15" height="15" alt="" border="0" align="absmiddle"></a></td>
+            <td class="[{ $listclass}]"><a href="Javascript:editThis('[{ $listitem->oxarticles__oxid->value}]');" class="[{ $listclass}]" [{include file="help.tpl" helpid=editvariant}] [{ $readonly }]><img src="[{$oViewConf->getImageUrl()}]/editvariant.gif" width="15" height="15" alt="" border="0" align="absmiddle"></a></td>
             <td class="[{ $listclass}]" align="center"><input class="edittext" type="checkbox" name="editval[[{ $listitem->oxarticles__oxid->value}]][oxarticles__oxactive]" value='1' [{if $listitem->oxarticles__oxactive->value == 1}]checked[{/if}] [{ $readonly }]></td>
             <td class="[{ $listclass}]"><input type="text" class="editinput" size="15" maxlength="[{$listitem->oxarticles__oxvarselect->fldmax_length}]" name="editval[[{ $listitem->oxarticles__oxid->value}]][oxarticles__oxvarselect]" value="[{$listitem->oxarticles__oxvarselect->value}]" [{ $readonly }]></td>
             <td class="[{ $listclass}]"><input type="text" class="editinput" size="10" maxlength="[{$listitem->oxarticles__oxartnum->fldmax_length}]" name="editval[[{ $listitem->oxarticles__oxid->value}]][oxarticles__oxartnum]" value="[{$listitem->oxarticles__oxartnum->value}]" [{ $readonly }]></td>
@@ -232,8 +232,8 @@ function editThis( sID )
           <tr>
 
             [{assign var="listclass" value=listitem$blWhite }]
-            <form name="myedit4" id="myedit4" action="[{ $shop->selflink }]" method="post">
-            [{ $shop->hiddensid }]
+            <form name="myedit4" id="myedit4" action="[{ $oViewConf->getSelfLink() }]" method="post">
+            [{ $oViewConf->getHiddenSid() }]
             <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
             <input type="hidden" name="cl" value="article_variant">
             <input type="hidden" name="fnc" value="savevariant">
@@ -263,7 +263,7 @@ function editThis( sID )
 
           </form>
 
-          <form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
+          <form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post">
           <tr>
             <td  colspan=9><br>
 
@@ -292,7 +292,7 @@ function editThis( sID )
         </table>
         </div>
 
-        [{ $shop->hiddensid }]
+        [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="cl" value="article_variant">
         <input type="hidden" name="fnc" value="">
         <input type="hidden" name="oxid" value="[{ $oxid }]">

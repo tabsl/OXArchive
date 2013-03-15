@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 32614 2011-01-20 15:23:11Z sarunas $
+ * @version   SVN: $Id: oxconfig.php 34355 2011-04-07 10:20:42Z linas.kukulskis $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -208,6 +208,13 @@ class oxConfig extends oxSuperCfg
     protected $_aConfigParams = array();
 
     /**
+     * Theme config parameters storage array
+     *
+     * @var array
+     */
+    protected $_aThemeConfigParams = array();
+
+    /**
      * Current language Id
      *
      * @var int
@@ -286,6 +293,13 @@ class oxConfig extends oxSuperCfg
     protected $_oActCurrencyObject = null;
 
     /**
+     * prefix for oxmodule field for themes in oxconfig and oxconfigdisplay tables
+     *
+     * @var string
+     */
+    const OXMODULE_THEME_PREFIX = 'theme:';
+
+    /**
      * Returns config parameter value if such parameter exists
      *
      * @param string $sName config parameter name
@@ -341,6 +355,10 @@ class oxConfig extends oxSuperCfg
         if( !$this->getConfigParam( 'sDefaultLang' ) )
             $this->setConfigParam( 'sDefaultLang', 0 );
 
+        $sTheme = $this->getConfigParam( 'sTheme' );
+        if( !isset( $sTheme ) )
+            $this->setConfigParam( 'sTheme', 'basic' );
+
         $blLogChangesInAdmin = $this->getConfigParam( 'blLogChangesInAdmin' );
         if( !isset( $blLogChangesInAdmin ) )
             $this->setConfigParam( 'blLogChangesInAdmin', false );
@@ -378,16 +396,6 @@ class oxConfig extends oxSuperCfg
         global  $ADODB_SESS_LIFE;
         $ADODB_SESS_LIFE  = 1;
 
-
-            /*
-        $iSessionTimeout = null;
-        if ( $this->isAdmin())
-            $iSessionTimeout = $this->getConfigParam( 'iSessionTimeoutAdmin' );
-        if ( !$this->isAdmin() || !$iSessionTimeout )
-            $iSessionTimeout = $this->getConfigParam( 'iSessionTimeout' );
-        if (!$iSessionTimeout)
-            $iSessionTimeout = 60;*/
-
         // ADODB cachelifetime
         $iDBCacheLifeTime = $this->getConfigParam( 'iDBCacheLifeTime' );
         if( !isset( $iDBCacheLifeTime ) )
@@ -397,15 +405,19 @@ class oxConfig extends oxSuperCfg
         $this->setConfigParam( 'sCoreDir', $sCoreDir.'/core/' );
 
         try {
-            //starting up the session
-            $this->getSession()->start();
-
             $sShopID = $this->getShopId();
 
             // load now
             $this->_loadVarsFromDb( $sShopID );
+            $this->_loadVarsFromDb( $sShopID, null, oxConfig::OXMODULE_THEME_PREFIX . $this->getConfigParam('sTheme') );
+            $sCustomTheme = $this->getConfigParam('sCustomTheme');
+            if ($sCustomTheme) {
+                $this->_loadVarsFromDb( $sShopID, null, oxConfig::OXMODULE_THEME_PREFIX . $sCustomTheme );
+            }
 
 
+            //starting up the session
+            $this->getSession()->start();
         } catch ( oxConnectionException $oEx ) {
             $oEx->debugOut();
             if ( defined( 'OXID_PHP_UNIT' ) ) {
@@ -418,10 +430,15 @@ class oxConfig extends oxSuperCfg
                 header( "Connection: close");
             }
         } catch ( oxCookieException $oEx ) {
+
+            //starting up the session
+            $this->getSession()->start();
+
             // redirect to start page and display the error
             oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
             oxUtils::getInstance()->redirect( $this->getShopHomeURL() .'cl=start', true, 302 );
         }
+
 
         //application initialization
         $this->_oStart = new oxStart();
@@ -456,13 +473,15 @@ class oxConfig extends oxSuperCfg
      *
      * @param string $sShopID   shop ID to load parameters
      * @param array  $aOnlyVars array of params to load (optional)
+     * @param string $sModule   module vars to load, empty for base options
      *
      * @return null
      */
-    protected function _loadVarsFromDb( $sShopID, $aOnlyVars = null )
+    protected function _loadVarsFromDb( $sShopID, $aOnlyVars = null, $sModule = '' )
     {
+        $oDb = oxDb::getDb();
 
-        $sQ = "select oxvarname, oxvartype, DECODE( oxvarvalue, '".$this->getConfigParam( 'sConfigKey' )."') as oxvarvalue from oxconfig where oxshopid = '$sShopID'";
+        $sQ = "select oxvarname, oxvartype, DECODE( oxvarvalue, '".$this->getConfigParam( 'sConfigKey' )."') as oxvarvalue from oxconfig where oxshopid = '$sShopID' and oxmodule=".$oDb->quote($sModule);
         // dodger, allow loading from some vars only from baseshop
         if ( $aOnlyVars !== null ) {
             $blSep = false;
@@ -477,7 +496,7 @@ class oxConfig extends oxSuperCfg
             $sQ .= ' and oxvarname in ( '.$sIn.' ) ';
         }
 
-        $oRs = oxDb::getDb()->execute( $sQ );
+        $oRs = $oDb->execute( $sQ );
         if ( $oRs != false && $oRs->recordCount() > 0 ) {
             while ( !$oRs->EOF ) {
                 $sVarName = $oRs->fields[0];
@@ -491,23 +510,41 @@ class oxConfig extends oxSuperCfg
                     continue;
                 }
 
-                switch ( $sVarType ) {
-                    case 'arr':
-                    case 'aarr':
-                        $this->setConfigParam( $sVarName, unserialize( $sVarVal ) );
-                        break;
-                    case 'bool':
-                        $this->setConfigParam( $sVarName, ( $sVarVal == 'true' || $sVarVal == '1' ) );
-                        break;
-                    default:
-                        $this->setConfigParam( $sVarName, $sVarVal );
-                        break;
+                $this->_setConfVarFromDb($sVarName, $sVarType, $sVarVal);
+
+                //setting theme options array
+                if ( $sModule != '' ) {
+                    $this->_aThemeConfigParams[$sVarName] = $sModule;
                 }
 
                 $oRs->moveNext();
             }
         }
+    }
 
+    /**
+     * set config variable to config object, first unserializing it by given type
+     *
+     * @param string $sVarName variable name
+     * @param string $sVarType variable type - arr, aarr, bool or str
+     * @param string $sVarVal  serialized by type value
+     *
+     * @return null
+     */
+    protected function _setConfVarFromDb($sVarName, $sVarType, $sVarVal)
+    {
+        switch ( $sVarType ) {
+            case 'arr':
+            case 'aarr':
+                $this->setConfigParam( $sVarName, unserialize( $sVarVal ) );
+                break;
+            case 'bool':
+                $this->setConfigParam( $sVarName, ( $sVarVal == 'true' || $sVarVal == '1' ) );
+                break;
+            default:
+                $this->setConfigParam( $sVarName, $sVarVal );
+                break;
+        }
     }
 
     /**
@@ -522,8 +559,6 @@ class oxConfig extends oxSuperCfg
 
     /**
      * Returns value of parameter stored in POST,GET.
-     * This method returns parameter stored in session as well, but this functionality is deprecated
-     * and will be removed in future
      * For security reasons performed oxconfig::checkSpecialChars().
      * use $blRaw very carefully if you want to get unescaped
      * parameter.
@@ -550,10 +585,6 @@ class oxConfig extends oxSuperCfg
             $sValue = $_POST[$sName];
         } elseif ( isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] == 'GET' && isset( $_GET[$sName] ) ) {
             $sValue = $_GET[$sName];
-            //<deprecated>
-        } elseif ( oxSession::hasVar( $sName ) ) {
-            $sValue = oxSession::getVar( $sName );
-            //</deprecated>
         } else {
             $sValue = null;
         }
@@ -897,7 +928,13 @@ class oxConfig extends oxSuperCfg
      */
     public function getShopCurrency()
     {
-        return (int) oxConfig::getParameter( 'currency' );
+        $iCurr = null;
+        if ( ( null === ( $iCurr = oxConfig::getParameter( 'cur' ) ) ) ) {
+            if ( null === ( $iCurr = oxConfig::getParameter( 'currency' ) ) ) {
+                $iCurr = oxSession::getVar( 'currency' );
+            }
+        }
+        return (int) $iCurr;
     }
 
     /**
@@ -915,11 +952,7 @@ class oxConfig extends oxSuperCfg
             }
         }
 
-        $iCur = oxConfig::getParameter( 'cur' );
-        if ( !isset( $iCur ) ) {
-            $iCur = $this->getShopCurrency();
-        }
-
+        $iCur = $this->getShopCurrency();
         $aCurrencies = $this->getCurrencyArray();
         if ( !isset( $aCurrencies[$iCur] ) ) {
             return $this->_oActCurrencyObject = reset( $aCurrencies ); // reset() returns the first element
@@ -943,101 +976,6 @@ class oxConfig extends oxSuperCfg
             $this->_oActCurrencyObject = null;
         }
     }
-
-
-    /**
-     * Returns image dir URL (no SSL).
-     *
-     * @param bool $blAdmin mode - admin/non-admin (default is false)
-     *
-     * @deprecated use getImageUrl
-     *
-     * @return string
-     */
-    public function getNoSslImageDir( $blAdmin = false )
-    {
-        return $this->getImageUrl( $blAdmin, false );
-    }
-
-    /**
-     * Returns absolute path to admin images.
-     *
-     * @deprecated use getImageDir
-     *
-     * @return string
-     */
-    public function getAbsAdminImageDir()
-    {
-        return $this->getImageDir( true );
-
-    }
-
-    /**
-     * Formats output directory depending on given parameters. Resources could be language dependant or multilanguage, to be located in theme dir or in default oxbaseshop, 1 or admin dirs. formatOutDir tries to locate resource $sFile in one of these dirs and return that dir.
-     * Example result could be /out/basic/1/de/lang.txt when you are looking for "/de/lang.txt" resource ($sFile).
-     *
-     * @param string $sFile      Resource name - image, template file or dir name (generally from out dir).
-     * @param int    $iLang      Custom language
-     * @param bool   $blAdmin    Whether to force admin dirs
-     * @param bool   $blNoThemes Whether to force the theme dir.
-     * @param string $iShop
-     *
-     * @deprecated use getDir
-     *
-     * @return string
-     */
-    /* is not used
-    public function formatOutDir($sFile, $iLang = null, $blAdmin = false, $blNoThemes = false, $iShop = null)
-    {
-        //resolving theme and shop dir
-        $sThemeDir  = ($blNoThemes || $blAdmin) ? "" : $this->getConfigParam( 'sTheme' );
-
-        if (is_null($iShop))
-            $iShop = $this->getShopId();
-
-        $aShopDirs = array();
-
-
-        if ($sThemeDir)
-            $aShopDirs[] = "$sThemeDir/1/";
-        else
-            $aShopDirs[] = $this->getBaseShopId() . "/";
-
-        //admin dir
-        if ( $blAdmin ) {
-            $aShopDirs = array('admin/');
-        }
-
-        if ($sFile) {
-            //language dir
-            if (is_null($iLang))
-                $iLang = oxLang::getInstance()->getBaseLanguage();
-
-            $aLangs    = oxLang::getInstance()->getLanguageArray();
-            //specific language dir and top dir
-            $aLangDirs = array();
-            if (isset($aLangs[$iLang]))
-                $aLangDirs[] = strtolower($aLangs[$iLang]->abbr . "/");
-            $aLangDirs[] = "";
-
-
-            //finally checking dir
-            foreach ($aShopDirs as $sShopDir) {
-                foreach ($aLangDirs as $sLangDir) {
-                    $sOut = "out/" . $sShopDir . $sLangDir . $sFile;
-                    if (file_exists($this->getConfigParam('sShopDir'). $sOut))
-                        return $sOut;
-                }
-            }
-        }
-
-        //not language specific default dir
-        foreach ($aShopDirs as $sShopDir) {
-            $sOut = "out/" . $sShopDir;
-            if (file_exists($this->getConfigParam('sShopDir'). $sOut))
-                return $sOut;
-        }
-    }*/
 
     /**
      * Returns path to out dir
@@ -1306,6 +1244,9 @@ class oxConfig extends oxSuperCfg
      */
     public function getPictureUrl( $sFile, $blAdmin = false, $blSSL = null, $iLang = null, $iShopId = null, $sDefPic = "0/nopic.jpg" )
     {
+        if (!isset($blSSL)) {
+            $blSSL = $this->isSsl();
+        }
         if ( $sAltUrl = $this->getConfigParam( 'sAltImageDir' ) ) {
 
             if ( $this->isSsl() && $blSSL && $sSslAltUrl = $this->getConfigParam( 'sSSLAltImageDir' ) ) {
@@ -1322,9 +1263,7 @@ class oxConfig extends oxSuperCfg
         $blNativeImg = $this->getConfigParam( 'blNativeImages' );
 
         $sUrl = $this->getUrl( $sFile, $this->_sPictureDir, $blAdmin, $blSSL, $blNativeImg, $iLang, $iShopId );
-        if ( $sFile && $this->getConfigParam( 'blFormerTplSupport' ) && !$blAdmin ) {
-            $sUrl = str_replace( $this->getPictureUrl( null, $blAdmin, $blSSL, $iLang, $iShopId ), '', $sUrl );
-        }
+
 
         //anything is better than empty name, because <img src=""> calls shop once more = x2 SLOW.
         if ( !$sUrl ) {
@@ -1423,7 +1362,7 @@ class oxConfig extends oxSuperCfg
      *
      * @return string
      */
-    public function getResourcePath($sFile, $blAdmin = false )
+    public function getResourcePath($sFile = '', $blAdmin = false )
     {
         return $this->getDir( $sFile, $this->_sResourceDir, $blAdmin );
     }
@@ -1438,7 +1377,7 @@ class oxConfig extends oxSuperCfg
      *
      * @return string
      */
-    public function getResourceUrl( $sFile, $blAdmin = false , $blSSL = null , $iLang = null )
+    public function getResourceUrl( $sFile = '', $blAdmin = false , $blSSL = null , $iLang = null )
     {
         $blNativeImg = $this->getConfigParam( 'blNativeImages' );
         return $this->getUrl( $sFile, $this->_sResourceDir, $blAdmin, $blSSL, $blNativeImg, $iLang );
@@ -1462,16 +1401,18 @@ class oxConfig extends oxSuperCfg
      * @param string $sFile   File name
      * @param bool   $blAdmin Whether to force admin
      * @param int    $iLang   Language id
+     * @param int    $iShop   Shop id
+     * @param string $sTheme  Theme name
      *
      * @return string
      */
-    public function getLanguagePath( $sFile, $blAdmin, $iLang = null )
+    public function getLanguagePath( $sFile, $blAdmin, $iLang = null, $iShop = null, $sTheme = null )
     {
-        return $this->getDir( $sFile, oxLang::getInstance()->getLanguageAbbr( $iLang ), $blAdmin, $iLang );
+        return $this->getDir( $sFile, oxLang::getInstance()->getLanguageAbbr( $iLang ), $blAdmin, $iLang, $iShop, $sTheme );
     }
 
     /**
-     * Returns standard ("basic" theme) language files or folders path
+     * Returns standard (current theme) language files or folders path
      *
      * @param string $sFile   File name
      * @param bool   $blAdmin Whether to force admin
@@ -1499,158 +1440,6 @@ class oxConfig extends oxSuperCfg
     public function getLanguageDir( $blAdmin )
     {
         return $this->getDir( null, null, $blAdmin );
-    }
-
-    /**
-     * Returns absolute path to images.
-     *
-     * @deprecated use getImageDir
-     *
-     * @return string
-     */
-    public function getAbsImageDir()
-    {
-        return $this->getImageDir();
-    }
-
-    /**
-     * Returns url to Dyn images.
-     *
-     * @param string $sOverrideShopId Shop ID (default null)
-     * @param bool   $blNoSsl         SSL status (default null)
-     *
-     * @deprecated
-     *
-     * @return string
-     */
-    public function getDynImageDir( $sOverrideShopId = null, $blNoSsl = null )
-    {
-        return $this->getPictureUrl(null, false, $this->isSsl() && !$blNoSsl, null, $sOverrideShopId);
-
-        /*
-
-        $sCacheKey = "getDynImageDir_" . $this->isSsl() . "_" . $this->getShopId() . "_" .oxLang::getInstance()->getTplLanguage() . "_" . $sOverrideShopId . "_" . $blNoSsl;
-        $sImageDir = oxUtils::getInstance()->fromStaticCache($sCacheKey);
-
-        if ($sImageDir)
-            return $sImageDir;
-
-        if ( $sAltImageDir = $this->getConfigParam( 'sAltImageDir' ) ) {
-            if ( $this->isSsl() ) {
-                $sAltImageDir = str_replace( 'http://', 'https://', $sAltImageDir );
-            }
-            oxUtils::getInstance()->toStaticCache($sCacheKey, $sAltImageDir);
-            return $sAltImageDir;
-        }
-
-        //Tomas 2005-01-19
-        //now it loads images only from either active shop either from oxbaseshop
-        //later to be fixed to load images from any shop according $sOverrideShopId by implementing
-        //function oxConfig::getShopURL($sOverrideShopId);
-
-        $blNativeImg = $this->getConfigParam( 'blNativeImages' ) && $sOverrideShopId == $this->getShopId();
-
-        if ( $this->isSsl() && !$blNoSsl ) {
-            $sUrl = $blNativeImg ? $this->getSSLShopURL():$this->getConfigParam( 'sSSLShopURL');
-        }
-
-        if(!$sUrl) {
-            $sUrl = $blNativeImg ? $this->getShopURL():$this->getConfigParam( 'sShopURL' );
-        }
-
-        $sLang = $this->getConfigParam( 'blUseDifferentDynDirs' )?oxLang::getInstance()->getTplLanguage():0;
-        $sDir  = $this->_sPictureDir;
-
-        $sImageDir = $sUrl . $this->formatOutDir($sDir, $iLang, false, true, $sOverrideShopId);
-
-        oxUtils::getInstance()->toStaticCache($sCacheKey, $sImageDir);
-
-
-        return $sImageDir;
-        */
-    }
-
-    /**
-     * Returns absolute path to Dyn images.
-     *
-     * @param string $sOverrideShopId Shop ID (default null)
-     *
-     * @deprecated
-     *
-     * @return string
-     */
-    public function getAbsDynImageDir( $sOverrideShopId = null )
-    {
-        return $this->getPictureDir(false);
-
-        /*
-        //$sShop = is_null($sOverrideShopId)?$this->getShopId():$sOverrideShopId;
-
-        if (isset($this->_aAbsDynImageDir[$sShop]))
-            return $this->_aAbsDynImageDir[$sShop];
-
-        $sRoot = $this->getConfigParam('sShopDir');
-        $iLang = $this->getConfigParam( 'blUseDifferentDynDirs' )?oxLang::getInstance()->getTplLanguage():0;
-        $sDir  = $this->_sPictureDir;
-
-        $this->_aAbsDynImageDir[$sShop] = $sRoot . $this->formatOutDir($sDir, $iLang, false, true, $sOverrideShopId);
-        return $this->_aAbsDynImageDir[$sShop];
-        */
-    }
-
-    /**
-     * Returns shop template file path.
-     *
-     * @param string $sTemplate name of template file
-     * @param bool   $blAdmin   mode - admin/non-admin (default is false)
-     *
-     * @deprecated
-     *
-     * @return string
-     */
-    public function getTemplateFile( $sTemplate, $blAdmin = false )
-    {
-        return $this->getTemplatePath( $sTemplate, $blAdmin );
-    }
-
-    /**
-     * Returns path to template files. Eg. 'http://localhost/oxid/out/1/html/0/templates/'
-     *
-     * @param bool $blAdmin mode - admin/non-admin (default is false)
-     *
-     * @deprecated use getResourceUrl
-     *
-     * @return string
-     */
-    public function getBaseTemplateDir( $blAdmin = false )
-    {
-        return $this->getResourceUrl( null, $blAdmin );
-        /*
-        $blNativeImg = $this->getConfigParam( 'blNativeImages' ) && !$blAdmin;
-
-        if ( $this->isSsl() ) {
-            $sTemplateUrl = $blNativeImg?$this->getSSLShopURL():$this->getConfigParam( 'sSSLShopURL' );
-        } else {
-            $sTemplateUrl = $blNativeImg?$this->getShopURL():$this->getConfigParam( 'sShopURL' );
-        }
-
-        return $this->getResourceUrl( null, $blAdmin, $this->isSsl() );
-        */
-    }
-
-    /**
-     * Returns base path to template files. (eg. 'out/1/')
-     *
-     * @param bool $blAdmin mode - admin/non-admin (default is false)
-     *
-     * @deprecated
-     *
-     * @return string
-     */
-    public function getBaseTplDir( $blAdmin = false )
-    {
-        //TODO: check usage
-        return $this->getResourceUrl( null, $blAdmin);
     }
 
     /**
@@ -1840,10 +1629,11 @@ class oxConfig extends oxSuperCfg
      * @param string $sVarName Variable name
      * @param mixed  $sVarVal  Variable value (can be string, integer or array)
      * @param string $sShopId  Shop ID, default is current shop
+     * @param string $sModule  Module name (empty for base options)
      *
      * @return null
      */
-    public function saveShopConfVar( $sVarType, $sVarName, $sVarVal, $sShopId = null )
+    public function saveShopConfVar( $sVarType, $sVarName, $sVarVal, $sShopId = null, $sModule = '' )
     {
         switch ( $sVarType ) {
             case 'arr':
@@ -1876,19 +1666,21 @@ class oxConfig extends oxSuperCfg
             $this->setConfigParam( $sVarName, $sVarVal );
         }
 
-        $oDb = oxDb::getDb();
-        $sQ = "delete from oxconfig where oxshopid = '$sShopId' and oxvarname = '$sVarName'";
+        $oDb = oxDb::getDb(true);
+
+        $sShopIdQuoted     = $oDb->quote($sShopId);
+        $sModuleQuoted     = $oDb->quote($sModule);
+        $sVarNameQuoted    = $oDb->quote($sVarName);
+        $sVarTypeQuoted    = $oDb->quote($sVarType);
+        $sVarValueQuoted   = $oDb->quote($sValue);
+        $sConfigKeyQuoted  = $oDb->quote($this->getConfigParam('sConfigKey'));
+        $sNewOXIDdQuoted   = $oDb->quote(oxUtilsObject::getInstance()->generateUID());
+
+        $sQ = "delete from oxconfig where oxshopid = $sShopIdQuoted and oxvarname = $sVarNameQuoted and oxmodule = $sModuleQuoted";
         $oDb->execute( $sQ );
 
-        $sNewOXIDdQuoted  = $oDb->quote(oxUtilsObject::getInstance()->generateUID());
-        $sShopIdQuoted    = $oDb->quote($sShopId);
-        $sVarNameQuoted   = $oDb->quote($sVarName);
-        $sVarTypeQuoted   = $oDb->quote($sVarType);
-        $sVarValueQuoted  = $oDb->quote($sValue);
-        $sConfigKeyQuoted = $oDb->quote($this->getConfigParam('sConfigKey'));
-
-        $sQ = "insert into oxconfig (oxid, oxshopid, oxvarname, oxvartype, oxvarvalue)
-               values($sNewOXIDdQuoted, $sShopIdQuoted, $sVarNameQuoted, $sVarTypeQuoted, ENCODE( $sVarValueQuoted, $sConfigKeyQuoted))";
+        $sQ = "insert into oxconfig (oxid, oxshopid, oxmodule, oxvarname, oxvartype, oxvarvalue)
+               values($sNewOXIDdQuoted, $sShopIdQuoted, $sModuleQuoted, $sVarNameQuoted, $sVarTypeQuoted, ENCODE( $sVarValueQuoted, $sConfigKeyQuoted) )";
 
         $oDb->execute( $sQ );
     }
@@ -2026,4 +1818,17 @@ class oxConfig extends oxSuperCfg
     {
         return $this->getConfigParam( 'sShopDir' ).'log/';
     }
+
+    /**
+     * Returns true if option is theme option
+     *
+     * @param string $sName option name
+     *
+     * @return bool
+     */
+    public function isThemeOption( $sName )
+    {
+        return (bool) isset( $this->_aThemeConfigParams[$sName] );
+    }
+
 }

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: voucherserie_groups.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: voucherserie_groups.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -42,9 +42,7 @@ class VoucherSerie_Groups extends oxAdminDetails
     {
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid");
-        // check if we right now saved a new entry
-
+        $soxId = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId)) {
             // load object
             $oVoucherSerie = oxNew( "oxvoucherserie" );

@@ -21,17 +21,8 @@ window.onload = function ()
 <div id="liste">
 
 
-<form name="search" id="search" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
-    <input type="hidden" name="cl" value="language_list">
-    <input type="hidden" name="lstrt" value="[{ $lstrt }]">
-    <input type="hidden" name="sort" value="[{ $sort }]">
-    <input type="hidden" name="actedit" value="[{ $actedit }]">
-    <input type="hidden" name="oxid" value="[{ $oxid }]">
-    <input type="hidden" name="fnc" value="">
-    <input type="hidden" name="language" value="[{ $actlang }]">
-    <input type="hidden" name="editlanguage" value="[{ $actlang }]">
-
+<form name="search" id="search" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{include file="_formparams.tpl" cl="language_list" lstrt=$lstrt actedit=$actedit oxid=$oxid fnc="" language=$actlang editlanguage=$actlang}]
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
 <colgroup>
     <col width="4%">
@@ -56,9 +47,9 @@ window.onload = function ()
 </tr>
 
 <tr>
-    <td class="listheader first" height="15" align="center"><a href="Javascript:document.search.sort.value='active';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_ARTICLE_OXACTIVE" }]</a></td>
-    <td class="listheader" height="15"><a href="Javascript:document.search.sort.value='abbr';document.search.submit();" class="listheader">[{ oxmultilang ident="LANGUAGE_ABBERVATION" }]</a></td>
-    <td class="listheader" height="15" colspan="2"><a href="Javascript:document.search.sort.value='name';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_LANGUAGE_NAME" }]</a></td>
+    <td class="listheader first" height="15" align="center"><a href="Javascript:top.oxid.admin.setSorting( document.forms.search, '', 'active', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_ARTICLE_OXACTIVE" }]</a></td>
+    <td class="listheader" height="15"><a href="Javascript:top.oxid.admin.setSorting( document.forms.search, '', 'abbr', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="LANGUAGE_ABBERVATION" }]</a></td>
+    <td class="listheader" height="15" colspan="2"><a href="Javascript:top.oxid.admin.setSorting( document.forms.search, '', 'name', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_LANGUAGE_NAME" }]</a></td>
 </tr>
 
 [{assign var="blWhite" value=""}]

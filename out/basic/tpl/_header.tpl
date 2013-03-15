@@ -5,7 +5,7 @@
     [{assign var="_titleprefix" value=$_titleprefix|default:$oView->getTitlePrefix() }]
     [{assign var="title" value=$title|default:$oView->getTitle() }]
     <title>[{ $_titleprefix }][{if $title&& $_titleprefix }] | [{/if}][{$title|strip_tags}][{if $_titlesuffix}] | [{$_titlesuffix}][{/if}][{if $titlepagesuffix}] | [{$titlepagesuffix}][{/if}]</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=[{$charset}]">
+    <meta http-equiv="Content-Type" content="text/html; charset=[{$oView->getCharSet()}]">
     [{if $oView->noIndex() == 1 }]
     <meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
     [{elseif $oView->noIndex() == 2 }]
@@ -21,10 +21,96 @@
     <!--[if IE 7]><link rel="stylesheet" type="text/css" href="[{ $oViewConf->getResourceUrl() }]oxid_ie7.css"><![endif]-->
     <!--[if IE 6]><link rel="stylesheet" type="text/css" href="[{ $oViewConf->getResourceUrl() }]oxid_ie6.css"><![endif]-->
 
+    [{assign var='rsslinks' value=$oView->getRssLinks() }]
     [{if $rsslinks}]
       [{foreach from=$rsslinks item='rssentry'}]
         <link rel="alternate" type="application/rss+xml" title="[{$rssentry.title|strip_tags}]" href="[{$rssentry.link}]">
       [{/foreach}]
+    [{/if}]
+    [{if $oViewConf->isTplBlocksDebugMode()}]
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(function(){
+                $("hr.debugBlocksStart").each(function(){
+                    var blockTitle = $(this).attr("title");
+                    var blockId    = $(this).attr("id");
+                    var endBlock   = $("hr.debugBlocksEnd[title="+blockId+"]");
+
+                    var _firstElement = $(this).next();
+                    var _lastElement  = endBlock.prev();
+                    while (_firstElement.hasClass('debugBlocksStart')) {
+                        _firstElement  = _firstElement.prev();
+                    }
+                    while (_lastElement.hasClass('debugBlocksEnd')) {
+                        _lastElement  = _lastElement.prev();
+                    }
+                    var divLeft    = Math.min(_firstElement.offset().left, _lastElement.offset().left);
+                    var divTop     = Math.min(_firstElement.offset().top, _lastElement.offset().top+_lastElement.outerHeight());
+                    var divHeight  = Math.max(_firstElement.offset().top, (_lastElement.offset().top+_lastElement.outerHeight())) - divTop;
+                    var divWidth   = Math.max(_firstElement.offset().left+_firstElement.outerWidth(), _lastElement.offset().left+_lastElement.outerWidth()) - divLeft;
+                    var blockDiv   = $("<div class='tplDebugBlock' style='z-index:1;background-color:rgba(200, 200, 200, 0.2)'>").html("<span id='"+blockId+"_title' style='z-index:3;color:#fff;background-color:#444;background-color:rgba(0, 0, 0, 0.7);padding:2px 6px;'>Block: "+blockTitle+"</span>");
+
+                    blockDiv.attr('id', blockId+"_border");
+                    blockDiv.css({
+                            'position' : 'absolute',
+                            'top'      : divTop,
+                            'left'     : divLeft,
+                            'width'    : divWidth-4,
+                            'height'   : divHeight-4,
+                            'border'   : '1px dashed #a33',
+                            'padding'  : '2px 1px'
+                    });
+                    $("body").append(blockDiv);
+
+                    $("#"+blockId+"_title").hover(function(){
+                        $(this).css('z-index',4);
+                        $(this).css('background-color', '#000');
+                        $("#"+blockId+"_border").css({
+                            'border':'2px solid #f00',
+                            'padding':'1px 0',
+                            'z-index': 2
+                        });
+                    },function(){
+                        $(this).css('z-index',3);
+                        try{
+                            $(this).css('background-color', 'rgba(0, 0, 0, 0.7)');
+                        }catch(err){
+                            $(this).css('background-color', '#444'); // for IE, as rgba will fail
+                        }
+
+                        $("#"+blockId+"_border").css({
+                            'border':'1px dashed #a33',
+                            'padding':'2px 1px',
+                            'z-index': 1
+                        });
+                    });
+
+                });
+                $("body")
+                    .append($("<button>Toggle template debug blocks</button>")
+                    .css({
+                        'right'      : 0,
+                        'top'        : 0,
+                        'position'   : 'fixed',
+                        'background' : '#a33',
+                        'color'      : '#fff',
+                        'border'     : '1px solid #600',
+                        'padding'    : '3px 10px',
+                        'cursor'     : 'pointer',
+                        'width'      : '230px',
+                        'z-index'    : 4
+                    })
+                    .click(function(){
+                        $('div.tplDebugBlock').toggle();
+                    })
+                    .hover(function(){
+                        $(this).css('background', '#533');
+                    },function(){
+                        $(this).css('background', '#a33');
+                    })
+                );
+            });
+        </script>
     [{/if}]
 </head>
 <body>

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: order_article.php 26305 2010-03-04 23:17:31Z alfonsas $
+ * @version   SVN: $Id: order_article.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -86,7 +86,7 @@ class Order_Article extends oxAdminDetails
      */
     public function getEditObject()
     {
-        $soxId = oxConfig::getParameter( "oxid" );
+        $soxId = $this->getEditObjectId();
         if ( $this->_oEditObject === null && isset( $soxId ) && $soxId != "-1" ) {
             $this->_oEditObject = oxNew( "oxorder" );
             $this->_oEditObject->load( $soxId );
@@ -191,7 +191,7 @@ class Order_Article extends oxAdminDetails
 
         if ( $sOxid && $dAmount && $oProduct->load( $sOxid ) ) {
 
-            $sOrderId = oxConfig::getParameter( 'oxid' );
+            $sOrderId = $this->getEditObjectId();
             $oOrder   = oxNew( 'oxorder' );
             if ( $sOrderId && $oOrder->load( $sOrderId ) ) {
                 $oOrderArticle = oxNew( 'oxorderArticle' );
@@ -213,7 +213,7 @@ class Order_Article extends oxAdminDetails
     {
         // get article id
         $sOrderArtId = oxConfig::getParameter( 'sArtID' );
-        $sOrderId = oxConfig::getParameter( 'oxid' );
+        $sOrderId = $this->getEditObjectId();
 
         $oOrderArticle = oxNew( 'oxorderarticle' );
         $oOrder = oxNew( 'oxorder' );
@@ -264,7 +264,7 @@ class Order_Article extends oxAdminDetails
         $sQ = "select oxartid from oxorderarticles where oxid = ".$oDb->quote( $sOrderArtId );
         if ( ( $sArtId = oxDb::getDb()->getOne( $sQ ) ) ) {
             $oOrder = oxNew( 'oxorder' );
-            if ( $oOrder->load( oxConfig::getParameter( 'oxid' ) ) ) {
+            if ( $oOrder->load( $this->getEditObjectId() ) ) {
                 $oOrder->recalculateOrder();
             }
         }
@@ -280,7 +280,7 @@ class Order_Article extends oxAdminDetails
         $aOrderArticles = oxConfig::getParameter( 'aOrderArticles' );
 
         $oOrder = oxNew( 'oxorder' );
-        if ( is_array( $aOrderArticles ) && $oOrder->load( oxConfig::getParameter( 'oxid' ) ) ) {
+        if ( is_array( $aOrderArticles ) && $oOrder->load( $this->getEditObjectId() ) ) {
 
             $myConfig = $this->getConfig();
             $oOrderArticles = $oOrder->getOrderArticles();

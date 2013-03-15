@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: content.php 32734 2011-01-26 08:32:22Z arvydas.vapsva $
+ * @version   SVN: $Id: content.php 33532 2011-02-25 11:04:14Z sarunas $
  */
 
 /**
@@ -43,13 +43,13 @@ class Content extends oxUBase
      * Current view template
      * @var string
      */
-    protected $_sThisTemplate = 'content.tpl';
+    protected $_sThisTemplate = 'page/info/content.tpl';
 
     /**
      * Current view plain template
      * @var string
      */
-    protected $_sThisPlainTemplate = 'content_plain.tpl';
+    protected $_sThisPlainTemplate = 'page/info/content_plain.tpl';
 
     /**
      * Current view content category (if available)
@@ -81,9 +81,6 @@ class Content extends oxUBase
      * template engine and generates content. Returns the name
      * of template to render content::_sThisTemplate
      *
-     * Template variables:
-     * <b>oxcid</b>, <b>oContent</b>
-     *
      * @return  string  $this->_sThisTemplate   current template file name
      */
     public function render()
@@ -99,8 +96,7 @@ class Content extends oxUBase
         if ( $sTplName = $this->_getTplName() ) {
             $this->_sThisTemplate = $sTpl = $sTplName;
         } elseif ( $oContent ) {
-            $this->_aViewData['oxcid'] = $sTpl = $oContent->getId();
-            $this->_aViewData['oContent'] = $oContent;
+            $sTpl = $oContent->getId();
         }
 
         if ( !$sTpl ) {
@@ -112,7 +108,6 @@ class Content extends oxUBase
             $this->_sThisTemplate = $this->_sThisPlainTemplate;
         }
 
-        $this->_aViewData['tpl'] = $sTpl;
         $this->getViewConfig()->setViewConfigParam( 'tpl', $sTpl );
         return $this->_sThisTemplate;
     }
@@ -295,9 +290,29 @@ class Content extends oxUBase
             //checking if it is template name, not content id
             if ( !getStr()->preg_match("/\.tpl$/", $sTplName) ) {
                 $sTplName = null;
+            } else {
+                $sTplName = 'message/'.$sTplName;
             }
         }
 
         return $sTplName;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $oContent = $this->getContent();
+
+        $aPaths = array();
+        $aPath = array();
+
+        $aPath['title'] =  $oContent->oxcontents__oxtitle->value;
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 }

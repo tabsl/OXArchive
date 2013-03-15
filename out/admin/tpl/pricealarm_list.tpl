@@ -1,4 +1,5 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign box="list"}]
+[{assign var="where" value=$oView->getListFilter()}]
 
 
   [{ if $shopid != "oxbaseshop" }]
@@ -21,17 +22,8 @@ window.onload = function ()
 
 <div id="liste">
 
-<form name="search" id="search" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
-    <input type="hidden" name="cl" value="pricealarm_list">
-    <input type="hidden" name="lstrt" value="[{ $lstrt }]">
-    <input type="hidden" name="sort" value="[{ $sort }]">
-    <input type="hidden" name="actedit" value="[{ $actedit }]">
-    <input type="hidden" name="oxid" value="[{ $oxid }]">
-    <input type="hidden" name="fnc" value="">
-    <input type="hidden" name="language" value="[{ $actlang }]">
-    <input type="hidden" name="editlanguage" value="[{ $actlang }]">
-
+<form name="search" id="search" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{include file="_formparams.tpl" cl="pricealarm_list" lstrt=$lstrt actedit=$actedit oxid=$oxid fnc="" language=$actlang editlanguage=$actlang}]
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
 <colgroup>
     <col width="15%">
@@ -46,49 +38,49 @@ window.onload = function ()
 <tr class="listitem">
     <td valign="top" class="listfilter first" height="20">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxpricealarm.oxemail]" value="[{ $where->oxpricealarm__oxemail }]">
+        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxpricealarm][oxemail]" value="[{ $where.oxpricealarm.oxemail }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter" height="20">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxuser.oxlname]" value="[{ $where->oxuser__oxlname }]">
+        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxuser][oxlname]" value="[{ $where.oxuser.oxlname }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter" height="20">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxpricealarm.oxinsert]" value="[{ $where->oxpricealarm__oxinsert }]">
+        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxpricealarm][oxinsert]" value="[{ $where.oxpricealarm.oxinsert }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter" height="20">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxpricealarm.oxsended]" value="[{ $where->oxpricealarm__oxsended }]">
+        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxpricealarm][oxsended]" value="[{ $where.oxpricealarm.oxsended }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter" height="20">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxarticles.oxtitle]" value="[{ $where->oxarticles__oxtitle }]">
+        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxarticles][oxtitle]" value="[{ $where.oxarticles.oxtitle }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter" height="20">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="5" maxlength="128" name="where[oxpricealarm.oxprice]" value="[{ $where->oxpricealarm__oxprice }]">
+        <input class="listedit" type="text" size="5" maxlength="128" name="where[oxpricealarm][oxprice]" value="[{ $where.oxpricealarm.oxprice }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter" height="20" [{if count($mylist) > 0}]colspan="2"[{/if}]>
         <div class="r1"><div class="b1">
         <div class="find"><input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]"></div>
-        <input class="listedit" type="text" size="5" maxlength="128" name="where[oxarticles.oxprice]" value="[{ $where->oxarticles__oxprice }]">
+        <input class="listedit" type="text" size="5" maxlength="128" name="where[oxarticles][oxprice]" value="[{ $where.oxarticles.oxprice }]">
         </div></div>
     </td>
 </tr>
 <tr>
-    <td class="listheader first" height="15">&nbsp;<a href="Javascript:document.search.sort.value='oxpricealarm.oxemail';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_EMAIL" }]</a></td>
-    <td class="listheader" height="15"><a href="Javascript:document.search.sort.value='oxuser.oxlname,oxuser.oxfname';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_NAME" }]</a></td>
-    <td class="listheader" height="15"><a href="Javascript:document.search.sort.value='oxpricealarm.oxinsert';document.search.submit();" class="listheader">[{ oxmultilang ident="PRICEALARM_LIST_CONFIRMDATE" }]</a></td>
-    <td class="listheader" height="15"><a href="Javascript:document.search.sort.value='oxpricealarm.oxsended';document.search.submit();" class="listheader">[{ oxmultilang ident="PRICEALARM_LIST_SENDDATE" }]</a></td>
-    <td class="listheader" height="15"><a href="Javascript:document.search.sort.value='oxarticles.oxtitle';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_ITEM" }]</a></td>
-    <td class="listheader" height="15"><a href="Javascript:document.search.sort.value='oxpricealarm.oxprice';document.search.submit();" class="listheader">[{ oxmultilang ident="PRICEALARM_LIST_CUSTOMERSPRICE" }]</a></td>
-    <td class="listheader" height="15"  [{if count($mylist) > 0}]colspan="2"[{/if}]>&nbsp;<a href="Javascript:document.search.sort.value='oxarticles.oxprice';document.search.submit();" class="listheader">[{ oxmultilang ident="PRICEALARM_LIST_STANDARTPRICE" }]</a></td>
+    <td class="listheader first" height="15">&nbsp;<a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxpricealarm', 'oxemail', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_EMAIL" }]</a></td>
+    <td class="listheader" height="15"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxuser', 'oxlname', 'asc');top.oxid.admin.setSorting( document.search, 'oxuser', 'oxfname', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_NAME" }]</a></td>
+    <td class="listheader" height="15"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxpricealarm', 'oxinsert', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="PRICEALARM_LIST_CONFIRMDATE" }]</a></td>
+    <td class="listheader" height="15"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxpricealarm', 'oxsended', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="PRICEALARM_LIST_SENDDATE" }]</a></td>
+    <td class="listheader" height="15"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxarticles', 'oxtitle', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_ITEM" }]</a></td>
+    <td class="listheader" height="15"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxpricealarm', 'oxprice', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="PRICEALARM_LIST_CUSTOMERSPRICE" }]</a></td>
+    <td class="listheader" height="15"  [{if count($mylist) > 0}]colspan="2"[{/if}]>&nbsp;<a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxarticles', 'oxprice', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="PRICEALARM_LIST_STANDARTPRICE" }]</a></td>
 </tr>
 
 [{assign var="blWhite" value=""}]
@@ -105,13 +97,13 @@ window.onload = function ()
     [{ if $listitem->getId() == $oxid }]
         [{assign var="listclass" value=listitem4 }]
     [{ /if}]
-    <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->iStatus==1}]listitemred[{elseif $listitem->iStatus==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->oxpricealarm__oxemail->value }]</a></div></td>
-    <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->iStatus==1}]listitemred[{elseif $listitem->iStatus==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->oxpricealarm__userlname->value }] [{ $listitem->oxpricealarm__userfname->value }]</a></div></td>
-    <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->iStatus==1}]listitemred[{elseif $listitem->iStatus==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->oxpricealarm__oxinsert|oxformdate }]</a></div></td>
-    <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->iStatus==1}]listitemred[{elseif $listitem->iStatus==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->oxpricealarm__oxsended|oxformdate }]</a></div></td>
-    <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->iStatus==1}]listitemred[{elseif $listitem->iStatus==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->oxpricealarm__articletitle->value }]</a></div></td>
-    <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->iStatus==1}]listitemred[{elseif $listitem->iStatus==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->fpricealarmprice }]&nbsp;[{ $listitem->oxpricealarm__oxcurrency->value }]</a></div></td>
-    <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->iStatus==1}]listitemred[{elseif $listitem->iStatus==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->fprice }]&nbsp;[{ $listitem->oxpricealarm__oxcurrency->value }]</a></div></td>
+    <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->getPriceAlarmStatus()==1}]listitemred[{elseif $listitem->getPriceAlarmStatus()==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->oxpricealarm__oxemail->value }]</a></div></td>
+    <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->getPriceAlarmStatus()==1}]listitemred[{elseif $listitem->getPriceAlarmStatus()==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->oxpricealarm__userlname->value }] [{ $listitem->oxpricealarm__userfname->value }]</a></div></td>
+    <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->getPriceAlarmStatus()==1}]listitemred[{elseif $listitem->getPriceAlarmStatus()==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->oxpricealarm__oxinsert|oxformdate }]</a></div></td>
+    <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->getPriceAlarmStatus()==1}]listitemred[{elseif $listitem->getPriceAlarmStatus()==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->oxpricealarm__oxsended|oxformdate }]</a></div></td>
+    <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->getPriceAlarmStatus()==1}]listitemred[{elseif $listitem->getPriceAlarmStatus()==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->getTitle() }]</a></div></td>
+    <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->getPriceAlarmStatus()==1}]listitemred[{elseif $listitem->getPriceAlarmStatus()==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->getFProposedPrice() }]&nbsp;[{ $listitem->oxpricealarm__oxcurrency->value }]</a></div></td>
+    <td valign="top" class="[{$listclass}]" height="15"><div class="listitemfloating"><a href="Javascript:top.oxid.admin.editThis('[{ $listitem->oxpricealarm__oxid->value}]');" class="[{if $listitem->getPriceAlarmStatus()==1}]listitemred[{elseif $listitem->getPriceAlarmStatus()==2}]listitemgreen[{else}][{$listclass}][{/if}]">[{ $listitem->getFPrice() }]&nbsp;[{ $listitem->oxpricealarm__oxcurrency->value }]</a></div></td>
     <td class="[{$listclass}]">
       [{ if !$listitem->isOx() }]
         [{ if $readonly == ""}]

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsupercfg.php 25471 2010-02-01 14:35:11Z alfonsas $
+ * @version   SVN: $Id: oxsupercfg.php 30341 2010-10-15 13:16:16Z arvydas $
  */
 
 /**
@@ -191,7 +191,8 @@ class oxSuperCfg
             return false;
         }
 
-        if ( self::$_oActUser == null ) {
+        if ( self::$_oActUser === null ) {
+            self::$_oActUser = false;
             $oUser = oxNew( 'oxuser' );
             if ( $oUser->loadActiveUser() ) {
                 self::$_oActUser = $oUser;

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: adminguestbook_list.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: adminguestbook_list.php 31980 2010-12-17 14:02:48Z sarunas $
  */
 
 /**
@@ -48,7 +48,7 @@ class AdminGuestbook_List extends oxAdminList
      *
      * @var string
      */
-    protected $_sDefSort = 'oxgbentries.oxcreate';
+    protected $_sDefSortField = 'oxcreate';
 
     /**
      * Default SQL sorting parameter (default null).

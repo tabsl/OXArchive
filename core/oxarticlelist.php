@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxarticlelist.php 31032 2010-11-18 09:35:33Z linas.kukulskis $
+ * @version   SVN: SVN: $Id: oxarticlelist.php 33601 2011-03-01 14:34:42Z rimvydas.paskevicius $
  */
 
 /**
@@ -49,13 +49,6 @@ class oxArticleList extends oxList
     protected $_blLoadSelectLists = false;
 
     /**
-     * Set to true if article price should be loaded
-     *
-     * @var bool
-     */
-    protected $_blLoadPrice = true;
-
-    /**
      * Set Custom Sorting, simply an order by....
      *
      * @param string $sSorting Custom sorting
@@ -68,10 +61,8 @@ class oxArticleList extends oxList
 
         if ( strpos( $aSorting[0], "." ) ) {
             $aSortElements = explode( ".", $aSorting[0] );
-            $aSortElements[1] = $this->getBaseObject()->getSqlFieldName( trim($aSortElements[1]) );
+            $aSortElements[1] = trim($aSortElements[1]);
             $aSorting[0] = implode( ".", $aSortElements );
-        } else {
-            $aSorting[0] = $this->getBaseObject()->getSqlFieldName( $aSorting[0] );
         }
 
         $this->_sCustomSorting = implode( " ", $aSorting );
@@ -97,10 +88,6 @@ class oxArticleList extends oxList
      */
     public function selectString( $sSelect )
     {
-        if ( !$this->isAdmin() ) {
-            $this->_aAssignCallbackPrepend = ( !$this->_blLoadPrice )?array( oxNew("oxarticle"), 'disablePriceLoad'):null;
-        }
-
         startProfile("loadinglists");
         $oRes = parent::selectString( $sSelect );
         stopProfile("loadinglists");
@@ -234,7 +221,7 @@ class oxArticleList extends oxList
         $myConfig = $this->getConfig();
 
         if ( !$myConfig->getConfigParam( 'bl_perfLoadPriceForAddList' ) ) {
-            $this->_blLoadPrice = false;
+            $this->getBaseObject()->disablePriceLoad();
         }
 
         $this->_aArray = array();
@@ -277,7 +264,7 @@ class oxArticleList extends oxList
         $myConfig = $this->getConfig();
 
         if ( !$myConfig->getConfigParam( 'bl_perfLoadPriceForAddList' ) ) {
-            $this->_blLoadPrice = false;
+            $this->getBaseObject()->disablePriceLoad();
         }
 
         switch( $myConfig->getConfigParam( 'iTop5Mode' ) ) {
@@ -325,10 +312,11 @@ class oxArticleList extends oxList
 
         $oBase = oxNew("oxactions");
         $sActiveSql = $oBase->getSqlActiveSnippet();
+        $sViewName = $oBase->getViewName();
 
         $sSelect = "select $sArticleFields from oxactions2article
                               left join $sArticleTable on $sArticleTable.oxid = oxactions2article.oxartid
-                              left join oxactions on oxactions.oxid = oxactions2article.oxactionid
+                              left join $sViewName on $sViewName.oxid = oxactions2article.oxactionid
                               where oxactions2article.oxshopid = '$sShopID' and oxactions2article.oxactionid = $sActionID and $sActiveSql
                               and $sArticleTable.oxid is not null and " .$oBaseObject->getSqlActiveSnippet(). "
                               order by oxactions2article.oxsort";
@@ -600,27 +588,19 @@ class oxArticleList extends oxList
      */
     public function loadPriceArticles( $dPriceFrom, $dPriceTo, $oCategory = null)
     {
-        $sArticleTable = getViewName('oxarticles');
-
         $sSelect =  $this->_getPriceSelect( $dPriceFrom, $dPriceTo );
 
         startProfile("loadPriceArticles");
         $this->selectString( $sSelect);
         stopProfile("loadPriceArticles");
 
-        //echo( $sSelect);
-
         if ( !$oCategory ) {
             return $this->count();
         }
 
-        // #858A
-        $iNumOfArticles = $oCategory->getNrOfArticles();
-        if ( !isset($iNumOfArticles) || $iNumOfArticles == -1) {
-            return oxUtilsCount::getInstance()->getPriceCatArticleCount($oCategory->getId(), $dPriceFrom, $dPriceTo );
-        } else {
-            return $oCategory->getNrOfArticles();
-        }
+        $iTotalCount = oxUtilsCount::getInstance()->getPriceCatArticleCount($oCategory->getId(), $dPriceFrom, $dPriceTo );
+
+        return $iTotalCount;
     }
 
     /**
@@ -696,14 +676,13 @@ class oxArticleList extends oxList
         $oListObject = $this->getBaseObject();
         $sArticleTable = $oListObject->getViewName();
         $sArticleFields = $oListObject->getSelectFields();
-
-        $sLangExt = oxLang::getInstance()->getLanguageTag( $iLang );
+        $sViewName = getViewName( 'oxartextends', $iLang );
 
         $oTagHandler = oxNew( 'oxtagcloud' );
         $sTag = $oTagHandler->prepareTags( $sTag );
 
-        $sQ = "select {$sArticleFields} from oxartextends inner join {$sArticleTable} on ".
-              "{$sArticleTable}.oxid = oxartextends.oxid where match ( oxartextends.oxtags{$sLangExt} ) ".
+        $sQ = "select {$sArticleFields} from {$sViewName} inner join {$sArticleTable} on ".
+              "{$sArticleTable}.oxid = {$sViewName}.oxid where match ( {$sViewName}.oxtags ) ".
               "against( ".oxDb::getDb()->quote( "\"".$sTag."\"" )." IN BOOLEAN MODE )";
 
         // checking stock etc
@@ -737,14 +716,14 @@ class oxArticleList extends oxList
     {
         $oListObject = $this->getBaseObject();
         $sArticleTable = $oListObject->getViewName();
-        $sLangExt = oxLang::getInstance()->getLanguageTag( $iLang );
+        $sViewName = getViewName( 'oxartextends', $iLang );
 
         $oTagHandler = oxNew( 'oxtagcloud' );
         $sTag = $oTagHandler->prepareTags( $sTag );
 
-        $sQ = "select oxartextends.oxid from oxartextends inner join {$sArticleTable} on ".
-              "{$sArticleTable}.oxid = oxartextends.oxid where {$sArticleTable}.oxissearch = 1 and ".
-              "match ( oxartextends.oxtags{$sLangExt} ) ".
+        $sQ = "select {$sViewName}.oxid from {$sViewName} inner join {$sArticleTable} on ".
+              "{$sArticleTable}.oxid = {$sViewName}.oxid where {$sArticleTable}.oxissearch = 1 and ".
+              "match ( {$sViewName}.oxtags ) ".
               "against( ".oxDb::getDb()->quote( $sTag )." IN BOOLEAN MODE )";
 
         // checking stock etc
@@ -860,9 +839,10 @@ class oxArticleList extends oxList
     protected function _getFilterIdsSql( $sCatId, $aFilter )
     {
         $sO2CView = getViewName( 'oxobject2category' );
+        $sO2AView = getViewName( 'oxobject2attribute' );
+
         $sFilter = '';
         $iCnt    = 0;
-        $sSuffix = oxLang::getInstance()->getLanguageTag();
 
         $oDb = oxDb::getDb();
         foreach ( $aFilter as $sAttrId => $sValue ) {
@@ -873,7 +853,7 @@ class oxArticleList extends oxList
                 $sValue  = $oDb->quote( $sValue );
                 $sAttrId = $oDb->quote( $sAttrId );
 
-                $sFilter .= "( oa.oxattrid = {$sAttrId} and oa.oxvalue{$sSuffix} = {$sValue} )";
+                $sFilter .= "( oa.oxattrid = {$sAttrId} and oa.oxvalue = {$sValue} )";
                 $iCnt++;
             }
         }
@@ -883,7 +863,7 @@ class oxArticleList extends oxList
 
         $sFilterSelect = "select oc.oxobjectid as oxobjectid, count(*) as cnt from ";
         $sFilterSelect.= "(SELECT * FROM $sO2CView WHERE $sO2CView.oxcatnid = '$sCatId' GROUP BY $sO2CView.oxobjectid, $sO2CView.oxcatnid) as oc ";
-        $sFilterSelect.= "INNER JOIN oxobject2attribute as oa ON ( oa.oxobjectid = oc.oxobjectid ) ";
+        $sFilterSelect.= "INNER JOIN $sO2AView as oa ON ( oa.oxobjectid = oc.oxobjectid ) ";
         return $sFilterSelect . "{$sFilter} GROUP BY oa.oxobjectid HAVING cnt = $iCnt ";
     }
 
@@ -1014,8 +994,6 @@ class oxArticleList extends oxList
                 } else {
                     $sSearchTable = $sArticleTable;
                 }
-
-                $sField = $oBaseObject->getSqlFieldName( $sField );
 
                 $sSearch .= $sSearchTable.'.'.$sField.' like '.$oDb->quote('%'.$sSearchString.'%') . ' ';
                 if ( $sUml ) {

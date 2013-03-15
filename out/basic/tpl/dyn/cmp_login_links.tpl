@@ -20,7 +20,7 @@
 </dl>
 [{/if}]
 
-[{ if $isfiltering && $oViewConf->getShowCompareList() && $oView->getCompareItemsCnt() }]
+[{ if $oViewConf->getShowCompareList() && $oView->getCompareItemsCnt() }]
 <dl class="actionslist">
     <dt>[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_MYPRODUCTCOMPARISON" }]</dt>
     <dd>

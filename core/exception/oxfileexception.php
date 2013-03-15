@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxfileexception.php 25635 2010-02-04 21:29:50Z alfonsas $
+ * @version   SVN: $Id: oxfileexception.php 30855 2010-11-11 11:56:44Z sarunas $
  */
 
 /**
@@ -34,7 +34,7 @@ class oxFileException extends oxException
      *
      * @var string
      */
-    protected $_sFileName;
+    protected $_sErrFileName;
 
     /**
      * Error occured with the file, if provided
@@ -52,7 +52,7 @@ class oxFileException extends oxException
      */
     public function setFileName($sFileName)
     {
-        $this->_sFileName = $sFileName;
+        $this->_sErrFileName = $sFileName;
     }
 
     /**
@@ -62,7 +62,7 @@ class oxFileException extends oxException
      */
     public function getFileName()
     {
-        return $this->_sFileName;
+        return $this->_sErrFileName;
     }
 
     /**
@@ -95,7 +95,7 @@ class oxFileException extends oxException
      */
     public function getString()
     {
-        return __CLASS__.'-'.parent::getString()." Faulty File --> ".$this->_sFileName."\n". "Error Code --> ".$this->_sFileError;
+        return __CLASS__.'-'.parent::getString()." Faulty File --> ".$this->_sErrFileName."\n". "Error Code --> ".$this->_sFileError;
     }
 
     /**

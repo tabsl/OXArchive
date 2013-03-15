@@ -1,3 +1,4 @@
+  [{assign var="currency" value=$oView->getActCurrency()}]
   [{foreach from=$oView->getTop5ArticleList() item=_product}]
   <div class="listitem">
       [{ assign var="sTop5ArtTitle" value="`$_product->oxarticles__oxtitle->value` `$_product->oxarticles__oxvarselect->value`" }]

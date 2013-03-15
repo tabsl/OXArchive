@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdiscountlist.php 29617 2010-09-01 14:13:05Z vilma $
+ * @version   SVN: $Id: oxdiscountlist.php 31982 2010-12-17 14:03:13Z sarunas $
  */
 
 /**
@@ -146,10 +146,9 @@ class oxDiscountList extends oxList
      */
     protected function _getFilterSelect( $oUser )
     {
-
-        $sTable = getViewName( 'oxdiscount' );
         $oBaseObject = $this->getBaseObject();
 
+        $sTable = $oBaseObject->getViewName();
         $sQ  = "select ".$oBaseObject->getSelectFields()." from $sTable ";
         $sQ .= "where ".$oBaseObject->getSqlActiveSnippet().' ';
 

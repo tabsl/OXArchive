@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: recommlist.php 31081 2010-11-23 07:55:44Z arvydas $
+ * @version   SVN: $Id: recommlist.php 33105 2011-02-09 14:52:06Z linas.kukulskis $
  */
 
 /**
@@ -39,7 +39,7 @@ class RecommList extends aList
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'recommlist.tpl';
+    protected $_sThisTemplate = 'page/recommendations/recommlist.tpl';
 
     /**
      * Other recommendations list
@@ -107,20 +107,7 @@ class RecommList extends aList
         $myConfig = $this->getConfig();
 
         $this->_iAllArtCnt = 0;
-        $this->_aViewData['actvrecommlist'] = $this->getActiveRecommList();
-        $this->_aViewData['itemList'] = $this->getArticleList();
 
-        // loading other recommlists
-        $this->_aViewData['similarrecommlist'] = $this->getSimilarRecommLists();
-
-        // Loads rating parameters
-        $this->_aViewData['rate']      = $this->canRate();
-        $this->_aViewData['rating']    = $this->getRatingValue();
-        $this->_aViewData['ratingcnt'] = $this->getRatingCount();
-        $this->_aViewData['reviews']   = $this->getReviews();
-
-        // list of found oxrecommlists
-        $this->_aViewData['recommlists'] = $this->getRecommLists();
         if ( $oActiveRecommList = $this->getActiveRecommList() ) {
             if ( ( $oList = $this->getArticleList() ) && $oList->count()) {
                 $this->_iAllArtCnt = $oActiveRecommList->getArtCount();
@@ -147,14 +134,6 @@ class RecommList extends aList
             $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 10;
             $this->_iCntPages  = round( $this->_iAllArtCnt / $iNrofCatArticles + 0.49 );
         }
-
-        $this->_aViewData['pageNavigation'] = $this->getPageNavigation();
-        $this->_aViewData['template_location']   = $this->getTemplateLocation();
-        $this->_aViewData['searchrecomm']        = $this->getRecommSearch();
-        $this->_aViewData['searchrecommforhtml'] = $this->getSearchForHtml();
-
-        $this->_aViewData['loginformanchor'] = $this->getLoginFormAnchor();
-
         // processing list articles
         $this->_processListArticles();
 
@@ -244,19 +223,6 @@ class RecommList extends aList
     }
 
     /**
-     * Show login template
-     *
-     * @deprecated use link to account page instead (e.g. "cl=account&amp;sourcecl=recommlist"+required parameters)
-     *
-     * @return null;
-     */
-    public function showLogin()
-    {
-        $this->_sThisTemplate = 'account_login.tpl';
-        $this->_sLoginFormAnchor = "review";
-    }
-
-    /**
      * Returns array of params => values which are used in hidden forms and as additional url params
      *
      * @return array
@@ -267,18 +233,6 @@ class RecommList extends aList
         $aParams['recommid'] = oxConfig::getParameter( 'recommid' );
 
         return $aParams;
-    }
-
-    /**
-     * Template variable getter. Returns active recommlist's items
-     *
-     * @deprecated use recommlist::getArticleList() instead
-     *
-     * @return object
-     */
-    public function getActiveRecommItems()
-    {
-        return $this->getArticleList();
     }
 
     /**
@@ -328,18 +282,6 @@ class RecommList extends aList
             }
         }
         return $this->_oOtherRecommList;
-    }
-
-    /**
-     * Template variable getter. Returns recommlist id
-     *
-     * @deprecated use oxUBase::getActiveRecommList()->getId()
-     *
-     * @return string
-     */
-    public function getRecommId()
-    {
-        return oxConfig::getParameter( 'recommid' );
     }
 
     /**
@@ -455,31 +397,6 @@ class RecommList extends aList
     }
 
     /**
-     * Template variable getter. Returns template location
-     *
-     * @deprecated use recommList::getTreePath() and adjust template
-     *
-     * @return string
-     */
-    public function getTemplateLocation()
-    {
-        if ( $this->_sTplLocation === null ) {
-            $this->_sTplLocation = false;
-            $oLang = oxLang::getInstance();
-            if ( $sSearchparam = $this->getRecommSearch() ) {
-                $sUrl = $this->getConfig()->getShopHomeURL();
-                $sLink = "{$sUrl}cl=recommlist&amp;searchrecomm=".rawurlencode( $sSearchparam );
-                $sTitle = $oLang->translateString('RECOMMLIST');
-                $sTitle .= " / ".$oLang->translateString('RECOMMLIST_SEARCH').' "'.$sSearchparam.'"';
-                $this->_sTplLocation = "<a href='".$sLink."'>".$sTitle."</a>";
-            } else {
-                $this->_sTplLocation = $oLang->translateString('RECOMMLIST');
-            }
-        }
-        return $this->_sTplLocation;
-    }
-
-    /**
      * Template variable getter. Returns category path array
      *
      * @return array
@@ -516,16 +433,6 @@ class RecommList extends aList
             return $oActiveRecommList->oxrecommlists__oxtitle->value;
         }
         return oxConfig::getParameter( 'searchrecomm' );
-    }
-
-    /**
-     * Template variable getter. Returns search string
-     *
-     * @return string
-     */
-    public function getLoginFormAnchor()
-    {
-        return $this->_sLoginFormAnchor;
     }
 
     /**
@@ -605,5 +512,21 @@ class RecommList extends aList
         }
 
         return $sLink;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_RECOMMENDATIONS_PRODUCTS_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 }

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: guestbookentry.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id$
  */
 
 /**
@@ -32,7 +32,7 @@ class GuestbookEntry extends GuestBook
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'guestbookentry.tpl';
+    protected $_sThisTemplate = 'page/guestbook/guestbookentry.tpl';
 
     /**
      * Guestbook form id, prevents double entry submit
@@ -55,26 +55,26 @@ class GuestbookEntry extends GuestBook
 
         // guest book`s entry is validated
         if ( !$sUserId ) {
-            oxUtilsView::getInstance()->addErrorToDisplay( 'GUESTBOOKENTRY_ERRLOGGINTOWRITEENTRY' );
+            oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_GUESTBOOKENTRY_ERRLOGGINTOWRITEENTRY' );
             //return to same page
             return;
         }
 
         if ( !$sShopId ) {
-            oxUtilsView::getInstance()->addErrorToDisplay( 'GUESTBOOKENTRY_ERRUNDEFINEDSHOP' );
+            oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_GUESTBOOKENTRY_ERRUNDEFINEDSHOP' );
             return 'guestbookentry';
         }
 
         // empty entries validation
         if ( '' == $sReviewText ) {
-            oxUtilsView::getInstance()->addErrorToDisplay( 'GUESTBOOKENTRY_ERRREVIEWCONTAINSNOTEXT' );
+            oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_GUESTBOOKENTRY_ERRREVIEWCONTAINSNOTEXT' );
             return 'guestbookentry';
         }
 
         // flood protection
         $oEntrie = oxNew( 'oxgbentry' );
         if ( $oEntrie->floodProtection( $sShopId, $sUserId ) ) {
-            oxUtilsView::getInstance()->addErrorToDisplay( 'GUESTBOOKENTRY_ERRMAXIMUMNOMBEREXCEEDED' );
+            oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_GUESTBOOKENTRY_ERRMAXIMUMNOMBEREXCEEDED' );
             return 'guestbookentry';
         }
 

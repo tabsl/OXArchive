@@ -4,7 +4,7 @@
 <!--
 function changeEditBar( sLocation, sPos )
 {
-    parent.edit.location = '[{$shop->selflink}]&cl=' + sLocation;
+    parent.edit.location = '[{$oViewConf->getSelfLink()|replace:"&amp;":"&"}]&cl=' + sLocation;
 
     var oSearch = document.getElementById("search");
     oSearch.actedit.value = sPos;
@@ -24,8 +24,8 @@ function ChangeExternal( sLocation, sPos)
 </script>
 
 <div class="liste">
-<form name="search" id="search" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="search" id="search" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="cl" value="dynscreen_list">
     <input type="hidden" name="actedit" value="[{ $actedit }]">
     <input type="hidden" name="oxid" value="1">

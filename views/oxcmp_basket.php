@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_basket.php 30898 2010-11-12 14:50:13Z vilma $
+ * @version   SVN: $Id: oxcmp_basket.php 33498 2011-02-24 11:27:10Z sarunas $
  */
 
 /**
@@ -82,7 +82,15 @@ class oxcmp_basket extends oxView
                 $oReservations->discardUnusedReservations($iLimit);
             }
         }
-        return parent::init();
+
+        parent::init();
+
+        // Basket exclude
+        if ( $this->getConfig()->getConfigParam( 'blBasketExcludeEnabled' ) ) {
+            if ( $oBasket = $this->getSession()->getBasket() ) {
+                $this->getParent()->setRootCatChanged( $this->isRootCatChanged() && $oBasket->getContents() );
+            }
+        }
     }
 
     /**
@@ -96,11 +104,6 @@ class oxcmp_basket extends oxView
         // recalculating
         if ( $oBasket = $this->getSession()->getBasket() ) {
             $oBasket->calculateBasket( false );
-        }
-
-        // Basket exclude
-        if ( $this->getConfig()->getConfigParam( 'blBasketExcludeEnabled' ) ) {
-            $this->getParent()->addTplParam( 'scRootCatChanged', $this->isRootCatChanged() );
         }
 
         parent::render();
@@ -493,6 +496,7 @@ class oxcmp_basket extends oxView
         } else {
             // clear basket
             $this->getSession()->getBasket()->deleteBasket();
+            $this->getParent()->setRootCatChanged( false );
         }
     }
 }

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: rss.php 26674 2010-03-19 12:05:19Z sarunas $
+ * @version   SVN: $Id: rss.php 33634 2011-03-03 12:44:17Z linas.kukulskis $
  */
 
 /**
@@ -49,21 +49,7 @@ class Rss extends oxUBase
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'rss.tpl';
-
-    /**
-     * initializes objects
-     *
-     * @access public
-     * @return void
-     */
-    public function init()
-    {
-        if (null !== ($iCur = oxConfig::getParameter('cur'))) {
-            oxSession::setVar('currency', (int) $iCur);
-        }
-        parent::init();
-    }
+    protected $_sThisTemplate = 'widget/rss.tpl';
 
     /**
      * get oxRssFeed
@@ -96,14 +82,14 @@ class Rss extends oxUBase
             $oSmarty->assign_by_ref( $sViewName, $this->_aViewData[$sViewName] );
         }
 
-        $oSmarty->assign('channel', $this->getChannel());
-        $oSmarty->assign('xmldef', $this->getXmlDef());
+        // variables are set as deprecated, use getters
+       // $oSmarty->assign('xmldef', $this->getXmlDef());
 
         // return rss xml, no further processing
         oxUtils::getInstance()->setHeader( "Content-Type: text/xml; charset=".oxLang::getInstance()->translateString( "charset" ) );
         oxUtils::getInstance()->showMessageAndExit(
-                    $this->_processOutput( 
-                            $oSmarty->fetch('rss.tpl', $this->getViewId())
+                    $this->_processOutput(
+                            $oSmarty->fetch($this->_sThisTemplate, $this->getViewId())
                     )
                 );
     }
@@ -249,6 +235,8 @@ class Rss extends oxUBase
 
     /**
      * Template variable getter. Returns xml start and end definition
+     *
+     * @deprecated since 4.5.0 not used any more
      *
      * @return array
      */

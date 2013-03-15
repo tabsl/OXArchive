@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxpayment.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxpayment.php 33202 2011-02-11 09:22:02Z arvydas.vapsva $
  */
 
 /**
@@ -29,6 +29,36 @@
  */
 class oxPayment extends oxI18n
 {
+    /**
+     * Consider for calculation of base sum - Value of all goods in basket
+     * @var int
+     */
+    const PAYMENT_ADDSUMRULE_ALLGOODS = 1;
+
+    /**
+     * Consider for calculation of base sum - Discounts
+     * @var int
+     */
+    const PAYMENT_ADDSUMRULE_DISCOUNTS = 2;
+
+    /**
+     * Consider for calculation of base sum - Vouchers
+     * @var int
+     */
+    const PAYMENT_ADDSUMRULE_VOUCHERS = 4;
+
+    /**
+     * Consider for calculation of base sum - Shipping costs
+     * @var int
+     */
+    const PAYMENT_ADDSUMRULE_SHIPCOSTS = 8;
+
+    /**
+     * Consider for calculation of base sum - Gift Wrapping/Greeting Card
+     * @var int
+     */
+    const PAYMENT_ADDSUMRULE_GIFTS = 16;
+
     /**
      * User groups object (default null).
      *
@@ -85,11 +115,12 @@ class oxPayment extends oxI18n
 
             // usergroups
             $this->_oGroups = oxNew( 'oxlist', 'oxgroups' );
+            $sViewName = getViewName( "oxgroups", $this->getLanguage() );
 
             // performance
-            $sSelect  = 'select oxgroups.* from oxgroups, oxobject2group ';
-            $sSelect .= "where oxobject2group.oxobjectid = '$sOxid' ";
-            $sSelect .= 'and oxobject2group.oxgroupsid=oxgroups.oxid ';
+            $sSelect = "select {$sViewName}.* from {$sViewName}, oxobject2group
+                        where oxobject2group.oxobjectid = '{$sOxid}'
+                        and oxobject2group.oxgroupsid={$sViewName}.oxid ";
             $this->_oGroups->selectString( $sSelect );
         }
 
@@ -165,6 +196,50 @@ class oxPayment extends oxI18n
     }
 
     /**
+     * Returns base basket price for payment cost calculations. Price depends on
+     * payment setup (payment administration)
+     *
+     * @param oxbasket $oBasket oxbasket object
+     *
+     * @return double
+     */
+    public function getBaseBasketPriceForPaymentCostCalc( $oBasket )
+    {
+        $dBasketPrice = 0;
+        $iRules = $this->oxpayments__oxaddsumrules->value;
+
+        // products brutto price
+        if ( !$iRules || ( $iRules & self::PAYMENT_ADDSUMRULE_ALLGOODS ) ) {
+            $dBasketPrice += $oBasket->getProductsPrice()->getBruttoSum();
+        }
+
+        // discounts
+        if ( ( !$iRules || ( $iRules & self::PAYMENT_ADDSUMRULE_DISCOUNTS ) ) &&
+             ( $oCosts = $oBasket->getTotalDiscount() ) ) {
+            $dBasketPrice -= $oCosts->getBruttoPrice();
+        }
+
+        // vouchers
+        if ( !$iRules || ( $iRules & self::PAYMENT_ADDSUMRULE_VOUCHERS ) ) {
+            $dBasketPrice -= $oBasket->getVoucherDiscValue();
+        }
+
+        // delivery
+        if ( ( !$iRules || ( $iRules & self::PAYMENT_ADDSUMRULE_SHIPCOSTS ) ) &&
+             ( $oCosts = $oBasket->getCosts( 'oxdelivery' ) ) ) {
+            $dBasketPrice += $oCosts->getBruttoPrice();
+        }
+
+            // wrapping
+        if ( ( $iRules & self::PAYMENT_ADDSUMRULE_GIFTS ) &&
+             ( $oCosts = $oBasket->getCosts( 'oxwrapping' ) ) ) {
+            $dBasketPrice += $oCosts->getBruttoPrice();
+        }
+
+        return $dBasketPrice;
+    }
+
+    /**
      * Returns price object for current payment applied on basket
      *
      * @param oxuserbasket $oBasket session basket
@@ -174,8 +249,7 @@ class oxPayment extends oxI18n
     public function getPaymentPrice( $oBasket )
     {
         //getting basket price with applied discounts and vouchers
-        $dBasketPrice = $oBasket->getPriceForPayment();
-        $dPrice = $this->getPaymentValue( $dBasketPrice );
+        $dPrice = $this->getPaymentValue( $this->getBaseBasketPriceForPaymentCostCalc( $oBasket ) );
 
         // calculating total price
         $oPrice = oxNew( 'oxPrice' );
@@ -265,8 +339,7 @@ class oxPayment extends oxI18n
             return true;
         }
 
-        $oValidator = oxNew( 'oxinputvalidator' );
-        if ( !$oValidator->validatePaymentInputData( $this->oxpayments__oxid->value, $aDynvalue ) ) {
+        if ( !oxInputValidator::getInstance()->validatePaymentInputData( $this->oxpayments__oxid->value, $aDynvalue ) ) {
             $this->_iPaymentError = 1;
             return false;
         }

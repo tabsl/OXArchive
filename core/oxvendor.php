@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvendor.php 27908 2010-05-25 14:54:30Z arvydas $
+ * @version   SVN: $Id: oxvendor.php 32881 2011-02-03 11:45:36Z sarunas $
  */
 
 /**
@@ -186,30 +186,6 @@ class oxVendor extends oxI18n implements oxIUrl
     }
 
     /**
-     * getRootVendor creates root vendor object
-     *
-     * @param integer $iLang language
-     *
-     * @static
-     * @deprecated use oxvendor::load( 'root' ) instead
-     * @access public
-     * @return void
-     */
-    public static function getRootVendor( $iLang = null)
-    {
-        $iLang = isset( $iLang ) ? $iLang : oxLang::getInstance()->getBaseLanguage();
-        if ( !isset( self::$_aRootVendor[$iLang] ) ) {
-            self::$_aRootVendor[$iLang] = false;
-
-            $oObject = oxNew( 'oxvendor' );
-            if ( $oObject->loadInLang( $iLang, 'root' ) ) {
-                self::$_aRootVendor[$iLang] = $oObject;
-            }
-        }
-        return self::$_aRootVendor[$iLang];
-    }
-
-    /**
      * Returns raw content seo url
      *
      * @param int $iLang language id
@@ -284,7 +260,7 @@ class oxVendor extends oxI18n implements oxIUrl
             $iLang = $this->getLanguage();
         }
 
-        return oxUtilsUrl::getInstance()->processStdUrl( $this->getBaseStdLink( $iLang ), $aParams, $iLang, $iLang != $this->getLanguage() );
+        return oxUtilsUrl::getInstance()->processUrl( $this->getBaseStdLink( $iLang ), true, $aParams, $iLang);
     }
 
     /**
@@ -359,16 +335,6 @@ class oxVendor extends oxI18n implements oxIUrl
     }
 
     /**
-     * Returns article picture
-     *
-     * @return strin
-     */
-    public function getIconUrl()
-    {
-        return $this->getConfig()->getIconUrl( 'icon/'.$this->oxvendor__oxicon->value );
-    }
-
-    /**
      * Empty method, called in templates when vendor is used in same code like category
      *
      * @return null
@@ -390,6 +356,29 @@ class oxVendor extends oxI18n implements oxIUrl
             oxSeoEncoderVendor::getInstance()->onDeleteVendor($this);
             return true;
         }
+        return false;
+    }
+
+
+    /**
+     * Returns article picture
+     *
+     * @return string
+     */
+    public function getIconUrl()
+    {
+        if ( $this->oxvendor__oxicon->value ) {
+           return $this->getConfig()->getIconUrl( 'icon/' . $this->oxvendor__oxicon->value );
+        }
+    }
+
+    /**
+     * Returns category thumbnail picture url if exist, false - if not
+     *
+     * @return mixed
+     */
+    public function getThumbUrl()
+    {
         return false;
     }
 }

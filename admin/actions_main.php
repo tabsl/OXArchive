@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: actions_main.php 28344 2010-06-15 11:32:21Z sarunas $
+ * @version   SVN: $Id: actions_main.php 33719 2011-03-10 08:40:42Z sarunas $
  */
 
 /**
@@ -41,23 +41,9 @@ class Actions_Main extends oxAdminDetails
     {
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid");
         // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($soxId == "-1" || !isset( $soxId)) && isset( $sSavedID) ) {
-            $soxId = $sSavedID;
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $soxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
-        }
-
-        // copy this tree for our article choose
-        $sChosenArtCat = oxConfig::getParameter( "artcat");
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId)) {
-            // generating category tree for select list
-            $sChosenArtCat = $this->_getCategoryTree( "artcattree", $sChosenArtCat, $soxId);
-
             // load object
             $oAction = oxNew( "oxactions" );
             $oAction->loadInLang( $this->_iEditLang, $soxId);
@@ -84,26 +70,37 @@ class Actions_Main extends oxAdminDetails
             }
         }
         $aColumns = array();
+
         if ( oxConfig::getParameter("aoc") ) {
+            // generating category tree for select list
+            $sChosenArtCat = oxConfig::getParameter( "artcat");
+            $sChosenArtCat = $this->_getCategoryTree( "artcattree", $sChosenArtCat, $soxId);
 
             include_once 'inc/'.strtolower(__CLASS__).'.inc.php';
             $this->_aViewData['oxajax'] = $aColumns;
 
             return "popups/actions_main.tpl";
         }
-        
-        
-        if ( ( $oPromotion = $this->getViewDataElement( "edit" ) ) ) {
-            if ( $oPromotion->oxactions__oxtype->value == 2 ) {
-                $this->_aViewData["editor"] = $this->_generateTextEditor( "100%", 300, $oPromotion, "oxactions__oxlongdesc", "details.tpl.css" );
 
-                if ( $iAoc = oxConfig::getParameter( "oxscpromotionsaoc" ) ) {
+
+        if ( ( $oPromotion = $this->getViewDataElement( "edit" ) ) ) {
+            if ( ($oPromotion->oxactions__oxtype->value == 2) || ($oPromotion->oxactions__oxtype->value == 3) ) {
+                if ( $iAoc = oxConfig::getParameter( "oxpromotionaoc" ) ) {
                     $sPopup = false;
                     switch( $iAoc ) {
-                        /*case 1:
-                            $sPopup = 'oxscpromotions_products';
-                            break;*/
-                        case 2:
+                        case 'article':
+                            // generating category tree for select list
+                            $sChosenArtCat = oxConfig::getParameter( "artcat");
+                            $sChosenArtCat = $this->_getCategoryTree( "artcattree", $sChosenArtCat, $soxId);
+
+                            if ($oArticle = $oPromotion->getBannerArticle()) {
+                                $this->_aViewData['actionarticle_artnum'] = $oArticle->oxarticles__oxartnum->value;
+                                $this->_aViewData['actionarticle_title']  = $oArticle->oxarticles__oxtitle->value;
+                            }
+
+                            $sPopup = 'actions_article';
+                            break;
+                        case 'groups':
                             $sPopup = 'actions_groups';
                             break;
                     }
@@ -114,10 +111,14 @@ class Actions_Main extends oxAdminDetails
                         $this->_aViewData['oxajax'] = $aColumns;
                         return "popups/{$sPopup}.tpl";
                     }
+                } else {
+                    if ( $oPromotion->oxactions__oxtype->value == 2) {
+                        $this->_aViewData["editor"] = $this->_generateTextEditor( "100%", 300, $oPromotion, "oxactions__oxlongdesc", "details.tpl.css" );
+                    }
                 }
             }
         }
-                
+
         return "actions_main.tpl";
     }
 
@@ -132,12 +133,15 @@ class Actions_Main extends oxAdminDetails
         $myConfig  = $this->getConfig();
 
 
-        $soxId   = oxConfig::getParameter( "oxid");
+        $soxId   = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");
 
         $oPromotion = oxNew( "oxactions" );
         if ( $soxId != "-1" ) {
             $oPromotion->load( $soxId );
+
+                oxUtilsPic::getInstance()->overwritePic( $oPromotion, 'oxactions', 'oxpic', 'PROMO', oxUtilsFile::PROMO_PICTURE_DIR, $aParams, $myConfig->getPictureDir(false));
+
         } else {
             $aParams['oxactions__oxid']   = null;
         }
@@ -153,11 +157,7 @@ class Actions_Main extends oxAdminDetails
         $oPromotion->save();
 
         // set oxid if inserted
-        if ( $soxId == "-1") {
-            oxSession::setVar( "saved_oxid", $oPromotion->getId() );
-        }
-
-        $this->_aViewData["updatelist"] = "1";
+        $this->setEditObjectId( $oPromotion->getId() );
     }
 
     /**

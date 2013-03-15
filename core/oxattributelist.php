@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxattributelist.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxattributelist.php 33500 2011-02-24 12:48:37Z linas.kukulskis $
  */
 
 /**
@@ -57,12 +57,12 @@ class oxAttributeList extends oxList
         }
 
         $sAttrViewName = getViewName( 'oxattribute' );
-        $sLangAdd = oxLang::getInstance()->getLanguageTag();
-        $sSelect  = "select $sAttrViewName.oxid, $sAttrViewName.oxtitle$sLangAdd, oxobject2attribute.oxvalue$sLangAdd, oxobject2attribute.oxobjectid ";
-        $sSelect .= "from oxobject2attribute ";
-        $sSelect .= "left join $sAttrViewName on $sAttrViewName.oxid = oxobject2attribute.oxattrid ";
-        $sSelect .= "where oxobject2attribute.oxobjectid in ( '".implode("','", $aIds)."' ) ";
-        $sSelect .= "order by oxobject2attribute.oxpos, $sAttrViewName.oxpos";
+        $sViewName     = getViewName( 'oxobject2attribute' );
+
+        $sSelect  = "select $sAttrViewName.oxid, $sAttrViewName.oxtitle, {$sViewName}.oxvalue, {$sViewName}.oxobjectid ";
+        $sSelect .= "from {$sViewName} left join $sAttrViewName on $sAttrViewName.oxid = {$sViewName}.oxattrid ";
+        $sSelect .= "where {$sViewName}.oxobjectid in ( '".implode("','", $aIds)."' ) ";
+        $sSelect .= "order by {$sViewName}.oxpos, $sAttrViewName.oxpos";
 
         return $this->_createAttributeListFromSql( $sSelect);
     }
@@ -104,19 +104,83 @@ class oxAttributeList extends oxList
      */
     public function loadAttributes( $sArtId)
     {
-        if ( !$sArtId) {
-            return;
+        if ( $sArtId ) {
+            $sAttrViewName = getViewName( 'oxattribute' );
+            $sViewName     = getViewName( 'oxobject2attribute' );
+
+            $sSelect  = "select {$sAttrViewName}.*, o2a.* from {$sViewName} as o2a ";
+            $sSelect .= "left join {$sAttrViewName} on {$sAttrViewName}.oxid = o2a.oxattrid ";
+            $sSelect .= "where o2a.oxobjectid = '{$sArtId}' and o2a.oxvalue != '' ";
+            $sSelect .= "order by o2a.oxpos, {$sAttrViewName}.oxpos";
+
+            $this->selectString( $sSelect );
+        }
+    }
+
+     /**
+     * get category attributes by category Id
+     *
+     * @param string  $sCategoryId category Id
+     * @param integer $iLang       language No
+     *
+     * @return object;
+     */
+
+    public function getCategoryAttributes( $sCategoryId, $iLang )
+    {
+        $aSessionFilter = oxSession::getVar( 'session_attrfilter' );
+
+        $oArtList = oxNew( "oxarticlelist");
+        $oArtList->loadCategoryIDs( $sCategoryId, $aSessionFilter );
+
+        // Only if we have articles
+        if (count($oArtList) > 0 ) {
+            $oDb = oxDb::getDb();
+            $sArtIds = '';
+            foreach (array_keys($oArtList->getArray()) as $sId ) {
+                if ($sArtIds) {
+                    $sArtIds .= ',';
+                }
+                $sArtIds .= $oDb->quote($sId);
+            }
+
+            $sActCatQuoted = $oDb->quote( $sCategoryId );
+            $sAttTbl = getViewName( 'oxattribute', $iLang );
+            $sO2ATbl = getViewName( 'oxobject2attribute', $iLang );
+            $sC2ATbl = getViewName( 'oxcategory2attribute', $iLang );
+
+            $sSelect = "SELECT DISTINCT att.oxid, att.oxtitle, o2a.oxvalue ".
+                       "FROM $sAttTbl as att, $sO2ATbl as o2a ,$sC2ATbl as c2a ".
+                       "WHERE att.oxid = o2a.oxattrid AND c2a.oxobjectid = $sActCatQuoted AND c2a.oxattrid = att.oxid AND o2a.oxvalue !='' AND o2a.oxobjectid IN ($sArtIds) ".
+                       "ORDER BY c2a.oxsort , att.oxpos, att.oxtitle, o2a.oxvalue";
+
+
+            $rs = $oDb->execute( $sSelect );
+
+            if ( $rs != false && $rs->recordCount() > 0 ) {
+                while ( !$rs->EOF && list( $sAttId, $sAttTitle, $sAttValue ) = $rs->fields ) {
+
+                    if ( !$this->offsetExists( $sAttId ) ) {
+
+                        $oAttribute = oxNew( "oxattribute" );
+                        $oAttribute->setTitle( $sAttTitle );
+
+                        $this->offsetSet( $sAttId, $oAttribute );
+
+                        if ( isset( $aSessionFilter[$sCategoryId][$sAttId] ) ) {
+                            $oAttribute->setActiveValue( $aSessionFilter[$sCategoryId][$sAttId] );
+                        }
+
+                    } else {
+                        $oAttribute = $this->offsetGet( $sAttId );
+                    }
+
+                    $oAttribute->addValue( $sAttValue );
+                    $rs->moveNext();
+                }
+            }
         }
 
-        $sSuffix = oxLang::getInstance()->getLanguageTag();
-
-        $sAttrViewName = getViewName( 'oxattribute' );
-        $sSelect  = "select $sAttrViewName.*, o2a.* ";
-        $sSelect .= "from oxobject2attribute as o2a ";
-        $sSelect .= "left join $sAttrViewName on $sAttrViewName.oxid = o2a.oxattrid ";
-        $sSelect .= "where o2a.oxobjectid = '$sArtId' and o2a.oxvalue$sSuffix != '' ";
-        $sSelect .= "order by o2a.oxpos, $sAttrViewName.oxpos";
-
-        $this->selectString( $sSelect );
+        return $this;
     }
 }

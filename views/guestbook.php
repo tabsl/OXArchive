@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: guestbook.php 26730 2010-03-22 11:58:18Z arvydas $
+ * @version   SVN: $Id: guestbook.php 33284 2011-02-15 15:17:07Z arvydas.vapsva $
  */
 
 /**
@@ -74,13 +74,13 @@ class GuestBook extends oxUBase
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'guestbook.tpl';
+    protected $_sThisTemplate = 'page/guestbook/guestbook.tpl';
 
     /**
      * Current class login template name
      * @var string
      */
-    protected $_sThisLoginTemplate = 'guestbook_login.tpl';
+    protected $_sThisLoginTemplate = 'page/guestbook/guestbook_login.tpl';
 
     /**
      * Marked which defines if current view is sortable or not
@@ -106,9 +106,6 @@ class GuestBook extends oxUBase
      * executes parent::render() and returns name of template to
      * render guestbook::_sThisTemplate.
      *
-     * Template variables:
-     * <b>entries</b>, <b>navigationPages</b>
-     *
      * @return  string  $this->_sThisTemplate   current template file name
      */
     public function render()
@@ -121,33 +118,8 @@ class GuestBook extends oxUBase
             return $this->_sThisLoginTemplate;
         }
 
-        // flood protection
-        $this->_aViewData['hideentries'] = $this->floodProtection();
-
-        $this->_aViewData["allsortcolumns"] = $this->getSortColumns();
-
-        $this->_aViewData['gborderby'] = $this->getGbSortBy();
-        $this->_aViewData['gborder']   = $this->getGbSortDir();
-
-        // loading GB records
-        $this->_aViewData['entries'] = $this->getEntries();
-
-        // page navigation object
-        $this->_aViewData['pageNavigation'] = $this->getPageNavigation();
-
+        $this->getEntries();
         return $this->_sThisTemplate;
-    }
-
-    /**
-     * Sets variable bShowLogin to true
-     *
-     * @deprecated use link to account page instead (e.g. "cl=account&amp;sourcecl=guestbook"+required parameters)
-     *
-     * @return null
-     */
-    public function showLogin()
-    {
-        $this->_blShowLogin = true;
     }
 
     /**
@@ -199,6 +171,7 @@ class GuestBook extends oxUBase
                 $this->_aEntries  = $oEntries->getAllEntries( $this->getActPage() * $iNrofCatArticles, $iNrofCatArticles, $this->getSortingSql( 'oxgb' ) );
             }
         }
+
         return $this->_aEntries;
     }
 
@@ -217,9 +190,28 @@ class GuestBook extends oxUBase
 
             $oEntries = oxNew( 'oxgbentry' );
             $this->_blFloodProtection = $oEntries->floodProtection( $this->getConfig()->getShopId(), $sUserId );
-
         }
         return $this->_blFloodProtection;
+    }
+
+     /**
+     * Returns sorted column parameter name
+     *
+     * @return string
+     */
+    public function getSortOrderByParameterName()
+    {
+        return 'gborderby';
+    }
+
+     /**
+     * Returns sorted column direction parameter name
+     *
+     * @return string
+     */
+    public function getSortOrderParameterName()
+    {
+        return 'gborder';
     }
 
     /**
@@ -241,8 +233,8 @@ class GuestBook extends oxUBase
 
         $this->_aSortColumns  = array( 'oxuser.oxusername', 'oxgbentries.oxcreate' );
 
-        $sSortBy  = oxConfig::getParameter( 'gborderby' );
-        $sSortDir = oxConfig::getParameter( 'gborder' );
+        $sSortBy  = oxConfig::getParameter( $this->getSortOrderByParameterName() );
+        $sSortDir = oxConfig::getParameter( $this->getSortOrderParameterName() );
 
         if ( !$sSortBy && $aSorting = $this->getSorting( 'oxgb' ) ) {
             $sSortBy  = $aSorting['sortby'];
@@ -280,4 +272,70 @@ class GuestBook extends oxUBase
         return $this->_oPageNavigation;
     }
 
+    /**
+     * Method applies validation to entry and saves it to DB.
+     * On error/success returns name of action to perform
+     * (on error: "guestbookentry?error=x"", on success: "guestbook").
+     *
+     * @return string
+     */
+    public function saveEntry()
+    {
+        $sReviewText = trim( ( string ) oxConfig::getParameter( 'rvw_txt', true ) );
+        $sShopId     = $this->getConfig()->getShopId();
+        $sUserId     = oxSession::getVar( 'usr' );
+
+        // guest book`s entry is validated
+        if ( !$sUserId ) {
+            oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_GUESTBOOKENTRY_ERRLOGGINTOWRITEENTRY' );
+            //return to same page
+            return;
+        }
+
+        if ( !$sShopId ) {
+            oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_GUESTBOOKENTRY_ERRUNDEFINEDSHOP' );
+            return 'guestbookentry';
+        }
+
+        // empty entries validation
+        if ( '' == $sReviewText ) {
+            oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_GUESTBOOKENTRY_ERRREVIEWCONTAINSNOTEXT' );
+            return 'guestbookentry';
+        }
+
+        // flood protection
+        $oEntrie = oxNew( 'oxgbentry' );
+        if ( $oEntrie->floodProtection( $sShopId, $sUserId ) ) {
+            oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_GUESTBOOKENTRY_ERRMAXIMUMNOMBEREXCEEDED' );
+            return 'guestbookentry';
+        }
+
+        // double click protection
+        if ( $this->canAcceptFormData() ) {
+            // here the guest book entry is saved
+            $oEntry = oxNew( 'oxgbentry' );
+            $oEntry->oxgbentries__oxshopid  = new oxField($sShopId);
+            $oEntry->oxgbentries__oxuserid  = new oxField($sUserId);
+            $oEntry->oxgbentries__oxcontent = new oxField($sReviewText);
+            $oEntry->save();
+        }
+
+        return 'guestbook';
+    }
+
+     /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_GUESTBOOK_LIST_GUESTBOOK', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
+    }
 }

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: wishlist.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: wishlist.php 33564 2011-02-28 12:44:18Z vilma $
  */
 
 /**
@@ -32,7 +32,7 @@ class Wishlist extends oxUBase
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'wishlist.tpl';
+    protected $_sThisTemplate = 'page/wishlist/wishlist.tpl';
 
     /**
      * user object list
@@ -75,36 +75,6 @@ class Wishlist extends oxUBase
     protected $_blBargainAction = true;
 
     /**
-     * If passed wishlist ID - loads wishlist owner object, then it's
-     * wishlist (oxuser::GetBasket()) and then loads each stored article.
-     * Returns name of template file to render wishlist::_sThisTemplate.
-     *
-     * Template variables:
-     * <b>wishuser</b>, <b>wishlist</b>
-     *
-     * Session variables:
-     * <b>wishid</b>
-     *
-     * @return  string  $this->_sThisTemplate   current template file name
-     */
-    public function render()
-    {
-        parent::render();
-
-        // loading actions
-        $this->_loadActions();
-
-        //for older templates
-        $this->_aViewData['wishuser'] = $this->getWishUser();
-        $this->_aViewData['wishlist'] = $this->getWishList();
-
-        $this->_aViewData['wish_result'] = $this->getWishListUsers();
-        $this->_aViewData['search']      = $this->getWishListSearchParam();
-        return $this->_sThisTemplate;
-    }
-
-
-    /**
      * return the user which is owner of the wish list
      *
      * @return object | bool
@@ -115,15 +85,16 @@ class Wishlist extends oxUBase
         if ( $this->_oWishUser === null) {
             $this->_oWishUser = false;
 
-            if ( $sUserID = oxConfig::getParameter( 'wishid' ) ) {
+            $sUserId = oxConfig::getParameter( 'wishid') ? oxConfig::getParameter( 'wishid' ): oxSession::getVar( 'wishid');
+            if ( $sUserId ) {
                 $oUser = oxNew( 'oxuser' );
-                if ( $oUser->load( $sUserID ) ) {
+                if ( $oUser->load( $sUserId ) ) {
 
                     // passing wishlist information
                     $this->_oWishUser = $oUser;
 
                     // store this one to session
-                    oxSession::setVar( 'wishid', $sUserID );
+                    oxSession::setVar( 'wishid', $sUserId );
                 }
             }
         }
@@ -197,5 +168,21 @@ class Wishlist extends oxUBase
     public function getWishListSearchParam()
     {
         return $this->_sSearchParam;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_WISHLIST_PRODUCTS_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 }

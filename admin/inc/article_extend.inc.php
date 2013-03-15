@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_extend.inc.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: article_extend.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -47,8 +47,8 @@ class ajaxComponent extends ajaxListComponent
      */
     protected function _getQuery()
     {
-        $sCategoriesTable = getViewName( 'oxcategories' );
-        $sO2CView = getViewName( 'oxobject2category' );
+        $sCategoriesTable = $this->_getViewName( 'oxcategories' );
+        $sO2CView = $this->_getViewName( 'oxobject2category' );
         $oDb = oxDb::getDb();
 
         $sOxid      = oxConfig::getParameter( 'oxid' );
@@ -119,7 +119,7 @@ class ajaxComponent extends ajaxListComponent
         $aRemoveCat = $this->_getActionIds( 'oxobject2category.oxid' );
         $soxId      = oxConfig::getParameter( 'oxid' );
         $sShopID    = $myConfig->getShopId();
-        $sO2CView = getViewName( 'oxobject2category' );
+        $sO2CView = $this->_getViewName( 'oxobject2category' );
         $oDb = oxDb::getDb();
 
         // removing all
@@ -151,11 +151,11 @@ class ajaxComponent extends ajaxListComponent
         $aAddCat  = $this->_getActionIds( 'oxcategories.oxid' );
         $soxId    = oxConfig::getParameter( 'synchoxid' );
         $sShopID  = $myConfig->getShopId();
-        $sO2CView = getViewName('oxobject2category');
+        $sO2CView = $this->_getViewName('oxobject2category');
 
         // adding
         if ( oxConfig::getParameter( 'all' ) ) {
-            $sCategoriesTable = getViewName( 'oxcategories' );
+            $sCategoriesTable = $this->_getViewName( 'oxcategories' );
             $aAddCat = $this->_getAll( $this->_addFilter( "select $sCategoriesTable.oxid ".$this->_getQuery() ) );
         }
 

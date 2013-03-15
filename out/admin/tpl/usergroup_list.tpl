@@ -1,4 +1,5 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign box="list"}]
+[{assign var="where" value=$oView->getListFilter()}]
 
 [{if $readonly}]
     [{assign var="readonly" value="readonly disabled"}]
@@ -21,17 +22,8 @@ window.onload = function ()
 <div id="liste">
 
 
-<form name="search" id="search" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
-    <input type="hidden" name="cl" value="usergroup_list">
-    <input type="hidden" name="lstrt" value="[{ $lstrt }]">
-    <input type="hidden" name="sort" value="[{ $sort }]">
-    <input type="hidden" name="actedit" value="[{ $actedit }]">
-    <input type="hidden" name="oxid" value="[{ $oxid }]">
-    <input type="hidden" name="fnc" value="">
-    <input type="hidden" name="language" value="[{ $actlang }]">
-    <input type="hidden" name="editlanguage" value="[{ $actlang }]">
-
+<form name="search" id="search" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{include file="_formparams.tpl" cl="usergroup_list" lstrt=$lstrt actedit=$actedit oxid=$oxid fnc="" language=$actlang editlanguage=$actlang}]
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
 <colgroup><col width="98%"><col width="2%"></colgroup>
 <tr class="listitem">
@@ -44,13 +36,13 @@ window.onload = function ()
             [{/foreach}]
             </select>
             <input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]"></div>
-            <input class="listedit" type="text" size="60" maxlength="128" name="where[oxgroups.oxtitle]" value="[{ $where->oxgroups__oxtitle }]">
+            <input class="listedit" type="text" size="60" maxlength="128" name="where[oxgroups][oxtitle]" value="[{ $where.oxgroups.oxtitle }]">
         </div></div>
     </td>
 </tr>
 
 <tr>
-    <td class="listheader first" height="15" colspan="2"><a href="Javascript:document.search.sort.value='oxtitle';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_NAME" }]</a></td>
+    <td class="listheader first" height="15" colspan="2"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxgroups', 'oxtitle', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_NAME" }]</a></td>
 </tr>
 
 [{assign var="blWhite" value=""}]

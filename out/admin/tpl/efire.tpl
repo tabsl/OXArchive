@@ -7,8 +7,8 @@
 
 <!-- frames -->
   <frameset  rows="62,*" border="0">
-    <frame src="[{$shop->selflink}]&cl=efire_list&oxid=[{$currentadminshop}]" name="list" id="list" frameborder="0" scrolling="auto" noresize marginwidth="0" marginheight="0">
-    <frame src="[{$shop->selflink}]&cl=efire_downloader&oxid=[{$currentadminshop}]" name="edit" id="edit" frameborder="0" scrolling="auto" noresize marginwidth="0" marginheight="0">
+    <frame src="[{$oViewConf->getSelfLink()}]&cl=efire_list&oxid=[{$currentadminshop}]" name="list" id="list" frameborder="0" scrolling="auto" noresize marginwidth="0" marginheight="0">
+    <frame src="[{$oViewConf->getSelfLink()}]&cl=efire_downloader&oxid=[{$currentadminshop}]" name="edit" id="edit" frameborder="0" scrolling="auto" noresize marginwidth="0" marginheight="0">
 </frameset>
 
 

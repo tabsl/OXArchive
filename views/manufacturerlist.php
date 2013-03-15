@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: manufacturerlist.php 31083 2010-11-23 08:02:22Z arvydas $
+ * @version   SVN: $Id: manufacturerlist.php 33397 2011-02-21 09:47:15Z arvydas.vapsva $
  */
 
 /**
@@ -95,10 +95,6 @@ class ManufacturerList extends aList
      * metatags info (oxubase::_convertForMetaTags()) and returns name of
      * template to render.
      *
-     * Template variables:
-     * <b>articlelist</b>, <b>pageNavigation</b>, <b>subcatlist</b>,
-     * <b>meta_keywords</b>, <b>meta_description</b>
-     *
      * @return  string  $this->_sThisTemplate   current template file name
      */
     public function render()
@@ -111,22 +107,14 @@ class ManufacturerList extends aList
         if ( $this->getManufacturerTree() ) {
             if ( ( $oManufacturer = $this->getActManufacturer() ) ) {
                 if ( $oManufacturer->getId() != 'root' ) {
-                    // load only articles which we show on screen
-                    $iNrofCatArticles = (int) $this->getConfig()->getConfigParam( 'iNrofCatArticles' );
-                    $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 1;
-
                     // load the articles
                     $this->getArticleList();
-                    $this->_iCntPages  = round( $this->_iAllArtCnt / $iNrofCatArticles + 0.49 );
 
+                    // processing list articles
+                    $this->_processListArticles();
                 }
             }
         }
-
-        $this->_aViewData['pageNavigation'] = $this->getPageNavigation();
-
-        // processing list articles
-        $this->_processListArticles();
 
         // generating meta info
         $this->setMetaDescription( null );
@@ -184,16 +172,19 @@ class ManufacturerList extends aList
 
         // load only articles which we show on screen
         $iNrofCatArticles = (int) $this->getConfig()->getConfigParam( 'iNrofCatArticles' );
-        $iNrofCatArticles = $iNrofCatArticles?$iNrofCatArticles:1;
+        $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 1;
 
         $oArtList = oxNew( 'oxarticlelist' );
-        $oArtList->setSqlLimit( $iNrofCatArticles * $this->getActPage(), $iNrofCatArticles );
+        $oArtList->setSqlLimit( $iNrofCatArticles * $this->_getRequestPageNr(), $iNrofCatArticles );
         $oArtList->setCustomSorting( $this->getSortingSql( $sManufacturerId ) );
 
         // load the articles
-        $iArtCnt = $oArtList->loadManufacturerArticles( $sManufacturerId, $oManufacturer );
+        $this->_iAllArtCnt = $oArtList->loadManufacturerArticles( $sManufacturerId, $oManufacturer );
 
-        return array( $oArtList, $iArtCnt );
+        // counting pages
+        $this->_iCntPages = round( $this->_iAllArtCnt / $iNrofCatArticles + 0.49 );
+
+        return array( $oArtList, $this->_iAllArtCnt );
     }
 
     /**
@@ -292,8 +283,8 @@ class ManufacturerList extends aList
             $this->_aArticleList = array();
             if ( ( $oManufacturerTree = $this->getManufacturerTree() ) ) {
                 if ( ( $oManufacturer = $this->getActManufacturer() ) && ( $oManufacturer->getId() != 'root' ) ) {
-                    list( $aArticleList, $this->_iAllArtCnt ) = $this->_loadArticles( $oManufacturer );
-                    if ( $this->_iAllArtCnt ) {
+                    list( $aArticleList, $iAllArtCnt ) = $this->_loadArticles( $oManufacturer );
+                    if ( $iAllArtCnt ) {
                         $this->_aArticleList = $aArticleList;
                     }
                 }
@@ -318,24 +309,6 @@ class ManufacturerList extends aList
             }
         }
         return $this->_sCatTitle;
-    }
-
-    /**
-     * Template variable getter. Returns template location
-     *
-     * @deprecated use manufacturerList::getTreePath() and adjust template
-     *
-     * @return string
-     */
-    public function getTemplateLocation()
-    {
-        if ( $this->_sTplLocation === null ) {
-            $this->_sTplLocation = false;
-            if ( ( $oManufacturerTree = $this->getManufacturerTree() ) ) {
-                $this->_sTplLocation = $oManufacturerTree->getHtmlPath();
-            }
-        }
-        return $this->_sTplLocation;
     }
 
     /**
@@ -456,5 +429,29 @@ class ManufacturerList extends aList
             $sAddParams .= "&amp;mnid=" . $oManufacturer->getId();
         }
         return $sAddParams;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+
+        $oCatTree = $this->getManufacturerTree()->getPath();
+
+        if ( $oCatTree ) {
+            foreach ( $oCatTree as $oCat ) {
+                $aCatPath = array();
+                $aCatPath['link'] = $oCat->getLink();
+                $aCatPath['title'] = $oCat->oxmanufacturers__oxtitle->value;
+
+                $aPaths[] = $aCatPath;
+            }
+        }
+
+        return $aPaths;
     }
 }

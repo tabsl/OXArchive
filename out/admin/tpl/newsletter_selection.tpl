@@ -1,15 +1,15 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="newsletter_selection">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
 </form>
 
 
-<form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
-[{ $shop->hiddensid }]
+<form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="newsletter_selection">
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -28,7 +28,7 @@
     <br>
     <br>
     <div id="_newsletterbtn"[{ if !$user }]style="display:none"[{ /if }]>
-    <a href="[{$shop->selflink}]&cl=newsletter_send&user=[{$user}]&id=[{ $oxid }]&iStart=0" class="edittext" target="list" [{if $readonly }]onclick="JavaScript:return false;"[{/if}]><b>[{ oxmultilang ident="NEWSLETTER_SELECTION_SENDNEWS" }]</b></a>
+    <a href="[{$oViewConf->getSelfLink()}]&cl=newsletter_send&user=[{$user}]&id=[{ $oxid }]&iStart=0" class="edittext" target="list" [{if $readonly }]onclick="JavaScript:return false;"[{/if}]><b>[{ oxmultilang ident="NEWSLETTER_SELECTION_SENDNEWS" }]</b></a>
     </div>
     </td>
     </tr>

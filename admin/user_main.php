@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: user_main.php 27018 2010-04-06 06:45:15Z arvydas $
+ * @version   SVN: $Id: user_main.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -42,7 +42,7 @@ class User_Main extends oxAdminDetails
     public function render()
     {
         $myConfig = $this->getConfig();
-        $soxId = oxConfig::getParameter( "oxid");
+        $soxId = $this->getEditObjectId();
 
         parent::render();
 
@@ -52,9 +52,10 @@ class User_Main extends oxAdminDetails
         $blisMallAdmin = $oAuthUser->oxuser__oxrights->value == "malladmin";
 
             // all usergroups
+            $sViewName = getViewName( "oxgroups", $this->_iEditLang );
             $oGroups = oxNew( "oxlist" );
             $oGroups->init( "oxgroups" );
-            $oGroups->selectString( "select * from oxgroups order by oxgroups.oxtitle" );
+            $oGroups->selectString( "select * from {$sViewName} order by {$sViewName}.oxtitle" );
 
         // User rights
         $aUserRights = array();
@@ -74,17 +75,7 @@ class User_Main extends oxAdminDetails
         }
 
 
-        $soxId = oxConfig::getParameter( "oxid");
-        // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ( $soxId == "-1" || !isset( $soxId ) ) && isset( $sSavedID ) ) {
-            $soxId = $sSavedID;
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $soxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
-        }
-
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId ) ) {
             // load object
             $oUser = oxNew( "oxuser" );
@@ -139,7 +130,7 @@ class User_Main extends oxAdminDetails
     {
 
         //allow admin information edit only for MALL admins
-        $soxId = oxConfig::getParameter( "oxid" );
+        $soxId = $this->getEditObjectId();
         if ( $this->_allowAdminEdit( $soxId ) ) {
 
             $aParams = oxConfig::getParameter( "editval");
@@ -175,12 +166,9 @@ class User_Main extends oxAdminDetails
 
             try {
                 $oUser->save();
-                $this->_aViewData["updatelist"] = "1";
 
                 // set oxid if inserted
-                if ( $soxId == "-1" ) {
-                    oxSession::setVar( "saved_oxid", $oUser->getId() );
-                }
+                $this->setEditObjectId( $oUser->getId() );
             } catch ( Exception $oExcp ) {
                 $this->_sSaveError = $oExcp->getMessage();
             }

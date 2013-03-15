@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: tags.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: tags.php 32965 2011-02-07 12:22:04Z vilma $
  */
 
 /**
@@ -32,37 +32,7 @@ class Tags extends oxUBase
      *
      * @var string
      */
-    protected $_sThisTemplate = "tags.tpl";
-
-    /**
-     * Executes parent::render(), loads article list according active tag
-     *
-     * Template variables:
-     * <b>articlelist</b>, <b>pageNavigation</b>, <b>subcatlist</b>,
-     * <b>meta_keywords</b>, <b>meta_description</b>
-     *
-     * @return  string  $this->_sThisTemplate   current template file name
-     */
-    public function render()
-    {
-        parent::render();
-
-        $this->_aViewData['tagCloud'] = $this->getTagCloud();
-        $this->_aViewData['blMoreTags'] = $this->isMoreTagsVisible();
-        $this->_aViewData['oView'] = $this;
-
-        return $this->_sThisTemplate;
-    }
-
-    /**
-     * Get HTML formated tag cloud.
-     *
-     * @return string
-     */
-    public function getTagCloud()
-    {
-        return oxNew( 'oxTagCloud' )->getTagCloud( null, true );
-    }
+    protected $_sThisTemplate = "page/tags/tags.tpl";
 
     /**
      * Returns tag cloud manager class
@@ -106,4 +76,21 @@ class Tags extends oxUBase
             return oxLang::getInstance()->translateString( 'INC_HEADER_TITLEPAGE' ). ( $iPage + 1 );
         }
     }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aCatPath = array();
+
+        $aCatPath['title'] = oxLang::getInstance()->translateString( 'TAGS', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aCatPath;
+
+        return $aPaths;
+    }
+
 }

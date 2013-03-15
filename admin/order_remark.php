@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: order_remark.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: order_remark.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -41,7 +41,7 @@ class Order_Remark extends oxAdminDetails
     {
         parent::render();
 
-        $soxId    = oxConfig::getParameter( "oxid");
+        $soxId = $this->getEditObjectId();
         $sRemoxId = oxConfig::getParameter( "rem_oxid");
         if ( $soxId != "-1" && isset( $soxId)) {
             $oOrder = oxNew( "oxorder" );
@@ -82,7 +82,7 @@ class Order_Remark extends oxAdminDetails
     {
 
         $oOrder = oxNew( "oxorder" );
-        if ( $oOrder->load( oxConfig::getParameter( "oxid" ) ) ) {
+        if ( $oOrder->load( $this->getEditObjectId() ) ) {
             $oRemark = oxNew( "oxremark" );
             $oRemark->load( oxConfig::getParameter( "rem_oxid" ) );
 

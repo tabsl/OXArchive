@@ -29,15 +29,15 @@ function editThis( sID, sListType)
 //-->
 </script>
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="pricealarm_main">
 </form>
 
 
-        <form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post" onSubmit="copyLongDesc( 'oxpricealarm__oxlongdesc' );">
-        [{ $shop->hiddensid }]
+        <form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post" onSubmit="copyLongDesc( 'oxpricealarm__oxlongdesc' );">
+        [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="cl" value="pricealarm_main">
         <input type="hidden" name="fnc" value="">
         <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -46,6 +46,7 @@ function editThis( sID, sListType)
 
         <table cellspacing="0" cellpadding="0" border="0" width="98%">
         [{if $edit}]
+        [{assign var="oArticle" value=$edit->getArticle()}]
         <tr>
           <td valign="top" class="edittext" valign="top" style="padding-top:10px;padding-left:10px;">
             <table cellspacing="0" cellpadding="0" border="0" width="100%">
@@ -60,9 +61,9 @@ function editThis( sID, sListType)
               <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="GENERAL_LANGUAGE" }]</b></td><td class="edittext" nowrap>[{$edit_lang}]</td></tr>
               <tr><td class="edittext" height="17" nowrap><b>[{ oxmultilang ident="PRICEALARM_MAIN_SUBSCRIPTIONDATE" }]&nbsp;&nbsp;</b></td><td class="edittext" nowrap>[{$edit->oxpricealarm__oxinsert|oxformdate}]</td></tr>
               <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="PRICEALARM_MAIN_MAILINGDATE" }]</b></td><td class="edittext">[{$edit->oxpricealarm__oxsended|oxformdate}]</td></tr>
-              <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="PRICEALARM_MAIN_PRODUCT" }]</b></td><td class="edittext"><a href="Javascript:editThis( '[{$edit->oArticle->oxarticles__oxid->value}]','article');" class="edittext">[{$edit->oArticle->oxarticles__oxtitle->value}]</a></td></tr>
-              <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="PRICEALARM_MAIN_CUSTOMERPRICE" }]</b></td><td class="edittext">[{$edit->oxpricealarm__oxprice->value}] [{ $edit->oxpricealarm__oxcurrency->value }]</td></tr>
-              <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="PRICEALARM_MAIN_REGULARPRICE" }]</b></td><td class="edittext">[{$edit->oArticle->fprice}] [{ $edit->oxpricealarm__oxcurrency->value }]</td></tr>
+              <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="PRICEALARM_MAIN_PRODUCT" }]</b></td><td class="edittext"><a href="Javascript:editThis( '[{$oArticle->oxarticles__oxid->value}]','article');" class="edittext">[{$edit->getTitle()}]</a></td></tr>
+              <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="PRICEALARM_MAIN_CUSTOMERPRICE" }]</b></td><td class="edittext">[{$edit->getFProposedPrice()}] [{ $edit->oxpricealarm__oxcurrency->value }]</td></tr>
+              <tr><td class="edittext" height="17"><b>[{ oxmultilang ident="PRICEALARM_MAIN_REGULARPRICE" }]</b></td><td class="edittext">[{$oArticle->getFPrice()}] [{ $edit->oxpricealarm__oxcurrency->value }]</td></tr>
               <tr><td class="edittext" height="17"><br><br><br></td><td class="edittext">
                 <input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="PRICEALARM_MAIN_EMAILSEND" }]" onClick="Javascript:document.myedit.fnc.value='send'" [{$readonly }]>
               </td></tr>

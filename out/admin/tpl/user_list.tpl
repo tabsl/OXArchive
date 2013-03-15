@@ -1,4 +1,5 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign box="list"}]
+[{assign var="where" value=$oView->getListFilter()}]
 
 [{if $readonly}]
     [{assign var="readonly" value="readonly disabled"}]
@@ -21,15 +22,8 @@ window.onload = function ()
 <div id="liste">
 
 
-<form name="search" id="search" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
-    <input type="hidden" name="cl" value="user_list">
-    <input type="hidden" name="lstrt" value="[{ $lstrt }]">
-    <input type="hidden" name="sort" value="[{ $sort }]">
-    <input type="hidden" name="actedit" value="[{ $actedit }]">
-    <input type="hidden" name="oxid" value="[{ $oxid }]">
-    <input type="hidden" name="fnc" value="">
-
+<form name="search" id="search" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{include file="_formparams.tpl" cl="user_list" lstrt=$lstrt actedit=$actedit oxid=$oxid fnc="" language=$actlang editlanguage=$actlang}]
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
 <colgroup>
     <col width="20%">
@@ -44,50 +38,50 @@ window.onload = function ()
 <tr class="listitem">
     <td valign="top" class="listfilter first" height="20">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxuser.oxlname]" value="[{ $where->oxuser__oxlname }]">
+        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxuser][oxlname]" value="[{ $where.oxuser.oxlname }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxuser.oxusername]" value="[{ $where->oxuser__oxusername }]">
+        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxuser][oxusername]" value="[{ $where.oxuser.oxusername }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxuser.oxstreet]" value="[{ $where->oxuser__oxstreet }]">
+        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxuser][oxstreet]" value="[{ $where.oxuser.oxstreet }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="10" maxlength="128" name="where[oxuser.oxzip]" value="[{ $where->oxuser__oxzip }]">
+        <input class="listedit" type="text" size="10" maxlength="128" name="where[oxuser][oxzip]" value="[{ $where.oxuser.oxzip }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxuser.oxcity]" value="[{ $where->oxuser__oxcity }]">
+        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxuser][oxcity]" value="[{ $where.oxuser.oxcity }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser.oxfon]" value="[{ $where->oxuser__oxfon }]">
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser][oxfon]" value="[{ $where.oxuser.oxfon }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter" colspan="2" nowrap>
         <div class="r1"><div class="b1">
         <div class="find"><input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]"></div>
-        <input class="listedit" type="text" size="5" maxlength="128" name="where[oxuser.oxcustnr]" value="[{ $where->oxuser__oxcustnr }]">
+        <input class="listedit" type="text" size="5" maxlength="128" name="where[oxuser][oxcustnr]" value="[{ $where.oxuser.oxcustnr }]">
         </div>
         </div></div>
     </td>
 </tr>
 <tr>
-    <td class="listheader first" height="15">&nbsp;<a href="Javascript:document.search.sort.value='oxuser.oxlname';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_NAME" }]</a></td>
-    <td class="listheader"><a href="Javascript:document.search.sort.value='oxuser.oxusername';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_EMAIL" }]</a></td>
-    <td class="listheader"><a href="Javascript:document.search.sort.value='oxuser.oxstreet';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_STREET" }]</a></td>
-    <td class="listheader"><a href="Javascript:document.search.sort.value='oxuser.oxzip';document.search.submit();" class="listheader">[{ oxmultilang ident="USER_LIST_ZIP" }]</a></td>
-    <td class="listheader"><a href="Javascript:document.search.sort.value='oxuser.oxcity';document.search.submit();" class="listheader">[{ oxmultilang ident="USER_LIST_PLACE" }]</a></td>
-    <td class="listheader"><a href="Javascript:document.search.sort.value='oxuser.oxfon';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_TELEPHONE" }]</a></td>
-    <td class="listheader" colspan="2"><a href="Javascript:document.search.sort.value='oxuser.oxcustnr';document.search.submit();" class="listheader">[{ oxmultilang ident="USER_LIST_CUSTOMERNUM" }]</a></td>
+    <td class="listheader first" height="15">&nbsp;<a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxuser', 'oxlname', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_NAME" }]</a></td>
+    <td class="listheader"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxuser', 'oxusername', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_EMAIL" }]</a></td>
+    <td class="listheader"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxuser', 'oxstreet', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_STREET" }]</a></td>
+    <td class="listheader"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxuser', 'oxzip', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="USER_LIST_ZIP" }]</a></td>
+    <td class="listheader"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxuser', 'oxcity', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="USER_LIST_PLACE" }]</a></td>
+    <td class="listheader"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxuser', 'oxfon', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_TELEPHONE" }]</a></td>
+    <td class="listheader" colspan="2"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxuser', 'oxcustnr', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="USER_LIST_CUSTOMERNUM" }]</a></td>
 </tr>
 
 [{assign var="blWhite" value=""}]

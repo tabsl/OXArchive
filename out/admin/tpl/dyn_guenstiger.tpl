@@ -1,7 +1,7 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE_1"|oxmultilangassign}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="1">
     <input type="hidden" name="cl" value="">
 </form>
@@ -11,8 +11,8 @@
     <td valign="top" class="edittext">
 
         <table cellspacing="0" cellpadding="0" border="0">
-        <form name="myedit" id="myedit" action="[{ $shop->selflink }]" target="dynexport_do" method="post">
-        [{ $shop->hiddensid }]
+        <form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" target="dynexport_do" method="post">
+        [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="cl" value="[{$sClassDo}]">
         <input type="hidden" name="fnc" value="start">
         <tr>

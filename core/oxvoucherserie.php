@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvoucherserie.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxvoucherserie.php 31954 2010-12-17 13:33:40Z sarunas $
  */
 
 /**
@@ -85,8 +85,9 @@ class oxVoucherSerie extends oxBase
         if ( $this->_oGroups === null ) {
             $this->_oGroups = oxNew( 'oxlist' );
             $this->_oGroups->init( 'oxgroups' );
-            $sSelect  = 'select gr.* from oxgroups as gr, oxobject2group as o2g where ';
-            $sSelect .= 'o2g.oxobjectid = "'. $this->getId() .'" and gr.oxid = o2g.oxgroupsid ';
+            $sViewName = getViewName( "oxgroups" );
+            $sSelect  = "select gr.* from {$sViewName} as gr, oxobject2group as o2g where
+                         o2g.oxobjectid = '". $this->getId() ."' and gr.oxid = o2g.oxgroupsid ";
             $this->_oGroups->selectString( $sSelect );
         }
 

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: list_order.php 27134 2010-04-09 13:50:28Z arvydas $
+ * @version   SVN: $Id: list_order.php 32331 2011-01-03 14:30:01Z arvydas $
  */
 
 /**
@@ -28,6 +28,29 @@
  */
 class List_Order extends Order_List
 {
+    /**
+     * Enable/disable sorting by DESC (SQL) (defaultfalse - disable).
+     *
+     * @var bool
+     */
+    protected $_blDesc = false;
+
+    /**
+     * Returns sorting fields array
+     *
+     * @return array
+     */
+    public function getListSorting()
+    {
+        $aSort = oxConfig::getParameter( 'sort' );
+        if ( $this->_aCurrSorting === null && isset( $aSort[0]['oxorderdate'] ) ) {
+            $this->_aCurrSorting[]["max(oxorder.oxorderdate)"] = "desc";
+            return $this->_aCurrSorting;
+        } else {
+            return parent::getListSorting();
+        }
+    }
+
     /**
      * Viewable list size getter
      *
@@ -48,8 +71,6 @@ class List_Order extends Order_List
     {
         oxAdminList::render();
 
-        $this->_aViewData["viewListSize"]  = $this->_getViewListSize();
-        $this->_aViewData["whereparam"]    = $this->_aViewData["whereparam"] . '&amp;viewListSize='.$this->_getViewListSize();
         $this->_aViewData["menustructure"] = $this->getNavigation()->getDomXml()->documentElement->childNodes;
 
         return "list_order.tpl";
@@ -66,7 +87,9 @@ class List_Order extends Order_List
      */
     public function _prepareWhereQuery( $aWhere, $sqlFull )
     {
-        return oxAdminList::_prepareWhereQuery( $aWhere, $sqlFull );
+        $sQ  = oxAdminList::_prepareWhereQuery( $aWhere, $sqlFull );
+        $sQ .= " group by oxorderarticles.oxartnum";
+        return $sQ;
     }
 
     /**
@@ -115,17 +138,8 @@ class List_Order extends Order_List
     protected function _prepareOrderByQuery( $sSql = null )
     {
         // calculating sum
-        $sSumQ = getStr()->preg_replace("/select .*? from/", "select round( sum(oxorderarticles.oxbrutprice*oxorder.oxcurrate),2) from", $sSql );
+        $sSumQ = getStr()->preg_replace( array( "/select .*? from/", "/group by oxorderarticles.oxartnum/" ), array( "select round( sum(oxorderarticles.oxbrutprice*oxorder.oxcurrate),2) from", "" ), $sSql );
         $this->_aViewData["sumresult"] = oxDb::getDb()->getOne( $sSumQ );
-
-        $sSql = " $sSql group by oxorderarticles.oxartnum";
-        if ( $sSort = oxConfig::getParameter( "sort" ) ) {
-            if ($sSort == 'oxorder.oxorderdate') {
-                $sSql .= " order by max(oxorder.oxorderdate) DESC";
-            } else {
-                $sSql .= " order by " . oxDb::getInstance()->escapeString( $sSort );
-            }
-        }
-        return $sSql;
+        return parent::_prepareOrderByQuery( $sSql );
     }
 }

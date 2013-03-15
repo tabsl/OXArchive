@@ -55,12 +55,12 @@ window.onload = function ()
     [{assign var="readonly" value=""}]
 [{/if}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="shop_main">
     <input type="hidden" name="fnc" value="">
-    <input type="hidden" name="actshop" value="[{ $shop->id }]">
+    <input type="hidden" name="actshop" value="[{$oViewConf->getActiveShopId()}]">
     <input type="hidden" name="updatenav" value="">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
 </form>
@@ -69,8 +69,8 @@ window.onload = function ()
 
 
 
-<form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post" onSubmit="unsetSmtpField()">
-[{ $shop->hiddensid }]
+<form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post" onSubmit="unsetSmtpField()">
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="shop_main">
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -255,7 +255,7 @@ window.onload = function ()
         <table cellspacing="0" cellpadding="0" border="0">
 
         [{assign var="blContinue" value=1}]
-           [{if $oxid==-1 || (!$ismall && !$malladmin)}]
+           [{if $oxid==-1 || (!$oView->isMall() && !$malladmin)}]
              [{assign var="blContinue" value=0}]
            [{/if}]
 

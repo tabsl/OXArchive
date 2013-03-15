@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_review.php 26440 2010-03-10 07:54:49Z arvydas $
+ * @version   SVN: $Id: article_review.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -45,7 +45,7 @@ class Article_Review extends oxAdminDetails
 
         $this->_aViewData["edit"] = $oArticle = oxNew( "oxarticle" );
 
-        $soxId    = oxConfig::getParameter( 'oxid' );
+        $soxId    = $this->getEditObjectId();
         $sRevoxId = oxConfig::getParameter( 'rev_oxid' );
         if ( $soxId != "-1" && isset( $soxId)) {
 

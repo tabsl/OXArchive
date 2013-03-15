@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: dynexportbase.php 30080 2010-10-04 11:23:36Z dainius.bigelis $
+ * @version   SVN: $Id: dynexportbase.php 33602 2011-03-01 14:49:47Z linas.kukulskis $
  */
 
 /**
@@ -331,12 +331,12 @@ class DynExportBase extends oxAdminDetails
         $sLang = oxLang::getInstance()->getBaseLanguage();
         $oDB = oxDb::getDb();
 
-        $sCatView = getViewName( 'oxcategories' );
-        $sO2CView = getViewName( 'oxobject2category' );
+        $sCatView = getViewName( 'oxcategories', $sLang );
+        $sO2CView = getViewName( 'oxobject2category', $sLang );
 
         //selecting category
         $sQ  = "select $sCatView.oxleft, $sCatView.oxright, $sCatView.oxrootid from $sO2CView as oxobject2category left join $sCatView on $sCatView.oxid = oxobject2category.oxcatnid ";
-        $sQ .= "where oxobject2category.oxobjectid=".$oDB->quote( $oArticle->getId() )." and $sCatView.oxactive".(($sLang)?"_$sLang":"")." = 1 order by oxobject2category.oxtime ";
+        $sQ .= "where oxobject2category.oxobjectid=".$oDB->quote( $oArticle->getId() )." and $sCatView.oxactive = 1 order by oxobject2category.oxtime ";
 
         $oRs = $oDB->execute( $sQ );
         if ( $oRs != false && $oRs->recordCount() > 0 ) {
@@ -345,7 +345,7 @@ class DynExportBase extends oxAdminDetails
             $sRootId = $oRs->fields[2];
 
             //selecting all parent category titles
-            $sQ = "select oxtitle".( ( $sLang ) ? "_$sLang" : "" )." from $sCatView where oxright >= {$sRight} and oxleft <= {$sLeft} and oxrootid = '{$sRootId}' order by oxleft ";
+            $sQ = "select oxtitle from $sCatView where oxright >= {$sRight} and oxleft <= {$sLeft} and oxrootid = '{$sRootId}' order by oxleft ";
 
             $oRs = $oDB->execute( $sQ );
             if ( $oRs != false && $oRs->recordCount() > 0 ) {
@@ -374,12 +374,12 @@ class DynExportBase extends oxAdminDetails
         $sLang = oxLang::getInstance()->getBaseLanguage();
         $oDB = oxDb::getDb();
 
-        $sCatView = getViewName( 'oxcategories' );
-        $sO2CView = getViewName( 'oxobject2category' );
+        $sCatView = getViewName( 'oxcategories', $sLang );
+        $sO2CView = getViewName( 'oxobject2category', $sLang );
 
         //selecting category
-        $sQ =  "select $sCatView.oxtitle".(($sLang)?"_$sLang":"")." from $sO2CView as oxobject2category left join $sCatView on $sCatView.oxid = oxobject2category.oxcatnid ";
-        $sQ .= "where oxobject2category.oxobjectid=".$oDB->quote( $oArticle->getId() )." and $sCatView.oxactive".(($sLang)?"_$sLang":"")." = 1 order by oxobject2category.oxtime ";
+        $sQ =  "select $sCatView.oxtitle from $sO2CView as oxobject2category left join $sCatView on $sCatView.oxid = oxobject2category.oxcatnid ";
+        $sQ .= "where oxobject2category.oxobjectid=".$oDB->quote( $oArticle->getId() )." and $sCatView.oxactive = 1 order by oxobject2category.oxtime ";
 
         return $oDB->getOne( $sQ);
     }
@@ -620,14 +620,11 @@ class DynExportBase extends oxAdminDetails
     {
         $oDB = oxDb::getDb();
 
-        $iLanguage = oxLang::getInstance()->getLanguageTag( 0 );
-
-        $sO2CView = getViewName('oxobject2category');
-        $oArticle = oxNew( 'oxarticle' );
-        $sArticleTable = $oArticle->getViewName();
+        $sO2CView = getViewName( 'oxobject2category' );
+        $sArticleTable = getViewName( "oxarticles" );
 
         $sSelect  = "insert into {$sHeapTable} select {$sArticleTable}.oxid from {$sArticleTable}, {$sO2CView} as oxobject2category where ";
-        $sSelect .= $oArticle->getSqlActiveSnippet();
+        $sSelect .= oxNew( 'oxarticle' )->getSqlActiveSnippet();
 
         if ( ! oxConfig::getParameter( "blExportVars" ) ) {
             $sSelect .= " and {$sArticleTable}.oxid = oxobject2category.oxobjectid and {$sArticleTable}.oxparentid = '' ";
@@ -637,9 +634,9 @@ class DynExportBase extends oxAdminDetails
 
         $sSearchString = oxConfig::getParameter( "search" );
         if ( isset( $sSearchString ) ) {
-            $sSelect .= "and ( {$sArticleTable}.OXTITLE".$iLanguage." like ".$oDB->quote( "%{$sSearchString}%" );
-            $sSelect .= " or {$sArticleTable}.OXSHORTDESC".$iLanguage."  like ".$oDB->quote( "%$sSearchString%" );
-            $sSelect .= " or {$sArticleTable}.oxsearchkeys  like ".$oDB->quote( "%$sSearchString%" ) ." ) ";
+            $sSelect .= "and ( {$sArticleTable}.OXTITLE like ".$oDB->quote( "%{$sSearchString}%" );
+            $sSelect .= " or {$sArticleTable}.OXSHORTDESC like ".$oDB->quote( "%$sSearchString%" );
+            $sSelect .= " or {$sArticleTable}.oxsearchkeys like ".$oDB->quote( "%$sSearchString%" ) ." ) ";
         }
 
         if ( $sCatAdd ) {
@@ -749,7 +746,6 @@ class DynExportBase extends oxAdminDetails
         if ( $this->_aCatLvlCache === null ) {
             $this->_aCatLvlCache = array();
 
-            $sLang = oxLang::getInstance()->getBaseLanguage();
             $sCatView = getViewName('oxcategories');
             $oDb = oxDb::getDb();
 
@@ -759,9 +755,9 @@ class DynExportBase extends oxAdminDetails
             if ( $oRs != false && $oRs->recordCount() > 0 ) {
                 while ( !$oRs->EOF ) {
                     // now load each tree
-                    $sSQL = "SELECT s.oxid, s.oxtitle".(($sLang)?"_$sLang":"").",
-                             s.oxparentid, count( * ) AS LEVEL FROM oxcategories v,
-                             oxcategories s WHERE s.oxrootid = '".$oRs->fields[0]."' and
+                    $sSQL = "SELECT s.oxid, s.oxtitle,
+                             s.oxparentid, count( * ) AS LEVEL FROM $sCatView v,
+                             $sCatView s WHERE s.oxrootid = '".$oRs->fields[0]."' and
                              v.oxrootid='".$oRs->fields[0]."' and s.oxleft BETWEEN
                              v.oxleft AND v.oxright AND s.oxhidden = '0' GROUP BY s.oxleft order by level";
 
@@ -846,7 +842,7 @@ class DynExportBase extends oxAdminDetails
                 $blContinue = true;
                 // check price
                 $dMinPrice = oxConfig::getParameter( "sExportMinPrice" );
-                if ( !isset( $dMinPrice ) || ( isset( $dMinPrice ) && ( $oArticle->brutPrice >= $dMinPrice ) ) ) {
+                if ( !isset( $dMinPrice ) || ( isset( $dMinPrice ) && ( $oArticle->getPrice()->getBruttoPrice() >= $dMinPrice ) ) ) {
 
                     //Saulius: variant title added
                     $sTitle = $oArticle->oxarticles__oxvarselect->value ? " " .$oArticle->oxarticles__oxvarselect->value : "";

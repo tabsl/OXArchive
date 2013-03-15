@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_extend.php 26176 2010-03-02 13:19:57Z arvydas $
+ * @version   SVN: $Id: article_extend.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -44,7 +44,7 @@ class Article_Extend extends oxAdminDetails
 
         $this->_aViewData['edit'] = $oArticle = oxNew( 'oxarticle' );
 
-        $soxId = oxConfig::getParameter( 'oxid' );
+        $soxId = $this->getEditObjectId();
         $sCatView = getViewName( 'oxcategories' );
 
         $sChosenArtCat = $this->_getCategoryTree( "artcattree", oxConfig::getParameter( "artcat"));
@@ -83,10 +83,9 @@ class Article_Extend extends oxAdminDetails
 
             $oDB = oxDb::getDB();
             $myConfig = $this->getConfig();
-            $suffix = ($this->_iEditLang)?"_$this->_iEditLang":"";
 
-            $sArticleTable = getViewName( 'oxarticles' );
-            $sSelect  = "select $sArticleTable.oxtitle$suffix, $sArticleTable.oxartnum, $sArticleTable.oxvarselect$suffix from $sArticleTable where 1 ";
+            $sArticleTable = getViewName( 'oxarticles', $this->_iEditLang );
+            $sSelect  = "select $sArticleTable.oxtitle, $sArticleTable.oxartnum, $sArticleTable.oxvarselect from $sArticleTable where 1 ";
             // #546
             $sSelect .= $myConfig->getConfigParam( 'blVariantsSelection' )?'':" and $sArticleTable.oxparentid = '' ";
             $sSelect .= " and $sArticleTable.oxid = ".$oDB->quote( $oArticle->oxarticles__oxbundleid->value );
@@ -133,8 +132,8 @@ class Article_Extend extends oxAdminDetails
     public function save()
     {
 
-        $soxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
+        $soxId = $this->getEditObjectId();
+        $aParams = oxConfig::getParameter( "editval");
         // checkbox handling
         if ( !isset( $aParams['oxarticles__oxissearch'])) {
             $aParams['oxarticles__oxissearch'] = 0;
@@ -210,7 +209,7 @@ class Article_Extend extends oxAdminDetails
      */
     public function deletemedia()
     {
-        $soxId = oxConfig::getParameter( "oxid");
+        $soxId = $this->getEditObjectId();
         $sMediaId = oxConfig::getParameter( "mediaid");
         if ($sMediaId && $soxId) {
             $oMediaUrl = oxNew("oxMediaUrl");

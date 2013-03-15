@@ -11,8 +11,8 @@ window.onload = function ()
 }
 //-->
 </script>
-<form name="search" id="search" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="search" id="search" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="actedit" value="[{ $actedit }]">
     <input type="hidden" name="cl" value="tools_list">
     <input type="hidden" name="oxid" value="x">
@@ -21,6 +21,11 @@ window.onload = function ()
 <div id="liste">
 
     <table cellspacing="0" cellpadding="0" border="0">
+    [{ if $blViewSuccess}]
+    <tr>
+    <td class="editnavigation">[{ oxmultilang ident="TOOLS_LIST_UPDATEVIEWSSECCESS" }]</td>
+    </tr>
+    [{/if}]
     [{ if $blMailSuccess}]
     <tr>
     <td class="editnavigation">[{ oxmultilang ident="TOOLS_LIST_SECCESS" }]</td>

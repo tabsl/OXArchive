@@ -27,7 +27,10 @@
                 <BTN id="manufacturer_new" />
                 <BTN id="manufacturer_resetnrofarticles" />
             </SUBMENU>
-            <SUBMENU id="mxlooknfeel" cl="gui" />
+            <SUBMENU id="mxtheme" cl="theme" list="theme_list">
+                <TAB id="tbcltheme_main" cl="theme_main" />
+                <TAB id="tbcltheme_config" cl="theme_config" />
+            </SUBMENU>
             <SUBMENU id="mxlanguages" cl="language" list="language_list">
                 <TAB id="tbcllanguage_main" cl="language_main" />
                 <BTN id="language_new" />
@@ -176,11 +179,11 @@
         </MAINMENU>
         <MAINMENU id="mxservice">
             <SUBMENU id="mxsysinfo" cl="systeminfo" rights="malladmin" disableForDemoShop="1" />
-            <SUBMENU id="mxtools" cl="tools" list="tools_list" rights="malladmin" disableForDemoShop="1" >
-                <TAB id="tbcltools_main" cl="tools_main" disableForDemoShop="1" />
-            </SUBMENU>
             <SUBMENU id="mxsysreq" cl="sysreq" list="sysreq_list">
                 <TAB id="tbclsysreq_main" cl="sysreq_main" />
+            </SUBMENU>
+            <SUBMENU id="mxtools" cl="tools" list="tools_list" rights="malladmin" disableForDemoShop="1" >
+                <TAB id="tbcltools_main" cl="tools_main" disableForDemoShop="1" />
             </SUBMENU>
             <SUBMENU id="mxgenexp" cl="genexport" />
             <SUBMENU id="mxgenimp" cl="genimport"></SUBMENU>

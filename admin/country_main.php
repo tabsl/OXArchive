@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: country_main.php 26463 2010-03-10 14:37:54Z rimvydas.paskevicius $
+ * @version   SVN: $Id: country_main.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -43,17 +43,7 @@ class Country_Main extends oxAdminDetails
 
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid");
-        // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($soxId == "-1" || !isset( $soxId)) && isset( $sSavedID) ) {
-            $soxId = $sSavedID;
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $soxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
-        }
-
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId)) {
             // load object
             $oCountry = oxNew( "oxcountry" );
@@ -100,7 +90,7 @@ class Country_Main extends oxAdminDetails
         $myConfig  = $this->getConfig();
 
 
-        $soxId   = oxConfig::getParameter( "oxid");
+        $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval" );
 
         if ( !isset( $aParams['oxcountry__oxactive']))
@@ -120,11 +110,9 @@ class Country_Main extends oxAdminDetails
         $oCountry->setLanguage($this->_iEditLang);
         $oCountry = oxUtilsFile::getInstance()->processFiles( $oCountry );
         $oCountry->save();
-        $this->_aViewData["updatelist"] = "1";
 
         // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oCountry->oxcountry__oxid->value);
+        $this->setEditObjectId( $oCountry->getId() );
     }
 
     /**
@@ -137,8 +125,8 @@ class Country_Main extends oxAdminDetails
         $myConfig  = $this->getConfig();
 
 
-        $soxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
+        $soxId = $this->getEditObjectId();
+        $aParams = oxConfig::getParameter( "editval");
 
         if ( !isset( $aParams['oxcountry__oxactive']))
             $aParams['oxcountry__oxactive'] = 0;
@@ -155,10 +143,8 @@ class Country_Main extends oxAdminDetails
         $oCountry->setLanguage($this->_iEditLang);
 
         $oCountry->save();
-        $this->_aViewData["updatelist"] = "1";
 
         // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oCountry->oxcountry__oxid->value);
+        $this->setEditObjectId( $oCountry->getId() );
     }
 }

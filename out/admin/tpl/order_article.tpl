@@ -65,8 +65,8 @@ function StornoThisArticle( sID)
 
 [{assign var="oCurr" value=$edit->getOrderCurrency() }]
 
-<form name="DeleteThisArticle" id="DeleteThisArticle" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="DeleteThisArticle" id="DeleteThisArticle" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="cur" value="[{ $oCurr->id }]">
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="sArtID" value="">
@@ -74,8 +74,8 @@ function StornoThisArticle( sID)
     <input type="hidden" name="fnc" value="DeleteThisArticle">
 </form>
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="cur" value="[{ $oCurr->id }]">
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="order_article">
@@ -83,8 +83,8 @@ function StornoThisArticle( sID)
 
 
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
-<form name="search" id="search" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="search" id="search" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="cur" value="[{ $oCurr->id }]">
     <input type="hidden" name="cl" value="order_article">
     <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -109,24 +109,24 @@ function StornoThisArticle( sID)
     [{else}]
         [{assign var="listclass" value=listitem$blWhite }]
     [{/if}]
-    <td valign="top" class="[{ $listclass}]">[{ if $listitem->oxorderarticles__oxstorno->value != 1 }]<input type="text" name="aOrderArticles[[{$listitem->getId()}]][oxamount]" value="[{ $listitem->oxorderarticles__oxamount->value }]" class="listedit">[{else}][{ $listitem->oxorderarticles__oxamount->value }][{/if}]</td>
+    <td valign="top" class="[{ $listclass}]">[{ if $listitem->oxorderarticles__oxstorno->value != 1 && !$listitem->isBundle() }]<input type="text" name="aOrderArticles[[{$listitem->getId()}]][oxamount]" value="[{ $listitem->oxorderarticles__oxamount->value }]" class="listedit">[{else}][{ $listitem->oxorderarticles__oxamount->value }][{/if}]</td>
     <td valign="top" class="[{ $listclass}]" height="15">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:editThis('[{ $listitem->oxarticles__oxid->value}]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxartnum->value }]</a></td>
     <td valign="top" class="[{ $listclass}]">[{if $listitem->oxarticles__oxid->value}]<a href="Javascript:editThis('[{ $listitem->oxarticles__oxid->value }]');" class="[{ $listclass}]">[{/if}][{ $listitem->oxorderarticles__oxtitle->value|oxtruncate:20:""|strip_tags }]</a></td>
     <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxselvariant->value }]</td>
     <td valign="top" class="[{ $listclass}]">
-        [{ if $listitem->aPersParam }]
-            [{foreach key=sVar from=$listitem->aPersParam item=aParam}]
+        [{ if $listitem->getPersParams() }]
+            [{foreach key=sVar from=$listitem->getPersParams() item=aParam}]
                      &nbsp;&nbsp;,&nbsp;<em>[{$sVar}] : [{$aParam}]</em>
             [{/foreach}]
         [{/if}]
     </td>
     <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxshortdesc->value|oxtruncate:20:""|strip_tags }]</td>
-    <td valign="top" class="[{ $listclass}]">[{ $listitem->fnetprice }] <small>[{ $edit->oxorder__oxcurrency->value }]</small></td>
-    <td valign="top" class="[{ $listclass}]">[{ $listitem->fbrutprice }] <small>[{ $edit->oxorder__oxcurrency->value }]</small></td>
-    <td valign="top" class="[{ $listclass}]">[{ $listitem->ftotbrutprice }] <small>[{ $edit->oxorder__oxcurrency->value }]</small></td>
+    <td valign="top" class="[{ $listclass}]">[{ $listitem->getNetPriceFormated() }] <small>[{ $edit->oxorder__oxcurrency->value }]</small></td>
+    <td valign="top" class="[{ $listclass}]">[{ $listitem->getBrutPriceFormated() }] <small>[{ $edit->oxorder__oxcurrency->value }]</small></td>
+    <td valign="top" class="[{ $listclass}]">[{ $listitem->getTotalBrutPriceFormated() }] <small>[{ $edit->oxorder__oxcurrency->value }]</small></td>
     <td valign="top" class="[{ $listclass}]">[{ $listitem->oxorderarticles__oxvat->value}]</td>
-    <td valign="top" class="[{ $listclass}]"><a href="Javascript:DeleteThisArticle('[{ $listitem->oxorderarticles__oxid->value }]');" class="delete" [{if $readonly }]onclick="JavaScript:return false;"[{/if}] [{include file="help.tpl" helpid=item_delete}]></a></td>
-    <td valign="top" class="[{ $listclass}]"><a href="Javascript:StornoThisArticle('[{ $listitem->oxorderarticles__oxid->value }]');" class="pause" [{if $readonly }]onclick="JavaScript:return false;"[{/if}] [{include file="help.tpl" helpid=item_storno}]></a></td>
+    <td valign="top" class="[{ $listclass}]">[{if !$listitem->isBundle()}]<a href="Javascript:DeleteThisArticle('[{ $listitem->oxorderarticles__oxid->value }]');" class="delete" [{if $readonly }]onclick="JavaScript:return false;"[{/if}] [{include file="help.tpl" helpid=item_delete}]></a>[{/if}]</td>
+    <td valign="top" class="[{ $listclass}]">[{if !$listitem->isBundle()}]<a href="Javascript:StornoThisArticle('[{ $listitem->oxorderarticles__oxid->value }]');" class="pause" [{if $readonly }]onclick="JavaScript:return false;"[{/if}] [{include file="help.tpl" helpid=item_storno}]></a>[{/if}]</td>
 </tr>
 [{if $blWhite == "2"}]
 [{assign var="blWhite" value=""}]
@@ -151,17 +151,17 @@ function StornoThisArticle( sID)
     <table border="0" cellspacing="0" cellpadding="0" id="order.info">
     <tr>
     <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_IBRUTTO" }]</td>
-    <td class="edittext" align="right"><b>[{ $edit->ftotalbrutsum }]</b></td>
+    <td class="edittext" align="right"><b>[{ $edit->getFormattedTotalBrutSum() }]</b></td>
     <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
     </tr>
     <tr>
     <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_DISCOUNT" }]&nbsp;&nbsp;</td>
-    <td class="edittext" align="right"><b>- [{ $edit->fdiscount }]</b></td>
+    <td class="edittext" align="right"><b>- [{ $edit->getFormattedDiscount() }]</b></td>
     <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
     </tr>
     <tr>
     <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_INETTO" }]</td>
-    <td class="edittext" align="right"><b>[{ $edit->ftotalnetsum }]</b></td>
+    <td class="edittext" align="right"><b>[{ $edit->getFormattedTotalNetSum() }]</b></td>
     <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
     </tr>
     [{foreach key=iVat from=$aProductVats item=dVatPrice}]
@@ -174,30 +174,30 @@ function StornoThisArticle( sID)
     [{if $edit->totalvouchers}]
     <tr>
     <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_VOUCHERS" }]</td>
-    <td class="edittext" align="right"><b>- [{ $edit->totalvouchers }]</b></td>
+    <td class="edittext" align="right"><b>- [{ $edit->getFormattedTotalVouchers() }]</b></td>
     <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
     </tr>
     [{/if}]
     <tr>
     <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_DELIVERYCOST" }]&nbsp;&nbsp;</td>
-    <td class="edittext" align="right"><b>[{ $edit->fdelcost }]</b></td>
+    <td class="edittext" align="right"><b>[{ $edit->getFormattedeliveryCost() }]</b></td>
     <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
     </tr>
     <tr>
     <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_PAYCOST" }]&nbsp;&nbsp;</td>
-    <td class="edittext" align="right"><b>[{ $edit->fpaycost }]</b></td>
+    <td class="edittext" align="right"><b>[{ $edit->getFormattedPayCost()}]</b></td>
     <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
     </tr>
     [{if $edit->oxorder__oxwrapcost->value }]
     <tr>
     <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_CARD" }]&nbsp;&nbsp;</td>
-    <td class="edittext" align="right"><b>[{ $edit->fwrapcost }]</b></td>
+    <td class="edittext" align="right"><b>[{ $edit->getFormattedWrapCost() }]</b></td>
     <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
     </tr>
     [{/if}]
     <tr>
     <td class="edittext" height="25">[{ oxmultilang ident="GENERAL_SUMTOTAL" }]&nbsp;&nbsp;</td>
-    <td class="edittext" align="right"><b>[{ $edit->ftotalorder }]</b></td>
+    <td class="edittext" align="right"><b>[{ $edit->getFormattedTotalOrderSum() }]</b></td>
     <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
     </tr>
     </table>
@@ -206,8 +206,8 @@ function StornoThisArticle( sID)
 <br />
 
 
-    <form method="POST" name="searchForProduct" id="searchForProduct" action="[{ $shop->selflink }]">
-      [{ $shop->hiddensid }]
+    <form method="POST" name="searchForProduct" id="searchForProduct" action="[{ $oViewConf->getSelfLink() }]">
+      [{ $oViewConf->getHiddenSid() }]
       <input type="hidden" name="oxid" value="[{ $oxid }]">
       <input type="hidden" name="cl" value="order_article">
       <input type="hidden" name="cur" value="[{ $oCurr->id }]">
@@ -232,8 +232,8 @@ function StornoThisArticle( sID)
     [{if $oSearchProd }]
     [{assign var="oMainProd" value=$oView->getMainProduct() }]
 
-    <form method="POST" name="AddThisArticle" id="AddThisArticle" action="[{ $shop->selflink }]">
-    [{ $shop->hiddensid }]
+    <form method="POST" name="AddThisArticle" id="AddThisArticle" action="[{ $oViewConf->getSelfLink() }]">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="cur" value="[{ $oCurr->id }]">
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="order_article">

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: tools_main.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: tools_main.php 32221 2010-12-22 12:36:39Z alfonsas $
  */
 
 /**
@@ -47,6 +47,9 @@ class Tools_Main extends oxAdminDetails
         $oAuthUser = oxNew( 'oxuser' );
         $oAuthUser->loadAdminUser();
         $this->_aViewData["blIsMallAdmin"] = $oAuthUser->oxuser__oxrights->value == "malladmin";
+        
+        $blShowUpdateViews = $this->getConfig()->getConfigParam( 'blShowUpdateViews' );
+        $this->_aViewData['showViewUpdate'] = ( isset( $blShowUpdateViews ) && !$blShowUpdateViews ) ? false : true;
 
         return "tools_main.tpl";
     }

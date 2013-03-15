@@ -20,15 +20,22 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxinputvalidator.php 27229 2010-04-15 11:57:07Z arvydas $
+ * @version   SVN: $Id: oxinputvalidator.php 30463 2010-10-21 14:31:55Z arvydas $
  */
 
 /**
  * Calss for validating input
  *
  */
-class oxInputValidator
+class oxInputValidator extends oxSuperCfg
 {
+    /**
+     * oxInputValidator instance
+     *
+     * @var oxDeliveryList
+     */
+    private static $_instance = null;
+
     /**
      * Required fields for credit card payment
      *
@@ -41,6 +48,13 @@ class oxInputValidator
                                            'kkname',
                                            'kkpruef'
                                           );
+
+    /**
+     * Input validation errors
+     *
+     * @var array
+     */
+    protected $_aInputValidationErrors = array();
 
     /**
      * Possible credit card types
@@ -76,6 +90,30 @@ class oxInputValidator
      */
     public function __construct()
     {
+    }
+
+    /**
+     * Returns oxInputValidator instance
+     *
+     * @return oxInputValidator
+     */
+    static function getInstance()
+    {
+        if ( defined('OXID_PHP_UNIT')) {
+            if ( ($oClassMod = modInstances::getMod(__CLASS__))  && is_object($oClassMod) ) {
+                return $oClassMod;
+            } else {
+                 $inst = oxNew( 'oxInputValidator' );
+                 modInstances::addMod( __CLASS__, $inst );
+                 return $inst;
+            }
+        }
+
+        if ( !isset( self::$_instance ) ) {
+            // allow modules
+            self::$_instance = oxNew( 'oxInputValidator' );
+        }
+        return self::$_instance;
     }
 
     /**
@@ -173,5 +211,306 @@ class oxInputValidator
         }
 
         return $blOK;
+    }
+
+    /**
+     * Used to collect user validation errors. This method is called from all of
+     * the input checking functionality to report found error.
+     *
+     * @param string    $sFieldName field name
+     * @param exception $oErr       exception
+     *
+     * @return exception
+     */
+    protected function _addValidationError( $sFieldName, $oErr )
+    {
+        return $this->_aInputValidationErrors[$sFieldName][] = $oErr;
+    }
+
+    /**
+     * Checks if user name does not break logics:
+     *  - if user wants to UPDATE his login name, performing check if
+     *    user entered correct password
+     *  - additionally checking for user name dublicates. This is usually
+     *    needed when creating new users.
+     * On any error exception is thrown.
+     *
+     * @param oxuser $oUser       active user
+     * @param string $sLogin      user preferred login name
+     * @param array  $aInvAddress user information
+     *
+     * @return string login name
+     */
+    public function checkLogin( $oUser, $sLogin, $aInvAddress )
+    {
+        // check only for users with password during registration
+        // if user wants to change user name - we must check if passwords are ok before changing
+        if ( $oUser->oxuser__oxpassword->value && $sLogin != $oUser->oxuser__oxusername->value ) {
+
+            // on this case password must be taken directly from request
+            $sNewPass = (isset( $aInvAddress['oxuser__oxpassword']) && $aInvAddress['oxuser__oxpassword'] )?$aInvAddress['oxuser__oxpassword']:oxConfig::getParameter( 'user_password' );
+            if ( !$sNewPass ) {
+
+                // 1. user forgot to enter password
+                $oEx = oxNew( 'oxInputException' );
+                $oEx->setMessage('EXCEPTION_INPUT_NOTALLFIELDS');
+
+                return $this->_addValidationError( "oxuser__oxpassword", $oEx );
+            } else {
+
+                // 2. entered wrong password
+                if ( !$oUser->isSamePassword( $sNewPass ) ) {
+                    $oEx = oxNew( 'oxUserException' );
+                    $oEx->setMessage('EXCEPTION_USER_PWDDONTMATCH');
+
+                    return $this->_addValidationError( "oxuser__oxpassword", $oEx );
+                }
+            }
+        }
+
+        if ( $oUser->checkIfEmailExists( $sLogin ) ) {
+            //if exists then we do now allow to do that
+            $oEx = oxNew( 'oxUserException' );
+            $oLang = oxLang::getInstance();
+            $oEx->setMessage( sprintf( $oLang->translateString( 'EXCEPTION_USER_USEREXISTS', $oLang->getTplLanguage() ), $sLogin ) );
+
+            return $this->_addValidationError( "oxuser__oxusername", $oEx );
+        }
+    }
+
+    /**
+     * Checks if email (used as login) is not empty and is
+     * valid.
+     *
+     * @param oxuser $oUser  active user
+     * @param string $sEmail user email/login
+     *
+     * @return null
+     */
+    public function checkEmail(  $oUser, $sEmail )
+    {
+        // missing email address (user login name) ?
+        if ( !$sEmail ) {
+            $oEx = oxNew( 'oxInputException' );
+            $oEx->setMessage('EXCEPTION_INPUT_NOTALLFIELDS');
+
+            return $this->_addValidationError( "oxuser__oxusername", $oEx );
+        }
+
+        // invalid email address ?
+        if ( !oxUtils::getInstance()->isValidEmail( $sEmail ) ) {
+            $oEx = oxNew( 'oxInputException' );
+            $oEx->setMessage( 'EXCEPTION_INPUT_NOVALIDEMAIL' );
+
+            return $this->_addValidationError( "oxuser__oxusername", $oEx );
+        }
+    }
+
+    /**
+     * Checking if user password is fine. In case of error
+     * exception is thrown
+     *
+     * @param oxuser $oUser         active user
+     * @param string $sNewPass      new user password
+     * @param string $sConfPass     retyped user password
+     * @param bool   $blCheckLenght option to check password lenght
+     *
+     * @return null
+     */
+    public function checkPassword( $oUser, $sNewPass, $sConfPass, $blCheckLenght = false )
+    {
+        //  no password at all
+        if ( $blCheckLenght && getStr()->strlen( $sNewPass ) == 0 ) {
+            $oEx = oxNew( 'oxInputException' );
+            $oEx->setMessage('EXCEPTION_INPUT_EMPTYPASS');
+
+            return $this->_addValidationError( "oxuser__oxpassword", $oEx );
+        }
+
+        //  password is too short ?
+        if ( $blCheckLenght &&  getStr()->strlen( $sNewPass ) < 6 ) {
+            $oEx = oxNew( 'oxInputException' );
+            $oEx->setMessage('EXCEPTION_INPUT_PASSTOOSHORT');
+
+            return $this->_addValidationError( "oxuser__oxpassword", $oEx );
+        }
+
+        //  passwords do not match ?
+        if ( $sNewPass != $sConfPass ) {
+            $oEx = oxNew( 'oxUserException' );
+            $oEx->setMessage('EXCEPTION_USER_PWDDONTMATCH');
+
+            return $this->_addValidationError( "oxuser__oxpassword", $oEx );
+        }
+    }
+
+    /**
+     * Checking if all required fields were filled. In case of error
+     * exception is thrown
+     *
+     * @param oxuser $oUser       active user
+     * @param array  $aInvAddress billing address
+     * @param array  $aDelAddress delivery address
+     *
+     * @return null
+     */
+    public function checkRequiredFields( $oUser, $aInvAddress, $aDelAddress )
+    {
+        // collecting info about required fields
+        $aMustFields = array( 'oxuser__oxfname',
+                              'oxuser__oxlname',
+                              'oxuser__oxstreetnr',
+                              'oxuser__oxstreet',
+                              'oxuser__oxzip',
+                              'oxuser__oxcity' );
+
+        // config shoud override default fields
+        $aMustFillFields = $this->getConfig()->getConfigParam( 'aMustFillFields' );
+        if ( is_array( $aMustFillFields ) ) {
+            $aMustFields = $aMustFillFields;
+        }
+
+        // assuring data to check
+        $aInvAddress = is_array( $aInvAddress )?$aInvAddress:array();
+        $aDelAddress = is_array( $aDelAddress )?$aDelAddress:array();
+
+        // collecting fields
+        $aFields = array_merge( $aInvAddress, $aDelAddress );
+
+
+        // check delivery address ?
+        $blCheckDel = false;
+        if ( count( $aDelAddress ) ) {
+            $blCheckDel = true;
+        }
+
+        // checking
+        foreach ( $aMustFields as $sMustField ) {
+
+            // A. not nice, but we keep all fields info in one config array, and must support baskwards compat.
+            if ( !$blCheckDel && strpos( $sMustField, 'oxaddress__' ) === 0 ) {
+                continue;
+            }
+
+            if ( isset( $aFields[$sMustField] ) && is_array( $aFields[$sMustField] ) ) {
+                $this->checkRequiredArrayFields( $oUser, $sMustField, $aFields[$sMustField] );
+            } elseif ( !isset( $aFields[$sMustField] ) || !trim( $aFields[$sMustField] ) ) {
+                   $oEx = oxNew( 'oxInputException' );
+                   $oEx->setMessage('EXCEPTION_INPUT_NOTALLFIELDS');
+
+                   $this->_addValidationError( "oxuser__oxpassword", $oEx );
+            }
+        }
+    }
+
+    /**
+     * Checks if all values are filled up
+     *
+     * @param oxuser $oUser        active user
+     * @param string $sFieldName   checking field name
+     * @param array  $aFieldValues field values
+     *
+     * @return null
+     */
+    public function checkRequiredArrayFields( $oUser, $sFieldName, $aFieldValues )
+    {
+        foreach ( $aFieldValues as $sValue ) {
+            if ( !trim( $sValue ) ) {
+                $oEx = oxNew( 'oxInputException' );
+                $oEx->setMessage('EXCEPTION_INPUT_NOTALLFIELDS');
+
+                $this->_addValidationError( $sFieldName, $oEx );
+            }
+        }
+    }
+
+    /**
+     * Checks if user defined countries (billing and delivery) are active
+     *
+     * @param oxuser $oUser       active user
+     * @param array  $aInvAddress billing address info
+     * @param array  $aDelAddress delivery address info
+     *
+     * @return null
+     */
+    public function checkCountries( $oUser, $aInvAddress, $aDelAddress )
+    {
+        $sBillCtry = isset( $aInvAddress['oxuser__oxcountryid'] ) ? $aInvAddress['oxuser__oxcountryid'] : null;
+        $sDelCtry  = isset( $aDelAddress['oxaddress__oxcountryid'] ) ? $aDelAddress['oxaddress__oxcountryid'] : null;
+
+        if ( $sBillCtry || $sDelCtry ) {
+            $oDb = oxDb::getDb();
+
+            if ( ( $sBillCtry == $sDelCtry ) || ( !$sBillCtry && $sDelCtry ) || ( $sBillCtry && !$sDelCtry ) ) {
+                $sBillCtry = $sBillCtry ? $sBillCtry : $sDelCtry;
+                $sQ = "select oxactive from oxcountry where oxid = ".$oDb->quote( $sBillCtry )." ";
+            } else {
+                $sQ = "select ( select oxactive from oxcountry where oxid = ".$oDb->quote( $sBillCtry )." ) and
+                              ( select oxactive from oxcountry where oxid = ".$oDb->quote( $sDelCtry )." ) ";
+            }
+
+            if ( !$oDb->getOne( $sQ ) ) {
+                $oEx = oxNew( 'oxUserException' );
+                $oEx->setMessage('EXCEPTION_INPUT_NOTALLFIELDS' );
+
+                $this->_addValidationError( "oxuser__oxpassword", $oEx );
+            }
+        }
+    }
+
+    /**
+     * Checks if user passed VAT id is valid. Exception is thrown
+     * if id is not valid
+     *
+     * @param oxuser $oUser       active user
+     * @param array  $aInvAddress user input array
+     *
+     * @return null
+     */
+    public function checkVatId( $oUser, $aInvAddress )
+    {
+        if ( $aInvAddress['oxuser__oxustid'] ) {
+
+            if (!($sCountryId = $aInvAddress['oxuser__oxcountryid'])) {
+                // no country
+                return;
+            }
+            $oCountry = oxNew('oxcountry');
+            if ( $oCountry->load( $sCountryId ) && $oCountry->isForeignCountry() && $oCountry->isInEU() ) {
+
+                    if ( strncmp( $aInvAddress['oxuser__oxustid'], $oCountry->oxcountry__oxisoalpha2->value, 2 ) ) {
+                        $oEx = oxNew( 'oxInputException' );
+                        $oEx->setMessage( 'VAT_MESSAGE_ID_NOT_VALID' );
+
+                        return $this->_addValidationError( "oxuser__oxustid", $oEx );
+                    }
+
+            }
+        }
+    }
+
+    /**
+     * Returns true if input validation for current field and rule reported an error
+     *
+     * @return bool
+     */
+    public function getFieldValidationErrors()
+    {
+        return $this->_aInputValidationErrors;
+    }
+
+    /**
+     * Returns first user input validation error
+     *
+     * @return exception
+     */
+    public function getFirstValidationError()
+    {
+        $oErr = null;
+        $aErr = reset( $this->_aInputValidationErrors );
+        if ( is_array( $aErr ) ) {
+            $oErr = reset( $aErr );
+        }
+        return $oErr;
     }
 }

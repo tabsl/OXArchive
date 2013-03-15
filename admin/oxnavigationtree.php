@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxnavigationtree.php 32618 2011-01-20 15:24:18Z sarunas $
+ * @version   SVN: $Id: oxnavigationtree.php 32885 2011-02-03 13:05:07Z sarunas $
  */
 
 /**
@@ -580,7 +580,7 @@ class OxNavigationTree extends oxSuperCfg
      *
      * @return string
      */
-    protected function _processCachedFile($sCacheContents)
+    protected function _processCachedFile( $sCacheContents )
     {
         return $sCacheContents;
     }
@@ -779,7 +779,7 @@ class OxNavigationTree extends oxSuperCfg
         } else {
             $sURL = trim( $myConfig->getConfigParam( 'sShopURL' ), '/' ).'/admin';
         }
-        return oxUtilsUrl::getInstance()->appendParamSeparator($this->getSession()->url("{$sURL}/index.php"));
+        return oxUtilsUrl::getInstance()->processUrl("{$sURL}/index.php", false);
     }
 
     /**

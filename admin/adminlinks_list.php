@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: adminlinks_list.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: adminlinks_list.php 31991 2010-12-17 14:04:49Z sarunas $
  */
 
 /**
@@ -45,20 +45,23 @@ class Adminlinks_List extends oxAdminList
     protected $_sListClass = 'oxlinks';
 
     /**
-     * Sets default list sorting field (oxinsert) and executes parent method parent::Init().
+     * Default SQL sorting parameter (default null).
      *
-     * @return null
+     * @var string
      */
-    public function init()
-    {
-        $this->_sDefSort = "oxinsert";
-        $sSortCol = oxConfig::getParameter( 'sort' );
+    protected $_sDefSortField = 'oxinsert';
 
-        if ( !$sSortCol || $sSortCol == $this->_sDefSort ) {
+    /**
+     * Returns sorting fields array
+     *
+     * @return array
+     */
+    public function getListSorting()
+    {
+        $aSorting = parent::getListSorting();
+        if ( isset( $aSorting["oxlinks"][$this->_sDefSortField] )) {
             $this->_blDesc = true;
         }
-
-        parent::Init();
-
+        return $aSorting;
     }
 }

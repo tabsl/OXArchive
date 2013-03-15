@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxwrapping.php 28590 2010-06-23 11:03:50Z alfonsas $
+ * @version   SVN: $Id: oxwrapping.php 33010 2011-02-07 16:31:41Z alfonsas $
  */
 
 /**
@@ -71,31 +71,6 @@ class oxWrapping extends oxI18n
     }
 
     /**
-     * Magic getter, deals with deprecated values
-     *
-     * @param string $sName Variable name
-     *
-     * @return mixed
-     */
-    public function __get($sName)
-    {
-        switch ( $sName ) {
-            case 'fprice':
-                $sValue = $this->getFPrice();
-                break;
-            default:
-                return $sValue = parent::__get( $sName );
-                break;
-                break;
-                break;
-                break;
-                break;
-        }
-
-        return $sValue;
-    }
-
-    /**
      * Wrapping Vat setter
      *
      * @param double $dVat vat
@@ -121,9 +96,6 @@ class oxWrapping extends oxI18n
 
         // setting image path
         $myConfig = $this->getConfig();
-        // this will be removed later
-        $this->dimagedir       = $myConfig->getDynImageDir( $this->oxwrapping__oxshopid->value );
-        $this->nossl_dimagedir = $myConfig->getDynImageDir( $this->oxwrapping__oxshopid->value, true );
     }
 
     /**
@@ -159,7 +131,7 @@ class oxWrapping extends oxI18n
         $oEntries = oxNew( 'oxlist' );
         $oEntries->init( 'oxwrapping' );
         $sWrappingViewName = getViewName( 'oxwrapping' );
-        $sSelect =  "select * from $sWrappingViewName where $sWrappingViewName.".$this->getSqlFieldName( 'oxactive' )." = '1' and $sWrappingViewName.oxtype = " . oxDb::getDb()->quote( $sWrapType );
+        $sSelect =  "select * from $sWrappingViewName where $sWrappingViewName.oxactive = '1' and $sWrappingViewName.oxtype = " . oxDb::getDb()->quote( $sWrapType );
         $oEntries->selectString( $sSelect );
 
         return $oEntries;
@@ -175,7 +147,7 @@ class oxWrapping extends oxI18n
     public function getWrappingCount( $sWrapType )
     {
         $sWrappingViewName = getViewName( 'oxwrapping' );
-        $sQ = "select count(*) from $sWrappingViewName where $sWrappingViewName.".$this->getSqlFieldName( 'oxactive' )." = '1' and $sWrappingViewName.oxtype = " . oxDb::getDb()->quote( $sWrapType );
+        $sQ = "select count(*) from $sWrappingViewName where $sWrappingViewName.oxactive = '1' and $sWrappingViewName.oxtype = " . oxDb::getDb()->quote( $sWrapType );
         return (int) oxDb::getDb()->getOne( $sQ );
     }
 
@@ -196,7 +168,7 @@ class oxWrapping extends oxI18n
      */
     public function getNoSslDynImageDir()
     {
-        return $this->getConfig()->getDynImageDir( $this->oxwrapping__oxshopid->value, true );
+        return $this->getConfig()->getPictureUrl(null, false, false, null, $this->oxwrapping__oxshopid->value);
     }
 
     /**
@@ -206,7 +178,7 @@ class oxWrapping extends oxI18n
      */
     public function getPictureUrl()
     {
-        return $this->getConfig()->getDynImageDir( $this->oxwrapping__oxshopid->value );
+        return $this->getConfig()->getPictureUrl(null, false, $this->getConfig()->isSsl(), null, $this->oxwrapping__oxshopid->value );
     }
 
 }

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxmanufacturer.php 27908 2010-05-25 14:54:30Z arvydas $
+ * @version   SVN: $Id: oxmanufacturer.php 32881 2011-02-03 11:45:36Z sarunas $
  */
 
 /**
@@ -186,30 +186,6 @@ class oxManufacturer extends oxI18n implements oxIUrl
     }
 
     /**
-     * getRootManufacturer creates root manufacturer object
-     *
-     * @param integer $iLang language
-     *
-     * @static
-     * @deprecated use oxmanufacturer::load( 'root' ) instead
-     * @access public
-     * @return void
-     */
-    public static function getRootManufacturer( $iLang = null)
-    {
-        $iLang = isset( $iLang ) ? $iLang : oxLang::getInstance()->getBaseLanguage();
-        if ( !isset( self::$_aRootManufacturer[$iLang] ) ) {
-            self::$_aRootManufacturer[$iLang] = false;
-
-            $oObject = oxNew( 'oxmanufacturer' );
-            if ( $oObject->loadInLang( $iLang, 'root' ) ) {
-                self::$_aRootManufacturer[$iLang] = $oObject;
-            }
-        }
-        return self::$_aRootManufacturer[$iLang];
-    }
-
-    /**
      * Returns raw manufacturer seo url
      *
      * @param int $iLang language id
@@ -284,7 +260,7 @@ class oxManufacturer extends oxI18n implements oxIUrl
             $iLang = $this->getLanguage();
         }
 
-        return oxUtilsUrl::getInstance()->processStdUrl( $this->getBaseStdLink( $iLang ), $aParams, $iLang, $iLang != $this->getLanguage() );
+        return oxUtilsUrl::getInstance()->processUrl( $this->getBaseStdLink( $iLang ), true, $aParams, $iLang);
     }
 
     /**
@@ -359,16 +335,6 @@ class oxManufacturer extends oxI18n implements oxIUrl
     }
 
     /**
-     * Returns article picture
-     *
-     * @return strin
-     */
-    public function getIconUrl()
-    {
-        return $this->getConfig()->getIconUrl( 'icon/'.$this->oxmanufacturers__oxicon->value );
-    }
-
-    /**
      * Empty method, called in templates when manufacturer is used in same code like category
      *
      * @return null
@@ -392,4 +358,28 @@ class oxManufacturer extends oxI18n implements oxIUrl
         }
         return false;
     }
+
+    /**
+     * Returns article picture
+     *
+     * @return strin
+     */
+    public function getIconUrl()
+    {
+        if ( $this->oxmanufacturers__oxicon->value ) {
+           return $this->getConfig()->getIconUrl( 'icon/'.$this->oxmanufacturers__oxicon->value );
+        }
+    }
+
+    /**
+     * Returns category thumbnail picture url if exist, false - if not
+     *
+     * @return mixed
+     */
+    public function getThumbUrl()
+    {
+        return false;
+    }
+
+
 }

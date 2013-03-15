@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: wrapping.php 33715 2011-03-09 16:17:08Z linas.kukulskis $
+ * @version   SVN: $Id: wrapping.php 33858 2011-03-21 12:43:20Z sarunas $
  */
 
 /**
@@ -32,7 +32,7 @@ class Wrapping extends oxUBase
      *
      * @var string
      */
-    protected $_sThisTemplate = 'wrapping.tpl';
+    protected $_sThisTemplate = 'page/checkout/wrapping.tpl';
 
     /**
      * Basket items array
@@ -54,28 +54,6 @@ class Wrapping extends oxUBase
      * @var oxlist
      */
     protected $_oCards = null;
-
-    /**
-     * Executes parent::render(), loads basket article objects,
-     * forms wrapping and gift cards list. Returns name of template
-     * file to render wishlist::_sThisTemplate.
-     *
-     * Template variables:
-     * <b>basketitemlist</b>, <b>wrappings</b>, <b>cards</b>
-     *
-     * @return  string  $this->_sThisTemplate   current template file name
-     */
-    public function render()
-    {
-        parent::render();
-
-        //for older templates
-        $this->_aViewData['basketitemlist'] = $this->getBasketItems();
-        $this->_aViewData['wrappings']      = $this->getWrappingList();
-        $this->_aViewData['cards']          = $this->getCardList();
-
-        return $this->_sThisTemplate;
-    }
 
     /**
      * Returns array of shopping basket articles

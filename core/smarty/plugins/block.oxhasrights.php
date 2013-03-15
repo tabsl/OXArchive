@@ -19,7 +19,7 @@
  * @package   smarty_plugins
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: block.oxhasrights.php 29400 2010-08-18 08:00:02Z sarunas $
+ * @version   SVN: $Id: block.oxhasrights.php 32829 2011-01-31 15:44:48Z sarunas $
  */
 
 /**
@@ -32,10 +32,11 @@
  * @param array  $params  params
  * @param string $content contents of the block
  * @param Smarty &$smarty clever simulation of a method
+ * @param bool   &$repeat repeat
  *
  * @return string $content re-formatted
  */
-function smarty_block_oxhasrights( $params, $content, &$smarty )
+function smarty_block_oxhasrights( $params, $content, &$smarty, &$repeat )
 {
         return $content;
 

@@ -3,7 +3,8 @@
     [{foreach from=$oxcmp_news item=oxcmp_news name=newsList}]
      <dt>
         <a id="test_newsTitle_[{$smarty.foreach.newsList.iteration}]" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=news" }]#[{$oxcmp_news->oxnews__oxid->value}]">
-          [{ $oxcmp_news->oxnews__oxlongdesc->value|strip_tags|oxtruncate:100 }]
+          [{oxeval var=$oxcmp_news->oxnews__oxlongdesc assign='_sNewsItem' force=1}]
+          [{ $_sNewsItem|strip_tags|oxtruncate:100 }]
         </a>
      </dt>
      <dd>

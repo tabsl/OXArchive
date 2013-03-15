@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: deliveryset_payment.inc.php 25640 2010-02-05 06:42:24Z alfonsas $
+ * @version   SVN: $Id: deliveryset_payment.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -50,7 +50,7 @@ class ajaxComponent extends ajaxListComponent
         $sId      = oxConfig::getParameter( 'oxid' );
         $sSynchId = oxConfig::getParameter( 'synchoxid' );
 
-        $sPayTable = getViewName('oxpayments');
+        $sPayTable = $this->_getViewName('oxpayments');
 
         // category selected or not ?
         if ( !$sId) {
@@ -99,7 +99,7 @@ class ajaxComponent extends ajaxListComponent
 
         // adding
         if ( oxConfig::getParameter( 'all' ) ) {
-            $sPayTable = getViewName('oxpayments');
+            $sPayTable = $this->_getViewName('oxpayments');
             $aChosenSets = $this->_getAll( $this->_addFilter( "select $sPayTable.oxid ".$this->_getQuery() ) );
         }
         if ( $soxId && $soxId != "-1" && is_array( $aChosenSets ) ) {

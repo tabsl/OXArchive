@@ -1,7 +1,7 @@
 [{include file="headitem.tpl" box="list"
     title="NEWSLETTER_SEND_TITLE"|oxmultilangassign box="list"
     meta_refresh_sec="2"
-    meta_refresh_url="`$shop->selflink`&cl=newsletter_send&iStart=`$iStart`&user=`$user`&id=`$id`"
+    meta_refresh_url="`$oViewConf->getSelfLink()`&cl=newsletter_send&iStart=`$iStart`&user=`$user`&id=`$id`"
 }]
 
 <script type="text/javascript">
@@ -17,16 +17,8 @@ window.onload = function ()
 </script>
 <body>
 
-<form name="search" id="search" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
-    <input type="hidden" name="cl" value="pricealarm_list">
-    <input type="hidden" name="lstrt" value="[{ $lstrt }]">
-    <input type="hidden" name="sort" value="[{ $sort }]">
-    <input type="hidden" name="actedit" value="[{ $actedit }]">
-    <input type="hidden" name="oxid" value="[{ $oxid }]">
-    <input type="hidden" name="fnc" value="">
-    <input type="hidden" name="language" value="[{ $actlang }]">
-    <input type="hidden" name="editlanguage" value="[{ $actlang }]">
+<form name="search" id="search" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{include file="_formparams.tpl" cl="pricealarm_list" lstrt=$lstrt actedit=$actedit oxid=$oxid fnc="" language=$actlang editlanguage=$actlang}]
 </form>
 
 <div class="liste">

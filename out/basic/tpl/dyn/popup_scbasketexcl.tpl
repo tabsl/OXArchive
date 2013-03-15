@@ -1,4 +1,4 @@
-[{if $scRootCatChanged && $oxcmp_basket->getContents()}]
+[{if $oView->isRootCatChanged() && $oxcmp_basket->getContents()}]
 <div id="popup" class="popup">
 
     <strong>[{ oxmultilang ident="BASKET_EXCLUDE_HEAD" }]</strong>
@@ -11,7 +11,7 @@
         [{ $oViewConf->getNavFormParams() }]
         <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
         <input type="hidden" name="fnc" value="executeuserchoice">
-        <input type="hidden" name="tpl" value="[{$tpl}]">
+        <input type="hidden" name="tpl" value="[{$oViewConf->getActTplName()}]">
         [{if $oView->getArticleId()}]
           <input type="hidden" name="aid" value="[{$oView->getArticleId()}]">
         [{/if}]

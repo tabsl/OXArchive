@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: tag.php 31277 2010-11-26 13:20:08Z alfonsas $
+ * @version   SVN: $Id: tag.php 33307 2011-02-17 10:31:11Z sarunas $
  */
 
 /**
@@ -76,10 +76,6 @@ class Tag extends aList
     /**
      * Executes parent::render(), loads article list according active tag
      *
-     * Template variables:
-     * <b>articlelist</b>, <b>pageNavigation</b>, <b>subcatlist</b>,
-     * <b>meta_keywords</b>, <b>meta_description</b>
-     *
      * @return  string  $this->_sThisTemplate   current template file name
      */
     public function render()
@@ -94,14 +90,6 @@ class Tag extends aList
         if ( !$oArticleList || count( $oArticleList ) < 1 ) {
             error_404_handler();
         }
-
-        $this->_aViewData['articlelist']       = $oArticleList;
-        $this->_aViewData['title']             = $this->getTitle();
-        $this->_aViewData['template_location'] = $this->getTemplateLocation();
-        $this->_aViewData['searchtag']         = $this->getTag();
-
-        $this->_aViewData['pageNavigation']    = $this->getPageNavigation();
-        $this->_aViewData['actCategory']       = $this->getActiveCategory();
 
         // processing list articles
         $this->_processListArticles();
@@ -147,7 +135,7 @@ class Tag extends aList
         $iNrofCatArticles = (int) $this->getConfig()->getConfigParam( 'iNrofCatArticles' );
         $iNrofCatArticles = $iNrofCatArticles?$iNrofCatArticles:1;
         $oArtList = oxNew( 'oxarticlelist' );
-        $oArtList->setSqlLimit( $iNrofCatArticles * $this->getActPage(), $iNrofCatArticles );
+        $oArtList->setSqlLimit( $iNrofCatArticles * $this->_getRequestPageNr(), $iNrofCatArticles );
         $oArtList->setCustomSorting( $this->getSortingSql( 'oxtags' ) );
 
         // load the articles
@@ -286,26 +274,6 @@ class Tag extends aList
     }
 
     /**
-     * Template variable getter. Returns template location
-     *
-     * @deprecated use tag::getTreePath() and adjust template
-     *
-     * @return string
-     */
-    public function getTemplateLocation()
-    {
-        if ( $this->_sTemplateLocation === null ) {
-            $this->_sTemplateLocation = false;
-            if ( ( $sTag = $this->getTag() ) ) {
-                $oStr = getStr();
-                $sTitle = $oStr->ucfirst( $sTag );
-                $this->_sTemplateLocation = oxLang::getInstance()->translateString('TAGS')." / ".$oStr->htmlspecialchars( $sTitle );
-            }
-        }
-        return $this->_sTemplateLocation;
-    }
-
-    /**
      * Template variable getter. Returns category path array
      *
      * @return array
@@ -378,4 +346,24 @@ class Tag extends aList
             return oxSeoEncoderTag::getInstance()->getTagUrl( $sTag );
         }
     }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aCatPath = array();
+
+        $aCatPath['title'] = oxLang::getInstance()->translateString( 'TAGS', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aCatPath;
+
+        $aCatPath['title'] = $this->getTitle();
+        $aPaths[] = $aCatPath;
+
+        return $aPaths;
+    }
+
 }

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account_order.php 28893 2010-07-20 13:29:11Z vilma $
+ * @version   SVN: $Id: account_order.php 32923 2011-02-04 14:35:22Z vilma $
  */
 
 /**
@@ -48,7 +48,7 @@ class Account_Order extends Account
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'account_order.tpl';
+    protected $_sThisTemplate = 'page/account/order.tpl';
 
     /**
      * collecting orders
@@ -69,9 +69,6 @@ class Account_Order extends Account
      * or if user is allready logged in - returns name of template
      * account_order::_sThisTemplate
      *
-     * Template variables:
-     * <b>orderlist</b>
-     *
      * @return string $_sThisTemplate current template file name
      */
     public function render()
@@ -83,12 +80,6 @@ class Account_Order extends Account
         if ( !$oUser ) {
             return $this->_sThisTemplate = $this->_sThisLoginTemplate;
         }
-
-        // Load Orderlist
-        $this->_aViewData['orderlist'] = $this->getOrderList();
-
-        // Load orders articles
-        $this->_aViewData['articlesList'] = $this->getOrderArticleList();
 
         return $this->_sThisTemplate;
     }
@@ -134,7 +125,6 @@ class Account_Order extends Account
                 $this->_aArticlesList->loadOrderArticles( $oOrdersList );
             }
         }
-
         return $this->_aArticlesList;
     }
 
@@ -149,5 +139,24 @@ class Account_Order extends Account
             $this->_oPageNavigation = $this->generatePageNavigation();
         }
         return $this->_oPageNavigation;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_MY_ACCOUNT', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_ORDER_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 }

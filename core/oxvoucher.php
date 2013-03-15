@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvoucher.php 28204 2010-06-08 06:36:11Z michael.keiluweit $
+ * @version   SVN: $Id: oxvoucher.php 32880 2011-02-03 11:45:17Z sarunas $
  */
 
 /**
@@ -780,22 +780,6 @@ class oxVoucher extends oxBase
                 break;
             case 'fVoucherdiscount':
                 return $this->oxvouchers__oxdiscount;
-                break;
-
-            // deprecated values for email templates
-            case 'oxmodvouchers__oxvouchernr':
-                return $this->oxvouchers__oxvouchernr;
-                break;
-            case 'oxmodvouchers__oxdiscounttype':
-                return $this->getSerie()->oxvoucherseries__oxdiscounttype;
-                break;
-            case 'oxmodvouchers__oxdiscount':
-                // former email templates are expecting type dependent discount values !!!
-                if ($this->getSerie()->oxvoucherseries__oxdiscounttype->value == 'absolute') {
-                    return $this->oxvouchers__oxdiscount;
-                } else {
-                    return $this->getSerie()->oxvoucherseries__oxdiscount;
-                }
                 break;
         }
         return parent::__get($sName);

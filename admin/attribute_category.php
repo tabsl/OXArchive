@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: attribute_category.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: attribute_category.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -41,8 +41,7 @@ class Attribute_Category extends oxAdminDetails
     {
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid");
-        $this->_aViewData["oxid"] =  $soxId;
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
 
             $aListAllIn = array();
         if ( $soxId != "-1" && isset( $soxId)) {

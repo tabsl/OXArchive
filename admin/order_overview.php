@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: order_overview.php 30860 2010-11-11 15:27:37Z arvydas $
+ * @version   SVN: $Id: order_overview.php 33467 2011-02-23 11:40:19Z arvydas.vapsva $
  */
 
 /**
@@ -46,7 +46,7 @@ class Order_Overview extends oxAdminDetails
         $oCur  = $myConfig->getActShopCurrencyObject();
         $oLang = oxLang::getInstance();
 
-        $soxId = oxConfig::getParameter( "oxid");
+        $soxId = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId)) {
             // load object
             $oOrder->load( $soxId);
@@ -74,7 +74,6 @@ class Order_Overview extends oxAdminDetails
         $this->_aViewData["afolder"] = $myConfig->getConfigParam( 'aOrderfolder' );
         $this->_aViewData["sfolder"] = $myConfig->getConfigParam( 'aOrderfolder' );
             $this->_aViewData["alangs"] = $oLang->getLanguageNames();
-
 
         $this->_aViewData["currency"] = $oCur;
 
@@ -132,7 +131,7 @@ class Order_Overview extends oxAdminDetails
      */
     public function createPDF()
     {
-        $soxId = oxConfig::getParameter( "oxid" );
+        $soxId = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId ) ) {
             // load object
             $oOrder = oxNew( "oxorder" );
@@ -221,7 +220,7 @@ class Order_Overview extends oxAdminDetails
     public function sendorder()
     {
         $oOrder = oxNew( "oxorder" );
-        if ( $oOrder->load( oxConfig::getParameter( "oxid" ) ) ) {
+        if ( $oOrder->load( $this->getEditObjectId() ) ) {
             $oOrder->oxorder__oxsenddate->setValue( date( "Y-m-d H:i:s", oxUtilsDate::getInstance()->getTime() ) );
             $oOrder->save();
 
@@ -250,7 +249,7 @@ class Order_Overview extends oxAdminDetails
     public function resetorder()
     {
         $oOrder = oxNew( "oxorder" );
-        if ( $oOrder->load( oxConfig::getParameter( "oxid" ) ) ) {
+        if ( $oOrder->load( $this->getEditObjectId() ) ) {
             $oOrder->oxorder__oxsenddate->setValue( "0000-00-00 00:00:00" );
             $oOrder->save();
         }
@@ -267,7 +266,7 @@ class Order_Overview extends oxAdminDetails
         //V #529: check if PDF invoice module is active
         if ( oxUtilsObject::getInstance()->isModuleActive( 'oxorder', 'myorder' ) ) {
             $oDb = oxDb::getDb();
-            $sOrderId = oxConfig::getParameter( "oxid" );
+            $sOrderId = $this->getEditObjectId();
             $sTable = getViewName( "oxorderarticles" );
             $sQ = "select count(oxid) from {$sTable} where oxorderid = ".$oDb->quote( $sOrderId )." and oxstorno = 0";
             $blCan = (bool) $oDb->getOne( $sQ );

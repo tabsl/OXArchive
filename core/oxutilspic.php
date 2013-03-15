@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilspic.php 31349 2010-11-30 16:03:36Z linas.kukulskis $
+ * @version   SVN: $Id: oxutilspic.php 32881 2011-02-03 11:45:36Z sarunas $
  */
 
 /**
@@ -116,7 +116,7 @@ class oxUtilsPic extends oxSuperCfg
      * deletes the given picutre and checks before if the picture is deletable
      *
      * @param string $sPicName        Name of picture file
-     * @param string $sAbsDynImageDir the absolute image diectory, where to delete the given image ($myConfig->getAbsDynImageDir())
+     * @param string $sAbsDynImageDir the absolute image diectory, where to delete the given image ($myConfig->getPictureDir(false))
      * @param string $sTable          in which table
      * @param string $sField          table field value
      *
@@ -135,7 +135,7 @@ class oxUtilsPic extends oxSuperCfg
      * Removes picture file from disk.
      *
      * @param string $sPicName        name of picture
-     * @param string $sAbsDynImageDir the absolute image diectory, where to delete the given image ($myConfig->getAbsDynImageDir())
+     * @param string $sAbsDynImageDir the absolute image diectory, where to delete the given image ($myConfig->getPictureDir(false))
      *
      * @return null
      */
@@ -197,7 +197,7 @@ class oxUtilsPic extends oxSuperCfg
      * @param string $sPicType        how does it call in $_FILE array
      * @param string $sPicDir         directory of pic
      * @param array  $aParams         new input text array
-     * @param string $sAbsDynImageDir the absolute image diectory, where to delete the given image ($myConfig->getAbsDynImageDir())
+     * @param string $sAbsDynImageDir the absolute image diectory, where to delete the given image ($myConfig->getPictureDir(false))
      *
      * @return null
      */
@@ -214,23 +214,6 @@ class oxUtilsPic extends oxSuperCfg
 
         return $blDelete;
     }
-
-    /**
-     * Returns icon name for give image filename.
-     * This function is deprecated. Use oxPictureHandler::getIconName() instead.
-     *
-     * @param string $sFilename file name(without path)
-     *
-     * @deprecated
-     *
-     * @return string
-     */
-    public function iconName( $sFilename )
-    {
-        $oPictureHandler = oxPictureHandler::getInstance();
-        return $oPictureHandler->getIconName( $sFilename );
-    }
-
 
     /**
      * Resizes and saves GIF image. This method was separated due to GIF transparency problems.

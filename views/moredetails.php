@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: moredetails.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: moredetails.php 32930 2011-02-04 16:08:29Z vilma $
  */
 
 /**
@@ -59,28 +59,6 @@ class MoreDetails extends oxUBase
      * @var int
      */
     protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXNOFOLLOW;
-
-    /**
-     * Fetches article object info, collects image gallery data,
-     * executes parent::render() and returns name of template to render
-     * moredetails::_sThisTemplate.
-     *
-     * Template variables:
-     * <b>product</b>, <b>actpicid</b>, <b>ArtPics</b>
-     *
-     * @return  string  $this->_sThisTemplate   current template file name
-     */
-    public function render()
-    {
-        $this->_aViewData['anid']     = $this->getProductId();
-        $this->_aViewData['actpicid'] = $this->getActPictureId();
-        $this->_aViewData['ArtPics']  = $this->getArtZoomPics();
-        $this->_aViewData['product']  = $this->getProduct();
-
-        parent::render();
-
-        return $this->_sThisTemplate;
-    }
 
     /**
      * Template variable getter. Returns current product id

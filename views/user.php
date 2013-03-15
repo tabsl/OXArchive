@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: user.php 29455 2010-08-20 10:44:48Z rimvydas.paskevicius $
+ * @version   SVN: $Id: user.php 33900 2011-03-22 17:06:44Z vilma $
  */
 
 /**
@@ -32,7 +32,7 @@ class User extends oxUBase
      * Current class template.
      * @var string
      */
-    protected $_sThisTemplate = 'user.tpl';
+    protected $_sThisTemplate = 'page/checkout/user.tpl';
 
     /**
      * Order step marker
@@ -103,109 +103,11 @@ class User extends oxUBase
 
         parent::render();
 
-        if ( $this->showShipAddress() && $oUser = $this->getUser()) {
-                $this->getDelAddress();
-                $this->_addFakeAddress( $oUser->getUserAddresses() );
-        }
-
-        $this->_aViewData['blshowshipaddress'] = $this->showShipAddress();
-        $this->_aViewData['delivadr']          = $this->getDelAddress();
-        $this->_aViewData['blnewssubscribed']  = $this->isNewsSubscribed();
-
-        $this->_aViewData['order_remark'] = $this->getOrderRemark();
-
-        $this->_aViewData['oxcountrylist'] = $this->getCountryList();
-
-        $this->_aViewData['iOption'] = $this->getLoginOption();
-
-        $this->_aViewData['blshownoregopt'] = $this->getShowNoRegOption();
-
-        $this->_aViewData['aMustFillFields'] = $this->getMustFillFields();
-
         if ( $myConfig->getConfigParam( "bl_showFbConnect" ) && !$this->getUser() ) {
              $this->_fillFormWithFacebookData();
         }
 
         return $this->_sThisTemplate;
-    }
-
-    /**
-     * Checks if product from wishlist is added
-     *
-     * @return $sWishId
-     */
-    protected function _getWishListId()
-    {
-        $this->_sWishId = null;
-        // check if we have to set it here
-        $oBasket = $this->getSession()->getBasket();
-        foreach ( $oBasket->getContents() as $oBasketItem ) {
-            if ( $this->_sWishId = $oBasketItem->getWishId() ) {
-                // stop on first found
-                break;
-            }
-        }
-        return $this->_sWishId;
-    }
-
-    /**
-     * Generats fake address for selection
-     *
-     * @param object $oAddresses user address list
-     *
-     * @return null
-     */
-    protected function _addFakeAddress( $oAddresses )
-    {
-        // generate selected no shipping address
-        $oDefAddress = new oxStdClass();
-        $oDefAddress->oxaddress__oxid = new oxStdClass();
-        $oDefAddress->oxaddress__oxid->value    = -2;
-
-        //T2009-08-19
-        //deprecated part
-        //no more fields are used in templates anymore
-        $oDefAddress->oxaddress__oxfname = new oxStdClass();
-        $oDefAddress->oxaddress__oxfname->value = '-';
-        $oDefAddress->oxaddress__oxlname = new oxStdClass();
-        $oDefAddress->oxaddress__oxlname->value = '-';
-        $oDefAddress->oxaddress__oxcity = new oxStdClass();
-        $oDefAddress->oxaddress__oxcity->value  = '-';
-
-        $oAddresses->offsetSet( $oAddresses->count(), $oDefAddress );
-    }
-
-    /**
-     * Returns active user object
-     *
-     * @return object
-     */
-    /*
-    protected function _getActiveUser()
-    {
-        if ( $this->_oUser === null ) {
-            $this->_oUser = false;
-            if ( $oUser = $this->getUser() ) {
-                $this->_oUser = $oUser;
-            }
-        }
-        return $this->_oUser;
-    }*/
-
-    /**
-     * Returns selected delivery address
-     *
-     * @return string
-     */
-    protected function _getSelectedAddress()
-    {
-        if ( $this->_sSelectedAddress === null ) {
-            $this->_sSelectedAddress = false;
-            if ( $oUser = $this->getUser() ) {
-                $this->_sSelectedAddress = $oUser->getSelectedAddress( $this->_getWishListId() );
-            }
-        }
-        return $this->_sSelectedAddress;
     }
 
     /**
@@ -242,6 +144,8 @@ class User extends oxUBase
 
     /**
      * Template variable getter. Returns country list
+     *
+     * @deprecated will be removed in future: use oxViewConfig::getCountryList()
      *
      * @return object
      */
@@ -302,86 +206,13 @@ class User extends oxUBase
     }
 
     /**
-     * Sets if show user shipping address
-     *
-     * @param bool $blShowShipAddress if TRUE - shipping address is shown
-     *
-     * @deprecated
-     *
-     * @return null
-     */
-    public function setShowShipAddress( $blShowShipAddress )
-    {
-        // does nothing, used for compat with old templates, remove it
-        // after removing old templates support
-    }
-
-    /**
      * Template variable getter. Checks to show or not shipping address entry form
      *
      * @return bool
      */
     public function showShipAddress()
     {
-
-        if ( $this->_blShowShipAddress === null ) {
-
-            $sAddressId = (int) oxConfig::getParameter( 'oxaddressid' );
-            $this->_blShowShipAddress = ( $sAddressId == -2 ) ? 0 : oxConfig::getParameter( 'blshowshipaddress' );
-
-            if ( ( $oUser = $this->getUser() ) ) {
-                // wishlist user address id
-                if ( $sWishId = $this->_getWishListId() ) {
-                    // if user didn't click on button to hide
-                    if ( $sWishId && oxSession::getVar( 'blshowshipaddress' ) === null ) {
-                        // opening address field for wishlist address information
-                        oxSession::setVar( 'blshowshipaddress', true );
-                        $this->_blShowShipAddress = true;
-                    }
-                }
-            }
-
-            if ( '-2' == $sAddressId ) {
-                // user decided to use paymetn address as delivery
-                oxSession::setVar( 'blshowshipaddress', 0 );
-                // unsetting delivery address
-                $this->_blShowShipAddress = false;
-            }
-        }
-
-        //if still not set then take it from session
-        if ( $this->_blShowShipAddress === null ) {
-            $this->_blShowShipAddress = oxSession::getVar( 'blshowshipaddress');
-        }
-
-        if ( $this->_blShowShipAddress === null ) {
-            $this->_blShowShipAddress = false;
-        }
-
-        return $this->_blShowShipAddress;
-    }
-
-    /**
-     * Template variable getter. Returns shipping address
-     *
-     * @return bool
-     */
-    public function getDelAddress()
-    {
-        if ( $this->_oDelAddress === null ) {
-            $this->_oDelAddress = false;
-            if ( $this->showShipAddress() ) {
-                $sAddressId = $this->_getSelectedAddress();
-                if ( $sAddressId && $sAddressId != '-1' ) {
-                    $oAdress = oxNew( 'oxaddress' );
-                    if ( $oAdress->load( $sAddressId ) ) {
-                        $this->_oDelAddress = $oAdress;
-                        $this->_aViewData['deladr'] = null;
-                    }
-                }
-            }
-        }
-        return $this->_oDelAddress;
+        return oxSession::getVar( 'blshowshipaddress' );
     }
 
     /**
@@ -397,7 +228,7 @@ class User extends oxUBase
         if ( $oFacebook->isConnected() ) {
             $aMe  = $oFacebook->api('/me');
 
-            $aInvAdr = $this->_aViewData['invadr'];
+            $aInvAdr = $this->getInvoiceAddress();
             $sCharset = oxLang::getInstance()->translateString( "charset" );
 
             // do not stop converting on error - just try to translit unknown symbols
@@ -411,7 +242,33 @@ class User extends oxUBase
                 $aInvAdr["oxuser__oxlname"] = iconv( 'UTF-8', $sCharset, $aMe["last_name"] );
             }
 
-            $this->_aViewData['invadr'] = $aInvAdr;
+            $this->setInvoiceAddress( $aInvAdr );
         }
+    }
+
+    /**
+     * Return true if user wants to change his billing address
+     *
+     * @return bool
+     */
+    public function modifyBillAddress()
+    {
+        return oxConfig::getParameter( 'blnewssubscribed' );
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_CHECKOUT_USER', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 }

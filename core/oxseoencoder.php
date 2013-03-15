@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoder.php 33228 2011-02-14 09:31:23Z arvydas.vapsva $
+ * @version   SVN: $Id: oxseoencoder.php 33661 2011-03-07 09:50:28Z sarunas $
  */
 
 /**
@@ -155,7 +155,10 @@ class oxSeoEncoder extends oxSuperCfg
      */
     protected function _processSeoUrl( $sSeoUrl, $sObjectId = null, $iLang = null, $blExclude = false )
     {
-        return $this->_getUniqueSeoUrl( $blExclude ? $sSeoUrl : $this->addLanguageParam( $sSeoUrl, $iLang ), $sObjectId, $iLang );
+        if (!$blExclude) {
+            $sSeoUrl = $this->addLanguageParam( $sSeoUrl, $iLang );
+        }
+        return $this->_getUniqueSeoUrl( $sSeoUrl, $sObjectId, $iLang );
     }
 
     /**
@@ -207,68 +210,6 @@ class oxSeoEncoder extends oxSuperCfg
                  oxlang = {$iLang} and oxexpired = '1'";
         $sQ   = "replace oxseohistory ( oxobjectid, oxident, oxshopid, oxlang, oxinsert ) {$sSub}";
         $oDb->execute( $sQ );
-    }
-
-    /**
-     * Returns string for SEO url with specific parameters (language,
-     * currency and active shop)
-     *
-     * @deprecated use oxUtilsUrl::getAddUrlParams()
-     *
-     * @return string
-     */
-    protected function _getAddParams()
-    {
-        // performance
-        if ( $this->_sAddParams === null ) {
-            $this->_sAddParams = $this->_getAddParamsFnc( oxConfig::getParameter('currency'), $this->getConfig()->getShopId() );
-        }
-        return $this->_sAddParams;
-    }
-
-    /**
-     * Returns string for SEO url with specific parameters (language,
-     * currency and active shop)
-     *
-     * @param integer $iCur     shop currency
-     * @param mixed   $iActShop active shop id
-     *
-     * @deprecated use oxUtilsUrl::getAddUrlParams()
-     *
-     * @return string
-     */
-    protected function _getAddParamsFnc( $iCur, $iActShop )
-    {
-        $sParams = '';
-        if ( count( $aParams = oxUtilsUrl::getInstance()->getAddUrlParams() ) ) {
-            foreach ( $aParams as $sName => $sValue ) {
-                if ( $sValue ) {
-                    if ( $sParams ) {
-                        $sParams .= "&amp;";
-                    }
-                    $sParams .= $sName . "=" . $sValue;
-                }
-            }
-            if ( $sParams ) {
-                $sParams = '?'.$sParams;
-            }
-        }
-        return $sParams;
-    }
-
-    /**
-     * Generates dynamic url object id (calls oxseoencoder::_getStaticObjectId)
-     *
-     * @param int    $iShopId shop id
-     * @param string $sStdUrl standard (dynamic) url
-     *
-     * @deprecated user oxseoencoder::getDynamicObjectId() instead
-     *
-     * @return string
-     */
-    protected function _getDynamicObjectId( $iShopId, $sStdUrl )
-    {
-        return $this->getDynamicObjectId( $iShopId, $sStdUrl );
     }
 
     /**
@@ -326,32 +267,30 @@ class oxSeoEncoder extends oxSuperCfg
      * Returns SEO url with shop's path + additional params ( oxseoencoder:: _getAddParams)
      *
      * @param string $sSeoUrl seo URL
-     * @param int    $iLang   active language (deprecated - does nothing)
+     * @param int    $iLang   active language
      * @param bool   $blSsl   forces to build ssl url
      *
      * @return string
      */
     protected function _getFullUrl( $sSeoUrl, $iLang = null, $blSsl = false )
     {
-        $sProcessedUrl = false;
         if ( $sSeoUrl ) {
             $sFullUrl = ( $blSsl ? $this->getConfig()->getSslShopUrl( $iLang ) : $this->getConfig()->getShopUrl( $iLang ) ) . $sSeoUrl;
-            $sProcessedUrl =  oxUtilsUrl::getInstance()->processSeoUrl( $sFullUrl );
+            return oxUtilsUrl::getInstance()->processSeoUrl( $sFullUrl );
         }
-        return $sProcessedUrl;
+        return false;
     }
 
     /**
      * _getSeoIdent returns seo ident for db search
      *
      * @param string $sSeoUrl seo url
-     * @param int    $iLang   active language (deprecated - does nothing)
      *
      * @access protected
      *
      * @return string
      */
-    protected function _getSeoIdent( $sSeoUrl, $iLang = null )
+    protected function _getSeoIdent( $sSeoUrl )
     {
         return md5( strtolower( $sSeoUrl ) );
     }
@@ -395,32 +334,15 @@ class oxSeoEncoder extends oxSuperCfg
      */
     protected function _getUniqueSeoUrl( $sSeoUrl, $sObjectId = null, $iObjectLang = null )
     {
+        $sSeoUrl = $this->_prepareUri( $sSeoUrl );
         $oStr = getStr();
-        $sConstEnd = $this->_getUrlExtension();
-        if ($sConstEnd === null) {
-            $aMatched = array();
-            if ( $oStr->preg_match( '/\.html?$/i', $sSeoUrl, $aMatched ) ) {
-                $sConstEnd = $aMatched[0];
-            } else {
-                if ($sSeoUrl{$oStr->strlen($sSeoUrl)-1} != '/') {
-                    $sSeoUrl .= '/';
-                }
-                $sConstEnd = '/';
-            }
+        $sExt = '';
+        if ( $oStr->preg_match( '/(\.html?|\/)$/i', $sSeoUrl, $aMatched ) ) {
+            $sExt = $aMatched[0];
         }
-
-        // fix for not having url, which executes through /other/ script then seo decoder
-        $sAdd = ' ';
-        if ('/' != self::$_sSeparator) {
-            $sAdd = self::$_sSeparator . self::$_sPrefix;
-        } else {
-            $sAdd = '_' . self::$_sPrefix;
-        }
-        $sSeoUrl = $oStr->preg_replace( "#^(/*)(".implode('|', $this->_getReservedEntryKeys()).")/#i", "\$1\$2$sAdd/", $sSeoUrl );
-
         $sBaseSeoUrl = $sSeoUrl;
-        if ( $sConstEnd && $oStr->substr( $sSeoUrl, 0 - $oStr->strlen( $sConstEnd ) ) == $sConstEnd ) {
-            $sBaseSeoUrl = $oStr->substr( $sSeoUrl, 0, $oStr->strlen( $sSeoUrl ) - $oStr->strlen( $sConstEnd ) );
+        if ( $sExt && $oStr->substr( $sSeoUrl, 0 - $oStr->strlen( $sExt ) ) == $sExt ) {
+            $sBaseSeoUrl = $oStr->substr( $sSeoUrl, 0, $oStr->strlen( $sSeoUrl ) - $oStr->strlen( $sExt ) );
         }
 
         $oDb = oxDb::getDb();
@@ -445,7 +367,7 @@ class oxSeoEncoder extends oxSuperCfg
             }
             ++$iCnt;
 
-            $sSeoUrl = $sBaseSeoUrl . $sAdd . $sConstEnd;
+            $sSeoUrl = $sBaseSeoUrl . $sAdd . $sExt;
             $sCheckSeoUrl = $this->_trimUrl( $sSeoUrl );
         }
         return $sSeoUrl;
@@ -560,18 +482,19 @@ class oxSeoEncoder extends oxSuperCfg
      */
     protected function _getReservedEntryKeys()
     {
-        if ( !isset( self::$_aReservedEntryKeys ) && !is_array( self::$_aReservedEntryKeys ) ) {
+        if ( !isset( self::$_aReservedEntryKeys ) || !is_array( self::$_aReservedEntryKeys ) ) {
             $sDir = getShopBasePath();
-            self::$_aReservedEntryKeys = array();
+            self::$_aReservedEntryKeys = array_map('preg_quote', self::$_aReservedWords, array('#'));
             $oStr = getStr();
             foreach ( glob( "$sDir/*" ) as $sFile ) {
                 if ( $oStr->preg_match( '/^(.+)\.php[0-9]*$/i', basename( $sFile ), $aMatches ) ) {
-                    self::$_aReservedEntryKeys[] = preg_quote( $aMatches[0] );
-                    self::$_aReservedEntryKeys[] = preg_quote( $aMatches[1] );
+                    self::$_aReservedEntryKeys[] = preg_quote( $aMatches[0], '#' );
+                    self::$_aReservedEntryKeys[] = preg_quote( $aMatches[1], '#' );
                 } elseif ( is_dir( $sFile ) ) {
-                    self::$_aReservedEntryKeys[] = preg_quote( basename( $sFile ) );
+                    self::$_aReservedEntryKeys[] = preg_quote( basename( $sFile ), '#' );
                 }
             }
+            self::$_aReservedEntryKeys = array_unique(self::$_aReservedEntryKeys);
         }
         return self::$_aReservedEntryKeys;
     }
@@ -592,41 +515,50 @@ class oxSeoEncoder extends oxSuperCfg
         $sUri = strip_tags( $sUri );
         $oStr = getStr();
 
-        $sSeparator = self::$_sSeparator;
-        $sPrefix    = self::$_sPrefix;
-        // 'fixing' reserved words
-        foreach ( self::$_aReservedWords as $sWord ) {
-            $sWord = preg_quote( $sWord );
-            $sUri = $oStr->preg_replace( array( "/(\s{$sWord})$/i", "/^({$sWord}\s)/i", "/(\s{$sWord}\s)/i", "/^({$sWord})$/i",
-                                         "/(\/{$sWord})$/i", "/^({$sWord}\/)/i", "/(\/{$sWord}\/)/i"),
-                                         " \$1{$sSeparator}{$sPrefix}{$sSeparator} ", $sUri );
-        }
 
-        // if found ".html" at the end - removing it temporary
-        $sExt = '';
+        // if found ".html" or "/" at the end - removing it temporary
         $oStr = getStr();
-        $aMatched = array();
-        if ( $oStr->preg_match( '/\.html?$/i', $sUri, $aMatched ) ) {
-            $sExt   = $oStr->substr( $sUri, 0 - $oStr->strlen( $aMatched[0] ) );
-            $sUri = $oStr->substr( $sUri, 0, $oStr->strlen( $sUri ) - $oStr->strlen( $aMatched[0] ) );
+        $sExt = $this->_getUrlExtension();
+        if ($sExt === null) {
+            $aMatched = array();
+            if ( $oStr->preg_match( '/(\.html?|\/)$/i', $sUri, $aMatched ) ) {
+                $sExt = $aMatched[0];
+            } else {
+                $sExt = '/';
+            }
+        }
+        if ( $sExt && $oStr->substr( $sUri, 0 - $oStr->strlen( $sExt ) ) == $sExt ) {
+            $sUri = $oStr->substr( $sUri, 0, $oStr->strlen( $sUri ) - $oStr->strlen( $sExt ) );
         }
 
         // removing any special characters
         $sRegExp = '/[^A-Za-z0-9'.preg_quote( self::$_sSeparator, '/').preg_quote( self::$_sPrefix, '/').'\/]+/';
-        $sUri  = trim( $oStr->preg_replace( array( "/\W*\/\W*/", $sRegExp ), array( "/", self::$_sSeparator ), $sUri ), self::$_sSeparator );
+        $sUri  = $oStr->preg_replace( array( "/\W*\/\W*/", $sRegExp ), array( "/", self::$_sSeparator ), $sUri );
 
         // SEO id is empty ?
-        if ( !$sUri ) {
+        if ( !$sUri && self::$_sPrefix ) {
             $sUri = $this->_prepareUri( self::$_sPrefix );
         }
 
-        // binding ".html" back
+        $sAdd = '';
+        if ('/' != self::$_sSeparator) {
+            $sAdd = self::$_sSeparator . self::$_sPrefix;
+            $sUri = trim($sUri, self::$_sSeparator);
+        } else {
+            $sAdd = '_' . self::$_sPrefix;
+        }
+
+        // binding the ending back
         $sUri .= $sExt;
+
+        // fix for not having url, which executes through /other/ script then seo decoder
+        $sUri = $oStr->preg_replace( "#^(/*)(".implode('|', $this->_getReservedEntryKeys()).")(/|$)#i", "\$1\$2$sAdd\$3", $sUri );
 
         // cleaning
         return $oStr->preg_replace( array( '|//+|', '/' . preg_quote( self::$_sSeparator . self::$_sSeparator, '/' ) .'+/' ),
                              array( '/', self::$_sSeparator ), $sUri );
     }
+
 
     /**
      * Prepares and returns formatted object SEO id
@@ -638,16 +570,29 @@ class oxSeoEncoder extends oxSuperCfg
      */
     protected function _prepareTitle( $sTitle, $blSkipTruncate = false )
     {
-        $sTitle = $this->_prepareUri( str_replace( "/", self::$_sSeparator, $sTitle ) );
+        $sTitle = $this->encodeString( $sTitle );
+        $sSep = self::$_sSeparator;
+        if (!$sSep || ('/' == $sSep)) {
+            $sSep = '_';
+        }
+
+        $sRegExp = '/[^A-Za-z0-9\/'.preg_quote( self::$_sPrefix, '/').preg_quote($sSep, '/').']+/';
+        $sTitle = preg_replace( array("#/+#", $sRegExp, "# +#", "#(".preg_quote($sSep, '/').")+#"), $sSep, $sTitle );
 
         $oStr = getStr();
         // smart truncate
         if ( !$blSkipTruncate && $oStr->strlen( $sTitle ) > $this->_iIdLength ) {
-            if ( ( $iFirstSpace = $oStr->strstr( $oStr->substr( $sTitle, $this->_iIdLength ), self::$_sSeparator ) !== false ) ) {
-                $sTitle = trim( $oStr->substr( $sTitle, 0, $this->_iIdLength + $iFirstSpace ), self::$_sSeparator );
+            $iFirstSpace = $oStr->strpos( $sTitle, $sSep, $this->_iIdLength);
+            if ( $iFirstSpace !== false ) {
+                $sTitle = $oStr->substr( $sTitle, 0, $iFirstSpace );
             }
         }
 
+        $sTitle = trim( $sTitle, $sSep );
+
+        if (!$sTitle) {
+            return self::$_sPrefix;
+        }
         // cleaning
         return $sTitle;
     }
@@ -736,7 +681,7 @@ class oxSeoEncoder extends oxSuperCfg
      * Removes shop path part and session id from given url
      *
      * @param string $sUrl  url to clean bad chars
-     * @param int    $iLang active language (deprecated - does nothing)
+     * @param int    $iLang active language
      *
      * @access protected
      *
@@ -752,7 +697,7 @@ class oxSeoEncoder extends oxSuperCfg
         $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)lang=[0-9]+&?(amp;)?/i', '\1', $sUrl );
         $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)&(amp;)?/i', '\1', $sUrl );
         $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)+$/i', '', $sUrl );
-        return $sUrl;
+        return trim($sUrl);
     }
 
     /**
@@ -825,6 +770,7 @@ class oxSeoEncoder extends oxSuperCfg
 
     /**
      * Sets array of words which must be checked before building seo url
+     * These words are appended by seo prefix if they are the initial uri segment
      *
      * @param array $aReservedWords reserved words
      *
@@ -941,8 +887,8 @@ class oxSeoEncoder extends oxSuperCfg
             $iLang = (int) $iLang;
 
             // generating seo url
-            if ( ( $sSeoUrl = trim( $sSeoUrl ) ) ) {
-                $sSeoUrl = $this->_prepareUri( $this->_trimUrl( $sSeoUrl ) );
+            $sSeoUrl = $this->_trimUrl( $sSeoUrl );
+            if ( $sSeoUrl ) {
                 $sSeoUrl = $this->_processSeoUrl( $sSeoUrl, $sObjectId, $iLang );
             }
 
@@ -1056,7 +1002,7 @@ class oxSeoEncoder extends oxSuperCfg
      */
     public function addSeoEntry( $sObjectId, $iShopId, $iLang, $sStdUrl, $sSeoUrl, $sType, $blFixed = 1, $sKeywords = '', $sDescription = '', $sParams = '', $blExclude = false, $sAltObjectId = null )
     {
-        $sSeoUrl = $this->_processSeoUrl( $this->_prepareUri( $this->_trimUrl( $sSeoUrl ? $sSeoUrl : $this->_getAltUri( $sAltObjectId ? $sAltObjectId : $sObjectId, $iLang ) ) ), $sObjectId, $iLang, $blExclude );
+        $sSeoUrl = $this->_processSeoUrl( $this->_trimUrl( $sSeoUrl ? $sSeoUrl : $this->_getAltUri( $sAltObjectId ? $sAltObjectId : $sObjectId, $iLang ) ), $sObjectId, $iLang, $blExclude );
         if ( $this->_saveToDb( $sType, $sObjectId, $sStdUrl, $sSeoUrl, $iLang, $iShopId, $blFixed, $sParams ) ) {
 
             $oDb = oxDb::getDb( true );

@@ -1,4 +1,5 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign box="list"}]
+[{assign var="where" value=$oView->getListFilter()}]
 
 [{if $readonly}]
     [{assign var="readonly" value="readonly disabled"}]
@@ -22,17 +23,8 @@ window.onload = function ()
 <div id="liste">
 
 
-<form name="search" id="search" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
-    <input type="hidden" name="cl" value="article_list">
-    <input type="hidden" name="lstrt" value="[{ $lstrt }]">
-    <input type="hidden" name="sort" value="[{ $sort }]">
-    <input type="hidden" name="actedit" value="[{ $actedit }]">
-    <input type="hidden" name="oxid" value="[{ $oxid }]">
-    <input type="hidden" name="fnc" value="">
-    <input type="hidden" name="language" value="[{ $actlang }]">
-    <input type="hidden" name="editlanguage" value="[{ $actlang }]">
-
+<form name="search" id="search" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{include file="_formparams.tpl" cl="article_list" lstrt=$lstrt actedit=$actedit oxid=$oxid fnc="" language=$actlang editlanguage=$actlang}]
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
     <colgroup>
         <col width="3%">
@@ -47,7 +39,7 @@ window.onload = function ()
     </td>
     <td valign="top" class="listfilter" align="left">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="9" maxlength="128" name="where[[{$listTable}].oxartnum]" value="[{ $where->oxarticles__oxartnum}]">
+        <input class="listedit" type="text" size="9" maxlength="128" name="where[oxarticles][oxartnum]" value="[{ $where.oxarticles.oxartnum}]">
         </div></div>
     </td>
     <td height="20" valign="middle" class="listfilter" nowrap>
@@ -70,14 +62,14 @@ window.onload = function ()
         [{/foreach}]
         </optgroup>
         </select>
-        <select name="pwrsearchfld" class="editinput" onChange="Javascript:document.search.lstrt.value=0;document.search.sort.value=this.value;document.forms.search.submit();">
+        <select name="pwrsearchfld" class="editinput" onChange="Javascript:document.search.lstrt.value=0;top.oxid.admin.setSorting( document.search, 'oxarticles', this.value, 'asc');document.forms.search.submit();">
             [{foreach from=$pwrsearchfields key=field item=desc}]
             [{assign var="ident" value=GENERAL_ARTICLE_$desc}]
             [{assign var="ident" value=$ident|oxupper }]
             <option value="[{ $desc }]" [{ if $pwrsearchfld == $desc|oxupper }]SELECTED[{/if}]>[{ oxmultilang|oxtruncate:20:"..":true ident=$ident }]</option>
             [{/foreach}]
         </select>
-        <input class="listedit" type="text" size="20" maxlength="128" name="where[[{$listTable}].[{$pwrsearchfld}]]" value="[{ $pwrsearchinput}]" [{include file="help.tpl" helpid=searchfieldoxdynamic}]>
+        <input class="listedit" type="text" size="20" maxlength="128" name="where[oxarticles][[{$pwrsearchfld|oxlower}]]" value="[{ $pwrsearchinput}]" [{include file="help.tpl" helpid=searchfieldoxdynamic}]>
         </div></div>
     </td>
     <td valign="top" class="listfilter" colspan="2" nowrap>
@@ -90,16 +82,16 @@ window.onload = function ()
         </select>
         <input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]" onClick="Javascript:document.search.lstrt.value=0;">
         </div>
-        <input class="listedit" type="text" size="25" maxlength="128" name="where[[{$listTable}].oxshortdesc]" value="[{ $where->oxarticles__oxshortdesc}]" [{include file="help.tpl" helpid=searchfieldoxshortdesc}]>
+        <input class="listedit" type="text" size="25" maxlength="128" name="where[oxarticles][oxshortdesc]" value="[{ $where.oxarticles.oxshortdesc}]" [{include file="help.tpl" helpid=searchfieldoxshortdesc}]>
         </div></div>
     </td>
 </tr>
 <tr class="listitem">
 <tr>
-    <td class="listheader first" height="15" width="30" align="center"><a href="Javascript:document.search.sort.value='oxactive';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_ACTIVTITLE" }]</a></td>
-    <td class="listheader"><a href="Javascript:document.search.sort.value='oxartnum';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_ARTNUM" }]</a></td>
-    <td class="listheader" height="15">&nbsp;<a href="Javascript:document.search.sort.value='[{ $pwrsearchfld|oxlower }]';document.search.submit();" class="listheader">[{assign var="ident" value=GENERAL_ARTICLE_$pwrsearchfld }][{assign var="ident" value=$ident|oxupper }][{ oxmultilang ident=$ident }]</a></td>
-    <td class="listheader" colspan="2"><a href="Javascript:document.search.sort.value='oxshortdesc';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_SHORTDESC" }]</a></td>
+    <td class="listheader first" height="15" width="30" align="center"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxarticles', 'oxactive', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_ACTIVTITLE" }]</a></td>
+    <td class="listheader"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxarticles', 'oxartnum', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_ARTNUM" }]</a></td>
+    <td class="listheader" height="15">&nbsp;<a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxarticles', '[{ $pwrsearchfld|oxlower }]', 'asc');document.search.submit();" class="listheader">[{assign var="ident" value=GENERAL_ARTICLE_$pwrsearchfld }][{assign var="ident" value=$ident|oxupper }][{ oxmultilang ident=$ident }]</a></td>
+    <td class="listheader" colspan="2"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxarticles', 'oxshortdesc', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_SHORTDESC" }]</a></td>
 </tr>
 
 [{assign var="blWhite" value=""}]

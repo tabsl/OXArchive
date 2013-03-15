@@ -19,7 +19,7 @@
  * @package   smarty_plugins
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: function.oxgetseourl.php 30070 2010-09-30 15:55:06Z rimvydas.paskevicius $
+ * @version   SVN: $Id: function.oxgetseourl.php 33731 2011-03-10 14:39:37Z arvydas.vapsva $
  */
 
 
@@ -51,12 +51,11 @@ function smarty_function_oxgetseourl( $params, &$smarty )
         } elseif ( $sOxid ) {
             //minimising aricle object loading
             if ( strtolower($sType) == "oxarticle") {
-                $oObject->disablePriceLoad( $oObject );
+                $oObject->disablePriceLoad();
                 $oObject->setNoVariantLoading( true );
-                $oObject->oxarticles__oxlongdesc = null;
             }
 
-            if ( $oObject->load( $sOxid ) ) {            
+            if ( $oObject->load( $sOxid ) ) {
                 $sUrl = $oObject->getLink();
             }
         }

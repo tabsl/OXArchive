@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: list_user.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: list_user.php 31980 2010-12-17 14:02:48Z sarunas $
  */
 
 /**
@@ -58,26 +58,7 @@ class List_User extends User_List
     public function render()
     {
         parent::render();
-
-        $this->_aViewData["viewListSize"]  = $this->_getViewListSize();
-        $this->_aViewData["whereparam"]    = $this->_aViewData["whereparam"] . '&amp;viewListSize='.$this->_getViewListSize();
         $this->_aViewData["menustructure"] = $this->getNavigation()->getDomXml()->documentElement->childNodes;
         return "list_user.tpl";
-    }
-
-    /**
-     * Adds order by to SQL query string.
-     *
-     * @param string $sSql sql string
-     *
-     * @return string
-     */
-    protected function _prepareOrderByQuery( $sSql = null )
-    {
-        if ( $sSort = oxConfig::getParameter( "sort" ) ) {
-            $sSql .= " order by " . oxDb::getInstance()->escapeString( $sSort ) . " ";
-        }
-
-        return $sSql;
     }
 }

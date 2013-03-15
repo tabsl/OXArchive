@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxrssfeed.php 27117 2010-04-09 13:36:58Z arvydas $
+ * @version   SVN: $Id: oxrssfeed.php 33132 2011-02-10 10:31:46Z arvydas.vapsva $
  */
 
 /**
@@ -72,17 +72,16 @@ class oxRssFeed extends oxSuperCfg
      */
     protected function _loadBaseChannel()
     {
-        $myUtils = oxUtils::getInstance();
         $oShop = $this->getConfig()->getActiveShop();
         $this->_aChannel['title'] = $oShop->oxshops__oxname->value;
-        $this->_aChannel['link']  = $myUtils->prepareUrlForNoSession($this->getConfig()->getShopHomeURL());
+        $this->_aChannel['link']  = oxUtilsUrl::getInstance()->prepareUrlForNoSession($this->getConfig()->getShopHomeURL());
         $this->_aChannel['description'] = '';
         $oLang = oxLang::getInstance();
         $aLangIds = $oLang->getLanguageIds();
         $this->_aChannel['language']  = $aLangIds[$oLang->getBaseLanguage()];
         $this->_aChannel['copyright'] = $oShop->oxshops__oxname->value;
         $this->_aChannel['selflink'] = '';
-        if ( $myUtils->isValidEmail( $oShop->oxshops__oxinfoemail->value )) {
+        if ( oxUtils::getInstance()->isValidEmail( $oShop->oxshops__oxinfoemail->value )) {
             $this->_aChannel['managingEditor'] = $oShop->oxshops__oxinfoemail->value;
         }
         //$this->_aChannel['webMaster']      = '';
@@ -105,7 +104,8 @@ class oxRssFeed extends oxSuperCfg
      */
     protected function _getCacheId($name)
     {
-        return $name.'_'.$this->getConfig()->getShopId().'_'.oxLang::getInstance()->getBaseLanguage().'_'.(int) oxConfig::getParameter('currency');
+        $oConfig = $this->getConfig();
+        return $name.'_'.$oConfig->getShopId().'_'.oxLang::getInstance()->getBaseLanguage().'_'.(int) $oConfig->getShopCurrency();
     }
 
     /**
@@ -179,7 +179,7 @@ class oxRssFeed extends oxSuperCfg
      */
     protected function _getArticleItems(oxArticleList $oList)
     {
-        $myUtils = oxUtils::getInstance();
+        $myUtilsUrl = oxUtilsUrl::getInstance();
         $aItems = array();
         $oLang = oxLang::getInstance();
         $oStr  = getStr();
@@ -192,7 +192,7 @@ class oxRssFeed extends oxSuperCfg
                 $sPrice =  " " . $oArticle->getPriceFromPrefix().$oLang->formatCurrency( $oPrice->getBruttoPrice(), $oActCur ) . " ". $oActCur->sign;
             }
             $oItem->title                   = strip_tags($oArticle->oxarticles__oxtitle->value . $sPrice);
-            $oItem->guid     = $oItem->link = $myUtils->prepareUrlForNoSession($oArticle->getLink());
+            $oItem->guid     = $oItem->link = $myUtilsUrl->prepareUrlForNoSession($oArticle->getLink());
             $oItem->isGuidPermalink         = true;
             $oItem->description             = $oArticle->getArticleLongDesc()->value; //oxarticles__oxshortdesc->value;
             if (trim(str_replace('&nbsp;', '', (strip_tags($oItem->description)))) == '') {
@@ -231,7 +231,7 @@ class oxRssFeed extends oxSuperCfg
             $sUrl = $oEncoder->getDynamicUrl( $sUrl, "rss/{$sTitle}/", $iLang );
         }
 
-        return oxUtils::getInstance()->prepareUrlForNoSession( $sUrl );
+        return oxUtilsUrl::getInstance()->prepareUrlForNoSession( $sUrl );
     }
 
     /**
@@ -703,12 +703,12 @@ class oxRssFeed extends oxSuperCfg
      */
     protected function _getRecommListItems($oList)
     {
-        $myUtils = oxUtils::getInstance();
+        $myUtilsUrl = oxUtilsUrl::getInstance();
         $aItems = array();
         foreach ($oList as $oRecommList) {
             $oItem = new oxStdClass();
             $oItem->title                   = $oRecommList->oxrecommlists__oxtitle->value;
-            $oItem->guid     = $oItem->link = $myUtils->prepareUrlForNoSession($oRecommList->getLink());
+            $oItem->guid     = $oItem->link = $myUtilsUrl->prepareUrlForNoSession($oRecommList->getLink());
             $oItem->isGuidPermalink         = true;
             $oItem->description             = $oRecommList->oxrecommlists__oxdesc->value;
 

@@ -6,15 +6,15 @@
     [{assign var="readonly" value=""}]
 [{/if}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="order_main">
 </form>
 
 
-<form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
-[{ $shop->hiddensid }]
+<form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="order_address">
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -170,10 +170,10 @@
             [{ oxmultilang ident="GENERAL_BILLSAL" }]
             </td>
             <td class="edittext">
-            	<select name="editval[oxorder__oxdelsal]" class="editinput" [{ $readonly }]>
-	                <option value="MR"  [{if $edit->oxorder__oxdelsal->value|lower  == "mr"  }]SELECTED[{/if}]>[{ oxmultilang ident="MR"  }]</option>
-	                <option value="MRS" [{if $edit->oxorder__oxdelsal->value|lower  == "mrs" }]SELECTED[{/if}]>[{ oxmultilang ident="MRS" }]</option>
-            	</select>
+                <select name="editval[oxorder__oxdelsal]" class="editinput" [{ $readonly }]>
+                    <option value="MR"  [{if $edit->oxorder__oxdelsal->value|lower  == "mr"  }]SELECTED[{/if}]>[{ oxmultilang ident="MR"  }]</option>
+                    <option value="MRS" [{if $edit->oxorder__oxdelsal->value|lower  == "mrs" }]SELECTED[{/if}]>[{ oxmultilang ident="MRS" }]</option>
+                </select>
             </td>
         </tr>
         <tr>

@@ -19,17 +19,17 @@ window.onload = function ()
     [{assign var="readonly" value=""}]
 [{/if}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="oxidCopy" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="manufacturer_main">
     <input type="hidden" name="language" value="[{ $actlang }]">
 </form>
 
-<form name="myedit" id="myedit" enctype="multipart/form-data" action="[{ $shop->selflink }]" method="post">
+<form name="myedit" id="myedit" enctype="multipart/form-data" action="[{ $oViewConf->getSelfLink() }]" method="post">
 <input type="hidden" name="MAX_FILE_SIZE" value="[{$iMaxUploadFileSize}]">
-[{ $shop->hiddensid }]
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="manufacturer_main">
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -83,10 +83,10 @@ window.onload = function ()
         </tr>
         <tr>
             <td class="edittext">
-            [{ oxmultilang ident="MANUFACTURER_MAIN_ICONUPLOAD" }]:<br>
+            [{ oxmultilang ident="MANUFACTURER_MAIN_ICONUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}]):<br>
             </td>
             <td class="edittext">
-            <input class="editinput" name="myfile[ICO@oxmanufacturers__oxicon]" type="file" [{ $readonly }]>
+            <input class="editinput" name="myfile[MICO@oxmanufacturers__oxicon]" type="file" [{ $readonly }]>
             [{ oxinputhelp ident="HELP_MANUFACTURER_MAIN_ICONUPLOAD" }]
             </td>
         </tr>

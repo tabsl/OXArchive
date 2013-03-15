@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadmindetails.php 29639 2010-09-02 14:04:02Z vilma $
+ * @version   SVN: $Id: oxadmindetails.php 33731 2011-03-10 14:39:37Z arvydas.vapsva $
  */
 
 /**
@@ -145,13 +145,8 @@ class oxAdminDetails extends oxAdminView
 
                 // parse for styles and add them
                 $this->setAdminMode( false );
-                if ( $myConfig->getConfigParam( "blFormerTplSupport" ) ) {
-                    $sCSSPath = $myConfig->getResourcePath("styles/{$sStylesheet}", false );
-                    $sCSSUrl  = $myConfig->getResourceUrl("styles/{$sStylesheet}", false );
-                } else {
-                    $sCSSPath = $myConfig->getResourcePath("{$sStylesheet}", false );
-                    $sCSSUrl  = $myConfig->getResourceUrl("{$sStylesheet}", false );
-                }
+                $sCSSPath = $myConfig->getResourcePath("{$sStylesheet}", false );
+                $sCSSUrl  = $myConfig->getResourceUrl("{$sStylesheet}", false );
 
                 $aCSSPaths = array();
                 $this->setAdminMode( true );
@@ -224,17 +219,30 @@ class oxAdminDetails extends oxAdminView
                 $sEditObjectValue = $oObject->$sField->value;
             }
 
-            // A. replace ONLY if long description is not processed by smarty, or users will not be able to
-            // store smarty tags ([{$shop->currenthomedir}]/[{$oViewConf->getCurrentHomeDir()}]) in long
-            // descriptions, which are filled dynamically
-            if ( !$this->getConfig()->getConfigParam( 'bl_perfParseLongDescinSmarty' ) ) {
-                $aReplace = array( '[{$shop->currenthomedir}]', '[{$oViewConf->getCurrentHomeDir()}]' );
-                $oObject->$sField = new oxField( str_replace( $aReplace, $this->getConfig()->getCurrentShopURL(), $sEditObjectValue ), oxField::T_RAW );
-                $sEditObjectValue = $oObject->$sField->value;
-            }
+            $sEditObjectValue = $this->_processEditValue( $sEditObjectValue );
+            $oObject->$sField = new oxField( $sEditObjectValue, oxField::T_RAW );
         }
 
         return $sEditObjectValue;
+    }
+
+    /**
+     * Processes edit value
+     *
+     * @param string $sValue string to process
+     *
+     * @return string
+     */
+    protected function _processEditValue( $sValue )
+    {
+        // A. replace ONLY if long description is not processed by smarty, or users will not be able to
+        // store smarty tags ([{$shop->currenthomedir}]/[{$oViewConf->getCurrentHomeDir()}]) in long
+        // descriptions, which are filled dynamically
+        if ( !$this->getConfig()->getConfigParam( 'bl_perfParseLongDescinSmarty' ) ) {
+            $aReplace = array( '[{$shop->currenthomedir}]', '[{$oViewConf->getCurrentHomeDir()}]' );
+            $sValue = str_replace( $aReplace, $this->getConfig()->getCurrentShopURL(), $sValue );
+        }
+        return $sValue;
     }
 
     /**
@@ -335,6 +343,11 @@ class oxAdminDetails extends oxAdminView
         if ( !isset( $this->oCatTree ) || $blForceNonCache ) {
             $this->oCatTree = oxNew( 'oxCategoryList' );
             $this->oCatTree->setShopID( $iTreeShopId );
+
+            // setting language
+            $oBase = $this->oCatTree->getBaseObject();
+            $oBase->setLanguage( $this->_iEditLang );
+
             $this->oCatTree->buildList( $this->getConfig()->getConfigParam( 'bl_perfLoadCatTree' ) );
         }
 
@@ -390,7 +403,7 @@ class oxAdminDetails extends oxAdminView
         }
 
         $oObject = oxNew( $sFolderClass );
-        if ( $oObject->load( oxConfig::getParameter( 'oxid' ) ) ) {
+        if ( $oObject->load( $this->getEditObjectId() ) ) {
             $oObject->{$oObject->getCoreTableName() . '__oxfolder'} = new oxField($sFolder);
             $oObject->save();
         }

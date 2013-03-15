@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: forgotpwd.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: forgotpwd.php 32923 2011-02-04 14:35:22Z vilma $
  */
 
 /**
@@ -35,7 +35,7 @@ class ForgotPwd extends oxUBase
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'forgotpwd.tpl';
+    protected $_sThisTemplate = 'page/account/forgotpwd.tpl';
 
     /**
      * Send forgot E-Mail.
@@ -102,10 +102,8 @@ class ForgotPwd extends oxUBase
         $sNewPass  = oxConfig::getParameter( 'password_new', true );
         $sConfPass = oxConfig::getParameter( 'password_new_confirm', true );
 
-        try {
-            $oUser = oxNew( 'oxuser' );
-            $oUser->checkPassword( $sNewPass, $sConfPass, true );
-        } catch ( Exception $oExcp ) {
+        $oUser = oxNew( 'oxuser' );
+        if ( ( $oExcp = $oUser->checkPassword( $sNewPass, $sConfPass, true ) ) ) {
             switch ( $oExcp->getMessage() ) {
                 case 'EXCEPTION_INPUT_EMPTYPASS':
                 case 'EXCEPTION_INPUT_PASSTOOSHORT':
@@ -181,24 +179,6 @@ class ForgotPwd extends oxUBase
     }
 
     /**
-     * Executes parent::render(), loads action articles and returns
-     * name of template to render forgotpwd::_sThisTemplate.
-     *
-     * @return  string  $this->_sThisTemplate   current template file name
-     */
-    public function render()
-    {
-        $this->_aViewData['sendForgotMail'] = $this->getForgotEmail();
-
-        parent::render();
-
-        // loading actions
-        $this->_loadActions();
-
-        return $this->_sThisTemplate;
-    }
-
-    /**
      * Template variable getter. Returns searched article list
      *
      * @return string
@@ -206,5 +186,21 @@ class ForgotPwd extends oxUBase
     public function getForgotEmail()
     {
         return $this->_sForgotEmail;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_FORGOTPWD_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 }

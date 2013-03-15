@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account_user.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: account_user.php 33900 2011-03-22 17:06:44Z vilma $
  */
 
 /**
@@ -37,34 +37,18 @@ class Account_User extends Account
      *
      * @var string
      */
-    protected $_sThisTemplate = 'account_user.tpl';
-
-    /**
-     * returns Deliver Adress.
-     *
-     * @var oxbase
-     */
-    protected $_oDelAddress = null;
-
-    /**
-     * returns Country.
-     *
-     * @var oxcountrylist
-     */
-    protected $_oCountryList = null;
+    protected $_sThisTemplate = 'page/account/user.tpl';
 
     /**
      * If user is not logged in - returns name of template account_user::_sThisLoginTemplate,
      * or if user is allready logged in additionally loads user delivery address
      * info and forms country list. Returns name of template account_user::_sThisTemplate
      *
-     * Template variables:
-     * <b>oxcountrylist</b>, <b>aMustFillFields</b>, <b>delivadr</b>
-     *
      * @return  string  $_sThisTemplate current template file name
      */
     public function render()
     {
+
         parent::render();
 
         // is logged in ?
@@ -72,39 +56,23 @@ class Account_User extends Account
             return $this->_sThisTemplate = $this->_sThisLoginTemplate;
         }
 
-        //for older templates
-        $this->_aViewData['delivadr']        = $this->getDeliverAddress();
-        $this->_aViewData['oxcountrylist']   = $this->getCountryList();
-        $this->_aViewData['aMustFillFields'] = $this->getMustFillFields();
-
         return $this->_sThisTemplate;
     }
 
     /**
-     * Return deliver address
+     * Template variable getter. Checks to show or not shipping address entry form
      *
-     * @return oxAddress | null
+     * @return bool
      */
-    public function getDeliverAddress()
+    public function showShipAddress()
     {
-        // is logged in ?
-        if ( $oUser = $this->getUser() ) {
-            $oAdresses = $oUser->getUserAddresses();
-            if ( $oAdresses->count() ) {
-                foreach ( $oAdresses as $oAddress ) {
-                    if ( $oAddress->selected == 1 ) {
-                        $this->_aViewData['deladr'] = null;
-                        return $oAddress;
-                    }
-                }
-                $oAdresses->rewind();
-                return $oAdresses->current();
-            }
-        }
+        return oxSession::getVar( 'blshowshipaddress' );
     }
 
     /**
      * Return country list
+     *
+     * @deprecated will be removed in future: use oxViewConfig::getCountryList()
      *
      * @return oxcountrylist
      */
@@ -116,5 +84,24 @@ class Account_User extends Account
             $this->_oCountryList->loadActiveCountries();
         }
         return $this->_oCountryList;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_MY_ACCOUNT', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_USER_USERTITLE', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 }

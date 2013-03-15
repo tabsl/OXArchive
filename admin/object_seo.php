@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: object_seo.php 28019 2010-05-31 08:07:40Z arvydas $
+ * @version   SVN: $Id: object_seo.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -38,13 +38,13 @@ class Object_Seo extends oxAdminDetails
     {
         parent::render();
 
-        if ( ( $oObject= $this->_getObject( oxConfig::getParameter( 'oxid' ) ) ) ) {
+        if ( ( $oObject= $this->_getObject( $this->getEditObjectId() ) ) ) {
 
             $iShopId  = $this->getConfig()->getShopId();
             $oOtherLang = $oObject->getAvailableInLangs();
             if (!isset($oOtherLang[$this->_iEditLang])) {
                 // echo "language entry doesn't exist! using: ".key($oOtherLang);
-                $oObject->loadInLang( key( $oOtherLang ), oxConfig::getParameter( 'oxid' ) );
+                $oObject->loadInLang( key( $oOtherLang ), $this->getEditObjectId() );
             }
             $this->_aViewData['edit'] = $oObject;
 
@@ -224,7 +224,7 @@ class Object_Seo extends oxAdminDetails
      */
     protected function _getSeoEntryId()
     {
-        return oxConfig::getParameter( 'oxid' );
+        return $this->getEditObjectId();
     }
 
     /**

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_selection.inc.php 25640 2010-02-05 06:42:24Z alfonsas $
+ * @version   SVN: $Id: article_selection.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -47,8 +47,8 @@ class ajaxComponent extends ajaxListComponent
      */
     protected function _getQuery()
     {
-        $sSLViewName  = getViewName('oxselectlist');
-        $sArtViewName = getViewName('oxarticles');
+        $sSLViewName  = $this->_getViewName('oxselectlist');
+        $sArtViewName = $this->_getViewName('oxarticles');
         $oDb          = oxDb::getDb();
 
         $sArtId      = oxConfig::getParameter( 'oxid' );
@@ -104,7 +104,7 @@ class ajaxComponent extends ajaxListComponent
 
         // adding
         if ( oxConfig::getParameter( 'all' ) ) {
-            $sSLViewName = getViewName('oxselectlist');
+            $sSLViewName = $this->_getViewName('oxselectlist');
             $aAddSel = $this->_getAll( $this->_addFilter( "select $sSLViewName.oxid ".$this->_getQuery() ) );
         }
 

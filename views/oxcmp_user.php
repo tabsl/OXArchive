@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_user.php 32734 2011-01-26 08:32:22Z arvydas.vapsva $
+ * @version   SVN: $Id: oxcmp_user.php 33895 2011-03-22 16:20:52Z arvydas.vapsva $
  */
 
 // defining login/logout states
@@ -110,6 +110,18 @@ class oxcmp_user extends oxView
      */
     public function init()
     {
+        // saving show/hide delivery address state
+        $blShow = oxConfig::getParameter( 'blshowshipaddress' );
+        if (!isset($blShow)) {
+            $blShow = oxSession::getVar( 'blshowshipaddress' );
+        }
+        // @deprecated, remove blhideshipaddress checking when basic theme support discontinued
+        if (oxConfig::getParameter( 'blhideshipaddress' ) || oxSession::getVar( 'blhideshipaddress' )) {
+            $blShow = false;
+        }
+
+        oxSession::setVar( 'blshowshipaddress', $blShow );
+
         // load session user
         $this->_loadSessionUser();
 
@@ -124,9 +136,6 @@ class oxcmp_user extends oxView
     /**
      * Executes parent::render(), oxcmp_user::_loadSessionUser(), loads user delivery
      * info. Returns user object oxcmp_user::oUser.
-     *
-     * Template variables:
-     *  <b>invadr</b>, <b>lgn_usr</b>, <b>deladr</b>,
      *
      * Session variables:
      * <b>dgr</b>
@@ -144,19 +153,6 @@ class oxcmp_user extends oxView
         // will automatically be added to this group later
         if ( $sDynGoup = oxConfig::getParameter( 'dgr' ) ) {
             oxSession::setVar( 'dgr', $sDynGoup );
-        }
-
-        $oParentView = $this->getParent();
-        if ( $aInvAdress = oxConfig::getParameter( 'invadr') ) {
-            $oParentView->addTplParam( 'invadr', $aInvAdress );
-        }
-
-        if ( ( $aDelAdress = oxConfig::getParameter( 'deladr') ) && !oxConfig::getParameter( 'reloadaddress' ) ) {
-               $oParentView->addTplParam( 'deladr', $aDelAdress );
-        }
-
-        if ( $sUser = oxConfig::getParameter( 'lgn_usr' ) ) {
-            $oParentView->addTplParam( 'lgn_usr', $sUser );
         }
 
         return $this->getUser();
@@ -245,7 +241,6 @@ class oxcmp_user extends oxView
         $sUser     = oxConfig::getParameter( 'lgn_usr' );
         $sPassword = oxConfig::getParameter( 'lgn_pwd' );
         $sCookie   = oxConfig::getParameter( 'lgn_cook' );
-        $sOpenId   = oxConfig::getParameter( 'lgn_openid' );
         //$blFbLogin = oxConfig::getParameter( 'fblogin' );
 
         $this->setLoginStatus( USER_LOGIN_FAIL );
@@ -253,15 +248,7 @@ class oxcmp_user extends oxView
         // trying to login user
         try {
             $oUser = oxNew( 'oxuser' );
-            if ( $this->getViewConfig()->getShowOpenIdLogin() && $sOpenId ) {
-                $iOldErrorReproting = error_reporting();
-                error_reporting($iOldErrorReproting & ~E_STRICT);
-                $oOpenId = oxNew( "oxOpenID" );
-                $oOpenId->authenticateOid( $sOpenId, $this->_getReturnUrl() );
-                error_reporting($iOldErrorReproting);
-            } else {
-                $oUser->login( $sUser, $sPassword, $sCookie );
-            }
+            $oUser->login( $sUser, $sPassword, $sCookie );
             $this->setLoginStatus( USER_LOGIN_SUCCESS );
         } catch ( oxUserException $oEx ) {
             // for login component send excpetion text to a custom component (if defined)
@@ -294,6 +281,13 @@ class oxcmp_user extends oxView
      */
     protected function _afterLogin( $oUser )
     {
+        $oSession = $this->getSession();
+
+        // generating new session id after login
+        if ( $this->getLoginStatus() === USER_LOGIN_SUCCESS ) {
+            $oSession->regenerateSessionId();
+        }
+
         $myConfig = $this->getConfig();
 
         // this user is blocked, deny him
@@ -305,7 +299,7 @@ class oxcmp_user extends oxView
         $oUser->addDynGroup(oxSession::getVar( 'dgr' ), $myConfig->getConfigParam( 'aDeniedDynGroups' ));
 
         // recalc basket
-        if ( $oBasket = $this->getSession()->getBasket() ) {
+        if ( $oBasket = $oSession->getBasket() ) {
             $oBasket->onUpdate();
         }
 
@@ -428,7 +422,7 @@ class oxcmp_user extends oxView
             return;
         }
 
-        $blUserRegistered = $this->_changeUser_noRedirect( );
+        $blUserRegistered = $this->_changeUser_noRedirect();
 
         if ( $blUserRegistered === true ) {
             return 'payment';
@@ -682,7 +676,7 @@ class oxcmp_user extends oxView
     protected function _getDelAddressData()
     {
         // if user company name, user name and additional info has special chars
-        $aDelAdress = $aDeladr = oxConfig::getParameter( 'deladr', $this->_aRawShippingFields );
+        $aDelAdress = $aDeladr = (oxConfig::getParameter( 'blshowshipaddress' ) || oxSession::getVar( 'blshowshipaddress' )) ? oxConfig::getParameter( 'deladr', $this->_aRawShippingFields ) : array();
 
         if ( is_array( $aDeladr ) ) {
             // checking if data is filled
@@ -726,153 +720,18 @@ class oxcmp_user extends oxView
     }
 
     /**
-     * Checks if shipping address fields must be displayed and
-     * sets into session.
+     * Checks if shipping address fields must be displayed.
      *
      * Template variables:
      * <b>blshowshipaddress</b>
+     *
+     * @todo Make depracated and  remove this function after basic theme support is discontinued
      *
      * @return null
      */
     protected function _setupDelAddress()
     {
-        $blShowIt = false;
-        $blShowShipAddress = $blSessShowAddress = (int) oxSession::getVar( 'blshowshipaddress' );
-
-        // user clicked on button to hide
-        if ( $blHideAddress = oxConfig::getParameter( 'blhideshipaddress' ) ) {
-            $blShowShipAddress = 0;
-            $blShowIt = true;
-        } else {
-
-            $blShowAddress = oxConfig::getParameter( 'blshowshipaddress' )? 1 : 0;
-            // user clicked on button to show
-            if ( $blShowAddress != $blSessShowAddress ) {
-                $blShowShipAddress = 1;
-                $blShowIt = true;
-            }
-        }
-
-        oxSession::setVar( 'blshowshipaddress', $blShowShipAddress );
-        if ($this->getParent()) {
-            $this->getParent()->addTplParam( 'blshowshipaddress', $blShowShipAddress );
-        }
-
-        return $blShowIt;
-    }
-
-    /**
-     * Collects user information posted from openid server. If user do not exists creates
-     * new user and executes oxuser::openIdLogin().
-     *
-     * @return null
-     */
-    public function loginOid()
-    {
-        if (!$this->getViewConfig()->getShowOpenIdLogin()) {
-            return;
-        }
-        $this->setLoginStatus( USER_LOGIN_FAIL );
-
-        $iOldErrorReproting = error_reporting();
-        //for 3rd part library disabling our E_STRICT error reporting
-        error_reporting($iOldErrorReproting & ~E_STRICT);
-        try {
-            $oOpenId = $this->getOpenId();
-            $aData = $oOpenId->getOidResponse( $this->_getReturnUrl() );
-        } catch ( oxUserException $oEx ) {
-            // for login component send excpetion text to a custom component (if defined)
-            oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true );
-        }
-        error_reporting($iOldErrorReproting);
-        if ( count( $aData ) < 1 ) {
-            oxUtils::getInstance()->redirect($this->getConfig()->getShopHomeURL().'cl=register');
-        }
-        if ( $aData['email'] ) {
-            $oUser = oxNew( 'oxuser' );
-            $oUser->oxuser__oxusername = new oxField($aData['email'], oxField::T_RAW);
-
-            // if such user does not exist - creating it
-            if ( !$oUser->exists() ) {
-                $oUser->oxuser__oxpassword = new oxField($oUser->getOpenIdPassword(), oxField::T_RAW);
-                $oUser->oxuser__oxactive   = new oxField(1, oxField::T_RAW);
-                $oUser->oxuser__oxrights   = new oxField('user', oxField::T_RAW);
-                $oUser->oxuser__oxshopid   = new oxField($this->getConfig()->getShopId(), oxField::T_RAW);
-                list ($sFName, $sLName)    = explode(' ', $aData['fullname']);
-                $oUser->oxuser__oxfname    = new oxField($sFName, oxField::T_RAW);
-                $oUser->oxuser__oxlname    = new oxField($sLName, oxField::T_RAW);
-
-                $oUser->oxuser__oxsal      = new oxField($this->_getUserTitle($aData['gender']), oxField::T_RAW);
-                $oUser->oxuser__oxisopenid = new oxField(1, oxField::T_RAW);
-                if ( $sCountryId = $oUser->getUserCountryId( $aData['country'] ) ) {
-                    $oUser->oxuser__oxcountryid = new oxField( $sCountryId, oxField::T_RAW );
-                }
-                if ( $aData['postcode'] ) {
-                    $oUser->oxuser__oxzip = new oxField( $aData['postcode'], oxField::T_RAW );
-                }
-                $oUser->save();
-            } else {
-                $oUser->load( $oUser->getId() );
-                //if existing user loggins first time with openid
-                if ( $oUser->oxuser__oxisopenid->value == 0 ) {
-                    if ( !$oUser->oxuser__oxpassword->value ) {
-                        $oUser->oxuser__oxisopenid = new oxField(1, oxField::T_RAW);
-                        $oUser->oxuser__oxpassword = new oxField($oUser->getOpenIdPassword(), oxField::T_RAW);
-                    } else {
-                        $oUser->oxuser__oxisopenid = new oxField(2, oxField::T_RAW);
-                    }
-                    $oUser->save();
-                }
-            }
-
-            try {
-                $oUser->openIdLogin( $oUser->oxuser__oxusername->value );
-                $this->setLoginStatus( USER_LOGIN_SUCCESS );
-            } catch ( oxUserException $oEx ) {
-                // for login component send excpetion text to a custom component (if defined)
-                oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true );
-            }
-
-            // finalizing ..
-            $this->_afterLogin( $oUser );
-            $this->getParent()->setFncName( null );
-            oxUtils::getInstance()->redirect($this->getParent()->getLink());
-        }
-    }
-
-    /**
-     * Returns gender for database
-     *
-     * @param string $sGender F(femail) or M(mail)
-     *
-     * @return string
-     */
-    protected function _getUserTitle( $sGender )
-    {
-        if ( $sGender == "F" ) {
-            return 'MRS';
-        } else {
-            return 'MR';
-        }
-    }
-
-    /**
-     * Returns return url for openid.
-     *
-     * @return string $sReturnUrl
-     */
-    protected function _getReturnUrl()
-    {
-        $this->getParent()->setFncName( 'loginOid' );
-        $sReturnUrl = str_replace( '&amp;', '&', $this->getParent()->getLink() );
-        if ( !strpos( $sReturnUrl, 'loginOid' ) ) {
-            if ( strpos( $sReturnUrl, '?' ) ) {
-                $sReturnUrl = $sReturnUrl . "&fnc=loginOid";
-            } else {
-                $sReturnUrl = $sReturnUrl . "?fnc=loginOid";
-            }
-        }
-        return $sReturnUrl;
+        return (oxConfig::getParameter( 'blshowshipaddress' ) !== null || oxConfig::getParameter( 'blhideshipaddress' ) !== null) && oxConfig::getParameter( 'userform' ) === null;
     }
 
     /**
@@ -898,16 +757,6 @@ class oxcmp_user extends oxView
     public function getLoginStatus()
     {
         return $this->_iLoginStatus;
-    }
-
-    /**
-     * Returns oxOpenId class
-     *
-     * @return oxOpenId
-     */
-    public function getOpenId()
-    {
-        return oxNew( "oxOpenID" );
     }
 
     /**

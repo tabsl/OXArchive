@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasket.php 31648 2010-12-09 16:43:37Z tomas $
+ * @version   SVN: $Id: oxbasket.php 34517 2011-04-09 09:12:28Z sarunas $
  */
 
 /**
@@ -389,18 +389,22 @@ class oxBasket extends oxSuperCfg
     public function addOrderArticleToBasket( $oOrderArticle )
     {
         // adding only if amount > 0
-        if ( $oOrderArticle->oxorderarticles__oxamount->value > 0 ) {
+        if ( $oOrderArticle->oxorderarticles__oxamount->value > 0 && !$oOrderArticle->isBundle() ) {
             $sItemId = $oOrderArticle->getId();
 
             //inserting new
             $this->_aBasketContents[$sItemId] = oxNew( 'oxbasketitem' );
             $this->_aBasketContents[$sItemId]->initFromOrderArticle( $oOrderArticle );
             $this->_aBasketContents[$sItemId]->setWrapping( $oOrderArticle->oxorderarticles__oxwrapid->value );
+            $this->_aBasketContents[$sItemId]->setBundle( $oOrderArticle->isBundle() );
 
             //calling update method
             $this->onUpdate();
 
             return $this->_aBasketContents[$sItemId];
+        } elseif ( $oOrderArticle->isBundle() ) {
+            // deleting bundles, they are handled automatically
+            $oOrderArticle->delete();
         }
     }
 
@@ -1151,7 +1155,7 @@ class oxBasket extends oxSuperCfg
             $oTsProtection = oxNew('oxtsprotection');
             $oTsProduct = $oTsProtection->getTsProduct( $this->_sTsProductId );
 
-            $oProtectionPrice = $oTsProduct->oPrice;
+            $oProtectionPrice = $oTsProduct->getPrice();
         }
         return $oProtectionPrice;
     }
@@ -1420,94 +1424,15 @@ class oxBasket extends oxSuperCfg
      */
     protected function _setDeprecatedValues()
     {
-        $this->dproductsprice    = $this->_oProductsPriceList->getBruttoSum(); // products brutto price
-        $this->dproductsnetprice = $this->getDiscountedNettoPrice();  // products netto price();
-
-        //P sum vat values
-        $this->dVAT = array_sum( $this->_oProductsPriceList->getVatInfo() );
-        $oLang = oxLang::getInstance();
-
-        // formatting final values
-        $this->fproductsprice    = $this->getFProductsPrice();
-        $this->fproductsnetprice = $this->getProductsNetPrice();
-        $this->fVAT = $oLang->formatCurrency( $this->dVAT, $this->getBasketCurrency());
-
-        // delivery costs
-        if ( $oDeliveryCost = $this->getCosts( 'oxdelivery' ) ) {
-
-            $this->ddeliverycost    = $oDeliveryCost->getBruttoPrice();
-            $this->ddeliverynetcost = $oDeliveryCost->getNettoPrice();
-            $this->dDelVAT          = $oDeliveryCost->getVatValue();
-            $this->fDelVATPercent   = $oDeliveryCost->getVat() / 100; // needed to divide, because in template value is multyplied by 100
-
-            // formating values
-            $this->fdeliverycost    = $oLang->formatCurrency( $this->ddeliverycost, $this->getBasketCurrency() );
-            $this->fdeliverynetcost = $oLang->formatCurrency( $this->ddeliverynetcost, $this->getBasketCurrency() );
-            $this->fDelVAT          = $this->getDelCostVat();
-        }
-
-        //P
-        // wrapping costs
-        if ( $oWrappingCost = $this->getCosts( 'oxwrapping' ) ) {
-
-            $this->dWrappingPrice = $oWrappingCost->getBruttoPrice();
-            $this->dWrappingNetto = $oWrappingCost->getNettoPrice();
-            $this->dWrappingVAT   = $oWrappingCost->getVatValue();
-
-            //formating values
-            $this->fWrappingPrice      = $oLang->formatCurrency( $this->dWrappingPrice, $this->getBasketCurrency() );
-            $this->fWrappingNetto      = $this->getWrappCostNet();
-            $this->fWrappingVAT        = $this->getWrappCostVat();
-            $this->fWrappingVATPercent = $this->getWrappCostVatPercent();
-        }
-
-        //P
-        // payment costs
-        if ( $oPaymentCost = $this->getCosts( 'oxpayment' ) ) {
-
-            $this->dAddPaymentSum    = $this->getPaymentCosts();
-            $this->dAddPaymentSumVAT = $oPaymentCost->getVatValue();
-
-            //formating values
-            $this->fAddPaymentSum    = $oLang->formatCurrency( $this->dAddPaymentSum, $this->getBasketCurrency() );
-            $this->fAddPaymentSumVAT = $this->getPayCostVat();
-            $this->fAddPaymentSumVATPercent = $this->getPayCostVatPercent();
-            $this->fAddPaymentNetSum = $this->getPayCostNet();
-        }
-
-        //P
-        // basket total prices
-        $this->dprice = $this->_oPrice->getBruttoPrice();
-        $this->fprice = $oLang->formatCurrency( $this->dprice, $this->getBasketCurrency() );
-
-        // product info
-        $this->iCntProducts = $this->getProductsCount();
-        $this->dCntItems    = $this->getItemsCount();
-        $this->aVATs        = $this->getProductVats();
-        $this->aBasketContents = $this->getContents();
-
-        // setting gift card information
-        $this->giftmessage = $this->getCardMessage();
-        $this->chosencard  = $this->getCardId();
-
-        $this->oCard = $this->getCard();
-
         // discount information
         // formating discount value
         $this->aDiscounts = $this->getDiscounts();
         if ( count($this->aDiscounts) > 0 ) {
+            $oLang = oxLang::getInstance();
             foreach ($this->aDiscounts as $oDiscount) {
                 $oDiscount->fDiscount = $oLang->formatCurrency( $oDiscount->dDiscount, $this->getBasketCurrency() );
             }
         }
-        $this->dDiscount  = $this->getTotalDiscount()->getBruttoPrice();
-
-        // voucher info
-        $this->aVouchers = $this->getVouchers();
-        $this->dVoucherDiscount = $this->getVoucherDiscValue();
-        $this->fVoucherDiscount = $oLang->formatCurrency( $this->dVoucherDiscount, $this->getBasketCurrency() );
-        $this->dSkippedDiscount = $this->hasSkipedDiscount();
-
     }
 
 
@@ -1635,7 +1560,7 @@ class oxBasket extends oxSuperCfg
             // ok, logged in
             if ( $sCountryId = $myConfig->getGlobalParameter( 'delcountryid' ) ) {
                 $sDelivCountry = $sCountryId;
-            } elseif ( $sAddressId = oxConfig::getParameter( 'deladrid' ) ) {
+            } elseif ( $sAddressId = oxSession::getVar( 'deladrid' ) ) {
 
                 $oDelAdress = oxNew( 'oxaddress' );
                 if ( $oDelAdress->load( $sAddressId ) ) {
@@ -1692,7 +1617,7 @@ class oxBasket extends oxSuperCfg
     public function getPaymentId()
     {
         if ( !$this->_sPaymentId ) {
-             $this->_sPaymentId = oxConfig::getParameter( 'paymentid' );
+             $this->_sPaymentId = oxSession::getVar( 'paymentid' );
         }
         return $this->_sPaymentId;
     }
@@ -1730,7 +1655,7 @@ class oxBasket extends oxSuperCfg
     public function getShippingId()
     {
         if ( !$this->_sShippingSetId ) {
-             $this->_sShippingSetId = oxConfig::getParameter( 'sShipSet' );
+             $this->_sShippingSetId = oxSession::getVar( 'sShipSet' );
         }
 
         $sActPaymentId = $this->getPaymentId();
@@ -1769,6 +1694,7 @@ class oxBasket extends oxSuperCfg
                     if ( is_array( $aSelList ) && ( $aSelectlist = $oProduct->getSelectLists( $sItemKey ) ) ) {
                         reset( $aSelList );
                         while ( list( $conkey, $iSel ) = each( $aSelList ) ) {
+                            $aSelectlist[$conkey][$iSel] = clone $aSelectlist[$conkey][$iSel];
                             $aSelectlist[$conkey][$iSel]->selected = 1;
                         }
                         $oProduct->setSelectlist( $aSelectlist );
@@ -2160,6 +2086,7 @@ class oxBasket extends oxSuperCfg
     public function getDelCostVat()
     {
         $dDelVAT = $this->getCosts( 'oxdelivery' )->getVatValue();
+
         if ( $dDelVAT > 0 ) {
             return oxLang::getInstance()->formatCurrency( $dDelVAT, $this->getBasketCurrency() );
         }
@@ -2250,6 +2177,22 @@ class oxBasket extends oxSuperCfg
         }
         return false;
     }
+
+    /**
+     * Returns formated voucher discount
+     *
+     * @return string | bool
+     */
+    public function getFVoucherDiscountValue()
+    {
+        if ( $oVoucherDiscount = $this->getVoucherDiscount() ) {
+            if ( $oVoucherDiscount->getBruttoPrice() ) {
+                return oxLang::getInstance()->formatCurrency( $oVoucherDiscount->getBruttoPrice(), $this->getBasketCurrency() );
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Returns VAT of wrapping costs

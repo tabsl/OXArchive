@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: navigation.php 30308 2010-10-13 14:59:26Z rimvydas.paskevicius $
+ * @version   SVN: $Id: navigation.php 32007 2010-12-17 15:10:27Z sarunas $
  */
  /**
  * Administrator GUI navigation manager class.
@@ -100,7 +100,7 @@ class Navigation extends oxAdminView
         if (!$blisMallAdmin) {
             // we only allow to see our shop
             $sShopID = oxSession::getVar("actshop");
-            $sWhere = "where oxshops.oxid = '$sShopID'";
+            $sWhere = "where ".$oBaseShop->getViewName().".oxid = '$sShopID'";
         }
 
         $oShoplist->selectString("select ".$oBaseShop->getSelectFields()." from ".$oBaseShop->getViewName()." $sWhere");

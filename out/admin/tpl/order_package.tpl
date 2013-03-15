@@ -54,9 +54,17 @@ function printWindow()
                     <tr>
                             <td class="packitem" valign="top"><b>[{ $article->oxorderarticles__oxamount->value }]</b></td>
                             <td class="packitem" valign="top">[{ $article->oxorderarticles__oxartnum->value }] </td>
-                            <td class="packitem" valign="top">[{ $article->oxorderarticles__oxtitle->value }] </td>
+                            <td class="packitem" valign="top">[{ $article->oxorderarticles__oxtitle->value }]
+
+                            [{foreach key=sVar from=$article->getPersParams() item=aParam}]
+                            	[{if $aParam }]
+                                <br />[{ oxmultilang ident="ORDER_PACKAGE_DETAILS" }]: [{$aParam}]
+                                [{/if }]
+                            [{/foreach}]
+
+                            </td>
                             <td class="packitem" valign="top">[{ $article->oxorderarticles__oxselvariant->value}]</td>
-                            <td class="packitem" valign="middle"><img src="[{$shop->imagedir}]/rectangle.gif" alt="" width="20" height="20" border="0"></td>
+                            <td class="packitem" valign="middle"><img src="[{$oViewConf->getImageUrl()}]/rectangle.gif" alt="" width="20" height="20" border="0"></td>
                     </tr>
                     [{assign var=_wrap value=$article->getWrapping()}]
                     [{if $_wrap }]

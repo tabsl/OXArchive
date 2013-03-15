@@ -19,8 +19,8 @@ function editThis( sID )
 //-->
 </script>
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{$oViewConf->getHiddenSid()}]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="article_attribute">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
@@ -48,7 +48,7 @@ function editThis( sID )
 
           [{ if !$edit->blForeignArticle }]
           <br><br>
-          <a class="edittext" href="[{ $shop->selflink }]&cl=attribute" target="_new"><b>[{ oxmultilang ident="ARTICLE_ATTRIBUTE_OPENINNEWWINDOW" }]</b></a>
+          <a class="edittext" href="[{ $oViewConf->getSelfLink() }]&cl=attribute" target="_new"><b>[{ oxmultilang ident="ARTICLE_ATTRIBUTE_OPENINNEWWINDOW" }]</b></a>
           [{/if}]
 
       </td>

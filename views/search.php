@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: search.php 28473 2010-06-19 13:40:35Z arvydas $
+ * @version   SVN: $Id: search.php 33003 2011-02-07 15:49:58Z vilma $
  */
 
 /**
@@ -44,7 +44,7 @@ class Search extends oxUBase
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'search.tpl';
+    protected $_sThisTemplate = 'page/search/search.tpl';
 
     /**
      * List type
@@ -125,12 +125,6 @@ class Search extends oxUBase
      * found articles. Article list is stored at search::_aArticleList
      * array.
      *
-     * Session variables:
-     * <b>searchparam</b>
-     *
-     * Template variables:
-     * <b>emptysearch</b>
-     *
      * @return null
      */
     public function init()
@@ -191,32 +185,10 @@ class Search extends oxUBase
      * Forms serach navigation URLs, executes parent::render() and
      * returns name of template to render search::_sThisTemplate.
      *
-     * Template variables:
-     * <b>articlelist</b>, <b>searchparam</b>, <b>searchparamforhtml</b>
-     * <b>searchcnid</b>, <b>searchvendor</b>, <b>searchlink</b>,
-     * <b>pageNavigation</b>, <b>searchlink</b>,
-     * <b>articlebargainlist</b>, <b>additionalparams</b>,
-     * <b>searchmanufacturer</b>
-     *
      * @return  string  current template file name
      */
     public function render()
     {
-        $this->_aViewData['emptysearch'] = $this->isEmptySearch();
-
-        $this->_aViewData['articlelist'] = $this->getArticleList();
-
-        $this->_aViewData['similarrecommlist']  = $this->getSimilarRecommLists();
-
-        $this->_aViewData['searchparamforhtml'] = $this->getSearchParamForHtml();
-        $this->_aViewData['searchparam']        = $this->getSearchParam();
-        $this->_aViewData['searchcnid']         = $this->getSearchCatId();
-        $this->_aViewData['searchvendor']       = $this->getSearchVendor();
-        $this->_aViewData['searchmanufacturer']       = $this->getSearchManufacturer();
-
-        $this->_aViewData['pageNavigation'] = $this->getPageNavigation();
-        $this->_aViewData['actCategory']    = $this->getActiveCategory();
-
         parent::render();
 
         $myConfig = $this->getConfig();
@@ -465,6 +437,7 @@ class Search extends oxUBase
         return $this->_oPageNavigation;
     }
 
+
     /**
      * Template variable getter. Returns active search
      *
@@ -473,6 +446,32 @@ class Search extends oxUBase
     public function getActiveCategory()
     {
         return $this->getActSearch();
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'SEARCH_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
+    }
+
+    /**
+     * Returns cofig prameters blShowListDisplayType value
+     *
+     * @return boolean
+     */
+    public function canSelectDisplayType()
+    {
+        return $this->getConfig()->getConfigParam( 'blShowListDisplayType' );
     }
 
 }

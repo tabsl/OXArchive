@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxstart.php 29936 2010-09-23 06:18:52Z alfonsas $
+ * @version   SVN: $Id: oxstart.php 33128 2011-02-10 10:28:24Z arvydas.vapsva $
  */
 
 /**
@@ -53,14 +53,13 @@ class oxStart extends oxUBase
         parent::render();
 
         $sErrorNo = oxConfig::getParameter( 'execerror' );
-        $this->_aViewData[ 'errornr' ] = $this->getErrorNumber();
 
         $sTemplate = '';
 
 
 
         if ( $sErrorNo == 'unknown' ) {
-            $sTemplate = 'err_unknown.tpl';
+            $sTemplate = 'message/err_unknown.tpl';
         }
 
         if ( $sTemplate ) {
@@ -78,10 +77,6 @@ class oxStart extends oxUBase
     public function pageStart()
     {
         $myConfig  = $this->getConfig();
-
-        // assign default values
-        if ( !oxSession::hasVar('currency') )
-            oxSession::setVar( 'currency', '0' );
 
 
         $myConfig->setConfigParam( 'iMaxMandates', $myConfig->getConfigParam( 'IMS' ) );

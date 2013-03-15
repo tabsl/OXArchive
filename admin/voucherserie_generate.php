@@ -89,7 +89,7 @@ class VoucherSerie_Generate extends VoucherSerie_Main
      */
     public function generateVoucher( $iCnt )
     {
-        $iAmount  = abs( (int) oxConfig::getParameter( "voucherAmount" ) );
+        $iAmount = abs( (int) oxSession::getVar( "voucherAmount" ) );
 
         // creating new vouchers
         if ( $iCnt < $iAmount && ( $oVoucherSerie = $this->_getVoucherSerie() ) ) {
@@ -98,8 +98,8 @@ class VoucherSerie_Generate extends VoucherSerie_Main
                 $this->_iGenerated = $iCnt;
             }
 
-            $blRandomNr = ( bool ) oxConfig::getParameter( "randomVoucherNr" );
-            $sVoucherNr = $blRandomNr ? oxUtilsObject::getInstance()->generateUID() : oxConfig::getParameter( "voucherNr" );
+            $blRandomNr = ( bool ) oxSession::getVar( "randomVoucherNr" );
+            $sVoucherNr = $blRandomNr ? oxUtilsObject::getInstance()->generateUID() : oxSession::getVar( "voucherNr" );
 
             $oNewVoucher = oxNew( "oxvoucher" );
             $oNewVoucher->oxvouchers__oxvoucherserieid = new oxField( $oVoucherSerie->getId() );

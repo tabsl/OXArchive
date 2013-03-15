@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: content_list.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: content_list.php 31986 2010-12-17 14:03:45Z sarunas $
  */
 
 /**
@@ -75,14 +75,16 @@ class Content_List extends oxAdminList
     {
         $sQ = parent::_prepareWhereQuery( $aWhere, $sqlFull );
         $sFolder = oxConfig::getParameter( 'folder' );
+        $sViewName = getviewName( "oxcontents" );
 
         //searchong for empty oxfolder fields
         if ( $sFolder == 'CMSFOLDER_NONE' || $sFolder == 'CMSFOLDER_NONE_RR') {
-            $sQ .= " and oxcontents.oxfolder = '' ";
+            $sQ .= " and {$sViewName}.oxfolder = '' ";
         } elseif ( $sFolder && $sFolder != '-1' ) {
             $sFolder = oxDb::getDb()->quote( $sFolder );
-            $sQ .= " and oxcontents.oxfolder = {$sFolder}";
+            $sQ .= " and {$sViewName}.oxfolder = {$sFolder}";
         }
+
 
         return $sQ;
     }

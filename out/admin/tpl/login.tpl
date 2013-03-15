@@ -7,7 +7,7 @@
     <link rel="shortcut icon" href="[{ $oViewConf->getBaseDir() }]favicon.ico">
     <style type="text/css">
         html,body{background:#fff;height:100%;padding:0;margin:0;font:11px Trebuchet MS, Tahoma, Verdana, Arial, Helvetica, sans-serif;}
-        div.box{width:330px;height:200px;padding:20px;background:#fff url([{$shop->imagedir}]login.png) no-repeat;position:absolute;top:50%;margin-top:-127px;left:50%;margin-left:-190px;}
+        div.box{width:330px;height:200px;padding:20px;background:#fff url([{$oViewConf->getImageUrl()}]login.png) no-repeat;position:absolute;top:50%;margin-top:-127px;left:50%;margin-left:-190px;}
         p{padding:0;margin:0;}
         img.logo {margin:0 0 0 125px;padding:0;}
         form{padding:0;margin:0;}
@@ -23,11 +23,11 @@
 <body>
 
 <div class="box">
-<form action="[{ $shop->selflink }]" target="_top" method="post" name="login" id="login">
+<form action="[{ $oViewConf->getSelfLink() }]" target="_top" method="post" name="login" id="login">
     <p>
-        <img src="[{$shop->imagedir}]/loginlogo.gif" alt="" class="logo">
+        <img src="[{$oViewConf->getImageUrl()}]/loginlogo.gif" alt="" class="logo">
 
-        [{ $shop->hiddensid }]
+        [{ $oViewConf->getHiddenSid() }]
 
         <input type="hidden" name="fnc" value="checklogin">
         <input type="hidden" name="cl" value="login"><br>

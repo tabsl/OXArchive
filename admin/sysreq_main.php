@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: sysreq_main.php 27173 2010-04-12 15:43:40Z tomas $
+ * @version   SVN: $Id: sysreq_main.php 30321 2010-10-15 10:53:13Z sarunas $
  */
 
 /**
@@ -86,5 +86,18 @@ class sysreq_main extends oxAdminDetails
         $sUrl = $oSysReq->getReqInfoUrl($sIdent);
 
         return $sUrl;
+    }
+
+    /**
+     * return missing template blocks
+     *
+     * @see oxSysRequirements::getMissingTemplateBlocks
+     *
+     * @return array
+     */
+    public function getMissingTemplateBlocks()
+    {
+        $oSysReq = oxNew('oxSysRequirements');
+        return $oSysReq->getMissingTemplateBlocks();
     }
 }

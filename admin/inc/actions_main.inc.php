@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: actions_main.inc.php 32510 2011-01-14 12:52:48Z vilma $
+ * @version   SVN: $Id: actions_main.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -49,6 +49,13 @@ $aColumns = array( 'container1' => array(    // field , table,         visible, 
  */
 class ajaxComponent extends ajaxListComponent
 {
+     /**
+     * If true extended column selection will be build
+     *
+     * @var bool
+     */
+    protected $_blAllowExtColumns = true;
+
     /**
      * Returns SQL query for data to fetc
      *
@@ -59,8 +66,8 @@ class ajaxComponent extends ajaxListComponent
         $myConfig = $this->getConfig();
 
         // looking for table/view
-        $sArtTable = getViewName('oxarticles');
-        $sO2CView  = getViewName('oxobject2category');
+        $sArtTable = $this->_getViewName('oxarticles');
+        $sO2CView  = $this->_getViewName('oxobject2category');
 
         $sSelId      = oxConfig::getParameter( 'oxid' );
         $sSynchSelId = oxConfig::getParameter( 'synchoxid' );
@@ -105,7 +112,7 @@ class ajaxComponent extends ajaxListComponent
 
         // display variants or not ?
         if ( $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ) {
-            $sQ .= ' group by '.getViewName( 'oxarticles' ).'.oxid ';
+            $sQ .= ' group by '.$this->_getViewName( 'oxarticles' ).'.oxid ';
 
             $oStr = getStr();
             if ( $oStr->strpos( $sQ, "select count( * ) " ) === 0 ) {
@@ -157,11 +164,11 @@ class ajaxComponent extends ajaxListComponent
         $soxId     = oxConfig::getParameter( 'synchoxid' );
 
         if ( oxConfig::getParameter( 'all' ) ) {
-            $sArtTable = getViewName('oxarticles');
+            $sArtTable = $this->_getViewName('oxarticles');
             $aArticles = $this->_getAll( $this->_addFilter( "select $sArtTable.oxid ".$this->_getQuery() ) );
         }
 
-        $sArtTable = getViewName('oxarticles');
+        $sArtTable = $this->_getViewName('oxarticles');
         $sQ = "select max(oxactions2article.oxsort) from oxactions2article join $sArtTable on $sArtTable.oxid=oxactions2article.oxartid
                where oxactions2article.oxactionid = '".$soxId."' and oxactions2article.oxshopid = '".$myConfig->getShopId()."'
                and $sArtTable.oxid is not null";
@@ -189,7 +196,7 @@ class ajaxComponent extends ajaxListComponent
     public function setSorting()
     {
         $myConfig  = $this->getConfig();
-        $sArtTable = getViewName('oxarticles');
+        $sArtTable = $this->_getViewName('oxarticles');
         $sSelId  = oxConfig::getParameter( 'oxid' );
         $sSelect  = "select * from $sArtTable left join oxactions2article on $sArtTable.oxid=oxactions2article.oxartid ";
         $sSelect .= "where oxactions2article.oxactionid = " . oxDb::getDb()->quote( $sSelId ) . " and oxactions2article.oxshopid = '".$myConfig->getShopID()."' ".$this->_getSorting();
@@ -237,47 +244,4 @@ class ajaxComponent extends ajaxListComponent
 
         $this->_outputResponse( $this->_getData( $sCountQ, $sQ ) );
     }
-
-    /**
-     * Formats and returns chunk of SQL query string with definition of
-     * fields to load from DB. Adds subselect to get variant title from parent article
-     *
-     * @return string
-     */
-    protected function _getQueryCols()
-    {
-        $myConfig = $this->getConfig();
-        $sLangTag = oxLang::getInstance()->getLanguageTag();
-
-        $sQ = '';
-        $blSep = false;
-        $aVisiblecols = $this->_getVisibleColNames();
-        foreach ( $aVisiblecols as $iCnt => $aCol ) {
-            if ( $blSep )
-                $sQ .= ', ';
-            $sViewTable = getViewName( $aCol[1] );
-            // multilanguage
-            $sCol = $aCol[3]?$aCol[0].$sLangTag:$aCol[0];
-            if ( $myConfig->getConfigParam( 'blVariantsSelection' ) && $aCol[0] == 'oxtitle' ) {
-                $sVarSelect = "$sViewTable.oxvarselect".$sLangTag;
-                $sQ .= " IF( $sViewTable.$sCol != '', $sViewTable.$sCol, CONCAT((select oxart.$sCol from $sViewTable as oxart where oxart.oxid = $sViewTable.oxparentid),', ',$sVarSelect)) as _" . $iCnt;
-            } else {
-                $sQ  .= $sViewTable . '.' . $sCol . ' as _' . $iCnt;
-            }
-            $blSep = true;
-        }
-
-        $aIdentCols = $this->_getIdentColNames();
-        foreach ( $aIdentCols as $iCnt => $aCol ) {
-            if ( $blSep )
-                $sQ .= ', ';
-
-            // multilanguage
-            $sCol = $aCol[3]?$aCol[0].$sLangTag:$aCol[0];
-            $sQ  .= getViewName( $aCol[1] ) . '.' . $sCol . ' as _' . $iCnt;
-        }
-
-        return " $sQ ";
-    }
-
 }

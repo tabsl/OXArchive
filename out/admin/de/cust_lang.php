@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: cust_lang.php 27027 2010-04-06 07:05:01Z arvydas $
+ * @version   SVN: $Id: cust_lang.php 34107 2011-03-31 15:18:40Z juergen.busch $
  */
 
 $sLangName  = "Deutsch";
@@ -27,31 +27,31 @@ $sLangName  = "Deutsch";
 // RESOURCE IDENTITFIER = STRING
 // -------------------------------
 $aLang = array(
-'charset'                                   => 'ISO-8859-15',
-'EMAIL_PRICEALARM_CUSTOMER_HY'              => 'Hallo,',
-'EMAIL_PRICEALARM_CUSTOMER_HAVEPRICEALARM'  => 'wir haben einen Preisalarm im',
-'EMAIL_PRICEALARM_CUSTOMER_ITEM1'           => 'Der Artikel',
-'EMAIL_PRICEALARM_CUSTOMER_ITEM2'           => 'für den Sie sich interessieren und einen Preis von',
-'EMAIL_PRICEALARM_CUSTOMER_ITEM3'           => 'geboten haben ist jetzt für',
-'EMAIL_PRICEALARM_CUSTOMER_ITEM4'           => 'zu haben !',
-'EMAIL_PRICEALARM_CUSTOMER_CLICKHERE1'      => 'Um direkt zu dem Artikel zu gelangen klicken Sie bitte ',
-'EMAIL_PRICEALARM_CUSTOMER_CLICKHERE2'      => 'hier',
-'EMAIL_PRICEALARM_CUSTOMER_TEAM1'           => 'Ihr',
-'EMAIL_PRICEALARM_CUSTOMER_TEAM2'           => 'Team',
-'EMAIL_SENDEDNOW_HTML_ORDERSHIPPEDTO'       => 'Die Sendung geht an:',
-'EMAIL_SENDEDNOW_HTML_ORDERNOMBER'          => 'Ihre Bestellnr.:',
-'EMAIL_SENDEDNOW_HTML_QUANTITY'             => 'Anzahl',
-'EMAIL_SENDEDNOW_HTML_PRODUCT'              => 'Artikel',
-'EMAIL_SENDEDNOW_HTML_PRODUCTRATING'        => 'Artikel bewerten',
-'EMAIL_SENDEDNOW_HTML_ARTNOMBER'            => 'Art.Nr.:',
-'EMAIL_SENDEDNOW_HTML_REVIEW'               => 'bewerten',
-'EMAIL_SENDEDNOW_HTML_YUORTEAM1'            => 'Ihr',
-'EMAIL_SENDEDNOW_HTML_YUORTEAM2'            => 'Team',
-'EMAIL_SENDEDNOW_HTML_HY'                   => 'Guten Tag',
-'EMAIL_SENDEDNOW_HTML_SENDEDITEMS'          => 'unser Vertriebszentrum hat soeben folgende Artikel versandt.',
-'EMAIL_SENDEDNOW_HTML_ORDERGOSTO'           => 'Die Sendung geht an',
-'EMAIL_SENDEDNOW_HTML_ORDERNUM'             => 'Ihre Bestellnr.',
-'EMAIL_SENDEDNOW_HTML_RATE'                 => 'bewerten'
+'charset'                                  => 'ISO-8859-15',
+'EMAIL_PRICEALARM_CUSTOMER_HY'             => 'Hallo,',
+'EMAIL_PRICEALARM_CUSTOMER_HAVEPRICEALARM' => 'wir haben einen Preisalarm im',
+'EMAIL_PRICEALARM_CUSTOMER_ITEM1'          => 'Der Artikel',
+'EMAIL_PRICEALARM_CUSTOMER_ITEM2'          => 'für den Sie sich interessieren und einen Preis von',
+'EMAIL_PRICEALARM_CUSTOMER_ITEM3'          => 'geboten haben ist jetzt für',
+'EMAIL_PRICEALARM_CUSTOMER_ITEM4'          => 'zu haben !',
+'EMAIL_PRICEALARM_CUSTOMER_CLICKHERE1'     => 'Um direkt zu dem Artikel zu gelangen klicken Sie bitte ',
+'EMAIL_PRICEALARM_CUSTOMER_CLICKHERE2'     => 'hier',
+'EMAIL_PRICEALARM_CUSTOMER_TEAM1'          => 'Ihr',
+'EMAIL_PRICEALARM_CUSTOMER_TEAM2'          => 'Team',
+'EMAIL_SENDEDNOW_HTML_ORDERSHIPPEDTO'      => 'Die Sendung geht an:',
+'EMAIL_SENDEDNOW_HTML_ORDERNOMBER'         => 'Ihre Bestellnr.:',
+'EMAIL_SENDEDNOW_HTML_QUANTITY'            => 'Anzahl',
+'EMAIL_SENDEDNOW_HTML_PRODUCT'             => 'Artikel',
+'EMAIL_SENDEDNOW_HTML_PRODUCTRATING'       => 'Artikel bewerten',
+'EMAIL_SENDEDNOW_HTML_ARTNOMBER'           => 'Art.Nr.:',
+'EMAIL_SENDEDNOW_HTML_REVIEW'              => 'bewerten',
+'EMAIL_SENDEDNOW_HTML_YUORTEAM1'           => 'Ihr',
+'EMAIL_SENDEDNOW_HTML_YUORTEAM2'           => 'Team',
+'EMAIL_SENDEDNOW_HTML_HY'                  => 'Guten Tag',
+'EMAIL_SENDEDNOW_HTML_SENDEDITEMS'         => 'unser Vertriebszentrum hat soeben folgende Artikel versandt.',
+'EMAIL_SENDEDNOW_HTML_ORDERGOSTO'          => 'Die Sendung geht an',
+'EMAIL_SENDEDNOW_HTML_ORDERNUM'            => 'Ihre Bestellnr.',
+'EMAIL_SENDEDNOW_HTML_RATE'                => 'bewerten'
 );
 
 /*

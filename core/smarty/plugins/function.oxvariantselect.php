@@ -82,7 +82,7 @@ function oxvariantselect_addSubvariants($oMdVariants, $iLevel, &$aSelectBoxes, &
         $blVisible = false;
         $sSelectedVariant = null;
         foreach ($oMdVariants as $sKey => $oVariant) {
-            $sSelectBoxName = "mdvariantselect_".$oVariant->getParentId();
+            $sSelectBoxName = "mdVariantSelect_".$oVariant->getParentId();
             $aSelectBoxes[$iLevel][] = $sSelectBoxName;
             $aOptions[$oVariant->getId()] = $oVariant->getName();
             if ($oVariant->hasArticleId($sArtId)) {
@@ -104,7 +104,8 @@ function oxvariantselect_addSubvariants($oMdVariants, $iLevel, &$aSelectBoxes, &
 
             //no more subvariants? Mseans we are the last level select box, good enought to register a real variant now
             if (!count($oVariant->getMdSubvariants())) {
-                $aRealVariants[$oVariant->getId()] = $oVariant->getArticleId();
+                $aRealVariants[$oVariant->getId()]['id'] = $oVariant->getArticleId();
+                $aRealVariants[$oVariant->getId()]['link'] = $oVariant->getlink();
             }
         }
     }
@@ -173,8 +174,10 @@ function oxvariantselect_formatJsRealVariantArray($aRealVariants)
     $sRes = "<script language=JavaScript><!--\n";
     $iCount = count($aRealVariants);
     $sRes .= "mdRealVariants = Array($iCount);\n";
+    $sRes .= "mdRealVariantsLinks = Array($iCount);\n";
     foreach ($aRealVariants as $sMdVarian => $sRealVariant) {
-        $sRes .= " mdRealVariants['$sMdVarian'] = '$sRealVariant';\n";
+        $sRes .= " mdRealVariants['$sMdVarian'] = '" . $sRealVariant['id'] . "';\n";
+        $sRes .= " mdRealVariantsLinks['$sMdVarian'] = '" . str_replace( '&amp;', '&', $sRealVariant['link']) . "';\n";
     }
 
     $sRes .= "--></script>";

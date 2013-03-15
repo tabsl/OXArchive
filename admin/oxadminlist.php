@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadminlist.php 27816 2010-05-19 13:44:05Z sarunas $
+ * @version   SVN: $Id: oxadminlist.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -71,20 +71,6 @@ class oxAdminList extends oxAdminView
     protected $_aWhere = null;
 
     /**
-     * Default SQL sorting parameter (default null).
-     *
-     * @var string
-     */
-    protected $_sDefSort = null;
-
-    /**
-     * Sorting parameters
-     *
-     * @var array
-     */
-    protected $_aSort = array();
-
-    /**
      * Enable/disable sorting by DESC (SQL) (defaultfalse - disable).
      *
      * @var bool
@@ -120,6 +106,59 @@ class oxAdminList extends oxAdminView
     protected $_iDefViewListSize = 50;
 
     /**
+     * List sorting array
+     *
+     * @var array
+     */
+    protected $_aCurrSorting = null;
+
+    /**
+     * Default sorting field
+     *
+     * @var string
+     */
+    protected $_sDefSortField = null;
+
+    /**
+     * List filter array
+     *
+     * @var array
+     */
+    protected $_aListFilter = null;
+
+    /**
+     * Returns sorting fields array
+     *
+     * @return array
+     */
+    public function getListSorting()
+    {
+        if ( $this->_aCurrSorting === null ) {
+            $this->_aCurrSorting = oxConfig::getParameter( 'sort' );
+
+            if ( !$this->_aCurrSorting && $this->_sDefSortField && ( $oBaseObject = $this->getItemListBaseObject() ) ) {
+                $this->_aCurrSorting[$oBaseObject->getCoreTableName()] = array( $this->_sDefSortField => "asc" );
+            }
+        }
+
+        return $this->_aCurrSorting;
+    }
+
+    /**
+     * Returns list filter array
+     *
+     * @return array
+     */
+    public function getListFilter()
+    {
+        if ( $this->_aListFilter === null ) {
+            $this->_aListFilter = oxConfig::getParameter( "where" );
+        }
+
+        return $this->_aListFilter;
+    }
+
+    /**
      * Viewable list size getter
      *
      * @return int
@@ -145,6 +184,16 @@ class oxAdminList extends oxAdminView
     }
 
     /**
+     * Returns view list size
+     *
+     * @return int
+     */
+    public function getViewListSize()
+    {
+        return $this->_getViewListSize();
+    }
+
+    /**
      * Viewable list size getter (used in list_*.php views)
      *
      * @return int
@@ -162,58 +211,6 @@ class oxAdminList extends oxAdminView
     }
 
     /**
-     * Executes parent::init(), loads list items
-     *
-     * @return null
-     */
-    public function init()
-    {
-        parent::init();
-
-        $myConfig = $this->getConfig();
-
-        if ( $this->_sListClass ) {
-
-            $this->_oList = oxNew( $this->_sListType, 'core' );
-            $this->_oList->clear();
-            $this->_oList->init( $this->_sListClass );
-
-            $aWhere = $this->buildWhere();
-
-            $oListObject = $this->_oList->getBaseObject();
-
-            oxSession::setVar( 'tabelle', $this->_sListClass );
-            $this->_aViewData['listTable'] = getViewName( $oListObject->getCoreTableName() );
-            $myConfig->setGlobalParameter( 'ListCoreTable', $oListObject->getCoreTableName() );
-
-            if ( $oListObject->isMultilang() ) {
-                // is the object multilingual?
-                $oListObject->setLanguage( oxLang::getInstance()->getBaseLanguage() );
-
-                if ( isset( $this->_blEmployMultilanguage ) ) {
-                    $oListObject->setEnableMultilang( $this->_blEmployMultilanguage );
-                }
-            }
-
-            $sSql = $this->_buildSelectString( $oListObject );
-            $sSql = $this->_prepareWhereQuery( $aWhere, $sSql );
-            $sSql = $this->_prepareOrderByQuery( $sSql );
-            $sSql = $this->_changeselect( $sSql );
-
-            // calculates count of list items
-            $this->_calcListItemsCount( $sSql );
-
-            // setting current list position (page)
-            $this->_setCurrentListPosition( oxConfig::getParameter( 'jumppage' ) );
-
-            // settting additioan params for list: current list size
-            $this->_oList->setSqlLimit( $this->_iCurrListPos, $this->_getViewListSize() );
-
-            $this->_oList->selectString( $sSql );
-        }
-    }
-
-    /**
      * Executes parent::render(), sets back search keys to view, sets navigation params
      *
      * @return null
@@ -223,62 +220,12 @@ class oxAdminList extends oxAdminView
         $sReturn = parent::render();
 
         // assign our list
-        if ( $this->_oList ) {
-            $this->_aViewData['mylist'] = $this->_oList;
-        }
-
-        // setting filter data back to view
-        $this->_setFilterParams();
+        $this->_aViewData['mylist'] = $this->getItemList();
 
         // set navigation parameters
         $this->_setListNavigationParams();
 
-        // sorting
-        $this->_aSort[0] = oxConfig::getParameter( 'sort' );
-        if ( !isset( $this->_aSort[0]) || !$this->_aSort[0] )
-            $this->_aSort[0] = $this->_sDefSort;
-
-        $this->_aViewData['sort'] = $this->_aSort[0];
-
         return $sReturn;
-    }
-
-    /**
-     * Sets view filter data
-     *
-     *  - aViewData['where'] containts filter data like $object->oxarticles__oxtitle = filter_value
-     *  - aViewData['whereparam'] contains string which can be later used in url. and
-     *    looks like &amp;where[oxarticles.oxtitle]=_filter_value_&amp;art_category=_filter_categry_;
-     *
-     * @return null
-     */
-    protected function _setFilterParams()
-    {
-        // build where
-        if ( is_array( $aWhere = oxConfig::getParameter( 'where' ) ) ) {
-
-            $myConfig = $this->getConfig();
-            $myUtils  = oxUtils::getInstance();
-            $sListTable = $myConfig->getGlobalParameter( 'ListCoreTable' );
-
-            $oSearchKeys = new oxStdClass();
-            $sWhereParam = "";
-
-            while ( list( $sName, $sValue ) = each( $aWhere ) ) {
-                $sWhereParam .= "&amp;where[".$sName."]=".$sValue;
-                $sFieldName = str_replace( getViewName( $sListTable ) . '.', $sListTable . '.', $sName );
-                $sFieldName = $myUtils->getArrFldName( $sFieldName );
-                $oSearchKeys->$sFieldName = $sValue;
-            }
-
-            $this->_aViewData['where'] = $oSearchKeys;
-
-            //#M430: Pagination in admin list loses category parameter
-            if ( $sChosenCat  = oxConfig::getParameter( "art_category") ) {
-                $sWhereParam .= "&amp;art_category=".$sChosenCat;
-            }
-            $this->_aViewData['whereparam'] = $sWhereParam;
-        }
     }
 
     /**
@@ -291,7 +238,7 @@ class oxAdminList extends oxAdminView
         $oDelete = oxNew( $this->_sListClass );
 
 
-        $blDelete = $oDelete->delete( oxConfig::getParameter( 'oxid' ) );
+        $blDelete = $oDelete->delete( $this->getEditObjectId() );
 
         // #A - we must reset object ID
         if ( $blDelete && isset( $_POST['oxid'] ) ) {
@@ -360,64 +307,37 @@ class oxAdminList extends oxAdminView
     protected function _prepareOrderByQuery( $sSql = null )
     {
         // sorting
-        $this->_aSort[0] = oxConfig::getParameter( 'sort' );
+        $aSortFields = $this->getListSorting();
 
-        if ( !isset( $this->_aSort[0]) || !$this->_aSort[0] )
-            $this->_aSort[0] = $this->_sDefSort;
-
-        $blSortDesc = $this->_blDesc;
-
-        // add sorting
-        if ( $this->_aSort && isset($this->_aSort[0] ) ) {
-
-            $blSortDesc = oxConfig::getParameter( 'adminorder' );
-
-            if ( !isset( $blSortDesc ) ) {
-                $blSortDesc = $this->_blDesc;
-            }
+        if ( is_array( $aSortFields ) && count( $aSortFields ) ) {
 
             // only add order by at full sql not for count(*)
             $sSql .= ' order by ';
             $blSep = false;
-            $iLang = null;
 
-            $oListObject = $this->_oList->getBaseObject();
+            $oListItem = $this->getItemListBaseObject();
+            $iLangId = $oListItem->isMultilang() ? $oListItem->getLanguage() : oxLang::getInstance()->getBaseLanguage();
 
-            if ( $oListObject->isMultilang() ) {
-                $iLang = $oListObject->getLanguage();
-            }
+            $blSortDesc = oxConfig::getParameter( 'adminorder' );
+            $blSortDesc = $blSortDesc !== null ? (bool) $blSortDesc : $this->_blDesc;
 
-            $sTable = $oListObject->getCoreTableName();
-            $sViewName = getViewName( $sTable );
+            foreach ( $aSortFields as $sTable => $aFieldData ) {
 
-            foreach ( $this->_aSort as $orderColumn ) {
+                $sTable = $sTable ? ( getViewName( $sTable, $iLangId ) . '.' ) : '';
+                foreach ( $aFieldData as $sColumn => $sSortDir ) {
 
-                //V oxactive field search always DESC
-                if ( $orderColumn == "oxactive" ) {
-                    $blSortDesc = true;
-                }
+                    $sField = $sTable . $sColumn;
 
-                // multilanguage sorting
-                if ( $iLang ) {
-                    $sObjectField = "{$sTable}__{$orderColumn}";
-                    if ( $oListObject instanceof oxI18n ) {
-                        if ( $oListObject->isMultilingualField($orderColumn) ) {
-                            $orderColumn .= "_{$iLang}";
-                        }
+                    //add table name to column name if no table name found attached to column name
+                    $sSql .= ( ( ( $blSep ) ? ', ' : '' ) ) . oxDb::getInstance()->escapeString( $sField );
+
+                    //V oxactive field search always DESC
+                    if ( $blSortDesc || $sColumn == "oxactive" || strcasecmp( $sSortDir, 'desc' ) == 0 ) {
+                        $sSql .= ' desc ';
                     }
+
+                    $blSep = true;
                 }
-
-                //add table name to column name if no table name found attached to column name
-                if ( strpos( $orderColumn, '.' ) === false ) {
-                    $orderColumn = $sViewName . '.' . $orderColumn;
-                }
-
-                $sSql  .= ( ( ( $blSep ) ? ', ' : '' ) ) . oxDb::getInstance()->escapeString( $orderColumn );
-                $blSep  = true;
-            }
-
-            if ( $blSortDesc ) {
-                $sSql .= ' desc ';
             }
         }
 
@@ -433,15 +353,7 @@ class oxAdminList extends oxAdminView
      */
     protected function _buildSelectString( $oListObject = null )
     {
-        $sSql = '';
-
-        if ( $oListObject ) {
-            $oBase = oxNew( 'oxBase' );
-            $oBase->init( $oListObject->getCoreTableName() );
-            $sSql = $oBase->buildSelectString( null );
-        }
-
-        return $sSql;
+        return $oListObject !== null ? $oListObject->buildSelectString( null ) : "";
     }
 
 
@@ -586,51 +498,36 @@ class oxAdminList extends oxAdminView
      */
     public function buildWhere()
     {
-        $myConfig = $this->getConfig();
-        $this->_aWhere = array();
+        if ( $this->_aWhere === null && ( $oList = $this->getItemList() ) ) {
 
-        $iLanguage = oxLang::getInstance()->getBaseLanguage();
-        $aWhere    = oxConfig::getParameter( 'where' );
+            $this->_aWhere = array();
+            $aFilter = $this->getListFilter();
+            if ( is_array( $aFilter ) ) {
 
-        if ( !$this->_oList )
-            return $this->_aWhere;
+                $oListItem = $this->getItemListBaseObject();
+                $iLangId = $oListItem->isMultilang() ? $oListItem->getLanguage() : oxLang::getInstance()->getBaseLanguage();
+                $sLocalDateFormat = $this->getConfig()->getConfigParam( 'sLocalDateFormat' );
 
-        $oListObject = $this->_oList->getBaseObject();
-        $sTable = $oListObject->getCoreTableName();
-        $sViewName = getViewName( $sTable );
+                foreach ( $aFilter as $sTable => $aFilterData ) {
+                    foreach ( $aFilterData as $sName => $sValue ) {
+                        if ( $sValue || '0' === ( string ) $sValue ) {
 
-        if ( $this->_oList && is_array( $aWhere ) ) {
+                            $sField = "{$sTable}__{$sName}";
 
-            $oStr = getStr();
-            foreach ( $aWhere as $sName => $sValue ) {
-                if ( $sValue || '0' === ( string ) $sValue ) {
+                            // if no table name attached to field name, add it
+                            $sName = $sTable ? getViewName( $sTable, $iLangId ) . ".{$sName}" : $sName;
 
-                    if ( strpos( $sName, '.' ) === false ) {
-                        // if no table name attached to field name, add it
-                        $sName = "{$sTable}.{$sName}";
-                    }
+                            // #M1260: if field is date
+                            if ( $sLocalDateFormat && $sLocalDateFormat != 'ISO' && isset( $oListItem->$sField ) ) {
+                                $sFldType = $oListItem->{$sField}->fldtype;
+                                if ( "datetime" == $sFldType || "date" == $sFldType ) {
+                                    $sValue = $this->_convertToDBDate( $sValue, $sFldType );
+                                }
+                            }
 
-
-                    // test if field is multilang
-                    if ( $oListObject instanceof oxI18n ) {
-                        $sFldName = strtolower( $oStr->preg_replace('/(.+)\./', '', $sName ) );
-                        if ( $oListObject->isMultilingualField( $sFldName ) && $iLanguage ) {
-                            $sName .=  "_$iLanguage";
+                            $this->_aWhere[$sName] = "%{$sValue}%";
                         }
                     }
-
-                    // #M1260: if field is date
-                    $sLocalDateFormat = $this->getConfig()->getConfigParam( 'sLocalDateFormat' );
-                    if ( $sLocalDateFormat && $sLocalDateFormat != 'ISO') {
-                        $sFldName = strtolower( $oStr->preg_replace('/(.+)\./', '', $sName ) );
-                        $sLongName = $sTable."__".$sFldName;
-                        $sFldType = $oListObject->$sLongName->fldtype;
-                        if ( $sFldType && ( $sFldType == "datetime" || $sFldType == "date" ) ) {
-                            $sValue = $this->_convertToDBDate( $sValue, $sFldType );
-                        }
-                    }
-
-                    $this->_aWhere[$sName] = "%{$sValue}%";
                 }
             }
         }
@@ -846,7 +743,7 @@ class oxAdminList extends oxAdminView
 
             $myAdminNavig = $this->getNavigation();
 
-            $sOxId = oxConfig::getParameter( 'oxid' );
+            $sOxId = $this->getEditObjectId();
 
             if ( $sOxId == -1) {
                 //on first call or when pressed creating new item button, reseting active tab
@@ -878,6 +775,68 @@ class oxAdminList extends oxAdminView
      */
     public function getItemList()
     {
+        if ( $this->_oList === null && $this->_sListClass ) {
+
+            $this->_oList = oxNew( $this->_sListType );
+            $this->_oList->clear();
+            $this->_oList->init( $this->_sListClass );
+
+            $aWhere = $this->buildWhere();
+
+            $oListObject = $this->_oList->getBaseObject();
+
+            oxSession::setVar( 'tabelle', $this->_sListClass );
+            $this->_aViewData['listTable'] = getViewName( $oListObject->getCoreTableName() );
+            $this->getConfig()->setGlobalParameter( 'ListCoreTable', $oListObject->getCoreTableName() );
+
+            if ( $oListObject->isMultilang() ) {
+                // is the object multilingual?
+                $oListObject->setLanguage( oxLang::getInstance()->getBaseLanguage() );
+
+                if ( isset( $this->_blEmployMultilanguage ) ) {
+                    $oListObject->setEnableMultilang( $this->_blEmployMultilanguage );
+                }
+            }
+
+            $sSql = $this->_buildSelectString( $oListObject );
+            $sSql = $this->_prepareWhereQuery( $aWhere, $sSql );
+            $sSql = $this->_prepareOrderByQuery( $sSql );
+            $sSql = $this->_changeselect( $sSql );
+
+            // calculates count of list items
+            $this->_calcListItemsCount( $sSql );
+
+            // setting current list position (page)
+            $this->_setCurrentListPosition( oxConfig::getParameter( 'jumppage' ) );
+
+            // settting additioan params for list: current list size
+            $this->_oList->setSqlLimit( $this->_iCurrListPos, $this->_getViewListSize() );
+
+            $this->_oList->selectString( $sSql );
+        }
+
         return $this->_oList;
+    }
+
+    /**
+     * Clear items list
+     *
+     * @return null
+     */
+    public function clearItemList()
+    {
+        $this->_oList = null;
+    }
+
+    /**
+     * Returns item list base object
+     *
+     * @return oxbase
+     */
+    public function getItemListBaseObject()
+    {
+        if ( ( $oList = $this->getItemList() ) ) {
+           return $oList->getBaseObject();
+        }
     }
 }

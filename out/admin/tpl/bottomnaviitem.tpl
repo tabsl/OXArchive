@@ -14,10 +14,10 @@
 <li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.new" href="#" onClick="Javascript:top.oxid.admin.editThis( -1 );return false" target="edit">[{ oxmultilang ident="TOOLTIPS_NEWUSER" }]</a> |</li>
 [{/if}]
 [{if $bottom_buttons->user_newremark && $oxid != "-1" }]
-<li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.newremark" href="#" onClick="Javascript:parent.list.document.search.actedit.value=3;document.location='[{$shop->selflink}]&cl=user_remark&oxid=[{$oxid}]';return false" target="edit">[{ oxmultilang ident="TOOLTIPS_NEWREMARK" }]</a> |</li>
+<li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.newremark" href="#" onClick="Javascript:parent.list.document.search.actedit.value=3;document.location='[{$oViewConf->getSelfLink()|replace:"&amp;":"&"}]&cl=user_remark&oxid=[{$oxid}]';return false" target="edit">[{ oxmultilang ident="TOOLTIPS_NEWREMARK" }]</a> |</li>
 [{/if}]
 [{if $bottom_buttons->user_newaddress && $oxid != "-1" }]
-<li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.newaddress" href="#" onClick="Javascript:parent.list.document.search.actedit.value=4;document.location='[{$shop->selflink}]&cl=user_address&oxaddressid=-1&oxid=[{$oxid}]';return false" target="edit">[{ oxmultilang ident="TOOLTIPS_NEWADDRESS" }]</a> |</li>
+<li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.newaddress" href="#" onClick="Javascript:parent.list.document.search.actedit.value=4;document.location='[{$oViewConf->getSelfLink()|replace:"&amp;":"&"}]&cl=user_address&oxaddressid=-1&oxid=[{$oxid}]';return false" target="edit">[{ oxmultilang ident="TOOLTIPS_NEWADDRESS" }]</a> |</li>
 [{ /if }]
 [{* payment *}]
   [{if $bottom_buttons->payment_new }]
@@ -28,7 +28,7 @@
 <li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.new" href="#" onClick="Javascript:top.oxid.admin.editThis( -1 );return false" target="edit">[{ oxmultilang ident="TOOLTIPS_NEWNEWSLETTER" }]</a> |</li>
 [{/if}]
 [{* shop *}]
-[{if $bottom_buttons->shop_new && $ismall && $malladmin == 1 }]
+[{if $bottom_buttons->shop_new && $oView->isMall() && $malladmin == 1 }]
 <li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.new" href="#" onClick="Javascript:editThis( -1 );return false" target="edit">[{ oxmultilang ident="TOOLTIPS_NEWSHOP" }]</a> |</li>
 [{/if}]
 [{* usergroups *}]
@@ -40,7 +40,7 @@
   <li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.new" href="#" onClick="Javascript:top.oxid.admin.editThis( -1 );return false" target="edit">[{ oxmultilang ident="TOOLTIPS_NEWCATEGORY" }]</a> |</li>
   [{/if}]
 [{if $bottom_buttons->category_refresh }]
-<li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.refresh" href="#" onClick="Javascript:var agree=confirm('[{ oxmultilang ident="BOTTOMNAVIITEM_ATTENTION" }]');if (agree){top.oxid.admin.editThis( -1 );popupWin=window.open('[{$shop->selflink}]&cl=category_update', 'remote', 'scrollbars=yes,width=500,height=400')}" target="edit">[{ oxmultilang ident="TOOLTIPS_NEWCATTREE" }]</a> |</li>
+<li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.refresh" href="#" onClick="Javascript:var agree=confirm('[{ oxmultilang ident="BOTTOMNAVIITEM_ATTENTION" }]');if (agree){top.oxid.admin.editThis( -1 );popupWin=window.open('[{$oViewConf->getSelfLink()|replace:"&amp;":"&"}]&cl=category_update', 'remote', 'scrollbars=yes,width=500,height=400')}" target="edit">[{ oxmultilang ident="TOOLTIPS_NEWCATTREE" }]</a> |</li>
 [{/if}]
 [{if $bottom_buttons->category_resetnrofarticles }]
 <li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.resetnrofarticles" href="#" onClick="Javascript:document.myedit.fnc.value='resetNrOfCatArticles';document.myedit.submit();" target="edit">[{ oxmultilang ident="TOOLTIPS_RESETNROFARTICLESINCAT" }]</a> |</li>
@@ -50,7 +50,7 @@
   <li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.new" href="#" onClick="Javascript:top.oxid.admin.editThis( -1 );return false" target="edit">[{ oxmultilang ident="TOOLTIPS_NEWARTICLE" }]</a> |</li>
   [{/if}]
 [{if $bottom_buttons->article_preview && $oxid != -1 }]
-<li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.preview" href="[{if $edit}][{$edit->getStdLink()}][{else}][{$shop->basedir}]?cl=details&anid=[{$oxid}][{/if}]&amp;preview=[{$oView->getPreviewId()}]" target="new">[{ oxmultilang ident="TOOLTIPS_ARTICLEREVIEW" }]</a> |</li>
+<li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.preview" href="[{if $edit}][{$edit->getStdLink()}][{else}][{$oViewConf->getBaseDir()}]?cl=details&anid=[{$oxid}][{/if}]&amp;preview=[{$oView->getPreviewId()}]" target="new">[{ oxmultilang ident="TOOLTIPS_ARTICLEREVIEW" }]</a> |</li>
 [{/if}]
 [{* attribute *}]
 [{if $bottom_buttons->attribute_new }]
@@ -94,7 +94,7 @@
 [{/if}]
 [{* order *}]
 [{if $bottom_buttons->order_newremark && $oxid!=-1 }]
-<li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.newremark" href="#" onClick="Javascript:parent.list.document.search.actedit.value=4;document.location='[{$shop->selflink}]&cl=order_remark&oxid=[{$oxid}]';return false" target="edit">[{ oxmultilang ident="TOOLTIPS_NEWREMARK" }]</a> |</li>
+<li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.newremark" href="#" onClick="Javascript:parent.list.document.search.actedit.value=4;document.location='[{$oViewConf->getSelfLink()|replace:"&amp;":"&"}]&cl=order_remark&oxid=[{$oxid}]';return false" target="edit">[{ oxmultilang ident="TOOLTIPS_NEWREMARK" }]</a> |</li>
 [{/if}]
 [{* imex *}]
 [{* country *}]
@@ -139,7 +139,7 @@
 
 [{ if $sHelpURL }]
 [{* HELP *}]
-<li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.help" href="[{ $sHelpURL }]/[{ $shop->cl|oxlower }].html" OnClick="window.open('[{ $sHelpURL }]/[{ $shop->cl|lower }].html','OXID_Help','width=800,height=600,resizable=no,scrollbars=yes');return false;">[{ oxmultilang ident="TOOLTIPS_OPENHELP" }]</a></li>
+<li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.help" href="[{ $sHelpURL }]/[{ $oViewConf->getActiveClassName()|oxlower }].html" OnClick="window.open('[{ $sHelpURL }]/[{ $oViewConf->getActiveClassName()|lower }].html','OXID_Help','width=800,height=600,resizable=no,scrollbars=yes');return false;">[{ oxmultilang ident="TOOLTIPS_OPENHELP" }]</a></li>
 [{/if}]
 </ul>
 [{/strip}]

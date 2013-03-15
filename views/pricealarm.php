@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: pricealarm.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: pricealarm.php 32991 2011-02-07 14:23:27Z vilma $
  */
 
 /**
@@ -57,34 +57,11 @@ class Pricealarm extends oxUBase
     protected $_iPriceAlarmStatus = null;
 
     /**
-     * Executes parent::render(), loads pricealarm article, currency.
-     * Returns name of template to render Pricealarm::_sThisTemplate.
-     *
-     * Template variables:
-     * <b>product</b>, <b>bidprice</b>
-     *
-     * @return string   current view template file name
-     */
-    public function render()
-    {
-        parent::render();
-
-        $this->_aViewData['product']  = $this->getProduct();
-        $this->_aViewData['bidprice'] = $this->getBidPrice();
-        $this->_aViewData['success']  = $this->getPriceAlarmStatus();
-
-        return $this->_sThisTemplate;
-    }
-
-    /**
      * Validates email
      * address. If email is wrong - returns false and exits. If email
      * address is OK - creates prcealarm object and saves it
      * (oxpricealarm::save()). Sends pricealarm notification mail
      * to shop owner.
-     *
-     * Template variables:
-     * <b>success</b>, <b>shop</b>
      *
      * @return  bool    false on error
      */

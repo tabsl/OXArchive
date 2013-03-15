@@ -97,10 +97,10 @@ var oxid = {
             oSearch.submit();
         },
 
-        reloadNavigation : function()
+        reloadNavigation : function( sID )
         {
             var oNavigation = top.document.getElementById("navigation");
-            oNavigation.src = oNavigation.src;
+            oNavigation.src = oNavigation.src + "&shp=" + sID;
         },
 
         changeLstrt : function()
@@ -156,6 +156,27 @@ var oxid = {
                 //forcing edit frame to reload after submit
                 top.forceReloadingEditFrame();
             }
+        },
+
+        setSorting : function( oForm, sTable, sColumn, sDirection )
+        {
+            // resetting previous
+            var aInputs = oForm.getElementsByTagName('input');
+            for ( var i = 0; i < aInputs.length; i++ ) {
+                if( aInputs[i].getAttribute( "name" ).match( /^sort/ ) ) {
+                    oForm.removeChild( aInputs[i] );
+                    i--;
+                }
+            }
+
+            // creating form element
+            var oFormField = document.createElement( "input" );
+            oFormField.setAttribute( "type", "hidden" );
+            oFormField.setAttribute( "name", "sort[" + sTable + "][" + sColumn + "]" );
+            oFormField.setAttribute( "value", sDirection );
+
+            // appending..
+            oForm.appendChild( oFormField );
         }
     }
 };

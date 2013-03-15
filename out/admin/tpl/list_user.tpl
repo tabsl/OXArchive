@@ -1,5 +1,15 @@
 [{include file="headitem.tpl" title="SHOWLIST_TITLE"|oxmultilangassign box=" "}]
 
+[{assign var="where" value=$oView->getListFilter()}]
+[{assign var="whereparam" value=""}]
+[{foreach from=$where item=aField key=sTable}]
+  [{foreach from=$aField item=sFilter key=sField}]
+    [{assign var="whereparam" value=$whereparam|cat:"where["|cat:$sTable|cat:"]["|cat:$sField|cat:"]="|cat:$sFilter|cat:"&amp;"}]
+  [{/foreach}]
+[{/foreach}]
+[{assign var="viewListSize" value=$oView->getViewListSize()}]
+[{assign var="whereparam" value=$whereparam|cat:"viewListSize="|cat:$viewListSize}]
+
 <script type="text/javascript">
 <!--
 function editThis( sID)
@@ -44,8 +54,8 @@ function editThis( sID)
 //-->
 </script>
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="list_user">
     <input type="hidden" name="updatelist" value="1">
@@ -60,26 +70,24 @@ function editThis( sID)
 <div id="liste">
 
 
-<form name="showlist" id="showlist" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="showlist" id="showlist" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="cl" value="list_user">
-    <input type="hidden" name="sort" value="">
-
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
 <tr>
     <td class="listfilter first">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser.oxfname]" value="[{ $where->oxuser__oxfname }]">
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser][oxfname]" value="[{ $where.oxuser.oxfname }]">
         </div></div>
     </td>
     <td class="listfilter">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser.oxlname]" value="[{ $where->oxuser__oxlname }]">
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser][oxlname]" value="[{ $where.oxuser.oxlname }]">
         </div></div>
     </td>
     <td class="listfilter">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser.oxusername]" value="[{ $where->oxuser__oxusername }]">
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser][oxusername]" value="[{ $where.oxuser.oxusername }]">
         </div></div>
     </td>
     <td class="listfilter">
@@ -93,16 +101,16 @@ function editThis( sID)
               </select>
               <input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]">
             </div>
-            <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser.oxregister]" value="[{ $where->oxuser__oxregister|oxformdate }]">
+            <input class="listedit" type="text" size="15" maxlength="128" name="where[oxuser][oxregister]" value="[{ $where.oxuser.oxregister|oxformdate }]">
           </div>
         </div>
     </td>
 </tr>
 <tr>
-    <td class="listheader first"><a href="javascript:document.forms.showlist.sort.value='oxuser.oxfname';document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxfname" }]</a></td>
-    <td class="listheader"><a href="javascript:document.forms.showlist.sort.value='oxuser.oxlname';document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxlname" }]</a></td>
-    <td class="listheader"><a href="javascript:document.forms.showlist.sort.value='oxuser.oxusername';document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxusername" }]</a></td>
-    <td class="listheader"><a href="javascript:document.forms.showlist.sort.value='oxuser.oxregister';document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxcreate" }]</a></td>
+    <td class="listheader first"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxuser', 'oxfname', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxfname" }]</a></td>
+    <td class="listheader"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxuser', 'oxlname', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxlname" }]</a></td>
+    <td class="listheader"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxuser', 'oxusername', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxusername" }]</a></td>
+    <td class="listheader"><a href="javascript:top.oxid.admin.setSorting( document.forms.showlist, 'oxuser', 'oxregister', 'asc');document.forms.showlist.submit();" class="listheader">[{ oxmultilang ident="snpuserlistoxcreate" }]</a></td>
 </tr>
 
 [{assign var="blWhite" value=""}]

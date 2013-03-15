@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: voucherserie_main.php 29410 2010-08-18 14:08:28Z arvydas $
+ * @version   SVN: $Id: voucherserie_main.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -63,18 +63,7 @@ class VoucherSerie_Main extends DynExportBase
     {
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid" );
-
-        // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid" );
-        if ( ( $soxId == "-1" || !isset( $soxId ) ) && isset( $sSavedID ) ) {
-            $soxId = $sSavedID;
-            oxSession::deleteVar( "saved_oxid" );
-            $this->_aViewData["oxid"] = $soxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] = "1";
-        }
-
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId ) ) {
             // load object
             $oVoucherSerie = oxNew( "oxvoucherserie" );
@@ -95,7 +84,7 @@ class VoucherSerie_Main extends DynExportBase
     {
 
         // Parameter Processing
-        $soxId          = oxConfig::getParameter( "oxid" );
+        $soxId = $this->getEditObjectId();
         $aSerieParams   = oxConfig::getParameter("editval");
 
         // Voucher Serie Processing
@@ -108,15 +97,11 @@ class VoucherSerie_Main extends DynExportBase
         }
 
 
-        $this->_aViewData["updatelist"] = "1";
-
         $oVoucherSerie->assign( $aSerieParams );
         $oVoucherSerie->save();
 
         // set oxid if inserted
-        if ( $soxId == "-1" ) {
-            oxSession::setVar("saved_oxid", $oVoucherSerie->getId() );
-        }
+        $this->setEditObjectId( $oVoucherSerie->getId() );
     }
 
     /**
@@ -150,7 +135,7 @@ class VoucherSerie_Main extends DynExportBase
     {
         if ( $this->_oVoucherSerie == null ) {
             $oVoucherSerie = oxNew( "oxvoucherserie" );
-            if ( $oVoucherSerie->load( oxConfig::getParameter( "voucherid" ) ) ) {
+            if ( $oVoucherSerie->load( oxSession::getVar( "voucherid" ) ) ) {
                 $this->_oVoucherSerie = $oVoucherSerie;
             }
         }

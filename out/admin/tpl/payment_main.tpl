@@ -7,19 +7,20 @@
     [{assign var="readonly" value=""}]
   [{/if}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="payment_main">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
 </form>
 
-<form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
-[{ $shop->hiddensid }]
+<form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post" onSubmit="copyLongDesc( 'oxpayments__oxlongdesc' );">
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="payment_main">
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
 <input type="hidden" name="editval[oxpayments__oxid]" value="[{ $oxid }]">
+<input type="hidden" name="editval[oxpayments__oxlongdesc]" value="">
 
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
 
@@ -61,6 +62,23 @@
             </td>
         </tr>
         <tr>
+            <td class="edittext" valign="top">
+            [{oxmultilang ident="PAYMENT_MAIN_ADDSUMRULES"}]
+            </td>
+            <td class="edittext">
+              <table cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                    <td><input type="checkbox" name="oxpayments__oxaddsumrules[]" value="1" [{if !$edit->oxpayments__oxaddsumrules->value || $edit->oxpayments__oxaddsumrules->value & 1}]checked[{/if}]> [{oxmultilang ident="PAYMENT_MAIN_ADDSUMRULES_ALLGOODS"}]</td>
+                    <td rowspan="5" valign="top">[{oxinputhelp ident="HELP_PAYMENT_MAIN_ADDSUMRULES"}]</td>
+                </tr>
+                <tr><td><input type="checkbox" name="oxpayments__oxaddsumrules[]" value="2" [{if !$edit->oxpayments__oxaddsumrules->value || $edit->oxpayments__oxaddsumrules->value & 2}]checked[{/if}]> [{oxmultilang ident="PAYMENT_MAIN_ADDSUMRULES_DISCOUNTS"}]</td></tr>
+                <tr><td><input type="checkbox" name="oxpayments__oxaddsumrules[]" value="4" [{if !$edit->oxpayments__oxaddsumrules->value || $edit->oxpayments__oxaddsumrules->value & 4}]checked[{/if}]> [{oxmultilang ident="PAYMENT_MAIN_ADDSUMRULES_VOUCHERS"}]</td></tr>
+                <tr><td><input type="checkbox" name="oxpayments__oxaddsumrules[]" value="8" [{if !$edit->oxpayments__oxaddsumrules->value || $edit->oxpayments__oxaddsumrules->value & 8}]checked[{/if}]> [{oxmultilang ident="PAYMENT_MAIN_ADDSUMRULES_SHIPCOSTS"}]</td></tr>
+                <tr><td><input type="checkbox" name="oxpayments__oxaddsumrules[]" value="16" [{if $edit->oxpayments__oxaddsumrules->value & 16}]checked[{/if}]> [{oxmultilang ident="PAYMENT_MAIN_ADDSUMRULES_GIFTS"}]</td></tr>
+              </table>
+            </td>
+        </tr>
+        <tr>
             <td class="edittext">
             [{ oxmultilang ident="PAYMENT_MAIN_FROMBONI" }]
             </td>
@@ -95,15 +113,6 @@
             <td class="edittext">
             <input type="text" class="editinput" size="25" maxlength="[{$edit->oxpayments__oxsort->fldmax_length}]" name="editval[oxpayments__oxsort]" value="[{$edit->oxpayments__oxsort->value}]" [{ $readonly }]>
             [{ oxinputhelp ident="HELP_PAYMENT_MAIN_SORT" }]
-            </td>
-        </tr>
-        <tr>
-            <td class="edittext">
-            [{ oxmultilang ident="GENERAL_SHORTDESC" }]
-            </td>
-            <td class="edittext">
-            <input type="text" class="editinput" size="25" maxlength="[{$edit->oxpayments__oxlongdesc->fldmax_length}]" name="editval[oxpayments__oxlongdesc]" value="[{$edit->oxpayments__oxlongdesc->value}]" [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_GENERAL_SHORTDESC" }]
             </td>
         </tr>
 
@@ -159,11 +168,17 @@
     </td>
     <!-- Anfang rechte Seite -->
     <td valign="top" class="edittext" align="left" width="50%">
-    [{ if $oxid != "-1"}]
+        [{ if $oxid != "-1"}]
+            <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" style="margin-bottom:30px;" onclick="JavaScript:showDialog('&cl=payment_main&aoc=1&oxid=[{ $oxid }]');">
+        [{ /if}]
 
-        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('&cl=payment_main&aoc=1&oxid=[{ $oxid }]');">
-
-    [{ /if}]
+        [{oxhasrights object=$edit field='oxlongdesc' readonly=$readonly }]
+            <div>
+                [{ oxmultilang ident="PAYMENT_MAIN_LONGDESC" }]
+                [{ $editor }]
+                <div class="messagebox">[{ oxmultilang ident="EDITOR_PLAINTEXT_HINT" }]</div>
+            </div>
+        [{/oxhasrights}]
     </td>
 
     </tr>

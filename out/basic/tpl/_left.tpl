@@ -4,7 +4,7 @@
         <p>
             [{ $oViewConf->getHiddenSid() }]
             <input type="hidden" name="cl" value="search">
-            <input type="text" name="searchparam" value="[{$searchparamforhtml}]" size="21" id="f.search.param" class="txt">
+            <input type="text" name="searchparam" value="[{$oView->getSearchParamForHtml()}]" size="21" id="f.search.param" name="search" class="txt">
 
             [{if $oView->getSearchCatTree() }]
             <select id="test_searchCategorySelect" class="search_input" name="searchcnid" [{if $oViewConf->isAutoSearchOnCat() }]onchange="oxid.search('f.search','f.search.param');"[{/if}]>
@@ -17,7 +17,7 @@
             <select id="test_searchVendorSelect" class="search_input" name="searchvendor">
                 <option value=""> [{ oxmultilang ident="INC_SEARCHLEFTITEM_ALLDISTRIBUTORS" }] </option>
                 [{foreach from=$oView->getVendorlist() item=oVendorlistentry}]
-                    <option value="[{$oVendorlistentry->oxvendor__oxid->value}]"[{if $searchvendor == $oVendorlistentry->oxvendor__oxid->value}] selected[{/if}]>[{ $oVendorlistentry->oxvendor__oxtitle->value }][{ if $oVendorlistentry->getNrOfArticles() > 0 }] ([{$oVendorlistentry->getNrOfArticles()}])[{/if}]</option>
+                    <option value="[{$oVendorlistentry->oxvendor__oxid->value}]"[{if $oView->getSearchVendor() == $oVendorlistentry->oxvendor__oxid->value}] selected[{/if}]>[{ $oVendorlistentry->oxvendor__oxtitle->value }][{ if $oVendorlistentry->getNrOfArticles() > 0 }] ([{$oVendorlistentry->getNrOfArticles()}])[{/if}]</option>
                 [{/foreach}]
             </select>
             [{/if}]
@@ -26,7 +26,7 @@
             <select id="test_searchManufacturerSelect" class="search_input" name="searchmanufacturer">
                 <option value=""> [{ oxmultilang ident="INC_SEARCHLEFTITEM_ALLMANUFACTURERS" }] </option>
                 [{foreach from=$oView->getManufacturerlist() item=oManufacturerlistentry}]
-                    <option value="[{$oManufacturerlistentry->oxmanufacturers__oxid->value}]"[{if $searchmanufacturer == $oManufacturerlistentry->oxmanufacturers__oxid->value}] selected[{/if}]>[{ $oManufacturerlistentry->oxmanufacturers__oxtitle->value }][{ if $oManufacturerlistentry->getNrOfArticles() > 0 }] ([{$oManufacturerlistentry->getNrOfArticles()}])[{/if}]</option>
+                    <option value="[{$oManufacturerlistentry->oxmanufacturers__oxid->value}]"[{if $oView->getSearchManufacturer() == $oManufacturerlistentry->oxmanufacturers__oxid->value}] selected[{/if}]>[{ $oManufacturerlistentry->oxmanufacturers__oxtitle->value }][{ if $oManufacturerlistentry->getNrOfArticles() > 0 }] ([{$oManufacturerlistentry->getNrOfArticles()}])[{/if}]</option>
                 [{/foreach}]
             </select>
             [{/if}]

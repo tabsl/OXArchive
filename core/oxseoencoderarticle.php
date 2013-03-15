@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoderarticle.php 31343 2010-11-30 15:56:34Z linas.kukulskis $
+ * @version   SVN: $Id: oxseoencoderarticle.php 31954 2010-12-17 13:33:40Z sarunas $
  */
 
 /**
@@ -385,7 +385,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
                 // looking in cache ..
                 if ( !isset( self::$_aTitleCache[$sParentId] ) ) {
                     $oDb = oxDb::getDb();
-                    $sQ = "select oxtitle from oxarticles where oxid = ".$oDb->quote( $sParentId );
+                    $sQ = "select oxtitle from ".$oArticle->getViewName()." where oxid = ".$oDb->quote( $sParentId );
                     self::$_aTitleCache[$sParentId] = $oDb->getOne( $sQ );
                 }
                 $sTitle = self::$_aTitleCache[$sParentId];

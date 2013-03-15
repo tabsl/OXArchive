@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_utils.php 28407 2010-06-17 10:53:43Z alfonsas $
+ * @version   SVN: $Id: oxcmp_utils.php 33562 2011-02-28 12:29:42Z vilma $
  */
 
 /**
@@ -91,7 +91,7 @@ class oxcmp_utils extends oxView
             $aExport['oxdetaillink']     = $oProduct->getLink();
             $aExport['oxmoredetaillink'] = $oProduct->getMoreDetailLink();
             $aExport['tobasketlink']     = $oProduct->getToBasketLink();
-            $aExport['thumbnaillink']    = $myConfig->getDynImageDir() ."/". $aExport['oxthumb'];
+            $aExport['thumbnaillink']    = $myConfig->getPictureUrl(null, false, $myConfig->isSsl()) ."/". $aExport['oxthumb'];
             $sOutput = serialize( $aExport );
         }
 
@@ -115,6 +115,8 @@ class oxcmp_utils extends oxView
         // only if enabled and not search engine..
         if ( $this->getViewConfig()->getShowCompareList() && !oxUtils::getInstance()->isSearchEngine() ) {
 
+            
+
             // #657 special treatment if we want to put on comparelist
             $blAddCompare  = oxConfig::getParameter( 'addcompare' );
             $blRemoveCompare = oxConfig::getParameter( 'removecompare' );
@@ -122,7 +124,7 @@ class oxcmp_utils extends oxView
             if ( ( $blAddCompare || $blRemoveCompare ) && $sProductId ) {
 
                 // toggle state in session array
-                $aItems = oxConfig::getParameter( 'aFiltcompproducts' );
+                $aItems = oxSession::getVar( 'aFiltcompproducts' );
                 if ( $blAddCompare && !isset( $aItems[$sProductId] ) ) {
                     $aItems[$sProductId] = true;
                 }
@@ -237,14 +239,12 @@ class oxcmp_utils extends oxView
         $oParentView = $this->getParent();
 
         if ( ( $oUser = $this->getUser() ) ) {
-
             // calculating user friends wishlist item count
-            if ( ( $sUserId = oxConfig::getParameter( 'wishid' ) ) ) {
+            $sUserId = oxConfig::getParameter( 'wishid') ? oxConfig::getParameter( 'wishid' ): oxSession::getVar( 'wishid');
+            if ( $sUserId ) {
                 $oWishUser = oxNew( 'oxuser' );
                 if ( $oWishUser->load( $sUserId ) ) {
                     $oParentView->setWishlistName( $oWishUser->oxuser__oxfname->value );
-                    // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-                    $oParentView->addTplParam( 'ShowWishlistName', $oParentView->getWishlistName() );
                 }
             }
         }
@@ -254,33 +254,27 @@ class oxcmp_utils extends oxView
         $oContentList->loadMainMenulist();
         $oParentView->setMenueList( $oContentList );
 
-        // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-        $oParentView->addTplParam( 'aMenueList', $oParentView->getMenueList() );
-
         // Performance
-        if ( !$myConfig->getConfigParam( 'bl_perfLoadCompare' ) ||
-            ( $myConfig->getConfigParam( 'blDisableNavBars' ) && $myConfig->getActiveView()->getIsOrderStep() ) ) {
-            $oParentView->addTplParam('isfiltering', false );
+        if ( ( $myConfig->getConfigParam( 'blDisableNavBars' ) && $myConfig->getActiveView()->getIsOrderStep() ) ) {
             return;
         }
 
         // load nr. of items which are currently shown in comparison
-        $aItems = oxConfig::getParameter( 'aFiltcompproducts' );
+        $aItems = oxSession::getVar( 'aFiltcompproducts' );
         if ( is_array( $aItems ) && count( $aItems ) ) {
 
             $oArticle = oxNew( 'oxarticle' );
 
             // counts how many pages
+            $sViewName = $oArticle->getViewName();
             $sInSql   = implode( ",", oxDb::getInstance()->quoteArray( array_keys( $aItems ) ) );
-            $sSelect  = "select count(oxid) from oxarticles where oxarticles.oxid in (".$sInSql.") ";
+            $sSelect  = "select count(oxid) from {$sViewName} where {$sViewName}.oxid in (".$sInSql.") ";
             $sSelect .= 'and '.$oArticle->getSqlActiveSnippet();
 
             $iCnt = (int) oxDb::getDb()->getOne( $sSelect );
 
             //add amount of compared items to view data
             $oParentView->setCompareItemsCnt( $iCnt );
-            // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-            $oParentView->addTplParam( 'oxcmp_compare', $oParentView->getCompareItemsCnt() );
 
             // return amount of items
             return $iCnt;

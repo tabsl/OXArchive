@@ -56,7 +56,6 @@ input.btn.hl {border-color:#f90;color:#f90;}
 input.chbox {vertical-align:middle; margin-top: 0px;}
 input.chk {margin: 1px 5px 1px 0px !important; padding: 0 !important;}
 textarea.fullsize {width: 100%;}
-input.openid {background: #fff url(bg/openid-icon-small.gif) no-repeat 0 50%; border:1px solid activeCaption; padding:2px 1px 2px 18px;}
 
 /* Tables .....*/
 table {border-collapse: collapse;}
@@ -234,7 +233,6 @@ ul.tree li a.exp.act{background-position: 0 -225px;}
 #right div.box p{padding:7px 10px;}
 #right .form label {color:#555555;display:block;margin:0 0 3px;}
 #right .form input.txt {width: 176px; margin:0 0 3px;}
-#right .form input.txt.openid{width: 159px;}
 #right .form span.btn input {width: 179px;}
 #right .form a.link {display:block;margin:0 0 3px;}
 
@@ -784,7 +782,7 @@ a.rss{display:block;position:absolute;right:0;bottom:0; width:14px;height:14px; 
 div.popup{visibility: hidden;display:none;}
 div.popup strong{display: block; margin: 9px 0; font-size: 11px;}
 div.on.popup{visibility: visible;display:block;position:fixed;top:50%;left:50%;width:270px;height: 150px;background: #ffffff;z-index: 2000;margin-top:-75px;margin-left:-135px;border:1px solid #000000;padding:10px;}
-div.on.popup.load {background: #fff url(bg/ajax-loader.gif) center center no-repeat;}
+div.on.popup.load, div#wait.popup {background: #fff url(bg/ajax-loader.gif) center center no-repeat;}
 div.on.popup table {width:100%;}
 div.on.popup input {color:#555555;background:#e2e2e2;border:1px solid #555555;font-weight: bold;padding:2px;width:130px;}
 div.on.popup input.disabled {color:#cbcbcb;background:#fff;border:1px solid #cbcbcb;font-weight: bold;padding:2px;width:130px;}

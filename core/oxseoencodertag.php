@@ -114,10 +114,9 @@ class oxSeoEncoderTag extends oxSeoEncoder
 
             $oTagCloud = oxNew('oxtagcloud');
             $sTag = $oTagCloud->prepareTags($sTag);
-
-            $sLangExt = oxLang::getInstance()->getLanguageTag( $iLang );
-            $sQ = "select 1 from oxartextends where match ( oxartextends.oxtags{$sLangExt} )
-                  against( ".oxDb::getDb()->quote( "\"".$sTag."\"" )." IN BOOLEAN MODE )";
+            $sViewName = getViewName( 'oxartextends', $iLang );
+            $sQ = "select 1 from {$sViewName} where match ( {$sViewName}.oxtags )
+                   against( ".oxDb::getDb()->quote( "\"".$sTag."\"" )." IN BOOLEAN MODE )";
 
             if ( $sOxid ) {
                 $sQ .= " and oxid = " . oxDb::getDb()->quote( $sOxid );

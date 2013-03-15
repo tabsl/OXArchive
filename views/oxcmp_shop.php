@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_shop.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxcmp_shop.php 32948 2011-02-07 09:29:22Z linas.kukulskis $
  */
 
 /**
@@ -49,8 +49,6 @@ class oxcmp_shop extends oxView
             if ( $sShopLogo && file_exists( $myConfig->getAbsImageDir().'/'.$sShopLogo ) ) {
                 $oParentView = $this->getParent();
                 $oParentView->setShopLogo( $sShopLogo );
-                // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-                $oParentView->addTplParam( 'shoplogo', $oParentView->getShopLogo() );
             }
 
         // is shop active?

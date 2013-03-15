@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: language_list.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: language_list.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -33,7 +33,7 @@ class Language_List extends oxAdminList
      *
      * @var string
      */
-    protected $_sDefSort = 'sort';
+    protected $_sDefSortField = 'sort';
 
     /**
      * Default sorting order.
@@ -52,7 +52,7 @@ class Language_List extends oxAdminList
         $myConfig = $this->getConfig();
 
 
-        $sOxId = oxConfig::getParameter( 'oxid' );
+        $sOxId = $this->getEditObjectId();
 
         $aLangData['params']  = $myConfig->getConfigParam( 'aLanguageParams' );
         $aLangData['lang']    = $myConfig->getConfigParam( 'aLanguages' );
@@ -125,12 +125,20 @@ class Language_List extends oxAdminList
         }
 
         if ( is_array( $aLangParams ) ) {
-            if ( $sSrotParam = $this->getConfig()->getParameter( 'sort' ) ) {
-                $this->_sDefSort = $sSrotParam;
+            $aSorting = $this->getListSorting();
 
-                if ( $sSrotParam == 'active' ) {
-                    //reverting sort order for field 'active'
-                    $this->_sDefSortOrder = 'desc';
+            if ( is_array( $aSorting ) ) {
+                foreach ( $aSorting as $aFieldSorting ) {
+                    foreach ( $aFieldSorting as $sField => $sDir ) {
+                        $this->_sDefSortField = $sField;
+                        $this->_sDefSortOrder = $sDir;
+
+                        if ( $sField == 'active' ) {
+                            //reverting sort order for field 'active'
+                            $this->_sDefSortOrder = 'desc';
+                        }
+                        break 2;
+                    }
                 }
             }
 
@@ -151,7 +159,7 @@ class Language_List extends oxAdminList
      */
     protected function _sortLanguagesCallback( $oLang1, $oLang2 )
     {
-        $sSortParam = $this->_sDefSort;
+        $sSortParam = $this->_sDefSortField;
         $sVal1 = is_string( $oLang1->$sSortParam ) ? strtolower( $oLang1->$sSortParam ) : $oLang1->$sSortParam;
         $sVal2 = is_string( $oLang2->$sSortParam ) ? strtolower( $oLang2->$sSortParam ) : $oLang2->$sSortParam;
 

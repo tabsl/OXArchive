@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: review.php 28010 2010-05-28 09:23:10Z sarunas $
+ * @version   SVN: $Id: review.php 32957 2011-02-07 10:29:20Z vilma $
  */
 
 /**
@@ -143,32 +143,17 @@ class Review extends Details
      * oxarticle::GetSimilarProducts()). Returns name of template file to
      * render review::_sThisTemplate.
      *
-     * Template variables:
-     * <b>product</b>, <b>reviews</b>, <b>crossselllist</b>,
-     * <b>similarlist</b>
-     *
      * @return  string  current template file name
      */
     public function render()
     {
         oxUBase::render();
-
         if ( ! ( $this->getReviewUser() ) ) {
             $this->_sThisTemplate = $this->_sThisLoginTemplate;
         } else {
 
-            $this->_aViewData['reviewuserhash'] = $this->getReviewUserHash();
-
-            $this->_aViewData['reviews'] = $this->getReviews();
-            $this->_aViewData['product'] = $this->getProduct();
-
-            // loading product reviews
-            $this->_aViewData['crossselllist']     = $this->getCrossSelling();
-            $this->_aViewData['similarlist']       = $this->getSimilarProducts();
-            $this->_aViewData['similarrecommlist'] = $this->getRecommList();
-
-            $this->_aViewData['actvrecommlist'] = $oActiveRecommList = $this->getActiveRecommList();
-            $this->_aViewData['itemList']       = $oList = $this->getActiveRecommItems();
+            $oActiveRecommList = $this->getActiveRecommList();
+            $oList = $this->getActiveRecommItems();
 
             if ( $oActiveRecommList ) {
                 if ( $oList && $oList->count()) {
@@ -179,10 +164,6 @@ class Review extends Details
                 $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 10;
                 $this->_iCntPages  = round( $this->_iAllArtCnt / $iNrofCatArticles + 0.49 );
             }
-
-            $this->_aViewData['pageNavigation'] = $this->getPageNavigation();
-            $this->_aViewData['rate'] = $this->canRate();
-            $this->_aViewData['success'] = $this->getReviewSendStatus();
         }
 
         return $this->_sThisTemplate;
@@ -190,9 +171,6 @@ class Review extends Details
 
     /**
      * Saves user review text (oxreview object)
-     *
-     * Template variables:
-     * <b>success</b>
      *
      * @return null
      */
@@ -243,35 +221,6 @@ class Review extends Details
     }
 
     /**
-     * checks if given user id is current user, if not, cheks if given user id can use direct review
-     *
-     * @param string $sReviewUserId user to check
-     *
-     * @deprecated not used any more
-     *
-     * @return boolean
-     */
-    protected function _checkDirectReview( $sReviewUserId )
-    {
-        return ( bool ) $this->getReviewUser();
-    }
-
-    /**
-     * Returns bool whether user is allowed to write review without logging in,
-     * only providing reviewuserid URL parameter.
-     *
-     * @param string $sUserId user id
-     *
-     * @deprecated not used any more
-     *
-     * @return bool
-     */
-    protected function _allowDirectReview( $sUserId )
-    {
-        return ( bool ) $this->getReviewUser();
-    }
-
-    /**
      * Returns review user object
      *
      * @return oxuser
@@ -304,22 +253,6 @@ class Review extends Details
     public function getReviewUserHash()
     {
         return oxConfig::getParameter( 'reviewuserhash' );
-    }
-
-    /**
-     * Template variable getter. Returns review user id
-     *
-     * @deprecated this getter should not be used in forms, use oxUBase::getReviewUserHash() instead
-     *
-     * @return string
-     */
-    public function getReviewUserId()
-    {
-        $sId = null;
-        if ( $oRevUser = $this->getReviewUser() ) {
-            $sId = $oRevUser->getId();
-        }
-        return $sId;
     }
 
     /**

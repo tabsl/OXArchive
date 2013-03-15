@@ -29,45 +29,11 @@
 class oxtsprotection extends oxSuperCfg
 {
     /**
-     * TS protection products
-     *
-     * @var array
-     */
-    protected $_aProducts = null;
-
-    /**
      * TS protection product Ids
      *
      * @var array
      */
-    protected $_aProductIds = null;
-
-    /**
-     * TS protection product nett prices
-     *
-     * @var array
-     */
-    protected $_aProductNettPrices = null;
-
-    /**
-     * TS protection product amounts
-     *
-     * @var array
-     */
-    protected $_aProductAmounts = null;
-
-    /**
-     * Buyer protection products
-     *
-     * @var array
-     */
-    protected $_sTsProtectProducts = array( "TS080501_500_30_EUR"   => array( "netto" => "0.82", "amount" => "500" ),
-                                       "TS080501_1500_30_EUR"  => array( "netto" => "2.47", "amount" => "1500" ),
-                                       "TS080501_2500_30_EUR"  => array( "netto" => "4.12", "amount" => "2500" ),
-                                       "TS080501_5000_30_EUR"  => array( "netto" => "8.24", "amount" => "5000" ),
-                                       "TS080501_10000_30_EUR" => array( "netto" => "16.47", "amount" => "10000" ),
-                                       "TS080501_20000_30_EUR" => array( "netto" => "32.94", "amount" => "20000" )
-                                );
+    protected $_aAllProducts = null;
 
     /**
      * Buyer protection products
@@ -83,18 +49,6 @@ class oxtsprotection extends oxSuperCfg
                                 );
 
     /**
-     * Class constructor, loads base objects.
-     *
-     * @return null
-     */
-    public function __construct()
-    {
-        $this->_aProductIds        = $this->_getTsProductIds();
-        $this->_aProductNettPrices = $this->_getProductNettPrices();
-        $this->_aProductAmounts    = $this->_getProductAmounts();
-    }
-
-    /**
      * Returns array of TS protection products according to order price
      *
      * @param double $dPrice order price
@@ -103,17 +57,16 @@ class oxtsprotection extends oxSuperCfg
      */
     public function getTsProducts( $dPrice )
     {
-        $oProduct = $this->getProduct( 0 );
-        $aTsProducts = array($oProduct);
-        for ($i=0; $i<count($this->_aProductIds); $i++ ) {
-            if ( $this->_aProductAmounts[$i] < $dPrice ) {
-                $oProduct = $this->getProduct( $i+1 );
-                $aTsProducts[] = $oProduct;
-            } else {
-                $i = count($this->_aProductIds);
+        $aProducts = array();
+        if ( $aTsProducts = $this->_getTsAllProducts()) {
+            foreach ( $aTsProducts as $oProduct ) {
+                $aProducts[] = $oProduct;
+                if ( $oProduct->getAmount() > $dPrice ) {
+                    break;
+                }
             }
         }
-        return $aTsProducts;
+        return $aProducts;
     }
 
     /**
@@ -125,32 +78,8 @@ class oxtsprotection extends oxSuperCfg
      */
     public function getTsProduct( $sTsId )
     {
-        $sKey = array_search( $sTsId, $this->_aProductIds );
-        $oProduct = $this->getProduct( $sKey );
-        return $oProduct;
-    }
-
-    /**
-     * Creats and returns TS protection product by key
-     *
-     * @param string $sKey key
-     *
-     * @return object
-     */
-    public function getProduct( $sKey )
-    {
-        $oConfig  = $this->getConfig();
-        $dVat     = $oConfig->getConfigParam( 'dDefaultVAT' );
-        $dPrice   = oxPrice::netto2Brutto($this->_aProductNettPrices[$sKey], $dVat);
-        $oProduct = new oxStdClass();
-        $oProduct->oPrice = oxNew( 'oxPrice' );
-        $oProduct->oPrice->setPrice( $dPrice );
-        if ( $oConfig->getConfigParam( 'blCalcVATForPayCharge' ) ) {
-            $oProduct->oPrice->setVat( $dVat );
-        }
-        $oProduct->sTsId = $this->_aProductIds[$sKey];
-        $oProduct->iAmount = $this->_aProductAmounts[$sKey];
-        $oProduct->fPrice = $oProduct->oPrice->getBruttoPrice();
+        $oProduct = oxNew("oxtsproduct");
+        $oProduct->setTsId($sTsId);
         return $oProduct;
     }
 
@@ -284,69 +213,20 @@ class oxtsprotection extends oxSuperCfg
      *
      * @return array
      */
-    protected function _getTsProductIds()
+    protected function _getTsAllProducts()
     {
-        if ($this->_aProductIds == null) {
-            $this->_aProductIds = false;
-            if ( $aTsProducts = $this->_getTsProducts()) {
-                $this->_aProductIds = array_keys($aTsProducts);
-            }
-        }
-        return $this->_aProductIds;
-    }
-
-    /**
-     * Returns TS protection product nettprices
-     *
-     * @return array
-     */
-    protected function _getProductNettPrices()
-    {
-        if ($this->_aProductNettPrices == null) {
-            $this->_aProductNettPrices = false;
-            if ( $aTsProducts = $this->_getTsProducts()) {
-                $this->_aProductNettPrices = array();
-                foreach ( $aTsProducts as $aTsProduct ) {
-                    $this->_aProductNettPrices[] = $aTsProduct['netto'];
+        if ($this->_aAllProducts == null) {
+            $this->_aAllProducts = false;
+            $oTsProduct = oxNew("oxtsproduct");
+            if ( $aTsProducts = $oTsProduct->getAllTsProducts()) {
+                foreach ( $aTsProducts as $sId => $aTsProduct ) {
+                    $oProduct = oxNew("oxtsproduct");
+                    $oProduct->setTsId($sId);
+                    $this->_aAllProducts[] = $oProduct;
                 }
             }
         }
-        return $this->_aProductNettPrices;
-    }
-
-    /**
-     * Returns TS protection product amounts
-     *
-     * @return array
-     */
-    protected function _getProductAmounts()
-    {
-        if ($this->_aProductAmounts == null) {
-            $this->_aProductAmounts = false;
-            if ( $aTsProducts = $this->_getTsProducts()) {
-                $this->_aProductAmounts = array();
-                foreach ( $aTsProducts as $aTsProduct ) {
-                    $this->_aProductAmounts[] = $aTsProduct['amount'];
-                }
-            }
-        }
-        return $this->_aProductAmounts;
-    }
-
-    /**
-     * Returns TS protection products
-     *
-     * @return array
-     */
-    protected function _getTsProducts()
-    {
-        if ($this->_aProducts == null) {
-            $this->_aProducts = false;
-            if ( $aTsProducts = $this->_sTsProtectProducts) {
-                $this->_aProducts = $aTsProducts;
-            }
-        }
-        return $this->_aProducts;
+        return $this->_aAllProducts;
     }
 
     /**

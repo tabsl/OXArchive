@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account_noticelist.php 26147 2010-03-01 14:38:04Z arvydas $
+ * @version   SVN: $Id: account_noticelist.php 32923 2011-02-04 14:35:22Z vilma $
  */
 
 /**
@@ -35,7 +35,7 @@ class Account_Noticelist extends Account
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'account_noticelist.tpl';
+    protected $_sThisTemplate = 'page/account/noticelist.tpl';
 
     /**
      * Check if there is an product in the noticelist.
@@ -73,9 +73,6 @@ class Account_Noticelist extends Account
      * the last article in list oxarticle::GetSimilarProducts() and
      * returns name of template to render account_noticelist::_sThisTemplate
      *
-     * Template variables:
-     * <b>noticelist</b>, <b>similarlist</b>
-     *
      * @return string current template file name
      */
     public function render()
@@ -87,11 +84,6 @@ class Account_Noticelist extends Account
         if ( !$oUser ) {
             return $this->_sThisTemplate = $this->_sThisLoginTemplate;
         }
-
-        //to maintain compatibility we still set the old template variable using new getter in render
-        $this->_aViewData['noticelist']  = $this->getNoticeProductList();
-        $this->_aViewData['similarlist'] = $this->getSimilarProducts();
-        $this->_aViewData['similarrecommlist'] = $this->getSimilarRecommLists();
 
         return $this->_sThisTemplate;
     }
@@ -157,5 +149,24 @@ class Account_Noticelist extends Account
             }
             return $this->_aRecommList;
         }
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_MY_ACCOUNT', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_NOTICELIST_MYWISHLIST', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 }

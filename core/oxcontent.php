@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcontent.php 28277 2010-06-10 15:10:39Z arvydas $
+ * @version   SVN: $Id: oxcontent.php 32881 2011-02-03 11:45:36Z sarunas $
  */
 
 /**
@@ -128,9 +128,11 @@ class oxContent extends oxI18n implements oxIUrl
      */
     public function loadByIdent( $sLoadId )
     {
-        $sSelect = $this->buildSelectString( array( 'oxcontents.oxloadid' => $sLoadId,
-                                                    'oxcontents.'.$this->getSqlFieldName( 'oxactive' ) => '1',
-                                                    'oxcontents.oxshopid' => $this->getConfig()->getShopId() ) );
+        $sContentsTable = $this->getViewName();
+
+        $sSelect = $this->buildSelectString( array( $sContentsTable.'.oxloadid' => $sLoadId,
+                                                    $sContentsTable.'.oxactive' => '1',
+                                                    $sContentsTable.'.oxshopid' => $this->getConfig()->getShopId() ) );
 
         return $this->assignRecord( $sSelect );
     }
@@ -244,7 +246,7 @@ class oxContent extends oxI18n implements oxIUrl
             $iLang = $this->getLanguage();
         }
 
-        return oxUtilsUrl::getInstance()->processStdUrl( $this->getBaseStdLink( $iLang ), $aParams, $iLang, $iLang != $this->getLanguage() );
+        return oxUtilsUrl::getInstance()->processUrl( $this->getBaseStdLink( $iLang ), true, $aParams, $iLang);
     }
 
     /**

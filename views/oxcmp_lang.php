@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_lang.php 26089 2010-02-26 10:00:15Z arvydas $
+ * @version   SVN: $Id: oxcmp_lang.php 33719 2011-03-10 08:40:42Z sarunas $
  */
 
 /**
@@ -30,53 +30,10 @@
 class oxcmp_lang extends oxView
 {
     /**
-     * Array of shop languages.
-     * @var array
-     */
-    public $aLanguages = null;
-
-    /**
      * Marking object as component
      * @var bool
      */
     protected $_blIsComponent = true;
-
-    /**
-     * Searches for language passed by URL, session or posted
-     * vars. If current client is search engine - sets language
-     * to session (this way active language is allways kept).
-     * Additionally language changing URLs is formed and stored
-     * to oxcmp_lang::aLanguages array. Finally executes parent
-     * method parent::init().
-     *
-     * @return null
-     */
-    public function init()
-    {
-        // Performance
-        if ( $this->getConfig()->getConfigParam( 'bl_perfLoadLanguages' ) ) {
-
-            // initializing language..
-            $oLang = oxLang::getInstance();
-            $oLang->getBaseLanguage();
-
-            if ( !( $iChangeLang = oxConfig::getParameter( 'changelang' ) ) ) {
-                $iChangeLang = oxConfig::getParameter( 'lang' );
-            }
-
-            if ( isset( $iChangeLang ) ) {
-                // set new language
-                $oLang->setBaseLanguage( $oLang->validateLanguage( $iChangeLang ) );
-
-                // recalc basket
-                $oBasket = $this->getSession()->getBasket();
-                $oBasket->onUpdate();
-            }
-
-            $this->aLanguages = $oLang->getLanguageArray( null, true, true );
-            parent::init();
-        }
-    }
 
     /**
      * Executes parent::render() and returns array with languages.
@@ -89,11 +46,12 @@ class oxcmp_lang extends oxView
 
         // Performance
         if ( $this->getConfig()->getConfigParam( 'bl_perfLoadLanguages' ) ) {
-            reset( $this->aLanguages );
-            while ( list( $sKey, $oVal ) = each( $this->aLanguages ) ) {
-                $this->aLanguages[$sKey]->link = $this->getParent()->getLink($oVal->id);
+            $aLanguages = oxLang::getInstance()->getLanguageArray( null, true, true );
+            reset($aLanguages);
+            while ( list( $sKey, $oVal ) = each( $aLanguages ) ) {
+                $aLanguages[$sKey]->link = $this->getParent()->getLink($oVal->id);
             }
-            return $this->aLanguages;
+            return $aLanguages;
         }
     }
 }

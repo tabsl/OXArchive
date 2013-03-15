@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_attribute.inc.php 25640 2010-02-05 06:42:24Z alfonsas $
+ * @version   SVN: $Id: article_attribute.inc.php 33454 2011-02-23 07:48:59Z arvydas.vapsva $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -49,14 +49,15 @@ class ajaxComponent extends ajaxListComponent
         $sArtId      = oxConfig::getParameter( 'oxid' );
         $sSynchArtId = oxConfig::getParameter( 'synchoxid' );
 
-        $sAttrViewName = getViewName('oxattribute');
+        $sAttrViewName = $this->_getViewName('oxattribute');
+        $sO2AViewName  = $this->_getViewName('oxobject2attribute');
         if ( $sArtId ) {
             // all categories article is in
-            $sQAdd  = " from oxobject2attribute left join $sAttrViewName on $sAttrViewName.oxid=oxobject2attribute.oxattrid ";
-            $sQAdd .= " where oxobject2attribute.oxobjectid = " . $oDb->quote( $sArtId ) . " ";
+            $sQAdd  = " from $sO2AViewName left join $sAttrViewName on $sAttrViewName.oxid=$sO2AViewName.oxattrid ";
+            $sQAdd .= " where $sO2AViewName.oxobjectid = " . $oDb->quote( $sArtId ) . " ";
         } else {
-            $sQAdd  = " from $sAttrViewName  where $sAttrViewName.oxid not in ( select oxobject2attribute.oxattrid from oxobject2attribute left join $sAttrViewName on $sAttrViewName.oxid=oxobject2attribute.oxattrid ";
-            $sQAdd .= " where oxobject2attribute.oxobjectid = " . $oDb->quote( $sSynchArtId ) . " ) ";
+            $sQAdd  = " from $sAttrViewName where $sAttrViewName.oxid not in ( select $sO2AViewName.oxattrid from $sO2AViewName left join $sAttrViewName on $sAttrViewName.oxid=$sO2AViewName.oxattrid ";
+            $sQAdd .= " where $sO2AViewName.oxobjectid = " . $oDb->quote( $sSynchArtId ) . " ) ";
         }
 
         return $sQAdd;
@@ -72,7 +73,8 @@ class ajaxComponent extends ajaxListComponent
         $aChosenArt = $this->_getActionIds( 'oxobject2attribute.oxid' );
         $sOxid = oxConfig::getParameter( 'oxid' );
         if ( oxConfig::getParameter( 'all' ) ) {
-            $sQ = $this->_addFilter( "delete oxobject2attribute.* ".$this->_getQuery() );
+            $sO2AViewName  = $this->_getViewName('oxobject2attribute');
+            $sQ = $this->_addFilter( "delete $sO2AViewName.* ".$this->_getQuery() );
             oxDb::getDb()->Execute( $sQ );
 
         } elseif ( is_array( $aChosenArt ) ) {
@@ -92,7 +94,7 @@ class ajaxComponent extends ajaxListComponent
         $soxId   = oxConfig::getParameter( 'synchoxid');
 
         if ( oxConfig::getParameter( 'all' ) ) {
-            $sAttrViewName = getViewName('oxattribute');
+            $sAttrViewName = $this->_getViewName('oxattribute');
             $aAddCat = $this->_getAll( $this->_addFilter( "select $sAttrViewName.oxid ".$this->_getQuery() ) );
         }
 
@@ -117,7 +119,7 @@ class ajaxComponent extends ajaxListComponent
         $oDb = oxDb::getDb();
 
         $soxId = oxConfig::getParameter( "oxid");
-        $this->sAttributeOXID = oxConfig::getParameter( "attr_oxid");
+        $sAttributeId = oxConfig::getParameter( "attr_oxid");
         $sAttributeValue      = oxConfig::getParameter( "attr_value");
         if (!$this->getConfig()->isUtf()) {
             $sAttributeValue = iconv( 'UTF-8', oxLang::getInstance()->translateString("charset"), $sAttributeValue );
@@ -127,18 +129,16 @@ class ajaxComponent extends ajaxListComponent
         if ( $oArticle->load( $soxId ) ) {
 
 
-            $sLangTag = oxLang::getInstance()->getLanguageTag();
-            if ( isset( $this->sAttributeOXID) && ("" != $this->sAttributeOXID)) {
-                $oGroups = oxNew( "oxlist" );
-                $oGroups->init( "oxbase", "oxobject2attribute" );
-                $sSelect =  "select * from oxobject2attribute where oxobject2attribute.oxobjectid= " . $oDb->quote( $oArticle->oxarticles__oxid->value ) . " and ";
-                $sSelect .= " oxobject2attribute.oxattrid= " . $oDb->quote( $this->sAttributeOXID ) . " ";
-                $oGroups->selectString( $sSelect );
-                foreach ($oGroups as $oGroup) {
-                    // sets new value
-                    $sFieldName = "oxobject2attribute__oxvalue".$sLangTag;
-                    $oGroup->$sFieldName->setValue($sAttributeValue);
-                    $oGroup->save();
+            if ( isset( $sAttributeId) && ("" != $sAttributeId ) ) {
+                $sO2AViewName = $this->_getViewName( "oxobject2attribute" );
+                $sSelect = "select * from $sO2AViewName where $sO2AViewName.oxobjectid= " . $oDb->quote( $oArticle->oxarticles__oxid->value ) . " and
+                            $sO2AViewName.oxattrid= " . $oDb->quote( $sAttributeId );
+                $oO2A = oxNew( "oxi18n" );
+                $oO2A->setLanguage( oxConfig::getParameter( 'editlanguage' ) );
+                $oO2A->init( "oxobject2attribute" );
+                if ( $oO2A->assignRecord( $sSelect ) ) {
+                    $oO2A->oxobject2attribute__oxvalue->setValue( $sAttributeValue );
+                    $oO2A->save();
                 }
             }
         }

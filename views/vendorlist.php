@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: vendorlist.php 31079 2010-11-23 07:54:24Z arvydas $
+ * @version   SVN: $Id: vendorlist.php 33397 2011-02-21 09:47:15Z arvydas.vapsva $
  */
 
 /**
@@ -95,10 +95,6 @@ class VendorList extends aList
      * metatags info (oxubase::_convertForMetaTags()) and returns name of
      * template to render.
      *
-     * Template variables:
-     * <b>articlelist</b>, <b>pageNavigation</b>, <b>subcatlist</b>,
-     * <b>meta_keywords</b>, <b>meta_description</b>
-     *
      * @return  string  $this->_sThisTemplate   current template file name
      */
     public function render()
@@ -111,31 +107,14 @@ class VendorList extends aList
         if ( ( $oVendorTree = $this->getVendorTree() ) ) {
             if ( ( $oVendor = $this->getActVendor() ) ) {
                 if ( $oVendor->getId() != 'root' ) {
-                    // load only articles which we show on screen
-                    $iNrofCatArticles = (int) $this->getConfig()->getConfigParam( 'iNrofCatArticles' );
-                    $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 1;
-
                     // load the articles
                     $this->getArticleList();
-                    $this->_iCntPages  = round( $this->_iAllArtCnt / $iNrofCatArticles + 0.49 );
 
+                    // processing list articles
+                    $this->_processListArticles();
                 }
             }
         }
-        $this->_aViewData['hasVisibleSubCats'] = $this->hasVisibleSubCats();
-        $this->_aViewData['subcatlist']        = $this->getSubCatList();
-        $this->_aViewData['articlelist']       = $this->getArticleList();
-        $this->_aViewData['similarrecommlist'] = $this->getSimilarRecommLists();
-
-        $this->_aViewData['title']             = $this->getTitle();
-        $this->_aViewData['template_location'] = $this->getTemplateLocation();
-        $this->_aViewData['actCategory']       = $this->getActiveCategory();
-        $this->_aViewData['actCatpath']        = $this->getCatTreePath();
-
-        $this->_aViewData['pageNavigation'] = $this->getPageNavigation();
-
-        // processing list articles
-        $this->_processListArticles();
 
         return $this->_sThisTemplate;
     }
@@ -189,16 +168,19 @@ class VendorList extends aList
 
         // load only articles which we show on screen
         $iNrofCatArticles = (int) $this->getConfig()->getConfigParam( 'iNrofCatArticles' );
-        $iNrofCatArticles = $iNrofCatArticles?$iNrofCatArticles:1;
+        $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 1;
 
         $oArtList = oxNew( 'oxarticlelist' );
-        $oArtList->setSqlLimit( $iNrofCatArticles * $this->getActPage(), $iNrofCatArticles );
+        $oArtList->setSqlLimit( $iNrofCatArticles * $this->_getRequestPageNr(), $iNrofCatArticles );
         $oArtList->setCustomSorting( $this->getSortingSql( $sVendorId ) );
 
         // load the articles
-        $iArtCnt = $oArtList->loadVendorArticles( $sVendorId, $oVendor );
+        $this->_iAllArtCnt = $oArtList->loadVendorArticles( $sVendorId, $oVendor );
 
-        return array( $oArtList, $iArtCnt );
+        // counting pages
+        $this->_iCntPages = round( $this->_iAllArtCnt / $iNrofCatArticles + 0.49 );
+
+        return array( $oArtList, $this->_iAllArtCnt );
     }
 
     /**
@@ -298,8 +280,8 @@ class VendorList extends aList
             $this->_aArticleList = array();
             if ( ( $oVendorTree = $this->getVendorTree() ) ) {
                 if ( ( $oVendor = $this->getActVendor() ) && ( $oVendor->getId() != 'root' ) ) {
-                    list( $aArticleList, $this->_iAllArtCnt ) = $this->_loadArticles( $oVendor );
-                    if ( $this->_iAllArtCnt ) {
+                    list( $aArticleList, $iAllArtCnt ) = $this->_loadArticles( $oVendor );
+                    if ( $iAllArtCnt ) {
                         $this->_aArticleList = $aArticleList;
                     }
                 }
@@ -324,24 +306,6 @@ class VendorList extends aList
             }
         }
         return $this->_sCatTitle;
-    }
-
-    /**
-     * Template variable getter. Returns template location
-     *
-     * @deprecated use vendorList::getTreePath() and adjust template
-     *
-     * @return string
-     */
-    public function getTemplateLocation()
-    {
-        if ( $this->_sTplLocation === null ) {
-            $this->_sTplLocation = false;
-            if ( ( $oVendorTree = $this->getVendorTree() ) ) {
-                $this->_sTplLocation = $oVendorTree->getHtmlPath();
-            }
-        }
-        return $this->_sTplLocation;
     }
 
     /**
@@ -457,5 +421,30 @@ class VendorList extends aList
             $sAddParams .= "&amp;cnid=v_" . $oVendor->getId();
         }
         return $sAddParams;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+
+        $oCatTree = $this->getVendorTree()->getPath();
+
+        if ( $oCatTree ) {
+            foreach ( $oCatTree as $oCat ) {
+                $aCatPath = array();
+
+                $aCatPath['link'] = $oCat->getLink();
+                $aCatPath['title'] = $oCat->oxcategories__oxtitle->value;
+
+                $aPaths[] = $aCatPath;
+            }
+        }
+
+        return $aPaths;
     }
 }

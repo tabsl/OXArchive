@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxstrmb.php 31131 2010-11-24 09:32:06Z arvydas $
+ * @version   SVN: $Id: oxstrmb.php 34141 2011-04-01 14:59:12Z sarunas $
  */
 
 /**
@@ -349,5 +349,17 @@ class oxStrMb
     public function cleanStr( $sStr, $sCleanChr = ' ' )
     {
         return $this->preg_replace( "/\"|\'|\:|\!|\?|\n|\r|\t|\xc2\x95|\xc2\xa0|;/", $sCleanChr, $sStr );
+    }
+
+    /**
+     * wrapper for json encode, which does not work with non utf8 characters
+     *
+     * @param mixed $data data to encode
+     *
+     * @return string
+     */
+    public function jsonEncode($data)
+    {
+        return json_encode($data);
     }
 }

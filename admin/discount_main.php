@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: discount_main.php 32858 2011-02-02 12:22:03Z arvydas.vapsva $
+ * @version   SVN: $Id: discount_main.php 33306 2011-02-17 09:41:55Z sarunas $
  */
 
 /**
@@ -41,18 +41,7 @@ class Discount_Main extends oxAdminDetails
         $myConfig = $this->getConfig();
         parent::render();
 
-        $sOxId = oxConfig::getParameter( "oxid");
-        // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($sOxId == "-1" || !isset( $sOxId ) ) && isset( $sSavedID ) ) {
-            $sOxId = $sSavedID;
-            //$myConfig->delParameter( "saved_oxid");
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $sOxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
-        }
-
+        $sOxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         if ( $sOxId != "-1" && isset( $sOxId)) {
             // load object
             $oDiscount = oxNew( "oxdiscount" );
@@ -108,14 +97,11 @@ class Discount_Main extends oxAdminDetails
     public function getItemDiscountProductTitle()
     {
         $sTitle = false;
-        $sOxId = oxConfig::getParameter( "oxid");
+        $sOxId = $this->getEditObjectId();
         if ( $sOxId != "-1" && isset( $sOxId)) {
-            $sViewName = getViewName( "oxarticles" );
-
-            $sLang = oxLang::getInstance()->getLanguageTag($this->_iEditLang);
-
+            $sViewName = getViewName( "oxarticles", $this->_iEditLang );
             $oDb = oxDb::getDb();
-            $sQ = "select concat( $sViewName.oxartnum, ' ', $sViewName.oxtitle$sLang ) from oxdiscount
+            $sQ = "select concat( $sViewName.oxartnum, ' ', $sViewName.oxtitle ) from oxdiscount
                    left join $sViewName on $sViewName.oxid=oxdiscount.oxitmartid
                    where oxdiscount.oxitmartid != '' and oxdiscount.oxid=" . $oDb->quote( $sOxId );
             $sTitle = $oDb->getOne( $sQ );
@@ -132,8 +118,8 @@ class Discount_Main extends oxAdminDetails
     public function save()
     {
 
-        $sOxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
+        $sOxId = $this->getEditObjectId();
+        $aParams = oxConfig::getParameter( "editval");
 
             // shopid
             $sShopID = oxSession::getVar( "actshop");
@@ -155,11 +141,9 @@ class Discount_Main extends oxAdminDetails
         $oAttr->setLanguage($this->_iEditLang);
         $oAttr = oxUtilsFile::getInstance()->processFiles( $oAttr );
         $oAttr->save();
-        $this->_aViewData["updatelist"] = "1";
 
         // set oxid if inserted
-        if ( $sOxId == "-1")
-            oxSession::setVar( "saved_oxid", $oAttr->oxdiscount__oxid->value );
+        $this->setEditObjectId( $oAttr->getId() );
     }
 
     /**
@@ -170,8 +154,8 @@ class Discount_Main extends oxAdminDetails
     public function saveinnlang()
     {
 
-        $sOxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
+        $sOxId = $this->getEditObjectId();
+        $aParams = oxConfig::getParameter( "editval");
 
             // shopid
             $sShopID = oxSession::getVar( "actshop");
@@ -192,10 +176,8 @@ class Discount_Main extends oxAdminDetails
         $oAttr->setLanguage($this->_iEditLang);
         $oAttr = oxUtilsFile::getInstance()->processFiles( $oAttr );
         $oAttr->save();
-        $this->_aViewData["updatelist"] = "1";
 
         // set oxid if inserted
-        if ( $sOxId == "-1")
-            oxSession::setVar( "saved_oxid", $oAttr->oxdiscount__oxid->value );
+        $this->setEditObjectId( $oAttr->getId() );
     }
 }

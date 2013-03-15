@@ -6,16 +6,16 @@
     [{assign var="readonly" value=""}]
 [{/if}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="oxidCopy" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="delivery_main">
     <input type="hidden" name="language" value="[{ $actlang }]">
 </form>
 
-<form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
-[{ $shop->hiddensid }]
+<form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="delivery_main">
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -66,7 +66,7 @@
             <td class="edittext" nowrap>
                 <select name="editval[oxdelivery__oxdeltype]" class="editinput" [{ $readonly }]>
                 [{foreach from=$deltypes item=deltyp}]
-                <option value="[{ $deltyp->typ }]" [{ if $deltyp->selected}]SELECTED[{/if}]>[{ $deltyp->Desc }]</option>
+                <option value="[{ $deltyp->sType }]" [{ if $deltyp->selected}]SELECTED[{/if}]>[{ $deltyp->sDesc }]</option>
                 [{/foreach}]
                 </select>
                 &gt;=

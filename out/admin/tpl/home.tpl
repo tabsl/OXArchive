@@ -2,8 +2,8 @@
 <html>
 <head>
     <title>[{ oxmultilang ident="MAIN_TITLE" }]</title>
-    <link rel="stylesheet" href="[{$shop->basetpldir}]main.css">
-    <link rel="stylesheet" href="[{$shop->basetpldir}]colors.css">
+    <link rel="stylesheet" href="[{$oViewConf->getResourceUrl()}]main.css">
+    <link rel="stylesheet" href="[{$oViewConf->getResourceUrl()}]colors.css">
     <meta http-equiv="Content-Type" content="text/html; charset=[{$charset}]">
 </head>
 <body>
@@ -113,7 +113,7 @@ function openExchange()
 <tr>
   <td colspan="2"></td>
   <td colspan="3">
-    <a href="[{$sExchangeUrl}]" onclick="return openExchange();"><img border="0" src="[{$shop->imagedir}]/oxid-exchange-banner.jpg" target="_top"></a>
+    <a href="[{$sExchangeUrl}]" onclick="return openExchange();"><img border="0" src="[{$oViewConf->getImageUrl()}]/oxid-exchange-banner.jpg" target="_top"></a>
   </td>
 </tr>
 [{/if}]

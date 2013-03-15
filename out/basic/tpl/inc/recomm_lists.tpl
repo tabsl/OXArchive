@@ -1,5 +1,5 @@
 <!-- page locator -->
-[{if $pageNavigation->iArtCnt }]
+[{if $oView->getArticleCount() }]
   [{include file="inc/list_locator.tpl" PageLoc="Top" where="Top" sLocatorCaption="INC_LIST_LOCATOR_RECOMLISTSPERPAGE"|oxmultilangassign }]
 [{/if}]
 [{assign var="currency" value=$oView->getActCurrency() }]
@@ -64,6 +64,6 @@
 </div>
 
 <!-- page locator -->
-[{if $pageNavigation->iArtCnt }]
+[{if $oView->getArticleCount() }]
   [{include file="inc/list_locator.tpl" PageLoc="Bottom" where="Bottom" sLocatorCaption="INC_LIST_LOCATOR_RECOMLISTSPERPAGE"|oxmultilangassign }]
 [{/if}]

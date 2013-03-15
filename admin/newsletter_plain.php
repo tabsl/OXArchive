@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: newsletter_plain.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: newsletter_plain.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -41,17 +41,7 @@ class Newsletter_Plain extends oxAdminDetails
     {
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid");
-        // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($soxId == "-1" || !isset( $soxId)) && isset( $sSavedID) ) {
-            $soxId = $sSavedID;
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $soxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
-        }
-
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId)) {
             // load object
             $oNewsletter = oxNew( "oxnewsletter" );
@@ -69,7 +59,7 @@ class Newsletter_Plain extends oxAdminDetails
      */
     public function save()
     {
-        $soxId      = oxConfig::getParameter( "oxid");
+        $soxId = $this->getEditObjectId();
         $aParams    = oxConfig::getParameter( "editval");
 
         // shopid
@@ -84,8 +74,8 @@ class Newsletter_Plain extends oxAdminDetails
         //$aParams = $oNewsletter->ConvertNameArray2Idx( $aParams);
         $oNewsletter->assign( $aParams);
         $oNewsletter->save();
+
         // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oNewsletter->oxnewsletter__oxid->value);
+        $this->setEditObjectId( $oNewsletter->getId() );
     }
 }

@@ -32,18 +32,18 @@ require "_header.php"; ?>
             <table cellpadding="0" cellspacing="0" border="0" height="29">
               <tr>
                 <td style="padding-right: 3px;">
-                    <select name="country_lang" style="font-size: 11px;"
+                    <select name="location_lang" style="font-size: 11px;"
                     onChange="update_dynpages_checkbox();"
                     >
 
                         <?php
-                        $aCountries   = $this->getViewParam( "aCountries" );
+                        $aLocations   = $this->getViewParam( "aLocations" );
                         $sSetupLang   = $this->getViewParam( "sSetupLang" );
-                        $sCountryLang = $this->getViewParam( "sCountryLang" );
+                        $sLocationLang = $this->getViewParam( "sLocationLang" );
 
-                        if ( isset( $aCountries[$sSetupLang] ) ) {
-                            foreach ( $aCountries[$sSetupLang] as $sKey => $sValue ) {
-                                $sSelected = ( $sCountryLang !== null && $sCountryLang == $sKey ) ? 'selected' : '';
+                        if ( isset( $aLocations[$sSetupLang] ) ) {
+                            foreach ( $aLocations[$sSetupLang] as $sKey => $sValue ) {
+                                $sSelected = ( $sLocationLang !== null && $sLocationLang == $sKey ) ? 'selected' : '';
                                 ?><option value="<?php echo $sKey; ?>" <?php echo $sSelected; ?>><?php echo $sValue; ?></option><?php
                             }
                         }
@@ -58,14 +58,41 @@ require "_header.php"; ?>
                <td>
                 &nbsp;&nbsp;
                     <input type="hidden" value="false" name="use_dynamic_pages">
-                    <input type="checkbox" id="use_dynamic_pages_ckbox" value="true" name="use_dynamic_pages" valign="" style="vertical-align:middle; width:20px; height:22px;<?php  if ( $sCountryLang === null ) echo " display: none;"?>" >
-              <td>
-              <td id="use_dynamic_pages_desc" style="<?php  if ( $sCountryLang === null ) echo "display: none;"?>">
+                    <input type="checkbox" id="use_dynamic_pages_ckbox" value="true" name="use_dynamic_pages" valign="" style="vertical-align:middle; width:20px; height:22px;<?php  if ( $sLocationLang === null ) echo " display: none;"?>" >
+              </td>
+              <td id="use_dynamic_pages_desc" style="<?php  if ( $sLocationLang === null ) echo "display: none;"?>">
                     <?php $this->getText('USE_DYNAMIC_PAGES'); ?><a href="<?php echo $sSetupLang; ?>/dyn_content_notice.php" onClick="showPopUp('<?php echo $sSetupLang; ?>/dyn_content_notice.php', 400, 200, 1); return false;" target="_blank"><u><?php $this->getText('PRIVACY_POLICY'); ?></u></a>.
               </td>
             </tr>
           </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-top: 5px;"><?php $this->getText('SELECT_SELIVERY_COUNTRY'); ?>: </td>
+        <td>
+            <table cellpadding="0" cellspacing="0" border="0" height="29">
+                <tr>
+                    <td>
+                        <select name="country_lang" style="font-size: 11px;">
+                            <?php
+                                $aCountries   = $this->getViewParam( "aCountries" );
+                                $sSetupLang   = $this->getViewParam( "sSetupLang" );
+                                $sCountryLang = $this->getViewParam( "sCountryLang" );
 
+                                if ( isset( $aCountries[$sSetupLang] ) ) {
+                                    foreach ( $aCountries[$sSetupLang] as $sKey => $sValue ) {
+                                        $sSelected = ( $sCountryLang !== null && $sCountryLang == $sKey ) ? 'selected' : '';
+                                        ?><option value="<?php echo $sKey; ?>" <?php echo $sSelected; ?>><?php echo $sValue; ?></option><?php
+                                    }
+                                }
+                            ?>
+                        </select>
+                    </td>
+                    <td style="padding: 0px 5px;">
+                        <?php $this->getText('SELECT_DELIVERY_COUNTRY_HINT'); ?>
+                    </td>
+                </tr>
+            </table>
         </td>
     </tr>
     <input type="hidden" name="sid" value="<?php $this->getSid(); ?>">

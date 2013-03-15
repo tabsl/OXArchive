@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: suggest.php 26801 2010-03-24 14:46:21Z arvydas $
+ * @version   SVN: $Id: suggest.php 33007 2011-02-07 16:02:53Z vilma $
  */
 
 /**
@@ -33,7 +33,7 @@ class Suggest extends oxUBase
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'suggest.tpl';
+    protected $_sThisTemplate = 'page/info/suggest.tpl';
 
     /**
      * Required fields to fill before sending suggest email
@@ -70,34 +70,6 @@ class Suggest extends oxUBase
      * @var object
      */
     protected $_oCaptcha = null;
-
-    /**
-     * Loads and passes article and related info to template engine
-     * (oxarticle::getReviews(), oxarticle::getCrossSelling(),
-     * oxarticle::GetSimilarProducts()), executes parent::render()
-     * and returns template file name to render suggest::_sThisTemplate.
-     *
-     * Template variables:
-     * <b>product</b>, <b>reviews</b>, <b>crossselllist</b>,
-     * <b>similarlist</b>
-     *
-     * @return  string  current template file name
-     */
-    public function render()
-    {
-        parent::render();
-
-        $this->_aViewData['product']           = $this->getProduct();
-        $this->_aViewData['crossselllist']     = $this->getCrossSelling();
-        $this->_aViewData['similarlist']       = $this->getSimilarProducts();
-        $this->_aViewData['similarrecommlist'] = $this->getRecommList();
-        //captcha
-        $this->_aViewData['oCaptcha'] = $this->getCaptcha();
-
-        $this->_aViewData['editval'] = $this->getSuggestData();
-
-        return $this->_sThisTemplate;
-    }
 
     /**
      * Sends product suggestion mail and returns a URL according to
@@ -302,6 +274,18 @@ class Suggest extends oxUBase
             $this->_oCaptcha = oxNew('oxCaptcha');
         }
         return $this->_oCaptcha;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths[]['title'] = oxLang::getInstance()->translateString( 'PAGE_INFO_SUGGEST_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
+
+        return $aPaths;
     }
 
 }

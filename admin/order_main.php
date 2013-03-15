@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: order_main.php 26510 2010-03-15 10:01:56Z arvydas $
+ * @version   SVN: $Id: order_main.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -41,17 +41,7 @@ class Order_Main extends oxAdminDetails
     {
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid");
-        // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($soxId == "-1" || !isset( $soxId)) && isset( $sSavedID) ) {
-            $soxId = $sSavedID;
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $soxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
-        }
-
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId ) ) {
             // load object
             $oOrder = oxNew( "oxorder" );
@@ -95,7 +85,7 @@ class Order_Main extends oxAdminDetails
     public function save()
     {
 
-        $soxId      = oxConfig::getParameter( "oxid" );
+        $soxId = $this->getEditObjectId();
         $aParams    = oxConfig::getParameter( "editval" );
 
             // shopid
@@ -129,12 +119,7 @@ class Order_Main extends oxAdminDetails
         $oOrder->recalculateOrder();
 
         // set oxid if inserted
-        if ( $soxId == "-1" ) {
-            oxSession::setVar( "saved_oxid", $oOrder->oxorder__oxid->value );
-        }
-
-        // reloading upper frame
-        $this->_aViewData["updatelist"] = "1";
+        $this->setEditObjectId( $oOrder->getId() );
     }
 
     /**
@@ -144,7 +129,7 @@ class Order_Main extends oxAdminDetails
      */
     public function sendorder()
     {
-        $soxId  = oxConfig::getParameter( "oxid" );
+        $soxId = $this->getEditObjectId();
         $oOrder = oxNew( "oxorder" );
         if ( $oOrder->load( $soxId ) ) {
 
@@ -178,7 +163,7 @@ class Order_Main extends oxAdminDetails
     public function resetorder()
     {
         $oOrder = oxNew( "oxorder" );
-        if ( $oOrder->load( oxConfig::getParameter( "oxid") ) ) {
+        if ( $oOrder->load( $this->getEditObjectId() ) ) {
 
             $oOrder->oxorder__oxsenddate->setValue("0000-00-00 00:00:00");
             $oOrder->save();
@@ -196,7 +181,7 @@ class Order_Main extends oxAdminDetails
     {
         $oOrder = oxNew( "oxorder" );
         if ( ( $sDelSetId = oxConfig::getParameter( "setDelSet" ) ) &&
-             $oOrder->load( oxConfig::getParameter( "oxid" ) ) ) {
+             $oOrder->load( $this->getEditObjectId() ) ) {
             $oOrder->oxorder__oxpaymenttype->setValue( "oxempty" );
             // keeps old discount
             $oOrder->reloadDiscount( false );
@@ -215,7 +200,7 @@ class Order_Main extends oxAdminDetails
     {
         $oOrder = oxNew( "oxorder" );
         if ( ( $sPayId = oxConfig::getParameter( "setPayment") ) &&
-             $oOrder->load( oxConfig::getParameter( "oxid" ) ) ) {
+             $oOrder->load( $this->getEditObjectId() ) ) {
             $oOrder->oxorder__oxpaymenttype->setValue( $sPayId );
             // keeps old discount
             $oOrder->reloadDiscount( false );

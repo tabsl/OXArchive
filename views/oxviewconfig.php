@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxviewconfig.php 32868 2011-02-02 14:18:51Z linas.kukulskis $
+ * @version   SVN: $Id: oxviewconfig.php 34356 2011-04-07 10:22:52Z arvydas.vapsva $
  */
 
 /**
@@ -56,6 +56,13 @@ class oxViewConfig extends oxSuperCfg
      * @return string
      */
     protected $_sHelpPageLink = null;
+
+    /**
+     * returns Country.
+     *
+     * @var oxcountrylist
+     */
+    protected $_oCountryList = null;
 
     /**
      * Returns shops home link
@@ -115,11 +122,25 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getLogoutLink()
     {
-        $sClass   = $this->getActionClassName();
-        $sCatnid  = $this->getActCatId();
-        $sTplName = $this->getActTplName();
+        $sClass         = $this->getActionClassName();
+        $sCatnid        = $this->getActCatId();
+        $sArtnid        = $this->getActArticleId();
+        $sTplName       = $this->getActTplName();
+        $sSearchParam   = $this->getActSearchParam();
+        $sSearchTag     = $this->getActSearchTag();
+        $sListType      = $this->getActListType();
 
-        return $this->getConfig()->getShopHomeURL()."cl={$sClass}&amp;".( $sCatnid ? "cnid={$sCatnid}" : '' )."&amp;fnc=logout".( $sTplName ? "&amp;tpl=".basename( $sTplName ) : '' )."&amp;redirect=1";
+
+        return $this->getConfig()->getShopHomeURL()
+            ."cl={$sClass}"
+            . ( $sCatnid ? "&amp;cnid={$sCatnid}" : '' )
+            . ( $sArtnid ? "&amp;anid={$sArtnid}" : '' )
+            . ( $sSearchParam ? "&amp;searchparam={$sSearchParam}" : '' )
+            . ( $sSearchTag ? "&amp;searchtag={$sSearchTag}" : '' )
+            . ( $sListType ? "&amp;listtype={$sListType}" : '' )
+            . "&amp;fnc=logout"
+            . ( $sTplName ? "&amp;tpl=".basename( $sTplName ) : '' )
+            . "&amp;redirect=1";
     }
 
     /**
@@ -132,13 +153,13 @@ class oxViewConfig extends oxSuperCfg
         if ( $this->_sHelpPageLink === null ) {
             $oConfig  = $this->getConfig();
             $sClass   = $this->getActiveClassName();
-            $sLangTag = oxLang::getInstance()->getLanguageTag();
             $sLink    = false;
-            $sAddQ    = "oxshopid = '".$oConfig->getShopId()."' and oxactive{$sLangTag} = 1 and";
+            $sAddQ    = "oxshopid = '".$oConfig->getShopId()."' and oxactive = 1 and";
+            $sViewName = getViewName( 'oxcontents' );
 
             // checking if there is a custom content for help page
-            $sQ  = "select oxid from oxcontents where {$sAddQ} oxloadid = 'oxhelp".strtolower( $sClass )."' union ";
-            $sQ .= "select oxid from oxcontents where {$sAddQ} oxloadid = 'oxhelpdefault'";
+            $sQ  = "select oxid from {$sViewName} where {$sAddQ} oxloadid = 'oxhelp".strtolower( $sClass )."' union ";
+            $sQ .= "select oxid from {$sViewName} where {$sAddQ} oxloadid = 'oxhelpdefault'";
 
             if ( $sContentId = oxDb::getDb()->getOne( $sQ ) ) {
                 $oContent = oxNew( "oxcontent" );
@@ -173,6 +194,46 @@ class oxViewConfig extends oxSuperCfg
         return oxConfig::getParameter( 'cnid' );
     }
 
+     /**
+     * Returns active article id
+     *
+     * @return string
+     */
+    public function getActArticleId()
+    {
+        return oxConfig::getParameter( 'anid' );
+    }
+
+     /**
+     * Returns active search parameter
+     *
+     * @return string
+     */
+    public function getActSearchParam()
+    {
+        return oxConfig::getParameter( 'searchparam' );
+    }
+
+     /**
+     * Returns active search tag parameter
+     *
+     * @return string
+     */
+    public function getActSearchTag()
+    {
+        return oxConfig::getParameter( 'searchtag' );
+    }
+
+    /**
+     * Returns active listtype parameter
+     *
+     * @return string
+     */
+    public function getActListType()
+    {
+        return oxConfig::getParameter( 'listtype' );
+    }
+
     /**
      * Returns active manufacturer id
      *
@@ -181,46 +242,6 @@ class oxViewConfig extends oxSuperCfg
     public function getActManufacturerId()
     {
         return oxConfig::getParameter( 'mnid' );
-    }
-
-    /**
-     * Returns parameters which should be appended to url
-     *
-     * @deprecated use oxViewConfig::getNavUrlParams
-     *
-     * @return string
-     */
-    public function getTypeLinkParams()
-    {
-        $sLink = '';
-        if ( ( $sId = $this->getActCatId() ) ) {
-            $sLink .= "cnid={$sId}";
-        }
-        if ( ( $sId = $this->getActManufacturerId() ) ) {
-            $sLink .= "mnid={$sId}";
-        }
-
-        return $sLink;
-    }
-
-    /**
-     * Returns parameters which should be appended to form
-     *
-     * @deprecated use oxViewConfig::getNavFormParams
-     *
-     * @return string
-     */
-    public function getTypeParams()
-    {
-        $sForm = '';
-        if ( ( $sId = $this->getActCatId() ) ) {
-            $sForm .= "<input type=\"hidden\" name=\"cnid\" value=\"{$sId}\">\n";
-        }
-        if ( ( $sId = $this->getActManufacturerId() ) ) {
-            $sForm .= "<input type=\"hidden\" name=\"mnid\" value=\"{$sId}\">\n";
-        }
-
-        return $sForm;
     }
 
     /**
@@ -280,27 +301,6 @@ class oxViewConfig extends oxSuperCfg
     {
         $this->_oShop     = $oShop;
         $this->_aViewData = $aViewData;
-    }
-
-    /**
-     * This magic function is used for easier view config parameter handling.
-     * It allows to access config parameters by calling:
-     *
-     * $oViewConf->_name_of_param_  (deprecated)
-     * $oViewConf->getNameOfParam() (preferred)
-     *
-     * @param string $sMethodName name os method
-     * @param mixed  $sParams     method parameters
-     *
-     * @return mixed
-     */
-    public function __call( $sMethodName, $sParams )
-    {
-        startProfile('oxviewconfig::__call');
-        if ( stripos( $sMethodName, 'get' ) === 0 ) {
-            return $this->getViewVar( substr( $sMethodName, 3 ) );
-        }
-        stopProfile('oxviewconfig::__call');
     }
 
     /**
@@ -713,7 +713,16 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getNrOfCatArticles()
     {
-        return $this->getConfig()->getConfigParam( 'aNrofCatArticles' );
+        // checking if all needed data is set
+        switch (oxSession::getVar( 'ldtype' )) {
+            case 'grid':
+                return $this->getConfig()->getConfigParam( 'aNrofCatArticlesInGrid' );
+                break;
+            case 'line':
+            case 'infogrid':
+            default:
+                return $this->getConfig()->getConfigParam( 'aNrofCatArticles' );
+        }
     }
 
     /**
@@ -733,7 +742,15 @@ class oxViewConfig extends oxSuperCfg
      */
     public function getShowCompareList()
     {
-        return $this->getConfig()->getConfigParam( 'bl_showCompareList' );
+        $myConfig = $this->getConfig();
+        $blShowCompareList = true;
+
+        if ( !$myConfig->getConfigParam( 'bl_showCompareList' ) ||
+            ( $myConfig->getConfigParam( 'blDisableNavBars' ) && $myConfig->getActiveView()->getIsOrderStep() ) ) {
+            $blShowCompareList = false;
+        }
+
+        return $blShowCompareList;
     }
 
     /**
@@ -744,16 +761,6 @@ class oxViewConfig extends oxSuperCfg
     public function getShowListmania()
     {
         return $this->getConfig()->getConfigParam( 'bl_showListmania' );
-    }
-
-    /**
-     * Returns config param "bl_showOpenId" value
-     *
-     * @return bool
-     */
-    public function getShowOpenIdLogin()
-    {
-        return $this->getConfig()->getConfigParam( 'bl_showOpenId' );
     }
 
     /**
@@ -929,189 +936,6 @@ class oxViewConfig extends oxSuperCfg
     public function getServiceUrl()
     {
         return $this->getViewConfigParam( 'sServiceUrl' );
-    }
-
-    /**
-     * Returns view config variable value if possible
-     *
-     * @param string $sVarName name of variable to return
-     *
-     * @return mixed
-     */
-    public function __get( $sVarName )
-    {
-        return $this->getViewVar( $sVarName );
-    }
-
-    /**
-     * Returns view config variable value if possible
-     *
-     * @param string $sVarName name of variable to return
-     *
-     * @return mixed
-     */
-    public function getViewVar( $sVarName )
-    {
-        startProfile('oxviewconfig::__get');
-
-        $myConfig = $this->getConfig();
-
-        // cached ?
-        if ( ( $sVarValue = $this->getViewConfigParam( $sVarName ) ) === null ) {
-
-            // using magic getter instead of waisting memmory on rarelly used variables ..
-            switch ( strtolower( $sVarName ) ) {
-                case 'sid' :
-                    $sVarValue = $this->getSessionId();
-                    break;
-                case 'hiddensid' :
-                    $sVarValue = $this->getHiddenSid();
-                    break;
-                case 'selflink' :
-                    $sVarValue = $this->getSelfLink();
-                    break;
-                case 'sslselflink' :
-                    $sVarValue = $this->getSslSelfLink();
-                    break;
-                //some different processing for Mall mode
-                case 'basedir' :
-                    $sVarValue = $this->getBaseDir();
-                    break;
-                case 'coreutilsdir' :
-                    $sVarValue = $this->getCoreUtilsDir();
-                    break;
-                case 'selfactionlink' :
-                    $sVarValue = $this->getSelfActionLink();
-                    break;
-                //https://.... or http://.... link
-                case 'currenthomedir' :
-                    $sVarValue = $this->getCurrentHomeDir();
-                    break;
-                case 'basketlink' :
-                    $sVarValue = $this->getBasketLink();
-                    break;
-                case 'orderlink' :
-                    $sVarValue = $this->getOrderLink();
-                    break;
-                case 'paymentlink' :
-                    $sVarValue = $this->getPaymentLink();
-                    break;
-                case 'exeorderlink' :
-                    $sVarValue = $this->getExeOrderLink();
-                    break;
-                case 'orderconfirmlink' :
-                    $sVarValue = $this->getOrderConfirmLink();
-                    break;
-                case 'basetpldir' :
-                    $sVarValue = $this->getResourceUrl();
-                    break;
-                case 'templatedir' :
-                    $sVarValue = $this->getTemplateDir();
-                    break;
-                case 'urltemplatedir' :
-                    $sVarValue = $this->getUrlTemplateDir();
-                    break;
-                case 'imagedir' :
-                    $sVarValue = $this->getImageUrl();
-                    break;
-                case 'nossl_imagedir' :
-                    $sVarValue = $this->getNoSslImageDir();
-                    break;
-                case 'dimagedir' :
-                    $sVarValue = $this->getPictureDir();
-                    break;
-                //applicable only in admin mode
-                //in most case admindir is set to "admin" unless you rename the admin dir
-                case 'admindir' :
-                    $sVarValue = $this->getAdminDir();
-                    break;
-                case 'id' :
-                    $sVarValue = $this->getActiveShopId();
-                    break;
-                case 'isssl' :
-                    $sVarValue = $this->isSsl();
-                    break;
-                case 'ip' :
-                    $sVarValue = $this->getRemoteAddress();
-                    break;
-                case 'popupident' :
-                    $sVarValue = $this->getPopupIdent();
-                    break;
-                case 'popupidentrand' :
-                    $sVarValue = $this->getPopupIdentRand();
-                    break;
-                case 'artperpageform' :
-                    $sVarValue = $this->getArtPerPageForm();
-                    break;
-                case 'buyableparent' :
-                    $sVarValue = $this->isBuyableParent();
-                    break;
-                case 'blshowbirthdayfields' :
-                    $sVarValue = $this->showBirthdayFields();
-                    break;
-                case 'blshowfinalstep' :
-                    $sVarValue = $this->showFinalStep();
-                    break;
-                case 'anrofcatarticles' :
-                    $sVarValue = $this->getNrOfCatArticles();
-                    break;
-                case 'blautosearchoncat' :
-                    $sVarValue = $this->isAutoSearchOnCat();
-                    break;
-                case 'cnid' :
-                    $sVarValue = $this->getActCatId();
-                    break;
-                case 'cl' :
-                    $sVarValue = $this->getActiveClassName();
-                    break;
-                case 'tpl' :
-                    $sVarValue = $this->getActTplName();
-                    break;
-                case 'lang' :
-                case 'slanguage' :
-                    $sVarValue = $this->getActLanguageId();
-                    break;
-                case 'helplink' :
-                    $sVarValue = $this->getHelpLink();
-                    break;
-                case 'logoutlink' :
-                    $sVarValue = $this->getLogoutLink();
-                    break;
-                case 'iartPerPage':
-                    $sVarValue = $this->getArtPerPageCount();
-                    break;
-                case 'navurlparams':
-                    $sVarValue = $this->getNavUrlParams();
-                    break;
-                case 'navformparams':
-                    $sVarValue = $this->getNavFormParams();
-                    break;
-                case 'blstockondefaultmessage':
-                    $sVarValue = $this->getStockOnDefaultMessage();
-                    break;
-                case 'blstockoffdefaultmessage':
-                    $sVarValue = $this->getStockOffDefaultMessage();
-                    break;
-                case 'sShopVersion':
-                    $sVarValue = $this->getShopVersion();
-                    break;
-                case 'ajaxlink':
-                    $sVarValue = $this->getAjaxLink();
-                    break;
-                case 'ismultishop':
-                    $sVarValue = $this->isMultiShop();
-                    break;
-                case 'sServiceUrl':
-                    $sVarValue = $this->getServiceUrl();
-                    break;
-            }
-        }
-
-        $this->setViewConfigParam( $sVarName, $sVarValue );
-
-        stopProfile('oxviewconfig::__get');
-
-        return $sVarValue;
     }
 
     /**
@@ -1329,4 +1153,130 @@ class oxViewConfig extends oxSuperCfg
         return $sTsId;
     }
 
+    /**
+     * true if blocks javascript code be enabled in templates
+     *
+     * @return bool
+     */
+    public function isTplBlocksDebugMode()
+    {
+        return (bool) $this->getConfig()->getConfigParam('blDebugTemplateBlocks');
+    }
+
+    /**
+     * min length of password
+     *
+     * @return int
+     */
+    public function getPasswordLength()
+    {
+        $iPasswordLength = 6;
+
+        $oConfig = $this->getConfig();
+
+        if ($oConfig->getConfigParam( "iPasswordLength" ) ) {
+            $iPasswordLength = $oConfig->getConfigParam( "iPasswordLength" );
+        }
+
+        return $iPasswordLength;
+    }
+
+    /**
+     * Return country list
+     *
+     * @return oxcountrylist
+     */
+    public function getCountryList()
+    {
+        if ( $this->_oCountryList === null ) {
+            // passing country list
+            $this->_oCountryList = oxNew( 'oxcountrylist' );
+            $this->_oCountryList->loadActiveCountries();
+        }
+        return $this->_oCountryList;
+    }
+
+
+    /**
+     * return path to the requested module file
+     *
+     * @param string $sModule module name (directory name in modules dir)
+     * @param string $sFile   file name to lookup
+     *
+     * @throws oxFileException
+     *
+     * @return string
+     */
+    public function getModulePath($sModule, $sFile = '')
+    {
+        if (!$sFile || ($sFile[0] != '/')) {
+            $sFile = '/'.$sFile;
+        }
+        $sFile = rtrim(getShopBasePath(), '/').'/modules/'.basename($sModule).$sFile;
+        if (file_exists($sFile) || is_dir($sFile)) {
+            return $sFile;
+        }
+        $oEx = new oxFileException("Requested file not found for module $sModule ($sFile)");
+        $oEx->debugOut();
+        throw $oEx;
+    }
+
+    /**
+     * return url to the requested module file
+     *
+     * @param string $sModule module name (directory name in modules dir)
+     * @param string $sFile   file name to lookup
+     *
+     * @throws oxFileException
+     *
+     * @return string
+     */
+    public function getModuleUrl($sModule, $sFile = '')
+    {
+        if (!$sFile || ($sFile[0] != '/')) {
+            $sFile = '/'.$sFile;
+        }
+        // check if file exists
+        $this->getModulePath($sModule, $sFile);
+        return rtrim($this->getConfig()->getCurrentShopUrl(), '/').'/modules/'.basename($sModule).$sFile;
+    }
+
+    /**
+     * return param value
+     *
+     * @param string $sName param name
+     *
+     * @return mix
+     */
+    public function getViewThemeParam( $sName )
+    {
+        $sValue = false;
+
+        if ($this->getConfig()->isThemeOption( $sName ) ) {
+            $sValue = $this->getConfig()->getConfigParam( $sName );
+        }
+
+        return $sValue;
+    }
+
+
+    /**
+     * Returns true if selection lists must be displayed in details page
+     *
+     * @return bool
+     */
+    public function showSelectLists()
+    {
+        return (bool) $this->getConfig()->getConfigParam( 'bl_perfLoadSelectLists' );
+    }
+
+    /**
+     * Returns true if selection lists must be displayed in details page
+     *
+     * @return bool
+     */
+    public function showSelectListsInList()
+    {
+        return $this->showSelectLists() && (bool) $this->getConfig()->getConfigParam( 'bl_perfLoadSelectListsInAList' );
+    }
 }

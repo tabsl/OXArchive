@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcountrylist.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxcountrylist.php 31954 2010-12-17 13:33:40Z sarunas $
  */
 
 /**
@@ -50,10 +50,8 @@ class oxCountryList extends oxList
      */
     public function loadActiveCountries( $iLang = null )
     {
-        $sSufix = oxLang::getInstance()->getLanguageTag( $iLang );
-
-        $sSelect = "SELECT oxid, oxtitle$sSufix as oxtitle FROM oxcountry WHERE oxactive = '1' ORDER BY oxorder, oxtitle$sSufix ";
+        $sViewName = getViewName( 'oxcountry', $iLang );
+        $sSelect = "SELECT oxid, oxtitle FROM {$sViewName} WHERE oxactive = '1' ORDER BY oxorder, oxtitle ";
         $this->selectString( $sSelect );
     }
-
 }

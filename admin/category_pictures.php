@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: category_pictures.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: category_pictures.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -42,7 +42,7 @@ class Category_Pictures extends oxAdminDetails
 
         $this->_aViewData['edit'] = $oCategory = oxNew( 'oxcategory' );
 
-        $soxId = oxConfig::getParameter( 'oxid' );
+        $soxId = $this->getEditObjectId();
         if ( $soxId != '-1' && isset( $soxId ) ) {
             // load object
             $oCategory->load( $soxId );

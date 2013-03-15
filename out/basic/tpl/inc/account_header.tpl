@@ -39,7 +39,7 @@
                     <dd id="test_link_account_wishlistDesc">[{ oxmultilang ident="INC_ACCOUNT_HEADER_PRODUCT3" }] [{ if $oxcmp_user }][{ $oxcmp_user->getWishListArtCnt() }][{else}]0[{/if}]</dd>
                 </dl>
             [{/if}]
-            [{if $isfiltering && $oViewConf->getShowCompareList()}]
+            [{if $oViewConf->getShowCompareList()}]
                 <dl>
                     <dt><a id="test_link_account_comparelist" class="[{if $active_link == 7}]active[{/if}]" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=compare" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_MYPRODUCTCOMPARISON" }]</a></dt>
                     <dd id="test_link_account_comparelistDesc">[{ oxmultilang ident="INC_ACCOUNT_HEADER_PRODUCT3" }] [{ if $oView->getCompareItemsCnt() }][{ $oView->getCompareItemsCnt() }][{else}]0[{/if}]</dd>

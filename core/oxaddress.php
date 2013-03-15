@@ -44,6 +44,13 @@ class oxAddress extends oxBase
     protected $_sClassName = 'oxaddress';
 
     /**
+     * Active address status
+     *
+     * @var bool
+     */
+    protected $_blSelected = false;
+
+    /**
      * Class constructor
      *
      * @return null
@@ -99,4 +106,23 @@ class oxAddress extends oxBase
         return $this->oxaddress__oxstateid->value;
     }
 
+    /**
+     * Returns TRUE if current address is selected
+     *
+     * @return bool
+     */
+    public function isSelected()
+    {
+        return $this->_blSelected;
+    }
+
+    /**
+     * Sets address state as selected
+     *
+     * @return null
+     */
+    public function setSelected()
+    {
+        $this->_blSelected = true;
+    }
 }

@@ -10,12 +10,12 @@
     [{assign var="readonly" value=""}]
 [{/if}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="shop_license">
     <input type="hidden" name="fnc" value="">
-    <input type="hidden" name="actshop" value="[{ $shop->id }]">
+    <input type="hidden" name="actshop" value="[{$oViewConf->getActiveShopId()}]">
     <input type="hidden" name="updatenav" value="">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
 </form>
@@ -31,8 +31,8 @@
             </td>
             <td class="edittext">
             <b>[{ oxmultilang ident="GENERAL_OXIDESHOP" }]
-                [{$edition}] [{$version}]_[{$revision}]
-                [{if $isdemoversion}]
+                [{$oView->getShopEdition()}] [{$oView->getShopVersion()}]_[{$oView->getRevision()}]
+                [{if $oView->isDemoVersion()}]
                     [{ oxmultilang ident="SHOP_LICENSE_DEMO" }]
                 [{/if}]
             </b>

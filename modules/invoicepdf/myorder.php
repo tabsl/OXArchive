@@ -19,7 +19,7 @@
  * @package   modules
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: myorder.php 28479 2010-06-21 11:24:05Z vilma $
+ * @version   SVN: $Id: myorder.php 32938 2011-02-07 08:02:21Z arvydas.vapsva $
  */
 
 /**
@@ -726,10 +726,10 @@ class MyOrder extends MyOrder_parent
 
         //logo
         $myConfig = $this->getConfig();
-        $aSize    = getimagesize( $myConfig->getAbsImageDir().'/pdf_logo.jpg' );
+        $aSize    = getimagesize( $myConfig->getImageDir().'/pdf_logo.jpg' );
         $iMargin  = 195 - $aSize[0] * 0.2;
         $oPdf->setLink( $oShop->oxshops__oxurl->value );
-        $oPdf->image( $myConfig->getAbsImageDir().'/pdf_logo.jpg', $iMargin, 10, $aSize[0] * 0.2, $aSize[1] * 0.2, '', $oShop->oxshops__oxurl->value );
+        $oPdf->image( $myConfig->getImageDir().'/pdf_logo.jpg', $iMargin, 10, $aSize[0] * 0.2, $aSize[1] * 0.2, '', $oShop->oxshops__oxurl->value );
         return 14 + $aSize[1] * 0.2;
     }
 

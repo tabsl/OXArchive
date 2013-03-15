@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: newsletter.php 31354 2010-11-30 16:23:35Z linas.kukulskis $
+ * @version   SVN: $Id: newsletter.php 32930 2011-02-04 16:08:29Z vilma $
  */
 
 /**
@@ -64,7 +64,7 @@ class Newsletter extends oxUBase
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'newsletter.tpl';
+    protected $_sThisTemplate = 'page/info/newsletter.tpl';
 
     /**
      * Current view search engine indexing state
@@ -72,35 +72,6 @@ class Newsletter extends oxUBase
      * @var int
      */
     protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXNOFOLLOW;
-
-    /**
-     * Executes parent::render(), loads action articles and
-     * returns name of template file to render newsletter::_sThisTemplate.
-     *
-     * Template variables:
-     * <b>toparticle</b>, <b>homecountryid</b>,
-     * <b>toparticlelist</b>
-     *
-     * @return  string  $this->_sThisTemplate   current template file name
-     */
-    public function render()
-    {
-        $myConfig = $this->getConfig();
-
-        parent::render();
-
-        // topoffer
-        $this->_aViewData['toparticle']     = $this->getTopStartArticle();
-        $this->_aViewData['toparticlelist'] = $this->getTopStartActionArticles();
-
-        $this->_aViewData['homecountryid'] = $this->getHomeCountryId();
-
-        $this->_aViewData['success'] = $this->getNewsletterStatus();
-
-        $this->_aViewData['aRegParams'] = $this->getRegParams();
-
-        return $this->_sThisTemplate;
-    }
 
     /**
      * Only loads newsletter subscriber data.
@@ -220,9 +191,6 @@ class Newsletter extends oxUBase
     /**
      * Loads user and removes him from newsletter group.
      *
-     * Template variables:
-     * <b>success</b>
-     *
      * @return null
      */
     public function removeme()
@@ -313,5 +281,17 @@ class Newsletter extends oxUBase
     public function getRegParams()
     {
         return $this->_aRegParams;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths[]['title'] = oxLang::getInstance()->translateString( 'PAGE_INFO_NEWSLETTER_STAYINFORMED', oxLang::getInstance()->getBaseLanguage(), false );
+
+        return $aPaths;
     }
 }

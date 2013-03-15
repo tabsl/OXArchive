@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: delivery_articles.inc.php 30670 2010-11-02 16:40:05Z arvydas $
+ * @version   SVN: $Id: delivery_articles.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -48,6 +48,13 @@ $aColumns = array( 'container1' => array(    // field , table,         visible, 
 class ajaxComponent extends ajaxListComponent
 {
     /**
+     * If true extended column selection will be build
+     *
+     * @var bool
+     */
+    protected $_blAllowExtColumns = true;
+
+    /**
      * Returns SQL query for data to fetc
      *
      * @return string
@@ -57,9 +64,9 @@ class ajaxComponent extends ajaxListComponent
         $myConfig = $this->getConfig();
 
         // looking for table/view
-        $sArtTable = getViewName('oxarticles');
-        $sCatTable = getViewName('oxcategories');
-        $sO2CView  = getViewName('oxobject2category');
+        $sArtTable = $this->_getViewName('oxarticles');
+        $sCatTable = $this->_getViewName('oxcategories');
+        $sO2CView  = $this->_getViewName('oxobject2category');
 
         $sDelId      = oxConfig::getParameter( 'oxid' );
         $sSynchDelId = oxConfig::getParameter( 'synchoxid' );
@@ -99,7 +106,7 @@ class ajaxComponent extends ajaxListComponent
      */
     /*protected function _addFilter( $sQ )
     {
-        $sArtTable = getViewName('oxarticles');
+        $sArtTable = $this->_getViewName('oxarticles');
         $sQ = parent::_addFilter( $sQ );
 
         // display variants or not ?
@@ -139,7 +146,7 @@ class ajaxComponent extends ajaxListComponent
 
         // adding
         if ( oxConfig::getParameter( 'all' ) ) {
-            $sArtTable = getViewName('oxarticles');
+            $sArtTable = $this->_getViewName('oxarticles');
             $aChosenArt = $this->_getAll( $this->_addFilter( "select $sArtTable.oxid ".$this->_getQuery() ) );
         }
 
@@ -154,47 +161,4 @@ class ajaxComponent extends ajaxListComponent
             }
         }
     }
-
-    /**
-     * Formats and returns chunk of SQL query string with definition of
-     * fields to load from DB. Adds subselect to get variant title from parent article
-     *
-     * @return string
-     */
-    protected function _getQueryCols()
-    {
-        $myConfig = $this->getConfig();
-        $sLangTag = oxLang::getInstance()->getLanguageTag();
-
-        $sQ = '';
-        $blSep = false;
-        $aVisiblecols = $this->_getVisibleColNames();
-        foreach ( $aVisiblecols as $iCnt => $aCol ) {
-            if ( $blSep )
-                $sQ .= ', ';
-            $sViewTable = getViewName( $aCol[1] );
-            // multilanguage
-            $sCol = $aCol[3]?$aCol[0].$sLangTag:$aCol[0];
-            if ( $myConfig->getConfigParam( 'blVariantsSelection' ) && $aCol[0] == 'oxtitle' ) {
-                $sVarSelect = "$sViewTable.oxvarselect".$sLangTag;
-                $sQ .= " IF( $sViewTable.$sCol != '', $sViewTable.$sCol, CONCAT((select oxart.$sCol from $sViewTable as oxart where oxart.oxid = $sViewTable.oxparentid),', ',$sVarSelect)) as _" . $iCnt;
-            } else {
-                $sQ  .= $sViewTable . '.' . $sCol . ' as _' . $iCnt;
-            }
-            $blSep = true;
-        }
-
-        $aIdentCols = $this->_getIdentColNames();
-        foreach ( $aIdentCols as $iCnt => $aCol ) {
-            if ( $blSep )
-                $sQ .= ', ';
-
-            // multilanguage
-            $sCol = $aCol[3]?$aCol[0].$sLangTag:$aCol[0];
-            $sQ  .= getViewName( $aCol[1] ) . '.' . $sCol . ' as _' . $iCnt;
-        }
-
-        return " $sQ ";
-    }
-
 }

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: basket.php 28585 2010-06-23 09:23:38Z sarunas $
+ * @version   SVN: $Id: basket.php 33818 2011-03-17 13:41:37Z arvydas.vapsva $
  */
 
 /**
@@ -35,7 +35,7 @@ class Basket extends oxUBase
      *
      * @var string
      */
-    protected $_sThisTemplate = 'basket.tpl';
+    protected $_sThisTemplate = 'page/checkout/basket.tpl';
 
     /**
      * Template for search engines
@@ -88,12 +88,23 @@ class Basket extends oxUBase
     protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXNOFOLLOW;
 
     /**
+     * Wrapping objects list
+     *
+     * @var oxlist
+     */
+    protected $_oWrappings = null;
+
+    /**
+     * Card objects list
+     *
+     * @var oxlist
+     */
+    protected $_oCards = null;
+
+    /**
      * Executes parent::render(), creates list with basket articles
      * Returns name of template file basket::_sThisTemplate (for Search
      * engines return "content.tpl" template to avoid fake orders etc).
-     *
-     * Template variables:
-     * <b>similarlist</b>, <b>basketitemlist</b>
      *
      * @return  string   $this->_sThisTemplate  current template file name
      */
@@ -109,13 +120,6 @@ class Basket extends oxUBase
         if ( oxUtils::getInstance()->isSearchEngine() ) {
             return $this->_sThisTemplate = $this->_sThisAltTemplate;
         }
-
-        //for older templates
-        $this->_aViewData['basketitemlist']    = $this->getBasketArticles();
-        $this->_aViewData['basketsimilarlist'] = $this->getBasketSimilarList();
-        $this->_aViewData['similarrecommlist'] = $this->getSimilarRecommLists();
-        $this->_aViewData['showbacktoshop']    = $this->showBackToShop();
-
 
         return $this->_sThisTemplate;
     }
@@ -261,5 +265,116 @@ class Basket extends oxUBase
     public function getErrorDestination()
     {
         return 'basket';
+    }
+
+    /**
+     * Returns wrapping options availability state (TRUE/FALSE)
+     *
+     * @return bool
+     */
+    public function isWrapping()
+    {
+        if (!$this->getViewConfig()->getShowGiftWrapping() ) {
+            return false;
+        }
+
+        if ( $this->_iWrapCnt === null ) {
+            $this->_iWrapCnt = 0;
+
+            $oWrap = oxNew( 'oxwrapping' );
+            $this->_iWrapCnt += $oWrap->getWrappingCount( 'WRAP' );
+            $this->_iWrapCnt += $oWrap->getWrappingCount( 'CARD' );
+        }
+
+        return (bool) $this->_iWrapCnt;
+    }
+
+    /**
+     * Return basket wrappings list if available
+     *
+     * @return oxlist
+     */
+    public function getWrappingList()
+    {
+        if ( $this->_oWrappings === null ) {
+            $this->_oWrappings = new oxlist();
+
+            // load wrapping papers
+            if ( $this->getViewConfig()->getShowGiftWrapping() ) {
+                $this->_oWrappings = oxNew( 'oxwrapping' )->getWrappingList( 'WRAP' );
+            }
+        }
+        return $this->_oWrappings;
+    }
+
+    /**
+     * Returns greeting cards list if available
+     *
+     * @return oxlist
+     */
+    public function getCardList()
+    {
+        if ( $this->_oCards === null ) {
+            $this->_oCards = new oxlist();
+
+            // load gift cards
+            if ( $this->getViewConfig()->getShowGiftWrapping() ) {
+                $this->_oCards = oxNew( 'oxwrapping' )->getWrappingList( 'CARD' );
+            }
+        }
+
+        return $this->_oCards;
+    }
+
+    /**
+     * Updates wrapping data in session basket object
+     * (oxsession::getBasket()) - adds wrapping info to
+     * each article in basket (if possible). Plus adds
+     * gift message and chosen card ( takes from GET/POST/session;
+     * oBasket::giftmessage, oBasket::chosencard). Then sets
+     * basket back to session (oxsession::setBasket()). Returns
+     * "order" to redirect to order confirmation secreen.
+     *
+     * @return string
+     */
+    public function changeWrapping()
+    {
+        $aWrapping = oxConfig::getParameter( 'wrapping' );
+        if ( $this->getViewConfig()->getShowGiftWrapping() ) {
+            $oBasket = $this->getSession()->getBasket();
+
+            // setting wrapping info
+            if ( is_array( $aWrapping ) && count( $aWrapping ) ) {
+                foreach ( $oBasket->getContents() as $sKey => $oBasketItem ) {
+                    // wrapping ?
+                    if ( isset( $aWrapping[$sKey] ) ) {
+                        $oBasketItem->setWrapping( $aWrapping[$sKey] );
+                    }
+                }
+            }
+
+            $oBasket->setCardMessage( oxConfig::getParameter( 'giftmessage' ) );
+            $oBasket->setCardId( oxConfig::getParameter( 'chosencard' ) );
+            $oBasket->onUpdate();
+        }
+
+        return 'basket';
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_CHECKOUT_VIEWCART', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 }

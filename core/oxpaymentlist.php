@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxpaymentlist.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxpaymentlist.php 32007 2010-12-17 15:10:27Z sarunas $
  */
 
 /**
@@ -109,7 +109,7 @@ class oxPaymentList extends oxList
         $sQ  = "select {$sTable}.* from ( select distinct {$sTable}.* from {$sTable}, oxobject2group, oxobject2payment ";
         $sQ .= "where {$sTable}.oxactive='1' and oxobject2group.oxobjectid = {$sTable}.oxid ";
         $sQ .= "and oxobject2payment.oxpaymentid = {$sTable}.oxid and oxobject2payment.oxobjectid = ".$oDb->quote( $sShipSetId );
-        $sQ .= " and oxpayments.oxfromboni <= ".$oDb->quote( $sBoni ) ." and oxpayments.oxfromamount <= ".$oDb->quote( $dPrice ) ." and oxpayments.oxtoamount >= ".$oDb->quote( $dPrice );
+        $sQ .= " and {$sTable}.oxfromboni <= ".$oDb->quote( $sBoni ) ." and {$sTable}.oxfromamount <= ".$oDb->quote( $dPrice ) ." and {$sTable}.oxtoamount >= ".$oDb->quote( $dPrice );
 
         // defining initial filter parameters
         $sGroupIds  = '';

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: account_wishlist.php 26802 2010-03-24 15:01:12Z arvydas $
+ * @version   SVN: $Id: account_wishlist.php 33897 2011-03-22 17:02:50Z vilma $
  */
 
 /**
@@ -38,7 +38,7 @@ class Account_Wishlist extends Account
      *
      * @var string
      */
-    protected $_sThisTemplate = 'account_wishlist.tpl';
+    protected $_sThisTemplate = 'page/account/wishlist.tpl';
 
     /**
      * If true, list will be shown, if false - will not
@@ -116,9 +116,6 @@ class Account_Wishlist extends Account
      * the last article in list loaded by oxarticle::GetSimilarProducts() and
      * returns name of template to render account_wishlist::_sThisTemplate
      *
-     * Template variables:
-     * <b>blshowsuggest</b>, <b>wishlist</b>
-     *
      * @return  string  $_sThisTemplate current template file name
      */
     public function render()
@@ -129,14 +126,6 @@ class Account_Wishlist extends Account
         $oUser = $this->getUser();
         if ( !$oUser ) {
             return $this->_sThisTemplate = $this->_sThisLoginTemplate;
-        }
-        // for older templates
-        $this->_aViewData['blshowsuggest'] = $this->showSuggest();
-        $this->_aViewData['similarrecommlist'] = $this->getSimilarRecommLists();
-
-        $this->_aViewData['wishlist'] = $this->getWishList();
-        if ( $this->getWishList() ) {
-            $this->_aViewData['wishlist']->aList = $this->getWishProductList();
         }
 
         return $this->_sThisTemplate;
@@ -221,9 +210,6 @@ class Account_Wishlist extends Account
     /**
      * Sends wishlist mail to recipient. On errors returns false.
      *
-     * Template variables:
-     * <b>editval</b>, <b>error</b>, <b>success</b>
-     *
      * @return bool
      */
     public function sendWishList()
@@ -236,7 +222,7 @@ class Account_Wishlist extends Account
 
             if ( !isset( $aParams['rec_name'] ) || !isset( $aParams['rec_email'] ) ||
                  !$aParams['rec_name'] || !$aParams['rec_email'] ) {
-                return oxUtilsView::getInstance()->addErrorToDisplay( 'ACCOUNT_WISHLIST_ERRCOMLETEFIELDSCORRECTLY', false, true );
+                return oxUtilsView::getInstance()->addErrorToDisplay( 'FORM_WISHLIST_SUGGEST_ERRCOMLETEFIELDSCORRECTLY', false, true );
             } else {
 
                 if ( $oUser = $this->getUser() ) {
@@ -246,12 +232,9 @@ class Account_Wishlist extends Account
 
                     $this->_blEmailSent = oxNew( 'oxemail' )->sendWishlistMail( $oParams );
                     if ( !$this->_blEmailSent ) {
-                        return oxUtilsView::getInstance()->addErrorToDisplay( 'ACCOUNT_WISHLIST_ERRWRONGEMAIL', false, true );
+                        return oxUtilsView::getInstance()->addErrorToDisplay( 'FORM_WISHLIST_SUGGEST_ERRWRONGEMAIL', false, true );
                     }
                 }
-
-                $this->_aViewData['success'] = $this->isWishListEmailSent();
-                $this->_aViewData['editval'] = $this->getEnteredData();
             }
         }
     }
@@ -299,7 +282,6 @@ class Account_Wishlist extends Account
         if ( $oUser = $this->getUser() ) {
 
             $blPublic = (int) oxConfig::getParameter( 'blpublic' );
-
             $oBasket = $oUser->getBasket( 'wishlist' );
             $oBasket->oxuserbaskets__oxpublic = new oxField( ( $blPublic == 1 ) ? $blPublic : 0 );
             $oBasket->save();
@@ -309,9 +291,6 @@ class Account_Wishlist extends Account
     /**
      * Searches for wishlist of another user. Returns false if no
      * searching conditions set (no login name defined).
-     *
-     * Template variables:
-     * <b>wish_result</b>, <b>search</b>
      *
      * @return bool
      */
@@ -328,9 +307,6 @@ class Account_Wishlist extends Account
 
             $this->_sSearchParam = $sSearch;
         }
-
-        $this->_aViewData['search'] = $this->getWishListSearchParam();
-        $this->_aViewData['wish_result'] = $this->getWishListUsers();
     }
 
     /**
@@ -352,5 +328,24 @@ class Account_Wishlist extends Account
     public function getWishListSearchParam()
     {
         return $this->_sSearchParam;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_MY_ACCOUNT', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_ACCOUNT_WISHLIST_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 }

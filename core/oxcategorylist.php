@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcategorylist.php 32762 2011-01-27 10:51:31Z sarunas $
+ * @version   SVN: $Id: oxcategorylist.php 32794 2011-01-28 09:04:24Z sarunas $
  */
 
 
@@ -111,18 +111,17 @@ class oxCategoryList extends oxList
         }
 
         $oBaseObject = $this->getBaseObject();
-        $sLangSuffix = oxLang::getInstance()->getLanguageTag();
 
-        $sFieldList = "$sTable.oxid as oxid, $sTable.oxactive$sLangSuffix as oxactive,"
+        $sFieldList = "$sTable.oxid as oxid, $sTable.oxactive as oxactive,"
                     ." $sTable.oxhidden as oxhidden, $sTable.oxparentid as oxparentid,"
                     ." $sTable.oxdefsort as oxdefsort, $sTable.oxdefsortmode as oxdefsortmode,"
                     ." $sTable.oxleft as oxleft, $sTable.oxright as oxright,"
                     ." $sTable.oxrootid as oxrootid, $sTable.oxsort as oxsort,"
-                    ." $sTable.oxtitle$sLangSuffix as oxtitle, $sTable.oxdesc$sLangSuffix as oxdesc,"
+                    ." $sTable.oxtitle as oxtitle, $sTable.oxdesc as oxdesc,"
                     ." $sTable.oxpricefrom as oxpricefrom, $sTable.oxpriceto as oxpriceto,"
                     ." $sTable.oxicon as oxicon, $sTable.oxextlink as oxextlink ";
 
-            $sFieldList.= ",not $sTable.".$oBaseObject->getSqlFieldName( 'oxactive' )." as oxppremove";
+            $sFieldList.= ",not $sTable.oxactive as oxppremove";
 
 
         return $sFieldList;
@@ -240,12 +239,11 @@ class oxCategoryList extends oxList
     public function buildTree($sActCat, $blLoadFullTree, $blPerfLoadTreeForSearch, $blTopNaviLayout)
     {
         startProfile("buildTree");
-
         $this->_sActCat     = $sActCat;
         $this->_blForceFull = $blLoadFullTree || $blPerfLoadTreeForSearch;
         $this->_iForceLevel = $blTopNaviLayout?2:1;
 
-        $sSelect = $this->_getSelectString(true);
+        $sSelect = $this->_getSelectString(false, null, 'oxparentid, oxsort, oxtitle');
         $this->selectString($sSelect);
 
         // PostProcessing
@@ -424,7 +422,6 @@ class oxCategoryList extends oxList
      */
     protected function _ppAddPathInfo()
     {
-
         if (is_null($this->_sActCat)) {
             return;
         }
@@ -468,15 +465,11 @@ class oxCategoryList extends oxList
      */
     protected function _ppBuildTree()
     {
-        startProfile("_sortCats");
-        $aIds = $this->sortCats();
-        stopProfile("_sortCats");
         $aTree = array();
         foreach ($this->_aArray as $oCat) {
             $sParentId = $oCat->oxcategories__oxparentid->value;
             if ( $sParentId != 'oxrootid') {
                 if (isset($this->_aArray[$sParentId])) {
-                    $this->_aArray[$sParentId]->setSortingIds( $aIds );
                     $this->_aArray[$sParentId]->setSubCat($oCat, $oCat->getId(), true);
                 }
             } else {
@@ -484,49 +477,7 @@ class oxCategoryList extends oxList
             }
         }
 
-        // run sorting only once on each parent
-        $aParents = array();
-        foreach ($this->_aArray as $oCat) {
-            $aParents[$oCat->oxcategories__oxparentid->value] = true;
-        }
-        if ($aParents['oxrootid']) {
-            unset($aParents['oxrootid']);
-        }
-        foreach (array_keys($aParents) as $sParent) {
-            if (isset($this->_aArray[$sParent])) {
-                $this->_aArray[$sParent]->sortSubCats();
-            }
-        }
-
-        // Sort root categories
-        $oCategory = oxNew('oxcategory');
-        $oCategory->setSortingIds( $aIds );
-        uasort($aTree, array( $oCategory, 'cmpCat' ) );
-
         $this->assign($aTree);
-    }
-
-    /**
-     * Sorts category tree after oxsort and oxtitle fields and returns ids.
-     *
-     * @return array $aIds
-     */
-    public function sortCats()
-    {
-        $sViewName  = getViewName('oxcategories');
-        $sSortSql = $this->_getSelectString(false, array('oxid', 'oxparentid', 'oxsort', 'oxtitle'), 'oxparentid, oxsort, oxtitle');
-        $aIds = array();
-        $oDB = oxDb::getDb(true);
-        $rs = $oDB->execute($sSortSql);
-        $cnt = 0;
-        if ($rs != false && $rs->recordCount() > 0) {
-            while (!$rs->EOF) {
-                $aIds[$rs->fields['oxid']] = $cnt;
-                $cnt++;
-                $rs->moveNext();
-            }
-        }
-        return $aIds;
     }
 
     /**
@@ -537,7 +488,6 @@ class oxCategoryList extends oxList
      */
     protected function _ppAddDepthInformation()
     {
-
         $aStack = array();
         $iDepth = 0;
         $sPrevParent = '';
@@ -554,7 +504,6 @@ class oxCategoryList extends oxList
             }
         }
         $this->assign($aTree);
-
     }
 
     /**

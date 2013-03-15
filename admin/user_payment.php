@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: user_payment.php 27017 2010-04-06 06:44:03Z arvydas $
+ * @version   SVN: $Id: user_payment.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -101,7 +101,7 @@ class User_Payment extends oxAdminDetails
     public function save()
     {
 
-        $soxId = oxConfig::getParameter( "oxid");
+        $soxId = $this->getEditObjectId();
         if ( $this->_allowAdminEdit( $soxId ) ) {
 
             $aParams    = oxConfig::getParameter( "editval");
@@ -130,7 +130,7 @@ class User_Payment extends oxAdminDetails
     public function delPayment()
     {
         $aParams = oxConfig::getParameter( "editval" );
-        $soxId   = oxConfig::getParameter( "oxid" );
+        $soxId = $this->getEditObjectId();
         if ( $this->_allowAdminEdit( $soxId )) {
             if ( $aParams['oxuserpayments__oxid'] != "-1") {
                 $oAdress = oxNew( "oxuserpayment" );
@@ -150,7 +150,7 @@ class User_Payment extends oxAdminDetails
     {
         if ( $this->_oActiveUser == null ) {
             $this->_oActiveUser = false;
-            $sOxId = oxConfig::getParameter( "oxid");
+            $sOxId = $this->getEditObjectId();
             if ( $sOxId != "-1" && isset( $sOxId)) {
                 // load object
                 $this->_oActiveUser = oxNew( "oxuser" );

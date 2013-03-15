@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxadminview.php 33881 2011-03-22 12:58:15Z alfonsas $
+ * @version   SVN: $Id: oxadminview.php 33911 2011-03-23 08:29:55Z sarunas $
  */
 
 /**
@@ -103,6 +103,13 @@ class oxAdminView extends oxView
      * @return
      */
     protected $_oEditShop = null;
+
+    /**
+     * Editable object id
+     *
+     * @var string
+     */
+    protected $_sEditObjectId = null;
 
     /**
      * Creates oxshop object and loads shop data, sets title of shop
@@ -193,16 +200,11 @@ class oxAdminView extends oxView
         }
 
         $oViewConf = $this->getViewConfig();
-        $oViewConf->setViewConfigParam( 'selflink', $mySession->url($sURL.'index.php') );
-        $oViewConf->setViewConfigParam( 'ajaxlink', str_replace( '&amp;', '&', $mySession->url( $sURL.'oxajax.php' ) ) );
+        $oViewConf->setViewConfigParam( 'selflink', oxUtilsUrl::getInstance()->processUrl($sURL.'index.php?editlanguage='.$this->_iEditLang, false) );
+        $oViewConf->setViewConfigParam( 'ajaxlink', str_replace( '&amp;', '&', oxUtilsUrl::getInstance()->processUrl( $sURL.'oxajax.php?editlanguage='.$this->_iEditLang, false ) ) );
         $oViewConf->setViewConfigParam( 'sServiceUrl', $this->getServiceUrl() );
         $oViewConf->setViewConfigParam( 'blLoadDynContents', $myConfig->getConfigParam( 'blLoadDynContents' ) );
         $oViewConf->setViewConfigParam( 'sShopCountry', $myConfig->getConfigParam( 'sShopCountry' ) );
-
-        if ( $sURL = $myConfig->getConfigParam( 'sAdminSSLURL') ) {
-            $oViewConf->setViewConfigParam( 'selflink', $mySession->url($sURL.'index.php') );
-            $oViewConf->setViewConfigParam( 'ajaxlink', str_replace( '&amp;', '&', $mySession->url( $sURL.'oxajax.php' ) ) );
-        }
 
         // set langugae in admin
         $iDynInterfaceLanguage = $myConfig->getConfigParam( 'iDynInterfaceLanguage' );
@@ -350,7 +352,7 @@ class oxAdminView extends oxView
         $this->_setupNavigation( oxConfig::getParameter( 'cl' ) );
 
         // active object id
-        $sOxId = oxConfig::getParameter( 'oxid' );
+        $sOxId = $this->getEditObjectId();
         $this->_aViewData['oxid'] = ( !$sOxId )?-1:$sOxId;
         // add Sumtype to all templates
         $this->_aViewData['sumtype'] = $this->_aSumType;
@@ -411,7 +413,7 @@ class oxAdminView extends oxView
 
         $iSize = floor( $iMaxFileSize / 1024 );
         while ( $iSize && current( $aMarkers ) ) {
-            $sFormattedMaxSize = $iSize . current( $aMarkers );
+            $sFormattedMaxSize = $iSize . " " . current( $aMarkers );
             $iSize = floor( $iSize / 1024 );
             next( $aMarkers );
         }
@@ -507,16 +509,16 @@ class oxAdminView extends oxView
         //default country
         $sCountry = 'international';
 
-        if ( !empty($sCountryCode) ) {
+        if ( !empty( $sCountryCode ) ) {
             $aLangIds = oxLang::getInstance()->getLanguageIds();
             $iEnglishId = array_search("en", $aLangIds);
-            if (false !== $iEnglishId) {
-                $sEnTag = oxLang::getInstance()->getLanguageTag($iEnglishId);
-                $sQ = "select oxtitle$sEnTag from oxcountry where oxisoalpha2 = " . oxDb::getDb()->quote( $sCountryCode );
+            if ( false !== $iEnglishId ) {
+                $sViewName = getViewName( "oxcountry", $iEnglishId );
+                $sQ = "select oxtitle from {$sViewName} where oxisoalpha2 = " . oxDb::getDb()->quote( $sCountryCode );
                 $sCountry = oxDb::getDb()->getOne( $sQ );
             } else {
                 // handling when english language is deleted
-                switch ($sCountryCode) {
+                switch ( $sCountryCode ) {
                     case 'de':
                         return 'germany';
                     default:
@@ -535,7 +537,11 @@ class oxAdminView extends oxView
      */
     protected function _authorize()
     {
-        return ( bool ) ( $this->getSession()->checkSessionChallenge() && count( oxUtilsServer::getInstance()->getOxCookie() ) && oxUtils::getInstance()->checkAccessRights() );
+        return ( bool ) (
+                $this->getSession()->checkSessionChallenge()
+                && count( oxUtilsServer::getInstance()->getOxCookie() )
+                && oxUtils::getInstance()->checkAccessRights()
+            );
     }
 
     /**
@@ -625,5 +631,33 @@ class oxAdminView extends oxView
     public function getPreviewId()
     {
         return oxUtils::getInstance()->getPreviewId();
+    }
+
+    /**
+     * Returns active/editable object id
+     *
+     * @return string
+     */
+    public function getEditObjectId()
+    {
+        if ( null === ( $sId = $this->_sEditObjectId ) ) {
+            if ( null === ( $sId = oxConfig::getParameter( "oxid" ) ) ) {
+                $sId = oxSession::getVar( "saved_oxid" );
+            }
+        }
+        return $sId;
+    }
+
+    /**
+     * Sets editable object id
+     *
+     * @param string $sId object id
+     *
+     * @return string
+     */
+    public function setEditObjectId( $sId )
+    {
+        $this->_sEditObjectId = $sId;
+        $this->_aViewData["updatelist"] = 1;
     }
 }

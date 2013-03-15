@@ -5,7 +5,7 @@
         [{ oxmultilang ident="GENERAL_LANGUAGE" }]
     </td>
     <td align="left">
-        <select name="editlanguage" id="test_editlanguage" class="saveinnewlanginput" onChange="Javascript:document.myedit.submit();" [{$readonly}] [{$readonly_fields}]>
+        <select name="editlanguage" id="test_editlanguage" class="saveinnewlanginput" onChange="Javascript:document.myedit.submit();">
         [{foreach from=$otherlang key=lang item=olang}]
         <option value="[{ $lang }]"[{ if $olang->selected}]SELECTED[{/if}]>[{ $olang->sLangDesc }]</option>
         [{/foreach}]

@@ -36,16 +36,16 @@ function editThis( sID )
     [{assign var="readonly" value=""}]
 [{/if}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="article_pictures">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
 </form>
 
-<form name="myedit" id="myedit" enctype="multipart/form-data" action="[{ $shop->selflink }]" method="post">
+<form name="myedit" id="myedit" enctype="multipart/form-data" action="[{ $oViewConf->getSelfLink() }]" method="post">
 <input type="hidden" name="MAX_FILE_SIZE" value="[{$iMaxUploadFileSize}]">
-[{ $shop->hiddensid }]
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="article_pictures">
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -88,7 +88,7 @@ function editThis( sID )
               </colgroup>
               <tr>
                   <th colspan="5" valign="top">
-                     [{ oxmultilang ident="GENERAL_ARTICLE_PICTURES" }]
+                     [{ oxmultilang ident="GENERAL_ARTICLE_PICTURES" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
                      [{ oxinputhelp ident="HELP_ARTICLE_PICTURES_PIC1" }]
                   </th>
               </tr>
@@ -125,13 +125,13 @@ function editThis( sID )
                     <input class="editinput" name="myfile[M[{$iIndex}]@oxarticles__oxpic[{$iIndex}]]" type="file">
                 </td>
                 <td nowrap="nowrap">
-                    [{if $blPicUplodaded}]
+                    [{if $blPicUplodaded && !$readonly }]
                     <a href="Javascript:DeletePic('[{$iIndex}]');" class="deleteText"><span class="ico"></span><span class="float: left;>">[{ oxmultilang ident="GENERAL_DELETE" }]</span></a>
                     [{/if}]
                 </td>
                 <td>
 
-                    [{if $blPicUplodaded}]
+                    [{if $blPicUplodaded && !$readonly }]
                         [{assign var="sPicUrl" value=$edit->getPictureUrl($iIndex)}]
                         <a href="[{$sPicUrl}]" class="zoomText" target="_blank"><span class="ico"></span><span class="float: left;>">[{ oxmultilang ident="ARTICLE_PICTURES_PREVIEW" }]</span></a>
                     [{/if}]
@@ -157,7 +157,7 @@ function editThis( sID )
 
               <tr>
                 <td class="index" nowrap>
-                    [{ oxmultilang ident="GENERAL_THUMB" }]
+                    [{ oxmultilang ident="GENERAL_THUMB" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
                     [{ oxinputhelp ident="HELP_ARTICLE_PICTURES_THUMB" }]
                 </td>
                 <td class="text">
@@ -173,7 +173,7 @@ function editThis( sID )
                     <input class="editinput" name="myfile[TH@oxarticles__oxthumb]" type="file">
                 </td>
                 <td nowrap="nowrap">
-                    [{if $blThumbUplodaded}]
+                    [{if $blThumbUplodaded && !$readonly }]
                     <a href="Javascript:DeletePic('TH');" class="deleteText"><span class="ico"></span><span class="float: left;>">[{ oxmultilang ident="GENERAL_DELETE" }]</span></a>
                     [{/if}]
                 </td>
@@ -181,7 +181,7 @@ function editThis( sID )
 
               <tr>
                 <td class="index" nowrap>
-                    [{ oxmultilang ident="ARTICLE_PICTURES_ICON" }]
+                    [{ oxmultilang ident="ARTICLE_PICTURES_ICON" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
                     [{ oxinputhelp ident="HELP_ARTICLE_PICTURES_ICON" }]
                 </td>
                 <td class="text">
@@ -197,7 +197,7 @@ function editThis( sID )
                     <input class="editinput" name="myfile[ICO@oxarticles__oxicon]" type="file">
                 </td>
                 <td nowrap="nowrap">
-                    [{if $blIcoUplodaded}]
+                    [{if $blIcoUplodaded && !$readonly }]
                     <a href="Javascript:DeletePic('ICO');" class="deleteText"><span class="ico"></span><span class="float: left;>">[{ oxmultilang ident="GENERAL_DELETE" }]</span></a>
                     [{/if}]
                 </td>

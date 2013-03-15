@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_pictures.php 29411 2010-08-18 14:23:09Z sarunas $
+ * @version   SVN: $Id: article_pictures.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -43,7 +43,7 @@ class Article_Pictures extends oxAdminDetails
 
         $this->_aViewData["edit"] = $oArticle = oxNew( "oxarticle");
 
-        $soxId = oxConfig::getParameter( 'oxid' );
+        $soxId = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId ) ) {
             // load object
             $oArticle->load( $soxId);
@@ -82,7 +82,7 @@ class Article_Pictures extends oxAdminDetails
         }
 
 
-        $soxId   = oxConfig::getParameter( "oxid");
+        $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");
 
         $oArticle = oxNew( "oxarticle");
@@ -120,7 +120,7 @@ class Article_Pictures extends oxAdminDetails
             return;
         }
 
-        $sOxId  = oxConfig::getParameter( "oxid" );
+        $sOxId = $this->getEditObjectId();
         $iIndex = oxConfig::getParameter( "masterPicIndex" );
 
         $oArticle = oxNew( "oxarticle" );

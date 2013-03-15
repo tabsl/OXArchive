@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: article_accessories.inc.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: article_accessories.inc.php 34302 2011-04-06 11:08:47Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -48,6 +48,13 @@ $aColumns = array( 'container1' => array(    // field , table,         visible, 
 class ajaxComponent extends ajaxListComponent
 {
     /**
+     * If true extended column selection will be build
+     *
+     * @var bool
+     */
+    protected $_blAllowExtColumns = true;
+
+    /**
      * Returns SQL query for data to fetc
      *
      * @return string
@@ -59,8 +66,8 @@ class ajaxComponent extends ajaxListComponent
         $sSynchSelId = oxConfig::getParameter( 'synchoxid' );
         $oDb         = oxDb::getDb();
 
-        $sArticleTable = getViewName('oxarticles');
-        $sO2CView      = getViewName('oxobject2category');
+        $sArticleTable = $this->_getViewName('oxarticles');
+        $sO2CView      = $this->_getViewName('oxobject2category');
 
         // category selected or not ?
         if ( !$sSelId ) {
@@ -87,23 +94,6 @@ class ajaxComponent extends ajaxListComponent
 
         // creating AJAX component
         return $sQAdd;
-    }
-
-    /**
-     * Adds filter SQL to current query
-     *
-     * @param string $sQ query to add filter condition
-     *
-     * @return string
-     */
-    protected function _addFilter( $sQ )
-    {
-        $sArtTable = getViewName('oxarticles');
-        $sQ = parent::_addFilter( $sQ );
-
-        // display variants or not ?
-        $sQ .= $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ? ' group by '.$sArtTable.'.oxid ' : '';
-        return $sQ;
     }
 
     /**
@@ -140,8 +130,8 @@ class ajaxComponent extends ajaxListComponent
 
         // adding
         if ( oxConfig::getParameter( 'all' ) ) {
-            $sArtTable = getViewName('oxarticles');
-            $aChosenArt = $this->_getAll( $this->_addFilter( "select $sArtTable.oxid ".$this->_getQuery() ) );
+            $sArtTable = $this->_getViewName('oxarticles');
+            $aChosenArt = $this->_getAll( parent::_addFilter( "select $sArtTable.oxid ".$this->_getQuery() ) );
         }
 
         if ( $oArticle->load( $soxId ) && $soxId && $soxId != "-1" && is_array( $aChosenArt ) ) {
@@ -155,47 +145,4 @@ class ajaxComponent extends ajaxListComponent
             }
         }
     }
-
-    /**
-     * Formats and returns chunk of SQL query string with definition of
-     * fields to load from DB. Adds subselect to get variant title from parent article
-     *
-     * @return string
-     */
-    protected function _getQueryCols()
-    {
-        $myConfig = $this->getConfig();
-        $sLangTag = oxLang::getInstance()->getLanguageTag();
-
-        $sQ = '';
-        $blSep = false;
-        $aVisiblecols = $this->_getVisibleColNames();
-        foreach ( $aVisiblecols as $iCnt => $aCol ) {
-            if ( $blSep )
-                $sQ .= ', ';
-            $sViewTable = getViewName( $aCol[1] );
-            // multilanguage
-            $sCol = $aCol[3]?$aCol[0].$sLangTag:$aCol[0];
-            if ( $myConfig->getConfigParam( 'blVariantsSelection' ) && $aCol[0] == 'oxtitle' ) {
-                $sVarSelect = "$sViewTable.oxvarselect".$sLangTag;
-                $sQ .= " IF( $sViewTable.$sCol != '', $sViewTable.$sCol, CONCAT((select oxart.$sCol from $sViewTable as oxart where oxart.oxid = $sViewTable.oxparentid),', ',$sVarSelect)) as _" . $iCnt;
-            } else {
-                $sQ  .= $sViewTable . '.' . $sCol . ' as _' . $iCnt;
-            }
-            $blSep = true;
-        }
-
-        $aIdentCols = $this->_getIdentColNames();
-        foreach ( $aIdentCols as $iCnt => $aCol ) {
-            if ( $blSep )
-                $sQ .= ', ';
-
-            // multilanguage
-            $sCol = $aCol[3]?$aCol[0].$sLangTag:$aCol[0];
-            $sQ  .= getViewName( $aCol[1] ) . '.' . $sCol . ' as _' . $iCnt;
-        }
-
-        return " $sQ ";
-    }
-
 }

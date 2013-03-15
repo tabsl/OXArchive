@@ -46,7 +46,7 @@ class ajaxComponent extends ajaxListComponent
     protected function _getQuery()
     {
         // active AJAX component
-        $sGroupTable = getViewName( 'oxgroups' );
+        $sGroupTable = $this->_getViewName( 'oxgroups' );
 
         $sId      = oxConfig::getParameter( 'oxid' );
         $sSynchId = oxConfig::getParameter( 'synchoxid' );
@@ -95,7 +95,7 @@ class ajaxComponent extends ajaxListComponent
         $soxId        = oxConfig::getParameter( 'synchoxid' );
 
         if ( oxConfig::getParameter( 'all' ) ) {
-            $sGroupTable  = getViewName('oxgroups');
+            $sGroupTable  = $this->_getViewName('oxgroups');
             $aChosenGroup = $this->_getAll( $this->_addFilter( "select $sGroupTable.oxid ".$this->_getQuery() ) );
         }
         if ( $soxId && $soxId != "-1" && is_array( $aChosenGroup ) ) {

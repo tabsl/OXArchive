@@ -33,7 +33,7 @@ class Invite extends oxUBase
      * Current class template name.
      * @var string
      */
-    protected $_sThisTemplate = 'invite.tpl';
+    protected $_sThisTemplate = 'page/privatesales/invite.tpl';
 
     /**
      * Required fields to fill before sending suggest email
@@ -77,42 +77,9 @@ class Invite extends oxUBase
      */
     protected $_iMailStatus = null;
 
-
-    /**
-     * Loads and passes article and related info to template engine
-     * (oxarticle::getReviews(), oxarticle::getCrossSelling(),
-     * oxarticle::GetSimilarProducts()), executes parent::render()
-     * and returns template file name to render suggest::_sThisTemplate.
-     *
-     * Template variables:
-     * <b>product</b>, <b>reviews</b>, <b>crossselllist</b>,
-     * <b>similarlist</b>
-     *
-     * @return  string  current template file name
-     */
-    public function render()
-    {
-        parent::render();
-
-        //getting captcha
-        $this->_aViewData['oCaptcha'] = $this->getCaptcha();
-
-        $this->_aViewData['editval'] = $this->getInviteData();
-
-        //checking if email was sent
-        if ( $this->_iMailStatus == 1 ) {
-            $this->_aViewData['success'] = true;
-        }
-
-        return $this->_sThisTemplate;
-    }
-
     /**
      * Sends product suggestion mail and returns a URL according to
      * URL formatting rules.
-     *
-     * Template variables:
-     * <b>editval</b>, <b>error</b>
      *
      * @return  null
      */
@@ -153,7 +120,7 @@ class Invite extends oxUBase
 
                 //counting entered eMails
                 if ( count( $aParams[$sFieldName] ) < 1 ) {
-                    $oUtilsView->addErrorToDisplay('INVITE_COMLETECORRECTLYFIELDS');
+                    $oUtilsView->addErrorToDisplay('EXCEPTION_INVITE_COMLETECORRECTLYFIELDS');
                     return;
                 }
 
@@ -162,7 +129,7 @@ class Invite extends oxUBase
             }
 
             if ( !isset( $aParams[$sFieldName] ) || !$aParams[$sFieldName] ) {
-                $oUtilsView->addErrorToDisplay('INVITE_COMLETECORRECTLYFIELDS');
+                $oUtilsView->addErrorToDisplay('EXCEPTION_INVITE_COMLETECORRECTLYFIELDS');
                 return;
             }
         }
@@ -172,13 +139,13 @@ class Invite extends oxUBase
         //validating entered emails
         foreach ( $aParams["rec_email"] as $sRecipientEmail ) {
             if ( !$oUtils->isValidEmail( $sRecipientEmail ) ) {
-                $oUtilsView->addErrorToDisplay('INVITE_INCORRECTEMAILADDRESS');
+                $oUtilsView->addErrorToDisplay('EXCEPTION_INVITE_INCORRECTEMAILADDRESS');
                 return;
             }
         }
 
         if ( !$oUtils->isValidEmail( $aParams["send_email"] ) ) {
-            $oUtilsView->addErrorToDisplay('INVITE_INCORRECTEMAILADDRESS');
+            $oUtilsView->addErrorToDisplay('EXCEPTION_INVITE_INCORRECTEMAILADDRESS');
             return;
         }
 
@@ -197,8 +164,22 @@ class Invite extends oxUBase
             }
 
         } else {
-            oxUtilsView::getInstance()->addErrorToDisplay('INVITE_ERRORWHILESENDINGMAIL');
+            oxUtilsView::getInstance()->addErrorToDisplay('EXCEPTION_INVITE_ERRORWHILESENDINGMAIL');
         }
+    }
+
+    /**
+     * Template variable getter. Return if mail was send successfully
+     *
+     * @return array
+     */
+    public function getInviteSendStatus()
+    {
+        //checking if email was sent
+        if ( $this->_iMailStatus == 1 ) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -257,6 +238,22 @@ class Invite extends oxUBase
                 $oDb->execute( $sSql );
             }
         }
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+        $aPath = array();
+
+        $aPath['title'] = oxLang::getInstance()->translateString( 'PAGE_PRIVATESALES_INVITE_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
+        $aPaths[] = $aPath;
+
+        return $aPaths;
     }
 
 

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxstrregular.php 31131 2010-11-24 09:32:06Z arvydas $
+ * @version   SVN: $Id: oxstrregular.php 34145 2011-04-01 15:51:13Z sarunas $
  */
 
 /**
@@ -315,5 +315,40 @@ class oxStrRegular
     public function cleanStr( $sStr, $sCleanChr = ' ')
     {
         return $this->preg_replace( "/\"|\'|\:|\!|\?|\n|\r|\t|\x95|\xa0|;/", $sCleanChr, $sStr );
+    }
+
+    /**
+     * wrapper for json encode, which does not work with non utf8 characters
+     *
+     * @param mixed $data data to encode
+     *
+     * @return string
+     */
+    public function jsonEncode($data)
+    {
+        if (is_array($data)) {
+            $ret = "";
+            $blWasOne = false;
+            $blNumerical = true;
+            reset($data);
+            while ($blNumerical && (list($key) = each($data))) {
+                $blNumerical = !is_string($key);
+            }
+            if ($blNumerical) {
+                return '['.  implode(',', array_map(array($this, 'jsonEncode'), $data)).']';
+            } else {
+                foreach ($data as $key => $val) {
+                    if ($blWasOne) {
+                        $ret .= ',';
+                    } else {
+                        $blWasOne = true;
+                    }
+                    $ret .= '"'.addslashes($key).'":'. $this->jsonEncode($val);
+                }
+                return "{".$ret."}";
+            }
+        } else {
+            return '"'.addcslashes((string)$data, "\r\n\t\"\\").'"';
+        }
     }
 }

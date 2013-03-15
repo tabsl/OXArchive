@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: delivery_main.inc.php 25640 2010-02-05 06:42:24Z alfonsas $
+ * @version   SVN: $Id: delivery_main.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -49,7 +49,7 @@ class ajaxComponent extends ajaxListComponent
      */
     protected function _getQuery()
     {
-        $sCountryTable = getViewName('oxcountry');
+        $sCountryTable = $this->_getViewName('oxcountry');
 
         $sId      = oxConfig::getParameter( 'oxid' );
         $sSynchId = oxConfig::getParameter( 'synchoxid' );
@@ -101,7 +101,7 @@ class ajaxComponent extends ajaxListComponent
 
         // adding
         if ( oxConfig::getParameter( 'all' ) ) {
-            $sCountryTable = getViewName('oxcountry');
+            $sCountryTable = $this->_getViewName('oxcountry');
             $aChosenCntr = $this->_getAll( $this->_addFilter( "select $sCountryTable.oxid ".$this->_getQuery() ) );
         }
 

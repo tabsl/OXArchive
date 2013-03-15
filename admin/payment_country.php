@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: payment_country.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: payment_country.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -45,17 +45,7 @@ class Payment_Country extends oxAdminDetails
         // remove itm from list
         unset( $this->_aViewData["sumtype"][2]);
 
-        $soxId = oxConfig::getParameter( "oxid");
-        // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($soxId == "-1" || !isset( $soxId)) && isset( $sSavedID) ) {
-            $soxId = $sSavedID;
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $soxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
-        }
-
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId)) {
             // load object
             $oPayment = oxNew( "oxpayment" );
@@ -99,7 +89,7 @@ class Payment_Country extends oxAdminDetails
      */
     public function addcountry()
     {
-        $sOxId = oxConfig::getParameter( "oxid" );
+        $sOxId = $this->getEditObjectId();
         $aChosenCntr = oxConfig::getParameter( "allcountries" );
         if ( isset( $sOxId ) && $sOxId != "-1" && is_array( $aChosenCntr ) ) {
             foreach ( $aChosenCntr as $sChosenCntr ) {
@@ -120,7 +110,7 @@ class Payment_Country extends oxAdminDetails
      */
     public function removecountry()
     {
-        $sOxId = oxConfig::getParameter( "oxid" );
+        $sOxId = $this->getEditObjectId();
         $aChosenCntr = oxConfig::getParameter( "countries" );
         if ( isset( $sOxId ) && $sOxId != "-1" && is_array( $aChosenCntr ) ) {
             foreach ( $aChosenCntr as $sChosenCntr ) {

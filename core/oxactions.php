@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxactions.php 28344 2010-06-15 11:32:21Z sarunas $
+ * @version   SVN: $Id: oxactions.php 33763 2011-03-15 09:02:55Z arvydas.vapsva $
  */
 
 /**
@@ -105,15 +105,6 @@ class oxActions extends oxI18n
 
         return parent::delete( $sOxId );
     }
-    
-    
-
-
-
-
-
-
-
 
     /**
      * return time left until finished
@@ -197,7 +188,6 @@ class oxActions extends oxI18n
         return true;
     }
 
-
     /**
      * get long description, parsed through smarty
      *
@@ -205,14 +195,66 @@ class oxActions extends oxI18n
      */
     public function getLongDesc()
     {
-        $sDbValue = $this->oxactions__oxlongdesc->getRawValue();
-        $oStr = getStr();
-        $blHasSmarty = $oStr->strstr( $sDbValue, '[{' );
-        $blHasPhp = $oStr->strstr( $sDbValue, '<?' );
-        if ( $blHasSmarty || $blHasPhp) {
-            $sDbValue = oxUtilsView::getInstance()->parseThroughSmarty( $sDbValue, "promotion_".$this->getId() );
-        }
-        return $sDbValue;
+        return oxUtilsView::getInstance()->parseThroughSmarty( $this->oxactions__oxlongdesc->getRawValue(), $this->getId().$this->getLanguage() );
     }
-    
+
+    /**
+     * return assigned banner article
+     *
+     * @return oxArticle
+     */
+    public function getBannerArticle()
+    {
+        $oDb = oxDb::getDb();
+        $sArtId = $oDb->getOne(
+            'select oxobjectid from oxobject2action '
+          . 'where oxactionid='.$oDb->quote($this->getId())
+          . ' and oxclass="oxarticle"'
+        );
+
+        if ( $sArtId ) {
+            $oArticle = oxNew( 'oxarticle' );
+
+            if ( $this->isAdmin() ) {
+                $oArticle->setLanguage( oxLang::getInstance()->getEditLanguage() );
+            }
+
+            if ( $oArticle->load($sArtId) ) {
+                return $oArticle;
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * Returns assigned banner article picture url
+     *
+     * @return string
+     */
+    public function getBannerPictureUrl()
+    {
+        if ( isset( $this->oxactions__oxpic ) && $this->oxactions__oxpic->value ) {
+            $sPromoDir = oxUtilsFile::getInstance()->normalizeDir( oxUtilsFile::PROMO_PICTURE_DIR );
+            return $this->getConfig()->getPictureUrl( $sPromoDir.$this->oxactions__oxpic->value, false );
+        }
+    }
+
+    /**
+     * Returns assigned banner link. If no link is defined and article is
+     * assigned to banner, article link will be returned.
+     *
+     * @return string
+     */
+    public function getBannerLink()
+    {
+        if ( isset( $this->oxactions__oxlink ) && $this->oxactions__oxlink->value ) {
+            return  oxUtilsUrl::getInstance()->processUrl( $this->oxactions__oxlink->value );
+        } else {
+            // if article is assinged to banner, getting article link
+            if ( $oArticle = $this->getBannerArticle() ) {
+                return $oArticle->getLink();
+            }
+        }
+    }
 }

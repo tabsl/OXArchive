@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_seo.php 32749 2011-01-26 09:19:36Z arvydas.vapsva $
+ * @version   SVN: $Id: shop_seo.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -111,7 +111,7 @@ class Shop_Seo extends Shop_Config
         $this->saveConfVars();
 
         $oShop = oxNew( 'oxshop' );
-        if ( $oShop->loadInLang( $this->_iEditLang, oxConfig::getParameter( 'oxid' ) ) ) {
+        if ( $oShop->loadInLang( $this->_iEditLang, $this->getEditObjectId() ) ) {
 
             //assigning values
             $oShop->setLanguage( 0 );
@@ -189,7 +189,7 @@ class Shop_Seo extends Shop_Config
         if ( is_array( $aStaticUrl = oxConfig::getParameter( 'aStaticUrl' ) ) ) {
             if ( ( $sObjectid = $aStaticUrl['oxseo__oxobjectid'] ) && $sObjectid != '-1' ) {
                 // active shop id
-                $soxId = oxConfig::getParameter( 'oxid' );
+                $soxId = $this->getEditObjectId();
                 $oDb = oxDb::getDb();
                 $oDb->execute( "delete from oxseo where oxtype='static' and oxobjectid = ".$oDb->quote( $sObjectid ) ." and oxshopid = ".$oDb->quote( $soxId ) );
             }

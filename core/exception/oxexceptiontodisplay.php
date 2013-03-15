@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxexceptiontodisplay.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: oxexceptiontodisplay.php 32877 2011-02-03 09:25:45Z rimvydas.paskevicius $
  */
 
 /**
@@ -169,13 +169,34 @@ class oxExceptionToDisplay implements oxIDisplayError
     }
 
     /**
+     * Sets the exception message arguments used when
+     * outputing message using sprintf().
+     *
+     * @return null
+     */
+    public function setMessageArgs()
+    {
+        $this->_aMessageArgs = func_get_args();
+    }
+
+    /**
      * Returns translated exception message
      *
      * @return string
      */
     public function getOxMessage()
     {
-        return $this->_blDebug ? $this : oxLang::getInstance()->translateString($this->_sMessage);
+        if ( $this->_blDebug ) {
+            return $this;
+        } else {
+             $sString = oxLang::getInstance()->translateString($this->_sMessage);
+
+             if ( !empty( $this->_aMessageArgs ) ) {
+                 $sString = vsprintf( $sString, $this->_aMessageArgs );
+             }
+
+             return $sString;
+        }
     }
 
     /**

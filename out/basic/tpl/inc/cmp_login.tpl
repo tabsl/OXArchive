@@ -8,7 +8,7 @@
         [{ $oViewConf->getNavFormParams() }]
         <input type="hidden" name="fnc" value="login_noredirect">
         <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
-        <input type="hidden" name="tpl" value="[{$tpl}]">
+        <input type="hidden" name="tpl" value="[{$oViewConf->getActTplName()}]">
         [{if $oView->getArticleId()}]
           <input type="hidden" name="aid" value="[{$oView->getArticleId()}]">
         [{/if}]
@@ -39,36 +39,4 @@
           </table>
     </div>
   </form>
-  [{if $oViewConf->getShowOpenIdLogin() }]
-  <div class="dot_sep"></div>
-  <br>
-  [{ oxmultilang ident="INC_CMP_LOGIN_FOROPENID" }]
-  <div class="dot_sep"></div>
-  <form name="login" action="[{ $oViewConf->getSslSelfLink() }]" method="post">
-    <div>
-        [{ $oViewConf->getHiddenSid() }]
-        [{ $oViewConf->getNavFormParams() }]
-        <input type="hidden" name="fnc" value="login_noredirect">
-        <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
-        <input type="hidden" name="tpl" value="[{$tpl}]">
-        [{if $oView->getArticleId()}]
-          <input type="hidden" name="aid" value="[{$oView->getArticleId()}]">
-        [{/if}]
-        [{if $oView->getProduct()}]
-          [{assign var="product" value=$oView->getProduct() }]
-          <input type="hidden" name="anid" value="[{ $product->oxarticles__oxnid->value }]">
-        [{/if}]
-            <table class="form">
-              <tr>
-                <td colspan="2"><label><strong>[{ oxmultilang ident="INC_CMP_LOGIN_OPENID" }]</strong></label></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td colspan="2"><input class="openid" id="test_LoginOpenID" type="text" name="lgn_openid" value="" size="51">&nbsp;&nbsp;</td>
-                <td><span class="btn"><input id="test_Login2" type="submit" class="btn" name="send" value="[{ oxmultilang ident="INC_CMP_LOGIN_LOGIN" }]"></span></td>
-              </tr>
-            </table>
-    </div>
-  </form>
-  [{/if}]
 </div>

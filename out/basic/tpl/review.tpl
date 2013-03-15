@@ -10,6 +10,7 @@
   [{include file="inc/cmp_login.tpl" }]
 [{else}]
   [{if $oView->getProduct()}]
+  [{assign var="product" value=$oView->getProduct()}]
   <strong class="boxhead">[{$template_title}]</strong>
   <div class="box info">
     <table width="100%">

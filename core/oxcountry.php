@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcountry.php 28204 2010-06-08 06:36:11Z michael.keiluweit $
+ * @version   SVN: $Id: oxcountry.php 31954 2010-12-17 13:33:40Z sarunas $
  */
 
 
@@ -82,7 +82,8 @@ class oxCountry extends oxI18n
             return $this->_aStates;
 
         $sCountryId = $this->getId();
-        $sQ = "select * from oxstates where oxcountryid = '$sCountryId' ";
+        $sViewName = getViewName( "oxstates", $this->getLanguage() );
+        $sQ = "select * from {$sViewName} where oxcountryid = '$sCountryId' ";
         $this->_aStates = oxNew("oxlist");
         $this->_aStates->init("oxstate");
         $this->_aStates->selectString($sQ);

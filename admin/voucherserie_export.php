@@ -86,7 +86,7 @@ class VoucherSerie_Export extends VoucherSerie_Main
             $sUrl = $myConfig->getConfigParam( 'sAdminSSLURL' );
         }
 
-        $sUrl = $this->getSession()->url( $sUrl.'/index.php' );
+        $sUrl = oxUtilsUrl::getInstance()->processUrl( $sUrl.'/index.php' );
         return $sUrl . '&amp;cl='.$this->sClassDo.'&amp;fnc=download';
     }
 

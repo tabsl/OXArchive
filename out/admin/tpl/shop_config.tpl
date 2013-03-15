@@ -43,18 +43,18 @@ function showInvitations()
 
 [{cycle assign="_clear_" values=",2" }]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="shop_config">
     <input type="hidden" name="fnc" value="">
-    <input type="hidden" name="actshop" value="[{ $shop->id }]">
+    <input type="hidden" name="actshop" value="[{$oViewConf->getActiveShopId()}]">
     <input type="hidden" name="updatenav" value="">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
 </form>
 
-<form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
-[{ $shop->hiddensid }]
+<form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{ $oViewConf->getHiddenSid() }]
 <input type="hidden" name="cl" value="shop_config">
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -191,16 +191,6 @@ function showInvitations()
     <div class="groupExp">
         <div>
             <a href="#" onclick="_groupExp(this);return false;" class="rc"><b>[{ oxmultilang ident="SHOP_OPTIONS_GROUP_ARTICLES" }]</b></a>
-            <dl>
-                <dt>
-                    <textarea class="txtfield" name=confarrs[aNrofCatArticles] [{ $readonly}]>[{$confarrs.aNrofCatArticles}]</textarea>
-                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_NROFCATARTICLES" }]
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_NROFCATARTICLES" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
 
             <dl>
                 <dt>
@@ -370,18 +360,6 @@ function showInvitations()
 
             <dl>
                 <dt>
-                    <input type=hidden name=confbools[blShowBirthdayFields] value=false>
-                    <input type=checkbox name=confbools[blShowBirthdayFields] value=true  [{if ($confbools.blShowBirthdayFields)}]checked[{/if}] [{ $readonly}]>
-                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWBIRTHDAYFIELDS" }]
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_SHOWBIRTHDAYFIELDS" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-            <dl>
-                <dt>
                     <input type=hidden name=confbools[blShowOrderButtonOnTop] value=false>
                     <input type=checkbox name=confbools[blShowOrderButtonOnTop] value=true  [{if ($confbools.blShowOrderButtonOnTop)}]checked[{/if}] [{ $readonly}]>
                     [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWORDERBUTTONONTHETOP" }]
@@ -513,17 +491,6 @@ function showInvitations()
 
             <dl>
                 <dt>
-                    <input type=text class="txt" name=confstrs[sIconsize] value="[{$confstrs.sIconsize}]" [{ $readonly}]>
-                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_ICONSIZE" }]
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_ICONSIZE" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-            <dl>
-                <dt>
                     <input type=hidden name=confbools[blAutoIcons] value=false>
                     <input type=checkbox name=confbools[blAutoIcons] value=true  [{if ($confbools.blAutoIcons)}]checked[{/if}] [{ $readonly}]>
                     [{ oxinputhelp ident="HELP_SHOP_CONFIG_AUTOICONS" }]
@@ -534,132 +501,20 @@ function showInvitations()
                 <div class="spacer"></div>
             </dl>
 
-            <dl>
-                <dt>
-                    <input type=text class="txt" name=confstrs[sThumbnailsize] value="[{$confstrs.sThumbnailsize}]" [{ $readonly}]>
-                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_THUMBNAILSIZE" }]
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_THUMBNAILSIZE" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-            <dl>
-                <dt>
-                    <textarea class="txtfield" name=confaarrs[aDetailImageSizes] [{ $readonly}]>[{$confaarrs.aDetailImageSizes}]</textarea>
-                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_DETAILIMAGESIZE" }]
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_DETAILIMAGESIZE" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-            <dl>
-                <dt>
-                    <input type=text class="txt" name=confstrs[sZoomImageSize] value="[{$confstrs.sZoomImageSize}]" [{ $readonly}]>
-                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_ZOOMIMAGESIZE" }]
-                </dt>
-                <dd>
-                [{ oxmultilang ident="SHOP_CONFIG_ZOOMIMAGESIZE" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-            <dl>
-                <dt>
-                    <input type=text class="txt" name=confstrs[sCatThumbnailsize] value="[{$confstrs.sCatThumbnailsize}]" [{ $readonly}]>
-                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_CATEGORYTHUMBNAILSIZE" }]
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_CATEGORYTHUMBNAILSIZE" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
          </div>
     </div>
 
     <div class="groupExp">
         <div>
             <a href="#" onclick="_groupExp(this);return false;" class="rc"><b>[{ oxmultilang ident="SHOP_OPTIONS_GROUP_SHOP_FRONTEND" }]</b></a>
-            <dl>
-                <dt>
-                </dt>
-                <dd>
-                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_SELECTSHOPCOMPONENTS" }][{ oxmultilang ident="SHOP_CONFIG_SELECTSHOPCOMPONENTS" }]
-                    <div style="margin-left:10px;">
-                        <input type=hidden name=confbools[bl_showVouchers] value=false>
-                        <input type=checkbox name=confbools[bl_showVouchers] value=true  [{if ($confbools.bl_showVouchers)}]checked[{/if}] [{ $readonly }]>
-                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWVOUCHERS" }]
-                        [{ oxmultilang ident="SHOP_CONFIG_SHOWVOUCHERS" }]
-                        <br>
-
-                        <input type=hidden name=confbools[bl_showOpenId] value=false>
-                        <input type=checkbox name=confbools[bl_showOpenId] value=true  [{if ($confbools.bl_showOpenId)}]checked[{/if}] [{ $readonly }]>
-                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWOPENID" }]
-                        [{ oxmultilang ident="SHOP_CONFIG_SHOWOPENID" }]
-                        <br>
-
-                        <input type=hidden name=confbools[bl_showGiftWrapping] value=false>
-                        <input type=checkbox name=confbools[bl_showGiftWrapping] value=true  [{if ($confbools.bl_showGiftWrapping)}]checked[{/if}] [{ $readonly }]>
-                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWGIFTWRAPPING" }]
-                        [{ oxmultilang ident="SHOP_CONFIG_SHOWGIFTWRAPPING" }]
-                        <br>
-
-                        <input type=hidden name=confbools[bl_showListmania] value=false>
-                        <input type=checkbox name=confbools[bl_showListmania] value=true  [{if ($confbools.bl_showListmania)}]checked[{/if}] [{ $readonly }]>
-                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWLISTMANIA" }]
-                        [{ oxmultilang ident="SHOP_CONFIG_SHOWLISTMANIA" }]
-                        <br>
-
-                        <input type=hidden name=confbools[bl_showWishlist] value=false>
-                        <input type=checkbox name=confbools[bl_showWishlist] value=true  [{if ($confbools.bl_showWishlist)}]checked[{/if}] [{ $readonly }]>
-                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWWISHLIST" }]
-                        [{ oxmultilang ident="SHOP_CONFIG_SHOWWISHLIST" }]
-                        <br>
-
-                        <input type=hidden name=confbools[bl_showCompareList] value=false>
-                        <input type=checkbox name=confbools[bl_showCompareList] value=true  [{if ($confbools.bl_showCompareList)}]checked[{/if}] [{ $readonly }]>
-                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWCOMPARELIST" }]
-                        [{ oxmultilang ident="SHOP_CONFIG_SHOWCOMPARELIST" }]
-                    </div>
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-
-            <dl>
-                <dt>
-                    <input type=hidden name=confbools[blTopNaviLayout] value=false>
-                    <input type=checkbox name=confbools[blTopNaviLayout] value=true  [{if ($confbools.blTopNaviLayout)}]checked[{/if}] [{ $readonly}]>
-                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_TOPNAVILAYOUT" }]
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_TOPNAVILAYOUT" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
 
             <dl>
                 <dt>
                     <input type="button" value="[{if isset($defcat) && isset($defcat->oxcategories__oxtitle)}][{$defcat->oxcategories__oxtitle->value}][{else}]---[{/if}]" onclick="JavaScript:showDialog('&cl=shop_config&aoc=1&oxid=[{$oxid|escape:'url'}]');">
-                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_TOPNAVICATCOUNT" }]
-                </dt>
-                <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_ACTIVECATEGORYBYSTART" }]
-                </dd>
-                <div class="spacer"></div>
-            </dl>
-
-            <dl>
-                <dt>
-                    <input type=text class="txt" style="width:70" name=confstrs[iTopNaviCatCount] value="[{$confstrs.iTopNaviCatCount}]" [{ $readonly}]>
                     [{ oxinputhelp ident="HELP_SHOP_CONFIG_ACTIVECATEGORYBYSTART" }]
                 </dt>
                 <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_TOPNAVICATCOUNT" }]
+                    [{ oxmultilang ident="SHOP_CONFIG_ACTIVECATEGORYBYSTART" }]
                 </dd>
                 <div class="spacer"></div>
             </dl>

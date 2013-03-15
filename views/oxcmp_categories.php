@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_categories.php 28345 2010-06-15 11:38:32Z alfonsas $
+ * @version   SVN: $Id: oxcmp_categories.php 32923 2011-02-04 14:35:22Z vilma $
  */
 
 /**
@@ -240,22 +240,12 @@ class oxcmp_categories extends oxView
              ( $oVendorTree = $oParentView->getVendorTree() )) {
             $oParentView->setVendorlist( $oVendorTree );
             $oParentView->setRootVendor( $oVendorTree->getRootCat() );
-
-            // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-            $oParentView->addTplParam( 'rootvendor', $oParentView->getRootVendor() );
-            $oParentView->addTplParam( 'aVendorlist', $oParentView->getVendorlist() );
-            $oParentView->addTplParam( 'sVendorID', $oParentView->getVendorId() );
         }
 
         if ( $myConfig->getConfigParam( 'bl_perfLoadManufacturerTree' ) &&
              ( $oManufacturerTree = $oParentView->getManufacturerTree() ) ) {
             $oParentView->setManufacturerlist( $oManufacturerTree );
             $oParentView->setRootManufacturer( $oManufacturerTree->getRootCat() );
-
-            // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-            $oParentView->addTplParam( 'rootmanufacturer', $oParentView->getRootManufacturer() );
-            $oParentView->addTplParam( 'aManufacturerlist', $oParentView->getManufacturerlist() );
-            $oParentView->addTplParam( 'sManufacturerID', $oParentView->getManufacturerId() );
         }
 
         if ( $myConfig->getConfigParam( 'bl_perfLoadCatTree' ) &&
@@ -264,17 +254,11 @@ class oxcmp_categories extends oxView
             // we loaded full category tree ?
             if ( $myConfig->getConfigParam( 'bl_perfLoadTreeForSearch' ) ) {
                 $oParentView->setSearchCatTree( $oCategoryTree );
-                // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-                $oParentView->addTplParam( 'aSearchCatTree', $oParentView->getSearchCatTree() );
             }
 
             // new navigation ?
             if ( $myConfig->getConfigParam( 'blTopNaviLayout' ) ) {
                 $oParentView->setCatMore( $this->_oMoreCat );
-                // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-                $oParentView->addTplParam( 'navcategorytree', $oCategoryTree );
-                $oParentView->addTplParam( 'navcategorycount', $oCategoryTree->count() );
-                $oParentView->addTplParam( 'navcatmore', $oParentView->getCatMore() );
             }
 
             return $oCategoryTree;

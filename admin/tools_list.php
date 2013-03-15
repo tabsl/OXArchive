@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: tools_list.php 27133 2010-04-09 13:48:22Z arvydas $
+ * @version   SVN: $Id: tools_list.php 32221 2010-12-22 12:36:39Z alfonsas $
  */
 
 /**
@@ -37,6 +37,20 @@ class Tools_List extends oxAdminList
      */
     protected $_sThisTemplate = 'tools_list.tpl';
 
+    /**
+     * Performs full view update
+     *
+     * @return mixed
+     */
+    public function updateViews()
+    {
+        //preventing edit for anyone except malladmin
+        if ( oxSession::getVar( "malladmin" ) ) {
+            oxDb::getInstance()->updateViews();
+            $this->_aViewData["blViewSuccess"]  = true;
+        }
+    }
+    
     /**
      * Method performs user passed SQL query
      *

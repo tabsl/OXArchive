@@ -19,21 +19,46 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxoutput.php 29937 2010-09-23 06:34:52Z alfonsas $
+ * @version   SVN: $Id: oxoutput.php 34141 2011-04-01 14:59:12Z sarunas $
  */
 
 /**
  * class for output processing
+ *
  * @package core
  */
 class oxOutput extends oxSuperCfg
 {
+    const OUTPUT_FORMAT_HTML = 'html';
+    const OUTPUT_FORMAT_JSON = 'json';
+
     /**
      * Keels search engine status
      *
      * @var bool
      */
     protected $_blSearchEngine = false;
+
+    /**
+     * page charset
+     *
+     * @var string
+     */
+    protected $_sCharset = null;
+
+    /**
+     * output format (html(default)/json)
+     *
+     * @var string
+     */
+    protected $_sOutputFormat = self::OUTPUT_FORMAT_HTML;
+
+    /**
+     * output buffer (e.g. for json)
+     *
+     * @var array
+     */
+    protected $_aBuffer = array();
 
     /**
      * Class constructor. Sets search engine mode according to client info
@@ -128,5 +153,86 @@ class oxOutput extends oxSuperCfg
         // #669 PHP5 claims that you cant pas full this but should instead pass reference what is anyway a much better idea
         // dodger: removed "return" as by reference you dont need any return
 
+    }
+
+
+    /**
+     * set page charset
+     *
+     * @param string $sCharset charset to send with headers
+     *
+     * @return null
+     */
+    public function setCharset($sCharset)
+    {
+        $this->_sCharset = $sCharset;
+    }
+
+    /**
+     * set page output format
+     *
+     * @param string $sFormat html or json
+     *
+     * @return null
+     */
+    public function setOutputFormat($sFormat)
+    {
+        $this->_sOutputFormat = $sFormat;
+    }
+
+    /**
+     * output data
+     *
+     * @param string $sName  output name (used in json mode)
+     * @param string $output output text/data
+     *
+     * @return null
+     */
+    public function output($sName, $output)
+    {
+        switch ($this->_sOutputFormat) {
+            case self::OUTPUT_FORMAT_JSON:
+                $this->_aBuffer[$sName] = $output;
+                break;
+            case self::OUTPUT_FORMAT_HTML:
+            default:
+                echo $output;
+                break;
+        }
+    }
+
+    /**
+     * flush pending output
+     *
+     * @return null
+     */
+    public function flushOutput()
+    {
+        switch ($this->_sOutputFormat) {
+            case self::OUTPUT_FORMAT_JSON:
+                echo getStr()->jsonEncode($this->_aBuffer);
+                break;
+            case self::OUTPUT_FORMAT_HTML:
+            default:
+                break;
+        }
+    }
+
+    /**
+     * send page headers (content type, charset)
+     *
+     * @return null
+     */
+    public function sendHeaders()
+    {
+        switch ($this->_sOutputFormat) {
+            case self::OUTPUT_FORMAT_JSON:
+                oxUtils::getInstance()->setHeader( "Content-Type: application/json; charset=".$this->_sCharset );
+                break;
+            case self::OUTPUT_FORMAT_HTML:
+            default:
+                oxUtils::getInstance()->setHeader( "Content-Type: text/html; charset=".$this->_sCharset );
+                break;
+        }
     }
 }

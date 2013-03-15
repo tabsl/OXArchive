@@ -61,7 +61,7 @@ class dyn_trusted_ratings extends Shop_Config
     public function save()
     {
         $myConfig = $this->getConfig();
-        $sOxId    = oxConfig::getParameter( "oxid" );
+        $sOxId = $this->getEditObjectId();
 
         // base parameters
         $aConfStrs  = oxConfig::getParameter( "confstrs" );

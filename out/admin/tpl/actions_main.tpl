@@ -8,15 +8,29 @@
 
 
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<script type="text/javascript">
+<!--
+
+function DeletePic( sField )
+{
+    var oForm = document.getElementById("myedit");
+    document.getElementById(sField).value="";
+    oForm.fnc.value='save';
+    oForm.submit();
+}
+
+//-->
+</script>
+
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{$oViewConf->getHiddenSid()}]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="actions_main">
 </form>
 
 
-<form name="myedit" id="myedit" onSubmit="copyLongDesc( 'oxactions__oxlongdesc' );" action="[{ $shop->selflink }]" method="post">
-[{ $shop->hiddensid }]
+<form name="myedit" enctype="multipart/form-data" id="myedit" onSubmit="copyLongDesc( 'oxactions__oxlongdesc' );" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{$oViewConf->getHiddenSid()}]
 <input type="hidden" name="cl" value="actions_main">
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -29,7 +43,7 @@
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
 
 <tr>
-    <td valign="top" class="edittext">
+    <td valign="top" class="edittext" style="padding-right: 20px;">
         <table cellspacing="0" cellpadding="0" border="0">
         <tr>
             <td class="edittext" width="120">
@@ -50,14 +64,22 @@
             [{ oxinputhelp ident="HELP_GENERAL_ACTIVE" }]
           </td>
         </tr>
+        [{ if $edit->oxactions__oxtype->value != 2 }]
         <tr>
           <td class="edittext">
-          [{ if $edit->oxactions__oxtype->value < 2 }][{ oxmultilang ident="GENERAL_ACTIVFROMTILL" }][{/if}]&nbsp;
+              <br>
+              &nbsp;&nbsp;[{ oxmultilang ident="GENERAL_OR" }]
           </td>
+        </tr>
+        [{/if}]
+        <tr>
           <td class="edittext">
-          <input type="text" class="editinput" size="27" name="editval[oxactions__oxactivefrom]" value="[{$edit->oxactions__oxactivefrom|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]> ([{ oxmultilang ident="GENERAL_FROM" }])<br>
-          <input type="text" class="editinput" size="27" name="editval[oxactions__oxactiveto]" value="[{$edit->oxactions__oxactiveto|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]> ([{ oxmultilang ident="GENERAL_TILL" }])
-          [{ if $edit->oxactions__oxtype->value < 2 }][{ oxinputhelp ident="HELP_GENERAL_ACTIVFROMTILL" }][{/if}]
+              [{ if $edit->oxactions__oxtype->value != 2 }][{ oxmultilang ident="GENERAL_ACTIVE" }][{/if}]&nbsp;
+          </td>
+          <td class="edittext" align="right">
+           [{ oxmultilang ident="GENERAL_FROM" }] <input type="text" class="editinput" size="27" name="editval[oxactions__oxactivefrom]" value="[{$edit->oxactions__oxactivefrom|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]><br>
+           [{ oxmultilang ident="GENERAL_TILL" }] <input type="text" class="editinput" size="27" name="editval[oxactions__oxactiveto]" value="[{$edit->oxactions__oxactiveto|oxformdate}]" [{include file="help.tpl" helpid=article_vonbis}] [{ $readonly }]>
+          [{ if $edit->oxactions__oxtype->value != 2 }][{ oxinputhelp ident="HELP_GENERAL_ACTIVFROMTILL" }][{/if}]
           </td>
         </tr>
         [{ if $oxid == "-1" }]
@@ -69,6 +91,7 @@
             <select class="editinput" name="editval[oxactions__oxtype]">
               <option value="1">[{ oxmultilang ident="PROMOTIONS_MAIN_TYPE_ACTION" }]</option>
               <option value="2">[{ oxmultilang ident="PROMOTIONS_MAIN_TYPE_PROMO" }]</option>
+              <option value="3">[{ oxmultilang ident="PROMOTIONS_MAIN_TYPE_BANNER" }]</option>
             </select>
           </td>
         </tr>
@@ -80,6 +103,15 @@
                 [{include file="language_edit.tpl"}]
             </td>
         </tr>
+        [{if $edit->oxactions__oxtype->value == 3 }]
+            <td class="edittext" width="120">
+            [{ oxmultilang ident="GENERAL_SORT" }]
+            </td>
+            <td class="edittext">
+            <input type="text" class="editinput" size="32" maxlength="[{$edit->oxactions__oxsort->fldmax_length}]" name="editval[oxactions__oxsort]" value="[{$edit->oxactions__oxsort->value}]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_SORT" }]
+            </td>
+        [{/if}]
         <tr>
             <td class="edittext">
             </td>
@@ -90,9 +122,9 @@
             [{ if $oxid != "-1"}]
 
                 [{ if $edit->oxactions__oxtype->value < 2 }]
-                <input type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNARTICLES" }]" class="edittext" onclick="JavaScript:showDialog('&cl=actions_main&aoc=1&oxid=[{ $oxid }]');" [{ $readonly }]>
+                   <input type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNARTICLES" }]" class="edittext" onclick="JavaScript:showDialog('&cl=actions_main&aoc=1&oxid=[{ $oxid }]');" [{ $readonly }]>
                 [{else}]
-                <input type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('&cl=actions_main&oxscpromotionsaoc=2&oxid=[{ $oxid }]');" [{ $readonly }]>
+                    <input type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('&cl=actions_main&oxpromotionaoc=groups&oxid=[{ $oxid }]');" [{ $readonly }]>
                 [{/if}]
 
             [{ /if}]
@@ -101,11 +133,114 @@
         </tr>
         </table>
     </td>
-    <!-- Anfang rechte Seite -->
-    <td valign="top" class="edittext" align="left" style="width:100%;padding-left:5px;padding-bottom:10px;">
-      [{ $editor }]
-    </td>
-    <!-- Ende rechte Seite -->
+    [{ if $edit->oxactions__oxtype->value > 1 }]
+
+        [{ if $edit->oxactions__oxtype->value == 3 }]
+            <td width="180" valign="top" style="padding: 0 25px 0 25px; border-left: 1px solid #ddd;">
+            [{ if (!($edit->oxactions__oxpic->value=="nopic.jpg" || $edit->oxactions__oxpic->value=="")) }]
+                <div style="padding-bottm: 10px;">
+                    <a href="[{$edit->getBannerPictureUrl()}]" target="_blank">
+                        <img src="[{$edit->getBannerPictureUrl()}]" width="120px;" border="0">
+                    </a>
+                    <div style="width: 120px; color: #666; padding-top: 5px; border-top: 1px solid #ccc; text-align: center;">
+                        Banner picture
+                    </div>
+                </div>
+            [{/if}]
+            </td>
+        [{/if}]
+
+        <td valign="top" class="edittext" align="left" style="width:100%;padding-left:5px;padding-bottom:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                [{ if $edit->oxactions__oxtype->value == 2 }]
+                <!-- Promotions editor -->
+                <tr>
+                    <td class="edittext" width="100%" colspan="2">
+                        [{ $editor }]
+                    </td>
+                </tr>
+                [{/if}]
+
+                [{ if $edit->oxactions__oxtype->value == 3 }]
+                <!-- Banners picture upload and link -->
+                <tr>
+                    <td class="edittext">
+
+                        <table cellspacing="0" cellpadding="0" width="100%" border="0" class="listTable">
+                          <colgroup>
+                              <col width="1%" nowrap>
+                              <col width="1%" nowrap>
+                              <col width="98%">
+                          </colgroup>
+                          <tr>
+                              <th colspan="5" valign="top">
+                                 [{ oxmultilang ident="PROMOTIONS_BANNER_PICTUREANDLINK" }]
+                                 [{ oxinputhelp ident="HELP_PROMOTIONS_BANNER_PICTUREANDLINK" }]
+                              </th>
+                          </tr>
+
+                          <tr>
+                            <td class="text">
+                                <b>[{ oxmultilang ident="PROMOTIONS_BANNER_PICTUREUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}]):</b>
+                            </td>
+                            <td class="edittext">
+                                <input class="editinput" name="myfile[PROMO@oxactions__oxpic]" type="file" size="26"[{$readonly_fields}]>
+                                <input id="oxpic" type="hidden" maxlength="[{$edit->oxactions__oxpic->fldmax_length}]" name="editval[oxactions__oxpic]" value="[{$edit->oxactions__oxpic->value}]" readonly>
+                            </td>
+                            <td nowrap="nowrap">
+                                [{ if (!($edit->oxactions__oxpic->value=="nopic.jpg" || $edit->oxactions__oxpic->value=="")) && !$readonly }]
+                                    <div style="display: inline-block;">
+                                        <a href="Javascript:DeletePic('oxpic');" class="deleteText"><span class="ico"></span><span style="float: left;>">[{ oxmultilang ident="GENERAL_DELETE" }]</span></a>
+                                    </div>
+                                [{/if}]
+                            </td>
+                          </tr>
+
+                          [{assign var="_oArticle" value=$edit->getBannerArticle()}]
+
+                          <tr>
+                            <td class="text">
+                                <b>[{ oxmultilang ident="PROMOTIONS_BANNER_LINK" }]:</b>
+                            </td>
+                            <td class="text">
+                                <input type="text" class="editinput" size="43" name="editval[oxactions__oxlink]" value="[{$edit->oxactions__oxlink->value}]" [{ $readonly }]>
+                            </td>
+                            <td nowrap="nowrap">
+                                [{ if $edit->oxactions__oxlink->value }]
+                                    <div style="display: inline-block;">
+                                        <a href="[{$edit->getBannerLink()}]" class="zoomText" target="_blank"><span class="ico"></span><span style="float: left;>">[{ oxmultilang ident="ARTICLE_PICTURES_PREVIEW" }]</span></a>
+                                    </div>
+                                [{/if}]
+                            </td>
+                          </tr>
+
+                          <tr>
+                            <td class="text">
+                                <b>[{ oxmultilang ident="PROMOTIONS_BANNER_ASSIGNEDARTICLE" }]:</b>
+                            </td>
+                            <td class="text" colspan="2">
+                                <b>
+                                    <span id="assignedArticleTitle">
+                                    [{if $_oArticle}]
+                                        [{$_oArticle->oxarticles__oxartnum->value}] [{$_oArticle->oxarticles__oxtitle->value}]
+                                    [{else}]
+                                        ---
+                                    [{/if}]
+                                    </span>
+                                </b>
+                            </td>
+                          </tr>
+                        </table>
+
+                        <input type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNARTICLE" }]" class="edittext" onclick="JavaScript:showDialog('&cl=actions_main&oxpromotionaoc=article&oxid=[{ $oxid }]');" [{ $readonly }]>
+
+                    </td>
+                </tr>
+                [{/if}]
+            </table>
+        </td>
+        <!-- Ende rechte Seite -->
+    [{/if}]
 
     </tr>
 </table>
@@ -126,7 +261,7 @@
 
     [{ if $sHelpURL }]
     [{* HELP *}]
-    <li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.help" href="[{ $sHelpURL }]/[{ $shop->cl|oxlower }].html" OnClick="window.open('[{ $sHelpURL }]/[{ $shop->cl|lower }].html','OXID_Help','width=800,height=600,resizable=no,scrollbars=yes');return false;">[{ oxmultilang ident="TOOLTIPS_OPENHELP" }]</a></li>
+    <li><a [{if !$firstitem}]class="firstitem"[{assign var="firstitem" value="1"}][{/if}] id="btn.help" href="[{ $sHelpURL }]/[{ 	$oViewConf->getActiveClassName()|oxlower }].html" OnClick="window.open('[{ $sHelpURL }]/[{ 	$oViewConf->getActiveClassName()|lower }].html','OXID_Help','width=800,height=600,resizable=no,scrollbars=yes');return false;">[{ oxmultilang ident="TOOLTIPS_OPENHELP" }]</a></li>
     [{/if}]
   </ul>
 [{/strip}]

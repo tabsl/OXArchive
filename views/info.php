@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: info.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: info.php 32923 2011-02-04 14:35:22Z vilma $
  * @deprecated
  */
 
@@ -47,6 +47,12 @@ class Info extends oxUBase
      * @var int
      */
     protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXNOFOLLOW;
+
+    /**
+     * Content object
+     * @var object
+     */
+    protected $_oContent = null;
 
     /**
      * Class constructor, assigns template file name passed by URL
@@ -79,9 +85,6 @@ class Info extends oxUBase
      * to render info::_sThisTemplate. If no template name specified - will
      * load "impressum" content
      *
-     * Template variables:
-     * <b>deliverylist</b>, <b>deliverysetlist</b>
-     *
      * @return  string  $this->_sThisTemplate   current template file name
      */
     public function render()
@@ -90,17 +93,12 @@ class Info extends oxUBase
 
         if ( !$this->getTemplateName() ) {
             //  get default page
-            $oContent = oxNew( 'oxcontent' );
-            $oContent->loadByIdent( 'oximpressum' );
-            $this->_aViewData['oContent'] = $oContent;
-            $this->_aViewData['tpl'] = $oContent->getId();
-            $this->_sThisTemplate = 'content.tpl';
+            $oContent = $this->getContent();
+            $this->getViewConfig()->setViewConfigParam( 'tpl', $oContent->getId() );
+            $this->_sThisTemplate = 'page/info/content.tpl';
         } else {
-            $this->_aViewData['tpl'] = $this->getTemplateName();
+            $this->getViewConfig()->setViewConfigParam( 'tpl', $this->getTemplateName() );
         }
-
-        $this->_aViewData['deliverylist']    = $this->getDeliveryList();
-        $this->_aViewData['deliverysetlist'] = $this->getDeliverySetList();;
 
         return $this->_sThisTemplate;
     }
@@ -113,6 +111,22 @@ class Info extends oxUBase
     public function getTemplateName()
     {
         return $this->_sThisTemplate;
+    }
+
+    /**
+     * Template variable getter. Returns active content
+     *
+     * @return object
+     */
+    public function getContent()
+    {
+        if ( $this->_oContent === null ) {
+            //  get default page
+            $oContent = oxNew( 'oxcontent' );
+            $oContent->loadByIdent( 'oximpressum' );
+            $this->_oContent = $oContent;
+        }
+        return $this->_oContent;
     }
 
     /**

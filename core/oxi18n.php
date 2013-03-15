@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxi18n.php 33671 2011-03-07 13:55:27Z sarunas $
+ * @version   SVN: $Id: oxi18n.php 34547 2011-04-09 14:24:32Z sarunas $
  */
 
 /**
@@ -62,9 +62,6 @@ class oxI18n extends oxBase
     {
         parent::__construct();
 
-        // set default language
-        //$this->setLanguage();
-
         //T2008-02-22
         //lets try to differentiate cache keys for oxI18n and oxBase
         //in order not to load cached structure for the instances of oxbase classe called on same table
@@ -83,6 +80,8 @@ class oxI18n extends oxBase
     public function setLanguage( $iLang = null )
     {
         $this->_iLanguage = (int) $iLang;
+        // reset
+        $this->_sViewTable = false;
     }
 
     /**
@@ -114,6 +113,8 @@ class oxI18n extends oxBase
                 //#63T
                 $this->modifyCacheKey("_nonml");
             }
+            // reset
+            $this->_sViewTable = false;
             if (count($this->_aFieldNames) > 1) {
                 $this->_initDataStructure();
             }
@@ -165,6 +166,8 @@ class oxI18n extends oxBase
     {
         // set new lang to this object
         $this->setLanguage($iLanguage);
+        // reset
+        $this->_sViewTable = false;
         return $this->load( $sOxid);
     }
 
@@ -190,28 +193,6 @@ class oxI18n extends oxBase
     }
 
     /**
-     * Handles multilanguage fields during assignment
-     *
-     * @param array $dbRecord Associative data values array
-     *
-     * @return null
-     */
-    public function assign($dbRecord)
-    {
-        $sLangTag = oxLang::getInstance()->getLanguageTag($this->getLanguage());
-        if ($this->_blEmployMultilanguage && $sLangTag) {
-            foreach ($dbRecord as $sField => $sVal) {
-                //handling multilang
-                if (isset($dbRecord[$sField . $sLangTag])) {
-                    $dbRecord[$sField] = $dbRecord[$sField . $sLangTag];
-                }
-            }
-        }
-
-        return parent::assign($dbRecord);
-    }
-
-    /**
      * Returns an array of languages in which object multilanguage
      * fields are already setted
      *
@@ -221,7 +202,10 @@ class oxI18n extends oxBase
     {
         $aLanguages = oxLang::getInstance()->getLanguageNames();
 
-        $aObjFields = $this->_getAllFields(true);
+        $aObjFields = $this->_getTableFields(
+            getViewName($this->_sCoreTable, -1, -1),
+            true
+        );
         $aMultiLangFields = array();
 
         //selecting all object multilang fields
@@ -246,7 +230,8 @@ class oxI18n extends oxBase
             return $aLanguages;
         }
 
-        $query = "select * from {$this->_sCoreTable} where oxid = '" . $this->getId() . "'";
+        // select from non-multilanguage core view (all ml tables joined to one)
+        $query = "select * from ".getViewName($this->_sCoreTable, -1, -1)." where oxid = '" . $this->getId() . "'";
         $rs = oxDb::getDb( true )->getAll($query);
 
         $aNotInLang = $aLanguages;
@@ -269,54 +254,6 @@ class oxI18n extends oxBase
         $aIsInLang = array_diff( $aLanguages, $aNotInLang );
 
         return $aIsInLang;
-    }
-
-    /**
-     * Returns field name depending on object language.
-     *
-     * @param string $sField Field name
-     *
-     * @return string
-     */
-    public function getSqlFieldName($sField)
-    {
-        $iLang = $this->getLanguage();
-        if ($iLang && $this->_blEmployMultilanguage && $this->isMultilingualField($sField)) {
-            $sField .= "_" . $iLang;
-        }
-
-        return $sField;
-    }
-
-    /**
-     * Returns SQL select string with checks if items are available
-     *
-     * @param bool $blForceCoreTable forces core table usage (optional)
-     *
-     * @return string
-     */
-    public function getSqlActiveSnippet( $blForceCoreTable = false )
-    {
-        $sQ = '';
-            $sTable = $this->getCoreTableName();
-
-        // has 'active' or 'active_x' field ?
-        if ( $this->isMultilingualField( 'oxactive' ) ) {
-            $sQ = " $sTable.oxactive".oxLang::getInstance()->getLanguageTag( $this->getLanguage() )." = 1 ";
-        } elseif ( isset( $this->_aFieldNames['oxactive'] ) ) {
-            $sQ = " $sTable.oxactive = 1 ";
-        }
-
-        // has 'activefrom'/'activeto' fields ?
-        if ( isset( $this->_aFieldNames['oxactivefrom'] ) && isset( $this->_aFieldNames['oxactiveto'] ) ) {
-
-            $sDate = date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() );
-
-            $sQ = $sQ?" $sQ or ":'';
-            $sQ = "( $sQ ( $sTable.oxactivefrom < '$sDate' and $sTable.oxactiveto > '$sDate' ) ) ";
-        }
-
-        return $sQ;
     }
 
     /**
@@ -387,25 +324,114 @@ class oxI18n extends oxBase
      */
     protected function _getFieldLang($sFieldName)
     {
-        startProfile('_getFieldLang');
-        $oStr = getStr();
-        if ( !$oStr->strstr($sFieldName, '_')) {
+        if ( false === strpos($sFieldName, '_')) {
             return 0;
         }
         if (preg_match('/_(\d{1,2})$/', $sFieldName, $aRegs)) {
-            $sRes = $aRegs[1];
+            return $aRegs[1];
         } else {
-            $sRes = 0;
+            return 0;
+        }
+    }
+
+    /**
+     * Returns DB field name for update.
+     *
+     * @param string $sField Field name
+     *
+     * @return string
+     */
+    public function getUpdateSqlFieldName($sField)
+    {
+        $iLang = $this->getLanguage();
+        if ($iLang && $this->_blEmployMultilanguage && $this->isMultilingualField($sField)) {
+            $sField .= "_" . $iLang;
         }
 
-        stopProfile('_getFieldLang');
-        return $sRes;
+        return $sField;
+    }
+
+    /**
+     * return update fields SQL part
+     *
+     * @param string $sTable              table name to be updated
+     * @param bool   $blUseSkipSaveFields use skip save fields array?
+     *
+     * @return string
+     */
+    protected function _getUpdateFieldsForTable( $sTable, $blUseSkipSaveFields = true )
+    {
+        $sCoreTable = $this->getCoreTableName();
+
+        $blSkipMultilingual = false;
+        $blSkipCoreFields = false;
+
+        if ($sTable != $sCoreTable ) {
+            $blSkipCoreFields = true;
+        }
+        if ($this->_blEmployMultilanguage) {
+            if ( $sTable != getLangTableName($sCoreTable, $this->getLanguage() ) ) {
+                $blSkipMultilingual = true;
+            }
+        }
+
+        $sSql = '';
+        $blSep  = false;
+        foreach (array_keys($this->_aFieldNames) as $sKey) {
+            $sKeyLowercase = strtolower($sKey);
+            if ($sKeyLowercase != 'oxid') {
+                if ($this->_blEmployMultilanguage) {
+                    if ($blSkipMultilingual && $this->isMultilingualField($sKey)) {
+                        continue;
+                    }
+                    if ($blSkipCoreFields && !$this->isMultilingualField($sKey)) {
+                        continue;
+                    }
+                } else {
+                    // need to explicitly check field language
+                    $iFieldLang = $this->_getFieldLang($sKey);
+                    if ($iFieldLang) {
+                        if ($sTable != getLangTableName($sCoreTable, $iFieldLang)) {
+                            continue;
+                        }
+                    } elseif ($blSkipCoreFields) {
+                        continue;
+                    }
+                }
+            }
+
+            $sLongName = $this->_getFieldLongName($sKey);
+            $oField = $this->$sLongName;
+
+            if ( !$blUseSkipSaveFields || ($blUseSkipSaveFields && !in_array($sKeyLowercase, $this->_aSkipSaveFields)) ) {
+                $sKey = $this->getUpdateSqlFieldName($sKey);
+                $sSql .= (( $blSep) ? ',':'' ).$sKey." = ".$this->_getUpdateFieldValue($sKey, $oField);
+                $blSep = true;
+            }
+        }
+
+        return $sSql;
+    }
+
+    /**
+     * Get object fields sql part for base table
+     * used for updates or inserts:
+     * return e.g.  fldName1 = 'value1',fldName2 = 'value2'...
+     *
+     * @param bool $blUseSkipSaveFields forces usage of skip save fields array (default is true)
+     *
+     * @return string
+     */
+    protected function _getUpdateFields( $blUseSkipSaveFields = true )
+    {
+        return $this->_getUpdateFieldsForTable( $this->getCoreTableName(), $blUseSkipSaveFields );
     }
 
     /**
      * Update this Object into the database, this function only works on
      * the main table, it will not save any dependend tables, which might
-     * be loaded through oxlist.
+     * be loaded through oxlist (with exception of the active language set
+     * table, which will be updated).
      *
      * @throws oxObjectException Throws on failure inserting
      *
@@ -414,6 +440,26 @@ class oxI18n extends oxBase
     protected function _update()
     {
         $blRet = parent::_update();
+
+        if ($blRet) {
+            //also update multilang table if it is separate
+            $aUpdateTables = array();
+            if ($this->_blEmployMultilanguage) {
+                $sCoreTable = $this->getCoreTableName();
+                $sLangTable = getLangTableName($sCoreTable, $this->getLanguage() );
+                if ($sCoreTable != $sLangTable) {
+                    $aUpdateTables[] = $sLangTable;
+                }
+            } else {
+                $aUpdateTables = $this->_getLanguageSetTables();
+            }
+            foreach ($aUpdateTables as $sLangTable) {
+                $sUpdate= "insert into $sLangTable set ".$this->_getUpdateFieldsForTable( $sLangTable, false ) . 
+                          " on duplicate key update ".$this->_getUpdateFieldsForTable( $sLangTable );
+
+                $blRet = (bool) oxDB::getDb()->execute( $sUpdate);
+            }
+        }
 
         // currently only multilanguage objects are SEO
         // if current object is managed by SEO and SEO is ON
@@ -426,6 +472,109 @@ class oxI18n extends oxBase
     }
 
     /**
+     * return all DB tables for the language sets
+     *
+     * @return array
+     */
+    protected function _getLanguageSetTables()
+    {
+        return oxNew('oxDbMetaDataHandler')->getAllMultiTables($this->getCoreTableName());
+    }
+
+    /**
+     * Insert this Object into the database, this function only works
+     * on the main table, it will not save any dependend tables, which
+     * might be loaded through oxlist.
+     *
+     * @return bool
+     */
+    protected function _insert()
+    {
+        $blRet = parent::_insert();
+
+        if ($blRet) {
+            //also insert to multilang tables if it is separate
+            foreach ($this->_getLanguageSetTables() as $sTable) {
+                $sSq = "insert into $sTable set ".$this->_getUpdateFieldsForTable( $sTable, false );
+                $blRet = $blRet && (bool) oxDB::getDb()->execute( $sSq );
+            }
+        }
+
+        return $blRet;
+    }
+
+    /**
+     * Returns actual object view or table name
+     *
+     * @param string $sTable  Original table name
+     * @param int    $sShopID Shop ID
+     *
+     * @return string
+     */
+    protected function _getObjectViewName( $sTable, $sShopID = null)
+    {
+        if (!$this->_blEmployMultilanguage) {
+            return parent::_getObjectViewName($sTable, $sShopID);
+        }
+
+        if ( $this->_blForceCoreTableUsage ) {
+            $sShopID = -1;
+        }
+        return getViewName( $sTable, $this->getLanguage(), $sShopID);
+    }
+
+    /**
+     * Returns main table data is actually selected from (could be a view name as well)
+     *
+     * @param bool $blForceCoreTableUsage (optional) use core views
+     *
+     * @return string
+     */
+    public function getViewName($blForceCoreTableUsage = null)
+    {
+        if (!$this->_blEmployMultilanguage) {
+            return parent::getViewName($blForceCoreTableUsage);
+        }
+        if (!$this->_sViewTable || ($blForceCoreTableUsage !== null)) {
+            if ( ($blForceCoreTableUsage !== null)?$blForceCoreTableUsage:$this->_blForceCoreTableUsage ) {
+                $iShopId = -1;
+            } else {
+                $iShopId = oxConfig::getInstance()->getShopId();
+            }
+            $sViewName = getViewName($this->_sCoreTable, $this->getLanguage(), $iShopId);
+            if ($blForceCoreTableUsage !== null) {
+                return $sViewName;
+            }
+            $this->_sViewTable = $sViewName;
+        }
+        return $this->_sViewTable;
+    }
+
+    /**
+     * Returns meta field or simple array of all object fields.
+     * This method is slow and normally is called before field cache is built.
+     * Make sure it is not called after first page is loaded and cache data is fully built (until tmp dir is cleaned).
+     *
+     * @param bool $blReturnSimple Set $blReturnSimple to true when you need simple array (meta data array is returned otherwise)
+     *
+     * @see oxBase::_getTableFields()
+     *
+     * @return array
+     */
+    protected function _getAllFields($blReturnSimple = false)
+    {
+        if ($this->_blEmployMultilanguage) {
+            return parent::_getAllFields($blReturnSimple);
+        } else {
+            $sViewName = $this->getViewName();
+            if (!$sViewName) {
+                return array();
+            }
+            return $this->_getTableFields($sViewName, $blReturnSimple);
+        }
+    }
+
+    /**
      * Adds additional field to meta structure. Skips language fields
      *
      * @param string $sName   Field name
@@ -435,12 +584,30 @@ class oxI18n extends oxBase
      *
      * @return null;
      */
-    /*
     protected function _addField($sName, $sStatus, $sType = null, $sLength = null)
     {
-        if ($this->_blEmployMultilanguage && $this->_getFieldLang($sName))
+        if ($this->_blEmployMultilanguage && $this->_getFieldLang($sName)) {
             return;
+        }
 
         return parent::_addField($sName, $sStatus, $sType, $sLength);
-    }*/
+    }
+
+    /**
+     * check if db field can be null
+     * for multilingual fields it checks only the base fields as they may be
+     * coming from outer join views, so oxbase would return that they always
+     * support null (while in reality updates to their lang set table with null
+     * would fail)
+     *
+     * @param string $sFieldName db field name
+     *
+     * @return bool
+     */
+    protected function _canFieldBeNull($sFieldName)
+    {
+        return parent::_canFieldBeNull(
+                preg_replace('/_\d{1,2}$/', '', $sFieldName)
+                );
+    }
 }

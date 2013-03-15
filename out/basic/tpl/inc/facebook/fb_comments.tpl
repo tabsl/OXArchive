@@ -3,7 +3,7 @@
 
         <strong id="test_facebookCommentsHead" class="boxhead">[{ oxmultilang ident="FACEBOOK_COMMENTS" }]</strong>
         <div class="box">
-            <fb:comments publish_feed=0 width="560"></fb:comments>
+            <div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#appId=[{$oViewConf->getFbAppId()}]&amp;xfbml=1"></script><fb:comments href="[{$oViewConf->getHomeLink()}]" num_posts="5" width="560"></fb:comments>
         </div>
         [{/if}]
 

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasketitem.php 33260 2011-02-15 12:28:00Z linas.kukulskis $
+ * @version   SVN: $Id: oxbasketitem.php 33319 2011-02-17 12:24:17Z sarunas $
  */
 
 /**
@@ -251,6 +251,7 @@ class oxBasketItem extends oxSuperCfg
         $this->setAmount( $oOrderArticle->oxorderarticles__oxamount->value );
         $this->_setSelectList( $oOrderArticle->getOrderArticleSelectList() );
         $this->setPersParams( $oOrderArticle->getPersParams() );
+        $this->setBundle( $oOrderArticle->isBundle() );
     }
 
     /**
@@ -301,11 +302,9 @@ class oxBasketItem extends oxSuperCfg
      */
     public function setAmount( $dAmount, $blOverride = true, $sItemKey = null )
     {
-        //validating amount
-        $oValidator = oxNew( 'oxinputvalidator' );
-
         try {
-            $dAmount = $oValidator->validateBasketAmount( $dAmount );
+            //validating amount
+            $dAmount = oxInputValidator::getInstance()->validateBasketAmount( $dAmount );
         } catch( oxArticleInputException $oEx ) {
             $oEx->setArticleNr( $this->getProductId() );
             $oEx->setProductId( $this->getProductId() );
@@ -373,8 +372,6 @@ class oxBasketItem extends oxSuperCfg
         $this->_oUnitPrice->setBruttoPriceMode();
         $this->_oUnitPrice->setVat( $oPrice->getVAT() );
         $this->_oUnitPrice->addPrice( $oPrice );
-
-        $this->_setDeprecatedValues();
     }
 
     /**
@@ -653,98 +650,6 @@ class oxBasketItem extends oxSuperCfg
             }
         }
         return $aRet;
-    }
-
-    /**
-     * Sets object deprecated values
-     *
-     * @deprecated This method is deprecated as all deprecated values are
-     *
-     * @return null
-     */
-    protected function _setDeprecatedValues()
-    {
-        $oUnitPrice = $this->getUnitPrice();
-        $oPrice = $this->getPrice();
-
-        // product VAT percent
-        $this->vatPercent = $this->getVatPercent();
-
-        // VAT value
-        $this->dvat = $oUnitPrice->getVATValue();
-
-        // unit non formatted price
-        $this->dprice = $oUnitPrice->getBruttoPrice();
-
-        // formatted unit price
-        $this->fprice = $this->getFUnitPrice();
-
-        // non formatted unit NETTO price
-        $this->dnetprice = $oUnitPrice->getNettoPrice();
-
-        // non formatted total NETTO price
-        $this->dtotalnetprice = $oPrice->getNettoPrice();
-
-        // formatter total NETTO price
-        $this->ftotalnetprice = oxLang::getInstance()->formatCurrency( $oPrice->getNettoPrice() );
-
-        // non formatted total BRUTTO price
-        $this->dtotalprice = $oPrice->getBruttoPrice();
-
-        // formatted total BRUTTO price
-        $this->ftotalprice = $this->getFTotalPrice();
-
-        // total VAT
-        $this->dtotalvat = $oPrice->getVATValue();
-
-        // formatted title
-        $this->title = $this->getTitle();
-
-        // icon URL
-        $this->icon  = $this->getIcon();
-
-        // details URL
-        $this->link  = $this->getLink();
-
-        // amount of items in basket
-        $this->dAmount  = $this->getAmount();
-
-        // weight
-        $this->dWeight  = $this->getWeight();
-
-        // select list
-        $this->aSelList = $this->getSelList();
-
-        // product id
-        $this->sProduct = $this->getProductId();
-
-        // product id
-        $this->varselect = $this->getVarSelect();
-
-        // is bundle ?
-        $this->blBundle = $this->isBundle();
-
-        // bundle amount
-        $this->dBundledAmount = $this->getdBundledAmount();
-
-        // skip discounts ?
-        $this->blSkipDiscounts     = $this->isSkipDiscount();
-
-        // is discount item ?
-        $this->blIsDiscountArticle = $this->isDiscountArticle();
-
-        // dyn image location
-        $this->dimagedir = $this->getImageUrl();
-
-        // setting wrapping paper info
-        $this->wrapping  = $this->getWrappingId();
-
-        $this->oWrap = $this->getWrapping();
-
-        $this->aPersParam = $this->getPersParams();
-
-        //chosen select list
-        $this->chosen_selectlist = $this->getChosenSelList();
     }
 
     /**

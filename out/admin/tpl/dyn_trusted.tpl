@@ -6,20 +6,20 @@
     [{assign var="readonly" value=""}]
 [{/if}]
 <div id="liste">
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{ $oViewConf->getHiddenSid() }]
     <input type="hidden" name="oxid" value="1">
     <input type="hidden" name="cl" value="">
 </form>
-        
+
         <table cellspacing="0" cellpadding="0" border="0">
-        <form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
-        [{ $shop->hiddensid }]
+        <form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post">
+        [{ $oViewConf->getHiddenSid() }]
         <input type="hidden" name="cl" value="dyn_trusted">
         <input type="hidden" name="fnc" value="">
         <input type="hidden" name="oxid" value="[{ $oxid }]">
         <input type="hidden" name="editval[oxshops__oxid]" value="[{ $oxid }]">
-    		[{ if $errorsaving }]
+            [{ if $errorsaving }]
                 <tr>
                   <td colspan="3">
                     [{ if $errorsaving eq 1 }]
@@ -36,10 +36,10 @@
              <td align="left" class="saveinnewlangtext">
                 [{ oxmultilang ident="GENERAL_LANGUAGE" }]&nbsp;&nbsp;
              </td>
-      		 <td valign="left" class="edittext">
-      		  	[{ oxmultilang ident="DYN_TRUSTED_TRUSTEDSHOP" }]&nbsp;&nbsp;
-      		 </td>
-      		 <td class="edittext">
+               <td valign="left" class="edittext">
+                    [{ oxmultilang ident="DYN_TRUSTED_TRUSTEDSHOP" }]&nbsp;&nbsp;
+               </td>
+               <td class="edittext">
               </td>
             </tr>
             [{foreach from=$alllang key=lang item=language}]
@@ -48,14 +48,14 @@
                 [{ $language }]
               </td>
               <td valign="left" class="edittext">
-      			 <input type=text class="editinput" style="width:270px" name="aShopID_TrustedShops[[{$lang}]]" value="[{$aShopID_TrustedShops.$lang}]" maxlength="40" [{ $readonly }]>
-      		     [{ oxinputhelp ident="HELP_DYN_TRUSTED_TSID" }]
-      		  </td>
-      		  <td class="[{if $aShopID_TrustedShops.$lang != ''}] active[{/if}]">
+                   <input type=text class="editinput" style="width:270px" name="aShopID_TrustedShops[[{$lang}]]" value="[{$aShopID_TrustedShops.$lang}]" maxlength="40" [{ $readonly }]>
+                   [{ oxinputhelp ident="HELP_DYN_TRUSTED_TSID" }]
+                </td>
+                <td class="[{if $aShopID_TrustedShops.$lang != ''}] active[{/if}]">
                 <div class="listitemfloating">&nbsp;</div>
               </td>
-    		</tr>
-    		<tr>
+            </tr>
+            <tr>
               <td align="left">
                 &nbsp;&nbsp;&nbsp;&nbsp;[{ oxmultilang ident="DYN_TRUSTED_USER" }]
               </td>

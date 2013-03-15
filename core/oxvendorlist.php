@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvendorlist.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxvendorlist.php 31954 2010-12-17 13:33:40Z sarunas $
  */
 
 /**
@@ -90,7 +90,6 @@ class oxVendorList extends oxList
      */
     public function loadVendorList()
     {
-        $sLangAdd = oxLang::getInstance()->getLanguageTag();
         $oBaseObject = $this->getBaseObject();
         $sFieldList = $oBaseObject->getSelectFields();
         $sViewName  = $oBaseObject->getViewName();
@@ -100,10 +99,10 @@ class oxVendorList extends oxList
         if ( !$this->isAdmin() ) {
             $sWhere  = $oBaseObject->getSqlActiveSnippet();
             $sWhere  = $sWhere?" where $sWhere and ":' where ';
-            $sWhere .= "{$sViewName}.oxtitle{$sLangAdd} != '' ";
+            $sWhere .= "{$sViewName}.oxtitle != '' ";
         }
 
-        $sSelect = "select {$sFieldList} from {$sViewName} {$sWhere} order by {$sViewName}.oxtitle{$sLangAdd}";
+        $sSelect = "select {$sFieldList} from {$sViewName} {$sWhere} order by {$sViewName}.oxtitle";
         $this->selectString( $sSelect );
     }
 

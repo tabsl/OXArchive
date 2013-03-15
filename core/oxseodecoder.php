@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseodecoder.php 27807 2010-05-19 11:37:32Z sarunas $
+ * @version   SVN: $Id: oxseodecoder.php 32009 2010-12-17 15:10:45Z sarunas $
  */
 
 /**
@@ -252,14 +252,13 @@ class oxSeoDecoder extends oxSuperCfg
     protected function _getObjectUrl( $sSeoId, $sTable, $iLanguage, $sType )
     {
         $oDb     = oxDb::getDb();
-        $sTable  = getViewName( $sTable );
-        $sField  = "oxseoid".oxLang::getInstance()->getLanguageTag( $iLanguage );
+        $sTable  = getViewName( $sTable, $iLanguage );
         $sSeoUrl = null;
 
         // first checking of field exists at all
-        if ( $oDb->getOne( "show columns from {$sTable} where field = '{$sField}'" ) ) {
+        if ( $oDb->getOne( "show columns from {$sTable} where field = 'oxseoid'" ) ) {
             // if field exists - searching for object id
-            if ( $sObjectId = $oDb->getOne( "select oxid from {$sTable} where {$sField} = ".$oDb->quote( $sSeoId ) ) ) {
+            if ( $sObjectId = $oDb->getOne( "select oxid from {$sTable} where oxseoid = ".$oDb->quote( $sSeoId ) ) ) {
                 $sSeoUrl = $oDb->getOne( "select oxseourl from oxseo where oxtype = " . $oDb->quote( $sType ) . " and oxobjectid = " . $oDb->quote( $sObjectId ) . " and oxlang = " . $oDb->quote( $iLanguage ) . " " );
             }
         }

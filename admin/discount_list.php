@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: discount_list.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: discount_list.php 31961 2010-12-17 13:59:10Z sarunas $
  */
 
 /**
@@ -52,14 +52,9 @@ class Discount_List extends oxAdminList
     protected $_sListType = 'oxdiscountlist';
 
     /**
-     * Sets SQL query parameters (such as sorting), creates new navigation and
-     * executes parent method parent::Init().
+     * Default SQL sorting parameter (default null).
      *
-     * @return string
+     * @var string
      */
-    public function init()
-    {
-        $this->_sDefSort = getViewName('oxdiscount').".oxtitle";
-        parent::Init();
-    }
+    protected $_sDefSortField = 'oxtitle';
 }

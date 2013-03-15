@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: dyn_affiliwelt.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: dyn_affiliwelt.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
  */
 
 /**
@@ -49,7 +49,7 @@ class dyn_affiliwelt extends Shop_Config
      */
     public function save()
     {
-        $soxId      = oxConfig::getParameter( "oxid");
+        $soxId      = $this->getEditObjectId();
         $aParams    = oxConfig::getParameter( "editval");
 
         $oShop = oxNew( "oxshop" );

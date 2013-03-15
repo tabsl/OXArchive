@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: news.php 26736 2010-03-22 13:40:09Z sarunas $
+ * @version   SVN: $Id: news.php 32923 2011-02-04 14:35:22Z vilma $
  */
 
 /**
@@ -38,7 +38,7 @@ class News extends oxUBase
      * Current class login template name.
      * @var string
      */
-    protected $_sThisTemplate = 'news.tpl';
+    protected $_sThisTemplate = 'page/info/news.tpl';
 
     /**
      * Sign if to load and show top5articles action
@@ -53,28 +53,6 @@ class News extends oxUBase
     protected $_blBargainAction = true;
 
     /**
-     * Loads news list oxnewslist::LoadNews(), action articles,
-     * executes parent::render() and returns name of template
-     * file to render news::_sThisTemplate.
-     *
-     * Template variables:
-     * <b>news</b>
-     *
-     * @return  string  $this->_sThisTemplate   current template file name
-     */
-    public function render()
-    {
-        parent::render();
-
-        $this->_aViewData['news'] = $this->getNews();
-
-        // loading actions
-        $this->_loadActions();
-
-        return $this->_sThisTemplate;
-    }
-
-    /**
      * Template variable getter. Returns newslist
      *
      * @return object
@@ -85,11 +63,25 @@ class News extends oxUBase
             $this->_oNewsList = false;
             $oActNews = oxNew( 'oxnewslist' );
             $oActNews->loadNews();
+
             if ( count($oActNews) ) {
                 $this->_oNewsList = $oActNews;
             }
         }
         return $this->_oNewsList;
     }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths[]['title'] = oxLang::getInstance()->translateString( 'PAGE_INFO_NEWS_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
+
+        return $aPaths;
+    }
+
 
 }

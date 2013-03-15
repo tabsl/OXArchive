@@ -6,16 +6,16 @@
     [{assign var="readonly" value=""}]
 [{/if}]
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{$oViewConf->getHiddenSid()}]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="adminguestbook_main">
 </form>
 
 
 <table cellspacing="0" cellpadding="0" border="0" style="width:100%;height:100%;">
-  <form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post" onSubmit="copyLongDesc( 'oxgbentries__oxcontent' );">
-  [{ $shop->hiddensid }]
+  <form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" method="post" onSubmit="copyLongDesc( 'oxgbentries__oxcontent' );">
+  [{$oViewConf->getHiddenSid()}]
   <input type="hidden" name="cl" value="adminguestbook_main">
   <input type="hidden" name="fnc" value="">
   <input type="hidden" name="oxid" value="[{ $oxid }]">

@@ -14,8 +14,8 @@
 
       <div class="actions">
           <a id="test_[{$test_Type}]_details_[{$_product->oxarticles__oxid->value}]" href="[{ $_product->getMainLink()}]" class="link">[{ oxmultilang ident="INC_PRODUCTITEM_MOREINFO" }]</a>
-          [{ if $isfiltering && $oViewConf->getShowCompareList()}]
-              [{oxid_include_dynamic file="dyn/compare_links.tpl" testid="_`$test_Type`_`$_product->oxarticles__oxid->value`" type="compare" aid=$_product->oxarticles__oxid->value anid=$altproduct->oxarticles__oxnid->value in_list=$_product->isOnComparisonList() class="link" page=$pageNavigation->actPage-1 text_from_id="INC_RIGHTLIST_REMOVEFROMCOMPARELIST" text_to_id="INC_RIGHTLIST_COMPARE"}]
+          [{ if $oViewConf->getShowCompareList()}]
+              [{oxid_include_dynamic file="dyn/compare_links.tpl" testid="_`$test_Type`_`$_product->oxarticles__oxid->value`" type="compare" aid=$_product->oxarticles__oxid->value anid=$altproduct->oxarticles__oxnid->value in_list=$_product->isOnComparisonList() class="link" page=$oView->getActPage() text_from_id="INC_RIGHTLIST_REMOVEFROMCOMPARELIST" text_to_id="INC_RIGHTLIST_COMPARE"}]
           [{ /if }]
       </div>
 

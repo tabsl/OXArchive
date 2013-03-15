@@ -32,16 +32,16 @@ function editThis( sID )
 //-->
 </script>
 
-<form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
+<form name="transfer" id="transfer" action="[{ $oViewConf->getSelfLink() }]" method="post">
+    [{$oViewConf->getHiddenSid()}]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="article_extend">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
 </form>
 
-<form name="myedit" id="myedit" action="[{ $shop->selflink }]" enctype="multipart/form-data" method="post">
+<form name="myedit" id="myedit" action="[{ $oViewConf->getSelfLink() }]" enctype="multipart/form-data" method="post">
 <input type="hidden" name="MAX_FILE_SIZE" value="[{$iMaxUploadFileSize}]">
-[{ $shop->hiddensid }]
+[{$oViewConf->getHiddenSid()}]
 <input type="hidden" name="cl" value="article_extend">
 <input type="hidden" name="fnc" value="">
 <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -148,7 +148,7 @@ function editThis( sID )
           </tr>
           <tr>
             <td class="edittext">
-              [{ oxmultilang ident="ARTICLE_EXTEND_FILEUPLOAD" }]
+              [{ oxmultilang ident="ARTICLE_EXTEND_FILEUPLOAD" }] ([{ oxmultilang ident="GENERAL_MAX_FILE_UPLOAD"}] [{$sMaxFormattedFileSize}])
             </td>
             <td class="edittext">
               <input class="editinput" name="myfile[FL@oxarticles__oxfile]" type="file" [{ $readonly }]>
@@ -279,7 +279,7 @@ function editThis( sID )
                   &nbsp;<a href="[{ $oMediaUrl->oxmediaurls__oxurl->value }]" target="_blank">&raquo;&raquo;</a>&nbsp;
                 </td>
                 <td class=listitem[{$oddclass}]>
-                  &nbsp;<a href="[{$shop->selflink}]&cl=article_extend&amp;mediaid=[{$oMediaUrl->oxmediaurls__oxid->value}]&amp;fnc=deletemedia&amp;oxid=[{$oxid}]&amp;editlanguage=[{ $editlanguage }]" onClick='return confirm("[{ oxmultilang ident="GENERAL_YOUWANTTODELETE" }]")'><img src="[{$shop->imagedir}]/delete_button.gif" border=0></a>&nbsp;
+                  &nbsp;<a href="[{$oViewConf->getSelfLink()}]&cl=article_extend&amp;mediaid=[{$oMediaUrl->oxmediaurls__oxid->value}]&amp;fnc=deletemedia&amp;oxid=[{$oxid}]&amp;editlanguage=[{ $editlanguage }]" onClick='return confirm("[{ oxmultilang ident="GENERAL_YOUWANTTODELETE" }]")'><img src="[{$oViewConf->getImageUrl()}]/delete_button.gif" border=0></a>&nbsp;
                 </td>
                 <td class="listitem[{$oddclass}]" width=250>
                   <input style="width:100%" class="edittext" type="text" name="aMediaUrls[[{ $oMediaUrl->oxmediaurls__oxid->value }]][oxmediaurls__oxdesc]" value="[{ $oMediaUrl->oxmediaurls__oxdesc->value }]">

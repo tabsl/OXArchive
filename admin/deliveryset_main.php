@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: deliveryset_main.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: deliveryset_main.php 33474 2011-02-23 13:29:51Z arvydas.vapsva $
  */
 
 /**
@@ -42,17 +42,7 @@ class DeliverySet_Main extends oxAdminDetails
         $myConfig = $this->getConfig();
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid");
-        // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($soxId == "-1" || !isset( $soxId)) && isset( $sSavedID) ) {
-            $soxId = $sSavedID;
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $soxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
-        }
-
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         if ( $soxId != "-1" && isset( $soxId)) {
             // load object
             $odeliveryset = oxNew( "oxdeliveryset" );
@@ -101,8 +91,8 @@ class DeliverySet_Main extends oxAdminDetails
     public function save()
     {
 
-        $soxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
+        $soxId = $this->getEditObjectId();
+        $aParams = oxConfig::getParameter( "editval");
 
             // shopid
             $sShopID = oxSession::getVar( "actshop");
@@ -124,11 +114,9 @@ class DeliverySet_Main extends oxAdminDetails
         $oDelSet->setLanguage($this->_iEditLang);
         $oDelSet = oxUtilsFile::getInstance()->processFiles( $oDelSet );
         $oDelSet->save();
-        $this->_aViewData["updatelist"] = "1";
 
         // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oDelSet->oxdeliveryset__oxid->value);
+        $this->setEditObjectId( $oDelSet->getId() );
     }
 
     /**
@@ -138,8 +126,8 @@ class DeliverySet_Main extends oxAdminDetails
      */
     public function saveinnlang()
     {
-        $soxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
+        $soxId = $this->getEditObjectId();
+        $aParams = oxConfig::getParameter( "editval");
         // checkbox handling
         if( !isset( $aParams['oxdeliveryset__oxactive']))
             $aParams['oxdeliveryset__oxactive'] = 0;
@@ -160,16 +148,10 @@ class DeliverySet_Main extends oxAdminDetails
 
 
         // apply new language
-        $sNewLanguage = oxConfig::getParameter( "new_lang");
-        $oDelSet->setLanguage( $sNewLanguage);
+        $oDelSet->setLanguage( oxConfig::getParameter( "new_lang" ) );
         $oDelSet->save();
-        $this->_aViewData["updatelist"] = "1";
-
-        // set for reload
-        oxSession::setVar( "new_lang", $sNewLanguage);
 
         // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oDelSet->oxdeliveryset__oxid->value);
+        $this->setEditObjectId( $oDelSet->getId() );
     }
 }

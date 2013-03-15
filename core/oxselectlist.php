@@ -19,13 +19,13 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxselectlist.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxselectlist.php 34366 2011-04-07 12:34:25Z arvydas.vapsva $
  */
 
 /**
  * @package core
  */
-class oxSelectlist extends oxI18n
+class oxSelectlist extends oxI18n implements oxISelectList
 {
     /**
      * Select list fields array
@@ -38,6 +38,25 @@ class oxSelectlist extends oxI18n
      * @var string
      */
     protected $_sClassName = 'oxselectlist';
+
+    /**
+     * Selections array
+     *
+     * @var array()
+     */
+    protected $_aList = null;
+
+    /**
+     * Product VAT
+     * @var float
+     */
+    protected $_dVat = null;
+
+    /**
+     * Active selection object
+     * @var oxSelection
+     */
+    protected $_oActiveSelection = null;
 
     /**
      * Class constructor, sets callback so that Shopowner is able to
@@ -94,5 +113,94 @@ class oxSelectlist extends oxI18n
         }
 
         return $blRemove;
+    }
+
+    /**
+     * VAT setter
+     *
+     * @param float $dVat product VAT
+     *
+     * @return null
+     */
+    public function setVat( $dVat )
+    {
+        $this->_dVat = $dVat;
+    }
+
+    /**
+     * Returns VAT set by oxSelectList::setVat()
+     *
+     * @return float
+     */
+    public function getVat()
+    {
+        return $this->_dVat;
+    }
+
+    /**
+     * Returns variant selection list label
+     *
+     * @return string
+     */
+    public function getLabel()
+    {
+        return $this->oxselectlist__oxtitle->value;
+    }
+
+    /**
+     * Returns array of oxSelection's
+     *
+     * @return array
+     */
+    public function getSelections()
+    {
+        if ( $this->_aList === null && $this->oxselectlist__oxvaldesc->value ) {
+            $this->_aList = false;
+            $aList = oxUtils::getInstance()->assignValuesFromText( $this->oxselectlist__oxvaldesc->value, $this->getVat() );
+            foreach ( $aList as $sKey => $oField ) {
+                if ( $oField->name ) {
+                   $this->_aList[$sKey] = oxNew( "oxSelection", getStr()->htmlspecialchars( strip_tags( $oField->name ) ), $sKey, false, $this->_aList === false ? true : false );
+                }
+            }
+        }
+        return $this->_aList;
+    }
+
+    /**
+     * Returns active selection object
+     *
+     * @return oxSelection
+     */
+    public function getActiveSelection()
+    {
+        if ( $this->_oActiveSelection === null ) {
+            if ( ( $aSelections = $this->getSelections() ) ) {
+                // first is allways active
+                $this->_oActiveSelection = reset( $aSelections );
+            }
+        }
+
+        return $this->_oActiveSelection;
+    }
+
+    /**
+     * Activates given by index selection
+     *
+     * @param int $iIdx selection index
+     *
+     * @return null
+     */
+    public function setActiveSelectionByIndex( $iIdx )
+    {
+        if ( ( $aSelections = $this->getSelections() ) ) {
+            $iSelIdx = 0;
+            foreach ( $aSelections as $oSelection ) {
+                $oSelection->setActiveState( $iSelIdx == $iIdx );
+                if ( $iSelIdx == $iIdx ) {
+                    $this->_oActiveSelection = $oSelection;
+                }
+                $iSelIdx++;
+            }
+        }
     }
 }

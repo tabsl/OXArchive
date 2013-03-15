@@ -1,4 +1,5 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign box="list"}]
+[{assign var="where" value=$oView->getListFilter()}]
 
 [{if $readonly}]
     [{assign var="readonly" value="readonly disabled"}]
@@ -21,15 +22,8 @@ window.onload = function ()
 <div id="liste">
 
 
-<form name="search" id="search" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
-    <input type="hidden" name="cl" value="voucherserie_list">
-    <input type="hidden" name="lstrt" value="[{ $lstrt }]">
-    <input type="hidden" name="sort" value="[{ $sort }]">
-    <input type="hidden" name="actedit" value="[{ $actedit }]">
-    <input type="hidden" name="oxid" value="[{ $oxid }]">
-    <input type="hidden" name="fnc" value="">
-
+<form name="search" id="search" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{include file="_formparams.tpl" cl="voucherserie_list" lstrt=$lstrt actedit=$actedit oxid=$oxid fnc="" language=$actlang editlanguage=$actlang}]
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
     <colgroup>
         <col width="39%">
@@ -42,38 +36,38 @@ window.onload = function ()
     <tr class="listitem">
     <td valign="top" class="listfilter first" height="20">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="30" maxlength="128" name="where[[{$listTable}].oxserienr]" value="[{ $where->oxvoucherseries__oxserienr }]">
+        <input class="listedit" type="text" size="30" maxlength="128" name="where[oxvoucherseries][oxserienr]" value="[{ $where.oxvoucherseries.oxserienr }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[[{$listTable}].oxdiscount]" value="[{ $where->oxvoucherseries__oxdiscount }]">
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxvoucherseries][oxdiscount]" value="[{ $where.oxvoucherseries.oxdiscount }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[[{$listTable}].oxbegindate]" value="[{ $where->oxvoucherseries__oxbegindate }]">
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxvoucherseries][oxbegindate]" value="[{ $where.oxvoucherseries.oxbegindate }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[[{$listTable}].oxenddate]" value="[{ $where->oxvoucherseries__oxenddate }]">
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxvoucherseries][oxenddate]" value="[{ $where.oxvoucherseries.oxenddate }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter" colspan="2">
         <div class="r1"><div class="b1">
         <div class="find"><input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]"></div>
-        <input class="listedit" type="text" size="15" maxlength="128" name="where[[{$listTable}].oxminimumvalue]" value="[{ $where->oxvoucherseries__oxminimumvalue }]">
+        <input class="listedit" type="text" size="15" maxlength="128" name="where[oxvoucherseries][oxminimumvalue]" value="[{ $where.oxvoucherseries.oxminimumvalue }]">
         </div></div>
     </td>
 </tr>
 
 <tr>
-    <td class="listheader first" height="15">&nbsp;<a href="Javascript:document.search.sort.value='[{$listTable}].oxserienr';document.search.submit();" class="listheader">[{ oxmultilang ident="VOUCHERSERIE_LIST_SERIALNUM" }]</a></td>
-    <td class="listheader"><a href="Javascript:document.search.sort.value='[{$listTable}].oxdiscount';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_DISCOUNT" }]</a></td>
-    <td class="listheader"><a href="Javascript:document.search.sort.value='[{$listTable}].oxbegindate';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_BEGINDATE" }]</a></td>
-    <td class="listheader"><a href="Javascript:document.search.sort.value='[{$listTable}].oxenddate';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_ENDDATE" }]</a></td>
-    <td class="listheader" colspan="2"><a href="Javascript:document.search.sort.value='[{$listTable}].oxminimumvalue';document.search.submit();" class="listheader">[{ oxmultilang ident="VOUCHERSERIE_LIST_MINVALUE" }]</a></td>
+    <td class="listheader first" height="15">&nbsp;<a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxvoucherseries', 'oxserienr', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="VOUCHERSERIE_LIST_SERIALNUM" }]</a></td>
+    <td class="listheader"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxvoucherseries', 'oxdiscount', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_DISCOUNT" }]</a></td>
+    <td class="listheader"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxvoucherseries', 'oxbegindate', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_BEGINDATE" }]</a></td>
+    <td class="listheader"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxvoucherseries', 'oxenddate', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_ENDDATE" }]</a></td>
+    <td class="listheader" colspan="2"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxvoucherseries', 'oxminimumvalue', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="VOUCHERSERIE_LIST_MINVALUE" }]</a></td>
 </tr>
 
 [{assign var="blWhite" value=""}]

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: attribute_main.php 26706 2010-03-20 13:37:49Z arvydas $
+ * @version   SVN: $Id: attribute_main.php 33474 2011-02-23 13:29:51Z arvydas.vapsva $
  */
 
 /**
@@ -42,17 +42,7 @@ class Attribute_Main extends oxAdminDetails
 
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid");
-        // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($soxId == "-1" || !isset( $soxId)) && isset( $sSavedID) ) {
-            $soxId = $sSavedID;
-            oxSession::deleteVar( "saved_oxid");
-            $this->_aViewData["oxid"] =  $soxId;
-            // for reloading upper frame
-            $this->_aViewData["updatelist"] =  "1";
-        }
-
+        $soxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
         $sArticleTable = getViewName('oxarticles');
 
         // copy this tree for our article choose
@@ -105,7 +95,7 @@ class Attribute_Main extends oxAdminDetails
     public function save()
     {
 
-        $soxId   = oxConfig::getParameter( "oxid");
+        $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");
 
             // shopid
@@ -124,11 +114,8 @@ class Attribute_Main extends oxAdminDetails
         $oAttr->setLanguage($this->_iEditLang);
         $oAttr = oxUtilsFile::getInstance()->processFiles( $oAttr );
         $oAttr->save();
-        $this->_aViewData["updatelist"] = "1";
 
-        // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oAttr->oxattribute__oxid->value);
+        $this->setEditObjectId( $oAttr->getId() );
     }
 
     /**
@@ -139,8 +126,8 @@ class Attribute_Main extends oxAdminDetails
     public function saveinnlang()
     {
 
-        $soxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
+        $soxId = $this->getEditObjectId();
+        $aParams = oxConfig::getParameter( "editval");
 
             // shopid
             $aParams['oxattribute__oxshopid'] = oxSession::getVar( "actshop");
@@ -157,16 +144,10 @@ class Attribute_Main extends oxAdminDetails
         $oAttr->assign( $aParams);
 
         // apply new language
-        $sNewLanguage = oxConfig::getParameter( "new_lang");
-        $oAttr->setLanguage( $sNewLanguage);
+        $oAttr->setLanguage( oxConfig::getParameter( "new_lang" ) );
         $oAttr->save();
-        $this->_aViewData["updatelist"] = "1";
-
-        // set for reload
-        oxSession::setVar( "new_lang", $sNewLanguage);
 
         // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oAttr->oxattribute__oxid->value);
+        $this->setEditObjectId( $oAttr->getId() );
     }
 }

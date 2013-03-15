@@ -2,7 +2,7 @@
     <div id="test_product_deltime" class="deltime">
     <b>[{ oxmultilang ident="DETAILS_DELIVERYTIME" }]</b>
     [{if $product->oxarticles__oxmindeltime->value && $product->oxarticles__oxmindeltime->value != $product->oxarticles__oxmaxdeltime->value }]
-        [{ $product->oxarticles__oxmindeltime->value }] - 
+        [{ $product->oxarticles__oxmindeltime->value }] -
     [{/if}]
     [{if $product->oxarticles__oxmaxdeltime->value  }]
         [{assign var="unit" value=$product->oxarticles__oxdeltimeunit->value}]

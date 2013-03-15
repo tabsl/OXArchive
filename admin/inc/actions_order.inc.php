@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: actions_order.inc.php 25640 2010-02-05 06:42:24Z alfonsas $
+ * @version   SVN: $Id: actions_order.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(
@@ -42,7 +42,7 @@ class ajaxComponent extends ajaxListComponent
      */
     protected function _getQuery()
     {
-        $sSelTable = getViewName('oxselectlist');
+        $sSelTable = $this->_getViewName('oxselectlist');
         $sArtId    = oxConfig::getParameter( 'oxid' );
 
         $sQAdd = " from $sSelTable left join oxobject2selectlist on oxobject2selectlist.oxselnid = $sSelTable.oxid where oxobjectid = " . oxDb::getDb()->quote($sArtId ) . "  ";

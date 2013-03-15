@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: cust_lang.php 27029 2010-04-06 07:05:30Z arvydas $
+ * @version   SVN: $Id: cust_lang.php 34153 2011-04-02 09:06:39Z juergen.busch $
  */
 
 $sLangName  = "Deutsch";
@@ -28,7 +28,7 @@ $sLangName  = "Deutsch";
 // -------------------------------
 $aLang = array(
 
-'charset'                                       => 'ISO-8859-15'
+'charset' => 'ISO-8859-15'
 );
 
 /*

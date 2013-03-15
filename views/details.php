@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: details.php 32617 2011-01-20 15:23:58Z sarunas $
+ * @version   SVN: $Id: details.php 34331 2011-04-06 16:11:30Z sarunas $
  */
 
 /**
@@ -43,7 +43,7 @@ class Details extends oxUBase
      *
      * @var string
      */
-    protected $_sThisTemplate = 'details.tpl';
+    protected $_sThisTemplate = 'page/details/details.tpl';
 
     /**
      * Current product parent article object
@@ -72,28 +72,22 @@ class Details extends oxUBase
     protected $_blEditTags = null;
 
     /**
+     * If tags can be changed
+     * @var bool
+     */
+    protected $_blCanEditTags = null;
+
+    /**
      * All tags
      * @var array
      */
     protected $_aTags = null;
 
     /**
-     * Tag cloud
-     * @var array
-     */
-    protected $_sTagCloud = null;
-
-    /**
      * Returns user recommlist
      * @var array
      */
     protected $_aUserRecommList = null;
-
-    /**
-     * Returns login form anchor
-     * @var string
-     */
-    protected $_sLoginFormAnchor = null;
 
     /**
      * Class handling CAPTCHA image.
@@ -225,6 +219,36 @@ class Details extends oxUBase
     protected $_blMdView = null;
 
     /**
+     * Rating value
+     * @var double
+     */
+    protected $_dRatingValue = null;
+
+    /**
+     * Ratng count
+     * @var integer
+     */
+    protected $_iRatingCnt = null;
+
+    /**
+     * Sign if to load and show top5articles action
+     * @var bool
+     */
+    protected $_blTop5Action = false;
+
+    /**
+     * Bid price.
+     * @var string
+     */
+    protected $_sBidPrice = null;
+
+    /**
+     * Price alarm status.
+     * @var integer
+     */
+    protected $_iPriceAlarmStatus = null;
+
+    /**
      * Returns current product parent article object if it is available
      *
      * @param string $sParentId parent product id
@@ -262,11 +286,6 @@ class Details extends oxUBase
                 $myConfig = $this->getConfig();
 
                 $this->_aVariantList = $oParent->getVariants( false );
-
-                //in variant list parent may be NOT buyable
-                if ( $oParent->blNotBuyableParent ) {
-                    $oParent->blNotBuyable = true;
-                }
 
                 //lets additionally add parent article if it is sellable
                 if ( $myConfig->getConfigParam( 'blVariantParentBuyable' ) ) {
@@ -324,7 +343,7 @@ class Details extends oxUBase
             return $this->_sViewId;
         }
 
-            $sViewId = parent::getViewId().'|'.oxConfig::getParameter( 'anid' ).'|'.count( $this->getVariantList() ).'|';
+            $sViewId = parent::getViewId().'|'.oxConfig::getParameter( 'anid' ).'|';
 
 
         return $this->_sViewId = $sViewId;
@@ -362,14 +381,6 @@ class Details extends oxUBase
      * (details::_convertForMetaTags()). Returns name of template file
      * details::_sThisTemplate
      *
-     * Template variables:
-     * <b>product</b>, <b>ispricealarm</b>, <b>reviews</b>, <b>crossselllist</b>,
-     * <b>accessoirelist</b>, <b>similarlist</b>, <b>customerwho</b>,
-     * <b>variants</b>, <b>amountprice</b>, <b>selectlist</b>, <b>sugsucc</b>,
-     * <b>meta_description</b>, <b>meta_keywords</b>, <b>blMorePic</b>,
-     * <b>parent_url</b>, <b>draw_parent_url</b>, <b>parentname</b>, <b>sBackUrl</b>,
-     * <b>allartattr</b>, <b>sSearchTitle</b>
-     *
      * @return  string  $this->_sThisTemplate   current template file name
      */
     public function render()
@@ -381,77 +392,30 @@ class Details extends oxUBase
         //loading amount price list
         $oProduct->loadAmountPriceInfo();
 
-        // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-        $this->_aViewData['product'] = $oProduct;
-
-        $this->_aViewData["aTags"]      = $this->getTags();
-        $this->_aViewData["blEditTags"] = $this->getEditTags();
-        startProfile("tagCloud");
-        $this->_aViewData['tagCloud']   = $this->getTagCloud();
-        stopProfile("tagCloud");
-
-        $this->_aViewData['loginformanchor'] = $this->getLoginFormAnchor();
-
-        $this->_aViewData['ispricealarm'] = $this->isPriceAlarm();
-
-        $this->_aViewData['customerwho']    = $this->getAlsoBoughtTheseProducts();
-        $this->_aViewData['accessoirelist'] = $this->getAccessoires();
-        $this->_aViewData['similarlist']    = $this->getSimilarProducts();
-        $this->_aViewData['crossselllist']  = $this->getCrossSelling();
-
-        $this->_aViewData['variants'] = $this->getVariantList();
-
-        $this->_aViewData['reviews'] = $this->getReviews();
-
-        $this->_aViewData['selectlist'] = $this->getSelectLists();
-
-        $this->_aViewData["actpicid"]  = $this->getActPictureId();
-        $this->_aViewData["actpic"]    = $this->getActPicture();
-        $this->_aViewData['blMorePic'] = $this->morePics();
-        $this->_aViewData['ArtPics']   = $this->getPictures();
-        $this->_aViewData['ArtIcons']  = $this->getIcons();
-        $this->_aViewData['blZoomPic'] = $this->showZoomPics();
-        $this->_aViewData['aZoomPics'] = $this->getZoomPics();
-        $this->_aViewData['iZoomPic']  = $this->getActZoomPic();
-
-        $this->_aViewData['parentname']      = $this->getParentName();
-        $this->_aViewData['parent_url']      = $this->getParentUrl();
-        $this->_aViewData['draw_parent_url'] = $this->drawParentUrl();
-
-        $this->_aViewData['pgNr'] = $this->getActPage();
-
         parent::render();
 
-        $this->_aViewData['allartattr'] = $this->getAttributes();
+        $sPartial = oxConfig::getParameter('renderPartial');
+        $this->addTplParam('sRenderPartial', $sPartial);
 
-        // #1102C
-        $this->_aViewData['oCategory'] = $this->getCategory();
+        switch ($sPartial) {
+            case "productInfo":
+                return 'page/details/ajax/fullproductinfo.tpl';
+                break;
+            case "detailsMain":
+                return 'page/details/ajax/productmain.tpl';
+                break;
+            default:
+                // #785A loads and sets locator data
+                $oLocator = oxNew( 'oxlocator', $this->getListType() );
+                $oLocator->setLocatorData( $oProduct, $this );
 
-        $this->_aViewData['oVendor'] = $this->getVendor();
+                if ($myConfig->getConfigParam( 'bl_rssRecommLists' ) && $this->getSimilarRecommLists()) {
+                    $oRss = oxNew('oxrssfeed');
+                    $this->addRssFeed($oRss->getRecommListsTitle( $oProduct ), $oRss->getRecommListsUrl( $oProduct ), 'recommlists');
+                }
 
-        $this->_aViewData['oManufacturer'] = $this->getManufacturer();
-
-        $this->_aViewData['aLastProducts'] = $this->getLastProducts();
-
-        // #785A loads and sets locator data
-        $oLocator = oxNew( 'oxlocator', $this->getListType() );
-        $oLocator->setLocatorData( $oProduct, $this );
-
-        //media files
-        $this->_aViewData['aMediaUrls'] = $this->getMediaFiles();
-
-        if ($myConfig->getConfigParam( 'bl_rssRecommLists' ) && $this->getSimilarRecommLists()) {
-            $oRss = oxNew('oxrssfeed');
-            $this->addRssFeed($oRss->getRecommListsTitle( $oProduct ), $oRss->getRecommListsUrl( $oProduct ), 'recommlists');
+                return $this->_sThisTemplate;
         }
-
-
-        //antispam
-        $this->_aViewData['oCaptcha']     = $this->getCaptcha();
-        $this->_aViewData['sSearchTitle'] = $this->getSearchTitle();
-        $this->_aViewData['actCatpath']   = $this->getCatTreePath();
-
-        return $this->_sThisTemplate;
     }
 
     /**
@@ -538,6 +502,20 @@ class Details extends oxUBase
     }
 
     /**
+     * Checks if rating runctionality is on and allwed to user
+     *
+     * @return bool
+     */
+    public function canChangeTags()
+    {
+        if ( $oUser = $this->getUser() ) {
+
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Saves user ratings and review text (oxreview object)
      *
      * @return null
@@ -579,21 +557,6 @@ class Details extends oxUBase
     }
 
     /**
-     * Show login template
-     *
-     * @deprecated use link to account page instead (e.g. "cl=account&amp;sourcecl=details"+required parameters)
-     *
-     * @return null
-     */
-    public function showLogin()
-    {
-        $this->_sThisTemplate = 'account_login.tpl';
-        if ( $sAnchor = $this->getConfig()->getParameter("anchor") ) {
-            $this->_sLoginFormAnchor = $sAnchor;
-        }
-    }
-
-    /**
      * Adds article to selected recommlist
      *
      * @return null
@@ -606,7 +569,7 @@ class Details extends oxUBase
 
         $sRecommText = trim( ( string ) oxConfig::getParameter( 'recomm_txt' ) );
         $sRecommList = oxConfig::getParameter( 'recomm' );
-        $sArtId      = oxConfig::getParameter( 'anid' );
+        $sArtId      = $this->getProduct()->getId();
 
         if ( $sArtId ) {
             $oRecomm = oxNew( 'oxrecommlist' );
@@ -627,14 +590,30 @@ class Details extends oxUBase
         if ( !$sTag && !$sHighTag) {
             return;
         }
-        $sTag .= " ".getStr()->html_entity_decode( $sHighTag );
+        if ( $sHighTag ) {
+            $sTag = getStr()->html_entity_decode( $sHighTag );
+        }
 
+        //can tag only once per product and tags
+        $aTags = array();
         $oProduct = $this->getProduct();
-        $oProduct->addTag( $sTag );
-
-        //refresh
-        $oTagHandler = oxNew( 'oxTagCloud' );
-        $this->_sTagCloud = $oTagHandler->getTagCloud( $oProduct->getId() );
+        $aTaggedProducts = oxSession::getVar("aTaggedProducts");
+        if ( $aTaggedProducts ) {
+            $aTags = $aTaggedProducts[$oProduct->getId()];
+        }
+        $blAddedTag = false;
+        //Checks if user already tagged it
+        if ( $aTags[$sTag] != 1 ) {
+            $oProduct->addTag( $sTag );
+            $aTags[$sTag] = 1;
+            $aTaggedProducts[$oProduct->getId()] = $aTags;
+            oxSession::setVar( 'aTaggedProducts', $aTaggedProducts);
+            $blAddedTag = true;
+        }
+        // for ajax call
+        if ($this->getConfig()->getParameter('blAjax', true )) {
+            die($blAddedTag);
+        }
     }
 
     /**
@@ -644,9 +623,44 @@ class Details extends oxUBase
      */
     public function editTags()
     {
+        if ( !$this->getUser() ) {
+            return;
+        }
         $oTagCloud = oxNew("oxTagCloud");
         $this->_aTags = $oTagCloud->getTags( $this->getProduct()->getId() );
         $this->_blEditTags = true;
+
+        // for ajax call
+        if ($this->getConfig()->getParameter('blAjax', true )) {
+            oxUtils::getInstance()->setHeader( "Content-Type: text/html; charset=".oxLang::getInstance()->translateString( 'charset' ) );
+            $oActView = oxNew( 'oxubase' );
+            $oSmarty = oxUtilsView::getInstance()->getSmarty();
+            $oSmarty->assign('oView', $this );
+            $oSmarty->assign('oViewConf', $this->getViewConfig() );
+            die($oSmarty->fetch( 'page/details/inc/editTags.tpl', $this->getViewId() ));
+        }
+    }
+
+    /**
+     * Cancels tags editing mode
+     *
+     * @return null
+     */
+    public function cancelTags()
+    {
+        $oTagCloud = oxNew("oxTagCloud");
+        $this->_aTags = $oTagCloud->getTags( $this->getProduct()->getId() );
+        $this->_blEditTags = false;
+
+        // for ajax call
+        if ($this->getConfig()->getParameter('blAjax', true )) {
+            oxUtils::getInstance()->setHeader( "Content-Type: text/html; charset=".oxLang::getInstance()->translateString( 'charset' ) );
+            $oActView = oxNew( 'oxubase' );
+            $oSmarty = oxUtilsView::getInstance()->getSmarty();
+            $oSmarty->assign('oView', $this );
+            $oSmarty->assign('oViewConf', $this->getViewConfig() );
+            die($oSmarty->fetch( 'page/details/inc/tags.tpl', $this->getViewId() ));
+        }
     }
 
     /**
@@ -673,7 +687,8 @@ class Details extends oxUBase
             $aArtAttributes = $this->getProduct()->getAttributes();
 
             //making a new array for backward compatibility
-            $this->_aAttributes = array();
+            $this->_aAttributes = false;
+
             if ( count( $aArtAttributes ) ) {
                 foreach ( $aArtAttributes as $sKey => $oAttribute ) {
                     $this->_aAttributes[$sKey] = new stdClass();
@@ -682,7 +697,6 @@ class Details extends oxUBase
                 }
             }
         }
-
         return $this->_aAttributes;
     }
 
@@ -708,23 +722,6 @@ class Details extends oxUBase
     }
 
     /**
-     * Returns tag cloud
-     *
-     * @deprecated should be used details::getTagCloudManager()
-     *
-     * @return string
-     */
-    public function getTagCloud()
-    {
-        if ( $this->_sTagCloud === null ) {
-            $this->_sTagCloud = false;
-            $oTagHandler = oxNew('oxTagCloud');
-            $this->_sTagCloud = $oTagHandler->getTagCloud($this->getProduct()->getId());
-        }
-        return $this->_sTagCloud;
-    }
-
-    /**
      * Returns tag cloud manager class
      *
      * @return oxTagCloud
@@ -738,13 +735,20 @@ class Details extends oxUBase
     }
 
     /**
-     * Returns login form anchor
+     * Returns if tags can be changed, if user is loggen in and
+     * product exists.
      *
-     * @return array
+     * @return bool
      */
-    public function getLoginFormAnchor()
+    public function isEditableTags()
     {
-        return $this->_sLoginFormAnchor;
+        if ( $this->_blCanEditTags === null ) {
+            $this->_blCanEditTags = false;
+            if ( $this->getProduct() && $this->getUser()) {
+                $this->_blCanEditTags = true;
+            }
+        }
+        return $this->_blCanEditTags;
     }
 
     /**
@@ -772,6 +776,11 @@ class Details extends oxUBase
             if ( !$this->_oProduct->load( $sOxid ) ) {
                 $myUtils->redirect( $myConfig->getShopHomeURL() );
                 $myUtils->showMessageAndExit( '' );
+            }
+
+            $aVariantSelections = $this->_oProduct->getVariantSelections( oxConfig::getParameter( "varselid" ) );
+            if ($aVariantSelections && $aVariantSelections['oActiveVariant'] && $aVariantSelections['blPerfectFit']) {
+                $this->_oProduct = $aVariantSelections['oActiveVariant'];
             }
         }
 
@@ -995,7 +1004,7 @@ class Details extends oxUBase
     {
         if ( $this->_aPicGallery === null ) {
             //get picture gallery
-            $this->_aPicGallery = $this->getProduct()->getPictureGallery();
+            $this->_aPicGallery = $this->getPicturesProduct()->getPictureGallery();
         }
         return $this->_aPicGallery;
     }
@@ -1204,18 +1213,6 @@ class Details extends oxUBase
     /**
      * Template variable getter. Returns list of customer also bought thies products
      *
-     * @deprecated use thankyou::getAlsoBoughtTheseProducts()
-     *
-     * @return object
-     */
-    public function getAlsoBoughtThiesProducts()
-    {
-        return $this->getAlsoBoughtTheseProducts();
-    }
-
-    /**
-     * Template variable getter. Returns list of customer also bought thies products
-     *
      * @return object
      */
     public function getAlsoBoughtTheseProducts()
@@ -1385,5 +1382,207 @@ class Details extends oxUBase
     {
         $sSepartor = $this->getConfig()->getConfigParam("sTagSeparator");
         return $sSepartor;
+    }
+
+    /**
+     * Template variable getter. Returns rating value
+     *
+     * @return double
+     */
+    public function getRatingValue()
+    {
+
+        if ( $this->_dRatingValue === null ) {
+            $this->_dRatingValue = (double) 0;
+            if ( $this->isReviewActive() && ( $oDetailsProduct = $this->getProduct() ) ) {
+                $this->_dRatingValue = round( $oDetailsProduct->getArticleRatingAverage(), 1);
+            }
+        }
+
+        return (double) $this->_dRatingValue;
+    }
+
+    /**
+     * Template variable getter. Returns if review modul is on
+     *
+     * @return bool
+     */
+    public function isReviewActive()
+    {
+        return $this->getConfig()->getConfigParam( 'bl_perfLoadReviews' );
+    }
+
+    /**
+     * Template variable getter. Returns rating count
+     *
+     * @return integer
+     */
+    public function getRatingCount()
+    {
+        if ( $this->_iRatingCnt === null ) {
+            $this->_iRatingCnt = false;
+            if ( $this->isReviewActive() && ( $oDetailsProduct = $this->getProduct() ) ) {
+                $this->_iRatingCnt = $oDetailsProduct->oxarticles__oxratingcnt->value;
+            }
+        }
+        return $this->_iRatingCnt;
+    }
+
+    /**
+     * Returns Bread Crumb - you are here page1/page2/page3...
+     *
+     * @return array
+     */
+    public function getBreadCrumb()
+    {
+        $aPaths = array();
+
+        if ( 'search' == oxConfig::getParameter( 'listtype' ) ) {
+
+            $aCatPath = array();
+            $aCatPath['title'] = sprintf(oxLang::getInstance()->translateString( 'searchResult', oxLang::getInstance()->getBaseLanguage(), false ), oxConfig::getParameter( 'searchparam' ));
+            $aPaths[] = $aCatPath;
+
+        } elseif ( 'tag' == oxConfig::getParameter( 'listtype' ) ) {
+
+            $aCatPath = array();
+            $aCatPath['title'] = oxLang::getInstance()->translateString( 'TAGS', oxLang::getInstance()->getBaseLanguage(), false );
+            $aPaths[] = $aCatPath;
+
+            $oStr = getStr();
+            $aCatPath['title'] = $oStr->ucfirst(oxConfig::getParameter( 'searchtag' ));
+            $aPaths[] = $aCatPath;
+
+        } elseif ( 'recommlist' == oxConfig::getParameter( 'listtype' ) ) {
+
+            $aCatPath = array();
+            $aCatPath['title'] = oxLang::getInstance()->translateString( 'PAGE_RECOMMENDATIONS_PRODUCTS_TITLE', oxLang::getInstance()->getBaseLanguage(), false );
+            $aPaths[] = $aCatPath;
+        } else {
+
+            $oCatTree = $this->getCatTreePath();
+
+            if ( $oCatTree ) {
+
+                foreach ( $oCatTree as $oCat ) {
+                    $aCatPath = array();
+
+                    $aCatPath['link'] = $oCat->getLink();
+                    $aCatPath['title'] = $oCat->oxcategories__oxtitle->value;
+
+                    $aPaths[] = $aCatPath;
+                }
+            }
+        }
+
+        return $aPaths;
+    }
+
+    /**
+     * Validates email
+     * address. If email is wrong - returns false and exits. If email
+     * address is OK - creates prcealarm object and saves it
+     * (oxpricealarm::save()). Sends pricealarm notification mail
+     * to shop owner.
+     *
+     * @return  bool    false on error
+     */
+    public function addme()
+    {
+        $myConfig = $this->getConfig();
+        $myUtils  = oxUtils::getInstance();
+
+        //control captcha
+        $sMac     = oxConfig::getParameter( 'c_mac' );
+        $sMacHash = oxConfig::getParameter( 'c_mach' );
+        $oCaptcha = oxNew('oxCaptcha');
+        if (!$oCaptcha->pass($sMac, $sMacHash)) {
+            $this->_iPriceAlarmStatus = 2;
+            return;
+        }
+
+        $aParams = oxConfig::getParameter( 'pa' );
+        if ( !isset( $aParams['email'] ) || !$myUtils->isValidEmail( $aParams['email'] ) ) {
+            $this->_iPriceAlarmStatus = 0;
+            return;
+        }
+        $aParams['aid'] = $this->getProduct()->getId();
+        $oCur = $myConfig->getActShopCurrencyObject();
+        // convert currency to default
+        $dPrice = $myUtils->currency2Float( $aParams['price'] );
+
+        $oAlarm = oxNew( "oxpricealarm" );
+        $oAlarm->oxpricealarm__oxuserid = new oxField( oxSession::getVar( 'usr' ));
+        $oAlarm->oxpricealarm__oxemail  = new oxField( $aParams['email']);
+        $oAlarm->oxpricealarm__oxartid  = new oxField( $aParams['aid']);
+        $oAlarm->oxpricealarm__oxprice  = new oxField( $myUtils->fRound( $dPrice, $oCur ));
+        $oAlarm->oxpricealarm__oxshopid = new oxField( $myConfig->getShopId());
+        $oAlarm->oxpricealarm__oxcurrency = new oxField( $oCur->name);
+
+        $oAlarm->oxpricealarm__oxlang = new oxField(oxLang::getInstance()->getBaseLanguage());
+
+        $oAlarm->save();
+
+        // Send Email
+        $oEmail = oxNew( 'oxemail' );
+        $this->_iPriceAlarmStatus = (int) $oEmail->sendPricealarmNotification( $aParams, $oAlarm );
+    }
+
+    /**
+     * Return pricealarm status (if it was send)
+     *
+     * @return integer
+     */
+    public function getPriceAlarmStatus()
+    {
+        return $this->_iPriceAlarmStatus;
+    }
+
+    /**
+     * Template variable getter. Returns bid price
+     *
+     * @return string
+     */
+    public function getBidPrice()
+    {
+        if ( $this->_sBidPrice === null ) {
+            $this->_sBidPrice = false;
+
+            $aParams = oxConfig::getParameter( 'pa' );
+            $oCur = $this->getConfig()->getActShopCurrencyObject();
+            $iPrice = oxUtils::getInstance()->currency2Float( $aParams['price'] );
+            $this->_sBidPrice = oxLang::getInstance()->formatCurrency( $iPrice, $oCur );
+        }
+        return $this->_sBidPrice;
+    }
+
+    /**
+     * Returns variant selection
+     *
+     * @return oxVariantSelectList
+     */
+    public function getVariantSelections()
+    {
+        // finding parent
+        $oProduct = $this->getProduct();
+        if ( ( $oParent = $this->_getParentProduct( $oProduct->oxarticles__oxparentid->value ) ) ) {
+            return $oParent->getVariantSelections( oxConfig::getParameter( "varselid" ), $oProduct->getId() );
+        }
+
+        return $oProduct->getVariantSelections( oxConfig::getParameter( "varselid" ) );
+    }
+
+    /**
+     * Returns pictures product object
+     *
+     * @return oxarticle
+     */
+    public function getPicturesProduct()
+    {
+        $aVariantSelections = $this->getVariantSelections();
+        if ($aVariantSelections && $aVariantSelections['oActiveVariant'] && !$aVariantSelections['blPerfectFit']) {
+            return $aVariantSelections['oActiveVariant'];
+        }
+        return $this->getProduct();
     }
 }

@@ -1,4 +1,5 @@
 [{include file="headitem.tpl" title="VENDOR_LIST_TITLE"|oxmultilangassign box="list"}]
+[{assign var="where" value=$oView->getListFilter()}]
 
 [{if $readonly}]
     [{assign var="readonly" value="readonly disabled"}]
@@ -20,23 +21,14 @@ window.onload = function ()
 
 <div id="liste">
 
-<form name="search" id="search" action="[{ $shop->selflink }]" method="post">
-    [{ $shop->hiddensid }]
-    <input type="hidden" name="cl" value="vendor_list">
-    <input type="hidden" name="lstrt" value="[{ $lstrt }]">
-    <input type="hidden" name="sort" value="[{ $sort }]">
-    <input type="hidden" name="actedit" value="[{ $actedit }]">
-    <input type="hidden" name="oxid" value="[{ $oxid }]">
-    <input type="hidden" name="fnc" value="">
-    <input type="hidden" name="language" value="[{ $actlang }]">
-    <input type="hidden" name="editlanguage" value="[{ $actlang }]">
-
+<form name="search" id="search" action="[{ $oViewConf->getSelfLink() }]" method="post">
+[{include file="_formparams.tpl" cl="vendor_list" lstrt=$lstrt actedit=$actedit oxid=$oxid fnc="" language=$actlang editlanguage=$actlang}]
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
 <colgroup><col width="40%"><col width="59%"><col width="1%"></colgroup>
 <tr class="listitem">
     <td valign="top" class="listfilter first">
         <div class="r1"><div class="b1">
-        <input class="listedit" type="text" size="50" maxlength="128" name="where[[{$listTable}].oxtitle]" value="[{ $where->oxvendor__oxtitle }]">
+        <input class="listedit" type="text" size="50" maxlength="128" name="where[oxvendor][oxtitle]" value="[{ $where.oxvendor.oxtitle }]">
         </div></div>
     </td>
     <td valign="top" class="listfilter" height="20" colspan="2">
@@ -51,13 +43,13 @@ window.onload = function ()
             <input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]">
         </div>
 
-        <input class="listedit" type="text" size="50" maxlength="128" name="where[[{$listTable}].oxshortdesc]" value="[{ $where->oxvendor__oxshortdesc }]">
+        <input class="listedit" type="text" size="50" maxlength="128" name="where[oxvendor][oxshortdesc]" value="[{ $where.oxvendor.oxshortdesc }]">
         </div></div>
     </td>
 </tr>
 <tr>
-    <td class="listheader first" height="15">&nbsp;<a href="Javascript:document.search.sort.value='oxtitle';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_TITLE" }]</a></td>
-    <td class="listheader" height="15" colspan="2"><a href="Javascript:document.search.sort.value='oxshortdesc';document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_SHORTDESC" }]</a></td>
+    <td class="listheader first" height="15">&nbsp;<a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxvendor', 'oxtitle', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_TITLE" }]</a></td>
+    <td class="listheader" height="15" colspan="2"><a href="Javascript:top.oxid.admin.setSorting( document.search, 'oxvendor', 'oxshortdesc', 'asc');document.search.submit();" class="listheader">[{ oxmultilang ident="GENERAL_SHORTDESC" }]</a></td>
 </tr>
 
 [{assign var="blWhite" value=""}]

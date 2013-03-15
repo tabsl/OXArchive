@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxpricelist.php 25467 2010-02-01 14:14:26Z alfonsas $
+ * @version   SVN: $Id: oxpricelist.php 25508 2010-02-02 02:53:05Z alfonsas $
  */
 
 /**

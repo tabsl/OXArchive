@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: pricealarm_list.php 26692 2010-03-20 08:55:36Z arvydas $
+ * @version   SVN: $Id: pricealarm_list.php 33217 2011-02-11 16:06:47Z vilma $
  */
 
 /**
@@ -30,6 +30,12 @@
  */
 class PriceAlarm_List extends oxAdminList
 {
+    /**
+     * Current class template name.
+     * @var string
+     */
+    protected $_sThisTemplate = 'pricealarm_list.tpl';
+
     /**
      * Name of chosen object class (default null).
      *
@@ -42,7 +48,7 @@ class PriceAlarm_List extends oxAdminList
      *
      * @var string
      */
-    protected $_sDefSort = "oxpricealarm.oxuserid";
+    protected $_sDefSortField = "oxuserid";
 
     /**
      * Modifying SQL query to load additional article and customer data
@@ -53,76 +59,13 @@ class PriceAlarm_List extends oxAdminList
      */
     protected function _buildSelectString( $oListObject = null )
     {
-        $sSql  = "select oxpricealarm.*, oxarticles.oxtitle AS articletitle, ";
+        $sViewName = getViewName( "oxarticles", (int) $this->getConfig()->getConfigParam( "sDefaultLang" ) );
+        $sSql  = "select oxpricealarm.*, {$sViewName}.oxtitle AS articletitle, ";
         $sSql .= "oxuser.oxlname as userlname, oxuser.oxfname as userfname ";
-        $sSql .= "from oxpricealarm ";
-        $sSql .= "left join oxarticles on oxarticles.oxid = oxpricealarm.oxartid ";
+        $sSql .= "from oxpricealarm left join {$sViewName} on {$sViewName}.oxid = oxpricealarm.oxartid ";
         $sSql .= "left join oxuser on oxuser.oxid = oxpricealarm.oxuserid WHERE 1 ";
 
         return $sSql;
-    }
-
-    /**
-     * Executes parent method parent::render() and returns name of
-     * template file "pricealarm_list.tpl".
-     *
-     * @return string
-     */
-    public function render()
-    {
-        $myConfig = $this->getConfig();
-
-        parent::render();
-
-
-        $oDefCurr = $myConfig->getActShopCurrencyObject();
-        $myUtils  = oxUtils::getInstance();
-        $myLang   = oxLang::getInstance();
-
-        foreach ( $this->_aViewData["mylist"] as $oListItem ) {
-
-            $oArticle = oxNew( "oxarticle" );
-            $oArticle->load($oListItem->oxpricealarm__oxartid->value);
-
-            //$oListI = $this->_aViewData["mylist"][$sItemId];
-            $oThisCurr = $myConfig->getCurrencyObject( $oListItem->oxpricealarm__oxcurrency->value );
-
-            // #869A we should perform currency conversion
-            // (older versions doesn't have currency info - assume as it is default - first in currency array)
-            if ( !$oThisCurr ) {
-                $oThisCurr = $myConfig->getCurrencyObject( $oDefCurr->name );
-                $oListItem->oxpricealarm__oxcurrency->setValue($oDefCurr->name);
-            }
-
-            // #889C - Netto prices in Admin
-            // (we have to call $oArticle->getPrice() to get price with VAT)
-            $dArtPrice = $oArticle->getPrice()->getBruttoPrice() * $oThisCurr->rate;
-            $dArtPrice = $myUtils->fRound( $dArtPrice );
-
-            $oListItem->fprice = $myLang->formatCurrency( $dArtPrice, $oThisCurr );
-
-            if ( $oArticle->oxarticles__oxparentid->value && !$oArticle->oxarticles__oxtitle->value) {
-                $oParent = oxNew( "oxarticle" );
-                $oParent->load( $oArticle->oxarticles__oxparentid->value );
-                $sFieldName = "oxpricealarm__articletitle";
-                $oListItem->$sFieldName = new oxField( $oParent->oxarticles__oxtitle->value . " " . $oArticle->oxarticles__oxvarselect->value );
-            }
-
-            $oListItem->fpricealarmprice = $myLang->formatCurrency( $oListItem->oxpricealarm__oxprice->value, $oThisCurr);
-
-            // neutral status
-            $oListItem->iStatus = 0;
-
-            // shop price is less or equal
-            if ( $oListItem->oxpricealarm__oxprice->value >= $dArtPrice)
-                $oListItem->iStatus = 1;
-
-            // suggestion to user is sent
-            if ( $oListItem->oxpricealarm__oxsended->value != "0000-00-00 00:00:00")
-                $oListItem->iStatus = 2;
-        }
-
-        return "pricealarm_list.tpl";
     }
 
     /**
@@ -132,18 +75,21 @@ class PriceAlarm_List extends oxAdminList
      */
     public function buildWhere()
     {
-        $this->_aWhere = ( array ) parent::buildWhere();
+        $this->_aWhere = parent::buildWhere();
+        $sViewName = getViewName( "oxpricealarm" );
+        $sArtViewName = getViewName( "oxarticles" );
 
         // updating price fields values for correct search in DB
-        if ( $this->_aWhere['oxpricealarm.oxprice'] ) {
-            $sPriceParam = (double) str_replace( array( '%', ',' ), array( '', '.' ), $this->_aWhere['oxpricealarm.oxprice'] );
-            $this->_aWhere['oxpricealarm.oxprice'] = '%'. $sPriceParam. '%';
+        if ( isset( $this->_aWhere[$sViewName.'.oxprice'] ) ) {
+            $sPriceParam = (double) str_replace( array( '%', ',' ), array( '', '.' ), $this->_aWhere[$sViewName.'.oxprice'] );
+            $this->_aWhere[$sViewName.'.oxprice'] = '%'. $sPriceParam. '%';
         }
 
-        if ( $this->_aWhere['oxarticles.oxprice'] ) {
-            $sPriceParam = (double) str_replace( array( '%', ',' ), array( '', '.' ), $this->_aWhere['oxarticles.oxprice'] );
-            $this->_aWhere['oxarticles.oxprice'] = '%'. $sPriceParam. '%';
+        if ( isset( $this->_aWhere[$sArtViewName.'.oxprice'] ) ) {
+            $sPriceParam = (double) str_replace( array( '%', ',' ), array( '', '.' ), $this->_aWhere[$sArtViewName.'.oxprice'] );
+            $this->_aWhere[$sArtViewName.'.oxprice'] = '%'. $sPriceParam. '%';
         }
+
 
         return $this->_aWhere;
     }

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: category_order.inc.php 26071 2010-02-25 15:12:55Z sarunas $
+ * @version   SVN: $Id: category_order.inc.php 33353 2011-02-18 13:44:54Z linas.kukulskis $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -56,8 +56,8 @@ class ajaxComponent extends ajaxListComponent
     protected function _getQuery()
     {
         // looking for table/view
-        $sArtTable = getViewName( 'oxarticles' );
-        $sO2CView  = getViewName( 'oxobject2category' );
+        $sArtTable = $this->_getViewName( 'oxarticles' );
+        $sO2CView  = $this->_getViewName( 'oxobject2category' );
 
         // category selected or not ?
         if ( $sSynchOxid  = oxConfig::getParameter( 'synchoxid' ) ) {
@@ -90,7 +90,7 @@ class ajaxComponent extends ajaxListComponent
             $sOrder = parent::_getSorting();
         } elseif ( ( $aSkipArt = oxSession::getVar( 'neworder_sess' ) ) ) {
             $sOrderBy  = '';
-            $sArtTable = getViewName( 'oxarticles' );
+            $sArtTable = $this->_getViewName( 'oxarticles' );
             $sSep = '';
             foreach ( $aSkipArt as $sId ) {
                 $sOrderBy = " $sArtTable.oxid=" . oxDb::getDb()->quote( $sId ) . " ".$sSep.$sOrderBy;
@@ -121,8 +121,8 @@ class ajaxComponent extends ajaxListComponent
             }
             oxSession::setVar( 'neworder_sess', $aSkipArt );
 
-            $sArticleTable = getViewName('oxarticles');
-            $sO2CView      = getViewName('oxobject2category');
+            $sArticleTable = $this->_getViewName('oxarticles');
+            $sO2CView      = $this->_getViewName('oxobject2category');
 
             // checking if all articles were moved from one
             $sSelect  = "select 1 from $sArticleTable left join $sO2CView on $sArticleTable.oxid=$sO2CView.oxobjectid ";
@@ -158,8 +158,8 @@ class ajaxComponent extends ajaxListComponent
             }
             oxSession::setVar( 'neworder_sess', $aOrdArt );
 
-            $sArticleTable = getViewName('oxarticles');
-            $sO2CView      = getViewName('oxobject2category');
+            $sArticleTable = $this->_getViewName('oxarticles');
+            $sO2CView      = $this->_getViewName('oxobject2category');
 
             // checking if all articles were moved from one
             $sSelect  = "select 1 from $sArticleTable left join $sO2CView on $sArticleTable.oxid=$sO2CView.oxobjectid ";
@@ -184,7 +184,7 @@ class ajaxComponent extends ajaxListComponent
 
             $aNewOrder = oxSession::getVar( "neworder_sess" );
             if ( is_array( $aNewOrder ) && count( $aNewOrder ) ) {
-                $sO2CView = getViewName('oxobject2category');
+                $sO2CView = $this->_getViewName('oxobject2category');
                 $sSelect =  "select * from $sO2CView where $sO2CView.oxcatnid='".$oCategory->getId()."' and $sO2CView.oxobjectid in (".implode( ", ", oxDb::getInstance()->quoteArray( $aNewOrder ) )." )";
                 $oList = oxNew( "oxlist" );
                 $oList->init( "oxbase", "oxobject2category" );

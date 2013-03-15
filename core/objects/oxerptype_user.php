@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype_user.php 25466 2010-02-01 14:12:07Z alfonsas $
+ * @version   SVN: $Id: oxerptype_user.php 33799 2011-03-16 16:51:42Z vilma $
  */
 
 require_once 'oxerptype.php';
@@ -310,9 +310,6 @@ class oxERPType_User extends oxERPType
                     if ( strpos( $oShopObject->oxuser__oxpassword->value, 'ox_' ) === 0 ) {
                         // decodable pass ?
                         $oShopObject->setPassword( oxUtils::getInstance()->strRem( $oShopObject->oxuser__oxpassword->value ) );
-                    } elseif ( ( strlen( $oShopObject->oxuser__oxpassword->value ) < 32 ) && ( strpos( $oShopObject->oxuser__oxpassword->value, 'openid_' ) !== 0 ) ) {
-                        // plain pass ?
-                        $oShopObject->setPassword( $oShopObject->oxuser__oxpassword->value );
                     }
                 }
             }
