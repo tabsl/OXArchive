@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 52121 2012-11-22 07:56:36Z linas.kukulskis $
+ * @version   SVN: $Id: lang.php 52926 2012-12-14 10:34:54Z juergen.busch $
  */
 
 $sLangName  = 'Deutsch';
@@ -385,7 +385,7 @@ $aLang = array(
 'ARTICLE_EXTEND_ISCONFIGURABLE'                            => 'Artikel ist individualisierbar',
 'ARTICLE_EXTEND_NONMATERIAL'                               => 'Immaterieller Artikel',
 'ARTICLE_EXTEND_FREESHIPPING'                              => 'Versandkostenfrei',
-'ARTICLE_EXTEND_BLFIXEDPRICE'                              => 'Sonderaktionen nicht erlaubt (Preisalarm)',
+'ARTICLE_EXTEND_BLFIXEDPRICE'                              => 'Preisalarm deaktivieren',
 'ARTICLE_EXTEND_ARTINCATS'                                 => 'Zugeordnete Kategorien',
 'ARTICLE_EXTEND_DEFAULT'                                   => 'Als Hauptkat. setzen.',
 'ARTICLE_EXTEND_UPDATEMEDIA'                               => 'Übernehmen',
@@ -515,7 +515,7 @@ $aLang = array(
 'ARTICLE_STOCK_WEEKS'                                      => 'Wochen',
 'ARTICLE_STOCK_ORDERINFO'                                  => 'Zusatzinfo in Bestellbestätigung',
 'ARTICLE_STOCK_VPE'                                        => 'Verpackungseinheit',
-'ARTICLE_STOCK_ERRORSCALEPRICE'                            => '[TR]Attention: Scale price must be lower than normal price.',
+'ARTICLE_STOCK_ERRORSCALEPRICE'                            => 'Achtung: Staffelpreis muss kleiner als der reguläre Preis sein.',
 'ARTICLE_USERDEF_USERDEFRANGE'                             => 'Benutzerdefinierter Bereich - hier können Sie ihre eigenen Felder und Änderungen hinzufügen.',
 'ARTICLE_VARIANT_YOUWANTTODELETE'                          => 'Wollen Sie diese Variante wirklich löschen?',
 'ARTICLE_VARIANT_EDIT'                                     => 'Edit',
@@ -998,7 +998,7 @@ $aLang = array(
 'PAYMENT_MAIN_AVAILIBLEINGROUP'                            => 'Zugeordnete Benutzergruppen',
 'PAYMENT_MAIN_NOTAVAILIBLEINGROUP'                         => 'Alle Benutzergruppen',
 'PAYMENT_MAIN_LONGDESC'                                    => 'Beschreibung der Zahlungsart',
-'PAYMENT_MAIN_NOTICEDEFAULTVALUESSELECTED'                 => '[TR]Default values have been selected',
+'PAYMENT_MAIN_NOTICEDEFAULTVALUESSELECTED'                 => 'Standardwerte wurden ausgewählt',
 'PAYMENT_OVERVIEW_HOWMANYPAYMENTS'                         => 'Wieviel Einkäufe wurden mit dieser Zahlungsart gemacht',
 'PRICEALARM_DONE_SENDEMAIL'                                => 'Preisalarm E-Mails versendet.',
 'PRICEALARM_DONE_GOTOPRICEALARM'                           => 'gehen Sie zu Preisalarm ',
@@ -1417,7 +1417,7 @@ $aLang = array(
 'TOOLS_MAIN_START'                                         => 'Update starten',
 'TOOLS_MAIN_CHECKPICS'                                     => 'Unbenutzte Bilder suchen und löschen',
 'TOOLS_LIST_UPDATEVIEWSSECCESS'                            => 'Datenbank-Views wurden erfolgreich aktualisiert.',
-'TOOLS_LIST_UPDATEVIEWSFAILED'                             => '[TR]DB Views update failed.',
+'TOOLS_LIST_UPDATEVIEWSFAILED'                             => 'Fehler beim Aktualisieren der Datenbank-Views.',
 'TOOLS_MAIN_UPDATEVIEWSINFO'                               => 'Nachdem Sie Änderungen am Tabellenlayout vorgenommen haben, müssen Sie die VIEWS neu generieren.',
 'TOOLS_MAIN_UPDATEVIEWSNOW'                                => 'VIEWS jetzt updaten',
 'TOOLS_MAIN_UPDATEVIEWSCONFIRM'                            => 'Sind Sie sicher das Sie die VIEWS jetzt updaten wollen',

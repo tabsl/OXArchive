@@ -32,7 +32,7 @@
  *
  * Add [{oxstyle include="oxid.css"}] to include local css file.
  * Add [{oxstyle include="oxid.css?20120413"}] to include local css file with query string part.
- * Add [{oxstyle include="http://www.oxid-esales.com/oxid.css"}] to include externall css file.
+ * Add [{oxstyle include="http://www.oxid-esales.com/oxid.css"}] to include external css file.
  *
  * IMPORTANT!
  * Do not forget to add plain [{oxstyle}] tag where you need to output all collected css includes.
@@ -65,13 +65,18 @@ function smarty_function_oxstyle($params, &$smarty)
     if ( $params['include'] ) {
         $sStyle = $params['include'];
         if (!preg_match('#^https?://#', $sStyle)) {
+            $sOriginalStyle = $sStyle;
+
             // Separate query part #3305.
             $aStyle = explode('?', $sStyle);
             $sStyle = $aStyle[0] = $myConfig->getResourceUrl($aStyle[0], $myConfig->isAdmin());
 
-            // Append query part if still needed #3305.
             if ($sStyle && count($aStyle) > 1) {
+                // Append query part if still needed #3305.
                 $sStyle .= '?'.$aStyle[1];
+            } elseif ($sSPath = $myConfig->getResourcePath($sOriginalStyle, $myConfig->isAdmin())) {
+                // Append file modification timestamp #3725.
+                $sStyle .= '?'.filemtime($sSPath);
             }
         }
 

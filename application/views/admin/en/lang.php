@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 52101 2012-11-21 14:03:01Z linas.kukulskis $
+ * @version   SVN: $Id: lang.php 52927 2012-12-14 10:35:35Z juergen.busch $
  */
 
 /*
@@ -389,7 +389,7 @@ $aLang = array(
 'ARTICLE_EXTEND_ISCONFIGURABLE'                            => 'Product can be customized',
 'ARTICLE_EXTEND_NONMATERIAL'                               => 'Intangible Product',
 'ARTICLE_EXTEND_FREESHIPPING'                              => 'Free Shipping',
-'ARTICLE_EXTEND_BLFIXEDPRICE'                              => 'No Promotions<br>(Price Alert)',
+'ARTICLE_EXTEND_BLFIXEDPRICE'                              => 'Deactivate Price Alert',
 'ARTICLE_EXTEND_ARTINCATS'                                 => 'Product is in these Categories',
 'ARTICLE_EXTEND_DEFAULT'                                   => 'Set as Main Category',
 'ARTICLE_EXTEND_UPDATEMEDIA'                               => 'Update media',
@@ -1424,7 +1424,7 @@ $aLang = array(
 'TOOLS_MAIN_UPDATEVIEWSNOW'                                => 'Update DB Views now',
 'TOOLS_MAIN_UPDATEVIEWSCONFIRM'                            => 'Are you sure you want to update views now?',
 'TOOLS_LIST_UPDATEVIEWSSECCESS'                            => 'DB Views updated successfully.',
-'TOOLS_LIST_UPDATEVIEWSFAILED'                            => 'DB Views update failed.',
+'TOOLS_LIST_UPDATEVIEWSFAILED'                             => 'DB Views update failed.',
 'TOOLTIPS_ADDSUMTYPE'                                      => 'Absolute or<br>percentage<br>Surcharge/Reduction',
 'TOOLTIPS_ADDSUMITMTYPE'                                   => 'Absolute, percentage<br> or Product<br>Markup/Discount',
 'TOOLTIPS_ARTICLEVAT'                                      => 'Specify only if individual VAT',

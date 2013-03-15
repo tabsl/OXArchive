@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxpricelist.php 50429 2012-10-12 09:09:11Z linas.kukulskis $
+ * @version   SVN: $Id: oxpricelist.php 52951 2012-12-14 13:57:59Z aurimas.gladutis $
  */
 
 /**
@@ -112,11 +112,11 @@ class oxPriceList
             $aPrices[$sKey]['sum'] += $oPrice->getPrice();
         }
 
-        foreach ( $aPrices as $sKey => $aPrices ) {
+        foreach ( $aPrices as $sKey => $aPrice ) {
             if ( $isNettoMode ) {
-                $dPrice = $aPrices['sum'] * $aPrices['vat'] / 100;
+                $dPrice = $aPrice['sum'] * $aPrice['vat'] / 100;
             } else {
-                $dPrice = $aPrices['sum'] * $aPrices['vat'] / ( 100 + $aPrices['vat'] );
+                $dPrice = $aPrice['sum'] * $aPrice['vat'] / ( 100 + $aPrice['vat'] );
             }
             $aVatValues[$sKey] = $dPrice;
         }

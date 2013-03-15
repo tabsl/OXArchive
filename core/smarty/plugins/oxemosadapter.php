@@ -34,7 +34,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  $Id: oxemosadapter.php 50060 2012-10-03 12:35:05Z tomas $
+ *  $Id: oxemosadapter.php 52845 2012-12-12 12:25:23Z linas.kukulskis $
  */
 
 
@@ -179,7 +179,9 @@ class oxEmosAdapter extends oxSuperCfg
     protected function _convProd2EmosItem( $oProduct, $sCatPath = "NULL", $iQty = 1 )
     {
         $oItem = $this->_getNewEmosItem();
-        $oItem->productId   = ( isset( $oProduct->oxarticles__oxartnum->value ) && $oProduct->oxarticles__oxartnum->value ) ? $oProduct->oxarticles__oxartnum->value : $oProduct->getId();
+
+        $sProductId = ( isset( $oProduct->oxarticles__oxartnum->value ) && $oProduct->oxarticles__oxartnum->value ) ? $oProduct->oxarticles__oxartnum->value : $oProduct->getId();
+        $oItem->productId   = $this->_convertToUtf( $sProductId );
         $oItem->productName = $this->_prepareProductTitle( $oProduct );
 
         // #810A
@@ -188,8 +190,8 @@ class oxEmosAdapter extends oxSuperCfg
         $oItem->productGroup = "{$sCatPath}/{$this->_convertToUtf( $oProduct->oxarticles__oxtitle->value )}";
         $oItem->quantity     = $iQty;
         // #3452: Add brands to econda tracking
-        $oItem->variant1     = $oProduct->getVendor() ? $oProduct->getVendor()->getTitle() : "NULL";
-        $oItem->variant2     = $oProduct->getManufacturer() ? $oProduct->getManufacturer()->getTitle() : "NULL";
+        $oItem->variant1     = $oProduct->getVendor() ? $this->_convertToUtf( $oProduct->getVendor()->getTitle() ) : "NULL";
+        $oItem->variant2     = $oProduct->getManufacturer() ? $this->_convertToUtf( $oProduct->getManufacturer()->getTitle() ) : "NULL";
         $oItem->variant3     = $oProduct->getId();
 
         return $oItem;
@@ -204,7 +206,7 @@ class oxEmosAdapter extends oxSuperCfg
      */
     protected function _getEmosPageTitle( $aParams )
     {
-        return isset( $aParams['title'] ) ? $aParams['title'] : null;
+        return isset( $aParams['title'] ) ? $this->_convertToUtf( $aParams['title'] ) : null;
     }
 
     /**
@@ -399,12 +401,12 @@ class oxEmosAdapter extends oxSuperCfg
                 //ECONDA FIX use username (email address) instead of customer number
                 $oOrder  = $oCurrView->getOrder();
                 $oBasket = $oCurrView->getBasket();
-                $oEmos->addEmosBillingPageArray( $oOrder->oxorder__oxordernr->value,
-                                                 $oUser->oxuser__oxusername->value,
+                $oEmos->addEmosBillingPageArray( $this->_convertToUtf($oOrder->oxorder__oxordernr->value),
+                                                 $this->_convertToUtf($oUser->oxuser__oxusername->value),
                                                  $oBasket->getPrice()->getBruttoPrice() * ( 1 / $oCur->rate ),
-                                                 $oOrder->oxorder__oxbillcountry->value,
-                                                 $oOrder->oxorder__oxbillzip->value,
-                                                 $oOrder->oxorder__oxbillcity->value );
+                                                 $this->_convertToUtf($oOrder->oxorder__oxbillcountry->value),
+                                                 $this->_convertToUtf($oOrder->oxorder__oxbillzip->value),
+                                                 $this->_convertToUtf($oOrder->oxorder__oxbillcity->value) );
 
                 // get Basket Page Array
                 $aBasket = array();

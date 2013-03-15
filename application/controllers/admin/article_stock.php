@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_stock.php 52440 2012-11-26 08:39:37Z aurimas.gladutis $
+ * @version   SVN: $Id: article_stock.php 52627 2012-12-03 08:28:49Z aurimas.gladutis $
  */
 
 /**
@@ -70,7 +70,6 @@ class Article_Stock extends oxAdminDetails
             if ( $oArticle->oxarticles__oxparentid->value) {
                 $oParentArticle = oxNew( "oxarticle");
                 $oParentArticle->load( $oArticle->oxarticles__oxparentid->value);
-                $oArticle->oxarticles__oxremindactive = new oxField( $oParentArticle->oxarticles__oxremindactive->value );
                 $this->_aViewData["parentarticle"] =  $oParentArticle;
                 $this->_aViewData["oxparentid"] =  $oArticle->oxarticles__oxparentid->value;
             }
@@ -127,8 +126,9 @@ class Article_Stock extends oxAdminDetails
 
         if ( $oArticle->oxarticles__oxremindactive->value &&
              $oArticle->oxarticles__oxremindamount->value <= $oArticle->oxarticles__oxstock->value ) {
-            $oArticle->oxarticles__oxremindactive->value = 1;
+             $oArticle->oxarticles__oxremindactive->value = 1;
         }
+        $oArticle->updateVariantsRemind();
 
         $oArticle->save();
     }

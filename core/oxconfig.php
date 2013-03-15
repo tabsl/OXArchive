@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 51851 2012-11-15 11:06:55Z aurimas.gladutis $
+ * @version   SVN: $Id: oxconfig.php 52793 2012-12-10 14:04:16Z saulius.stasiukaitis $
  */
 
 //max integer

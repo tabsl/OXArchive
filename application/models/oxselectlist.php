@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxselectlist.php 51379 2012-11-06 07:30:52Z andrius.silgalis $
+ * @version   SVN: $Id: oxselectlist.php 52709 2012-12-05 11:59:55Z aurimas.gladutis $
  */
 
 /**
@@ -158,10 +158,10 @@ class oxSelectlist extends oxI18n implements oxISelectList
     {
         if ( $this->_aList === null && $this->oxselectlist__oxvaldesc->value ) {
             $this->_aList = false;
-            $aList = oxRegistry::getUtils()->assignValuesFromText( $this->oxselectlist__oxvaldesc->value, $this->getVat() );
+            $aList = oxRegistry::getUtils()->assignValuesFromText( $this->oxselectlist__oxvaldesc->getRawValue(), $this->getVat() );
             foreach ( $aList as $sKey => $oField ) {
                 if ( $oField->name ) {
-                   $this->_aList[$sKey] = oxNew( "oxSelection", getStr()->htmlspecialchars( getStr()->strip_tags( $oField->name ) ), $sKey, false, $this->_aList === false ? true : false );
+                   $this->_aList[$sKey] = oxNew( "oxSelection", getStr()->strip_tags( $oField->name ), $sKey, false, $this->_aList === false ? true : false );
                 }
             }
         }

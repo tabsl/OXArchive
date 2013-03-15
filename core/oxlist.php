@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlist.php 46853 2012-07-02 11:03:41Z linas.kukulskis $
+ * @version   SVN: $Id: oxlist.php 52493 2012-11-27 16:13:19Z aurimas.gladutis $
  */
 
 /**
@@ -159,6 +159,7 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
      */
     public function rewind()
     {
+        $this->_blRemovedActive = false;
         $this->_blValid = ( false !== reset( $this->_aArray ) );
     }
 

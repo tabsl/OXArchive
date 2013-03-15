@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_variant.php 51714 2012-11-12 14:13:56Z andrius.silgalis $
+ * @version   SVN: $Id: article_variant.php 52627 2012-12-03 08:28:49Z aurimas.gladutis $
  */
 
 /**
@@ -166,6 +166,7 @@ class Article_Variant extends oxAdminDetails
                 // assign field from parent for new variant
                 // #4406
                 $oArticle->oxarticles__oxisconfigurable = new oxField( $oParent->oxarticles__oxisconfigurable->value );
+                $oArticle->oxarticles__oxremindactive = new oxField( $oParent->oxarticles__oxremindactive->value );
 
             }
         }

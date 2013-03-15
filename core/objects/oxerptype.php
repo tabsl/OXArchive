@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype.php 48768 2012-08-16 17:56:23Z tomas $
+ * @version   SVN: $Id: oxerptype.php 52715 2012-12-05 15:01:54Z aurimas.gladutis $
  */
 
 /**
@@ -453,6 +453,9 @@ class oxERPType
     public function getRightFields()
     {
         $aRParams = array();
+        if (!$this->_aFieldList) {
+            $this->getFieldList();
+        }
 
         foreach ($this->_aFieldList as $sField) {
             $aRParams[] = strtolower($this->_sTableName.'__'.$sField);
@@ -482,8 +485,8 @@ class oxERPType
         }
 
         $sViewName = $oShopObject->getViewName();
-        $sFields = str_ireplace( $sViewName . ".", "", strtoupper($oShopObject->getSelectFields()) );
-        $sFields = str_ireplace( " ", "", $sFields );
+        $sFields = str_ireplace( '`' . $sViewName . "`.", "", strtoupper($oShopObject->getSelectFields()) );
+        $sFields = str_ireplace( array(" ", "`"), array("", ""), $sFields );
         $this->_aFieldList = explode( ",", $sFields );
 
         return $this->_aFieldList;

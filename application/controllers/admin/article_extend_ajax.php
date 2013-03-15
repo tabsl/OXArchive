@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_extend_ajax.php 48768 2012-08-16 17:56:23Z tomas $
+ * @version   SVN: $Id: article_extend_ajax.php 52632 2012-12-03 09:15:51Z linas.kukulskis $
  */
 
 /**
@@ -247,11 +247,11 @@ class article_extend_ajax extends ajaxListComponent
 
         // #0003650: increment all product references independent to active shop
         $sQ = "update oxobject2category set oxtime = oxtime + 10 where oxobjectid = " . $oDb->quote( $soxId );
-        oxDb::getInstance()->getDb()->Execute($sQ);
+        oxDb::getDb()->Execute($sQ);
 
         // set main category for active shop
         $sQ = "update oxobject2category set oxtime = 0 where oxobjectid = " . $oDb->quote( $soxId ) . " and oxcatnid = " . $oDb->quote( $sDefCat ) . " $sShopCheck ";
-        oxDb::getInstance()->getDb()->Execute($sQ);
+        oxDb::getDb()->Execute($sQ);
         //echo "\n$sQ\n";
 
         // #0003366: invalidate article SEO for all shops

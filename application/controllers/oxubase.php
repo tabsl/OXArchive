@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 52464 2012-11-26 22:46:36Z alfonsas $
+ * @version   SVN: $Id: oxubase.php 52642 2012-12-03 10:48:25Z aurimas.gladutis $
  */
 
 /**
@@ -1860,12 +1860,15 @@ class oxUBase extends oxView
     }
 
     /**
-     * Returns current view title. Default is null
+     * Returns current view title. Default is search for translation of PAGE_TITLE_{view_class_name}
      *
-     * @return null
+     * @return string
      */
     public function getTitle()
     {
+        $sTranslationName = 'PAGE_TITLE_'.strtoupper($this->getConfig()->getActiveView()->getClassName());
+        $sTranslated = oxRegistry::getLang()->translateString( $sTranslationName, oxRegistry::getLang()->getBaseLanguage(), false );
+        return $sTranslationName == $sTranslated? null : $sTranslated;
     }
 
     /**

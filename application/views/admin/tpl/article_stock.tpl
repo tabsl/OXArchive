@@ -182,6 +182,13 @@ function editThis( sID )
             <table cellspacing="0" cellpadding="1" border="0" >
             [{assign var=oddclass value="2"}]
             [{foreach from=$amountprices item=amountprice}]
+              [{if is_array($errorscaleprice) && in_array($amountprice->oxprice2article__oxid->value, $errorscaleprice)}]
+              <tr>
+                  <td colspan="3">
+                      <div class="errorbox">[{oxmultilang ident="ARTICLE_STOCK_ERRORSCALEPRICE"}]</div>
+                  </td>
+              </tr>
+              [{/if}]
               <tr>
               [{if $oddclass == 2}]
                 [{assign var=oddclass value=""}]

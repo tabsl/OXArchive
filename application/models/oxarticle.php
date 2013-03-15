@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 52168 2012-11-23 09:55:27Z aurimas.gladutis $
+ * @version   SVN: $Id: oxarticle.php 52907 2012-12-13 15:08:27Z aurimas.gladutis $
  */
 
 // defining supported link types
@@ -391,7 +391,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
      */
     protected $_aCopyParentField = array('oxarticles__oxnonmaterial',
                                          'oxarticles__oxfreeshipping',
-                                         'oxarticles__oxremindactive',
+                                         //'oxarticles__oxremindactive',
                                          'oxarticles__oxisdownloadable');
 
     /**
@@ -1220,11 +1220,16 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     {
         $iLimit = (int) $iLimit;
         if ( !isset( $this->_aVariantSelections[$iLimit] ) ) {
-            $this->_aVariantSelections[$iLimit] = false;
-
+            $aVariantSelections = false;
             if ( $this->oxarticles__oxvarcount->value ) {
-                $this->_aVariantSelections[$iLimit] = oxNew( "oxVariantHandler" )->buildVariantSelections( $this->oxarticles__oxvarname->getRawValue(), $this->getVariants(false), $aFilterIds, $sActVariantId, $iLimit );
+                $oVariants = $this->getVariants( false );
+                $aVariantSelections = oxNew( "oxVariantHandler" )->buildVariantSelections( $this->oxarticles__oxvarname->getRawValue(), $oVariants, $aFilterIds, $sActVariantId, $iLimit );
+
+                if ( !empty($oVariants) && empty( $aVariantSelections['rawselections'] ) ) {
+                    $aVariantSelections = false;
+                }
             }
+            $this->_aVariantSelections[$iLimit] = $aVariantSelections;
         }
 
         return $this->_aVariantSelections[$iLimit];
@@ -1749,6 +1754,19 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
 
         $this->_applyVat( $oPrice, $this->getArticleVat() );
         $this->_applyCurrency( $oPrice );
+
+        if ( $this->isParentNotBuyable() ) {
+            // if parent article is not buyable then compare agains min article variant price
+            $oPrice2 = $this->getVarMinPrice();
+        } else {
+            // else compare against article price
+            $oPrice2 = $this->getPrice();
+        }
+
+        if ( $oPrice->getPrice() <= $oPrice2->getPrice() ) {
+            // if RRP price is less or equal to comparable price then return
+            return;
+        }
 
         $this->_oTPrice = $oPrice;
 
@@ -3889,6 +3907,29 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
     }
 
     /**
+     * Updates article variants oxremindactive field, as variants inherit this setting from parent
+     *
+     * @return null
+     */
+    public function updateVariantsRemind()
+    {
+        // check if it is parent article
+        if ( !$this->isVariant() && $this->_hasAnyVariant()) {
+            $oDb = oxDb::getDb();
+            $sOxId = $oDb->quote($this->getId());
+            $sOxShopId = $oDb->quote($this->getShopId());
+            $iRemindActive = $oDb->quote($this->oxarticles__oxremindactive->value);
+            $sUpdate = "
+                update oxarticles
+                    set oxremindactive = $iRemindActive
+                    where oxparentid = $sOxId and
+                          oxshopid = $sOxShopId
+            ";
+            $oDb->execute( $sUpdate );
+        }
+    }
+
+    /**
      * Deletes records in database
      *
      * @param string $sOXID Article ID
@@ -4124,20 +4165,20 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             $oDb = oxDb::getDb( oxDb::FETCH_MODE_ASSOC );
             $sQ = '
                 SELECT
-                    MIN(`oxprice`) AS `varminprice`,
-                    MAX(`oxprice`) AS `varmaxprice`
-                FROM ' . $this->getViewName(true) . '
-                WHERE ' .$this->getSqlActiveSnippet(true) . '
-                    AND ( `oxparentid` = ' . $oDb->quote( $sParentId ) . ')
-                    AND `oxprice` > 0';
+                    MIN( IF( `oxarticles`.`oxprice` > 0, `oxarticles`.`oxprice`, `p`.`oxprice` ) ) AS `varminprice`,
+                    MAX( IF( `oxarticles`.`oxprice` > 0, `oxarticles`.`oxprice`, `p`.`oxprice` ) ) AS `varmaxprice`
+                FROM '. $this->getViewName(true) . ' AS `oxarticles`
+                    LEFT JOIN '. $this->getViewName(true) . ' AS `p` ON ( `p`.`oxid` = `oxarticles`.`oxparentid` AND `p`.`oxprice` > 0 )
+                WHERE '. $this->getSqlActiveSnippet(true) .'
+                    AND ( `oxarticles`.`oxparentid` = '. $oDb->quote( $sParentId ) .' )';
             $oDb->setFetchMode( oxDb::FETCH_MODE_ASSOC );
             $aPrices = $oDb->getRow( $sQ, false, false );
             if ( !is_null( $aPrices['varminprice'] ) || !is_null( $aPrices['varmaxprice'] ) ) {
                 $sQ = '
                     UPDATE `oxarticles`
                     SET
-                        `oxvarminprice` = ' . $oDb->quote( $aPrices['varminprice'] ) .',
-                        `oxvarmaxprice` = ' . $oDb->quote( $aPrices['varmaxprice'] ) .'
+                        `oxvarminprice` = '. $oDb->quote( $aPrices['varminprice'] ) .',
+                        `oxvarmaxprice` = '. $oDb->quote( $aPrices['varmaxprice'] ) .'
                     WHERE
                         `oxid` = ' . $oDb->quote( $sParentId );
             } else {

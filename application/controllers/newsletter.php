@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: newsletter.php 51867 2012-11-15 12:45:08Z linas.kukulskis $
+ * @version   SVN: $Id: newsletter.php 52489 2012-11-27 15:54:43Z aurimas.gladutis $
  */
 
 /**
@@ -181,10 +181,14 @@ class Newsletter extends oxUBase
     {
         // user exists ?
         $oUser = oxNew( 'oxuser' );
-        if ( $oUser->load( oxConfig::getParameter( 'uid' ) ) ) {
-            $oUser->getNewsSubscription()->setOptInStatus( 1 );
-            $oUser->addToGroup( 'oxidnewsletter' );
-            $this->_iNewsletterStatus = 2;
+        if ( $oUser->load( oxRegistry::getConfig()->getRequestParameter( 'uid' ) ) ) {
+            $sConfirmCode = md5($oUser->oxuser__oxusername->value.$oUser->oxuser__oxpasssalt->value);
+            // is confirm code ok?
+            if ( oxRegistry::getConfig()->getRequestParameter( 'confirm' ) == $sConfirmCode ) {
+                $oUser->getNewsSubscription()->setOptInStatus( 1 );
+                $oUser->addToGroup( 'oxidnewsletter' );
+                $this->_iNewsletterStatus = 2;
+            }
         }
     }
 

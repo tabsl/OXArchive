@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxemail.php 51971 2012-11-19 09:45:49Z aurimas.gladutis $
+ * @version   SVN: $Id: oxemail.php 52489 2012-11-27 15:54:43Z aurimas.gladutis $
  */
 /**
  * Includes PHP mailer class.
@@ -831,7 +831,8 @@ class oxEmail extends PHPMailer
 
         // create messages
         $oSmarty = $this->_getSmarty();
-        $this->setViewData( "subscribeLink", $this->_getNewsSubsLink($oUser->oxuser__oxid->value) );
+        $sConfirmCode = md5($oUser->oxuser__oxusername->value.$oUser->oxuser__oxpasssalt->value);
+        $this->setViewData( "subscribeLink", $this->_getNewsSubsLink($oUser->oxuser__oxid->value, $sConfirmCode ) );
         $this->setUser( $oUser );
 
         // Process view data array through oxoutput processor
@@ -853,17 +854,19 @@ class oxEmail extends PHPMailer
     /**
      * Returns newsletter subscription link
      *
-     * @param string $sId user id
+     * @param string $sId          user id
+     * @param string $sConfirmCode confirmation code
      *
      * @return string $sUrl
      */
-    protected function _getNewsSubsLink( $sId )
+    protected function _getNewsSubsLink( $sId, $sConfirmCode = null )
     {
         $myConfig = $this->getConfig();
         $iActShopLang = $myConfig->getActiveShop()->getLanguage();
 
         $sUrl = $myConfig->getShopHomeURL().'cl=newsletter&amp;fnc=addme&amp;uid='.$sId;
         $sUrl.= ( $iActShopLang ) ? '&amp;lang='.$iActShopLang : "";
+        $sUrl.= ( $sConfirmCode ) ? '&amp;confirm='.$sConfirmCode : "";
         return $sUrl;
     }
 

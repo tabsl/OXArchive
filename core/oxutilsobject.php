@@ -19,13 +19,13 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsobject.php 49599 2012-09-17 13:35:30Z alfonsas $
+ * @version   SVN: $Id: oxutilsobject.php 52490 2012-11-27 15:55:29Z linas.kukulskis $
  */
 
 /**
  * Object Factory implementation (oxNew() method is implemented in this class).
  */
-class oxUtilsObject /*extends oxSuperCfg*/
+class oxUtilsObject
 {
 
     /**
@@ -362,10 +362,8 @@ class oxUtilsObject /*extends oxSuperCfg*/
      */
     protected function _getActiveModuleChain( $aClassChain )
     {
-        //$myConfig = $this->getConfig();
-
-        $aDisabledModules = $this->getModuleVar( 'aDisabledModules' ); //array();//$myConfig->getConfigParam( 'aDisabledModules' );
-        $aModulePaths     = $this->getModuleVar( 'aModulePaths' );//array();//$myConfig->getConfigParam( 'aModulePaths' );
+        $aDisabledModules = $this->getModuleVar( 'aDisabledModules' );
+        $aModulePaths     = $this->getModuleVar( 'aModulePaths' );
 
         if (is_array( $aDisabledModules ) && count($aDisabledModules) > 0) {
             foreach ($aDisabledModules as $sId) {
@@ -417,11 +415,8 @@ class oxUtilsObject /*extends oxSuperCfg*/
      *
      * @return string
      */
-    private function _makeSafeModuleClassParents( $aClassChain, $sBaseModule )
+    protected function _makeSafeModuleClassParents( $aClassChain, $sBaseModule )
     {
-        //$myConfig = $this->getConfig();
-
-
         $sParent = $sBaseModule;
         $sClassName = $sBaseModule;
 

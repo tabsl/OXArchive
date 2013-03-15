@@ -19,7 +19,7 @@
  * @package   smarty_plugins
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: function.oxmultilang.php 52136 2012-11-22 09:53:14Z linas.kukulskis $
+ * @version   SVN: $Id: function.oxmultilang.php 52593 2012-11-30 08:44:47Z linas.kukulskis $
  */
 
 /**
@@ -55,8 +55,12 @@ function smarty_function_oxmultilang( $params, &$smarty )
 
     try {
         $sTranslation = $oLang->translateString( $sIdent, $iLang, $blAdmin );
-        if ( $aArgs && is_array( $aArgs ) ) {
-            $sTranslation = vsprintf( $sTranslation, $aArgs );
+        if ( $aArgs ) {
+            if ( is_array( $aArgs ) ) {
+                $sTranslation = vsprintf( $sTranslation, $aArgs );
+            } else {
+                $sTranslation = sprintf( $sTranslation, $aArgs );
+            }
         }
     } catch ( oxLanguageException $oEx ) {
         // is thrown in debug mode and has to be caught here, as smarty hangs otherwise!
