@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   smarty_plugins
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: function.oxgetseourl.php 33480 2011-02-23 14:43:14Z arvydas.vapsva $
  */
@@ -37,7 +37,7 @@
 function smarty_function_oxeval( $aParams, &$oSmarty )
 {
     if ( $aParams['var'] && ( $aParams['var'] instanceof oxField ) ) {
-        $aParams['var'] = $aParams['var']->getRawValue();
+        $aParams['var'] = trim($aParams['var']->getRawValue());
     }
 
     // processign only if enabled

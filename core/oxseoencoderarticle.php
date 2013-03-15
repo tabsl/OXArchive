@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoderarticle.php 40048 2011-11-18 14:20:25Z linas.kukulskis $
+ * @version   SVN: $Id: oxseoencoderarticle.php 42280 2012-02-15 13:00:56Z arvydas.vapsva $
  */
 
 /**
@@ -387,10 +387,10 @@ class oxSeoEncoderArticle extends oxSeoEncoder
         $sQ = "select oxcatnid from ".getViewName( "oxobject2category" )." where oxobjectid = ".$oDb->quote( $sArtId )." order by oxtime";
         $sIdent = md5( $sQ );
 
-        if ( ( $sMainCatId = $this->_loadFromCache( $sIdent ) ) === false ) {
+        if ( ( $sMainCatId = $this->_loadFromCache( $sIdent, "oxarticle" ) ) === false ) {
             $sMainCatId = $oDb->getOne( $sQ );
             // storing in cache
-            $this->_saveInCache( $sIdent, $sMainCatId );
+            $this->_saveInCache( $sIdent, $sMainCatId, "oxarticle" );
         }
 
         if ( $sMainCatId ) {

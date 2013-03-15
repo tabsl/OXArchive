@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxrssfeed.php 33132 2011-02-10 10:31:46Z arvydas.vapsva $
+ * @version   SVN: $Id: oxrssfeed.php 42151 2012-02-10 12:44:51Z linas.kukulskis $
  */
 
 /**
@@ -346,7 +346,7 @@ class oxRssFeed extends oxSuperCfg
         }
 
         $oArtList = oxNew( 'oxarticlelist' );
-        $oArtList->loadTop5Articles();
+        $oArtList->loadTop5Articles( $this->getConfig()->getConfigParam( 'iRssItemsCount' ) );
 
         $oLang = oxLang::getInstance();
         $this->_loadData(
@@ -845,7 +845,7 @@ class oxRssFeed extends oxSuperCfg
         }
 
         $oArtList = oxNew( 'oxarticlelist' );
-        $oArtList->loadAktionArticles( 'OXBARGAIN' );
+        $oArtList->loadAktionArticles( 'OXBARGAIN', $this->getConfig()->getConfigParam( 'iRssItemsCount' ) );
 
         $oLang = oxLang::getInstance();
         $this->_loadData(

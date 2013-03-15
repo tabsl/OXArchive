@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_stock.php 39919 2011-11-14 08:40:35Z arvydas.vapsva $
+ * @version   SVN: $Id: article_stock.php 41966 2012-02-01 13:45:29Z arvydas.vapsva $
  */
 
 /**
@@ -75,10 +75,16 @@ class Article_Stock extends oxAdminDetails
                 $this->_aViewData["oxparentid"] =  $oArticle->oxarticles__oxparentid->value;
             }
 
-            $sShopID = $myConfig->getShopID();
+            if ( $myConfig->getConfigParam( 'blMallInterchangeArticles' ) ) {
+                $sShopSelect = '1';
+            } else {
+                $sShopID = $myConfig->getShopID();
+                $sShopSelect = " oxshopid =  '$sShopID' ";
+            }
+
             $oPriceList = oxNew("oxlist");
             $oPriceList->init( 'oxbase', "oxprice2article" );
-            $sQ = "select * from oxprice2article where oxartid = '$soxId' and oxshopid = '$sShopID' and (oxamount > 0 or oxamountto > 0) order by oxamount ";
+            $sQ = "select * from oxprice2article where oxartid = '$soxId' and {$sShopSelect} and (oxamount > 0 or oxamountto > 0) order by oxamount ";
             $oPriceList->selectstring( $sQ );
 
             $this->_aViewData["amountprices"] = $oPriceList;

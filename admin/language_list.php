@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: language_list.php 33186 2011-02-10 15:53:43Z arvydas.vapsva $
+ * @version   SVN: $Id: language_list.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
  */
 
 /**
@@ -63,7 +63,7 @@ class Language_List extends oxAdminList
 
         // preventing deleting main language with base id = 0
         if ( $iBaseId == 0 ) {
-            $oEx = new oxExceptionToDisplay();
+            $oEx = oxNew( "oxExceptionToDisplay" );
             $oEx->setMessage( 'LANGUAGE_DELETINGMAINLANG_WARNING' );
             oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
             return;
@@ -198,7 +198,7 @@ class Language_List extends oxAdminList
                 oxDb::rollbackTransaction();
 
                 //show warning
-                $oEx = new oxExceptionToDisplay();
+                $oEx = oxNew( "oxExceptionToDisplay" );
                 $oEx->setMessage( 'LANGUAGE_ERROR_RESETING_MULTILANG_FIELDS' );
                 oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
             }

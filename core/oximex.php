@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oximex.php 33731 2011-03-10 14:39:37Z arvydas.vapsva $
+ * @version   SVN: $Id: oximex.php 42258 2012-02-14 13:19:38Z linas.kukulskis $
  */
 
 /**
@@ -272,8 +272,7 @@ class oxImex extends oxBase
         $sExport .= "<Bestellliste>$sNewLine";
         $sRet     = $sExport;
 
-        foreach ( $oOrderlist->arrayKeys() as $key ) {
-            $oOrder = $oOrderlist[$key];
+        foreach ( $oOrderlist as $oOrder ) {
             // Convert each amount of money with currency rate of the order
             $dOrderCurRate = (double)$oOrder->oxorder__oxcurrate->value;
 
@@ -351,8 +350,7 @@ class oxImex extends oxBase
             $dSumBrutPrice = 0;
 
             $oOrderArticles = $oOrder->getOrderArticles();
-            foreach ($oOrderArticles->arrayKeys() as $key) {
-                $oOrderArt = $oOrderArticles->offsetGet($key);
+            foreach ($oOrderArticles as $oOrderArt) {
 
                 $dVATSet = array_search( $oOrderArt->oxorderarticles__oxvat->value, $myConfig->getConfigParam( 'aLexwareVAT' ) );
                 $sExport  = "   <Artikel>$sNewLine";
@@ -413,7 +411,6 @@ class oxImex extends oxBase
 
             $oOrder->oxorder__oxexport->setValue(1);
             $oOrder->save();
-
         }
         $sExport = "</Bestellliste>$sNewLine";
         $sRet .= $sExport;

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbase.php 41754 2012-01-25 11:41:04Z linas.kukulskis $
+ * @version   SVN: $Id: oxbase.php 42279 2012-02-15 13:00:27Z linas.kukulskis $
  */
 
 /**
@@ -511,11 +511,14 @@ class oxBase extends oxSuperCfg
                 return $this->_sCoreTable;
             }
 
-            if ( ( $blForceCoreTableUsage !== null ) ? $blForceCoreTableUsage : $this->_blForceCoreTableUsage ) {
+
+            if ( ( $blForceCoreTableUsage !== null ) && $blForceCoreTableUsage ) {
                 $iShopId = -1;
             } else {
                 $iShopId = oxConfig::getInstance()->getShopId();
             }
+
+
             $sViewName = getViewName( $this->_sCoreTable, $this->_blEmployMultilanguage == false ? -1 : $this->getLanguage(), $iShopId );
             if ( $blForceCoreTableUsage !== null ) {
                 return $sViewName;
@@ -900,7 +903,7 @@ class oxBase extends oxSuperCfg
 
     /**
      * This function is triggered whenever the object is saved or deleted.
-     * onChange() is triggered after saving the changes in Save() method, but before actually deleting the instance from the database.
+     * onChange() is triggered after saving the changes in Save() method, after deleting the instance from the database.
      * If you make any change to the database record manually you should also call onChange() from your script.
      *
      * @param int    $iAction Action identifier.
@@ -1003,9 +1006,6 @@ class oxBase extends oxSuperCfg
      */
     protected function _getObjectViewName( $sTable, $sShopID = null)
     {
-        if ( $this->_blForceCoreTableUsage ) {
-            $sShopID = -1;
-        }
         return getViewName( $sTable, -1, $sShopID);
     }
 

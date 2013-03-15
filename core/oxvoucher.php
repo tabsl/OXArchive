@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvoucher.php 39222 2011-10-12 13:55:27Z arvydas.vapsva $
+ * @version   SVN: $Id: oxvoucher.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
  */
 
 /**
@@ -489,7 +489,7 @@ class oxVoucher extends oxBase
         }
         $oSerie = oxNew('oxvoucherserie');
         if (!$oSerie->load($this->oxvouchers__oxvoucherserieid->value)) {
-            throw new oxObjectException();
+            throw oxNew( "oxObjectException" );
         }
         $this->_oSerie = $oSerie;
         return $oSerie;

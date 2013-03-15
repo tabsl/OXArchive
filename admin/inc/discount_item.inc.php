@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: discount_articles.inc.php 29956 2010-09-23 15:51:52Z tomas $
  */
@@ -96,23 +96,6 @@ class ajaxComponent extends ajaxListComponent
         }
 
         return $sQAdd;
-    }
-
-    /**
-     * Adds filter SQL to current query
-     *
-     * @param string $sQ query to add filter condition
-     *
-     * @return string
-     */
-    protected function _addFilter( $sQ )
-    {
-        $sArtTable = $this->_getViewName('oxarticles');
-        $sQ = parent::_addFilter( $sQ );
-
-        // display variants or not ?
-        $sQ .= $this->getConfig()->getConfigParam( 'blVariantsSelection' ) ? ' group by '.$sArtTable.'.oxid ' : '';
-        return $sQ;
     }
 
     /**

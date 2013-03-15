@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsobject.php 39207 2011-10-12 13:31:09Z arvydas.vapsva $
+ * @version   SVN: $Id: oxutilsobject.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
  */
 
 /**
@@ -112,7 +112,7 @@ class oxUtilsObject extends oxSuperCfg
             $sActionClassName = $this->getClassName( $sClassName );
             //expect __autoload() (oxfunctions.php) to do its job when class_exists() is called
             if ( !class_exists( $sActionClassName ) ) {
-                $oEx = new oxSystemComponentException();
+                $oEx = oxNew( "oxSystemComponentException" );
                 $oEx->setMessage('EXCEPTION_SYSTEMCOMPONENT_CLASSNOTFOUND');
                 $oEx->setComponent($sClassName);
                 $oEx->debugOut();
@@ -165,7 +165,7 @@ class oxUtilsObject extends oxSuperCfg
                     $oObj = $oRo->newInstanceArgs( $aParams );
                 } catch ( ReflectionException $oRefExcp ) {
                     // something went wrong?
-                    $oEx = new oxSystemComponentException();
+                    $oEx = oxNew( "oxSystemComponentException" );
                     $oEx->setMessage( $oRefExcp->getMessage() );
                     $oEx->setComponent( $sClassName );
                     $oEx->debugOut();
@@ -337,7 +337,7 @@ class oxUtilsObject extends oxSuperCfg
                     include_once $sParentPath;
                 } elseif ( !class_exists( $sModuleClass ) ) {
                     //to avoid problems with unitest and only throw a exception if class does not exists MAFI
-                    $oEx = new oxSystemComponentException();
+                    $oEx = oxNew( "oxSystemComponentException" );
                     $oEx->setMessage('EXCEPTION_SYSTEMCOMPONENT_CLASSNOTFOUND');
                     $oEx->setComponent($sModule);
                 }

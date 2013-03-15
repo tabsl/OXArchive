@@ -71,7 +71,7 @@ class oxTheme extends oxSuperCfg
     {
         $sError = $this->checkForActivationErrors();
         if ($sError) {
-            throw new oxException($sError);
+            throw oxNew( "oxException", $sError );
         }
         $sParent = $this->getInfo('parentTheme');
         if ($sParent) {

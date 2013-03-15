@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseoencoder.php 40152 2011-11-23 09:57:04Z arvydas.vapsva $
+ * @version   SVN: $Id: oxseoencoder.php 42280 2012-02-15 13:00:56Z arvydas.vapsva $
  */
 
 /**
@@ -96,7 +96,13 @@ class oxSeoEncoder extends oxSuperCfg
      * SEO cache array
      * @var array
      */
-    protected static $_aCache = null;
+    protected static $_aCache = array();
+
+    /**
+     * Maximum seo/dynamic url length
+     * @var int
+     */
+    protected $_iMaxUrlLength = null;
 
     /**
      * Singleton method
@@ -406,14 +412,24 @@ class oxSeoEncoder extends oxSuperCfg
     /**
      * Returns cache key (in non admin mode)
      *
+     * @param string $sType   object type
+     * @param int    $iLang   active language id
+     * @param mixed  $iShopId active shop id
+     * @param string $sParams additional seo params. optional (mostly used for db indexing)
+     *
      * @return string
      */
-    protected function _getCacheKey()
+    protected function _getCacheKey( $sType, $iLang = null, $iShopId = null, $sParams = null )
     {
+        $blAdmin = $this->isAdmin();
+        if ( !$blAdmin && $sType !== "oxarticle" ) {
+            return $sType . ( (int) $iLang ) . ( (int) $iShopId ) . "seo";
+        }
+
         // use cache in non admin mode
         if ( self::$_sCacheKey === null ) {
             self::$_sCacheKey = false;
-            if ( !$this->isAdmin() && ( $oView = $this->getConfig()->getActiveView() ) ) {
+            if ( !$blAdmin && ( $oView = $this->getConfig()->getActiveView() ) ) {
                 self::$_sCacheKey = md5( $oView->getViewId() ) . "seo";
             }
         }
@@ -424,23 +440,26 @@ class oxSeoEncoder extends oxSuperCfg
      * Loads seo tada from cache for active view (in non admin mode)
      *
      * @param string $sCacheIdent cache identifier
+     * @param string $sType       object type
+     * @param int    $iLang       active language id
+     * @param mixed  $iShopId     active shop id
+     * @param string $sParams     additional seo params. optional (mostly used for db indexing)
      *
      * @return string
      */
-    protected function _loadFromCache( $sCacheIdent )
+    protected function _loadFromCache( $sCacheIdent, $sType, $iLang = null, $iShopId = null, $sParams = null )
     {
         startProfile( "seoencoder_loadFromCache" );
 
+        $sCacheKey = $this->_getCacheKey( $sType, $iLang, $iShopId, $sParams );
         $sCache = false;
-        if ( self::$_aCache === null ) {
-            self::$_aCache = false;
-            if ( ( $sCacheKey = $this->_getCacheKey() ) !== false ) {
-                self::$_aCache = oxUtils::getInstance()->fromFileCache( $sCacheKey );
-            }
+
+        if ( $sCacheKey && !isset( $sCacheKey, self::$_aCache ) ) {
+            self::$_aCache[$sCacheKey] = oxUtils::getInstance()->fromFileCache( $sCacheKey );
         }
 
-        if ( self::$_aCache && isset( self::$_aCache[$sCacheIdent] ) ) {
-            $sCache = self::$_aCache[$sCacheIdent];
+        if ( isset( self::$_aCache[$sCacheKey] ) && isset( self::$_aCache[$sCacheKey][$sCacheIdent] ) ) {
+            $sCache = self::$_aCache[$sCacheKey][$sCacheIdent];
         }
 
         stopProfile( "seoencoder_loadFromCache" );
@@ -452,17 +471,21 @@ class oxSeoEncoder extends oxSuperCfg
      *
      * @param string $sCacheIdent cache identifier
      * @param string $sCache      cacheable data
+     * @param string $sType       object type
+     * @param int    $iLang       active language id
+     * @param mixed  $iShopId     active shop id
+     * @param string $sParams     additional seo params. optional (mostly used for db indexing)
      *
      * @return bool
      */
-    protected function _saveInCache( $sCacheIdent, $sCache )
+    protected function _saveInCache( $sCacheIdent, $sCache, $sType, $iLang = null, $iShopId = null, $sParams = null )
     {
         startProfile( "seoencoder_saveInCache" );
 
         $blSaved = false;
-        if ( $sCache && ( $sCacheKey = $this->_getCacheKey() ) !== false ) {
-            self::$_aCache[$sCacheIdent] = $sCache;
-            $blSaved = oxUtils::getInstance()->toFileCache( $sCacheKey, self::$_aCache );
+        if ( $sCache && ( $sCacheKey = $this->_getCacheKey( $sType, $iLang, $iShopId, $sParams ) ) !== false ) {
+            self::$_aCache[$sCacheKey][$sCacheIdent] = $sCache;
+            $blSaved = oxUtils::getInstance()->toFileCache( $sCacheKey, self::$_aCache[$sCacheKey] );
         }
 
         stopProfile( "seoencoder_saveInCache" );
@@ -508,7 +531,7 @@ class oxSeoEncoder extends oxSuperCfg
         $sIdent = md5( $sQ );
 
         // looking in cache
-        if ( ( $sSeoUrl = $this->_loadFromCache( $sIdent ) ) === false ) {
+        if ( ( $sSeoUrl = $this->_loadFromCache( $sIdent, $sType, $iLang, $iShopId, $sParams ) ) === false ) {
 
             $oRs = $oDb->execute( $sQ );
             if ( $oRs && $oRs->recordCount() > 0 && !$oRs->EOF ) {
@@ -524,7 +547,7 @@ class oxSeoEncoder extends oxSuperCfg
                 }
 
                 // storing in cache
-                $this->_saveInCache( $sIdent, $sSeoUrl );
+                $this->_saveInCache( $sIdent, $sSeoUrl, $sType, $iLang, $iShopId, $sParams );
             }
         }
         return $sSeoUrl;
@@ -755,7 +778,32 @@ class oxSeoEncoder extends oxSuperCfg
         $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)stoken=[a-z0-9]+&?(amp;)?/i', '\1', $sUrl );
         $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)&(amp;)?/i', '\1', $sUrl );
         $sUrl = $oStr->preg_replace( '/(\?|&(amp;)?)+$/i', '', $sUrl );
-        return trim($sUrl);
+        $sUrl = trim( $sUrl );
+
+        // max length <= $this->_iMaxUrlLength
+        $iLength = $this->_getMaxUrlLength();
+        if ( $oStr->strlen( $sUrl ) > $iLength ) {
+            $sUrl = $oStr->substr( $sUrl, 0, $iLength );
+        }
+
+        return $sUrl;
+    }
+
+    /**
+     * Returns maximum seo/dynamic url length
+     *
+     * @return int
+     */
+    protected function _getMaxUrlLength()
+    {
+        if ( $this->_iMaxUrlLength === null ) {
+            // max length <= 2048 / custom
+            $this->_iMaxUrlLength = $this->getConfig()->getConfigParam( "iMaxSeoUrlLength" ) ;
+            if ( !$this->_iMaxUrlLength ) {
+                $this->_iMaxUrlLength = 2048;
+            }
+        }
+        return $this->_iMaxUrlLength;
     }
 
     /**

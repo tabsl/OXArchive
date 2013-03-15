@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_categories.php 32923 2011-02-04 14:35:22Z vilma $
+ * @version   SVN: $Id: oxcmp_categories.php 42291 2012-02-15 14:50:54Z linas.kukulskis $
  */
 
 /**
@@ -62,6 +62,7 @@ class oxcmp_categories extends oxView
 
         $sActCat = $this->_getActCat();
 
+        //@deprecated in v.4.5.7, since 2012-02-15; config option removed bug #0003385
         if ( $myConfig->getConfigParam( 'bl_perfLoadVendorTree' ) ) {
             // building vendor tree
             $this->_loadVendorTree( $sActCat );
@@ -129,6 +130,8 @@ class oxcmp_categories extends oxView
             $myConfig = $this->getConfig();
 
             $sActManufacturer = $myConfig->getConfigParam( 'bl_perfLoadManufacturerTree' ) ? $sActManufacturer : null;
+
+            //@deprecated in v.4.5.7, since 2012-02-15; config option removed bug #0003385
             $sActVendor = ( $myConfig->getConfigParam( 'bl_perfLoadVendorTree' ) && getStr()->preg_match( '/^v_.?/i', $sActCat ) ) ? $sActCat : null;
 
             $sActCat = $this->_addAdditionalParams( $oProduct, $sActCat, $sActManufacturer, $sActCont, $sActTag, $sActVendor );
@@ -174,6 +177,8 @@ class oxcmp_categories extends oxView
      * Vendor tree loader
      *
      * @param string $sActVendor active vendor id
+     *
+     * @deprecated in v.4.5.7, since 2012-02-15; config option removed bug #0003385
      *
      * @return null
      */
@@ -236,6 +241,7 @@ class oxcmp_categories extends oxView
         $myConfig = $this->getConfig();
         $oParentView = $this->getParent();
 
+        //@deprecated in v.4.5.7, since 2012-02-15; config option removed bug #0003385
         if ( $myConfig->getConfigParam( 'bl_perfLoadVendorTree' ) &&
              ( $oVendorTree = $oParentView->getVendorTree() )) {
             $oParentView->setVendorlist( $oVendorTree );

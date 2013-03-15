@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlang.php 41717 2012-01-24 09:58:52Z linas.kukulskis $
+ * @version   SVN: $Id: oxlang.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
  */
 
 /**
@@ -459,7 +459,7 @@ class oxLang extends oxSuperCfg
     public function registerAdditionalLangFile($sFile)
     {
         if (!$sFile || !is_readable($sFile)) {
-            $oErr = new oxFileException('EXCEPTION_FILENOTFOUND');
+            $oErr = oxNew( "oxFileException", 'EXCEPTION_FILENOTFOUND');
             $oErr->setFileName($sFile);
             throw $oErr;
         }

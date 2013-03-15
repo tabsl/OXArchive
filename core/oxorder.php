@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 40704 2011-12-19 15:46:03Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxorder.php 42251 2012-02-14 11:33:32Z linas.kukulskis $
  */
 
 /**
@@ -110,7 +110,7 @@ class oxOrder extends oxBase
     /**
      * User payment
      *
-     * @var oxPayment
+     * @var oxUserPayment
      */
     protected $_oPayment = null;
 
@@ -279,30 +279,45 @@ class oxOrder extends oxBase
     }
 
     /**
+     * returned assigned orderarticles from order
+     *
+     * @param bool $blExcludeCanceled excludes canceled items from list
+     *
+     * @return oxList
+     */
+    protected function _getArticles( $blExcludeCanceled = false )
+    {
+        $sSelect = "SELECT `oxorderarticles`.* FROM `oxorderarticles`
+                        WHERE `oxorderarticles`.`oxorderid` = '".$this->getId() . "'" .
+                        ( $blExcludeCanceled ? " AND `oxorderarticles`.`oxstorno` != 1 ": " " ) ."
+                        ORDER BY `oxorderarticles`.`oxartid`";
+
+            // order articles
+        $oArticles = oxNew( 'oxlist' );
+        $oArticles->init( 'oxorderarticle' );
+        $oArticles->selectString( $sSelect );
+
+        return $oArticles;
+    }
+
+    /**
      * Assigns data, stored in oxorderarticles to oxorder object .
      *
      * @param bool $blExcludeCanceled excludes canceled items from list
      *
-     * @return null
+     * @return oxList
      */
     public function getOrderArticles( $blExcludeCanceled = false )
     {
         // checking set value
-        if ( $this->_oArticles === null  ) {
-            $sTable = getViewName( "oxorderarticles" );
-            $sSelect = "select {$sTable}.* from {$sTable}
-                        where {$sTable}.oxorderid = '".$this->getId() . "'" .
-                        ( $blExcludeCanceled ? " and {$sTable}.oxstorno != 1 ": " " ) ."
-                        order by {$sTable}.oxartid";
+        if ( $blExcludeCanceled ) {
 
-            // order articles
-            $oArticles = oxNew( 'oxlist' );
-            $oArticles->init( 'oxorderarticle' );
-            $oArticles->selectString( $sSelect );
+            return $this->_getArticles( true );
 
-            // is value was not set, just returning it
-            return $oArticles;
+        } elseif ( $this->_oArticles === null  ) {
+                $this->_oArticles = $this->_getArticles();
         }
+
         return $this->_oArticles;
     }
 
@@ -883,7 +898,7 @@ class oxOrder extends oxBase
      *
      * @param string $sPaymentid used payment id
      *
-     * @return object $oUserpayment payment object
+     * @return oxUserPayment
      */
     protected function _setPayment( $sPaymentid )
     {
@@ -1465,8 +1480,16 @@ class oxOrder extends oxBase
 
         $oBasket = $this->_getOrderBasket( false );
 
+        // unsetting bundles
+        $oOrderArticles = $this->getOrderArticles();
+        foreach ( $oOrderArticles as $sItemId => $oItem ) {
+            if ( $oItem->isBundle() ) {
+                $oOrderArticles->offsetUnset( $sItemId );
+            }
+        }
+
         // add this order articles to basket and recalculate basket
-        $this->_addOrderArticlesToBasket( $oBasket, $this->getOrderArticles() );
+        $this->_addOrderArticlesToBasket( $oBasket, $oOrderArticles );
 
         // recalculating basket
         $oBasket->calculateBasket( true );
@@ -1561,9 +1584,9 @@ class oxOrder extends oxBase
     /**
      * Send order to shop owner and user
      *
-     * @param oxUser    $oUser    order user
-     * @param oxBasket  $oBasket  current order basket
-     * @param oxPayment $oPayment order payment
+     * @param oxUser        $oUser    order user
+     * @param oxBasket      $oBasket  current order basket
+     * @param oxUserPayment $oPayment order payment
      *
      * @return bool
      */
@@ -1603,7 +1626,7 @@ class oxOrder extends oxBase
     /**
      * Returns order payment
      *
-     * @return oxBasket
+     * @return oxUserPayment
      */
     public function getPayment()
     {
@@ -1836,8 +1859,12 @@ class oxOrder extends oxBase
     {
         $this->oxorder__oxstorno = new oxField( 1 );
         if ( $this->save() ) {
+
+
             // canceling ordered products
             foreach ( $this->getOrderArticles() as $oOrderArticle ) {
+
+
                 $oOrderArticle->cancelOrderArticle();
             }
         }

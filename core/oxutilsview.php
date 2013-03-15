@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsview.php 41722 2012-01-24 11:33:57Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxutilsview.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
  */
 
 /**
@@ -417,7 +417,7 @@ class oxUtilsView extends oxSuperCfg
         if (file_exists($sFileName) && is_readable($sFileName)) {
             return file_get_contents($sFileName);
         } else {
-            throw new oxException("Template block file ($sFileName) not found for '$sModule' module.");
+            throw oxNew( "oxException", "Template block file ($sFileName) not found for '$sModule' module." );
         }
     }
 

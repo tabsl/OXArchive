@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxviewconfig.php 39210 2011-10-12 13:35:14Z arvydas.vapsva $
+ * @version   SVN: $Id: oxviewconfig.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
  */
 
 /**
@@ -1227,7 +1227,7 @@ class oxViewConfig extends oxSuperCfg
         if (file_exists($sFile) || is_dir($sFile)) {
             return $sFile;
         }
-        $oEx = new oxFileException("Requested file not found for module $sModule ($sFile)");
+        $oEx = oxNew( "oxFileException", "Requested file not found for module $sModule ($sFile)" );
         $oEx->debugOut();
         throw $oEx;
     }

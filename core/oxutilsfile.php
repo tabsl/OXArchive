@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsfile.php 41770 2012-01-26 08:45:35Z arvydas.vapsva $
+ * @version   SVN: $Id: oxutilsfile.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
  */
 
 /**
@@ -557,17 +557,17 @@ class oxUtilsFile extends oxSuperCfg
 
         //checking params
         if ( !isset( $aFileInfo['name'] ) || !isset( $aFileInfo['tmp_name'] ) ) {
-            throw new oxException( 'EXCEPTION_NOFILE' );
+            throw oxNew( "oxException", 'EXCEPTION_NOFILE' );
         }
 
         //wrong chars in file name?
         if ( !getStr()->preg_match('/^[\-_a-z0-9\.]+$/i', $aFileInfo['name'] ) ) {
-            throw new oxException( 'EXCEPTION_FILENAMEINVALIDCHARS' );
+            throw oxNew( "oxException", 'EXCEPTION_FILENAMEINVALIDCHARS' );
         }
 
         // error uploading file ?
         if ( isset( $aFileInfo['error'] ) && $aFileInfo['error'] ) {
-            throw new oxException( 'EXCEPTION_FILEUPLOADERROR_'.( (int) $aFileInfo['error'] ) );
+            throw oxNew( "oxException", 'EXCEPTION_FILEUPLOADERROR_'.( (int) $aFileInfo['error'] ) );
         }
 
         $aPathInfo = pathinfo($aFileInfo['name']);
@@ -578,7 +578,7 @@ class oxUtilsFile extends oxSuperCfg
         $aAllowedUploadTypes = (array) $this->getConfig()->getConfigParam( 'aAllowedUploadTypes' );
         $aAllowedUploadTypes = array_map( "strtolower", $aAllowedUploadTypes );
         if ( !in_array( strtolower( $sExt ), $aAllowedUploadTypes ) ) {
-            throw new oxException( 'EXCEPTION_NOTALLOWEDTYPE' );
+            throw oxNew( "oxException", 'EXCEPTION_NOTALLOWEDTYPE' );
         }
 
         $sFileName = $this->_getUniqueFileName( $sBasePath . $sUploadPath, $sFileName, $sExt );
@@ -611,17 +611,17 @@ class oxUtilsFile extends oxSuperCfg
 
         //checking params
         if ( !isset( $aFileInfo['name'] ) || !isset( $aFileInfo['tmp_name'] ) ) {
-            throw new oxException( 'EXCEPTION_NOFILE' );
+            throw oxNew( "oxException", 'EXCEPTION_NOFILE' );
         }
 
         //wrong chars in file name?
         if ( !getStr()->preg_match('/^[\-_a-z0-9\.]+$/i', $aFileInfo['name'] ) ) {
-            throw new oxException( 'EXCEPTION_FILENAMEINVALIDCHARS' );
+            throw oxNew( "oxException", 'EXCEPTION_FILENAMEINVALIDCHARS' );
         }
 
         // error uploading file ?
         if ( isset( $aFileInfo['error'] ) && $aFileInfo['error'] ) {
-            throw new oxException( 'EXCEPTION_FILEUPLOADERROR_'.( (int) $aFileInfo['error'] ) );
+            throw oxNew( "oxException", 'EXCEPTION_FILEUPLOADERROR_'.( (int) $aFileInfo['error'] ) );
         }
 
         $aPathInfo = pathinfo($aFileInfo['name']);
@@ -633,7 +633,7 @@ class oxUtilsFile extends oxSuperCfg
         $aAllowedUploadTypes = array_map( "strtolower", $aAllowedUploadTypes );
 
         if ( !in_array( strtolower( $sExt ), $aAllowedUploadTypes ) ) {
-            throw new oxException( 'EXCEPTION_NOTALLOWEDTYPE' );
+            throw oxNew( "oxException", 'EXCEPTION_NOTALLOWEDTYPE' );
         }
 
         $sFileName = $this->_getUniqueFileName( $sBasePath . $sUploadPath, $sFileName, $sExt );

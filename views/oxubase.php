@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 41876 2012-01-30 10:15:28Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxubase.php 42291 2012-02-15 14:50:54Z linas.kukulskis $
  */
 
 /**
@@ -916,6 +916,8 @@ class oxUBase extends oxView
 
     /**
      * Returns if show/hide vendors
+     *
+     * @deprecated in v.4.5.7, since 2012-02-15; config option removed bug #0003385
      *
      * @return bool
      */

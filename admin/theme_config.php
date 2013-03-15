@@ -66,7 +66,7 @@ class Theme_Config extends Shop_Config
                 $oEx->debugOut();
             }
         } else {
-            oxUtilsView::getInstance()->addErrorToDisplay( new oxException('EXCEPTION_THEME_NOT_LOADED') );
+            oxUtilsView::getInstance()->addErrorToDisplay( oxNew( "oxException", 'EXCEPTION_THEME_NOT_LOADED') );
         }
         return 'theme_config.tpl';
     }

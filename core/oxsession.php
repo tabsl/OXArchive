@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsession.php 41876 2012-01-30 10:15:28Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxsession.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
  */
 
 DEFINE('_DB_SESSION_HANDLER', getShopBasePath() . 'core/adodblite/session/adodb-session.php');
@@ -280,7 +280,7 @@ class oxSession extends oxSuperCfg
 
                 // passing notification about session problems
                 if ( $this->_sErrorMsg && $myConfig->getConfigParam( 'iDebug' ) ) {
-                    oxUtilsView::getInstance()->addErrorToDisplay( new oxException( $this->_sErrorMsg ) );
+                    oxUtilsView::getInstance()->addErrorToDisplay( oxNew( "oxException", $this->_sErrorMsg ) );
                 }
             } elseif ( !$blSwapped ) {
                 // transferring cookies between hosts

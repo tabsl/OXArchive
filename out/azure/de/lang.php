@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: lang.php 28697 2010-06-29 11:09:58Z vilma $
  */
@@ -53,11 +53,11 @@ $aLang = array(
 'EMAIL_ORDER_CUST_HTML_PAYMENTCHARGEVAT1'                     => "Aufsch. Zahl. MwSt.",
 'EMAIL_ORDER_CUST_HTML_PAYMENTMETHOD'                         => "Die Bezahlung erfolgt mit:",
 'EMAIL_ORDER_CUST_HTML_PLUSTAX1'                              => "zzgl. MwSt.",
-'EMAIL_ORDER_CUST_HTML_PLUSTAX21'                             => "zzgl. Mwst.",
+'EMAIL_ORDER_CUST_HTML_PLUSTAX21'                             => "zzgl. MwSt.",
 'EMAIL_ORDER_CUST_HTML_SHIPPINGCARRIER'                       => "Der Versand erfolgt mit",
 'EMAIL_ORDER_CUST_HTML_SHIPPINGNET'                           => "Versandkosten (netto):",
 'EMAIL_ORDER_CUST_HTML_TAX1'                                  => "zzgl. MwSt.",
-'EMAIL_ORDER_CUST_HTML_TSPROTECTIONCHARGETAX1'                => "zzgl. Mwst.",
+'EMAIL_ORDER_CUST_HTML_TSPROTECTIONCHARGETAX1'                => "zzgl. MwSt.",
 'EMAIL_ORDER_OWNER_HTML_MESSAGE'                              => "Mitteilung:",
 'EMAIL_ORDER_OWNER_HTML_PAYMENTINFOOFF'                       => "<b>BEZAHLINFORMATIONEN AUSGESCHALTET</b> - um diese einzuschalten bitte email_order_owner_html.tpl aendern.",
 'EMAIL_SUGGEST_HTML_MENYGREETINGS'                            => "Viele Grüsse,",
@@ -116,8 +116,8 @@ $aLang = array(
 'PAGE_CHECKOUT_BASKETCONTENTS_TOTAL'                          => "Gesamtsumme",
 'PAGE_CHECKOUT_BASKETCONTENTS_TOTALGROSS'                     => "Summe Artikel (brutto)",
 'PAGE_CHECKOUT_BASKETCONTENTS_TOTALNET'                       => "Summe Artikel (netto)",
-'PAGE_CHECKOUT_BASKETCONTENTS_TSPROTECTIONCHARGETAX1'         => "zzgl. Mwst..",
-'PAGE_CHECKOUT_BASKETCONTENTS_WRAPPINGTAX1'                   => "zzgl. Mwst.",
+'PAGE_CHECKOUT_BASKETCONTENTS_TSPROTECTIONCHARGETAX1'         => "zzgl. MwSt..",
+'PAGE_CHECKOUT_BASKETCONTENTS_WRAPPINGTAX1'                   => "zzgl. MwSt.",
 'PAGE_CHECKOUT_BASKETCONTENTS_YOURMESSAGE'                    => "Ihr Text:",
 'PAGE_CHECKOUT_ORDER_BILLINGADDRESS'                          => "Rechnungsadresse",
 'PAGE_CHECKOUT_ORDER_COUPONNOTACCEPTED1'                      => "Ihr Gutschein",

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 41755 2012-01-25 11:41:47Z linas.kukulskis $
+ * @version   SVN: $Id: oxarticle.php 42414 2012-02-23 16:10:13Z linas.kukulskis $
  */
 
 // defining supported link types
@@ -1533,6 +1533,8 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             $sVendorId = $this->oxarticles__oxvendorid->value;
         }
         if ( $sVendorId && $oVendor->load( $sVendorId ) && $oVendor->oxvendor__oxactive->value ) {
+
+            //@deprecated in v.4.5.7, since 2012-02-15; config option removed bug #0003385
             if ( !$this->getConfig()->getConfigParam( 'bl_perfLoadVendorTree' ) ) {
                 $oVendor->setReadOnly( true );
             }
@@ -2248,7 +2250,8 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
             $sViewName = getViewName( 'oxartextends', $this->getLanguage() );
 
             $sDbValue = oxDb::getDb()->getOne( "select oxlongdesc from {$sViewName} where oxid = ?", array( $sOxid ) );
-            if ( $sDbValue !== false ) {
+
+            if ( $sDbValue != false ) {
                 $this->_oLongDesc->setValue( $sDbValue, oxField::T_RAW );
             } elseif ( $this->oxarticles__oxparentid->value ) {
                 $this->_oLongDesc->setValue( $this->getParentArticle()->getArticleLongDesc()->getRawValue(), oxField::T_RAW );
@@ -2297,6 +2300,7 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
         $this->_oLongDesc = new oxField( $sDesc, oxField::T_RAW );
 
         // setting original value?
+        //deprecated since 2012-02-13 in v.4.5.7
         if ( $sOrigValue ) {
             $this->_oLongDesc->orignalValue = $sOrigValue;
         }

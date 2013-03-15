@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_license.php 39940 2011-11-14 12:26:27Z arvydas.vapsva $
+ * @version   SVN: $Id: shop_license.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
  */
 
 /**
@@ -47,7 +47,7 @@ class Shop_License extends Shop_Config
     {
         $myConfig   = $this->getConfig();
         if ($myConfig->isDemoShop()) {
-            throw new oxSystemComponentException("license");
+            throw oxNew( "oxSystemComponentException", "license" );
         }
 
         parent::render();

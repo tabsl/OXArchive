@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 41876 2012-01-30 10:15:28Z mindaugas.rimgaila $
+ * @version   SVN: $Id: lang.php 42225 2012-02-13 15:28:15Z linas.kukulskis $
  */
 
 $sLangName  = 'Deutsch';
@@ -92,7 +92,7 @@ $aLang = array(
 'GENERAL_ARTICLE_OXUNITQUANTITY'                           => 'Mengeneinheit',
 'GENERAL_ARTICLE_OXURLDESC'                                => 'URL Beschreibung',
 'GENERAL_ARTICLE_OXURLIMG'                                 => 'Bild für externe URL',
-'GENERAL_ARTICLE_OXVAT'                                    => 'Artikel Mwst.',
+'GENERAL_ARTICLE_OXVAT'                                    => 'Artikel MwSt.',
 'GENERAL_ARTICLE_OXTHUMB'                                  => 'Vorschaubild',
 'GENERAL_ARTICLE_OXICON'                                   => 'Icon',
 'GENERAL_ARTICLE_OXPICSGENERATED'                          => 'Bilder erzeugt',
@@ -225,7 +225,7 @@ $aLang = array(
 'GENERAL_IDENT'                                            => 'Ident',
 'GENERAL_INGROUP'                                          => 'In Benutzergruppe',
 'GENERAL_INETTO'                                           => 'Artikel netto',
-'GENERAL_IVAT'                                             => 'VAT',
+'GENERAL_IVAT'                                             => 'MwSt',
 'GENERAL_INFOLDER'                                         => 'Ordner',
 'GENERAL_LIST_FIRST'                                       => 'Erste Seite',
 'GENERAL_LIST_PREV'                                        => 'zurück',
@@ -1289,7 +1289,7 @@ $aLang = array(
 'TOOLS_MAIN_UPDATEVIEWSCONFIRM'                            => 'Sind Sie sicher das Sie die VIEWS jetzt updaten wollen',
 'TOOLTIPS_ADDSUMTYPE'                                      => 'Absoluter oder<br>prozentualer<br>Auf/Abschlag',
 'TOOLTIPS_ADDSUMITMTYPE'                                   => 'Absoluter, prozentualer<br> oder Artikel<br>Auf/Abschlag',
-'TOOLTIPS_ARTICLEVAT'                                      => 'Nur falls spezielle Mwst. hier ausfüllen',
+'TOOLTIPS_ARTICLEVAT'                                      => 'Nur falls spezielle MwSt. hier ausfüllen',
 'TOOLTIPS_ARTICLEREVIEW'                                   => 'Artikel Vorschau öffnen',
 'TOOLTIPS_ARTICLESTOCK'                                    => 'Anzahl Artikel auf Lager',
 'TOOLTIPS_ARTICLEDELIVERY'                                 => 'Zeit Format: ',
@@ -1324,7 +1324,7 @@ $aLang = array(
 'TOOLTIPS_NEWVAR3'                                         => 'Variante anlegen',
 'TOOLTIPS_NEWSELECTLIST'                                   => 'Neue Auswahlliste anlegen',
 'TOOLTIPS_NEWDISCOUNT'                                     => 'Neuen Rabatt anlegen',
-'TOOLTIPS_NEWMWST'                                         => 'Neuen Mwst. Satz anlegen',
+'TOOLTIPS_NEWMWST'                                         => 'Neuen MwSt. Satz anlegen',
 'TOOLTIPS_NEWDELIVERY'                                     => 'Neue Versandkostenregel anlegen',
 'TOOLTIPS_NEWDELIVERYSET'                                  => 'Neue Versandart anlegen',
 'TOOLTIPS_NEWNEWS'                                         => 'Neue Nachricht anlegen',

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxarticlelist.php 40709 2011-12-20 09:53:02Z linas.kukulskis $
+ * @version   SVN: SVN: $Id: oxarticlelist.php 42173 2012-02-13 07:13:39Z linas.kukulskis $
  */
 
 /**
@@ -223,7 +223,7 @@ class oxArticleList extends oxList
                 break;
             case 1:
                 // manually entered
-                $this->loadAktionArticles( 'oxnewest' );
+                $this->loadAktionArticles( 'oxnewest', $iLimit );
                 break;
             case 2:
                 $sArticleTable = getViewName('oxarticles');
@@ -248,9 +248,11 @@ class oxArticleList extends oxList
     /**
      * Load top 5 articles
      *
+     * @param int $iLimit Select limit
+     *
      * @return null
      */
-    public function loadTop5Articles()
+    public function loadTop5Articles( $iLimit = null )
     {
         //has module?
         $myConfig = $this->getConfig();
@@ -265,15 +267,18 @@ class oxArticleList extends oxList
                 break;
             case 1:
                 // manually entered
-                $this->loadAktionArticles( 'oxtop5');
+                $this->loadAktionArticles( 'oxtop5', $iLimit );
                 break;
             case 2:
                 $sArticleTable = getViewName('oxarticles');
 
+                //by default limit 5
+                $sLimit = ( $iLimit > 0 ) ? "limit " . $iLimit : 'limit 5';
+
                 $sSelect  = "select * from $sArticleTable ";
                 $sSelect .= "where ".$this->getBaseObject()->getSqlActiveSnippet()." and $sArticleTable.oxissearch = 1 ";
                 $sSelect .= "and $sArticleTable.oxparentid = '' and $sArticleTable.oxsoldamount>0 ";
-                $sSelect .= "order by $sArticleTable.oxsoldamount desc limit 5";
+                $sSelect .= "order by $sArticleTable.oxsoldamount desc $sLimit";
 
                 $this->selectString($sSelect);
                 break;
@@ -284,10 +289,11 @@ class oxArticleList extends oxList
      * Loads shop AktionArticles.
      *
      * @param string $sActionID Action id
+     * @param int    $iLimit    Select limit
      *
      * @return null
      */
-    public function loadAktionArticles( $sActionID )
+    public function loadAktionArticles( $sActionID, $iLimit = null )
     {
         // Performance
         if ( !trim( $sActionID) ) {
@@ -306,12 +312,14 @@ class oxArticleList extends oxList
         $sActiveSql = $oBase->getSqlActiveSnippet();
         $sViewName = $oBase->getViewName();
 
+        $sLimit = ( $iLimit > 0 ) ? "limit " . $iLimit : '';
+
         $sSelect = "select $sArticleFields from oxactions2article
                               left join $sArticleTable on $sArticleTable.oxid = oxactions2article.oxartid
                               left join $sViewName on $sViewName.oxid = oxactions2article.oxactionid
                               where oxactions2article.oxshopid = '$sShopID' and oxactions2article.oxactionid = $sActionID and $sActiveSql
                               and $sArticleTable.oxid is not null and " .$oBaseObject->getSqlActiveSnippet(). "
-                              order by oxactions2article.oxsort";
+                              order by oxactions2article.oxsort $sLimit";
 
         $this->selectString( $sSelect );
     }

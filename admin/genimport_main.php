@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: genimport_main.php 29921 2010-09-21 12:18:02Z sarunas $
+ * @version   SVN: $Id: genimport_main.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
  */
 
 /**
@@ -251,7 +251,7 @@ class GenImport_Main extends oxAdminDetails
     {
         if ( $iNavStep == 2 ) {
             if ( !$this->_getUploadedCsvFilePath() ) {
-                $oEx = new oxExceptionToDisplay();
+                $oEx = oxNew( "oxExceptionToDisplay" );
                 $oEx->setMessage( 'GENIMPORT_ERRORUPLOADINGFILE' );
                 oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true, 'genimport' );
                 $iNavStep = 1;
@@ -269,7 +269,7 @@ class GenImport_Main extends oxAdminDetails
             }
 
             if ( $blIsEmpty ) {
-                $oEx = new oxExceptionToDisplay();
+                $oEx = oxNew( "oxExceptionToDisplay" );
                 $oEx->setMessage( 'GENIMPORT_ERRORASSIGNINGFIELDS' );
                 oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true, 'genimport' );
                 $iNavStep = 2;
@@ -315,7 +315,7 @@ class GenImport_Main extends oxAdminDetails
     {
         foreach ( $oErpImport->getStatistics() as $aValue ) {
             if ( !$aValue ['r'] ) {
-                $oEx = new oxExceptionToDisplay();
+                $oEx = oxNew( "oxExceptionToDisplay" );
                 $oEx->setMessage( $aValue ['m'] );
                 oxUtilsView::getInstance()->addErrorToDisplay( $oEx, false, true, 'genimport' );
             }

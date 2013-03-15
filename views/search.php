@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: search.php 35529 2011-05-23 07:31:20Z arunas.paskevicius $
+ * @version   SVN: $Id: search.php 42291 2012-02-15 14:50:54Z linas.kukulskis $
  */
 
 /**
@@ -153,7 +153,7 @@ class Search extends oxUBase
             return false;
         }
 
-        // config allows to search in vendors ?
+        //@deprecated in v.4.5.7, since 2012-02-15; config option removed bug #0003385
         if ( !$myConfig->getConfigParam( 'bl_perfLoadVendorTree' ) ) {
             $sInitialSearchVendor = null;
         }
