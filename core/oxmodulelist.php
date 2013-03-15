@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxmodulelist.php 44206 2012-04-23 14:52:13Z vilma $
+ * @version   SVN: $Id: oxmodulelist.php 45357 2012-05-18 05:46:24Z vilma $
  */
 
 /**
@@ -157,7 +157,7 @@ class oxModuleList extends oxSuperCfg
         $aDeletedExt = $this->getDeletedExtensions();
 
         //collecting deleted extension IDs
-        $aDeletedExtIds = $this->getDeletedExtensions($aDeletedExt);
+        $aDeletedExtIds = $this->getDeletedExtensionIds($aDeletedExt);
 
         // removing from aModules config varviable
         $this->_removeFromModulesArray( $aDeletedExt );

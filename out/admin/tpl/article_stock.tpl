@@ -201,7 +201,7 @@ function editThis( sID )
                   [{/if}]
                 </td>
                 <td class=listitem[{$oddclass}]>
-                  <a href="[{ $oViewConf->getSelfLink() }]&cl=article_stock&priceid=[{$amountprice->oxprice2article__oxid->value}]&fnc=deleteprice&oxid=[{$oxid}]" onClick='return confirm("Wollen Sie diesen Eintrag wirklich l�schen ?")' class="delete"></a>
+                  <a href="[{ $oViewConf->getSelfLink() }]&cl=article_stock&priceid=[{$amountprice->oxprice2article__oxid->value}]&fnc=deleteprice&oxid=[{$oxid}]" onClick='return confirm("[{ oxmultilang ident="GENERAL_YOUWANTTODELETE" }]")' class="delete"></a>
                 </td>
               </tr>
             [{/foreach}]

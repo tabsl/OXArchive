@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 44342 2012-04-25 10:59:43Z linas.kukulskis $
+ * @version   SVN: $Id: oxubase.php 44715 2012-05-09 11:27:44Z linas.kukulskis $
  */
 
 /**
@@ -1507,6 +1507,7 @@ class oxUBase extends oxView
             $aPattern = array( "/,[\s\+\-\*]*,/", "/\s+,/" );
             $sMeta = $oStr->preg_replace( $aPattern, ',', $sMeta );
             $sMeta = oxUtilsString::getInstance()->minimizeTruncateString( $sMeta, $iLength );
+            $sMeta = $oStr->htmlspecialchars( $sMeta );
 
             return trim( $sMeta );
         }
@@ -1725,19 +1726,19 @@ class oxUBase extends oxView
                     $sRet .= "&amp;searchparam={$sSearchParamForLink}";
                 }
 
-                if ( ( $sVar = oxConfig::getParameter( 'searchcnid' ) ) ) {
+                if ( ( $sVar = oxConfig::getParameter( 'searchcnid', true ) ) ) {
                     $sRet .= '&amp;searchcnid='.rawurlencode( rawurldecode( $sVar ) );
                 }
-                if ( ( $sVar = oxConfig::getParameter( 'searchvendor' ) ) ) {
+                if ( ( $sVar = oxConfig::getParameter( 'searchvendor', true ) ) ) {
                     $sRet .= '&amp;searchvendor='.rawurlencode( rawurldecode( $sVar ) );
                 }
-                if ( ( $sVar = oxConfig::getParameter( 'searchmanufacturer' ) ) ) {
+                if ( ( $sVar = oxConfig::getParameter( 'searchmanufacturer', true ) ) ) {
                     $sRet .= '&amp;searchmanufacturer='.rawurlencode( rawurldecode( $sVar ) );
                 }
                 break;
             case 'tag':
                 $sRet .= "&amp;listtype={$sListType}";
-                if ( $sParam = rawurlencode( oxConfig::getParameter( 'searchtag', 1 ) ) ) {
+                if ( $sParam = rawurlencode( oxConfig::getParameter( 'searchtag', true ) ) ) {
                     $sRet .= "&amp;searchtag={$sParam}";
                 }
                 break;

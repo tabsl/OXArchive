@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvoucher.php 44115 2012-04-20 11:58:43Z linas.kukulskis $
+ * @version   SVN: $Id: oxvoucher.php 45401 2012-05-18 14:00:54Z edvardas.gineika $
  */
 
 /**
@@ -359,6 +359,9 @@ class oxVoucher extends oxBase
 
         $oEx = oxNew( 'oxVoucherException' );
         $oEx->setMessage('EXCEPTION_VOUCHER_ISNOTVALIDDATE');
+        if ( $iFrom > time() && $iTo > time() ) {
+            $oEx->setMessage('ERROR_MESSAGE_VOUCHER_NOVOUCHER');
+        }
         $oEx->setVoucherNr( $this->oxvouchers__oxvouchernr->value );
         throw $oEx;
     }

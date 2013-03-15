@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlang.php 43354 2012-03-29 14:57:06Z vilma $
+ * @version   SVN: $Id: oxlang.php 45622 2012-05-23 15:52:19Z alfonsas $
  */
 
 /**
@@ -885,6 +885,7 @@ class oxLang extends oxSuperCfg
             foreach ( $aLangFiles as $sLangFile ) {
 
                 if ( file_exists( $sLangFile ) && is_readable( $sLangFile ) ) {
+                    $aSeoReplaceChars = array();
                     include $sLangFile;
 
                     // including only (!) thoose, which has charset defined

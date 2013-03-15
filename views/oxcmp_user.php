@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcmp_user.php 42870 2012-03-14 14:35:47Z vilma $
+ * @version   SVN: $Id: oxcmp_user.php 44707 2012-05-09 11:24:40Z linas.kukulskis $
  */
 
 // defining login/logout states
@@ -220,7 +220,7 @@ class oxcmp_user extends oxView
     public function login()
     {
         $sUser     = oxConfig::getParameter( 'lgn_usr' );
-        $sPassword = oxConfig::getParameter( 'lgn_pwd' );
+        $sPassword = oxConfig::getParameter( 'lgn_pwd', true );
         $sCookie   = oxConfig::getParameter( 'lgn_cook' );
         //$blFbLogin = oxConfig::getParameter( 'fblogin' );
 
@@ -468,10 +468,10 @@ class oxcmp_user extends oxView
         $sUser = oxConfig::getParameter( 'lgn_usr' );
 
         // first pass
-        $sPassword = oxConfig::getParameter( 'lgn_pwd' );
+        $sPassword = oxConfig::getParameter( 'lgn_pwd', true );
 
         // second pass
-        $sPassword2 = oxConfig::getParameter( 'lgn_pwd2' );
+        $sPassword2 = oxConfig::getParameter( 'lgn_pwd2', true );
 
         $aInvAdress = oxConfig::getParameter( 'invadr', true );
         $aDelAdress = $this->_getDelAddressData();

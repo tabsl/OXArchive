@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxstrmb.php 34141 2011-04-01 14:59:12Z sarunas $
+ * @version   SVN: $Id: oxstrmb.php 44715 2012-05-09 11:27:44Z linas.kukulskis $
  */
 
 /**
@@ -339,7 +339,7 @@ class oxStrMb
 
     /**
      * Replaces special characters with passed char.
-     * Special chars are: " ' : ! ? \n \r \t \xc2\x95 \xc2\xa0 ;
+     * Special chars are: \n \r \t \xc2\x95 \xc2\xa0 ;
      *
      * @param string $sStr      string to cleanup
      * @param object $sCleanChr which character should be used as a replacement (default is empty space)
@@ -348,7 +348,7 @@ class oxStrMb
      */
     public function cleanStr( $sStr, $sCleanChr = ' ' )
     {
-        return $this->preg_replace( "/\"|\'|\:|\!|\?|\n|\r|\t|\xc2\x95|\xc2\xa0|;/", $sCleanChr, $sStr );
+        return $this->preg_replace( "/\n|\r|\t|\xc2\x95|\xc2\xa0|;/", $sCleanChr, $sStr );
     }
 
     /**

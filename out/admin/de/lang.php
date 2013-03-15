@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 44164 2012-04-23 08:40:53Z juergen.busch $
+ * @version   SVN: $Id: lang.php 44757 2012-05-09 14:04:15Z saulius.stasiukaitis $
  */
 
 $sLangName  = 'Deutsch';
@@ -2093,6 +2093,7 @@ $aLang = array(
 
 'SHOP_PERF_SEO_CACHE'                                      => 'SEO Cache aktivieren',
 'INFO_MODULES_MOVED_TO_EXTENSIONS'                         => 'Die Einstellungen für Themes und Module finden Sie im neuen Menü "Erweiterungen"',
+'EXCEPTION_THEME_SHOULD_BE_ONLY_IN_DATABASE'               => '[TR]Theme config should not be in config file',
     
 );
 

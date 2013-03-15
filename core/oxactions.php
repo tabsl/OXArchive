@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxactions.php 43590 2012-04-06 13:34:41Z linas.kukulskis $
+ * @version   SVN: $Id: oxactions.php 45583 2012-05-23 10:11:42Z edvardas.gineika $
  */
 
 /**
@@ -253,7 +253,11 @@ class oxActions extends oxI18n
     public function getBannerLink()
     {
         if ( isset( $this->oxactions__oxlink ) && $this->oxactions__oxlink->value ) {
-            return  oxUtilsUrl::getInstance()->processUrl( $this->oxactions__oxlink->value );
+           $sUrl = $this->oxactions__oxlink->value ;
+            if ( !preg_match( "#^https?://#i", $sUrl) ) {
+                 $sUrl =  $this->getConfig()->getShopUrl() . $sUrl ;
+            }
+            return  oxUtilsUrl::getInstance()->processUrl( $sUrl );
         } else {
             // if article is assinged to banner, getting article link
             if ( $oArticle = $this->getBannerArticle() ) {

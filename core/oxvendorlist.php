@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvendorlist.php 31954 2010-12-17 13:33:40Z sarunas $
+ * @version   SVN: $Id: oxvendorlist.php 44457 2012-04-27 08:02:29Z linas.kukulskis $
  */
 
 /**
@@ -112,6 +112,8 @@ class oxVendorList extends oxList
      * @param string $sLinkTarget  Name of class, responsible for category rendering
      * @param string $sActCat      Active category
      * @param string $sShopHomeUrl base shop url ($myConfig->getShopHomeURL())
+     *
+     * @deprecated in v.4.6.1, since 2012-04-26; config option removed bug #0003385
      *
      * @return null
      */

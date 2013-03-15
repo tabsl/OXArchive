@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxrating.php 43744 2012-04-11 07:55:41Z linas.kukulskis $
+ * @version   SVN: $Id: oxrating.php 45382 2012-05-18 10:45:17Z edvardas.gineika $
  */
 
 /**
@@ -66,7 +66,7 @@ class oxRating extends oxBase
     }
 
     /**
-     * Inserts object data fiels in DB. Returns true on success.
+     * Checks if user can rate product.
      *
      * @param string $sUserId   user id
      * @param string $sType     object type

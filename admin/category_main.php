@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: category_main.php 41256 2012-01-12 13:34:23Z mindaugas.rimgaila $
+ * @version   SVN: $Id: category_main.php 45246 2012-05-16 14:07:27Z linas.kukulskis $
  */
 
 /**
@@ -92,6 +92,7 @@ class Category_Main extends oxAdminDetails
 
             return "popups/category_main.tpl";
         }
+        //print_r($this);
         return "category_main.tpl";
     }
 
@@ -167,7 +168,8 @@ class Category_Main extends oxAdminDetails
 
         } else {
             //#550A - if new category is made then is must be default activ
-            $aParams['oxcategories__oxactive'] = 1;
+            //#4051: Impossible to create inactive category
+            //$aParams['oxcategories__oxactive'] = 1;
             $aParams['oxcategories__oxid'] = null;
         }
 
@@ -183,8 +185,8 @@ class Category_Main extends oxAdminDetails
 
         $oCategory = oxUtilsFile::getInstance()->processFiles( $oCategory );
         $oCategory->save();
-
-        $this->setEditObjectId( $oCategory->getId() );
+            
+        $this->setEditObjectId( $oCategory->getId() );        
     }
 
     /**

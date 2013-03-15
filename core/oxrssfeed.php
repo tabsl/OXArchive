@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxrssfeed.php 43092 2012-03-22 13:07:15Z linas.kukulskis $
+ * @version   SVN: $Id: oxrssfeed.php 45470 2012-05-21 10:54:02Z vaidas.matulevicius $
  */
 
 /**
@@ -183,7 +183,7 @@ class oxRssFeed extends oxSuperCfg
         $aItems = array();
         $oLang = oxLang::getInstance();
         $oStr  = getStr();
-
+        
         foreach ($oList as $oArticle) {
             $oItem = new oxStdClass();
             $oActCur = $this->getConfig()->getActShopCurrencyObject();
@@ -192,11 +192,18 @@ class oxRssFeed extends oxSuperCfg
                 $sPrice =  " " . $oArticle->getPriceFromPrefix().$oLang->formatCurrency( $oPrice->getBruttoPrice(), $oActCur ) . " ". $oActCur->sign;
             }
             $oItem->title                   = strip_tags($oArticle->oxarticles__oxtitle->value . $sPrice);
-            $oItem->guid     = $oItem->link = $myUtilsUrl->prepareUrlForNoSession($oArticle->getLink());
+            $oItem->guid                    = $oItem->link = $myUtilsUrl->prepareUrlForNoSession($oArticle->getLink());
             $oItem->isGuidPermalink         = true;
-            $oItem->description             = $oArticle->getLongDescription()->value; //oxarticles__oxshortdesc->value;
+            // $oItem->description             = $oArticle->getLongDescription()->value; //oxarticles__oxshortdesc->value;
+            //#4038: Smarty not parsed in RSS, although smarty parsing activated for longdescriptions
+            if ( oxConfig::getInstance()->getConfigParam( 'bl_perfParseLongDescinSmarty' ) ) {
+                $oItem->description         = $oArticle->getLongDesc();
+            } else {
+                $oItem->description         = $oArticle->getLongDescription()->value;
+            }
+            
             if (trim(str_replace('&nbsp;', '', (strip_tags($oItem->description)))) == '') {
-                $oItem->description             = $oArticle->oxarticles__oxshortdesc->value;
+                $oItem->description         = $oArticle->oxarticles__oxshortdesc->value;
             }
 
             $oItem->description = trim($oItem->description);

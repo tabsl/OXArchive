@@ -19,7 +19,7 @@
  * @package   modules
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: myorder.php 43676 2012-04-10 13:25:25Z linas.kukulskis $
+ * @version   SVN: $Id: myorder.php 45645 2012-05-24 08:39:25Z vaidas.matulevicius $
  */
 
 /**

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 43715 2012-04-11 07:02:23Z linas.kukulskis $
+ * @version   SVN: $Id: oxconfig.php 45511 2012-05-21 15:35:24Z alfonsas $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -445,9 +445,15 @@ class oxConfig extends oxSuperCfg
 
         try {
             $sShopID = $this->getShopId();
+            $blConfigLoaded = $this->_loadVarsFromDb( $sShopID );
 
             // loading shop config
-            $this->_loadVarsFromDb( $sShopID );
+            if ( empty($sShopID) || !$blConfigLoaded ) {
+                // if no config values where loaded (some problmems with DB), throwing an exception
+                $oEx = oxNew( "oxConnectionException" );
+                $oEx->setMessage( "Unable to load shop config values from database" );
+                throw $oEx;
+            }
 
             // loading theme config options
             $this->_loadVarsFromDb( $sShopID, null, oxConfig::OXMODULE_THEME_PREFIX . $this->getConfigParam('sTheme') );
@@ -465,7 +471,9 @@ class oxConfig extends oxSuperCfg
 
             //starting up the session
             $this->getSession()->start();
+
         } catch ( oxConnectionException $oEx ) {
+
             $oEx->debugOut();
             if ( defined( 'OXID_PHP_UNIT' ) ) {
                 return false;
@@ -545,7 +553,7 @@ class oxConfig extends oxSuperCfg
      * @param array  $aOnlyVars array of params to load (optional)
      * @param string $sModule   module vars to load, empty for base options
      *
-     * @return null
+     * @return bool
      */
     protected function _loadVarsFromDb( $sShopID, $aOnlyVars = null, $sModule = '' )
     {
@@ -572,6 +580,7 @@ class oxConfig extends oxSuperCfg
             $sQ .= ' and oxvarname in ( '.$sIn.' ) ';
         }
         $oRs = $oDb->select( $sQ );
+
         if ( $oRs != false && $oRs->recordCount() > 0 ) {
             while ( !$oRs->EOF ) {
                 $sVarName = $oRs->fields[0];
@@ -594,6 +603,10 @@ class oxConfig extends oxSuperCfg
 
                 $oRs->moveNext();
             }
+
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -648,7 +661,15 @@ class oxConfig extends oxSuperCfg
         if ( defined( 'OXID_PHP_UNIT' ) ) {
             if ( isset( modConfig::$unitMOD ) && is_object( modConfig::$unitMOD ) ) {
                 try{
-                    return modConfig::getParameter(  $sName, $blRaw );
+                    $sValue = modConfig::getParameter(  $sName, $blRaw );
+
+                    // TODO: remove this after special chars concept implementation
+                    $blIsAdmin = modConfig::getInstance()->isAdmin() || isAdmin();
+                    if ( $sValue !== null && !$blIsAdmin && (!$blRaw || is_array($blRaw))) {
+                        self::checkSpecialChars( $sValue, $blRaw );
+                    }
+
+                    return $sValue;
                 } catch( Exception $e ) {
                     // if exception is thrown, use default
                 }
@@ -663,9 +684,9 @@ class oxConfig extends oxSuperCfg
             $sValue = $_GET[$sName];
         }
 
-        // TODO: remove this after special charts concept implementation
+        // TODO: remove this after special chars concept implementation
         $blIsAdmin = oxConfig::getInstance()->isAdmin() && oxSession::getVar("blIsAdmin");
-        if ( $sValue != null && !$blIsAdmin && (!$blRaw || is_array($blRaw))) {
+        if ( $sValue !== null && !$blIsAdmin && (!$blRaw || is_array($blRaw))) {
             self::checkSpecialChars( $sValue, $blRaw );
         }
 
@@ -742,7 +763,7 @@ class oxConfig extends oxSuperCfg
                 $newValue[$sValidKey] = $sVal;
             }
             $sValue = $newValue;
-        } else {
+        } elseif ( is_string( $sValue ) ) {
             $sValue = str_replace( array( '&',     '<',    '>',    '"',      "'",      chr(0), '\\' ),
                                    array( '&amp;', '&lt;', '&gt;', '&quot;', '&#039;', '',     '&#092;' ),
                                    $sValue );
@@ -800,7 +821,8 @@ class oxConfig extends oxSuperCfg
                 // "1&1" hoster provides "1"
                 $this->_blIsSsl = ($this->getConfigParam('sSSLShopURL') || $this->getConfigParam('sMallSSLShopURL'));
                 if ($this->isAdmin() && !$this->_blIsSsl) {
-                    $this->_blIsSsl = $this->getConfigParam('sAdminSSLURL');
+                    //#4026
+                    $this->_blIsSsl = !is_null($this->getConfigParam('sAdminSSLURL')) ? true : false;
                 }
             }
 
@@ -830,10 +852,12 @@ class oxConfig extends oxSuperCfg
 
         $oUtilsServer = oxUtilsServer::getInstance();
 
-        preg_match("/^(http:\/\/)?([^\/]+)/i", $sURL, $matches);
+        // #4010: force_sid added in https to every link
+        preg_match("/^(https?:\/\/)?([^\/]+)/i", $sURL, $matches);
         $sUrlHost = $matches[2];
 
-        preg_match("/^(http:\/\/)?([^\/]+)/i", $oUtilsServer->getServerVar( 'HTTP_HOST' ), $matches);
+        // #4010: force_sid added in https to every link
+        preg_match("/^(https?:\/\/)?([^\/]+)/i", $oUtilsServer->getServerVar( 'HTTP_HOST' ), $matches);
         $sRealHost = $matches[2];
 
         $sCurrentHost = preg_replace( '/\/\w*\.php.*/', '', $oUtilsServer->getServerVar( 'HTTP_HOST' ) . $oUtilsServer->getServerVar( 'SCRIPT_NAME' ) );

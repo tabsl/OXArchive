@@ -56,7 +56,27 @@ class Theme_Main extends oxAdminDetails
 
         parent::render();
 
+        if ( $this->themeInConfigFile() ) {
+            oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_THEME_SHOULD_BE_ONLY_IN_DATABASE' );
+        }
+
         return 'theme_main.tpl';
+    }
+    
+    /**
+     * Check if theme config is in config file.
+     * 
+     * @return bool
+     */
+    public function themeInConfigFile()
+    {
+        $blThemeSet = isset( $this->getConfig()->sTheme );
+        $blCustomThemeSet = isset( $this->getConfig()->sCustomTheme );
+        
+        if ( $blThemeSet || $blCustomThemeSet ) {
+            return true;
+        }
+        return false;
     }
 
 

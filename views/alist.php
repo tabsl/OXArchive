@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: alist.php 44342 2012-04-25 10:59:43Z linas.kukulskis $
+ * @version   SVN: $Id: alist.php 44715 2012-05-09 11:27:44Z linas.kukulskis $
  */
 
 /**
@@ -460,7 +460,9 @@ class aList extends oxUBase
 
         // making safe for output
         $sDescription = getStr()->cleanStr($sDescription);
-        return trim( strip_tags( getStr()->html_entity_decode( $sDescription ) ) );
+        $sDescription = strip_tags( getStr()->html_entity_decode( $sDescription ) );
+        $sDescription = getStr()->htmlspecialchars( $sDescription );
+        return trim( $sDescription );
     }
 
     /**

@@ -164,11 +164,12 @@ class oxModule extends oxSuperCfg
      */
     public function loadUnregisteredModule( $sModuleId )
     {
+        $oConfig = $this->getConfig();
         $aModules = $this->getAllModules();
 
         $sModuleDir = $this->getModulePath( $sModuleId );
 
-        $sFilePath = $this->getConfig()->getModulesDir() . $sModuleDir ;
+        $sFilePath = $oConfig->getModulesDir() . $sModuleDir ;
         if ( file_exists( $sFilePath ) && is_readable( $sFilePath ) ) {
             $this->_aModule = array();
             $this->_aModule['id'] = $sModuleId;
@@ -177,7 +178,7 @@ class oxModule extends oxSuperCfg
             $this->_blLegacy      = true;
             $this->_blRegistered  = false;
             $this->_blMetadata    = false;
-            $this->_blFile        = !is_dir($this->getConfig()->getModulesDir() . $sModuleId);
+            $this->_blFile        = !is_dir($oConfig->getModulesDir() . $sModuleId);
             $this->_aModule['active'] = $this->isActive();
             return true;
         }
@@ -439,6 +440,7 @@ class oxModule extends oxSuperCfg
      */
     public function deactivate($sModuleId = null)
     {
+        $oConfig = $this->getConfig();
         if (!isset($sModuleId)) {
             $sModuleId = $this->getId();
         }
@@ -449,9 +451,10 @@ class oxModule extends oxSuperCfg
                 $aDisabledModules = array();
             }
             $aModules = array_merge($aDisabledModules, array($sModuleId));
+            $aModules = array_unique($aModules);
 
-            $this->getConfig()->saveShopConfVar('arr', 'aDisabledModules', $aModules);
-            $this->getConfig()->setConfigParam('aDisabledModules', $aModules);
+            $oConfig->saveShopConfVar('arr', 'aDisabledModules', $aModules);
+            $oConfig->setConfigParam('aDisabledModules', $aModules);
 
             //deactivate oxblocks too
             $this->_changeBlockStatus( $sModuleId );
@@ -758,14 +761,13 @@ class oxModule extends oxSuperCfg
         if (is_null($sModuleId)) {
             $sModuleId = $this->getId();
         }
-
-        $sShopId = $this->getConfig()->getShopId();
+        $oConfig = $this->getConfig();
+        $sShopId = $oConfig->getShopId();
         $oDb     = oxDb::getDb();
 
         if ( is_array($aModuleSettings) ) {
 
-            foreach ( $aModuleSettings as $aValue ) {
-                $oConfig = $this->getConfig();
+            foreach ( $aModuleSettings as $aValue ) {                
                 $sOxId = oxUtilsObject::getInstance()->generateUId();
 
                 $sModule     = 'module:'.$sModuleId;

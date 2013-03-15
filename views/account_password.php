@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: account_password.php 38456 2011-08-26 13:53:41Z arunas.paskevicius $
+ * @version   SVN: $Id: account_password.php 44707 2012-05-09 11:24:40Z linas.kukulskis $
  */
 
 
@@ -81,9 +81,9 @@ class Account_Password extends Account
             return;
         }
 
-        $sOldPass  = oxConfig::getParameter( 'password_old' );
-        $sNewPass  = oxConfig::getParameter( 'password_new' );
-        $sConfPass = oxConfig::getParameter( 'password_new_confirm' );
+        $sOldPass  = oxConfig::getParameter( 'password_old', true );
+        $sNewPass  = oxConfig::getParameter( 'password_new', true );
+        $sConfPass = oxConfig::getParameter( 'password_new_confirm', true );
 
         if ( ( $oExcp = $oUser->checkPassword( $sNewPass, $sConfPass, true ) ) ) {
             switch ( $oExcp->getMessage() ) {
