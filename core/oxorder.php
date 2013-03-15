@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 45715 2012-05-29 14:41:51Z vaidas.matulevicius $
+ * @version   SVN: $Id: oxorder.php 47210 2012-07-11 14:47:07Z arturas.sevcenko $
  */
 
 /**
@@ -520,6 +520,16 @@ class oxOrder extends oxBase
         // deleting remark info only when order is finished
         oxSession::deleteVar( 'ordrem' );
         oxSession::deleteVar( 'stsprotection' );
+
+        $myConfig = $this->getConfig();
+        // order number setter in finalize if cfq opt true
+        if ( !$this->oxorder__oxordernr->value ) {
+            if ( $myConfig->getConfigParam( 'blStoreOrderNrInFinalize' ) ) {
+                $this->_setNumber();
+            }
+        } else {
+            oxNew( 'oxCounter' )->update( $this->_getCounterIdent(), $this->oxorder__oxordernr->value );
+        }
         
         //#4005: Order creation time is not updated when order processing is complete
         if ( !$blRecalculatingOrder ) {
@@ -1214,12 +1224,13 @@ class oxOrder extends oxBase
         if ( ( $blInsert = parent::_insert() ) ) {
             // setting order number
             if ( !$this->oxorder__oxordernr->value ) {
-               $blInsert = $this->_setNumber();
+                if ( !$myConfig->getConfigParam( 'blStoreOrderNrInFinalize' ) ) {
+                    $blInsert = $this->_setNumber();
+                }
             } else {
                 oxNew( 'oxCounter' )->update( $this->_getCounterIdent(), $this->oxorder__oxordernr->value );
             }
         }
-
         return $blInsert;
     }
 

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxmodulelist.php 45357 2012-05-18 05:46:24Z vilma $
+ * @version   SVN: $Id: oxmodulelist.php 47344 2012-07-13 15:18:41Z rimvydas.paskevicius $
  */
 
 /**
@@ -113,6 +113,26 @@ class oxModuleList extends oxSuperCfg
     }
 
     /**
+     * Get all modules files paths
+     *
+     * @return array
+     */
+    public function getModuleFiles()
+    {
+        return $this->getConfig()->getConfigParam('aModuleFiles');
+    }
+
+    /**
+     * Get all modules templates paths
+     *
+     * @return array
+     */
+    public function getModuleTemplates()
+    {
+        return $this->getConfig()->getConfigParam('aModuleTemplates');
+    }
+
+    /**
      * Returns disabled module classes with path using config aModules
      * and aModulePaths.
      * aModules has all extended classes
@@ -167,6 +187,15 @@ class oxModuleList extends oxSuperCfg
 
         // removing from aLegacyModules array
         $this->_removeFromLegacyModulesArray( $aDeletedExtIds );
+
+        // removing from aModulePaths array
+        $this->_removeFromModulesPathsArray( $aDeletedExtIds );
+
+        // removing from aModuleFiles array
+        $this->_removeFromModulesFilesArray( $aDeletedExtIds );
+
+        // removing from aModuleTemplates array
+        $this->_removeFromModulesTemplatesArray( $aDeletedExtIds );
 
         //removing from config tables and templates blocks table
         $this->_removeFromDatabase( $aDeletedExtIds );
@@ -326,6 +355,66 @@ class oxModuleList extends oxSuperCfg
         }
 
         $this->getConfig()->saveShopConfVar( 'aarr', 'aLegacyModules', $aLegacyExt );
+    }
+
+    /**
+     * Removes extension from modules paths array
+     *
+     * @param array $aDeletedModule deleted extensions ID's
+     *
+     * @return null
+     */
+    protected function _removeFromModulesPathsArray( $aDeletedModule )
+    {
+        $aModulePaths = $this->getModulePaths();
+
+        foreach ( $aDeletedModule as $sDeletedModuleId ) {
+            if ( isset($aModulePaths[$sDeletedModuleId]) ) {
+                unset( $aModulePaths[$sDeletedModuleId] );
+            }
+        }
+
+        $this->getConfig()->saveShopConfVar( 'aarr', 'aModulePaths', $aModulePaths );
+    }
+
+    /**
+     * Removes extension from modules files array
+     *
+     * @param array $aDeletedModule deleted extensions ID's
+     *
+     * @return null
+     */
+    protected function _removeFromModulesFilesArray( $aDeletedModule )
+    {
+        $aModuleFiles = $this->getModuleFiles();
+
+        foreach ( $aDeletedModule as $sDeletedModuleId ) {
+            if ( isset($aModuleFiles[$sDeletedModuleId]) ) {
+                unset( $aModuleFiles[$sDeletedModuleId] );
+            }
+        }
+
+        $this->getConfig()->saveShopConfVar( 'aarr', 'aModuleFiles', $aModuleFiles );
+    }
+
+    /**
+     * Removes extension from legacy modules templates array
+     *
+     * @param array $aDeletedModule deleted extensions ID's
+     *
+     * @return null
+     */
+    protected function _removeFromModulesTemplatesArray( $aDeletedModule )
+    {
+        $aModuleTemplates = $this->getModuleTemplates();
+
+        foreach ( $aDeletedModule as $sDeletedModuleId ) {
+            if ( isset($aModuleTemplates[$sDeletedModuleId]) ) {
+                unset( $aModuleTemplates[$sDeletedModuleId] );
+            }
+        }
+
+        $this->getConfig()->saveShopConfVar( 'aarr', 'aModuleTemplates', $aModuleTemplates );
     }
 
     /**

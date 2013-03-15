@@ -38,10 +38,7 @@
             </b>
             </td>
             <td class="edittext">
-                <form action="http://admin.oxid-esales.com/CE/onlinecheck.php" method=post target=_blank>
-                <input type="hidden" name="myversion"  value="[{$edit->oxshops__oxversion->value }]">
-                <input type="submit" class="edittext" name="save" value="&nbsp;&nbsp;&nbsp;&nbsp;[{ oxmultilang ident="SHOP_LICENSE_ONLINECHECK" }]&nbsp;&nbsp;&nbsp;&nbsp;" [{ $readonly }]>
-              </form>
+              <span>[{$aCurVersionInfo}]</span>
             </td>
           </tr>
 

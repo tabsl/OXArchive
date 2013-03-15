@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 43753 2012-04-11 08:34:18Z linas.kukulskis $
+ * @version   SVN: $Id: oxuser.php 47153 2012-07-11 06:12:14Z arturas.sevcenko $
  */
 
 /**
@@ -1077,7 +1077,7 @@ class oxUser extends oxBase
 
 
         // throwing first validation error
-        if ( $oError = oxInputValidator::getInstance()->getFirstValidationError( $this->getId() ) ) {
+        if ( $oError = oxInputValidator::getInstance()->getFirstValidationError() ) {
             throw $oError;
         }
     }
@@ -1255,13 +1255,8 @@ class oxUser extends oxBase
 
         $sUserSelect = is_numeric( $sUser ) ? "oxuser.oxcustnr = {$sUser} " : "oxuser.oxusername = " . $oDb->quote( $sUser );
         $sPassSelect = " oxuser.oxpassword = MD5( CONCAT( ".$oDb->quote( $sPassword ).", UNHEX( oxuser.oxpasssalt ) ) ) ";
-        $sShopSelect = "";
-
-
-        // admin view: can only login with higher than 'user' rights
-        if ( $blAdmin ) {
-            $sShopSelect = " and ( oxrights != 'user' ) ";
-        }
+        
+        $sShopSelect = $this->_getShopSelect( $myConfig, $sShopID, $blAdmin );
 
         $blStagingMode = false;
         $blDemoMode = false;
@@ -1285,6 +1280,25 @@ class oxUser extends oxBase
     }
 
     /**
+     * Returns shopselect part of login query sql
+     * 
+     * @param object $myConfig shop config
+     * @param string $sShopID  shopid
+     * @param bool   $blAdmin  admin/non admin mode
+     * 
+     * @return string
+     */
+    protected function _getShopSelect( $myConfig, $sShopID, $blAdmin )
+    {
+        $sShopSelect = "";
+        // admin view: can only login with higher than 'user' rights
+        if ( $blAdmin ) {
+            $sShopSelect = " and ( oxrights != 'user' ) ";
+        }
+        
+        return $sShopSelect;
+    }
+    /**
      * Load saved user basket from the database after he logs in
      *
      * @deprecated move this functionality in MAJOR version to function which calls login method (e.g. component or so)
@@ -1304,6 +1318,7 @@ class oxUser extends oxBase
             }
         }
     }
+    
 
     /**
      * Performs user login by username and password. Fetches user data from DB.

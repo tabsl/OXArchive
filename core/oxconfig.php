@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 45511 2012-05-21 15:35:24Z alfonsas $
+ * @version   SVN: $Id: oxconfig.php 46714 2012-06-27 09:02:56Z arturas.sevcenko $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -528,7 +528,7 @@ class oxConfig extends oxSuperCfg
     }
 
     /**
-     * Loads vars from config file
+     * Loads vars from default config file
      *
      * @return null;
      */
@@ -544,8 +544,23 @@ class oxConfig extends oxSuperCfg
         $this->sShopURL     = $oFileUtils->normalizeDir($this->sShopURL);
         $this->sSSLShopURL  = $oFileUtils->normalizeDir($this->sSSLShopURL);
         $this->sAdminSSLURL = $oFileUtils->normalizeDir($this->sAdminSSLURL);
+        
+        $this->_loadCustomConfig();
     }
 
+    /**
+     * Loads vars from custom config file
+     *
+     * @return null;
+     */
+    protected function _loadCustomConfig()
+    {
+        $sCustConfig = getShopBasePath().'/cust_config.inc.php';
+        if ( is_readable( $sCustConfig ) ) {
+            include $sCustConfig;
+        }
+    }
+    
     /**
      * Load config values from DB
      *

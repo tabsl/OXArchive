@@ -26,7 +26,7 @@
                     elCell.innerHTML = '<div>'+oData.toString()+'</div>';
                 }
                 if ( oData = oRecord.getData() ) {
-                    if ( oData._3 == "0" ) {
+                    if ( oData._4 == "0" ) {
                         $D.addClass( elCell, "oxid-aoc-primary-cat" );
                     } else {
                         $D.removeClass( elCell, "oxid-aoc-primary-cat" );
@@ -67,8 +67,8 @@
         YAHOO.oxid.container2.subscribe( "rowSelectEvent", function( oParam )
         {
             if ( oData = oParam.record.getData() ) {
-                if ( oData._3 ) {
-                    $('defcat').value = oData._4;
+                if ( oData._4 ) {
+                    $('defcat').value = oData._5;
                     YAHOO.oxid.container2.oActiveBtn.set("disabled", false);
                 }
             }

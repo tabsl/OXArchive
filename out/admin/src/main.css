@@ -464,3 +464,12 @@ dl.moduleDesc a:hover {
 span.new{
     padding: 1px 5px;
 }
+
+a#linkToUpdate {
+    text-decoration:underline;	
+}
+
+a#linkToUpdate:hover {
+    color: #787878;
+} 
+

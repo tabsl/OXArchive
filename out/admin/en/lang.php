@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 46601 2012-06-22 13:58:02Z juergen.busch $
+ * @version   SVN: $Id: lang.php 47361 2012-07-16 08:43:03Z juergen.busch $
  */
 
 /*
@@ -449,6 +449,9 @@ $aLang = array(
 'ARTICLE_MAIN_DISTEAN'                                     => 'Man. EAN',
 'ARTICLE_MAIN_MPN'                                         => 'MPN',
 'ARTICLE_MAIN_MANUFACTURERID'                              => 'Manufacturer',
+'HELP_ARTICLE_MAIN_PRICE' 								   => 'This price is inherited to product\'s variants.'.
+                                                              '<ul><li>Depending on the shop settings net price or gross price is input/shown.</li>'.
+                                                              '<li>Gross price is always shown in parentheses.</li></ul>',
 'ARTICLE_OVERVIEW_ARTMADEON'                               => 'Product created on',
 'ARTICLE_OVERVIEW_LASTCHANGE'                              => 'Last Modification on',
 'ARTICLE_OVERVIEW_SALEPOSITION'                            => 'Position Sales Rating ',
@@ -901,7 +904,9 @@ $aLang = array(
 'LANGUAGE_LANGUAGEID'                                      => 'Language ID',
 'LANGUAGE_BASEURL'                                         => 'Base URL',
 'LANGUAGE_BASESSLURL'                                      => 'Base SSL URL',
-'LANGUAGE_NOTRANSLATIONS_WARNING'                          => 'Attention: No translations files were found in templates dir for selected language!',
+'LANGUAGE_FRONTEND_NOTRANSLATIONS_WARNING'                 => 'Attention: No language files were found in selected theme or /out dir for selected language!',
+'LANGUAGE_BACKEND_NOTRANSLATIONS_WARNING'                  => 'Attention: No language files were found in /admin dir for selected language!',
+'LANGUAGE_NOTRANSLATIONS_WARNING'                          => 'Attention: No language files were found in templates dir for selected language!',
 'LANGUAGE_ERROR_ADDING_MULTILANG_FIELDS'                   => 'Attention: Error occured while adding new multilanguage fields to tables!',
 'LANGUAGE_ERROR_RESETING_MULTILANG_FIELDS'                 => 'Attention: Error occured while reseting multilanguage fields after language delete!',
 'LANGUAGE_DELETINGMAINLANG_WARNING'                        => 'Attention: you can\'t delete main language (with ID = 0)!',
@@ -1265,7 +1270,7 @@ $aLang = array(
 'SHOP_CONFIG_ALLOWUNEVENAMOUNTS'                           => 'Allow fraction Quantities (e.g. 1.5)',
 'SHOP_CONFIG_BIDIRECTCROSS'                                => 'Enable bidirectional Crosselling',
 'SHOP_CONFIG_CONFIRMAGB'                                   => 'Users have to Confirm General Terms and Conditions during Check-Out',
-'SHOP_CONFIG_SHOWORDERBUTTONONTHETOP'                      => 'Show an additional "Purchase" Button at the Top in 4th Order Step (By default "Purchase" Button is shown only on the Bottom of the Page).',
+'SHOP_CONFIG_SHOWORDERBUTTONONTHETOP'                      => 'Show an additional "Order now" button at the top in 4th order step (by default "Order now" button is shown only on the bottom of the page).',
 'SHOP_CONFIG_CALCULATEVATFORDELIVERY'                      => 'Display shipping costs as net price and VAT (instead of gross) in shopping cart and invoice',
 'SHOP_CONFIG_CALCDELVATONTOP'                              => 'Enter Shipping Costs as net Price (plus VAT)',
 'SHOP_CONFIG_CALCULATEVATFORWRAPPING'                      => 'Display VAT contained in Gift Wrapping in Shopping Cart and Invoice',

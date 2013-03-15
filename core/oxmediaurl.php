@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxmediaurl.php 46509 2012-06-21 09:38:37Z arturas.sevcenko $
+ * @version   SVN: $Id: oxmediaurl.php 46874 2012-07-02 14:31:37Z arturas.sevcenko $
  */
 
 /**
@@ -54,7 +54,7 @@ class oxMediaUrl extends oxI18n
     {
         $sUrl = $this->oxmediaurls__oxurl->value;
         //youtube link
-        if (strpos($sUrl, 'youtube.com')) {
+        if (  strpos( $sUrl, 'youtube.com' ) || strpos( $sUrl, 'youtu.be' ) ) {
             return $this->_getYoutubeHtml();
         }
 
@@ -128,16 +128,17 @@ class oxMediaUrl extends oxI18n
     {
         $sUrl = $this->oxmediaurls__oxurl->value;
         $sDesc = $this->oxmediaurls__oxdesc->value;
+        
+        if ( strpos( $sUrl, 'youtube.com' ) ) {
+            $sYoutubeUrl = str_replace( "www.youtube.com/watch?v=", "www.youtube.com/embed/", $sUrl );
+            $sYoutubeUrl = preg_replace( '/&amp;/', '?', $sYoutubeUrl, 1 );
+        }
+        if ( strpos( $sUrl, 'youtu.be' ) ) {
+            $sYoutubeUrl = str_replace( "youtu.be/", "www.youtube.com/embed/", $sUrl );
+        }
 
-        //http://www.youtube.com/watch?v=ZN239G6aJZo
-        //to
-        //<iframe width="420" height="315" src="http://www.youtube.com/embed/ZN239G6aJZo" frameborder="0" allowfullscreen></iframe>
-        
-        $sYoutubeUrl = str_replace("www.youtube.com/watch?v=", "www.youtube.com/embed/", $sUrl);
-        $sYoutubeUrl = preg_replace('/&amp;/', '?', $sYoutubeUrl, 1);
-        
         $sYoutubeTemplate = '%s<br><iframe width="425" height="344" src="%s" frameborder="0" allowfullscreen></iframe>';
-        $sYoutubeHtml = sprintf($sYoutubeTemplate, $sDesc, $sYoutubeUrl, $sYoutubeUrl);
+        $sYoutubeHtml = sprintf( $sYoutubeTemplate, $sDesc, $sYoutubeUrl, $sYoutubeUrl );
 
         return $sYoutubeHtml;
     }

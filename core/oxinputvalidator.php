@@ -20,7 +20,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxinputvalidator.php 43732 2012-04-11 07:39:52Z linas.kukulskis $
+ * @version   SVN: $Id: oxinputvalidator.php 46723 2012-06-27 09:50:32Z arturas.sevcenko $
  */
 
 /**
@@ -490,9 +490,9 @@ class oxInputValidator extends oxSuperCfg
     }
 
     /**
-     * Returns true if input validation for current field and rule reported an error
+     * Returns error array if input validation for current field and rule reported an error
      *
-     * @return bool
+     * @return array
      */
     public function getFieldValidationErrors()
     {

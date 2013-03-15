@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 46600 2012-06-22 13:57:37Z juergen.busch $
+ * @version   SVN: $Id: lang.php 47360 2012-07-16 08:42:36Z juergen.busch $
  */
 
 $sLangName  = 'Deutsch';
@@ -324,7 +324,7 @@ $aLang = array(
 'GENERAL_STANDARD'                                         => 'Standard',
 'GENERAL_STARTLISTING'                                     => 'Ausgabe der Liste starten',
 'GENERAL_STATE'                                            => 'Bundesland',
-'GENERAL_STREET'                                           => 'Staße',
+'GENERAL_STREET'                                           => 'Straße',
 'GENERAL_STREETNUM'                                        => 'Straße, Nr.',
 'GENERAL_SUM'                                              => 'Anzahl',
 'GENERAL_SUMTOTAL'                                         => 'Summe total',
@@ -452,6 +452,9 @@ $aLang = array(
 'ARTICLE_MAIN_DISTEAN'                                     => 'Hersteller EAN',
 'ARTICLE_MAIN_MPN'                                         => 'Hersteller-Artikelnummer (MPN)',
 'ARTICLE_MAIN_MANUFACTURERID'                              => 'Hersteller',
+'HELP_ARTICLE_MAIN_PRICE' 								   => 'Dieser Preis wird an Varianten des Artikels vererbt.'.
+                                                              '<ul><li>Abhängig von den Shopeinstellungen wird der Netto- oder der Bruttopreis eingegeben/angezeigt.</li>'.
+                                                              '<li>In Klammern steht immer der Bruttopreis.</li></ul>',
 'ARTICLE_OVERVIEW_ARTMADEON'                               => 'Art. erstellt am',
 'ARTICLE_OVERVIEW_LASTCHANGE'                              => 'Letzte Änderung am',
 'ARTICLE_OVERVIEW_SALEPOSITION'                            => 'Verkaufsrang Position ',
@@ -904,6 +907,8 @@ $aLang = array(
 'LANGUAGE_LANGUAGEID'                                      => 'Sprach-ID',
 'LANGUAGE_BASEURL'                                         => 'Basis URL',
 'LANGUAGE_BASESSLURL'                                      => 'Basis SSL URL',
+'LANGUAGE_FRONTEND_NOTRANSLATIONS_WARNING'                 => 'Warnung: Es wurden keine Sprachdateien zum Theme oder im Verzeichnis /out für die ausgewählte Sprache gefunden!',
+'LANGUAGE_BACKEND_NOTRANSLATIONS_WARNING'                  => 'Warnung: Es wurden keine Sprachdateien im Verzeichnis /admin für die ausgewählte Sprache gefunden!',
 'LANGUAGE_NOTRANSLATIONS_WARNING'                          => 'Warnung: Es wurden keine Sprachdateien für die ausgewählte Sprache gefunden!',
 'LANGUAGE_ERROR_ADDING_MULTILANG_FIELDS'                   => 'Warnung: Beim anlegen der neuen Datenbankfelder ist ein Fehler aufgetreten',
 'LANGUAGE_ERROR_RESETING_MULTILANG_FIELDS'                 => 'Achtung: Während des Löschens einer Sprache ist beim Zurücksetzens der Multisprachen-Felder ein Fehler aufgetreten!',
@@ -1268,7 +1273,7 @@ $aLang = array(
 'SHOP_CONFIG_ALLOWUNEVENAMOUNTS'                           => 'Nicht ganzzahlige Eingaben bei Artikelmengen erlauben (z.B. 1,5)',
 'SHOP_CONFIG_BIDIRECTCROSS'                                => 'Bidirektionales Crossselling aktivieren',
 'SHOP_CONFIG_CONFIRMAGB'                                   => 'Kunden müssen die AGB bestätigen, um bestellen zu können',
-'SHOP_CONFIG_SHOWORDERBUTTONONTHETOP'                      => 'Im 4. Bestellschritt einen zusätzlichen "Kostenpflichtig bestellen" Button oben anzeigen (Wenn die Einstellung nicht aktiv ist, wird nur der "Kostenpflichtig bestellen" Button weiter unten angezeigt).',
+'SHOP_CONFIG_SHOWORDERBUTTONONTHETOP'                      => 'Im 4. Bestellschritt einen zusätzlichen "Zahlungspflichtig bestellen" Button oben anzeigen (wenn die Einstellung nicht aktiv ist, wird nur der "Zahlungspflichtig bestellen" Button weiter unten angezeigt).',
 'SHOP_CONFIG_CALCULATEVATFORDELIVERY'                      => 'Im Warenkorb und in der Rechnung die Versandkosten als Nettobetrag und Mehrwertsteuer anstatt als Bruttobetrag anzeigen',
 'SHOP_CONFIG_CALCDELVATONTOP'                              => 'Versandkosten als Nettopreise eingeben (zuzüglich MwSt.)',
 'SHOP_CONFIG_CALCULATEVATFORWRAPPING'                      => 'Die in den Geschenkverpackungskosten enthaltene Mehrwertsteuer im Warenkorb und in der Rechnung anzeigen',

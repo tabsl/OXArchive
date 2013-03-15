@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_stock.php 45746 2012-05-30 13:38:39Z edvardas.gineika $
+ * @version   SVN: $Id: article_stock.php 46859 2012-07-02 12:33:24Z edvardas.gineika $
  */
 
 /**
@@ -162,8 +162,8 @@ class Article_Stock extends oxAdminDetails
             $aParams[$key] = str_replace( ",", ".", $sParam );
         }
 
-            $sShopID = $myConfig->getShopID();
-            $aParams['oxprice2article__oxshopid'] = $sShopID;
+        $sShopID = $myConfig->getShopID();
+        $aParams['oxprice2article__oxshopid'] = $sShopID;
 
         if ( isset( $sOXID ) ) {
             $aParams['oxprice2article__oxid'] = $sOXID;

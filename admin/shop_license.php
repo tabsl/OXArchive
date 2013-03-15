@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_license.php 44048 2012-04-19 06:12:57Z linas.kukulskis $
+ * @version   SVN: $Id: shop_license.php 47523 2012-07-19 13:11:01Z arturas.sevcenko $
  */
 
 /**
@@ -36,6 +36,17 @@ class Shop_License extends Shop_Config
      */
     protected $_sThisTemplate = "shop_license.tpl";
 
+    
+    /**
+     * Getting current shop version links for editions
+     * @var array 
+     */
+    protected $_aVersionCheckLinks = array(
+            "EE" => "http://admin.oxid-esales.com/EE/onlinecheck.php",
+            "PE" => "http://admin.oxid-esales.com/PE/onlinecheck.php",
+            "CE" => "http://admin.oxid-esales.com/CE/onlinecheck.php"
+    );
+    
 
     /**
      * Executes parent method parent::render(), creates oxshop object, passes it's
@@ -63,6 +74,7 @@ class Shop_License extends Shop_Config
         $this->_aViewData["version"] = $myConfig->getVersion();
 
 
+            $this->_aViewData['aCurVersionInfo'] = $this->_fetchCurVersionInfo( $this->_aVersionCheckLinks["CE"] );
 
         if (!$this->_canUpdate()) {
             $this->_aViewData['readonly'] = true;
@@ -91,5 +103,34 @@ class Shop_License extends Shop_Config
         }
 
         return true;
+    }
+    
+    /**
+     * Fetch current shop version information from url
+     * 
+     * @param string $sUrl current version info fetching url by edition
+     * 
+     * @return string
+     */
+    protected function _fetchCurVersionInfo( $sUrl )
+    {
+        $aParams = array("myversion" => $this->getConfig()->getVersion() );
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $aParams);
+        curl_setopt($ch, CURLOPT_URL, $sUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $sOutput = curl_exec($ch);
+        curl_close($ch);
+        
+        $sOutput = strip_tags($sOutput, "<br>, <b>");
+        $aResult = explode("<br>", $sOutput);
+        if ( strstr( $aResult[5], "update" ) ) {
+            $aResult[5] = "<a id='linkToUpdate' href='http://wiki.oxidforge.org/Category:Downloads' target='_blank'>" . $aResult[5] . "</a>";
+        }
+        $sOutput = implode("<br>", $aResult);
+
+        return $sOutput;
     }
 }

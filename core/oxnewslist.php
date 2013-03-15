@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxnewslist.php 43740 2012-04-11 07:47:56Z linas.kukulskis $
+ * @version   SVN: $Id: oxnewslist.php 46725 2012-06-27 09:55:01Z arturas.sevcenko $
  */
 
 /**
@@ -72,6 +72,7 @@ class oxNewslist extends oxList
         }
 
         $sSelect .= " and ".$oBaseObject->getSqlActiveSnippet();
+        $sSelect .= " and $sNewsViewName.oxshortdesc <> '' ";
         $sSelect .= " group by $sNewsViewName.oxid order by $sNewsViewName.oxdate desc ";
 
 
