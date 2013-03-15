@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutils.php 49880 2012-09-28 12:37:10Z tomas $
+ * @version   SVN: $Id: oxutils.php 51662 2012-11-12 09:33:47Z aurimas.gladutis $
  */
 
 /**
@@ -262,6 +262,33 @@ class oxUtils extends oxSuperCfg
         $fRet = str_replace( array(" ","."), "", $fRet);
 
         $fRet = str_replace( ",", ".", $fRet);
+        return (float) $fRet;
+    }
+
+    /**
+     * Returns formatted float, according to formatting standards.
+     *
+     * @param string $sValue Formatted price
+     *
+     * @return float
+     */
+    public function string2Float( $sValue)
+    {
+        $fRet = str_replace( " ", "", $sValue);
+        $iCommaPos = strpos( $fRet, ",");
+        $iDotPos = strpos( $fRet, ".");
+        if (!$iDotPos xor !$iCommaPos) {
+            if (substr_count( $fRet, ",") > 1 || substr_count( $fRet, ".") > 1) {
+                $fRet = str_replace( array(",","."), "", $fRet);
+            } else {
+                $fRet = str_replace( ",", ".", $fRet);
+            }
+        } else if ( $iDotPos < $iCommaPos ) {
+            $fRet = str_replace( ".", "", $fRet);
+            $fRet = str_replace( ",", ".", $fRet);
+        }
+        // remove thousands
+        $fRet = str_replace( array(" ",","), "", $fRet);
         return (float) $fRet;
     }
 

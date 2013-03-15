@@ -58,7 +58,7 @@ function smarty_block_oxifcontent( $params, $content, &$smarty, &$repeat)
                 $oContent = $sOxid ? $aContentCache[$sOxid] : $aContentCache[$sIdent];
             } else {
                 $oContent = oxNew( "oxcontent" );
-                $blLoaded = $sOxid ? $oContent->load( $sOxid ) : ( $sIdent === "oxcredits" ? $oContent->loadCredits( $sIdent ) : $oContent->loadbyIdent( $sIdent ) );
+                $blLoaded = $sOxid ? $oContent->load( $sOxid ) : ( $oContent->loadbyIdent( $sIdent ) );
                 if ( $blLoaded ) {
                     $aContentCache[$oContent->getId()] = $aContentCache[$oContent->oxcontents__oxloadid->value] = $oContent;
                 } else {
@@ -72,7 +72,7 @@ function smarty_block_oxifcontent( $params, $content, &$smarty, &$repeat)
             }
 
             $blLoaded = false;
-            if ( $oContent && $oContent->oxcontents__oxactive->value || $sIdent === "oxcredits" ) {
+            if ( $oContent && $oContent->oxcontents__oxactive->value ) {
                 $smarty->assign($sObject, $oContent);
                 $blLoaded = true;
             }

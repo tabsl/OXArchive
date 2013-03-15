@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_config.php 45813 2012-06-04 07:45:24Z vaidas.matulevicius $
+ * @version   SVN: $Id: shop_config.php 51662 2012-11-12 09:33:47Z aurimas.gladutis $
  */
 
 /**
@@ -40,6 +40,7 @@ class Shop_Config extends oxAdminDetails
         "arr"    => 'confarrs',
         "aarr"   => 'confaarrs',
         "select" => 'confselects',
+        "num"    => 'confnum',
     );
 
     /**
@@ -85,7 +86,7 @@ class Shop_Config extends oxAdminDetails
 
         }
 
-        $aDbVariables = $this->_loadConfVars($soxId, $this->_getModuleForConfigVars());
+        $aDbVariables = $this->loadConfVars($soxId, $this->_getModuleForConfigVars());
         $aConfVars = $aDbVariables['vars'];
         $aConfVars['str']['sVersion'] = $myConfig->getConfigParam( 'sVersion' );
 
@@ -172,6 +173,24 @@ class Shop_Config extends oxAdminDetails
             oxUtils::getInstance()->rebuildCache();
         }
     }
+    /**
+     * Load and parse config vars from db.
+     * Return value is a map:
+     *      'vars'        => config variable values as array[type][name] = value
+     *      'constraints' => constraints list as array[name] = constraint
+     *      'grouping'    => grouping info as array[name] = grouping
+     *
+     * @param string $sShopId Shop id
+     * @param string $sModule module to load (empty string is for base values)
+     *
+     * @deprecated since v5.0.0 (2012-10-19); Use public loadConfVars().
+     *
+     * @return array
+     */
+    public function _loadConfVars($sShopId, $sModule)
+    {
+        return $this->loadConfVars($sShopId, $sModule);
+    }
 
     /**
      * Load and parse config vars from db.
@@ -185,7 +204,7 @@ class Shop_Config extends oxAdminDetails
      *
      * @return array
      */
-    public function _loadConfVars($sShopId, $sModule)
+    public function loadConfVars($sShopId, $sModule)
     {
         $myConfig  = $this->getConfig();
         $aConfVars = array(
@@ -194,6 +213,7 @@ class Shop_Config extends oxAdminDetails
             "arr"     => array(),
             "aarr"    => array(),
             "select"  => array(),
+            "num"     => array(),
         );
         $aVarConstraints = array();
         $aGrouping       = array();
@@ -293,10 +313,11 @@ class Shop_Config extends oxAdminDetails
             case "str":
             case "select":
             case "int":
+            case "num":
+                $mData = $oStr->htmlentities( $sValue );
                 if (in_array($sName, $this->_aParseFloat)) {
                     $mData = str_replace( ',', '.', $mData );
                 }
-                $mData = $oStr->htmlentities( $sValue );
                 break;
 
             case "arr":
@@ -329,24 +350,21 @@ class Shop_Config extends oxAdminDetails
      */
     public function _serializeConfVar($sType, $sName, $mValue)
     {
-        $sData = '';
+        $sData = $mValue;
 
         switch ($sType) {
             case "bool":
-                $sData = $mValue;
                 break;
 
             case "str":
             case "select":
             case "int":
                 if (in_array($sName, $this->_aParseFloat)) {
-                    $mData = str_replace( ',', '.', $mData );
+                    $sData = str_replace( ',', '.', $sData );
                 }
-                $sData = $mValue;
                 break;
 
             case "arr":
-                $sData = $mValue;
                 if ( !is_array( $mValue ) ) {
                     $sData = $this->_multilineToArray( $mValue );
                 }

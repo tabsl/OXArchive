@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: account_password.php 44707 2012-05-09 11:24:40Z linas.kukulskis $
+ * @version   SVN: $Id: account_password.php 53142 2012-12-19 13:28:11Z aurimas.gladutis $
  */
 
 
@@ -103,6 +103,8 @@ class Account_Password extends Account
         $oUser->setPassword( $sNewPass );
         if ( $oUser->save() ) {
             $this->_blPasswordChanged = true;
+            // deleting user autologin cookies.
+            oxUtilsServer::getInstance()->deleteUserCookie( $this->getConfig()->getShopId() );
         }
     }
 

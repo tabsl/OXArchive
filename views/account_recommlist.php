@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: account_recommlist.php 35786 2011-06-03 07:59:07Z linas.kukulskis $
+ * @version   SVN: $Id: account_recommlist.php 51830 2012-11-14 15:55:09Z aurimas.gladutis $
  */
 
 /**
@@ -157,7 +157,13 @@ class Account_Recommlist extends Account
                 $oItemList = $oRecommList->getArticles();
 
                 if ( $oItemList->count() ) {
-                    foreach ( $oItemList as $oItem ) {
+                    foreach ( $oItemList as $key => $oItem ) {
+                        if ( !$oItem->isVisible() ) {
+                            $oRecommList->removeArticle( $oItem->getId() );
+                            $oItemList->offsetUnset( $key );
+                            continue;
+                        }
+
                         $oItem->text = $oRecommList->getArtDescription( $oItem->getId() );
                     }
                     $this->_oActRecommListArticles = $oItemList;

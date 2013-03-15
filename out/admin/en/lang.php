@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2013
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 49797 2012-09-26 12:36:58Z juergen.busch $
+ * @version   SVN: $Id: lang.php 53759 2013-01-14 08:16:21Z aurimas.gladutis $
  */
 
 /*
@@ -401,7 +401,7 @@ $aLang = array(
 'ARTICLE_EXTEND_ISCONFIGURABLE'                            => 'Product can be customized',
 'ARTICLE_EXTEND_NONMATERIAL'                               => 'Intangible Product',
 'ARTICLE_EXTEND_FREESHIPPING'                              => 'Free Shipping',
-'ARTICLE_EXTEND_BLFIXEDPRICE'                              => 'No Promotions<br>(Price Alert)',
+'ARTICLE_EXTEND_BLFIXEDPRICE'                              => 'Deactivate Price Alert',
 'ARTICLE_EXTEND_ARTINCATS'                                 => 'Product is in these Categories',
 'ARTICLE_EXTEND_DEFAULT'                                   => 'Set as Main Category',
 'ARTICLE_EXTEND_UPDATEMEDIA'                               => 'Update media',
@@ -422,6 +422,7 @@ $aLang = array(
 'ARTICLE_LIST_ALLPRODUCTS'                                 => 'all Products',
 'ARTICLE_LIST_MENUSUBITEM'                                 => 'Product',
 'ARTICLE_MAIN_ERRORSAVINGARTICLE'                          => 'Attention: Product already exists!',
+'ARTICLE_MAIN_PARENTNOTBUYABLE'                            => 'Attention: Parent Product can not be purchased.',
 'ARTICLE_MAIN_ALDPRICE'                                    => 'Alt. Prices',
 'ARTICLE_MAIN_NONE'                                        => '-- none --',
 'ARTICLE_MAIN_GOTO'                                        => 'Go to',
@@ -803,13 +804,13 @@ $aLang = array(
 'EDITOR_PLAINTEXT_HINT'                                    => '<b>Note:</b> If you need to preserve text line breaks (e.g. plaintext e-mails), please use tab "html CODE" instead of "Design".',
 'ALTERNATIVE_IMAGE_SERVER_NOTE'                            => '<b>Note:</b> Alternative image server configuration detected, files will not be uploaded to remote location. Please take care about synchronization manually.',
 //eFire related contents will appear only for users located in Germany
-'EFIRE_USERNAME'                                           => 'eFire External Transaction username',
-'EFIRE_PASSWORD'                                           => 'eFire External Transaction password',
+'EFIRE_USERNAME'                                           => 'Externer Transaktions Login (user name)',
+'EFIRE_PASSWORD'                                           => 'Externes Transaktions Passwort (password)',
 'EFIRE_DOWNLOADER'                                         => 'Downloader',
-'EFIRE_DOWNLOADER_ERROR'                                   => 'Error downloading eFire connector: %s',
-'EFIRE_DOWNLOADER_SUCCESS'                                 => 'Connector downloaded successfully',
-'EFIRE_GETCONNECTOR'                                       => 'If you have registered for OXID eFire you can get your personalized Shop-Connector right here.',
-'EFIRE_CONNECTORINSTRUCTION'                               => 'Fill in your "Externer Transaktions Login" and "Externer Transaktions Login" which you have previously entered in OXID eFire and press "Download" button to get OXID eFire Shop-Connector.',
+'EFIRE_DOWNLOADER_ERROR'                                   => 'Error downloading shop connector: %s',
+'EFIRE_DOWNLOADER_SUCCESS'                                 => 'Shop connector downloaded successfully',
+'EFIRE_GETCONNECTOR'                                       => 'Once you are registered with OXID eFire you\'ll be able to download your personalized copy of the shop connector and install it directly to the right shop location.',
+'EFIRE_CONNECTORINSTRUCTION'                               => 'Please enter "Externer Transaktions Login" and "Externes Transaktions Passwort" that you previously have entered in OXID eFire options ("Einstellungen").',
 'EFIRE_SAVECREDENTIALS'                                    => 'Save your credentials for future use',
 'EFIRE_USERDETAILS'                                        => 'User',
 'EFIRE_USERPASSHASH'                                       => 'Password hash',
@@ -880,7 +881,7 @@ $aLang = array(
 'THEME_VERSION'                                            => 'Version',
 'THEME_ACTIVATE'                                           => 'Activate',
 'THEME_PARENT_THEME_TITLE'                                 => 'Parent theme',
-'THEME_PARENT_VERSIONS'                                    => 'Comapatible parent theme versions',
+'THEME_PARENT_VERSIONS'                                    => 'Compatible parent theme versions',
 'MODULE_AUTHOR'                                            => 'Author',
 'MODULE_VERSION'                                           => 'Version',
 'MODULE_ACTIVATE'                                          => 'Activate',
@@ -1107,6 +1108,7 @@ $aLang = array(
 'PAYMENT_MAIN_AVAILIBLEINGROUP'                            => 'Available in User Groups',
 'PAYMENT_MAIN_NOTAVAILIBLEINGROUP'                         => 'Not available in User Groups',
 'PAYMENT_MAIN_LONGDESC'                                    => 'Payment Description',
+'PAYMENT_MAIN_NOTICEDEFAULTVALUESSELECTED'                 => 'Default values have been selected',
 'PAYMENT_OVERVIEW_HOWMANYPAYMENTS'                         => 'How many purchases were paid with this payment method',
 'PRICEALARM_DONE_SENDEMAIL'                                => 'Sent Price Alert e-mails.',
 'PRICEALARM_DONE_GOTOPRICEALARM'                           => 'go to Price Alert ',

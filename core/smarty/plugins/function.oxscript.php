@@ -19,7 +19,7 @@
  * @package   smarty_plugins
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: function.oxscript.php 44021 2012-04-18 09:30:55Z linas.kukulskis $
+ * @version   SVN: $Id: function.oxscript.php 52502 2012-11-27 21:03:03Z alfonsas $
  */
 
 /**
@@ -30,13 +30,13 @@
  * Name: oxscript
  * Purpose: Collect given javascript includes/calls, but include/call them at the bottom of the page.
  *
- * Add [{oxscript add="oxid.popup.load();" }] to add stript call.
+ * Add [{oxscript add="oxid.popup.load();" }] to add script call.
  * Add [{oxscript include="oxid.js"}] to include local javascript file.
  * Add [{oxscript include="oxid.js?20120413"}] to include local javascript file with query string part.
- * Add [{oxscript include="http://www.oxid-esales.com/oxid.js"}] to include externall javascript file.
+ * Add [{oxscript include="http://www.oxid-esales.com/oxid.js"}] to include external javascript file.
  *
  * IMPORTANT!
- * Do not forget to add plain [{oxscript}] tag before blosing body tag, to output all collected script includes and calls.
+ * Do not forget to add plain [{oxscript}] tag before closing body tag, to output all collected script includes and calls.
  * -------------------------------------------------------------
  *
  * @param array  $params  params
@@ -66,13 +66,18 @@ function smarty_function_oxscript($params, &$smarty)
     } elseif ( $params['include'] ) {
         $sScript = $params['include'];
         if (!preg_match('#^https?://#', $sScript)) {
+            $sOriginalScript = $sScript;
+
             // Separate query part #3305.
             $aScript = explode('?', $sScript);
             $sScript = $myConfig->getResourceUrl($aScript[0], $myConfig->isAdmin());
 
-            // Append query part if still needed #3305.
             if ($sScript && count($aScript) > 1) {
+                // Append query part if still needed #3305.
                 $sScript .= '?'.$aScript[1];
+            } elseif ($sSPath = $myConfig->getResourcePath($sOriginalScript, $myConfig->isAdmin())) {
+                // Append file modification timestamp #3725.
+                $sScript .= '?'.filemtime($sSPath);
             }
         }
 

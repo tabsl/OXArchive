@@ -342,4 +342,16 @@ class oxLegacyDb extends oxSuperCfg
         }
     }
 
+    /**
+     * Calls Db UI method
+     *
+     * @param type $pollsecs poll seconds
+     *
+     * @return null
+     */
+    public function UI( $pollsecs=5 )
+    {
+        $this->getDb( false )->UI( $pollsecs );
+    }
+
 }

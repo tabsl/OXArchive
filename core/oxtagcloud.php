@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxtagcloud.php 44248 2012-04-24 11:39:49Z linas.kukulskis $
+ * @version   SVN: $Id: oxtagcloud.php 53210 2012-12-21 11:51:53Z aurimas.gladutis $
  */
 
 if (!defined('OXTAGCLOUD_MINFONT')) {
@@ -82,7 +82,7 @@ class oxTagCloud extends oxSuperCfg
 
     /**
      * Tag separator.
-     * Separator as space is deprecated. The default value is  ','
+     * @deprecated since 5.0.0,  Separator as space is not used any more. The default value is  ','
      *
      * @var string
      */
@@ -199,7 +199,7 @@ class oxTagCloud extends oxSuperCfg
      * Returns extended tag cloud array
      *
      * @param string $sProductId product id [optional]
-     * @param bool   $blExtended extended clour array mode [optional]
+     * @param bool   $blExtended extended cloud array mode [optional]
      * @param int    $iLang      language id [optional]
      *
      * @return array
@@ -212,7 +212,10 @@ class oxTagCloud extends oxSuperCfg
         $sProductId = ( $sProductId === null ) ? (string) $this->getProductId() : $sProductId;
 
         // checking if current data is allready loaded
-        $sCacheIdent = $this->_getCacheKey( $blExtended, $iLang )."_".$sProductId;
+        $sCacheIdent = $this->_getCacheKey( $blExtended, $iLang );
+        if ($sProductId ) {
+            $sCacheIdent .= "_".$sProductId;
+        }
         if ( !isset( $this->_aCloudArray[$sCacheIdent] ) ) {
 
             $myUtils = oxUtils::getInstance();
@@ -500,7 +503,7 @@ class oxTagCloud extends oxSuperCfg
     }
 
     /**
-     * Trims underscores and spaces from tags.
+     * Trims spaces from tags, removes unnecessary commas, dashes and underscores.
      *
      * @param string $sTags given tag
      *
@@ -554,7 +557,7 @@ class oxTagCloud extends oxSuperCfg
      */
     protected function _getCacheKey( $blExtended, $iLang = null )
     {
-        return $this->_sCacheKey."_".$this->getConfig()->getShopId()."_".( ( $iLang !== null ) ? $iLang : oxLang::getInstance()->getBaseLanguage() ) ."_".$blExtended;
+        return $this->_sCacheKey."_".$this->getConfig()->getShopId()."_".( ( $iLang !== null ) ? $iLang : oxLang::getInstance()->getBaseLanguage() ) ."_".($blExtended?1:0);
     }
 
     /**

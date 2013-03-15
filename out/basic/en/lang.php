@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 44071 2012-04-19 10:34:30Z vaidas.matulevicius $
+ * @version   SVN: $Id: lang.php 52945 2012-12-14 13:21:49Z juergen.busch $
  */
 
 
@@ -170,7 +170,7 @@ $aLang = array(
 'ORDER_SHIPPINGANDPAYMENT'                                    => "Shipping carrier and payment method",
 'ORDER_SHIPPINGGROSS1'                                        => "Shipping",
 'ORDER_VERIFYYOURINPUT'                                       => "Please verify your input!",
-'PAYMENT_EMPTY_TEXT'                                          => '<p>Currently we have no delivery method set up for this country.</p> <p>We are aiming to find a possible delivery method and we will inform you as soon as possible via e-mail about the result, including further information about delivery costs.</p> <p>If you agree to this procedure, please select "move on to next step"</p>',
+'PAYMENT_EMPTY_TEXT'                                          => '<p>Currently we have no shipping method set up for this country.</p> <p>We are aiming to find a possible delivery method and we will inform you as soon as possible via e-mail about the result, including further information about delivery costs.</p>',
 'PAYMENT_INCLUDEVAT'                                          => "incl. VAT",
 'PAYMENT_PLUSCODCHARGE1'                                      => "plus",
 'PAYMENT_PLUSCODCHARGE2'                                      => "COD Charge",

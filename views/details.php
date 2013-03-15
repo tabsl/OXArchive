@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: details.php 44346 2012-04-25 11:01:12Z linas.kukulskis $
+ * @version   SVN: $Id: details.php 53086 2012-12-18 12:22:28Z aurimas.gladutis $
  */
 
 /**
@@ -294,6 +294,7 @@ class Details extends oxUBase
                 //lets additionally add parent article if it is sellable
                 if ( count( $this->_aVariantList ) && $myConfig->getConfigParam( 'blVariantParentBuyable' ) ) {
                     //#1104S if parent is buyable load selectlists too
+                    $oParent->enablePriceLoad();
                     $oParent->aSelectlist = $oParent->getSelectLists();
                     $this->_aVariantList = array_merge( array( $oParent ), $this->_aVariantList->getArray() );
                 }
@@ -425,10 +426,15 @@ class Details extends oxUBase
         if ( !$sMeta ) {
             $oProduct = $this->getProduct();
 
-            $sMeta = $oProduct->getLongDescription()->value;
-            $sMeta = str_replace( array( '<br>', '<br />', '<br/>' ), "\n", $sMeta );
+            if ( oxConfig::getInstance()->getConfigParam( 'bl_perfParseLongDescinSmarty' ) ) {
+                $sMeta = $oProduct->getLongDesc();
+            } else {
+                $sMeta = $oProduct->getLongDescription()->value;
+            }
+            if ( $sMeta == '' ) {
+                $sMeta = $oProduct->oxarticles__oxshortdesc->value;
+            }
             $sMeta = $oProduct->oxarticles__oxtitle->value.' - '.$sMeta;
-            $sMeta = strip_tags( $sMeta );
         }
         return parent::_prepareMetaDescription( $sMeta, $iLength, $blDescTag );
     }

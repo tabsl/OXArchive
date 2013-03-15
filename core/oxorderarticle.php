@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorderarticle.php 43743 2012-04-11 07:52:36Z linas.kukulskis $
+ * @version   SVN: $Id: oxorderarticle.php 52665 2012-12-04 07:38:54Z aurimas.gladutis $
  */
 
 /**
@@ -160,13 +160,15 @@ class oxOrderArticle extends oxBase implements oxIArticle
         $oArticle->load( $this->oxorderarticles__oxartid->value );
         $oArticle->beforeUpdate();
 
-        // get real article stock count
-        $iStockCount = $this->_getArtStock( $dAddAmount, $blAllowNegativeStock );
-        $oDb = oxDb::getDb();
+        if ( $this->getConfig()->getConfigParam( 'blUseStock' ) ) {
+            // get real article stock count
+            $iStockCount = $this->_getArtStock( $dAddAmount, $blAllowNegativeStock );
+            $oDb = oxDb::getDb();
 
-        $oArticle->oxarticles__oxstock = new oxField($iStockCount);
-        $oDb->execute( 'update oxarticles set oxarticles.oxstock = '.$oDb->quote( $iStockCount ).' where oxarticles.oxid = '.$oDb->quote( $this->oxorderarticles__oxartid->value ) );
-        $oArticle->onChange( ACTION_UPDATE_STOCK );
+            $oArticle->oxarticles__oxstock = new oxField($iStockCount);
+            $oDb->execute( 'update oxarticles set oxarticles.oxstock = '.$oDb->quote( $iStockCount ).' where oxarticles.oxid = '.$oDb->quote( $this->oxorderarticles__oxartid->value ) );
+            $oArticle->onChange( ACTION_UPDATE_STOCK );
+        }
 
         //update article sold amount
         $oArticle->updateSoldAmount( $dAddAmount * ( -1 ) );
@@ -620,7 +622,7 @@ class oxOrderArticle extends oxBase implements oxIArticle
         if ( $this->oxorderarticles__oxstorno->value == 0 ) {
             $myConfig = $this->getConfig();
             $this->oxorderarticles__oxstorno->setValue( 1 );
-            if ( $this->save() && $myConfig->getConfigParam( 'blUseStock' ) ) {
+            if ( $this->save() ) {
                 $this->updateArticleStock( $this->oxorderarticles__oxamount->value, $myConfig->getConfigParam('blAllowNegativeStock') );
             }
         }
@@ -638,7 +640,7 @@ class oxOrderArticle extends oxBase implements oxIArticle
     {
         if ( $blDelete = parent::delete( $sOXID ) ) {
             $myConfig = $this->getConfig();
-            if ( $myConfig->getConfigParam( 'blUseStock' ) && $this->oxorderarticles__oxstorno->value != 1 ) {
+            if ( $this->oxorderarticles__oxstorno->value != 1 ) {
                 $this->updateArticleStock( $this->oxorderarticles__oxamount->value, $myConfig->getConfigParam('blAllowNegativeStock') );
             }
         }
@@ -657,17 +659,16 @@ class oxOrderArticle extends oxBase implements oxIArticle
         // ordered articles
         if ( ( $blSave = parent::save() ) && $this->isNewOrderItem() ) {
             $myConfig = $this->getConfig();
-            if ( $myConfig->getConfigParam( 'blUseStock' ) ) {
-                if ($myConfig->getConfigParam( 'blPsBasketReservationEnabled' )) {
+            if ( $myConfig->getConfigParam( 'blUseStock' ) &&
+                 $myConfig->getConfigParam( 'blPsBasketReservationEnabled' )) {
                     $this->getSession()
                             ->getBasketReservations()
                             ->commitArticleReservation(
                                    $this->oxorderarticles__oxartid->value,
                                    $this->oxorderarticles__oxamount->value
                            );
-                } else {
-                    $this->updateArticleStock( $this->oxorderarticles__oxamount->value * (-1), $myConfig->getConfigParam( 'blAllowNegativeStock' ) );
-                }
+            } else {
+                $this->updateArticleStock( $this->oxorderarticles__oxamount->value * (-1), $myConfig->getConfigParam( 'blAllowNegativeStock' ) );
             }
 
             // seting downloadable products article files

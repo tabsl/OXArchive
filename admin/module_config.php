@@ -51,7 +51,7 @@ class Module_Config extends Shop_Config
         if ( $sModuleId && $oModule->load( $sModuleId ) ) {
 
             try {
-                $aDbVariables = $this->_loadConfVars($sShopId, $this->_getModuleForConfigVars());
+                $aDbVariables = $this->loadConfVars($sShopId, $this->_getModuleForConfigVars());
                 $this->_aViewData["var_constraints"] = $aDbVariables['constraints'];
                 $this->_aViewData["var_grouping"]    = $aDbVariables['grouping'];
                 $iCount = 0;

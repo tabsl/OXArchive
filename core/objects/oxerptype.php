@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerptype.php 43708 2012-04-11 06:29:15Z linas.kukulskis $
+ * @version   SVN: $Id: oxerptype.php 52714 2012-12-05 15:00:42Z aurimas.gladutis $
  */
 
 /**
@@ -454,6 +454,9 @@ class oxERPType
     public function getRightFields()
     {
         $aRParams = array();
+        if (!$this->_aFieldList) {
+            $this->getFieldList();
+        }
 
         foreach ($this->_aFieldList as $sField) {
             $aRParams[] = strtolower($this->_sTableName.'__'.$sField);

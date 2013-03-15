@@ -145,6 +145,7 @@ class oxOrderFile extends oxBase
     {
         $oFile = oxNew("oxfile");
         $oFile->load($this->oxorderfiles__oxfileid->value);
+
         return $oFile->getSize();
     }
 

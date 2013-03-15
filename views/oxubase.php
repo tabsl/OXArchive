@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2013
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 44715 2012-05-09 11:27:44Z linas.kukulskis $
+ * @version   SVN: $Id: oxubase.php 54128 2013-01-22 11:06:15Z aurimas.gladutis $
  */
 
 /**
@@ -669,6 +669,11 @@ class oxUBase extends oxView
 
         $this->_sViewId .= "|".( (int) $this->_blForceNoIndex ).'|'.((int)$this->isRootCatChanged());
 
+        // #0004798: SSL should be included in viewId
+        if ($myConfig->isSsl()) {
+            $this->_sViewId .= "|ssl";
+        }
+
         // #0002866: external global viewID addition
         if (function_exists('customGetViewId')) {
             $oExtViewId = customGetViewId();
@@ -1034,6 +1039,9 @@ class oxUBase extends oxView
         if (!is_array($this->_aRssLinks)) {
             $this->_aRssLinks = array();
         }
+
+        $sUrl = oxUtilsUrl::getInstance()->prepareUrlForNoSession($sUrl);
+
         if ($key === null) {
             $this->_aRssLinks[] = array('title'=>$sTitle, 'link' => $sUrl);
         } else {
@@ -1187,7 +1195,7 @@ class oxUBase extends oxView
             $oContent = oxNew( 'oxcontent' );
             if ( $oContent->loadByIdent( $sMetaIdent ) &&
                  $oContent->oxcontents__oxactive->value ) {
-                return strip_tags( $oContent->oxcontents__oxcontent->value );
+                return getStr()->strip_tags( $oContent->oxcontents__oxcontent->value );
             }
         }
     }
@@ -1239,7 +1247,7 @@ class oxUBase extends oxView
     }
 
     /**
-     * Get active language
+     * Get active currency
      *
      * @return object
      */
@@ -1249,7 +1257,7 @@ class oxUBase extends oxView
     }
 
     /**
-     * Active language setter
+     * Active currency setter
      *
      * @param object $oCur corrency object
      *
@@ -1492,7 +1500,7 @@ class oxUBase extends oxView
             // decoding html entities
             $sMeta = $oStr->html_entity_decode( $sMeta );
             // stripping HTML tags
-            $sMeta = strip_tags( $sMeta );
+            $sMeta = $oStr->strip_tags( $sMeta );
 
             // removing some special chars
             $sMeta = $oStr->cleanStr( $sMeta );
@@ -2066,12 +2074,15 @@ class oxUBase extends oxView
     }
 
     /**
-     * Returns current view title. Default is null
+     * Returns current view title. Default is search for translation of PAGE_TITLE_{view_class_name}
      *
-     * @return null
+     * @return string
      */
     public function getTitle()
     {
+        $sTranslationName = 'PAGE_TITLE_'.strtoupper($this->getConfig()->getActiveView()->getClassName());
+        $sTranslated = oxLang::getInstance()->translateString( $sTranslationName, oxLang::getInstance()->getBaseLanguage(), false );
+        return $sTranslationName == $sTranslated? null : $sTranslated;
     }
 
     /**

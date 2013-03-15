@@ -109,12 +109,15 @@ class oxUtilsUrl extends oxSuperCfg
      */
     public function prepareUrlForNoSession( $sUrl )
     {
+        $oStr = getStr();
+
+        // cleaning up session id..
+        $sUrl = $oStr->preg_replace('/(\?|&(amp;)?)(force_)?(admin_)?sid=[a-z0-9\._]+&?(amp;)?/i', '\1', $sUrl);
+        $sUrl = $oStr->preg_replace( '/(&amp;|\?)$/', '', $sUrl );
+
         if ( oxUtils::getInstance()->seoIsActive() ) {
             return $sUrl;
         }
-
-        $oStr = getStr();
-        $sUrl = $oStr->preg_replace('/(\?|&(amp;)?)(force_)?(admin_)?sid=[a-z0-9\._]+&?(amp;)?/i', '\1', $sUrl);
 
         if ($qpos = $oStr->strpos($sUrl, '?')) {
             if ($qpos == $oStr->strlen($sUrl)-1) {

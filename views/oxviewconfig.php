@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxviewconfig.php 48990 2012-08-24 10:53:12Z tomas $
+ * @version   SVN: $Id: oxviewconfig.php 53116 2012-12-19 08:50:55Z aurimas.gladutis $
  */
 
 /**
@@ -124,6 +124,7 @@ class oxViewConfig extends oxSuperCfg
     {
         $sClass         = $this->getActionClassName();
         $sCatnid        = $this->getActCatId();
+        $sMnfid         = $this->getActManufacturerId();
         $sArtnid        = $this->getActArticleId();
         $sTplName       = $this->getActTplName();
         $sSearchParam   = $this->getActSearchParam();
@@ -131,12 +132,12 @@ class oxViewConfig extends oxSuperCfg
         $sRecommId      = $this->getActRecommendationId();
         $sListType      = $this->getActListType();
 
-
-
-        return $this->getConfig()->getShopHomeURL()
+        $oConfig = $this->getConfig();
+        return ( $oConfig->isSsl()? $oConfig->getShopSecureHomeUrl() : $oConfig->getShopHomeUrl() )
             ."cl={$sClass}"
             . ( $sCatnid ? "&amp;cnid={$sCatnid}" : '' )
             . ( $sArtnid ? "&amp;anid={$sArtnid}" : '' )
+            . ( $sMnfid ? "&amp;mnid={$sMnfid}" : '' )
             . ( $sSearchParam ? "&amp;searchparam={$sSearchParam}" : '' )
             . ( $sSearchTag ? "&amp;searchtag={$sSearchTag}" : '' )
             . ( $sRecommId ? "&amp;recommid={$sRecommId}" : '' )

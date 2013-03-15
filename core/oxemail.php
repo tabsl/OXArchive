@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxemail.php 43724 2012-04-11 07:22:33Z linas.kukulskis $
+ * @version   SVN: $Id: oxemail.php 52485 2012-11-27 15:35:24Z aurimas.gladutis $
  */
 /**
  * Includes PHP mailer class.
@@ -630,9 +630,10 @@ class oxEmail extends PHPMailer
         $this->setSubject( $sSubject );
         $this->setRecipient( $oShop->oxshops__oxowneremail->value, $oLang->translateString("order") );
 
-        if ( $oUser->oxuser__oxusername->value != "admin" )
+        if ( $oUser->oxuser__oxusername->value != "admin" ) {
             $sFullName = $oUser->oxuser__oxfname->getRawValue() . " " . $oUser->oxuser__oxlname->getRawValue();
             $this->setReplyTo( $oUser->oxuser__oxusername->value, $sFullName );
+        }
 
         $blSuccess = $this->send();
 
@@ -718,7 +719,7 @@ class oxEmail extends PHPMailer
      * @param string $sEmailAddress user email address
      * @param string $sSubject      user defined subject [optional]
      *
-     * @return bool
+     * @return mixed true - success, false - user not found, -1 - could not send
      */
     public function sendForgotPwdEmail( $sEmailAddress, $sSubject = null )
     {
@@ -744,8 +745,8 @@ class oxEmail extends PHPMailer
         }
 
         $sSelect = "select oxid from oxuser where $sWhere $sOrder";
-        if ( ( $sOxId = $oDb->getOne( $sSelect ) ) ) {
 
+        if ( ( $sOxId = $oDb->getOne( $sSelect ) ) ) {
             $oUser = oxNew( 'oxuser' );
             if ( $oUser->load($sOxId) ) {
                 // create messages
@@ -767,11 +768,14 @@ class oxEmail extends PHPMailer
                 $this->setRecipient( $sEmailAddress, $sFullName );
                 $this->setReplyTo( $oShop->oxshops__oxorderemail->value, $oShop->oxshops__oxname->getRawValue() );
 
-                return $this->send();
+                if ( !$this->send() ) {
+                    return -1; // failed to send
+                }
+                return true; // success
             }
         }
 
-        return false;
+        return false; // user with this email not found
     }
 
     /**
@@ -797,7 +801,7 @@ class oxEmail extends PHPMailer
         $this->setSubject( $sSubject );
 
         $this->setRecipient( $oShop->oxshops__oxinfoemail->value, "" );
-        $this->setFrom( $sEmailAddress, "" );
+        $this->setFrom( $oShop->oxshops__oxowneremail->value, $oShop->oxshops__oxname->getRawValue() );
         $this->setReplyTo( $sEmailAddress, "" );
 
         return $this->send();
@@ -827,7 +831,8 @@ class oxEmail extends PHPMailer
 
         // create messages
         $oSmarty = $this->_getSmarty();
-        $this->setViewData( "subscribeLink", $this->_getNewsSubsLink($oUser->oxuser__oxid->value) );
+        $sConfirmCode = md5($oUser->oxuser__oxusername->value.$oUser->oxuser__oxpasssalt->value);
+        $this->setViewData( "subscribeLink", $this->_getNewsSubsLink($oUser->oxuser__oxid->value, $sConfirmCode ) );
         $this->setUser( $oUser );
 
         // Process view data array through oxoutput processor
@@ -849,17 +854,19 @@ class oxEmail extends PHPMailer
     /**
      * Returns newsletter subscription link
      *
-     * @param string $sId user id
+     * @param string $sId          user id
+     * @param string $sConfirmCode confirmation code
      *
      * @return string $sUrl
      */
-    protected function _getNewsSubsLink( $sId )
+    protected function _getNewsSubsLink( $sId, $sConfirmCode = null )
     {
         $myConfig = $this->getConfig();
         $iActShopLang = $myConfig->getActiveShop()->getLanguage();
 
         $sUrl = $myConfig->getShopHomeURL().'cl=newsletter&amp;fnc=addme&amp;uid='.$sId;
         $sUrl.= ( $iActShopLang ) ? '&amp;lang='.$iActShopLang : "";
+        $sUrl.= ( $sConfirmCode ) ? '&amp;confirm='.$sConfirmCode : "";
         return $sUrl;
     }
 
@@ -2019,21 +2026,26 @@ class oxEmail extends PHPMailer
      */
     protected function _getShop( $iLangId = null, $iShopId = null )
     {
-
-        if ( isset( $this->_oShop ) ) {
-            return $this->_oShop;
+        if ( $iLangId === null && $iShopId === null ) {
+            if ( isset( $this->_oShop ) ) {
+                return $this->_oShop;
+            } else {
+                return $this->_oShop = $this->getConfig()->getActiveShop();
+            }
         }
 
         $myConfig = $this->getConfig();
 
-        if ( $iLangId === null ) {
-            $oShop = $myConfig->getActiveShop();
-        } else {
-            $oShop = oxNew( 'oxshop' );
-            $oShop->loadInLang( $iLangId, $myConfig->getShopId() );
+        $oShop = oxNew( 'oxshop' );
+        if ( $iShopId !== null ) {
+            $oShop->setShopId($iShopId);
         }
+        if ( $iLangId !== null ) {
+            $oShop->setLanguage($iLangId);
+        }
+        $oShop->load($myConfig->getShopId());
 
-        return $this->_oShop = $oShop;
+        return $oShop;
     }
 
     /**

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxstrregular.php 44715 2012-05-09 11:27:44Z linas.kukulskis $
+ * @version   SVN: $Id: oxstrregular.php 51145 2012-10-31 12:27:28Z andrius.silgalis $
  */
 
 /**
@@ -350,5 +350,22 @@ class oxStrRegular
         } else {
             return '"'.addcslashes((string)$data, "\r\n\t\"\\").'"';
         }
+    }
+
+    /**
+     * PHP strip_tags() function wrapper.
+     *
+     * @param string $sString        the input string
+     * @param string $sAllowableTags an optional parameter to specify tags which should not be stripped
+     *
+     * @return string
+     */
+    public function strip_tags( $sString, $sAllowableTags = '' )
+    {
+        if ( stripos( $sAllowableTags, '<style>' ) === false ) {
+            // strip style tags with definitions within
+            $sString = $this->preg_replace( "'<style[^>]*>.*</style>'siU", '', $sString );
+        }
+        return strip_tags( $sString, $sAllowableTags );
     }
 }

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: tag.php 38614 2011-09-05 13:34:37Z linas.kukulskis $
+ * @version   SVN: $Id: tag.php 53210 2012-12-21 11:51:53Z aurimas.gladutis $
  */
 
 /**
@@ -85,7 +85,7 @@ class Tag extends aList
         $oArticleList = $this->getArticleList();
 
         // if tags are off or no articles - showing 404 header (#2139)
-        if ( !$this->showTags() || !$oArticleList || count( $oArticleList ) < 1 ) {
+        if ( !$this->showTags() || !$oArticleList ) {
             error_404_handler();
         }
 

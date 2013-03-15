@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2012
+ * @copyright (C) OXID eSales AG 2003-2013
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 49796 2012-09-26 12:36:30Z juergen.busch $
+ * @version   SVN: $Id: lang.php 54388 2013-01-25 10:30:09Z juergen.busch $
  */
 
 $sLangName  = 'Deutsch';
@@ -404,7 +404,7 @@ $aLang = array(
 'ARTICLE_EXTEND_ISCONFIGURABLE'                            => 'Artikel ist individualisierbar',
 'ARTICLE_EXTEND_NONMATERIAL'                               => 'Immaterieller Artikel',
 'ARTICLE_EXTEND_FREESHIPPING'                              => 'Versandkostenfrei',
-'ARTICLE_EXTEND_BLFIXEDPRICE'                              => 'Sonderaktionen nicht erlaubt (Preisalarm)',
+'ARTICLE_EXTEND_BLFIXEDPRICE'                              => 'Preisalarm deaktivieren',
 'ARTICLE_EXTEND_ARTINCATS'                                 => 'Zugeordnete Kategorien',
 'ARTICLE_EXTEND_DEFAULT'                                   => 'Als Hauptkat. setzen.',
 'ARTICLE_EXTEND_UPDATEMEDIA'                               => 'Übernehmen',
@@ -425,6 +425,7 @@ $aLang = array(
 'ARTICLE_LIST_ALLPRODUCTS'                                 => 'alle Artikel',
 'ARTICLE_LIST_MENUSUBITEM'                                 => 'Artikel',
 'ARTICLE_MAIN_ERRORSAVINGARTICLE'                          => 'Warnung: Artikelnummer bereits vorhanden!',
+'ARTICLE_MAIN_PARENTNOTBUYABLE'                            => 'Achtung: Vaterartikel kann nicht gekauft werden.',
 'ARTICLE_MAIN_ALDPRICE'                                    => 'Alt. Preise',
 'ARTICLE_MAIN_NONE'                                        => '-- keine --',
 'ARTICLE_MAIN_GOTO'                                        => 'Gehe zu',
@@ -806,13 +807,13 @@ $aLang = array(
 'EDITOR_PLAINTEXT_HINT'                                    => '<b>Anmerkung:</b> Wenn Sie Zeilenumbrüche unverändert übernehmen möchten (z. B. für plaintext E-Mail), dann benutzen Sie "Source" anstatt "Design".',
 'ALTERNATIVE_IMAGE_SERVER_NOTE'                            => '<b>Hinweis:</b> Der Shop ist konfiguriert, Artikelbilder von einem externen Server zu laden. Dateien werden aber nicht zu diesem Speicherort hochgeladen. Stellen Sie bitte die manuelle Synchronisation sicher.',
 //eFire related contents will appear only for users located in Germany
-'EFIRE_USERNAME'                                           => 'OXID eFire Externer Transaktions Login',
-'EFIRE_PASSWORD'                                           => 'OXID eFire Externes Transaktions Passwort',
+'EFIRE_USERNAME'                                           => 'Externer Transaktions Login',
+'EFIRE_PASSWORD'                                           => 'Externes Transaktions Passwort',
 'EFIRE_DOWNLOADER'                                         => 'Downloader',
-'EFIRE_DOWNLOADER_ERROR'                                   => 'Fehler beim Herunterladen des OXID eFire Shop-Connectors: %s',
-'EFIRE_DOWNLOADER_SUCCESS'                                 => 'OXID eFire Shop-Connector erfolgreich geladen',
-'EFIRE_GETCONNECTOR'                                       => 'Sofern Sie sich bei OXID eFire registriert haben, laden Sie hier Ihren persönlichen Shop-Connector.',
-'EFIRE_CONNECTORINSTRUCTION'                               => 'Geben Sie dazu Ihren Externen Transaktions Login und Externes Transaktions Passwort ein, den Sie in OXID eFire unter "Einstellungen" eingegeben haben.',
+'EFIRE_DOWNLOADER_ERROR'                                   => 'Fehler beim Herunterladen des Shop-Connectors: %s',
+'EFIRE_DOWNLOADER_SUCCESS'                                 => 'Shop-Connector erfolgreich geladen',
+'EFIRE_GETCONNECTOR'                                       => 'Sofern Sie sich bei OXID eFire registriert haben, laden Sie hier Ihren persönlichen Shop-Connector direkt in den Shop.',
+'EFIRE_CONNECTORINSTRUCTION'                               => 'Geben Sie dazu Ihren Externen Transaktions Login und das Externe Transaktions Passwort ein, wie in OXID eFire unter "Einstellungen" hinterlegt.',
 'EFIRE_SAVECREDENTIALS'                                    => 'Einstellungen für zukünftige Verbindungen zu OXID eFire speichern',
 'EFIRE_USERDETAILS'                                        => 'Benutzer',
 'EFIRE_USERPASSHASH'                                       => 'Passwort Prüfsumme (Hash)',
@@ -1110,6 +1111,7 @@ $aLang = array(
 'PAYMENT_MAIN_AVAILIBLEINGROUP'                            => 'Zugeordnete Benutzergruppen',
 'PAYMENT_MAIN_NOTAVAILIBLEINGROUP'                         => 'Alle Benutzergruppen',
 'PAYMENT_MAIN_LONGDESC'                                    => 'Beschreibung der Zahlungsart',
+'PAYMENT_MAIN_NOTICEDEFAULTVALUESSELECTED'                 => 'Standardwerte wurden ausgewählt',
 'PAYMENT_OVERVIEW_HOWMANYPAYMENTS'                         => 'Wieviel Einkäufe wurden mit dieser Zahlungsart gemacht',
 'PRICEALARM_DONE_SENDEMAIL'                                => 'Preisalarm E-Mails versendet.',
 'PRICEALARM_DONE_GOTOPRICEALARM'                           => 'gehen Sie zu Preisalarm ',
@@ -1275,9 +1277,9 @@ $aLang = array(
 'SHOP_CONFIG_CONFIRMAGB'                                   => 'Kunden müssen die AGB bestätigen, um bestellen zu können',
 'SHOP_CONFIG_SHOWORDERBUTTONONTHETOP'                      => 'Im 4. Bestellschritt einen zusätzlichen "Zahlungspflichtig bestellen" Button oben anzeigen (wenn die Einstellung nicht aktiv ist, wird nur der "Zahlungspflichtig bestellen" Button weiter unten angezeigt).',
 'SHOP_CONFIG_CALCULATEVATFORDELIVERY'                      => 'Im Warenkorb und in der Rechnung die Versandkosten als Nettobetrag und Mehrwertsteuer anstatt als Bruttobetrag anzeigen',
-'SHOP_CONFIG_CALCDELVATONTOP'                              => 'Kosten für Geschenkverpackungen und Grußkarten als Nettopreise eingeben (zuzüglich MwSt.)',
+'SHOP_CONFIG_CALCDELVATONTOP'                              => 'Versandkosten als Nettopreise eingeben (zuzüglich MwSt.)',
 'SHOP_CONFIG_CALCULATEVATFORWRAPPING'                      => 'Die in Geschenkverpackungen und Grußkarten enthaltene Mehrwertsteuer im Warenkorb und in der Rechnung anzeigen',
-'SHOP_CONFIG_CALCWRAPVATONTOP'                             => 'Verpackungskosten als Nettopreise eingeben (zuzüglich MwSt.)',
+'SHOP_CONFIG_CALCWRAPVATONTOP'                             => 'Kosten für Geschenkverpackungen und Grußkarten als Nettopreise eingeben (zuzüglich MwSt.)',
 'SHOP_CONFIG_CALCPAYVATONTOP'                              => 'Zahlungsarten-Gebühren als Nettopreise eingeben (zuzüglich MwSt.)',
 'SHOP_CONFIG_CALCULATEVATOFORPAYCHARGE'                    => 'Die in den Zahlungsarten-Gebühren enthaltene Mehrwertsteuer im Warenkorb und in der Rechnung anzeigen',
 'SHOP_CONFIG_CMSFOLDER'                                    => 'Ordner für CMS-Seiten',

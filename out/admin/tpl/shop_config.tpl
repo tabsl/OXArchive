@@ -152,8 +152,8 @@ function showInvitations()
 
             <dl>
                 <dt>
-            <input type=text class="txt" name=confstrs[sStockWarningLimit] value="[{$confstrs.sStockWarningLimit}]" [{ $readonly}]>
-            [{ oxinputhelp ident="HELP_SHOP_CONFIG_STOCKWARNINGLIMIT" }]
+                    <input type=text class="txt" name=confstrs[sStockWarningLimit] value="[{$confstrs.sStockWarningLimit}]" [{ $readonly}]>
+                [{ oxinputhelp ident="HELP_SHOP_CONFIG_STOCKWARNINGLIMIT" }]
                 </dt>
                 <dd>
                     [{ oxmultilang ident="SHOP_CONFIG_STOCKWARNINGLIMIT" }]

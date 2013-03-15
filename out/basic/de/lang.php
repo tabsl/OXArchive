@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 44071 2012-04-19 10:34:30Z vaidas.matulevicius $
+ * @version   SVN: $Id: lang.php 52941 2012-12-14 13:12:29Z juergen.busch $
  */
 
 
@@ -231,7 +231,7 @@ $aLang = array(
 'ORDER_YOURMESSAGE'                                           => "Ihr Text:",
 'PAYMENT_ACCOUNTNUMBER'                                       => "Kontonummer:",
 'PAYMENT_COMLETEALLFIELDS'                                    => "Bitte alle Felder richtig ausfüllen!",
-'PAYMENT_EMPTY_TEXT'                                          => '<p>Derzeit ist keine Versandart für dieses Land definiert.</p> <p>Wir werden versuchen, Liefermöglichkeiten zu finden und Sie über die Versandkosten informieren.</p> <p>Falls Sie hiermit einverstanden sind, wählen Sie "Weiter zum nächsten Schritt".</p>',
+'PAYMENT_EMPTY_TEXT'                                          => '<p>Derzeit ist keine Versandart für dieses Land definiert.</p> <p>Wir werden versuchen, Liefermöglichkeiten zu finden und Sie über die Versandkosten informieren.</p>',
 'PAYMENT_INCLUDEVAT'                                          => "inkl. MwSt.",
 'PAYMENT_PLUSCODCHARGE1'                                      => "zuzüglich",
 'PAYMENT_PLUSCODCHARGE2'                                      => "Nachnahmegebühr",

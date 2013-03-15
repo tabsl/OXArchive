@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: alist.php 44715 2012-05-09 11:27:44Z linas.kukulskis $
+ * @version   SVN: $Id: alist.php 52265 2012-11-23 15:08:26Z aurimas.gladutis $
  */
 
 /**
@@ -459,8 +459,9 @@ class aList extends oxUBase
         }
 
         // making safe for output
-        $sDescription = getStr()->cleanStr($sDescription);
-        $sDescription = strip_tags( getStr()->html_entity_decode( $sDescription ) );
+        $sDescription = getStr()->html_entity_decode( $sDescription );
+        $sDescription = getStr()->strip_tags( $sDescription );
+        $sDescription = getStr()->cleanStr( $sDescription );
         $sDescription = getStr()->htmlspecialchars( $sDescription );
         return trim( $sDescription );
     }
@@ -576,7 +577,7 @@ class aList extends oxUBase
         if ( count( $aArticleList = $this->getArticleList() ) ) {
             $oStr = getStr();
             foreach ( $aArticleList as $oProduct ) {
-                $sDesc = strip_tags( trim( $oStr->strtolower( $oProduct->getLongDescription()->value ) ) );
+                $sDesc = $oStr->strip_tags( trim( $oStr->strtolower( $oProduct->getLongDescription()->value ) ) );
 
                 //removing dots from string (they are not cleaned up during general string cleanup)
                 $sDesc = $oStr->preg_replace( "/\./", " ", $sDesc );
@@ -681,7 +682,7 @@ class aList extends oxUBase
         $oActCat = $this->getActCategory();
         if ( !$aSorting && $oActCat && $oActCat->oxcategories__oxdefsort->value ) {
             $sSortBy  = $oActCat->oxcategories__oxdefsort->value;
-            $sSortDir = ( $oActCat->oxcategories__oxdefsortmode->value ) ? "desc" : null;
+            $sSortDir = ( $oActCat->oxcategories__oxdefsortmode->value ) ? "desc" : "asc";
 
             $this->setItemSorting( $sCnid, $sSortBy, $sSortDir );
             $aSorting = array ( 'sortby' => $sSortBy, 'sortdir' => $sSortDir );

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxseodecoder.php 43748 2012-04-11 08:08:11Z linas.kukulskis $
+ * @version   SVN: $Id: oxseodecoder.php 52196 2012-11-23 14:23:42Z aurimas.gladutis $
  */
 
 /**
@@ -214,6 +214,7 @@ class oxSeoDecoder extends oxSuperCfg
                 // old type II seo urls
                 oxUtils::getInstance()->redirect( $this->getConfig()->getShopURL().$sRedirectUrl, false );
             } else {
+                oxSession::getInstance()->start();
                 // unrecognized url
                 error_404_handler( $sParams );
             }

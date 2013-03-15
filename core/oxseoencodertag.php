@@ -112,26 +112,26 @@ class oxSeoEncoderTag extends oxSeoEncoder
                 $this->_copyToHistory( $sObjectId, $iShopId, $iLang, 'dynamic' );
             }
 
-            $oTagCloud = oxNew('oxtagcloud');
+            // disabling check if there are any tags used, as it should always generate seo url.
+            /*$oTagCloud = oxNew('oxtagcloud');
+            $oDb = oxDb::getDb();
             $sTag = $oTagCloud->prepareTags($sTag);
             $sViewName = getViewName( 'oxartextends', $iLang );
-            $oDb = oxDb::getDb();
-            $sQ = "select 1 from {$sViewName} where match ( {$sViewName}.oxtags )
-                   against( ".$oDb->quote( "\"".$sTag."\"" )." IN BOOLEAN MODE )";
+            $sQ = "select 1 from {$sViewName} where {$sViewName}.oxtags LIKE ".$oDb->quote( "%$sTag%" )."";
 
             if ( $sOxid ) {
                 $sQ .= " and oxid = " . $oDb->quote( $sOxid );
-            }
+            }*/
 
-            if ( $oDb->getOne( $sQ ) ) {
+            //if ( $oDb->getOne( $sQ ) ) {
                 // creating unique
                 $sSeoUrl = $this->_processSeoUrl( $sSeoUrl, $sObjectId, $iLang );
 
                 // inserting
                 $this->_saveToDb( 'dynamic', $sObjectId, $sStdUrl, $sSeoUrl, $iLang, $iShopId );
-            } else {
+            /*} else {
                 $sSeoUrl = false;
-            }
+            }*/
         }
 
         return $sSeoUrl;

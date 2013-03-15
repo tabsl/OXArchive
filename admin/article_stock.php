@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_stock.php 46859 2012-07-02 12:33:24Z edvardas.gineika $
+ * @version   SVN: $Id: article_stock.php 52897 2012-12-13 12:40:39Z aurimas.gladutis $
  */
 
 /**
@@ -70,7 +70,6 @@ class Article_Stock extends oxAdminDetails
             if ( $oArticle->oxarticles__oxparentid->value) {
                 $oParentArticle = oxNew( "oxarticle");
                 $oParentArticle->load( $oArticle->oxarticles__oxparentid->value);
-                $oArticle->oxarticles__oxremindactive = new oxField( $oParentArticle->oxarticles__oxremindactive->value );
                 $this->_aViewData["parentarticle"] =  $oParentArticle;
                 $this->_aViewData["oxparentid"] =  $oArticle->oxarticles__oxparentid->value;
             }
@@ -106,11 +105,6 @@ class Article_Stock extends oxAdminDetails
         $soxId = $this->getEditObjectId();
         $aParams = oxConfig::getParameter( "editval");
 
-        // checkbox handling
-        if ( !isset( $aParams['oxarticles__oxremindactive'])) {
-            $aParams['oxarticles__oxremindactive'] = 0;
-        }
-
             // shopid
             $sShopID = oxSession::getVar( "actshop");
             $aParams['oxarticles__oxshopid'] = $sShopID;
@@ -118,16 +112,21 @@ class Article_Stock extends oxAdminDetails
         $oArticle = oxNew( "oxarticle");
         $oArticle->loadInLang( $this->_iEditLang, $soxId );
         $oArticle->setLanguage( 0 );
+
+        // checkbox handling
+        if ( !$oArticle->oxarticles__oxparentid->value && !isset( $aParams['oxarticles__oxremindactive'])) {
+            $aParams['oxarticles__oxremindactive'] = 0;
+        }
+
         $oArticle->assign( $aParams );
 
         //tells to article to save in different language
         $oArticle->setLanguage( $this->_iEditLang );
         $oArticle = oxUtilsFile::getInstance()->processFiles( $oArticle );
 
-        if ( $oArticle->oxarticles__oxremindactive->value &&
-             $oArticle->oxarticles__oxremindamount->value <= $oArticle->oxarticles__oxstock->value ) {
-            $oArticle->oxarticles__oxremindactive->value = 1;
-        }
+        $oArticle->resetRemindStatus();
+
+        $oArticle->updateVariantsRemind();
 
         $oArticle->save();
     }

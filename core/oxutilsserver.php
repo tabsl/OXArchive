@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsserver.php 42112 2012-02-09 14:55:11Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxutilsserver.php 53149 2012-12-19 15:35:46Z aurimas.gladutis $
  */
 
 /**
@@ -340,7 +340,7 @@ class oxUtilsServer extends oxSuperCfg
     {
         $myConfig = $this->getConfig();
         $sShopId = ( !$sShopId ) ? $myConfig->getShopId() : $sShopId;
-        $sSslUrl = $myConfig->getSslShopUrl();
+        $sSslUrl = rtrim($myConfig->getSslShopUrl(), '/').$_SERVER['REQUEST_URI'];
         if (stripos($sSslUrl, 'https') === 0) {
             $blSsl = true;
         } else {
@@ -384,12 +384,12 @@ class oxUtilsServer extends oxSuperCfg
      */
     public function getUserCookie( $sShopId = null )
     {
-        $myConfig = parent::getConfig();
+        $myConfig = $this->getConfig();
         $sShopId = ( !$sShopId ) ? $myConfig->getShopId() : $sShopId;
 
         // check for SSL connection
         if (!$myConfig->isSsl() && $this->getOxCookie('oxid_'.$sShopId.'_autologin') == '1') {
-            $sSslUrl = $myConfig->getSslShopUrl();
+            $sSslUrl = rtrim($myConfig->getSslShopUrl(), '/').$_SERVER['REQUEST_URI'];
             if (stripos($sSslUrl, 'https') === 0) {
                 oxUtils::getInstance()->redirect($sSslUrl, true, 302);
             }

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_accessories_ajax.php 45812 2012-06-04 07:35:10Z vaidas.matulevicius $
+ * @version   SVN: $Id: article_accessories_ajax.php 52578 2012-11-29 12:14:18Z aurimas.gladutis $
  */
 
 /**
@@ -96,6 +96,10 @@ class article_accessories_ajax extends ajaxListComponent
             $sSubSelect .= " where oxaccessoire2article.oxarticlenid = " . $oDb->quote( $sSynchSelId ) . " ";
             $sQAdd .= " and $sArticleTable.oxid not in ( $sSubSelect ) ";
         }
+
+        // skipping self from list
+        $sId = ( $sSynchSelId ) ? $sSynchSelId : $sSelId ;
+        $sQAdd .= " and $sArticleTable.oxid != " . $oDb->quote( $sId ) . " ";
 
         // creating AJAX component
         return $sQAdd;

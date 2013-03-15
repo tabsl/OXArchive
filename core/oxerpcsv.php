@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxerpcsv.php 43726 2012-04-11 07:27:01Z linas.kukulskis $
+ * @version   SVN: $Id: oxerpcsv.php 53106 2012-12-18 15:34:56Z aurimas.gladutis $
  */
 
 /**
@@ -418,10 +418,12 @@ class oxErpCsv extends oxERPBase
 
         if ( isset($aRow['OXID'] ) ) {
             $this->_checkIDField($aRow['OXID']);
-        } else {
+        }
+        // #0004426
+        /*else {
             $this->_checkIDField($aRow['OXARTNUM']);
             $aRow['OXID'] = $aRow['OXARTNUM'];
-        }
+        }*/
 
         $sResult = $this->_save( $oType, $aRow, $this->_sCurrVersion == "0.1"); // V0.1 allowes the shopid to be set no matter which login
         return (boolean) $sResult;

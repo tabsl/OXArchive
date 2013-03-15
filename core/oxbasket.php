@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasket.php 49802 2012-09-26 13:10:58Z tomas $
+ * @version   SVN: $Id: oxbasket.php 51806 2012-11-14 13:06:32Z aurimas.gladutis $
  */
 
 /**
@@ -390,7 +390,9 @@ class oxBasket extends oxSuperCfg
         }
 
         // notifying that new basket item was added
-        $this->_addedNewItem( $sProductID, $dAmount, $aSel, $aPersParam, $blOverride, $blBundle, $sOldBasketItemId );
+        if (!$blBundle) {
+            $this->_addedNewItem( $sProductID, $dAmount, $aSel, $aPersParam, $blOverride, $blBundle, $sOldBasketItemId );
+        }
 
         // returning basket item object
         return $this->_aBasketContents[$sItemId];

@@ -195,7 +195,7 @@ function ThisDate( sID)
                                 [{ oxinputhelp ident="HELP_ORDER_MAIN_DELTYPE" }]
                             </td>
                             <td>
-                                <input type="submit" class="edittext" name="save" id="shippNowButton" onclick="document.sendorder.sendmail.value=document.getElementById('sendmail').checked;document.sendorder.submit();return false;" value="&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_NOWSEND" }]&nbsp;&nbsp;" [{ $readonly }]>
+                                <input type="submit" class="edittext" name="save" id="shippNowButton" onclick="document.sendorder.sendmail.value=document.getElementById('sendmail').checked?1:0;document.sendorder.submit();return false;" value="&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_NOWSEND" }]&nbsp;&nbsp;" [{ $readonly }]>
                                 <input id='sendmail' class="edittext" type="checkbox" name="sendmail" value='1' [{ $readonly }]> [{ oxmultilang ident="GENERAL_SENDEMAIL" }]
                             </td>
                         </tr>

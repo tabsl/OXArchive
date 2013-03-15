@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcaptcha.php 43712 2012-04-11 06:51:26Z linas.kukulskis $
+ * @version   SVN: $Id: oxcaptcha.php 52486 2012-11-27 15:37:13Z aurimas.gladutis $
  */
 
 /**
@@ -90,7 +90,9 @@ class oxCaptcha extends oxSuperCfg
         // if session is started - storing captcha info here
         if ( $this->getSession()->isSessionStarted() ) {
             $sHash = oxUtilsObject::getInstance()->generateUID();
-            oxSession::setVar( "aCaptchaHash", array( $sHash => array( $sTextHash => $iTime ) ) );
+            $aHash = oxSession::getVar( "aCaptchaHash" );
+            $aHash[$sHash] = array( $sTextHash => $iTime );
+            oxSession::setVar( "aCaptchaHash", $aHash );
         } else {
             $oDb = oxDb::getDb();
             $sQ = "insert into oxcaptcha ( oxhash, oxtime ) values ( '{$sTextHash}', '{$iTime}' )";
@@ -154,7 +156,12 @@ class oxCaptcha extends oxSuperCfg
         $blPass = null;
         if ( ( $aHash = oxSession::getVar( "aCaptchaHash" ) ) ) {
             $blPass = ( isset( $aHash[$sMacHash][$sHash] ) && $aHash[$sMacHash][$sHash] >= $iTime ) ? true : false;
-            oxSession::deleteVar( "aCaptchaHash" );
+            unset( $aHash[$sMacHash] );
+            if ( !empty( $aHash ) ) {
+                oxSession::setVar( "aCaptchaHash", $aHash );
+            } else {
+                oxSession::deleteVar( "aCaptchaHash" );
+            }
         }
         return $blPass;
     }

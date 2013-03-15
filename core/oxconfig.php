@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 49755 2012-09-25 12:51:45Z tomas $
+ * @version   SVN: $Id: oxconfig.php 51662 2012-11-12 09:33:47Z aurimas.gladutis $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -1803,6 +1803,11 @@ class oxConfig extends oxSuperCfg
                     $sVarVal = unserialize( $sVarVal );
                 }
                 break;
+            case 'num':
+                //config param
+                $sVarVal = $sVarVal != ''? oxUtils::getInstance()->string2Float( $sVarVal ) : '';
+                $sValue = $sVarVal;
+                break;
             case 'bool':
                 //config param
                 $sVarVal = (( $sVarVal == 'true' || $sVarVal) && $sVarVal && strcasecmp($sVarVal, "false"));
@@ -1838,7 +1843,6 @@ class oxConfig extends oxSuperCfg
 
         $sQ = "insert into oxconfig (oxid, oxshopid, oxmodule, oxvarname, oxvartype, oxvarvalue)
                values($sNewOXIDdQuoted, $sShopIdQuoted, $sModuleQuoted, $sVarNameQuoted, $sVarTypeQuoted, ENCODE( $sVarValueQuoted, $sConfigKeyQuoted) )";
-
         $oDb->execute( $sQ );
     }
 

@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_crossselling_ajax.php 45919 2012-06-05 14:25:59Z vaidas.matulevicius $
+ * @version   SVN: $Id: article_crossselling_ajax.php 52574 2012-11-29 11:34:58Z aurimas.gladutis $
  */
 
 /**
@@ -111,9 +111,8 @@ class article_crossselling_ajax extends ajaxListComponent
         $sQAdd .= " and $sArticleTable.oxid IS NOT NULL ";
 
         // skipping self from list
-        $sId = ( $sSelId ) ? $sSelId : $sSynchSelId ;
+        $sId = ( $sSynchSelId ) ? $sSynchSelId : $sSelId ;
         $sQAdd .= " and $sArticleTable.oxid != " . $oDb->quote( $sId ) . " ";
-        
         return $sQAdd ;
     }
 

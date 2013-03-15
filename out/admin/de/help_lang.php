@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 46594 2012-06-22 13:30:18Z juergen.busch $
+ * @version   SVN: $Id: help_lang.php 52933 2012-12-14 10:58:54Z juergen.busch $
  */
 
 /**
@@ -324,6 +324,8 @@ $aLang =  array(
 'HELP_ARTICLE_EXTEND_NONMATERIAL'             => 'Einstellung wird vom Vater-Artikel an die Varianten vererbt und gilt für den gesamten Artikel.',
 
 'HELP_ARTICLE_EXTEND_FREESHIPPING'            => 'Einstellung wird vom Vater-Artikel an die Varianten vererbt und gilt für den gesamten Artikel.',
+
+'HELP_ARTICLE_EXTEND_BLFIXEDPRICE'            => 'Der Preisalarm kann für diesen Artikel ausgeschaltet werden.',
 
 'HELP_ARTICLE_EXTEND_TEMPLATE'                => 'Sie können die Detailansicht des Artikels mit einem anderen Template anzeigen lassen. Tragen Sie dazu Pfad und Namen des Templates ein, das verwendet werden soll. Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/bestimmte-artikel-oder-kategorien-mit-anderen-templates-anzeigen" target="_blank">eShop Handbuch</a>.',
 

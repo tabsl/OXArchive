@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsfile.php 43698 2012-04-10 14:53:40Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxutilsfile.php 51948 2012-11-19 07:59:12Z aurimas.gladutis $
  */
 
 /**
@@ -424,7 +424,9 @@ class oxUtilsFile extends oxSuperCfg
     protected function _moveImage( $sSource, $sTarget )
     {
         $blDone = false;
-
+        if ( !is_dir( dirname( $sTarget ) ) ) {
+            mkdir(dirname($sTarget), 0744, true);
+        }
         if ( $sSource === $sTarget ) {
             $blDone = true;
         } else {

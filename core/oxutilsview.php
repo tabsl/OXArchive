@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsview.php 43766 2012-04-11 09:53:06Z linas.kukulskis $
+ * @version   SVN: $Id: oxutilsview.php 51120 2012-10-31 08:09:21Z alfonsas $
  */
 
 /**
@@ -127,7 +127,7 @@ class oxUtilsView extends oxSuperCfg
                 // show debbuging information
                 if ( $iDebug == 4 ) {
                     echo( "TemplateData[$sViewName] : \n");
-                    print_r( $aViewData[$sViewName] );
+                    var_export( $aViewData[$sViewName] );
                 }
                 $oSmarty->assign_by_ref( $sViewName, $aViewData[$sViewName] );
             }
@@ -403,15 +403,15 @@ class oxUtilsView extends oxSuperCfg
     /**
      * is called when a template cannot be obtained from its resource.
      *
-     * @param string $sResourceType      template type
-     * @param string $sResourceName      template file name
-     * @param string $sResourceContent   template file content
-     * @param int    $sResourceTimestamp template file timestamp
-     * @param object $oSmarty            template processor object (smarty)
+     * @param string $sResourceType       template type
+     * @param string $sResourceName       template file name
+     * @param string &$sResourceContent   template file content
+     * @param int    &$sResourceTimestamp template file timestamp
+     * @param object $oSmarty             template processor object (smarty)
      *
      * @return bool
      */
-    public function _smartyDefaultTemplateHandler($sResourceType, $sResourceName, $sResourceContent, $sResourceTimestamp, $oSmarty)
+    public function _smartyDefaultTemplateHandler($sResourceType, $sResourceName, &$sResourceContent, &$sResourceTimestamp, $oSmarty)
     {
         $myConfig = oxConfig::getInstance();
         if ( $sResourceType == 'file' && !is_readable($sResourceName) ) {

@@ -213,18 +213,23 @@ window.onload = function ()
                     </td>
                   </tr>
 
-                  [{if !$edit->isParentNotBuyable()}]
-
-                    <tr>
-                      <td class="edittext">
-                        [{ oxmultilang ident="ARTICLE_MAIN_PRICE" }] ([{ $oActCur->sign }])
-                      </td>
-                      <td class="edittext">
-                        <input type="text" class="editinput" size="8" maxlength="[{$edit->oxarticles__oxprice->fldmax_length}]" name="editval[oxarticles__oxprice]" value="[{$edit->oxarticles__oxprice->value}]" [{ $readonly }]>
-                        &nbsp;<em>( [{$edit->getFPrice()}] )</em>
-                        [{ oxinputhelp ident="HELP_ARTICLE_MAIN_PRICE" }]
-                      </td>
-                    </tr>
+                  [{if $edit->isParentNotBuyable()}]
+                  <tr>
+                    <td colspan="2">
+                      <div class="errorbox">[{ oxmultilang ident="ARTICLE_MAIN_PARENTNOTBUYABLE" }]</div>
+                    </td>
+                  </tr>
+                  [{/if}]
+                  <tr>
+                    <td class="edittext">
+                      [{ oxmultilang ident="ARTICLE_MAIN_PRICE" }] ([{ $oActCur->sign }])
+                    </td>
+                    <td class="edittext">
+                      <input type="text" class="editinput" size="8" maxlength="[{$edit->oxarticles__oxprice->fldmax_length}]" name="editval[oxarticles__oxprice]" value="[{$edit->oxarticles__oxprice->value}]" [{ $readonly }]>
+                      &nbsp;<em>( [{$edit->getFPrice()}] )</em>
+                      [{ oxinputhelp ident="HELP_ARTICLE_MAIN_PRICE" }]
+                    </td>
+                  </tr>
 
                   <tr>
                     <td class="edittext">
@@ -246,8 +251,6 @@ window.onload = function ()
                         [{ oxinputhelp ident="HELP_ARTICLE_MAIN_VAT" }]
                     </td>
                   </tr>
-
-                  [{/if}]
               [{/block}]
 
               <tr>

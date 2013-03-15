@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 46597 2012-06-22 13:44:03Z juergen.busch $
+ * @version   SVN: $Id: help_lang.php 52934 2012-12-14 10:59:23Z juergen.busch $
  */
 
 /**
@@ -326,6 +326,8 @@ $aLang =  array(
 'HELP_ARTICLE_EXTEND_NONMATERIAL'             => 'Setting is inherited from Parent product to Variants and applies to the entire product.',
 
 'HELP_ARTICLE_EXTEND_FREESHIPPING'            => 'Setting is inherited from Parent product to Variants and applies to the entire product.',
+
+'HELP_ARTICLE_EXTEND_BLFIXEDPRICE'            => 'Price Alert can be turned off for this product.',
 
 'HELP_ARTICLE_EXTEND_SKIPDISCOUNTS'           => 'If <span class="navipath_or_inputname">Skip all negative discounts</span> is active, negative allowances will not be calculated for this product. These include discounts and vouchers.',
 

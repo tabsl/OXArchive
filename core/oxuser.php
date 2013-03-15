@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxuser.php 49701 2012-09-21 15:42:43Z tomas $
+ * @version   SVN: $Id: oxuser.php 53149 2012-12-19 15:35:46Z aurimas.gladutis $
  */
 
 /**
@@ -622,6 +622,10 @@ class oxUser extends oxBase
             $this->oxuser__oxcreate->setValue(oxUtilsDate::getInstance()->formatDBDate( $this->oxuser__oxcreate->value ));
         }
 
+        if ( isset($this->_oNewsSubscription) ) {
+            $this->_oNewsSubscription->oxnewssubscribed__oxuserid = new oxField( $oxID, oxField::T_RAW);
+        }
+
         return $blRet;
     }
 
@@ -1093,12 +1097,13 @@ class oxUser extends oxBase
     /**
      * Sets newsletter subscription status to user
      *
-     * @param bool $blSubscribe subscribes/unsubscribes user from newsletter
-     * @param bool $blSendOptIn if to send confirmation email
+     * @param bool $blSubscribe       subscribes/unsubscribes user from newsletter
+     * @param bool $blSendOptIn       if to send confirmation email
+     * @param bool $blForceCheckOptIn forces to check subscription even when it is set to 1
      *
      * @return bool
      */
-    public function setNewsSubscription( $blSubscribe, $blSendOptIn )
+    public function setNewsSubscription( $blSubscribe, $blSendOptIn, $blForceCheckOptIn = false  )
     {
         // assigning to newsletter
         $blSuccess = false;
@@ -1108,7 +1113,7 @@ class oxUser extends oxBase
         // user wants to get newsletter messages or no ?
         $oNewsSubscription = $this->getNewsSubscription();
         if ( $oNewsSubscription ) {
-            if ( $blSubscribe && ( $iOptInStatus = $oNewsSubscription->getOptInStatus() ) != 1 ) {
+            if ( $blSubscribe && ($blForceCheckOptIn || ( $iOptInStatus = $oNewsSubscription->getOptInStatus() ) != 1) ) {
                 if ( !$blSendOptIn ) {
 
                     // double-opt-in check is disabled - assigning automatically
@@ -1445,50 +1450,20 @@ class oxUser extends oxBase
         $myConfig = $this->getConfig();
 
         $blAdmin = $this->isAdmin() || $blForceAdmin;
-        $oDb = oxDb::getDb();
 
         // first - checking session info
         $sUserID = $blAdmin ? oxSession::getVar( 'auth' ) : oxSession::getVar( 'usr' );
+
+        // trying automatic login (by 'remember me' cookie)
         $blFoundInCookie = false;
-
-        //trying automatic login (by 'remember me' cookie)
         if ( !$sUserID && !$blAdmin && $myConfig->getConfigParam('blShowRememberMe') ) {
-            $sShopID = $myConfig->getShopId();
-            if ( ( $sSet = oxUtilsServer::getInstance()->getUserCookie( $sShopID ) ) ) {
-                $aData = explode( '@@@', $sSet );
-                $sUser = $aData[0];
-                $sPWD  = @$aData[1];
-
-                $sSelect =  'select oxid, oxpassword, oxpasssalt from oxuser where oxuser.oxpassword != "" and  oxuser.oxactive = 1 and oxuser.oxusername = '.$oDb->quote($sUser);
-
-                $rs = $oDb->select( $sSelect );
-                if ( $rs != false && $rs->recordCount() > 0 ) {
-                    while (!$rs->EOF) {
-                        $sTest = crypt( $rs->fields[1], $rs->fields[2] );
-                        if ( $sTest == $sPWD ) {
-                            // found
-                            $sUserID = $rs->fields[0];
-                            $blFoundInCookie = true;
-                            break;
-                        }
-                        $rs->moveNext();
-                    }
-                }
-            }
+            $sUserID = $this->_getCookieUserId( $blAdmin );
+            $blFoundInCookie = $sUserID? true : false;
         }
 
-        // Checking if user is connected via Facebook connect.
-        // If yes, trying to login user using user Facebook ID
+        // If facebook connection is enabled, trying to login user using Facebook ID
         if ( $myConfig->getConfigParam( "bl_showFbConnect") && !$sUserID && !$blAdmin ) {
-            $oFb = oxFb::getInstance();
-            if ( $oFb->isConnected() && $oFb->getUser() ) {
-                $sUserSelect = "oxuser.oxfbid = " . $oDb->quote( $oFb->getUser() );
-                $sShopSelect = "";
-
-
-                $sSelect =  "select oxid from oxuser where oxuser.oxactive = 1 and {$sUserSelect} {$sShopSelect} ";
-                $sUserID = $oDb->getOne( $sSelect );
-            }
+            $sUserID = $this->_getFacebookUserId();
         }
 
         // checking user results
@@ -1515,6 +1490,66 @@ class oxUser extends oxBase
 
             return false;
         }
+    }
+
+    /**
+     * Checks if user is connected via Facebook connect and if so, returns user id.
+     *
+     * @return string
+     */
+    protected function _getFacebookUserId()
+    {
+        $oDb = oxDb::getDb();
+        $oFb = oxFb::getInstance();
+        $oConfig = $this->getConfig();
+        if ( $oFb->isConnected() && $oFb->getUser() ) {
+            $sUserSelect = "oxuser.oxfbid = " . $oDb->quote( $oFb->getUser() );
+            $sShopSelect = "";
+
+
+            $sSelect =  "select oxid from oxuser where oxuser.oxactive = 1 and {$sUserSelect} {$sShopSelect} ";
+            $sUserID = $oDb->getOne( $sSelect );
+        }
+        return $sUserID;
+    }
+
+    /**
+     * Checks if user is connected via cookies and if so, returns user id.
+     *
+     * @param bool $blAdmin (default false)
+     *
+     * @return string
+     */
+    protected function _getCookieUserId( $blAdmin = false )
+    {
+        $oConfig = $this->getConfig();
+        $sShopID = $oConfig->getShopId();
+        if ( ( $sSet = oxUtilsServer::getInstance()->getUserCookie( $sShopID ) ) ) {
+            $oDb = oxDb::getDb();
+            $aData = explode( '@@@', $sSet );
+            $sUser = $aData[0];
+            $sPWD  = @$aData[1];
+
+            $sSelect =  'select oxid, oxpassword, oxpasssalt from oxuser where oxuser.oxpassword != "" and  oxuser.oxactive = 1 and oxuser.oxusername = '.$oDb->quote($sUser);
+
+            $rs = $oDb->select( $sSelect );
+            if ( $rs != false && $rs->recordCount() > 0 ) {
+                while (!$rs->EOF) {
+                    $sTest = crypt( $rs->fields[1], $rs->fields[2] );
+                    if ( $sTest == $sPWD ) {
+                        // found
+                        $sUserID = $rs->fields[0];
+                        break;
+                    }
+                    $rs->moveNext();
+                }
+            }
+            // if cookie info is not valid, remove it.
+            if ( !$sUserID ) {
+                oxUtilsServer::getInstance()->deleteUserCookie( $sShopID );
+            }
+        }
+        return $sUserID;
     }
 
     /**

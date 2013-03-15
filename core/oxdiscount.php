@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdiscount.php 49802 2012-09-26 13:10:58Z tomas $
+ * @version   SVN: $Id: oxdiscount.php 50557 2012-10-16 10:09:49Z vilma $
  */
 
 /**
