@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxfunctions.php 14097 2008-11-11 08:39:26Z sarunas $
+ * $Id: oxfunctions.php 14388 2008-11-26 15:43:17Z vilma $
  */
 
 /**
@@ -59,8 +59,11 @@ function __autoload( $sClass )
         }
     }
 
+    // in case module parent class (*_parent) is required
+    $sClass = preg_replace( '/_parent$/i', '', $sClass );
+
     // special case
-    if ( !in_array( $sClass, $aTriedClasses ) && ( $aModules = oxConfig::getInstance()->getConfigParam( 'aModules' ) ) ) {
+    if ( !in_array( $sClass, $aTriedClasses ) && is_array( $aModules = oxConfig::getInstance()->getConfigParam( 'aModules' ) ) ) {
 
         foreach ( $aModules as $sParentName => $sModuleName ) {
             // looking for module parent class
@@ -81,7 +84,8 @@ if ( !function_exists( 'error_404_handler' ) ) {
      *
      * @return void
      */
-    function error_404_handler($sUrl = '') {
+    function error_404_handler($sUrl = '') 
+    {
         header("HTTP/1.0 404 Not Found");
         echo "Page not found.";
         exit(0);
@@ -94,8 +98,10 @@ if ( !function_exists( 'error_404_handler' ) ) {
  * #T2008-07-22
  * Not used yet
  *
- * @param int $iErrorNr
- * @param string $sErrorText
+ * @param int    $iErrorNr   error number
+ * @param string $sErrorText error message
+ *
+ * @return null
  */
 function warningHandler($iErrorNr, $sErrorText)
 {
@@ -351,8 +357,9 @@ function smarty_modifier_oxtruncate( $sString, $iLength = 80, $sEtc = '...', $bl
 
         $sString = str_replace( array('&#039;', '&quot;'), array( "'",'"' ), $sString );
 
-        if ( !$blBreakWords )
+        if ( !$blBreakWords ) {
             $sString = preg_replace( '/\s+?(\S+)?$/', '', substr( $sString, 0, $iLength + 1 ) );
+        }
 
         $sString = substr( $sString, 0, $iLength ).$sEtc;
 
@@ -383,13 +390,16 @@ if ( !function_exists( 'getRequestUrl' ) ) {
     /**
      * Returns request url, which was executed to render current page view
      *
+     * @param string $sParams     Parameters to object
+     * @param bool   $blReturnUrl If return url
+     *
      * @return string
      */
     function getRequestUrl( $sParams = '', $blReturnUrl = false )
     {
         if ($_SERVER["REQUEST_METHOD"] != "POST" ) {
 
-            if( isset( $_SERVER['REQUEST_URI'] ) && $_SERVER['REQUEST_URI'] ) {
+            if ( isset( $_SERVER['REQUEST_URI'] ) && $_SERVER['REQUEST_URI'] ) {
                 $sRequest = $_SERVER['REQUEST_URI'];
             } else {    // try something else
                 $sRequest = $_SERVER['SCRIPT_URI'];

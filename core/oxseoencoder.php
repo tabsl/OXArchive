@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxseoencoder.php 14166 2008-11-12 14:00:44Z arvydas $
+ * $Id: oxseoencoder.php 14368 2008-11-26 07:36:13Z vilma $
  */
 
 /**
@@ -128,8 +128,9 @@ class oxSeoEncoder extends oxSuperCfg
     protected function _getAddParams()
     {
         // performance
-        if ( $this->_sAddParams )
+        if ( $this->_sAddParams ) {
             return $this->_sAddParams;
+        }
 
         $myConfig = $this->getConfig();
         $iCur = oxConfig::getParameter('currency');
@@ -323,11 +324,12 @@ class oxSeoEncoder extends oxSuperCfg
      * _loadFromDb loads data from oxseo table if exists
      * returns oxseo url
      *
-     * @param string $sType   object type
-     * @param string $sId     object identifier
-     * @param int    $iLang   active language id
-     * @param mixed  $iShopId active shop id
-     * @param string $sParams additional seo params. optional (mostly used for db indexing)
+     * @param string $sType               object type
+     * @param string $sId                 object identifier
+     * @param int    $iLang               active language id
+     * @param mixed  $iShopId             active shop id
+     * @param string $sParams             additional seo params. optional (mostly used for db indexing)
+     * @param bool   $blStrictParamsCheck strict parameters check
      *
      * @access protected
      *
@@ -383,14 +385,14 @@ class oxSeoEncoder extends oxSuperCfg
 
         // basic string preparation
         $sTitle = strip_tags( $sTitle );
-        $_sSeparator = self::$_sSeparator;
-        $_sPrefix = self::$_sPrefix;
+        $sSeparator = self::$_sSeparator;
+        $sPrefix     = self::$_sPrefix;
         // 'fixing' reserved words
         foreach ( self::$_aReservedWords as $sWord ) {
             // this probably possible to do in one regexp
             $sTitle = preg_replace( array( "/(\s$sWord)$/i", "/^($sWord\s)/i", "/(\s$sWord\s)/i", "/^($sWord)$/i",
                                            "/(\/$sWord)$/i", "/^($sWord\/)/i", "/(\/$sWord\/)/i"),
-                                    " $1{$_sSeparator}{$_sPrefix}{$_sSeparator} ", $sTitle );
+                                    " $1{$sSeparator}{$sPrefix}{$sSeparator} ", $sTitle );
         }
 
         // if found ".html" at the end - removing it temporary
@@ -410,7 +412,7 @@ class oxSeoEncoder extends oxSuperCfg
         }
 
         // removing any special characters
-        $sRegExp = '/[^A-Za-z0-9'.preg_quote( self::$_sSeparator , '/').'\/]+/';
+        $sRegExp = '/[^A-Za-z0-9'.preg_quote( self::$_sSeparator, '/').'\/]+/';
         $sTitle  = trim( preg_replace( $sRegExp, self::$_sSeparator, $sTitle ), self::$_sSeparator );
 
         // binding ".html" back
@@ -512,7 +514,7 @@ class oxSeoEncoder extends oxSuperCfg
         $sUrl = str_replace( $this->getConfig()->getShopURL(), '', $sUrl );
 
         if ( ( $sLangParam = $this->getLanguageParam( $iLang ) ) ) {
-            $sUrl = preg_replace( "'^".preg_quote( $sLangParam , "'")."'", '', $sUrl );
+            $sUrl = preg_replace( "'^".preg_quote( $sLangParam, "'")."'", '', $sUrl );
         }
 
         return preg_replace( '/sid=[a-z0-9\.]+&?(amp;)?/i', '', $sUrl );
@@ -548,8 +550,9 @@ class oxSeoEncoder extends oxSuperCfg
     public function setSeparator( $sSeparator = null )
     {
         self::$_sSeparator = $sSeparator;
-        if ( !self::$_sSeparator )
+        if ( !self::$_sSeparator ) {
             self::$_sSeparator = '-';
+        }
     }
 
     /**
@@ -601,6 +604,7 @@ class oxSeoEncoder extends oxSuperCfg
      * @param string $sId     changed object id. If null is passed, object dependency is not checked
      * @param int    $iShopId active shop id. Shop id must be passed uf you want to do shop level update (default null)
      * @param int    $iLang   active language (optiona;)
+     * @param string $sParams additional params
      *
      * @return null
      */
@@ -623,6 +627,7 @@ class oxSeoEncoder extends oxSuperCfg
      * @param string $sStdUrl stanradr url
      * @param string $sSeoUrl seo uri
      * @param string $sParams additional params, liek page number etc. mostly used by mysql for indexes
+     * @param int    $iLang   language
      * @param bool   $blFixed fixed url marker (default is false)
      *
      * @return string
@@ -735,7 +740,7 @@ class oxSeoEncoder extends oxSuperCfg
         $iBaseShopId = $this->getConfig()->getBaseShopId();
         if ( $iShopId != $iBaseShopId ) {
             foreach (array_keys(oxLang::getInstance()->getLanguageIds()) as $iLang) {
-                $iLang = (int)$iLang;
+                $iLang = (int) $iLang;
                 $sPrfx = $this->getLanguageParam($iLang);
                 $sQ = "insert into oxseo ( oxobjectid, oxident, oxshopid, oxlang, oxstdurl, oxseourl, oxtype )
                        select MD5( LOWER( CONCAT( '{$iShopId}', oxstdurl ) ) ), MD5( LOWER(  CONCAT( '{$sPrfx}', oxseourl ) ) ),

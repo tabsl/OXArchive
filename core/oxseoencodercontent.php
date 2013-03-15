@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxseoencodercontent.php 14164 2008-11-12 11:50:43Z arvydas $
+ * $Id: oxseoencodercontent.php 14392 2008-11-26 16:50:36Z vilma $
  */
 
 /**
@@ -51,6 +51,7 @@ class oxSeoEncoderContent extends oxSeoEncoder
      * content is assigned to it
      *
      * @param oxcontent $oCont content category object
+     * @param int       $iLang language
      *
      * @return string
      */
@@ -91,6 +92,7 @@ class oxSeoEncoderContent extends oxSeoEncoder
      * encodeContentUrl encodes content link
      *
      * @param oxContent $oCont category object
+     * @param int       $iLang language
      *
      * @access public
      *

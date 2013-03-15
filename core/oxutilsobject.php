@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxutilsobject.php 13914 2008-10-30 11:12:55Z arvydas $
+ * $Id: oxutilsobject.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -126,8 +126,9 @@ class oxUtilsObject extends oxSuperCfg
             $oActionObject = new $sActionClassName();
         }
 
-        if ( $oActionObject instanceof oxBase )
+        if ( $oActionObject instanceof oxBase ) {
             self::$_aInstanceCache[$sCacheKey] = clone $oActionObject;
+        }
 
         return $oActionObject;
     }
@@ -142,8 +143,9 @@ class oxUtilsObject extends oxSuperCfg
      */
     public function oxNewArticle( $sOxID, $aProperties = array())
     {
-        if ( $sOxID && isset( self::$_aLoadedArticles[$sOxID] ) )
+        if ( $sOxID && isset( self::$_aLoadedArticles[$sOxID] ) ) {
             return self::$_aLoadedArticles[$sOxID];
+        }
 
         $oActionObject = $this->oxNew( 'oxarticle' );
 
@@ -173,9 +175,11 @@ class oxUtilsObject extends oxSuperCfg
         }
 
         //looping due to possible memory "leak".
-        if (is_array(self::$_aInstanceCache))
-            foreach(self::$_aInstanceCache as $sKey => $oInstance)
+        if (is_array(self::$_aInstanceCache)) {
+            foreach (self::$_aInstanceCache as $sKey => $oInstance) {
                 unset(self::$_aInstanceCache[$sKey]);
+            }
+        }
 
         self::$_aInstanceCache = array();
     }

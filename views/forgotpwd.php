@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package views
  * @copyright © OXID eSales AG 2003-2008
- * $Id: forgotpwd.php 13614 2008-10-24 09:36:52Z sarunas $
+ * $Id: forgotpwd.php 14391 2008-11-26 16:00:50Z arvydas $
  */
 
 /**
@@ -51,6 +51,13 @@ class ForgotPwd extends oxUBase
     protected $_iViewIndexState = 1;
 
     /**
+     * Update link expiration status
+     *
+     * @var bool
+     */
+    protected $_blUpdateLinkStatus = null;
+
+    /**
      * Executes oxemail::SendForgotPwdEmail() and sends login
      * password to user according to login name (email).
      *
@@ -62,9 +69,103 @@ class ForgotPwd extends oxUBase
     public function forgotPassword()
     {
         $sEmail = oxConfig::getParameter( 'lgn_usr' );
+        $this->_sForgotEmail = $sEmail;
         $oEmail = oxNew( 'oxemail' );
-        $oEmail->sendForgotPwdEmail( $sEmail );
-        $this->_sForgotEmail = $sEmail?$sEmail:' - ';
+
+        // problems sending passwd reminder ?
+        if ( !$sEmail || !$oEmail->sendForgotPwdEmail( $sEmail ) ) {
+            oxUtilsView::getInstance()->addErrorToDisplay('FORGOTPWD_ERRUNABLETOSEND', false, true);
+            $this->_sForgotEmail = ' - ';
+        }
+    }
+
+    /**
+     * Checks if password is fine and updates old one with new
+     * password. On success user is redirected to success page
+     *
+     * @return string
+     */
+    public function updatePassword()
+    {
+        $sNewPass  = oxConfig::getParameter( 'password_new', true );
+        $sConfPass = oxConfig::getParameter( 'password_new_confirm', true );
+
+        if ( !$sNewPass || !$sConfPass ) {
+            return oxUtilsView::getInstance()->addErrorToDisplay('FORGOTPWD_ERRPASSWORDTOSHORT', false, true);
+        }
+
+        if ( $sNewPass != $sConfPass ) {
+            return oxUtilsView::getInstance()->addErrorToDisplay('FORGOTPWD_ERRPASSWDONOTMATCH', false, true);
+        }
+
+        if ( strlen($sNewPass) < 6 ||  strlen($sConfPass) < 6 ) {
+            return oxUtilsView::getInstance()->addErrorToDisplay('FORGOTPWD_ERRPASSWORDTOSHORT', false, true);
+        }
+
+        // passwords are fine - updating and loggin user in
+        $oUser = oxNew( 'oxuser' );
+        if ( $oUser->loadUserByUpdateId( $this->getUpdateId() ) ) {
+
+            // setting new pass ..
+            $oUser->setPassword( $sNewPass );
+
+            // resetting update pass params
+            $oUser->setUpdateKey( true );
+
+            // saving ..
+            $oUser->save();
+
+            // forcing user login
+            oxSession::setVar( 'usr', $oUser->getId() );
+            return 'forgotpwd?success=1';
+        } else {
+            // expired reminder
+            return oxUtilsView::getInstance()->addErrorToDisplay( 'FORGOTPWD_ERRLINKEXPIRED', false, true );
+        }
+    }
+
+    /**
+     * If user password update was successfull - setting success status
+     *
+     * @return bool
+     */
+    public function updateSuccess()
+    {
+        return (bool) oxConfig::getParameter( 'success' );
+    }
+
+    /**
+     * Notifies that password update form must be shown
+     *
+     * @return bool
+     */
+    public function showUpdateScreen()
+    {
+        return (bool) $this->getUpdateId();
+    }
+
+    /**
+     * Returns special id used for password update functionality
+     *
+     * @return string
+     */
+    public function getUpdateId()
+    {
+        return oxConfig::getParameter( 'uid' );
+    }
+
+    /**
+     * Returns password update link expiration status
+     *
+     * @return bool
+     */
+    public function isExpiredLink()
+    {
+        if ( ( $sKey = $this->getUpdateId() ) ) {
+            $blExpired = oxNew( 'oxuser' )->isExpiredUpdateKey( $sKey );
+        }
+
+        return $blExpired;
     }
 
     /**

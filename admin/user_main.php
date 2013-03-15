@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package admin
  * @copyright © OXID eSales AG 2003-2008
- * $Id: user_main.php 14014 2008-11-06 13:26:22Z arvydas $
+ * $Id: user_main.php 14361 2008-11-25 15:40:16Z arvydas $
  */
 
 /**
@@ -147,11 +147,6 @@ class User_Main extends oxAdminDetails
         if ( !isset( $aParams['oxuser__oxactive']))
             $aParams['oxuser__oxactive'] = 0;
 
-        //setting password
-        if (oxConfig::getParameter("newPassword")) {
-            $aParams['oxuser__oxpassword'] = oxConfig::getParameter("newPassword");
-        }
-
         // #1899 (R)
         if ( isset($aParams['oxuser__oxcompany']))
             oxConfig::checkSpecialChars($aParams['oxuser__oxcompany']);
@@ -161,6 +156,11 @@ class User_Main extends oxAdminDetails
             $oUser->load( $soxId);
         else
             $aParams['oxuser__oxid'] = null;
+
+        //setting new password
+        if ( ( $sNewPass = oxConfig::getParameter( "newPassword" ) ) ) {
+            $oUser->setPassword( $sNewPass );
+        }
 
         //FS#2167 V checks for already used email
         if ( $oUser->checkIfEmailExists($aParams['oxuser__oxusername'])) {

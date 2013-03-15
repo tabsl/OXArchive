@@ -9,7 +9,7 @@
       [{if $_basket_extended }]
         [{foreach from=$oxcmp_basket->getContents() name=rightlist item=_product}]
         <div id="test_[{$_basket_testid}]Title_[{$_product->getProductId()}]_[{$smarty.foreach.rightlist.iteration}]" class="listitem rightbasketitems">
-          [{ assign var="sRightListArtTitle" value=$_product->getTitle()|cat:$_product->getVarSelect() }]
+          [{ assign var="sRightListArtTitle" value=$_product->getTitle() }]
           <a id="test_[{$_basket_testid}]Pic_[{$_product->getProductId()}]_[{$smarty.foreach.rightlist.iteration}]" href="[{$_product->getLink()}]" class="picture">
               <img src="[{$_product->getImageUrl()}]/[{$_product->getIcon()}]" alt="[{ $sRightListArtTitle|strip_tags }]">
           </a>

@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package admin
  * @copyright © OXID eSales AG 2003-2008
- * $Id: category_seo.php 13770 2008-10-27 13:10:37Z arvydas $
+ * $Id: category_seo.php 14266 2008-11-19 10:12:51Z arvydas $
  */
 
 /**
@@ -127,6 +127,6 @@ class Category_Seo extends Object_Seo
             }
         }
 
-        parent::save();
+        return parent::save();
     }
 }

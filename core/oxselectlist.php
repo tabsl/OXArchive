@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxselectlist.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxselectlist.php 14368 2008-11-26 07:36:13Z vilma $
  */
 
 /**
@@ -61,7 +61,7 @@ class oxSelectlist extends oxI18n
     {
         if ( $this->_aFieldList == null && $this->oxselectlist__oxvaldesc->value ) {
             $this->_aFieldList = oxUtils::getInstance()->assignValuesFromText( $this->oxselectlist__oxvaldesc->value );
-            foreach( $this->_aFieldList as $sKey => $oField ) {
+            foreach ( $this->_aFieldList as $sKey => $oField ) {
                 $this->_aFieldList[$sKey]->name = htmlspecialchars( $this->_aFieldList[$sKey]->name );
             }
         }
@@ -77,10 +77,12 @@ class oxSelectlist extends oxI18n
      */
     public function delete( $sOXID = null )
     {
-        if( !$sOXID )
+        if ( !$sOXID ) {
             $sOXID = $this->getId();
-        if( !$sOXID )
+        }
+        if ( !$sOXID ) {
             return false;
+        }
 
         // remove selectlists from articles also
         if ( $blRemove = parent::delete( $sOXID ) ) {

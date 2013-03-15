@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxseoencoderarticle.php 14165 2008-11-12 12:22:26Z arvydas $
+ * $Id: oxseoencoderarticle.php 14388 2008-11-26 15:43:17Z vilma $
  */
 
 /**
@@ -50,6 +50,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
      * Returns SEO uri for passed article
      *
      * @param oxarticle $oArticle article object
+     * @param int       $iLang    language
      *
      * @return string
      */
@@ -189,6 +190,8 @@ class oxSeoEncoderArticle extends oxSeoEncoder
      * Encodes article URLs into SEO format
      *
      * @param oxArticle $oArticle Article object
+     * @param int       $iLang    language
+     * @param int       $iType    type
      *
      * @return string
      */
@@ -204,7 +207,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
                 break;
             default:
                 $sUri = $this->_getArticleUri( $oArticle, $iLang );
-        }
+            }
 
         return $this->_getFullUrl( $sUri, $iLang );
 
@@ -214,6 +217,7 @@ class oxSeoEncoderArticle extends oxSeoEncoder
      * Returns array of suitable categories for given article
      *
      * @param oxArticle $oArticle article to search
+     * @param int       $iLang    language
      *
      * @return oxList
      */

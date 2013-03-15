@@ -400,11 +400,11 @@ INSERT INTO `oxnewsletter` VALUES ('oxidnewsletter', 'oxbaseshop', 'Beispiel New
 # Daten für Tabelle `oxdelivery`
 #
 
-INSERT INTO `oxdelivery` VALUES ('1b842e734b62a4775.45738618', 'oxbaseshop', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'Standard: Versandkostenfrei ab 80,-', '', '', '', 'abs', '0', 'p', '80.00', '999999', '0', 1000, '1');
-INSERT INTO `oxdelivery` VALUES ('1b842e73470578914.54719298', 'oxbaseshop', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'Standard: 3,90 Euro innerhalb Deutschland', '', '', '', 'abs', '3.9', 'p', '0', '79.99', '0', 2000, '1');
-INSERT INTO `oxdelivery` VALUES ('1b842e7352422a708.01472527', 'oxbaseshop', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'Standard: 6,90 Rest EU', '', '', '', 'abs', '6.9', 'p', '0', '999999', '0', 3000, '1');
-INSERT INTO `oxdelivery` VALUES ('1b842e738970d31e3.71258327', 'oxbaseshop', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'UPS: 48', '', '', '', 'abs', '9.9', 'p', '0', '99999', '0', 4000, '1');
-INSERT INTO `oxdelivery` VALUES ('1b842e738970d31e3.71258328', 'oxbaseshop', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'UPS: Express', '', '', '', 'abs', '12.9', 'p', '0', '99999', '0', 5000, '1');
+INSERT INTO `oxdelivery` VALUES ('1b842e734b62a4775.45738618', 'oxbaseshop', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'Versandkosten für Standard: Versandkostenfrei ab 80,-', '', '', '', 'abs', '0', 'p', '80.00', '999999', '0', 1000, '1');
+INSERT INTO `oxdelivery` VALUES ('1b842e73470578914.54719298', 'oxbaseshop', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'Versandkosten für Standard: 3,90 Euro innerhalb Deutschland', '', '', '', 'abs', '3.9', 'p', '0', '79.99', '0', 2000, '1');
+INSERT INTO `oxdelivery` VALUES ('1b842e7352422a708.01472527', 'oxbaseshop', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'Versandkosten für Standard: 6,90 Rest EU', '', '', '', 'abs', '6.9', 'p', '0', '999999', '0', 3000, '1');
+INSERT INTO `oxdelivery` VALUES ('1b842e738970d31e3.71258327', 'oxbaseshop', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'Versandkosten für Beispiel Set1: UPS 48 Std.: 9,90.-', '', '', '', 'abs', '9.9', 'p', '0', '99999', '0', 4000, '1');
+INSERT INTO `oxdelivery` VALUES ('1b842e738970d31e3.71258328', 'oxbaseshop', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'Versandkosten für Beispiel Set2: UPS 24 Std. Express: 12,90.-', '', '', '', 'abs', '12.9', 'p', '0', '99999', '0', 5000, '1');
 
 #
 # Daten für Tabelle `oxdiscount`

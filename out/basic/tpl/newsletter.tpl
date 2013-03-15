@@ -44,6 +44,17 @@
           </tr>
           <tr>
             <td></td>
+            <td valign="top">
+              <input id="test_newsletterSubscribeOn" type="radio" name="subscribeStatus" value="1" checked><label for="test_newsletterSubscribeOn">[{ oxmultilang ident="NEWSLETTER_SUBSCRIBE" }]</label>
+              <input id="test_newsletterSubscribeOff" type="radio" name="subscribeStatus" value="0"><label for="test_newsletterSubscribeOff">[{ oxmultilang ident="NEWSLETTER_UNSUBSCRIBE" }]</label>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td></td>
             <td valign="top">[{ oxmultilang ident="NEWSLETTER_COMPLETEMARKEDFIELEDS" }]</td>
           </tr>
           <tr>

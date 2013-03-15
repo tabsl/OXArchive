@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxstatistic.php 13901 2008-10-30 08:17:41Z vilma $
+ * $Id: oxstatistic.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -68,7 +68,7 @@ class oxStatistic extends oxBase
      *
      * @param string $sFieldName index OR name (eg. 'oxarticles__oxtitle') of a data field to set
      * @param string $sValue     value of data field
-     * @param int field type
+     * @param int    $iDataType  field type
      *
      * @return null
      */

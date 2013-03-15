@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxdeliverysetlist.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxdeliverysetlist.php 14368 2008-11-26 07:36:13Z vilma $
  */
 
 /**
@@ -82,10 +82,11 @@ class oxDeliverySetList extends oxList
      */
     public function setHomeCountry( $sHomeCountry )
     {
-        if ( is_array( $sHomeCountry ) )
+        if ( is_array( $sHomeCountry ) ) {
             $this->_sHomeCountry = current( $sHomeCountry );
-        else
+        } else {
             $this->_sHomeCountry = $sHomeCountry;
+        }
     }
 
     /**
@@ -266,8 +267,9 @@ class oxDeliverySetList extends oxList
         $aActSets    = array();
         $aActPaymentList = array();
 
-        if (!$oUser)
+        if (!$oUser) {
             return;
+        }
 
         $this->_getList( $oUser, $oUser->getActiveCountry() );
 

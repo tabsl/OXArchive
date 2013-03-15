@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxvatselector.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxvatselector.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -33,29 +33,30 @@ class oxVatSelector extends oxSuperCfg
      *
      * @var array
      */
-    private static $_aUserVatCache = array();
+    protected static $_aUserVatCache = array();
 
     /**
      * get VAT for user, can NOT be null
      *
-     * @throws oxObjectException
+     * @param oxUser $oUser        given user object
+     * @param bool   $blCacheReset reset cache
      *
-     * @param oxUser $oUser
-     * @param bool $blCacheReset
+     * @throws oxObjectException if wrong country
      * @return double | false
      */
     public function getUserVat(oxUser $oUser, $blCacheReset = false)
     {
         if (!$blCacheReset) {
-            if (self::$_aUserVatCache[$oUser->getId()] !== null)
+            if (self::$_aUserVatCache[$oUser->getId()] !== null) {
                 return self::$_aUserVatCache[$oUser->getId()];
+            }
         }
 
         $ret = false;
 
         if ($sCountryId = $oUser->oxuser__oxcountryid->value) {
             $oCountry = oxNew('oxcountry');
-            if (!$oCountry->Load($sCountryId)) {
+            if (!$oCountry->load($sCountryId)) {
                 throw new oxObjectException();
             }
             if ($oCountry->isForeignCountry()) {
@@ -70,8 +71,9 @@ class oxVatSelector extends oxSuperCfg
     /**
      * get vat for user of a foreign country
      *
-     * @param oxUser $oUser
-     * @param oxCountry $oCountry
+     * @param oxUser    $oUser    given user object
+     * @param oxCountry $oCountry given country object
+     *
      * @return unknown
      */
     protected function _getForeignCountryUserVat(oxUser $oUser, oxCountry $oCountry )
@@ -89,9 +91,8 @@ class oxVatSelector extends oxSuperCfg
     /**
      * return Vat value for oxcategory type assignment only
      *
-     * @throws oxObjectException
+     * @param oxArticle $oArticle given article
      *
-     * @param oxArticle $oArticle
      * @return float | false
      */
     protected function _getVatForArticleCategory(oxArticle $oArticle)
@@ -109,8 +110,7 @@ class oxVatSelector extends oxSuperCfg
         //no category specific vats in shop?
         //then for performance reasons we just return false
         $iCount = oxDb::getDb()->getOne($sSelect);
-        if (!$iCount)
-        {
+        if (!$iCount) {
             return false;
         }
 
@@ -136,9 +136,8 @@ class oxVatSelector extends oxSuperCfg
     /**
      * get VAT for given article, can NOT be null
      *
-     * @throws oxObjectException
+     * @param oxArticle $oArticle given article
      *
-     * @param oxArticle $oArticle
      * @return double
      */
     public function getArticleVat(oxArticle $oArticle)

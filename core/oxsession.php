@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxsession.php 13657 2008-10-24 14:35:25Z arvydas $
+ * $Id: oxsession.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 
@@ -35,12 +35,6 @@ if (oxConfig::getInstance()->getConfigParam( 'blAdodbSessionHandler' ) )
 class oxSession extends oxSuperCfg
 {
     /**
-     * User sesion ID variable name.
-     * @var string
-     */
-    private $name   = 'sid';
-
-    /**
      * Session parameter name
      *
      * @var string
@@ -52,13 +46,6 @@ class oxSession extends oxSuperCfg
      * @var string
      */
     protected  $_sId     = null;
-
-    /**
-     * TODO: remove it for release, exopecting exception if this is accesssed in some way
-     *
-     * @var string
-     */
-    private $id;
 
     /**
      * A flag indicating that sesion was just created, useful for tracking cookie support
@@ -140,7 +127,9 @@ class oxSession extends oxSuperCfg
     /**
      * Sets session id
      *
-     * @param unknown_type $sVal
+     * @param string $sVal id value
+     *
+     * @return null
      */
     public function setId($sVal)
     {
@@ -150,7 +139,9 @@ class oxSession extends oxSuperCfg
     /**
      * Sets session param name
      *
-     * @param string $sVal
+     * @param string $sVal name value
+     *
+     * @return null
      */
     public function setName($sVal)
     {
@@ -178,10 +169,11 @@ class oxSession extends oxSuperCfg
     {
         $sid = null;
 
-        if ( $this->isAdmin() )
+        if ( $this->isAdmin() ) {
             $this->setName("admin_sid");
-        else
+        } else {
             $this->setName("sid");
+        }
 
         $sForceSidParam = oxConfig::getParameter('force_sid');
         $sSidParam = oxConfig::getParameter($this->getName());
@@ -189,20 +181,22 @@ class oxSession extends oxSuperCfg
         $blUseCookies = $this->getConfig()->getConfigParam( 'blSessionUseCookies') || $this->isAdmin();
 
         //forcing sid for SSL<->nonSSL transitions
-        if ($sForceSidParam)
+        if ($sForceSidParam) {
             $sid = $sForceSidParam;
-        elseif ($blUseCookies && $this->_getCookieSid())
+        } elseif ($blUseCookies && $this->_getCookieSid()) {
             $sid = $this->_getCookieSid();
-        elseif($sSidParam)
+        } elseif($sSidParam) {
             $sid = $sSidParam;
+        }
 
 
         //creating new sid
         if ( !$sid) {
             $this->initNewSession();
             self::$_blIsNewSession = true;
-        } else
+        } else {
             $this->_setSessionId($sid);
+        }
 
 
         //starting session if only we can
@@ -211,8 +205,9 @@ class oxSession extends oxSuperCfg
             @session_start();
 
             //special handling for new ZP cluster session, as in that case session_start() regenerates id
-            if ($this->_sId != session_id())
+            if ($this->_sId != session_id()) {
                 $this->_setSessionId(session_id());
+            }
         }
 
         //checking for swapped client in case cookies are not available
@@ -239,9 +234,11 @@ class oxSession extends oxSuperCfg
     {
         //saving persistent params if old session exists
         $aPersistent = array();
-        foreach ($this->_aPersistentParams as $sParam)
-            if ( self::getVar($sParam))
+        foreach ($this->_aPersistentParams as $sParam) {
+            if ( self::getVar($sParam)) {
                 $aPersistent[$sParam] = self::getVar($sParam);
+            }
+        }
 
         $sid = md5(oxUtilsObject::getInstance()->generateUID());
 
@@ -249,8 +246,9 @@ class oxSession extends oxSuperCfg
         session_unset();
 
         //restoring persistent params to session
-        foreach ($aPersistent as $key => $sParam)
+        foreach ($aPersistent as $key => $sParam) {
             self::setVar($key, $aPersistent[$key]);
+        }
     }
 
     /**
@@ -344,10 +342,11 @@ class oxSession extends oxSuperCfg
             }
         }
 
-        if( isset( $_SESSION[$name] ))
+        if ( isset( $_SESSION[$name] )) {
             return $_SESSION[$name];
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -384,10 +383,12 @@ class oxSession extends oxSuperCfg
     public function url($url)
     {
         $myConfig = $this->getConfig();
-        if (strpos(" ".$url, "https:") === 1 && !$myConfig->isSsl())
+        if (strpos(" ".$url, "https:") === 1 && !$myConfig->isSsl()) {
             $blForceSID = true;
-        if (strpos(" ".$url, "http:") === 1 && $myConfig->isSsl())
+        }
+        if (strpos(" ".$url, "http:") === 1 && $myConfig->isSsl()) {
             $blForceSID = true;
+        }
 
         $blUseCookies = $myConfig->getConfigParam( 'blSessionUseCookies' ) || $this->isAdmin();
 
@@ -399,16 +400,18 @@ class oxSession extends oxSuperCfg
 
             //or this is SSL link in non SSL environment (or vice versa)
             //and we force sid here
-            if ($blForceSID)
+            if ($blForceSID) {
                 $url .= 'force_sid=' . $this->getId() . '&amp;';
+            }
         } elseif (oxUtils::getInstance()->isSearchEngine()) {
             $url .= $sSeparator;
 
             //adding lang parameter for search engines
             $sLangParam = oxConfig::getParameter( "lang" );
             $sConfLang = $myConfig->getConfigParam( 'sDefaultLang' );
-            if ( (int)$sLangParam != (int)$sConfLang )
+            if ( (int) $sLangParam != (int) $sConfLang ) {
                 $url   .= "lang=" . $sLangParam . "&amp;";
+            }
         } elseif ($this->sid()) {
             //removing dublicate params
             //..hopefully this is not needed
@@ -430,15 +433,17 @@ class oxSession extends oxSuperCfg
      */
     public function sid()
     {
-        if ( !$this->getId() )
+        if ( !$this->getId() ) {
             return false;
+        }
 
         $myConfig     = $this->getConfig();
         $blUseCookies = $myConfig->getConfigParam( 'blSessionUseCookies' ) || $this->isAdmin();
 
         //no cookie?
-        if (!$blUseCookies || !$this->_getCookieSid())
+        if (!$blUseCookies || !$this->_getCookieSid()) {
             $sRet = $this->getName()."=".$this->getId();
+        }
 
         if (oxUtils::getInstance()->isSearchEngine() && is_array($myConfig->getConfigParam( 'aCacheViews' ) ) && !$this->isAdmin() ) {
 
@@ -460,9 +465,9 @@ class oxSession extends oxSuperCfg
      */
     public function hiddenSid()
     {
-
-        if ( $this->isAdmin())
+        if ( $this->isAdmin()) {
             return '';
+        }
 
         return "<input type=\"hidden\" name=\"force_sid\" value=\"". $this->getId() . "\">";
     }
@@ -528,11 +533,13 @@ class oxSession extends oxSuperCfg
     protected function _allowSessionStart()
     {
         $blAllowSessionStart = true;
-        if ( oxUtils::getInstance()->isSearchEngine() )
+        if ( oxUtils::getInstance()->isSearchEngine() ) {
             $blAllowSessionStart = false;
+        }
 
-        if ( oxConfig::getParameter( 'skipSession' ) )
+        if ( oxConfig::getParameter( 'skipSession' ) ) {
             $blAllowSessionStart = false;
+        }
 
         /*if ($this->_getCookieSid())
             $blAllowSessionStart = true;*/
@@ -541,7 +548,11 @@ class oxSession extends oxSuperCfg
     }
 
     /**
-     * Checks for mandatory cookie support. Return true if the check is succseful. False means some problem occured - user has no cookies, but they are required.
+     * Checks for mandatory cookie support. Return true if the check is succseful. 
+     * False means some problem occured - user has no cookies, but they are required.
+     *
+     * @param string $sClass    class name
+     * @param string $sFunction function name
      *
      * @return null
      */
@@ -550,14 +561,17 @@ class oxSession extends oxSuperCfg
         $myConfig  = $this->getConfig();
 
         //no mandatory cookie needed
-        if (!$myConfig->getConfigParam( 'blSessionEnforceCookies' ) || (oxUtilsServer::getInstance()->getOxCookie($this->getName())) || !$sClass)
+        if (!$myConfig->getConfigParam( 'blSessionEnforceCookies' ) || (oxUtilsServer::getInstance()->getOxCookie($this->getName())) || !$sClass) {
             return true;
+        }
 
-        if($sFunction && in_array($sFunction, $this->_aRequireCookiesInFncs))
+        if($sFunction && in_array($sFunction, $this->_aRequireCookiesInFncs)) {
             return false;
+        }
 
-        if (array_key_exists($sClass, $this->_aRequireCookiesInFncs))
+        if (array_key_exists($sClass, $this->_aRequireCookiesInFncs)) {
             return false;
+        }
 
         //otherwise cookies are mandatories and we don't have them
         return true;
@@ -578,8 +592,9 @@ class oxSession extends oxSuperCfg
         $blSwapped = false;
 
         //checking search engine
-        if ( $myUtils->isSearchEngine() )
+        if ( $myUtils->isSearchEngine() ) {
             return false;
+        }
 
         /*
         //T2007-05-14
@@ -593,8 +608,9 @@ class oxSession extends oxSuperCfg
 
         $sAgent = oxUtilsServer::getInstance()->getServerVar( 'HTTP_USER_AGENT' );
         $sExistingAgent = self::getVar( 'sessionagent' );
-        if ( $this->_checkUserAgent( $sAgent, $sExistingAgent ) )
+        if ( $this->_checkUserAgent( $sAgent, $sExistingAgent ) ) {
             $blSwapped = true;
+        }
 
         /*
         if ( $this->_checkByTimeOut() )
@@ -602,16 +618,18 @@ class oxSession extends oxSuperCfg
         */
 
         if ( $myConfig->getConfigParam( 'blAdodbSessionHandler' ) ) {
-            if ( $this->_checkSid() )
+            if ( $this->_checkSid() ) {
                 $blSwapped = true;
+            }
         }
 
         $blDisableCookieCheck = $myConfig->getConfigParam( 'blDisableCookieCheck' );
         if ( !$blDisableCookieCheck ) {
             $sCookieSid = oxUtilsServer::getInstance()->getOxCookie( 'sid_key' );
             $aSessCookieSetOnce = self::getVar("sessioncookieisset");
-            if ( $this->_checkCookies( $sCookieSid, $aSessCookieSetOnce ) )
+            if ( $this->_checkCookies( $sCookieSid, $aSessCookieSetOnce ) ) {
                 $blSwapped = true;
+            }
         }
 
         return $blSwapped;
@@ -631,8 +649,9 @@ class oxSession extends oxSuperCfg
         if ($sAgent && $sExistingAgent && $sAgent != $sExistingAgent && (!$blIgnoreBrowserChange)) {
             $this->_sErrorMsg = "Different browser ($sExistingAgent, $sAgent), creating new SID...<br>";
             return true;
-        } elseif (!isset($sExistingAgent))
+        } elseif (!isset($sExistingAgent)) {
             self::setVar("sessionagent", $sAgent);
+        }
         return false;
     }
 
@@ -702,10 +721,11 @@ class oxSession extends oxSuperCfg
         $myConfig   = $this->getConfig();
         $blSwapped  = false;
 
-        if ( isset( $aSessCookieSetOnce[$myConfig->getCurrentShopURL()] ) )
+        if ( isset( $aSessCookieSetOnce[$myConfig->getCurrentShopURL()] ) ) {
             $blSessCookieSetOnce = $aSessCookieSetOnce[$myConfig->getCurrentShopURL()];
-        else
+        } else {
             $blSessCookieSetOnce = false;
+        }
 
         //if cookie was there once but now is gone it means we have to reset
         if ( $blSessCookieSetOnce && !$sCookieSid ) {
@@ -741,8 +761,9 @@ class oxSession extends oxSuperCfg
     protected function _setSessionId($sSessId)
     {
         //marking this session as new one, as it might be not writen to db yet
-        if ($sSessId && session_id() != $sSessId)
+        if ($sSessId && session_id() != $sSessId) {
             $this->_blNewSession = true;
+        }
 
         session_id($sSessId);
 
@@ -756,7 +777,7 @@ class oxSession extends oxSuperCfg
         //setting session cookie
          oxUtilsServer::getInstance()->setOxCookie($this->getName(), $sSessId);
 
-        if( $this->_sErrorMsg) {
+        if ( $this->_sErrorMsg) {
             //display debug error msg
             echo $this->_sErrorMsg;
             $this->_sErrorMsg = null;
@@ -771,10 +792,11 @@ class oxSession extends oxSuperCfg
     protected function _getBasketName()
     {
         $myConfig = $this->getConfig();
-        if( $myConfig->getConfigParam( 'blMallSharedBasket' ) == 0)
+        if( $myConfig->getConfigParam( 'blMallSharedBasket' ) == 0) {
             return $myConfig->getShopId()."_basket";
-        else
+        } else {
             return "basket";
+        }
     }
 
     /**

@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxwrapping.php 13769 2008-10-27 12:56:06Z vilma $
+ * $Id: oxwrapping.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -81,7 +81,7 @@ class oxWrapping extends oxI18n
         switch ($sName) {
             case 'fprice':
                 return $this->getFPrice();
-                    break;
+                break;
 
         }
 
@@ -130,7 +130,7 @@ class oxWrapping extends oxI18n
     {
         if ( $this->_oPrice === null ) {
             $this->_oPrice = oxNew( 'oxprice' );
-    
+
             $oCur = $this->getConfig()->getActShopCurrencyObject();
             $this->_oPrice->setPrice( $this->oxwrapping__oxprice->value * $oCur->rate, $this->_dVat );
             $this->_oPrice->multiply( $dAmount );
@@ -156,6 +156,20 @@ class oxWrapping extends oxI18n
         $oEntries->selectString( $sSelect );
 
         return $oEntries;
+    }
+
+    /**
+     * Counts amount of wrapping/card options
+     *
+     * @param string $sWrapType type - wrapping paper (WRAP) or card (CARD)
+     *
+     * @return int
+     */
+    public function getWrappingCount( $sWrapType )
+    {
+        $sWrappingViewName = getViewName( 'oxwrapping' );
+        $sQ = "select count(*) from $sWrappingViewName where $sWrappingViewName.oxactive = '1' and $sWrappingViewName.oxtype = '$sWrapType' ";
+        return (int) oxDb::getDb()->getOne( $sQ );
     }
 
     /**

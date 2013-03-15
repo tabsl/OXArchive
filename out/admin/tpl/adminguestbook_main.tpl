@@ -37,6 +37,7 @@ function UpdateList( sID)
   <input type="hidden" name="voxid" value="[{ $oxid }]">
   <input type="hidden" name="editval[oxgbentries__oxid]" value="[{ $oxid }]">
   <input type="hidden" name="editval[oxgbentries__oxcontent]" value="">
+  [{include file="autosave.form.tpl"}]
   <tr>
     <td valign="top" class="edittext" width="250">
       <table cellspacing="0" cellpadding="0" border="0">

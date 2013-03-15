@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxuserbasketitem.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxuserbasketitem.php 14388 2008-11-26 15:43:17Z vilma $
  */
 
 /**
@@ -96,8 +96,9 @@ class oxUserBasketItem extends oxBase
             throw $oEx;
         }
 
-        if ( $this->_oArticle )
+        if ( $this->_oArticle ) {
             return $this->_oArticle;
+        }
 
         $this->_oArticle = oxNew( 'oxarticle' );
 
@@ -127,8 +128,9 @@ class oxUserBasketItem extends oxBase
         if ( $this->_oArticle->oxarticles__oxparentid->value ) {
             $oParent = oxNew( 'oxarticle' );
             if ( $oParent->load( $this->_oArticle->oxarticles__oxparentid->value ) ) {
-                if ( $this->_oArticle->oxarticles__oxvarselect->value )
+                if ( $this->_oArticle->oxarticles__oxvarselect->value ) {
                     $this->_oArticle->oxarticles__oxtitle->value .= ', '.$this->_oArticle->oxarticles__oxvarselect->value;
+                }
             }
         }
 

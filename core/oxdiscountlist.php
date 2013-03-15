@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxdiscountlist.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxdiscountlist.php 14368 2008-11-26 07:36:13Z vilma $
  */
 
 /**
@@ -120,8 +120,9 @@ class oxDiscountList extends oxList
     public function getCountryId( $oUser )
     {
         $sCountryId = null;
-        if ( $oUser )
+        if ( $oUser ) {
             $sCountryId = $oUser->getActiveCountry();
+        }
 
         return $sCountryId;
     }
@@ -165,8 +166,9 @@ class oxDiscountList extends oxList
 
             // user group ids
             foreach ( $oUser->getUserGroups() as $oGroup ) {
-                if ( $sGroupIds )
+                if ( $sGroupIds ) {
                     $sGroupIds .= ', ';
+                }
                 $sGroupIds .= "'".$oGroup->getId()."'";
             }
         }
@@ -203,8 +205,9 @@ class oxDiscountList extends oxList
     {
         $aList = array();
         foreach ( $this->_getList( $oUser ) as $oDiscount ) {
-            if ( $oDiscount->isForArticle( $oArticle ) )
+            if ( $oDiscount->isForArticle( $oArticle ) ) {
                 $aList[$oDiscount->getId()] = $oDiscount;
+            }
         }
 
         return $aList;

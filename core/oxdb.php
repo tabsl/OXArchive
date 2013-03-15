@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxdb.php 13914 2008-10-30 11:12:55Z arvydas $
+ * $Id: oxdb.php 14368 2008-11-26 07:36:13Z vilma $
  */
 
 /**
@@ -200,11 +200,11 @@ class oxDb extends oxSuperCfg
 
         if (  $iDebug == 2 || $iDebug == 3 || $iDebug == 4  || $iDebug == 7 ) {
             try {
-                self::$_oDB->Execute('truncate table adodb_logsql;');
+                self::$_oDB->execute('truncate table adodb_logsql;');
             } catch (ADODB_Exception $e) {
                 // nothing
             }
-            self::$_oDB->LogSQL( true );
+            self::$_oDB->logSQL( true );
         }
 
         self::$_oDB->cacheSecs = 60 * 10; // 10 minute caching
@@ -476,6 +476,7 @@ class oxDb extends oxSuperCfg
     /**
      * Start mysql transaction
      *
+     * @return null
      */
     static public function startTransaction()
     {
@@ -485,6 +486,7 @@ class oxDb extends oxSuperCfg
     /**
      * Commit mysql transaction
      *
+     * @return null
      */
     static public function commitTransaction()
     {
@@ -494,6 +496,7 @@ class oxDb extends oxSuperCfg
     /**
      * RollBack mysql transaction
      *
+     * @return null
      */
     static public function rollbackTransaction()
     {
@@ -503,13 +506,18 @@ class oxDb extends oxSuperCfg
     /**
      * Set transaction isolation level
      * Allowed values READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE
+     *
+     * @param string $sLevel level
+     *
+     * @return null
      */
     static public function setTransactionIsolationLevel( $sLevel = null )
     {
         $aLevels = array( 'READ UNCOMMITTED', 'READ COMMITTED', 'REPEATABLE READ', 'SERIALIZABLE' );
 
-        if (in_array(strtoupper($sLevel), $aLevels))
+        if (in_array(strtoupper($sLevel), $aLevels)) {
             self::$_oDB->execute( 'SET TRANSACTION ISOLATION LEVEL ' . $sLevel );
+        }
     }
 
 

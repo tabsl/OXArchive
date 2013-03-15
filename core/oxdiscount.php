@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxdiscount.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxdiscount.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -130,8 +130,9 @@ class oxDiscount extends oxI18n
             $sCatIds = "('".implode("','", $aCatIds)."')";
             // getOne appends limit 1, so this one should be fast enough
             $sQ = "select oxobjectid from oxobject2discount where oxdiscountid = '{$this->oxdiscount__oxid->value}' and oxobjectid in $sCatIds and oxtype = 'oxcategories'";
-            if ( ( bool ) $myDB->getOne( $sQ ) )
+            if ( ( bool ) $myDB->getOne( $sQ ) ) {
                 return true;
+            }
         }
         return false;
     }
@@ -145,8 +146,9 @@ class oxDiscount extends oxI18n
      */
     public function isForBasketItem( $oArticle )
     {
-        if ( $this->oxdiscount__oxamount->value == 0 && $this->oxdiscount__oxprice->value == 0 )
+        if ( $this->oxdiscount__oxamount->value == 0 && $this->oxdiscount__oxprice->value == 0 ) {
             return false;
+        }
 
         // skipping bundle discounts
         if ( $this->oxdiscount__oxaddsumtype->value == 'itm' ) {
@@ -173,7 +175,7 @@ class oxDiscount extends oxI18n
     /**
      * Tests if total amount or price (price priority) of articles that can be applied to current discount fits to discount configuration
      *
-     * @param oxbasket $oBasket  basket
+     * @param oxbasket $oBasket basket
      *
      * @return bool
      */
@@ -186,14 +188,14 @@ class oxDiscount extends oxI18n
 
             $oBasketArticle = $oBasketItem->getArticle();
 
-            $_blForBasketItem = false;
+            $blForBasketItem = false;
             if ( $this->oxdiscount__oxaddsumtype->value != 'itm' ) {
-                $_blForBasketItem = $this->isForBasketItem( $oBasketArticle );
+                $blForBasketItem = $this->isForBasketItem( $oBasketArticle );
             } else {
-                $_blForBasketItem = $this->isForBundleItem( $oBasketArticle );
+                $blForBasketItem = $this->isForBundleItem( $oBasketArticle );
             }
 
-            if ( $_blForBasketItem ) {
+            if ( $blForBasketItem ) {
                 if ( $this->oxdiscount__oxprice->value ) {
                     $dAmount += $oBasketArticle->getPrice()->getBruttoPrice() * $oBasketInfo->aArticles[$oBasketArticle->getId()];
                 } elseif ( $this->oxdiscount__oxamount->value ) {
@@ -235,8 +237,9 @@ class oxDiscount extends oxI18n
     public function isForBasket( $oBasket )
     {
         // initial configuration check
-        if ( $this->oxdiscount__oxamount->value == 0 && $this->oxdiscount__oxprice->value == 0 )
+        if ( $this->oxdiscount__oxamount->value == 0 && $this->oxdiscount__oxprice->value == 0 ) {
             return false;
+        }
 
         $oSummary = $oBasket->getBasketSummary();
         // amounts check
@@ -262,8 +265,9 @@ class oxDiscount extends oxI18n
      */
     public function isForBundleItem( $oArticle )
     {
-        if ( $this->oxdiscount__oxaddsumtype->value != 'itm' )
+        if ( $this->oxdiscount__oxaddsumtype->value != 'itm' ) {
             return false;
+        }
 
         $sSelect = "select 1 from oxobject2discount where oxdiscountid='".$this->getId()."' and oxobjectid='".$oArticle->getId()."' ";
         if ( !( $blOk = (bool) oxDb::getDb()->getOne( $sSelect ) ) ) {
@@ -282,8 +286,9 @@ class oxDiscount extends oxI18n
      */
     public function isForBundleBasket( $oBasket )
     {
-        if ( $this->oxdiscount__oxaddsumtype->value != 'itm' )
+        if ( $this->oxdiscount__oxaddsumtype->value != 'itm' ) {
             return false;
+        }
 
         return $this->isForBasket( $oBasket );
     }
@@ -356,9 +361,7 @@ class oxDiscount extends oxI18n
     /**
      * Checks if discount may be applied according amounts info
      *
-     * @param object $oArticle      article object to chesk
-     * @param bool   $blSpecForItem check individually for passed item. If false - will be checked for categories item belongs
-     * @param mixed  $oBasketInfo   basket info as returned by $oBasket->getBasketSummary()
+     * @param object $oArticle article object to chesk
      *
      * @return bool
      */

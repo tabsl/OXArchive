@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxcategory.php 13998 2008-11-06 12:00:26Z vilma $
+ * $Id: oxcategory.php 14388 2008-11-26 15:43:17Z vilma $
  */
 
 /**
@@ -147,12 +147,12 @@ class oxCategory extends oxI18n
             case 'openlink':
             case 'closelink':
             case 'link':
-            //case 'toListLink':
-            //case 'noparamlink':
+                //case 'toListLink':
+                //case 'noparamlink':
                 return $this->getLink();
             case 'dimagedir':
                 return $this->getPictureUrl();
-        }
+            }
         return parent::__get($sName);
     }
 
@@ -437,8 +437,8 @@ class oxCategory extends oxI18n
     public function getPictureUrl()
     {
         if ( $this->_sDynImageDir === null ) {
-        	$sThisShop = $this->oxcategories__oxshopid->value;
-            $this->_sDynImageDir = $this->getConfig()->getPictureUrl( null, false, null , null , $sThisShop);
+            $sThisShop = $this->oxcategories__oxshopid->value;
+            $this->_sDynImageDir = $this->getConfig()->getPictureUrl( null, false, null, null, $sThisShop);
         }
         return $this->_sDynImageDir;
     }
@@ -446,13 +446,15 @@ class oxCategory extends oxI18n
     /**
      * returns the url of the category
      *
+     * @param int $iLang language
+     *
      * @return string
      */
     public function getLink($iLang = null)
     {
         if (isset($iLang)) {
-            $iLang = (int)$iLang;
-            if ($iLang == (int)$this->getLanguage()) {
+            $iLang = (int) $iLang;
+            if ($iLang == (int) $this->getLanguage()) {
                 $iLang = null;
             }
         }
@@ -475,9 +477,9 @@ class oxCategory extends oxI18n
     }
 
     /**
-     * returns the url of the category
+     * sets the url of the category
      *
-     * @param string $sLink
+     * @param string $sLink category url
      *
      * @return null
      */
@@ -507,6 +509,8 @@ class oxCategory extends oxI18n
     /**
      * Returns standard URL to category
      *
+     * @param int $iLang language
+     *
      * @return string
      */
     public function getStdLink($iLang = null)
@@ -519,8 +523,8 @@ class oxCategory extends oxI18n
         }
 
         if ( isset($iLang) && !oxUtils::getInstance()->seoIsActive() ) {
-            $iLang = (int)$iLang;
-            if ($iLang != (int)$this->getLanguage()) {
+            $iLang = (int) $iLang;
+            if ($iLang != (int) $this->getLanguage()) {
                 $sLink .= "&amp;lang={$iLang}";
             }
         }
@@ -609,11 +613,11 @@ class oxCategory extends oxI18n
         $aSessionFilter = oxSession::getVar( 'session_attrfilter' );
 
         $oArtList = oxNew( "oxarticlelist");
-        $oArtList->LoadCategoryIDs( $sActCat, $aSessionFilter );
+        $oArtList->loadCategoryIDs( $sActCat, $aSessionFilter );
 
         // Only if we have articles
-        if(count($oArtList) > 0 ){
-            $sArtIds = implode("','",array_keys($oArtList->getArray()) );
+        if (count($oArtList) > 0 ) {
+            $sArtIds = implode("','", array_keys($oArtList->getArray()) );
             $sAttTbl = getViewName('oxattribute');
             $sO2ATbl = getViewName('oxobject2attribute');
             $sC2ATbl = getViewName('oxcategory2attribute');
@@ -625,9 +629,9 @@ class oxCategory extends oxI18n
                        "ORDER BY c2a.oxsort , att.oxpos, att.oxtitle{$sLngSuf}, o2a.oxvalue{$sLngSuf}";
 
             $rs = oxDb::getDb()->Execute( $sSelect);
-            if ($rs != false && $rs->RecordCount() > 0){
-                while ( !$rs->EOF && list($sAttId,$sAttTitle,$sAttVid,$sAttValue) = $rs->fields ){
-                    if( !isset( $aAttributes[$sAttId])){
+            if ($rs != false && $rs->recordCount() > 0) {
+                while ( !$rs->EOF && list($sAttId,$sAttTitle,$sAttVid,$sAttValue) = $rs->fields ) {
+                    if ( !isset( $aAttributes[$sAttId])) {
                         $oAttribute           = new stdClass();
                         $oAttribute->title    = $sAttTitle;
                         $oAttribute->aValues  = array();
@@ -640,7 +644,7 @@ class oxCategory extends oxI18n
 
                     $blActiveFilter = $blActiveFilter || $oValue->blSelected;
                     $aAttributes[$sAttId]->aValues[$sAttVid] = $oValue;
-                    $rs->MoveNext();
+                    $rs->moveNext();
                 }
             }
 
@@ -844,10 +848,10 @@ class oxCategory extends oxI18n
 
             $sNewParentLeft = $oDB->getOne( "select oxleft from oxcategories where oxid = '".$this->oxcategories__oxparentid->value."'");
 
-//            if(!$sNewParentLeft){
-//                //the current node has become root node, (oxrootid == "oxrootid")
-//                $sNewParentLeft = 0;
-//            }
+            //if(!$sNewParentLeft){
+                //the current node has become root node, (oxrootid == "oxrootid")
+            //    $sNewParentLeft = 0;
+            //}
 
             $iMoveAfter = $sNewParentLeft+1;
 
@@ -915,10 +919,11 @@ class oxCategory extends oxI18n
     protected function _setFieldData( $sFieldName, $sValue, $iDataType = oxField::T_TEXT)
     {
         //preliminar quick check saves 3% of execution time in category lists by avoiding redundant strtolower() call
-        if ($sFieldName[2] == 'l' || $sFieldName[2] == 'L' || (isset($sFieldName[16]) && ($sFieldName[16] == 'l' || $sFieldName[16] == 'L') ) )
+        if ($sFieldName[2] == 'l' || $sFieldName[2] == 'L' || (isset($sFieldName[16]) && ($sFieldName[16] == 'l' || $sFieldName[16] == 'L') ) ) {
             if ('oxlongdesc' === strtolower($sFieldName) || 'oxcategories__oxlongdesc' === strtolower($sFieldName)) {
                 $iDataType = oxField::T_RAW;
             }
+        }
         return parent::_setFieldData($sFieldName, $sValue, $iDataType);
     }
 

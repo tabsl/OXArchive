@@ -32,6 +32,9 @@
           <input type="hidden" name="fnc" value="changewrapping">
         </div>
 
+        [{ assign var="oWrapList" value=$oView->getWrappingList() }]
+        [{if $oWrapList->count() }]
+
         <table class="wrapping">
 
           <colgroup>
@@ -119,8 +122,10 @@
             </tr>
 
         </table>
+        [{/if}]
 
-
+     [{ assign var="oCardList" value=$oView->getCardList() }]
+     [{if $oCardList->count() }]
      <strong class="boxhead">[{ oxmultilang ident="WRAPPING_GREETINGCARD" }]</strong>
      <div class="box info">
 
@@ -145,7 +150,7 @@
                     [{counter start=0 print=false}]
                     [{assign var="icounter" value="0"}]
 
-                    [{foreach from=$oView->getCardList() item=card name=GreetCards}]
+                    [{foreach from=$oCardList item=card name=GreetCards}]
 
                     [{if $icounter == 2}]
                      <div class="card_sep"></div>
@@ -181,8 +186,9 @@
           <textarea cols="102" rows="5" name="giftmessage" class="fullsize">[{$oxcmp_basket->getCardMessage()}]</textarea>
         </dd>
       </dl>
+     </div>
+     [{/if}]
 
-      </div>
       <div class="bar prevnext">
           <div class="right">
               <input id="test_BackToOrder" type="submit" value="[{ oxmultilang ident="WRAPPING_BACKTOORDER" }]">

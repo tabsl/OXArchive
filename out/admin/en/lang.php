@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package lang
  * @copyright © OXID eSales AG 2003-2008
- * $Id: lang.php 14248 2008-11-18 09:48:07Z philipp.grashoff $
+ * $Id: lang.php 14379 2008-11-26 14:01:48Z philipp.grashoff $
  */
 
 $sLangName  = 'English';
@@ -971,7 +971,7 @@ $aLang = array(
 'ORDER_OVERVIEW_ORDERAMTODAY'                   => 'Number Orders Today',
 'ORDER_OVERVIEW_ORDERSUMTODAY'                  => 'Sum Revenue Today',
 'ORDER_OVERVIEW_ORDERAMTOTAL'                   => 'Number Order TOTAL',
-'ORDER_OVERVIEW_ORDERSUMTOTAL'                  => 'Summe Revenue TOTAL',
+'ORDER_OVERVIEW_ORDERSUMTOTAL'                  => 'Sum Revenue TOTAL',
 'ORDER_OVERVIEW_PAYMENTTYPE'                    => 'Payment with',
 'ORDER_OVERVIEW_PRICEHAMORDER'                  => 'PRICE ALERT ORDER - confirmed ?',
 'ORDER_OVERVIEW_STORNO'                         => 'Order is canceled',

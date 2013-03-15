@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxcontent.php 14174 2008-11-12 15:10:59Z vilma $
+ * $Id: oxcontent.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -84,7 +84,7 @@ class oxContent extends oxI18n
         switch ( $sName ) {
             case 'expanded':
                 return $this->getExpanded();
-        }
+            }
         return parent::__get( $sName );
     }
 
@@ -145,14 +145,16 @@ class oxContent extends oxI18n
     /**
      * getLink returns link for this content in the frontend
      *
+     * @param integer $iLang language
+     *
      * @access public
      * @return string
      */
     public function getLink($iLang = null)
     {
         if (isset($iLang)) {
-            $iLang = (int)$iLang;
-            if ($iLang == (int)$this->getLanguage()) {
+            $iLang = (int) $iLang;
+            if ($iLang == (int) $this->getLanguage()) {
                 $iLang = null;
             }
         }
@@ -176,6 +178,8 @@ class oxContent extends oxI18n
     /**
      * Returns standard URL to product
      *
+     * @param integer $iLang language
+     *
      * @return string
      */
     public function getStdLink($iLang = null)
@@ -183,8 +187,8 @@ class oxContent extends oxI18n
         $sAdd = '';
 
         if (isset($iLang) && !oxUtils::getInstance()->seoIsActive()) {
-            $iLang = (int)$iLang;
-            if ($iLang != (int)$this->getLanguage()) {
+            $iLang = (int) $iLang;
+            if ($iLang != (int) $this->getLanguage()) {
                 $sAdd .= "&amp;lang={$iLang}";
             }
         }

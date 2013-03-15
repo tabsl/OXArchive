@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxi18n.php 13958 2008-11-04 11:00:00Z vilma $
+ * $Id: oxi18n.php 14388 2008-11-26 15:43:17Z vilma $
  */
 
 /**
@@ -63,8 +63,9 @@ class oxI18n extends oxBase
         //T2008-02-22
         //lets try to differentiate cache keys for oxI18n and oxBase
         //in order not to load cached structure for the instances of oxbase classe called on same table
-        if ($this->_sCacheKey)
+        if ($this->_sCacheKey) {
             $this->_sCacheKey .= "_i18n";
+        }
     }
 
     /**
@@ -77,10 +78,11 @@ class oxI18n extends oxBase
     public function setLanguage( $iLang = null )
     {
         $myConfig = $this->getConfig();
-        if( isset($iLang))
+        if( isset($iLang)) {
             $this->_iLanguage = (int) $iLang;
-        else
+        } else {
             $this->_iLanguage = (int) oxLang::getInstance()->getBaseLanguage();
+        }
     }
 
     /**
@@ -106,10 +108,10 @@ class oxI18n extends oxBase
         if ($this->_blEmployMultilanguage != $blEmployMultilanguage) {
             $this->_blEmployMultilanguage = $blEmployMultilanguage;
             if (!$blEmployMultilanguage) {
-                #63T
+                //#63T
                 $this->modifyCacheKey("_nonml");
             }
-            if(count($this->_aFieldNames) > 1) {
+            if (count($this->_aFieldNames) > 1) {
                 $this->_initDataStructure();
             }
         }
@@ -125,8 +127,9 @@ class oxI18n extends oxBase
      */
     public function isMultilingualField($sFieldName)
     {
-        if (isset($this->_aFieldNames[$sFieldName]))
+        if (isset($this->_aFieldNames[$sFieldName])) {
             return (bool) $this->_aFieldNames[$sFieldName];
+        }
 
         //not inited field yet
         //and note that this is should be called only in first call after tmp dir is empty
@@ -172,13 +175,15 @@ class oxI18n extends oxBase
      */
     public function modifyCacheKey( $sCacheKey, $blOverride = false )
     {
-        if ($blOverride)
+        if ($blOverride) {
             $this->_sCacheKey = $sCacheKey."|i18n";
-        else
+        } else {
             $this->_sCacheKey .= $sCacheKey;
+        }
 
-        if (!$sCacheKey)
+        if (!$sCacheKey) {
             $this->_sCacheKey = null;
+        }
     }
 
     /**
@@ -206,12 +211,14 @@ class oxI18n extends oxBase
     {
         oxLang::getInstance()->getBaseLanguage();
         $sLangTag = oxLang::getInstance()->getLanguageTag($this->getLanguage());
-        if ($this->_blEmployMultilanguage && $sLangTag)
+        if ($this->_blEmployMultilanguage && $sLangTag) {
             foreach ($dbRecord as $sField => $sVal) {
                 //handling multilang
-                if (isset($dbRecord[$sField . $sLangTag]))
+                if (isset($dbRecord[$sField . $sLangTag])) {
                     $dbRecord[$sField] = $dbRecord[$sField . $sLangTag];
+                }
             }
+        }
 
         return parent::assign($dbRecord);
     }
@@ -286,8 +293,9 @@ class oxI18n extends oxBase
     public function getSqlFieldName($sField)
     {
         $iLang = (int) $this->_iLanguage;
-        if ($iLang && $this->_blEmployMultilanguage && $this->isMultilingualField($sField))
+        if ($iLang && $this->_blEmployMultilanguage && $this->isMultilingualField($sField)) {
             $sField .= "_" . $iLang;
+        }
 
         return $sField;
     }
@@ -327,15 +335,16 @@ class oxI18n extends oxBase
      * Returns _aFieldName[] value. 0 means - non multilanguage, 1 - multilanguage field.
      * This method is slow, so we should make sure it is called only when tmp dir is cleaned (and then the results are cached).
      *
-     * @param $sFieldName Field name
+     * @param string $sFieldName Field name
      *
      * @return int
      */
     protected function _getFieldStatus($sFieldName)
     {
         $aAllField = $this->_getAllFields(true);
-        if (isset($aAllField[$sFieldName."_1"]))
+        if (isset($aAllField[$sFieldName."_1"])) {
             return 1;
+        }
         return 0;
     }
 
@@ -356,11 +365,12 @@ class oxI18n extends oxBase
         //TODO: clean this
         $aFields = parent::_getNonCachedFieldNames($blForceFullStructure);
 
-        if (!$this->_blEmployMultilanguage)
+        if (!$this->_blEmployMultilanguage) {
             return $aFields;
+        }
 
         //lets do some pointer manipulation
-        if($aFields) {
+        if ($aFields) {
             //non admin fields
             $aWorkingFields = &$aFields;
         } else {
@@ -369,11 +379,13 @@ class oxI18n extends oxBase
         }
 
         //we have an array of fields, lets remove multilanguage fields
-        foreach ($aWorkingFields as $sName => $sVal)
-            if ($this->_getFieldLang($sName))
+        foreach ($aWorkingFields as $sName => $sVal) {
+            if ($this->_getFieldLang($sName)) {
                 unset($aWorkingFields[$sName]);
-            else
+            } else {
                 $aWorkingFields[$sName] = $this->_getFieldStatus($sName);
+            }
+        }
 
         return $aWorkingFields;
     }
@@ -388,12 +400,14 @@ class oxI18n extends oxBase
     protected function _getFieldLang($sFieldName)
     {
         startProfile('_getFieldLang');
-        if (!strstr($sFieldName, '_'))
+        if (!strstr($sFieldName, '_')) {
             return 0;
-        if (preg_match('/_(\d{1,2})$/', $sFieldName, $aRegs))
+        }
+        if (preg_match('/_(\d{1,2})$/', $sFieldName, $aRegs)) {
             $sRes = $aRegs[1];
-        else
+        } else {
             $sRes = 0;
+        }
 
         stopProfile('_getFieldLang');
         return $sRes;

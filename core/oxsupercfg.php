@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxsupercfg.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxsupercfg.php 14392 2008-11-26 16:50:36Z vilma $
  */
 class oxSuperCfg
 {
@@ -106,7 +106,7 @@ class oxSuperCfg
     /**
      * oxConfig instance setter
      *
-     * @param oxconfig
+     * @param oxconfig $oConfig config object
      *
      * @return null
      */
@@ -144,7 +144,7 @@ class oxSuperCfg
     /**
      * oxSession instance setter
      *
-     * @param oxsession
+     * @param oxsession $oSession session object
      *
      * @return null
      */
@@ -182,7 +182,7 @@ class oxSuperCfg
     /**
      * Active oxuser object setter
      *
-     * @param oxuser
+     * @param oxuser $oUser user object
      *
      * @return null
      */

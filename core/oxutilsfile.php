@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxutilsfile.php 13914 2008-10-30 11:12:55Z arvydas $
+ * $Id: oxutilsfile.php 14388 2008-11-26 15:43:17Z vilma $
  */
 
 /**
@@ -65,7 +65,7 @@ class oxUtilsFile extends oxSuperCfg
      */
     public function normalizeDir( $sDir )
     {
-        if( isset($sDir) && substr($sDir, -1) !== '/' ) {
+        if ( isset($sDir) && substr($sDir, -1) !== '/' ) {
             $sDir .= "/";
         }
 
@@ -360,8 +360,9 @@ class oxUtilsFile extends oxSuperCfg
                         // #840A + compatibility with prev. versions
                         $aDetailImageSizes = $myConfig->getConfigParam( 'aDetailImageSizes' );
                         $sDetailImageSize = $myConfig->getConfigParam( 'sDetailImageSize' );
-                        if ( isset($aDetailImageSizes["oxpic".intval($aPType[1])]))
+                        if ( isset($aDetailImageSizes["oxpic".intval($aPType[1])])) {
                             $sDetailImageSize = $aDetailImageSizes["oxpic".intval($aPType[1])];
+                        }
 
                         if ( $sDetailImageSize ) {
                             // convert this file
@@ -400,8 +401,9 @@ class oxUtilsFile extends oxSuperCfg
                         // #840A + compatibility with prev. versions
                         $aZoomImageSizes = $myConfig->getConfigParam( 'aZoomImageSizes' );
                         $sZoomImageSize  = $myConfig->getConfigParam( 'sZoomImageSize' );
-                        if ( isset($aZoomImageSizes["oxzoom".intval($aPType[1])]))
+                        if ( isset($aZoomImageSizes["oxzoom".intval($aPType[1])])) {
                             $sZoomImageSize = $aZoomImageSizes["oxzoom".intval($aPType[1])];
+                        }
 
                         //
                         if ( $sZoomImageSize) {
@@ -415,15 +417,16 @@ class oxUtilsFile extends oxSuperCfg
 
                     default:
                         break;
-                }
+                    }
 
                 if ( !$blCopy && $sSource) {
                     move_uploaded_file( $sSource, $sTarget);
                     chmod( $sTarget, 0644);
                 }
                 // assign the name
-                if ( isset( $value) && $value)
+                if ( isset( $value) && $value) {
                     $oObject->$key->setValue($value);
+                }
             }
         }
 
@@ -444,15 +447,16 @@ class oxUtilsFile extends oxSuperCfg
 
         $aCheckCache = oxSession::getVar("checkcache");
 
-        if ( isset( $aCheckCache[$sFile]))
+        if ( isset( $aCheckCache[$sFile])) {
             return $aCheckCache[$sFile];
+        }
 
         $blRet = false;
 
         //if (@fclose(@fopen( $sFile, "r")))
-        if (is_readable( $sFile))
+        if (is_readable( $sFile)) {
             $blRet = true;
-        else {
+        } else {
             // try again via socket
             $blRet = $this->urlValidate( $sFile );
         }
@@ -464,40 +468,42 @@ class oxUtilsFile extends oxSuperCfg
     }
 
     /**
-     * ï¿½berprï¿½ft die angegeben URL auf Erreichbarkeit (HTTP-Code: 200)
+     * Checks if given URL is accessible (HTTP-Code: 200)
      *
-     * @param string $link
+     * @param string $sLink given link
      *
      * @return boolean
      */
-    function urlValidate( $link )
+    function urlValidate( $sLink )
     {
-        $url_parts = @parse_url( $link );
+        $aUrlParts = @parse_url( $sLink );
 
-        if ( empty( $url_parts["host"] ) )
+        if ( empty( $aUrlParts["host"] ) ) {
             return( false );
+        }
 
-        if ( !empty( $url_parts["path"] ) ) {
-            $documentpath = $url_parts["path"];
+        if ( !empty( $aUrlParts["path"] ) ) {
+            $sDocumentPath = $aUrlParts["path"];
         } else {
-            $documentpath = "/";
+            $sDocumentPath = "/";
         }
 
-        if ( !empty( $url_parts["query"] ) ) {
-            $documentpath .= "?" . $url_parts["query"];
+        if ( !empty( $aUrlParts["query"] ) ) {
+            $sDocumentPath .= "?" . $aUrlParts["query"];
         }
 
-        $host = $url_parts["host"];
-        $port = $url_parts["port"];
+        $sHost = $aUrlParts["host"];
+        $sPort = $aUrlParts["port"];
 
         // Now (HTTP-)GET $documentpath at $host";
-        if (empty( $port ) )
-            $port = "80";
-        $socket = @fsockopen( $host, $port, $errno, $errstr, 30 );
+        if (empty( $sPort ) ) {
+            $sPort = "80";
+        }
+        $socket = @fsockopen( $sHost, $sPort, $errno, $errstr, 30 );
         if (!$socket) {
             return(false);
         } else {
-            fwrite ($socket, "HEAD ".$documentpath." HTTP/1.0\r\nHost: $host\r\n\r\n");
+            fwrite ($socket, "HEAD ".$sDocumentPath." HTTP/1.0\r\nHost: $sHost\r\n\r\n");
             $http_response = fgets( $socket, 22 );
 
             if ( ereg("200 OK", $http_response, $regs ) ) {
@@ -515,7 +521,7 @@ class oxUtilsFile extends oxSuperCfg
      * @param array  $aFileInfo   Global $_FILE parameter info
      * @param string $sUploadPath RELATIVE (to config sShopDir parameter) path for uploaded file to be copied
      *
-     * @throws oxException
+     * @throws oxException if file is not valid
      *
      * @return string
      */
@@ -548,8 +554,9 @@ class oxUtilsFile extends oxSuperCfg
         }
 
         //file exists ?
-        while (file_exists($sBasePath . "/" .$sUploadPath . "/" . $sFileName . "." . $sExt))
+        while (file_exists($sBasePath . "/" .$sUploadPath . "/" . $sFileName . "." . $sExt)) {
             $sFileName .= "(1)";
+        }
 
         move_uploaded_file($aFileInfo['tmp_name'], $sBasePath . "/" .$sUploadPath . "/" . $sFileName . "." . $sExt);
 

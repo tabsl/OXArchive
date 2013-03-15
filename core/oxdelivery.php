@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxdelivery.php 13976 2008-11-04 16:15:50Z vilma $
+ * $Id: oxdelivery.php 14388 2008-11-26 15:43:17Z vilma $
  */
 
 /**
@@ -137,16 +137,18 @@ class oxDelivery extends oxI18n
      */
     public function getArticles()
     {
-        if ( $this->_aArtIds !== null )
+        if ( $this->_aArtIds !== null ) {
             return $this->_aArtIds;
+        }
 
         $sQ = 'select oxobjectid from oxobject2delivery where oxdeliveryid="'.$this->getId().'" and oxtype = "oxarticles" ';
 
         $aArtIds = oxDb::getDb()->getArray( $sQ );
 
         //make single dimension array
-        foreach ( $aArtIds AS $aItem )
+        foreach ( $aArtIds AS $aItem ) {
             $this->_aArtIds[] = $aItem[0];
+        }
 
         return $this->_aArtIds;
 
@@ -159,16 +161,18 @@ class oxDelivery extends oxI18n
      */
     public function getCategories()
     {
-        if ( $this->_aCatIds !== null )
+        if ( $this->_aCatIds !== null ) {
             return $this->_aCatIds;
+        }
 
         $sQ = 'select oxobjectid from oxobject2delivery where oxdeliveryid="'.$this->getId().'" and oxtype = "oxcategories" ';
 
         $aCatIds = oxDb::getDb()->getAll( $sQ );
 
         //make single dimension array
-        foreach ( $aCatIds AS $aItem )
+        foreach ( $aCatIds AS $aItem ) {
             $this->_aCatIds[] = $aItem[0];
+        }
 
         return $this->_aCatIds;
     }
@@ -196,7 +200,7 @@ class oxDelivery extends oxI18n
     /**
      * Returns amount (total net price/weight/volume/Amount) on which delivery price is applied
      *
-     * @param object $oBasketItem       basket item object
+     * @param object $oBasketItem basket item object
      *
      * @return double
      */
@@ -240,7 +244,7 @@ class oxDelivery extends oxI18n
     /**
      * Returns oxprice object for delivery costs
      *
-     * @param double $dVat               delivery vat
+     * @param double $dVat delivery vat
      *
      * @return oxPrice
      */
@@ -394,7 +398,7 @@ class oxDelivery extends oxI18n
     /**
      * checks if amount param is ok for this delivery
      *
-     * @param double $iAmount
+     * @param double $iAmount amount
      *
      * @return boolean
      */

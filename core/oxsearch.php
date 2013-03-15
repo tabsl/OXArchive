@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxsearch.php 13914 2008-10-30 11:12:55Z arvydas $l
+ * $Id: oxsearch.php 14378 2008-11-26 13:59:41Z vilma $l
  */
 
 /**
@@ -134,8 +134,9 @@ class oxSearch extends oxSuperCfg
 
             $sQ  = "select 1 from $sCatTable where $sCatTable.oxid = ".oxDb::getDb()->quote( $sInitialSearchCat )." ";
             $sQ .= "and ".$oCategory->getSqlActiveSnippet();
-            if ( !oxDb::getDb()->getOne( $sQ ) )
+            if ( !oxDb::getDb()->getOne( $sQ ) ) {
                 return;
+            }
         }
 
         // performance:
@@ -146,8 +147,9 @@ class oxSearch extends oxSuperCfg
 
             $sQ  = "select 1 from $sVndTable where $sVndTable.oxid = ".oxDb::getDb()->quote( $sInitialSearchVendor )." ";
             $sQ .= "and ".$oVendor->getSqlActiveSnippet();
-            if ( !oxDb::getDb()->getOne( $sQ ) )
+            if ( !oxDb::getDb()->getOne( $sQ ) ) {
                 return;
+            }
         }
 
         $sWhere = null;

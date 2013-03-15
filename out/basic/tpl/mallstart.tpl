@@ -22,7 +22,7 @@
        [{ oxmultilang ident="MALLSTART_LOCATION" }]
     </div>
 
-    [{if $isdemoshop}]
+    [{if $oView->isDemoShop()}]
       [{ include file="inc/admin_banner.tpl" }]
     [{/if}]
 

@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxnews.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxnews.php 14368 2008-11-26 07:36:13Z vilma $
  */
 
 /**
@@ -167,7 +167,7 @@ class oxNews extends oxI18n
      *
      * @param string $sFieldName index OR name (eg. 'oxarticles__oxtitle') of a data field to set
      * @param string $sValue     value of data field
-     * @param int field type
+     * @param int    $iDataType  field type
      *
      * @return null
      */

@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxprice.php 13914 2008-10-30 11:12:55Z arvydas $
+ * $Id: oxprice.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -61,14 +61,17 @@ class oxPrice extends oxSuperCfg
     /**
      * Class constructor. Gets price entering mode.
      *
+     * @param double $dInitPrice given price
+     *
      * @return oxPrice
      */
     public function __construct($dInitPrice = null)
     {
         $this->_blNetPriceMode = $this->getConfig()->getConfigParam( 'blEnterNetPrice' );
 
-        if ($dInitPrice)
+        if ($dInitPrice) {
             $this->setPrice($dInitPrice);
+        }
     }
 
     /**
@@ -316,7 +319,9 @@ class oxPrice extends oxSuperCfg
      *   1 - when this price is larger than $oPrice.
      *  -1 - when this price is smaller than $oPrice.
      *
-     * @param oxPrice $oPrice
+     * @param oxPrice $oPrice price object
+     *
+     * @return null
      */
     public function compare(oxPrice $oPrice)
     {
@@ -364,7 +369,9 @@ class oxPrice extends oxSuperCfg
     {
         // if VAT = -100% Return 0 because we subtract all what we have.
         // made to avoid division by zero in formula.
-        if ($dVat == -100) return 0;
+        if ($dVat == -100) {
+            return 0;
+        }
 
         $dBrutto = oxUtils::getInstance()->fRound($dBrutto);
         return (double) ((double) $dBrutto*100.0)/(100.0 + (double) $dVat);

@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxpricelist.php 14226 2008-11-17 08:46:23Z arvydas $
+ * $Id: oxpricelist.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -95,8 +95,9 @@ class oxPriceList
     {
         $aPrices = array();
         foreach ( $this->_aList as $oPrice ) {
-            if ( !isset( $aPrices[$oPrice->getVat()] ))
+            if ( !isset( $aPrices[$oPrice->getVat()] )) {
                 $aPrices[$oPrice->getVat()] = 0;
+            }
             $aPrices[$oPrice->getVat()] += $oPrice->getBruttoPrice();
         }
 
@@ -112,8 +113,9 @@ class oxPriceList
     public function getMostUsedVatPercent()
     {
         $aPrices = $this->getPriceInfo();
-        if ( count( $aPrices ) == 0 )
+        if ( count( $aPrices ) == 0 ) {
             return;
+        }
 
         return array_search( max( $aPrices ), $aPrices );
     }

@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxbase.php 14117 2008-11-11 11:57:46Z sarunas $
+ * $Id: oxbase.php 14392 2008-11-26 16:50:36Z vilma $
  */
 
 /**
@@ -173,8 +173,8 @@ class oxBase extends oxSuperCfg
     /**
      * Magic setter. If using lazy loading, adds setted field to fields array
      *
-     * @param string $sName
-     * @param mixed  $sValue
+     * @param string $sName  name value
+     * @param mixed  $sValue value
      *
      * @return null
      */
@@ -182,7 +182,7 @@ class oxBase extends oxSuperCfg
     {
         $this->$sName = $sValue;
         if ( $this->_blUseLazyLoading && strpos( $sName, $this->_sCoreTable . "__" ) === 0 ) {
-            $sFieldName = str_replace( $this->_sCoreTable . "__" , '', $sName );
+            $sFieldName = str_replace( $this->_sCoreTable . "__", '', $sName );
             if ($sFieldName != 'oxnid' && !$this->_aFieldNames[$sFieldName]) {
                 $aAllFields = $this->_getAllFields(true);
                 if (isset($aAllFields[strtolower($sFieldName)])) {
@@ -221,8 +221,9 @@ class oxBase extends oxSuperCfg
             $iFieldStatus = $this->_getFieldStatus($sFieldName);
 
             $sSqlFieldName = $sFieldName;
-            if ($iFieldStatus && $this->isMultilang() )
+            if ($iFieldStatus && $this->isMultilang() ) {
                 $sSqlFieldName =  $sFieldName.oxLang::getInstance()->getLanguageTag( $this->getLanguage() );
+            }
 
             if ( $this->getId() ) {
                 $oDb = oxDb::getDb();
@@ -506,7 +507,9 @@ class oxBase extends oxSuperCfg
     /**
      * Returns true in case the item represented by this object is derived from parent shop
      *
-     * @param bool $blVal
+     * @param bool $blVal if derived
+     *
+     * @return null
      */
     public function setIsDerived($blVal)
     {
@@ -563,14 +566,14 @@ class oxBase extends oxSuperCfg
         $oDB = oxDb::getDb(true);
         $myUtils = oxUtils::getInstance();
 
-
         $sGet = $this->getSelectFields();
         $sSelect = "select $sGet from " . $this->_sViewTable . " where 1 ";
 
         if ( $aWhere) {
             reset($aWhere);
-            while (list($name, $value) = each($aWhere))
+            while (list($name, $value) = each($aWhere)) {
                 $sSelect .=  " and " . $name.' = '.$oDB->quote($value);
+            }
         }
 
         // add active shop
@@ -1057,13 +1060,15 @@ class oxBase extends oxSuperCfg
 
         //TODO: remove this
         //this is left only for debug as this should never happen
-        if ($sName == "oxnid")
+        if ($sName == "oxnid") {
             throw new Exception("oxnid added");
+        }
 
         //TODO: remove this
         //this is left only for debug as this should never happen
-        if (!is_int($iStatus ))
+        if (!is_int($iStatus )) {
             throw new Exception('Non int status!');
+        }
 
         //adding field names element
         $this->_aFieldNames[$sName] = $iStatus;
@@ -1106,8 +1111,9 @@ class oxBase extends oxSuperCfg
     protected function _getFieldLongName( $sFieldName)
     {
         //trying to avoid strpos call as often as possible
-        if ($sFieldName[2] == $this->_sCoreTable[2] && strpos($sFieldName, $this->_sCoreTable."__") === 0)
+        if ($sFieldName[2] == $this->_sCoreTable[2] && strpos($sFieldName, $this->_sCoreTable."__") === 0) {
             return $sFieldName;
+        }
 
         $sLongName = $this->_sCoreTable."__".strtolower( $sFieldName);
         return $sLongName;
@@ -1138,14 +1144,15 @@ class oxBase extends oxSuperCfg
 
         //in non lazy loading case we just add a field and do not care about it more
         if (!$this->_blUseLazyLoading && !isset($this->$sLongFieldName)) {
-            $_aFields = $this->_getAllFields(true);
-            if ( isset( $_aFields[strtolower($sFieldName)] ) ) {
+            $aFields = $this->_getAllFields(true);
+            if ( isset( $aFields[strtolower($sFieldName)] ) ) {
                 $this->_addField($sFieldName, $this->_getFieldStatus($sFieldName));
             }
         }
         // if we have a double field we replace "," with "." in case somebody enters it in european format
-        if (isset($this->$sLongFieldName) && $this->$sLongFieldName->fldtype == "double")
+        if (isset($this->$sLongFieldName) && $this->$sLongFieldName->fldtype == "double") {
             $sValue = str_replace( ",", ".", $sValue );
+        }
 
         // isset is REQUIRED here not to use getter
         if (isset($this->$sLongFieldName) && is_object($this->$sLongFieldName)) {
@@ -1166,9 +1173,9 @@ class oxBase extends oxSuperCfg
      */
     protected function _getUpdateFieldValue($sFieldName, $oField)
     {
-       $blPassNullValue = false;
-       if ($oField instanceof oxField) {
-           $value = $oField->getRawValue();
+        $blPassNullValue = false;
+        if ($oField instanceof oxField) {
+            $value = $oField->getRawValue();
         } else {
             $value = $oField->value;
         }
@@ -1354,8 +1361,9 @@ class oxBase extends oxSuperCfg
     protected function _isDisabledFieldCache()
     {
         $sClass = get_class($this);
-        if (isset(self::$_blDisableFieldCaching[$sClass]) && self::$_blDisableFieldCaching[$sClass])
+        if (isset(self::$_blDisableFieldCaching[$sClass]) && self::$_blDisableFieldCaching[$sClass]) {
             return true;
+        }
 
         return false;
     }

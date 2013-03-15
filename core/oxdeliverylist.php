@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxdeliverylist.php 13976 2008-11-04 16:15:50Z vilma $
+ * $Id: oxdeliverylist.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -120,10 +120,11 @@ class oxDeliveryList extends oxList
      */
     public function setHomeCountry( $sHomeCountry )
     {
-        if ( is_array( $sHomeCountry ) )
+        if ( is_array( $sHomeCountry ) ) {
             $this->_sHomeCountry = current( $sHomeCountry );
-        else
+        } else {
             $this->_sHomeCountry = $sHomeCountry;
+        }
     }
 
     /**
@@ -260,10 +261,10 @@ class oxDeliveryList extends oxList
      *    NOTICE: for performance reasons deliveries is cached in
      *    $myConfig->aDeliveryList.
      *
-     * @param object $oBasket           basket object
-     * @param oxuser $oUser             session user
-     * @param string $sDelCountry       user country id
-     * @param string $sDelSet           delivery set id
+     * @param object $oBasket     basket object
+     * @param oxuser $oUser       session user
+     * @param string $sDelCountry user country id
+     * @param string $sDelSet     delivery set id
      *
      * @return array
      */
@@ -283,8 +284,9 @@ class oxDeliveryList extends oxList
             foreach ( $aDeliveries as $sDeliveryId => $oDelivery ) {
 
                 // skipping that was checked and didn't fit before
-                if ( in_array( $sDeliveryId, $aSkipDeliveries ) )
+                if ( in_array( $sDeliveryId, $aSkipDeliveries ) ) {
                     continue;
+                }
 
                 $aSkipDeliveries[] = $sDeliveryId;
 
@@ -337,10 +339,10 @@ class oxDeliveryList extends oxList
     /**
      * Checks if deliveries in list fits for current basket and delivery set
      *
-     * @param oxbasket $oBasket           shop basket
-     * @param oxuser   $oUser             session user
-     * @param string   $sDelCountry       delivery country
-     * @param string   $sDeliverySetId    delivery set id to check its relation to delivery list
+     * @param oxbasket $oBasket        shop basket
+     * @param oxuser   $oUser          session user
+     * @param string   $sDelCountry    delivery country
+     * @param string   $sDeliverySetId delivery set id to check its relation to delivery list
      *
      * @return bool
      */

@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxrating.php 13916 2008-10-30 11:16:56Z arvydas $
+ * $Id: oxrating.php 14339 2008-11-25 08:52:31Z vilma $
  */
 
 /**
@@ -63,6 +63,7 @@ class oxRating extends oxBase
 
         return parent::_insert();
     }
+
     /**
      * Inserts object data fiels in DB. Returns true on success.
      *
@@ -81,7 +82,7 @@ class oxRating extends oxBase
             $oDB->execute( "delete from oxratings where oxtimestamp < '$sExpDate'" );
         }
         $sSelect = "select oxid from oxratings where oxuserid = '$sUserId' and oxtype='$sType' and oxobjectid = '$sObjectId'";
-        if( $oDB->getOne( $sSelect ) ) {
+        if ( $oDB->getOne( $sSelect ) ) {
             return false;
         }
 

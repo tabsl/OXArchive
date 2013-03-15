@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package inc
  * @copyright © OXID eSales AG 2003-2008
- * $Id: article_crossselling.inc.php 14035 2008-11-06 14:48:53Z arvydas $
+ * $Id: article_crossselling.inc.php 14409 2008-11-28 16:01:58Z arvydas $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -71,11 +71,11 @@ class ajaxComponent extends ajaxListComponent
             } else {
 
                 if ( $myConfig->getConfigParam( 'blBidirectCross' ) ) {
-                    $sQAdd  = " from (select $sArticleTable.oxartnum, $sArticleTable.oxtitle, oxobject2article.oxobjectid, $sArticleTable.oxid from oxobject2article ";
+                    $sQAdd  = " from oxobject2article ";
                     $sQAdd .= " inner join $sArticleTable on ( oxobject2article.oxobjectid = $sArticleTable.oxid ";
                     $sQAdd .= " or oxobject2article.oxarticlenid = $sArticleTable.oxid ) ";
                     $sQAdd .= " where ( oxobject2article.oxarticlenid = '$sSelId' or oxobject2article.oxobjectid = '$sSelId' ) ";
-                    $sQAdd .= " and $sArticleTable.oxid != '$sSelId' ) as $sArticleTable where 1 ";
+                    $sQAdd .= " and $sArticleTable.oxid != '$sSelId' ";
                 } else {
                     $sQAdd  = " from oxobject2article left join $sArticleTable on oxobject2article.oxobjectid=$sArticleTable.oxid ";
                     $sQAdd .= " where oxobject2article.oxarticlenid = '$sSelId' ";
@@ -99,10 +99,25 @@ class ajaxComponent extends ajaxListComponent
         $sQAdd .= " and $sArticleTable.oxid IS NOT NULL ";
 
         // skipping self from list
-        if ( $sSelId && $myConfig->getConfigParam( 'blBidirectCross' ) )
-            $sQAdd .= " and $sArticleTable.oxid != '$sSelId' group by $sArticleTable.oxid ";
+        $sQAdd .= " and $sArticleTable.oxid != '".( $sSelId ? $sSelId: $sSynchSelId )."' ";
 
         return $sQAdd;
+    }
+
+    /**
+     * Adds filter SQL to current query
+     *
+     * @param string $sQ query to add filter condition
+     *
+     * @return string
+     */
+    protected function _addFilter( $sQ )
+    {
+        $sQ = parent::_addFilter( $sQ );
+        if ( !oxConfig::getParameter( 'oxid' ) ) {
+            $sQ .= ' group by '.getViewName( 'oxarticles' ).'.oxid ';
+        }
+        return $sQ;
     }
 
     /**

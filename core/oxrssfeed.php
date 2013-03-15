@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxrssfeed.php 13914 2008-10-30 11:12:55Z arvydas $
+ * $Id: oxrssfeed.php 14342 2008-11-25 09:13:13Z vilma $
  */
 
 /**
@@ -419,6 +419,8 @@ class oxRssFeed extends oxSuperCfg
     /**
      * Returns string built from category titles
      *
+     * @param oxCategory $oCat category object
+     *
      * @return string
      */
     protected function _getCatPath( $oCat )
@@ -647,7 +649,7 @@ class oxRssFeed extends oxSuperCfg
     {
         $oLang = oxLang::getInstance();
         $iLang = $oLang->getBaseLanguage();
-        return $this->_prepareFeedName( sprintf($oLang->translateString( 'RSS_ARTRECOMMLISTS_TITLE', $iLang ),$oArticle->oxarticles__oxtitle->value) );
+        return $this->_prepareFeedName( sprintf($oLang->translateString( 'RSS_ARTRECOMMLISTS_TITLE', $iLang ), $oArticle->oxarticles__oxtitle->value) );
     }
 
     /**
@@ -662,13 +664,13 @@ class oxRssFeed extends oxSuperCfg
         $oLang = oxLang::getInstance();
         $iLang = $oLang->getBaseLanguage();
         return $this->_prepareUrl("cl=rss&amp;fnc=recommlists&amp;anid=".$oArticle->getId(),
-                sprintf($oLang->translateString( 'RSS_ARTRECOMMLISTS_URL', $iLang ),$oArticle->oxarticles__oxtitle->value));
+                sprintf($oLang->translateString( 'RSS_ARTRECOMMLISTS_URL', $iLang ), $oArticle->oxarticles__oxtitle->value));
     }
 
     /**
      * make rss data array from given oxlist
      *
-     * @param oxList $oList
+     * @param oxList $oList recommlist object
      *
      * @return array
      */
@@ -712,7 +714,7 @@ class oxRssFeed extends oxSuperCfg
         $this->_loadData(
             self::RSS_ARTRECOMMLISTS.$oArticle->getId(),
             $this->getRecommListsTitle($oArticle),
-            sprintf($oLang->translateString( 'RSS_ARTRECOMMLISTS_DESCRIPTION', $oLang->getBaseLanguage() ),$oArticle->oxarticles__oxtitle->value),
+            sprintf($oLang->translateString( 'RSS_ARTRECOMMLISTS_DESCRIPTION', $oLang->getBaseLanguage() ), $oArticle->oxarticles__oxtitle->value),
             $this->_getRecommListItems($oList),
             $this->getRecommListsUrl($oArticle),
             $oArticle->getLink()
@@ -730,7 +732,7 @@ class oxRssFeed extends oxSuperCfg
     {
         $oLang = oxLang::getInstance();
         $iLang = $oLang->getBaseLanguage();
-        return $this->_prepareFeedName( sprintf($oLang->translateString( 'RSS_RECOMMLISTARTICLES_TITLE', $iLang ),$oRecommList->oxrecommlists__oxtitle->value) );
+        return $this->_prepareFeedName( sprintf($oLang->translateString( 'RSS_RECOMMLISTARTICLES_TITLE', $iLang ), $oRecommList->oxrecommlists__oxtitle->value) );
     }
 
     /**
@@ -745,7 +747,7 @@ class oxRssFeed extends oxSuperCfg
         $oLang = oxLang::getInstance();
         $iLang = $oLang->getBaseLanguage();
         return $this->_prepareUrl("cl=rss&amp;fnc=recommlistarts&amp;recommid=".$oRecommList->getId(),
-                sprintf($oLang->translateString( 'RSS_RECOMMLISTARTICLES_URL', $iLang ),$oRecommList->oxrecommlists__oxtitle->value));
+                sprintf($oLang->translateString( 'RSS_RECOMMLISTARTICLES_URL', $iLang ), $oRecommList->oxrecommlists__oxtitle->value));
     }
 
     /**
@@ -768,7 +770,7 @@ class oxRssFeed extends oxSuperCfg
         $this->_loadData(
             self::RSS_RECOMMLISTARTS.$oRecommList->getId(),
             $this->getRecommListArticlesTitle($oRecommList),
-            sprintf($oLang->translateString( 'RSS_RECOMMLISTARTICLES_DESCRIPTION', $oLang->getBaseLanguage() ),$oRecommList->oxrecommlists__oxtitle->value),
+            sprintf($oLang->translateString( 'RSS_RECOMMLISTARTICLES_DESCRIPTION', $oLang->getBaseLanguage() ), $oRecommList->oxrecommlists__oxtitle->value),
             $this->_getArticleItems($oList),
             $this->getRecommListArticlesUrl($oRecommList),
             $oRecommList->getLink()

@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package lang
  * @copyright © OXID eSales AG 2003-2008
- * $Id: lang.php 14004 2008-11-06 12:05:22Z vilma $
+ * $Id: lang.php 14421 2008-12-01 12:37:55Z rimvydas.paskevicius $
  */
 
 $sLangName  = "Deutsch";
@@ -397,8 +397,8 @@ $aLang = array(
 'EMAIL_ORDER_OWNER_HTML_SHIPPINGVAT1'             =>"Versand. MwSt.",
 'EMAIL_ORDER_OWNER_HTML_SHIPPINGVAT2'             =>"% Betrag:",
 'EMAIL_ORDER_OWNER_HTML_MESSAGE'                  =>"Mitteilung:",
-'EMAIL_ORDER_OWNER_HTML_PEYMENTINFO'              =>"Bezahlinformation:",
-'EMAIL_ORDER_OWNER_HTML_PEYMENTINFOOFF'           =>"<b>BEZAHLINFORMATIONEN AUSGESCHALTET</b> - um diese einzuschalten bitte email_order_owner_html.tpl aendern.",
+'EMAIL_ORDER_OWNER_HTML_PAYMENTINFO'              =>"Bezahlinformation:",
+'EMAIL_ORDER_OWNER_HTML_PAYMENTINFOOFF'           =>"<b>BEZAHLINFORMATIONEN AUSGESCHALTET</b> - um diese einzuschalten bitte email_order_owner_html.tpl aendern.",
 'EMAIL_OWNER_REMINDER_HTML_STOCKLOW'              =>"Lagerbestand niedrig : Dieser Artikel hat die eing. Lagerbestandsgrenze erreicht.",
 'EMAIL_OWNER_REMINDER_HTML_PRODUCT'               =>"Produkt",
 'EMAIL_OWNER_REMINDER_HTML_QUANTITY'              =>"Anzahl total",
@@ -453,11 +453,24 @@ $aLang = array(
 'EXCEPTION_INPUT_PASSTOOSHORT'                    =>"Fehler: Ihr Passwort ist zu kurz.",
 'FORGOTPWD_TITLE'                                 =>"Passwort vergessen?",
 'FORGOTPWD_FORGOTPWD'                             =>"Sie haben Ihr Passwort vergessen?",
-'FORGOTPWD_WEWILLSENDITTOYOU'                     =>"Kein Problem, hier können Sie es sich wieder zuschicken lassen.",
+'FORGOTPWD_WEWILLSENDITTOYOU'                     =>"Kein Problem, hier Sie ein neues Passwort einrichten.",
 'FORGOTPWD_YOUREMAIL'                             =>"Ihre E-Mail Adresse:",
 'FORGOTPWD_PWDWASSEND'                            =>"Passwort wurde verschickt an:",
 'FORGOTPWD_REQUESTPWD'                            =>"Passwort anfordern",
-'FORGOTPWD_AFTERCLICK'                            =>"Nachdem Sie den 'Passwort anfordern'-Knopf angeklickt haben, schicken wir Ihnen eine Benachrichtigung per E-Mail mit Ihrem persönlichen Passwort zu.",
+'FORGOTPWD_AFTERCLICK'                            =>"Nachdem Sie den 'Passwort anfordern'-Knopf angeklickt haben, schicken wir Ihnen eine E-Mail zu, mit der Sie Ihr Passwort ändern können.",
+'FORGOTPWD_UPDATESUCCESSTITLE'                    => "Passwort ändern",
+'FORGOTPWD_UPDATE_SUCCESS'                        => "Ihr Passwort wurde erfolgreich geändert!",
+'FORGOTPWD_UPDATETITLE'                           => "Neues Passwort",
+'FORGOTPWD_ENTERNEWPASSWORD'                      => "Bitte geben Sie ein neues Passwort ein.",
+'FORGOTPWD_NEWPASSWORD'                           => "Neues Passwort:",
+'FORGOTPWD_CONFIRMPASSWORD'                       => "Passwort bestätigen:",
+'FORGOTPWD_UPDATEPASSWORD'                        => "Neues Passwort speichern",
+'FORGOTPWD_BACKTOSHOP'                            => "Zurück zum Shop",
+'FORGOTPWD_ERRPASSWORDTOSHORT'                    => "Fehler: Ihr Passwort ist zu kurz.",
+'FORGOTPWD_ERRPASSWDONOTMATCH'                    => "Fehler: Die Passwörter stimmen nicht überein.",
+'FORGOTPWD_ERRLINKEXPIRED'                        => "Diese Seite ist nicht mehr gültig. Bitte benutzen Sie die Passwort vergessen Funktion erneut.",
+'FORGOTPWD_ERRUNABLETOSEND'                       => "Die eingegebene E-Mail Adresse ist ungültig. Bitte geben Sie eine gültige E-Mail Adresse ein.",
+'FORGOTPWD_BACKTOSHOP'                            => "Zurück zum Shop",
 'GUESTBOOK_LOGIN_LOGIN'                           =>"Anmeldung",
 'GUESTBOOK_TITLE'                                 =>"Gästebuch",
 'GUESTBOOK_WRITEENTRY'                            =>"Eintrag schreiben",
@@ -730,6 +743,7 @@ $aLang = array(
 'NEWSLETTER_EMAIL'                                => "E-Mail",
 'NEWSLETTER_COMPLETEMARKEDFIELEDS'                => 'Felder mit einem <span class="req">*</span> müssen ausgefüllt werden.',
 'NEWSLETTER_SUBSCRIBE'                            => "Abonnieren",
+'NEWSLETTER_UNSUBSCRIBE'                          => "Stornieren",
 'NEWSLETTER_THANKYOU'                             => "Vielen Dank für das Abonnement unseres Newsletters.",
 'NEWSLETTER_YOUHAVEBEENSENTCONFIRMATION'          => "Sie haben soeben eine E-Mail erhalten, mit der Sie unseren Newsletter freischalten können.",
 'NEWSLETTER_CONGRATULATIONS'                      => "Herzlichen Glückwunsch!",

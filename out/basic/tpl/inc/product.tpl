@@ -47,8 +47,8 @@
                 <span class="desc">[{ oxmultilang ident="DETAILS_PERSPARAM_REDUCEDTEXT" }]</span><br>
                 <sub class="only">[{ oxmultilang ident="DETAILS_PERSPARAM_NOWONLY" }]</sub>
             [{/if}]
-            [{if $product->getFAmountPrice() || $product->getFPrice()}]
-              <big>[{ $product->getFAmountPrice()|default:$product->getFPrice() }] [{ $currency->sign}]</big><sup class="dinfo"><a href="#delivery_link" rel="nofollow">*</a></sup>
+            [{if $product->getFPrice()}]
+              <big>[{ $product->getFPrice() }] [{ $currency->sign}]</big><sup class="dinfo"><a href="#delivery_link" rel="nofollow">*</a></sup>
             [{else}]
               <big>&nbsp;</big>
             [{/if}]

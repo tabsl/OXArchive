@@ -12,7 +12,11 @@
         <input type="hidden" name="cnid" value="[{$oViewConf->getActCatId()}]">
         <input type="hidden" name="lgn_cook" value="0">
         <input type="hidden" name="option" value="3">
-        <table class="form">
+        <table class="form" width="100%">
+            <colgroup>
+                <col width="35%">
+                <col width="65%">
+            </colgroup>
             <tr class="th_sep">
                 <th colspan="2">[{ oxmultilang ident="REGISTER_ACCOUNTINFO" }] <small>[{ oxmultilang ident="REGISTER_COMPLETEMARKEDFIELDS" }]</small></th>
             </tr>
@@ -131,13 +135,15 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    [{if !$oView->showShipAddress()}]
-                    <span class="btn"><input type="submit" class="btn" name="blshowshipaddress" value="[{ oxmultilang ident="REGISTER_DIFFERENTSHIPPINGADDRESS" }]"></span>
-                    [{else}]
-                    <span class="btn"><input type="submit" class="btn" name="blhideshipaddress" value="[{ oxmultilang ident="REGISTER_DISABLESHIPPINGADDRESS" }]"></span>
-                    [{/if}]
-                    <br><br>
-                    <span class="note">[{ oxmultilang ident="REGISTER_NOTE" }]</span> [{ oxmultilang ident="REGISTER_DIFFERENTDELIVERYADDRESS" }]
+                    <div class="showHideShippAddr">
+	                    [{if !$oView->showShipAddress()}]
+	                    <span class="btn"><input type="submit" class="btn" name="blshowshipaddress" value="[{ oxmultilang ident="REGISTER_DIFFERENTSHIPPINGADDRESS" }]"></span>
+	                    [{else}]
+	                    <span class="btn"><input type="submit" class="btn" name="blhideshipaddress" value="[{ oxmultilang ident="REGISTER_DISABLESHIPPINGADDRESS" }]"></span>
+	                    [{/if}]
+	                    <br><br>
+	                    <span class="note">[{ oxmultilang ident="REGISTER_NOTE" }]</span> [{ oxmultilang ident="REGISTER_DIFFERENTDELIVERYADDRESS" }]
+                    </div>
                 </td>
             </tr>
             [{if $oView->showShipAddress()}]

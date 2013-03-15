@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxseoencodervendor.php 13770 2008-10-27 13:10:37Z arvydas $
+ * $Id: oxseoencodervendor.php 14368 2008-11-26 07:36:13Z vilma $
  */
 
 /**
@@ -50,6 +50,7 @@ class oxSeoEncoderVendor extends oxSeoEncoder
      * Returns part of SEO url excluding path
      *
      * @param oxVendor $oVendor vendor object
+     * @param int      $iLang   language
      *
      * @return string
      */
@@ -90,6 +91,7 @@ class oxSeoEncoderVendor extends oxSeoEncoder
      *
      * @param oxvendor $oVendor vendor object
      * @param int      $iPage   page tu prepare number
+     * @param int      $iLang   language
      * @param bool     $blFixed fixed url marker (default is false)
      *
      * @return string
@@ -112,6 +114,7 @@ class oxSeoEncoderVendor extends oxSeoEncoder
      * Encodes vendor categoru URLs into SEO format
      *
      * @param oxvendor $oVendor Vendor object
+     * @param int      $iLang   language
      *
      * @return null
      */

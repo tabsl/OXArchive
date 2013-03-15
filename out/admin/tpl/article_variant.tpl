@@ -137,6 +137,8 @@ function SetSticker( sStickerId, oObject)
         <input type="text" class="editinput" size="32" maxlength="[{$edit->oxarticles__oxvarname->fldmax_length}]" name="editval[oxarticles__oxvarname]" value="[{$edit->oxarticles__oxvarname->value}]" [{ $readonly }]>
         [{if !$shop->buyableparent}]<input class="edittext" type="submit" value="[{ oxmultilang ident="ARTICLE_VARIANT_ARTSAVE" }]" [{ $readonly }]>[{/if}]
         <br><br>
+        
+        <div style="overflow-x:auto;">
         <table cellspacing="0" cellpadding="0" border="0" width="730">
           <tr>
             <td class="listheader first" height="15">[{ oxmultilang ident="ARTICLE_VARIANT_EDIT" }] </td>
@@ -288,7 +290,8 @@ function SetSticker( sStickerId, oObject)
             </td>
           </tr>
         </table>
-
+        </div>
+        
         [{ $shop->hiddensid }]
         <input type="hidden" name="cl" value="article_variant">
         <input type="hidden" name="fnc" value="">

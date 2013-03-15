@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package views
  * @copyright © OXID eSales AG 2003-2008
- * $Id: newsletter.php 13614 2008-10-24 09:36:52Z sarunas $
+ * $Id: newsletter.php 14421 2008-12-01 12:37:55Z rimvydas.paskevicius $
  */
 
 /**
@@ -142,16 +142,15 @@ class Newsletter extends oxUBase
             return;
         }
 
+        $blSubscribe = oxConfig::getParameter("subscribeStatus");
+        
         $oUser = oxNew( 'oxuser' );
         $oUser->oxuser__oxusername = new oxField($aParams['oxuser__oxusername'], oxField::T_RAW);
-        if ( isset( $aParams['oxuser__oxpassword'] ) ) { // password optional from 2.1 on we do not need it here
-            $oUser->oxuser__oxpassword = new oxField($aParams['oxuser__oxpassword']);
-        }
 
-        $blSubscribe = false;
+        $blUserLoaded = false;
 
-        // if such user does not exist - creating it
-        if ( !$oUser->exists() ) {
+        // if such user does not exist and subscribe is on - creating it
+        if ( !$oUser->exists() && $blSubscribe ) {
             $oUser->oxuser__oxactive    = new oxField(1, oxField::T_RAW);
             $oUser->oxuser__oxrights    = new oxField('user', oxField::T_RAW);
             $oUser->oxuser__oxshopid    = new oxField($this->getConfig()->getShopId(), oxField::T_RAW);
@@ -159,22 +158,26 @@ class Newsletter extends oxUBase
             $oUser->oxuser__oxlname     = new oxField($aParams['oxuser__oxlname'], oxField::T_RAW);
             $oUser->oxuser__oxsal       = new oxField($aParams['oxuser__oxsal'], oxField::T_RAW);
             $oUser->oxuser__oxcountryid = new oxField($aParams['oxuser__oxcountryid'], oxField::T_RAW);
-            $blSubscribe = $oUser->save();
+            $blUserLoaded = $oUser->save();
         } else {
-            // unsubscribing existing user before changing its subscription status
-            if ( ( $blSubscribe = $oUser->load( $oUser->getId() ) ) ) {
-                $oUser->setNewsSubscription( false, false );
-            }
+            $blUserLoaded = $oUser->load( $oUser->getId() );
         }
-
-        // if user was added/loaded successfully - subscribing to newsletter
-        if ( $blSubscribe ) {
+        
+        // if user was added/loaded successfully and subscribe is on - subscribing to newsletter
+        if ( $blSubscribe && $blUserLoaded ) {
+            //removing user from subscribe list before adding 
+            $oUser->setNewsSubscription( false, false );
+            
             if ( $oUser->setNewsSubscription( true, true ) ) {
                 // done, confirmation required
                 $this->_iNewsletterStatus = 1;
             } else {
                 oxUtilsView::getInstance()->addErrorToDisplay('NEWSLETTER_NOTABLETOSENDEMAIL');
             }
+        } elseif ( !$blSubscribe && $blUserLoaded ) {
+            // unsubscribing user
+            $oUser->setNewsSubscription( false, false );
+            $this->_iNewsletterStatus = 3;
         }
     }
 

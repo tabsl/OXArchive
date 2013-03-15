@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxseodecoder.php 14150 2008-11-11 15:14:37Z arvydas $
+ * $Id: oxseodecoder.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -31,7 +31,8 @@ class oxSeoDecoder extends oxSuperCfg
     /**
      * _parseStdUrl parses given url into array of params
      *
-     * @param string $Url
+     * @param string $sUrl given url
+     *
      * @access protected
      * @return array
      */
@@ -41,7 +42,7 @@ class oxSeoDecoder extends oxSuperCfg
         $sUrl = html_entity_decode($sUrl);
         if (($iPos = strpos($sUrl, '?')) !== false) {
             $aParams = explode('&', substr($sUrl, $iPos+1));
-            foreach($aParams as $sParam) {
+            foreach ($aParams as $sParam) {
                 $aP = explode('=', $sParam);
                 if (count($aP) == 2) {
                     if (($sName = trim($aP[0])) && ($sValue = trim($aP[1]))) {
@@ -57,7 +58,8 @@ class oxSeoDecoder extends oxSuperCfg
      * decodeUrl decodes given url into oxid eShop required parameters
      * wich are returned as array
      *
-     * @param string $sSeoUrl
+     * @param string $sSeoUrl SEO url
+     *
      * @access public
      * @return array || false
      */
@@ -87,7 +89,8 @@ class oxSeoDecoder extends oxSuperCfg
      * Checks if url is stored in history table and if it was found - tryes
      * to fetch new url from seo table
      *
-     * @param string $sSeoUrl
+     * @param string $sSeoUrl SEO url
+     *
      * @access public
      * @return string || false
      */
@@ -103,7 +106,7 @@ class oxSeoDecoder extends oxSuperCfg
         $sKey = md5( strtolower( $sSeoUrl ) );
 
         $sUrl = false;
-        $rs = $oDb->Execute( "select oxobjectid, oxlang from oxseohistory where oxident = '{$sKey}' and oxshopid = '{$iShopId}' limit 1");
+        $rs = $oDb->execute( "select oxobjectid, oxlang from oxseohistory where oxident = '{$sKey}' and oxshopid = '{$iShopId}' limit 1");
         if ( !$rs->EOF ) {
             // updating hit info (oxtimestamp field will be updated automatically)
             $oDb->execute( "update oxseohistory set oxhits = oxhits + 1 where oxident = '{$sKey}' and oxshopid = '{$iShopId}' limit 1" );
@@ -117,6 +120,9 @@ class oxSeoDecoder extends oxSuperCfg
     /**
      * processSeoCall handles Server information and passes it to decoder
      *
+     * @param string $sRequest request
+     * @param string $sPath    path
+     *
      * @access public
      * @return void
      */
@@ -124,7 +130,7 @@ class oxSeoDecoder extends oxSuperCfg
     {
         // first - collect needed parameters
         if ( !$sRequest ) {
-            if( isset( $_SERVER['REQUEST_URI'] ) && $_SERVER['REQUEST_URI'] ) {
+            if ( isset( $_SERVER['REQUEST_URI'] ) && $_SERVER['REQUEST_URI'] ) {
                 $sRequest = $_SERVER['REQUEST_URI'];
             } else {    // try something else
                 $sRequest = $_SERVER['SCRIPT_URI'];
@@ -135,7 +141,7 @@ class oxSeoDecoder extends oxSuperCfg
         if ( ( $sParams = $this->_getParams( $sRequest, $sPath ) ) ) {
 
             // in case SEO url is actual
-            if ( is_array( $aGet = $this->decodeUrl( $sParams ) ) ){
+            if ( is_array( $aGet = $this->decodeUrl( $sParams ) ) ) {
                 $_GET = array_merge( $aGet, $_GET );
                 oxLang::getInstance()->resetBaseLanguage();
             } elseif ( ( $sRedirectUrl = $this->_decodeOldUrl( $sParams ) ) ) {
@@ -241,7 +247,8 @@ class oxSeoDecoder extends oxSuperCfg
     /**
      * Searches for seo url in seo table. If not found - FALSE is returned
      *
-     * @param string $sStdUrl standard url
+     * @param string  $sStdUrl   standard url
+     * @param integer $iLanguage language
      *
      * @return mixed
      */
@@ -254,7 +261,7 @@ class oxSeoDecoder extends oxSuperCfg
         $sSeoUrl = false;
 
         $sQ = "select oxseourl, oxlang from oxseo where oxstdurl = $sStdUrl and oxlang = '$iLanguage' limit 1";
-        $oRs = $oDb->Execute( $sQ );
+        $oRs = $oDb->execute( $sQ );
         if ( !$oRs->EOF ) {
             $sSeoUrl = oxSeoEncoder::getInstance()->getLanguageParam( $oRs->fields['oxlang'] ).$oRs->fields['oxseourl'];
         }

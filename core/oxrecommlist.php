@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxrecommlist.php 14175 2008-11-12 15:12:41Z arvydas $
+ * $Id: oxrecommlist.php 14388 2008-11-26 15:43:17Z vilma $
  */
 
 /**
@@ -70,8 +70,9 @@ class oxRecommList extends oxBase
     public function getArticles(  $iStart = null, $iNrofArticles = null, $blReload = false )
     {
         // cached ?
-        if ( $this->_oArticles !== null && !$blReload )
+        if ( $this->_oArticles !== null && !$blReload ) {
             return $this->_oArticles;
+        }
 
         $this->_oArticles = oxNew( 'oxarticlelist' );
 
@@ -87,10 +88,6 @@ class oxRecommList extends oxBase
 
     /**
      * Returns count of recommendation list items
-     *
-     * @param integer $iStart        start for sql limit
-     * @param integer $iNrofArticles nr of items per page
-     * @param bool    $blReload      if TRUE forces to reload list
      *
      * @return array of oxUserBasketItems
      */
@@ -142,10 +139,12 @@ class oxRecommList extends oxBase
      */
     public function delete( $sOXID = null )
     {
-        if ( !$sOXID )
+        if ( !$sOXID ) {
             $sOXID = $this->getId();
-        if ( !$sOXID )
+        }
+        if ( !$sOXID ) {
             return false;
+        }
 
         if ( ( $blDelete = parent::delete( $sOXID ) ) ) {
             // cleaning up related data
@@ -164,8 +163,9 @@ class oxRecommList extends oxBase
      */
     public function getArtDescription( $sOXID )
     {
-        if ( !$sOXID )
+        if ( !$sOXID ) {
             return false;
+        }
 
         $sSelect = 'select oxdesc from oxobject2list where oxlistid = "'.$this->getId().'" and oxobjectid = "'.$sOXID.'"';
         $sDesc = oxDb::getDb()->getOne( $sSelect );
@@ -181,8 +181,9 @@ class oxRecommList extends oxBase
      */
     public function removeArticle( $sOXID )
     {
-        if ( !$sOXID )
+        if ( !$sOXID ) {
             return false;
+        }
 
         $sQ = "delete from oxobject2list where oxobjectid = '$sOXID' ";
         return oxDb::getDb()->execute( $sQ );
@@ -217,7 +218,7 @@ class oxRecommList extends oxBase
      *     1. show lists, that has more requested articles first
      *     2. show lists, that have more any articles
      *
-     * @param array $aIds Object IDs
+     * @param array $aArticleIds Object IDs
      *
      * @return oxList
      */
@@ -284,6 +285,8 @@ class oxRecommList extends oxBase
      *
      * @param oxList $oRecommList recommendation list
      * @param array  $aIds        article ids
+     *
+     * @return null
      */
     protected function _loadFirstArticles(oxList $oRecommList, $aIds)
     {
@@ -408,8 +411,9 @@ class oxRecommList extends oxBase
         $oReview = oxNew('oxreview');
         $oRevs = $oReview->loadList('oxrecommlist', $this->getId());
         //if no review found, return null
-        if ( $oRevs->count() < 1 )
+        if ( $oRevs->count() < 1 ) {
             return null;
+        }
         return $oRevs;
     }
 
@@ -435,7 +439,9 @@ class oxRecommList extends oxBase
     /**
      * set sql filter for article loading
      *
-     * @param string $sArticlesFilter
+     * @param string $sArticlesFilter article filter
+     *
+     * @return null
      */
     public function setArticlesFilter($sArticlesFilter)
     {

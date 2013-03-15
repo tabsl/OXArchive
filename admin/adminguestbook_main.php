@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package admin
  * @copyright © OXID eSales AG 2003-2008
- * $Id: adminguestbook_main.php 14017 2008-11-06 13:32:23Z arvydas $
+ * $Id: adminguestbook_main.php 14266 2008-11-19 10:12:51Z arvydas $
  */
 
 /**
@@ -115,6 +115,8 @@ class Adminguestbook_Main extends oxAdminDetails
         if ( $soxId == '-1' ) {
             oxSession::setVar( 'saved_oxid', $oLinks->oxgbentries__oxid->value );
         }
+
+        return $this->autosave();
     }
 
 }

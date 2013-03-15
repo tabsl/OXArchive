@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package admin
  * @copyright © OXID eSales AG 2003-2008
- * $Id: content_main.php 14019 2008-11-06 13:35:04Z arvydas $
+ * $Id: content_main.php 14410 2008-11-28 16:02:31Z arvydas $
  */
 
 /**
@@ -88,17 +88,19 @@ class Content_Main extends oxAdminDetails
                 $oContent->oxcontents__oxloadid = new oxField( $sUId );
         }
 
-        $this->_aViewData["edit"]    =  $oContent;
-        $this->_aViewData["cattree"] =  $oCatTree;
-        $this->_aViewData["link"]    =  "[{\$shop->selflink}]&cl=content&tpl=".$oContent->oxcontents__oxid->value;
+        $this->_aViewData["edit"] = $oContent;
+        $this->_aViewData["link"] = "[{ oxgetseourl oxid=&quot;".$oContent->getId()."&quot; type=&quot;oxcontent&quot; }]";
+        $this->_aViewData["cattree"] = $oCatTree;
 
         // generate editor
         $sCSS = "content.tpl.css";
-        if ( $oContent->oxcontents__oxsnippet->value == '1')
-                $sCSS = null;
-        $this->_aViewData["editor"] = $this->_generateTextEditor( "100%", 300, $oContent, "oxcontents__oxcontent", $sCSS);
+        if ( $oContent->oxcontents__oxsnippet->value == '1') {
+            $sCSS = null;
+        }
 
+        $this->_aViewData["editor"]  = $this->_generateTextEditor( "100%", 300, $oContent, "oxcontents__oxcontent", $sCSS);
         $this->_aViewData["afolder"] = $myConfig->getConfigParam( 'aCMSfolder' );
+
         return "content_main.tpl";
     }
 

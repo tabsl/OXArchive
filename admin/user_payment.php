@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package admin
  * @copyright © OXID eSales AG 2003-2008
- * $Id: user_payment.php 14014 2008-11-06 13:26:22Z arvydas $
+ * $Id: user_payment.php 14266 2008-11-19 10:12:51Z arvydas $
  */
 
 /**
@@ -135,6 +135,8 @@ class User_Payment extends oxAdminDetails
         //$aParams = $oAdress->ConvertNameArray2Idx( $aParams);
         $oAdress->assign( $aParams);
         $oAdress->save();
+
+        return $this->autosave();
     }
 
     /**

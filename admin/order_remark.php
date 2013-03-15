@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package admin
  * @copyright © OXID eSales AG 2003-2008
- * $Id: order_remark.php 14024 2008-11-06 13:41:48Z arvydas $
+ * $Id: order_remark.php 14266 2008-11-19 10:12:51Z arvydas $
  */
 
 /**
@@ -94,10 +94,6 @@ class Order_Remark extends oxAdminDetails
         $oRemark->oxremark__oxtext->setValue($sNewText);
         $oRemark->oxremark__oxheader->setValue($sNewHeader);
         $oRemark->oxremark__oxparentid->setValue($oOrder->oxorder__oxuserid->value);
-            // shopid
-            $sShopID = oxSession::getVar( "actshop");
-            $oRemark->oxremark__oxshopid->setValue($sShopID);
-
         $oRemark->save();
 
         return $this->autosave();

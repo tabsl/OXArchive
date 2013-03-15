@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxemail.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxemail.php 14451 2008-12-03 09:47:09Z sarunas $
  */
 /**
  * Includes PHP mailer class.
@@ -34,6 +34,8 @@ require oxConfig::getInstance()->getConfigParam( 'sCoreDir' ) . "/phpmailer/clas
  */
 class oxEmail extends phpmailer
 {
+    public $SMTP_PORT = 25;
+
     /**
      * Name of template used by reminder function (article).
      *
@@ -236,8 +238,9 @@ class oxEmail extends phpmailer
             $this->_setSmtpAuthInfo( $oShop->oxshops__oxsmtpuser->value, $oShop->oxshops__oxsmtppwd->value );
         }
 
-        if ( $myConfig->getConfigParam( 'iDebug' ) == 6 )
-            $this->setSmtpDebug( true );
+        if ( $myConfig->getConfigParam( 'iDebug' ) == 6 ) {
+            $this->_setSmtpDebug( true );
+        }
     }
 
     /**
@@ -251,7 +254,7 @@ class oxEmail extends phpmailer
     {
         $blIsSmtp = false;
         if ( $sSmtpHost ) {
-            if ( $blIsSmtp = (bool) ( $rHandle = @fsockopen( $sSmtpHost, $this->SMTP_PORT, $iErrNo = '', $sErrStr  = '', 30 )) ) {
+            if ( $blIsSmtp = (bool) ( $rHandle = @fsockopen( $sSmtpHost, $this->SMTP_PORT, $iErrNo, $sErrStr, 30 )) ) {
                 // closing connection ..
                 fclose( $rHandle );
             }
@@ -302,23 +305,26 @@ class oxEmail extends phpmailer
         $smarty->assign( "iswishlist", true);
         $smarty->assign( "isreview", true);
 
-        if( $aVoucherList = $oOrder->getVoucherList() )
+        if( $aVoucherList = $oOrder->getVoucherList() ) {
             $smarty->assign( "vouchers", $aVoucherList );
+        }
 
         $oOutputProcessor = oxNew( "oxoutput" );
         $aNewSmartyArray = $oOutputProcessor->processViewArray( $smarty->get_template_vars(), "oxemail" );
 
-        foreach ( $aNewSmartyArray as $key => $val )
+        foreach ( $aNewSmartyArray as $key => $val ) {
             $smarty->assign( $key, $val );
+        }
 
         $this->setBody( $smarty->fetch( $sCustHTML) );
         $this->setAltBody( $smarty->fetch( $sCustPLAIN) );
 
         // #586A
-        if ( $smarty->template_exists( $this->_sOrderUserSubjectTemplate) )
+        if ( $smarty->template_exists( $this->_sOrderUserSubjectTemplate) ) {
             $this->setSubject( $smarty->fetch( $this->_sOrderUserSubjectTemplate) );
-        else
+        } else {
             $this->setSubject( $oShop->oxshops__oxordersubject->value." (#".$oOrder->oxorder__oxordernr->value.")" );
+        }
 
         $sFullName = $oOrder->getUser()->oxuser__oxfname->value . " " . $oOrder->getUser()->oxuser__oxlname->value;
 
@@ -390,7 +396,7 @@ class oxEmail extends phpmailer
             $smarty->assign( $key, $val );
 
         //path to admin message template file
-        $sPathToTemplate = $myConfig->getTemplateDir(false,$iOrderLang).'/';
+        $sPathToTemplate = $myConfig->getTemplateDir(false, $iOrderLang).'/';
 
         $this->setBody( $smarty->fetch( $sPathToTemplate.$sOwnerHTML ) );
         $this->setAltBody( $smarty->fetch( $sPathToTemplate.$sOwnerPLAIN ) );
@@ -417,8 +423,9 @@ class oxEmail extends phpmailer
         $oRemark->save();
 
 
-        if( $myConfig->getConfigParam( 'iDebug' ) == 6)
+        if( $myConfig->getConfigParam( 'iDebug' ) == 6) {
             exit();
+        }
 
         return $blSuccess;
     }
@@ -452,8 +459,9 @@ class oxEmail extends phpmailer
         $oOutputProcessor = oxNew( "oxoutput" );
         $aNewSmartyArray = $oOutputProcessor->processViewArray( $smarty->get_template_vars(), "oxemail" );
 
-        foreach ( $aNewSmartyArray as $key => $val )
+        foreach ( $aNewSmartyArray as $key => $val ) {
             $smarty->assign( $key, $val );
+        }
 
         $this->setBody( $smarty->fetch( "email_register_html.tpl") );
         $this->setAltBody( $smarty->fetch( "email_register_plain.tpl") );
@@ -490,38 +498,27 @@ class oxEmail extends phpmailer
         $this->_setMailParams( $oShop );
 
         // user
-        //$oUserList = oxNew( "oxlist", "core");
-        //$oUserList->Init( "oxuser");
+        $sSelect = "select oxid from oxuser where oxuser.oxactive = 1 and
+                    oxuser.oxusername = '$sEmailAddress' and oxuser.oxpassword != ''
+                    order by oxshopid = '".$oShop->getId()."' desc";
 
-        $sSelect = "select oxid from oxuser where oxuser.oxactive = 1 and oxuser.oxusername = '$sEmailAddress' and oxuser.oxpassword != ''";
-        $sOxId = oxDb::getDb()->getOne( $sSelect );
-
-        if ( !empty($sOxId) ) {
+        if ( ( $sOxId = oxDb::getDb()->getOne( $sSelect ) ) ) {
 
             $oUser = oxNew( 'oxuser' );
-
             if ( $oUser->load($sOxId) ) {
                 // create messages
                 $smarty = oxUtilsView::getInstance()->getSmarty();
                 $smarty->assign( "charset", oxLang::getInstance()->translateString("charset"));
                 $smarty->assign( "shop", $oShop );
                 $smarty->assign( "oViewConf", $oShop );
-
-                //#1007T
-                $sPassword = $oUser->oxuser__oxpassword->value;
-                if ( strpos($sPassword, "ox_") === false )
-                    $oUser->oxuser__oxpassword = new oxField($sPassword);
-                else
-                    $oUser->oxuser__oxpassword = new oxField(oxUtils::getInstance()->strRem( $sPassword, $myConfig->getConfigParam( 'sConfigKey' ) ));
-
-
                 $smarty->assign( "user", $oUser );
 
                 $oOutputProcessor = oxNew( "oxoutput" );
                 $aNewSmartyArray  = $oOutputProcessor->processViewArray( $smarty->get_template_vars(), "oxemail" );
 
-                foreach ( $aNewSmartyArray as $key => $val )
+                foreach ( $aNewSmartyArray as $key => $val ) {
                     $smarty->assign($key, $val);
+                }
 
                 $this->setBody( $smarty->fetch( "email_forgotpwd_html.tpl") );
                 $this->setAltBody( $smarty->fetch( "email_forgotpwd_plain.tpl") );
@@ -599,8 +596,9 @@ class oxEmail extends phpmailer
 
         $oOutputProcessor = oxNew( "oxoutput" );
         $aNewSmartyArray = $oOutputProcessor->processViewArray( $smarty->get_template_vars(), "oxemail" );
-        foreach ( $aNewSmartyArray as $key => $val )
+        foreach ( $aNewSmartyArray as $key => $val ) {
             $smarty->assign( $key, $val );
+        }
 
         $this->setBody( $smarty->fetch("email_newsletteroptin_html.tpl") );
         $this->setAltBody( $smarty->fetch( "email_newsletteroptin_plain.tpl") );
@@ -667,8 +665,9 @@ class oxEmail extends phpmailer
         //sets language of shop
         $iCurrLang = 0;
         $iActShopLang = $myConfig->getActiveShop()->getLanguage();
-        if ( isset($iActShopLang) && $iActShopLang != $iCurrLang )
+        if ( isset($iActShopLang) && $iActShopLang != $iCurrLang ) {
             $iCurrLang = $iActShopLang;
+        }
 
         // shop info
         $oShop = $this->_getShop( $iCurrLang );
@@ -694,8 +693,9 @@ class oxEmail extends phpmailer
         $oOutputProcessor = oxNew( "oxoutput" );
         $aNewSmartyArray = $oOutputProcessor->processViewArray( $smarty->get_template_vars(), "oxemail" );
 
-        foreach ( $aNewSmartyArray as $key => $val )
+        foreach ( $aNewSmartyArray as $key => $val ) {
             $smarty->assign( $key, $val );
+        }
 
         $this->setBody( $smarty->fetch( "email_suggest_html.tpl") );
         $this->setAltBody( $smarty->fetch( "email_suggest_plain.tpl") );
@@ -747,8 +747,9 @@ class oxEmail extends phpmailer
         $oOutputProcessor = oxNew( "oxoutput" );
         $aNewSmartyArray = $oOutputProcessor->processViewArray( $smarty->get_template_vars(), "oxemail" );
 
-        foreach ( $aNewSmartyArray as $key => $val )
+        foreach ( $aNewSmartyArray as $key => $val ) {
             $smarty->assign( $key, $val );
+        }
 
         // dodger #1469 - we need to patch security here as we do not use standard template dir, so smarty stops working
         $aStore['INCLUDE_ANY'] = $smarty->security_settings['INCLUDE_ANY'];
@@ -763,7 +764,7 @@ class oxEmail extends phpmailer
         $smarty->security_settings['INCLUDE_ANY'] = true;
 
         //Sets path to template file
-        $sPathToTemplate = $myConfig->getTemplateDir(false,$iOrderLang)."/";
+        $sPathToTemplate = $myConfig->getTemplateDir(false, $iOrderLang)."/";
 
         $this->setBody( $smarty->fetch( $sPathToTemplate."email_sendednow_html.tpl") );
         $this->setAltBody( $smarty->fetch( $sPathToTemplate."email_sendednow_plain.tpl") );
@@ -1070,8 +1071,9 @@ class oxEmail extends phpmailer
                         }
                         if ($sCId && $sCId == $aImageCache[$sFileName]) {
                             $sReplTag = str_replace($image, 'cid:'.$sCId, $aImage[0]);
-                            if ($sReplTag)
+                            if ($sReplTag) {
                                 $this->setBody( str_replace($aImage[0], $sReplTag, $this->getBody()) );
+                            }
                         }
                     }
                 }
@@ -1114,8 +1116,9 @@ class oxEmail extends phpmailer
      */
     public function setBody( $sBody = null, $blClearSid = true )
     {
-        if ( $blClearSid )
+        if ( $blClearSid ) {
             $sBody = eregi_replace("sid=[A-Z0-9\.]+", "sid=x&amp;shp=" . $this->getConfig()->getShopId(), $sBody);
+        }
 
         $this->Body = $sBody;
     }
@@ -1141,8 +1144,9 @@ class oxEmail extends phpmailer
      */
     public function setAltBody( $sAltBody = null, $blClearSid = true )
     {
-        if ( $blClearSid )
+        if ( $blClearSid ) {
             $sAltBody = eregi_replace("sid=[A-Z0-9\.]+", "sid=x&amp;shp=" . $this->getConfig()->getShopId(), $sAltBody);
+        }
 
         // A. alt body is used for plain text emails so we should eliminate HTML entities
         $sAltBody = str_replace(array('&amp;', '&quot;', '&#039;', '&lt;', '&gt;'), array('&', '"', "'", '<', '>' ), $sAltBody);
@@ -1187,11 +1191,12 @@ class oxEmail extends phpmailer
         return $this->_aRecipients;
     }
 
-  /**
-   * Clears all recipients assigned in the TO, CC and BCC
-   * array.  Returns void.
-   * @return void
-   */
+    /**
+     * Clears all recipients assigned in the TO, CC and BCC
+     * array.  Returns void.
+     *
+     * @return void
+     */
     public function clearAllRecipients()
     {
         $this->_aRecipients = array();
@@ -1211,8 +1216,9 @@ class oxEmail extends phpmailer
      */
     public function setReplyTo( $sEmail = null, $sName = null )
     {
-        if ( !oxUtils::getInstance()->isValidEmail( $sEmail ) )
+        if ( !oxUtils::getInstance()->isValidEmail( $sEmail ) ) {
             $sEmail = $this->_oShop->oxshops__oxorderemail->value;
+        }
 
         $this->_aReplies[] = array( $sEmail, $sName );
         parent::AddReplyTo( $sEmail, $sName );
@@ -1286,10 +1292,11 @@ class oxEmail extends phpmailer
      */
     public function setCharSet( $sCharSet = null )
     {
-        if ( !empty($sCharSet) )
+        if ( !empty($sCharSet) ) {
             $this->CharSet = $sCharSet;
-        else
+        } else {
             $this->CharSet = oxLang::getInstance()->translateString("charset");
+        }
     }
 
     /**
@@ -1389,17 +1396,17 @@ class oxEmail extends phpmailer
         return parent::addAttachment( $sFullPath, $sAttFile, $sEncoding, $sType );
     }
 
-  /**
-   * Adds an embedded attachment (check phpmail documentation for more details)
-   *
-   * @param string $sFullPath Path to the attachment.
-   * @param string $sCid      Content ID of the attachment. Use this to identify the Id for accessing the image in an HTML form.
-   * @param string $sAttFile  Overrides the attachment name.
-   * @param string $sEncoding File encoding (see $Encoding).
-   * @param string $sType     File extension (MIME) type.
-   *
-   * @return bool
-   */
+    /**
+     * Adds an embedded attachment (check phpmail documentation for more details)
+     *
+     * @param string $sFullPath Path to the attachment.
+     * @param string $sCid      Content ID of the attachment. Use this to identify the Id for accessing the image in an HTML form.
+     * @param string $sAttFile  Overrides the attachment name.
+     * @param string $sEncoding File encoding (see $Encoding).
+     * @param string $sType     File extension (MIME) type.
+     *
+     * @return bool
+     */
     public function addEmbeddedImage( $sFullPath, $sCid, $sAttFile = '', $sEncoding = 'base64', $sType = 'application/octet-stream' )
     {
         $this->_aAttachments[] = array( $sFullPath, basename($sFullPath), $sAttFile, $sEncoding, $sType, false, 'inline', $sCid );
@@ -1433,10 +1440,14 @@ class oxEmail extends phpmailer
      *
      * @param string $sName  header name
      * @param string $sValue header value
+     *
+     * @return null
      */
-    public function headerLine($sName, $sValue) {
-        if (stripos($sName, 'X-') !== false)
+    public function headerLine($sName, $sValue) 
+    {
+        if (stripos($sName, 'X-') !== false) {
             return;
+        }
         return parent::headerLine($sName, $sValue);
     }
 
@@ -1563,8 +1574,9 @@ class oxEmail extends phpmailer
     {
         $this->_clearMailer();
 
-        if ( !$oShop )
+        if ( !$oShop ) {
             $oShop = $this->_getShop();
+        }
 
         $this->setFrom( $oShop->oxshops__oxorderemail->value, $oShop->oxshops__oxname->value );
         $this->setSmtp( $oShop );
@@ -1584,14 +1596,16 @@ class oxEmail extends phpmailer
         if ( !isset($iLangId) ) {
             $iLangId = 0;
             $iActShopLang = $myConfig->getActiveShop()->getLanguage();
-            if ( isset($iActShopLang) && $iActShopLang != $iLangId )
+            if ( isset($iActShopLang) && $iActShopLang != $iLangId ) {
                 $iLangId = $iActShopLang;
+            }
         }
         if ( isset($this->_oShop) && $this->_oShop ) {
             // if oShop already setted and reqesting oShop with same language as current oShop,
             // or wihtout lang param, return oShop object
-            if ( isset($iLangId) && $iLangId == $this->_oShop->getLanguage() )
+            if ( isset($iLangId) && $iLangId == $this->_oShop->getLanguage() ) {
                 return $this->_oShop;
+            }
         }
 
         $this->_oShop = oxNew( 'oxshop' );

@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxfield.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxfield.php 14368 2008-11-26 07:36:13Z vilma $
  */
 
 /**
@@ -31,12 +31,14 @@ class oxField // extends oxSuperCfg
     const T_RAW  = 2;
 
     /**
-     * constructor
-     * initial value assigment is coded here by not calling a function is for performance
+     * Constructor
+     * Initial value assigment is coded here by not calling a function is for performance
      * because oxField is created MANY times and even a function call matters
      *
-     * @param mixed $value
-     * @param int $type
+     * @param mixed $value Field value
+     * @param int   $type  Value type
+     *
+     * @return null
      */
     public function __construct($value = null, $type = self::T_TEXT)
     {
@@ -54,32 +56,34 @@ class oxField // extends oxSuperCfg
     }
 
     /**
-     * checks if $name is set
+     * Checks if $name is set
      *
-     * @param string $name
+     * @param string $sName Variable name
+     *
      * @return boolean
      */
-    public function __isset($name)
+    public function __isset( $sName )
     {
-        switch ($name) {
+        switch ( $sName ) {
             case 'rawValue':
                 return ($this->rawValue !== null);
             case 'value':
                 return ($this->value !== null);
             //return true;
-        }
+            }
         return false;
     }
 
     /**
-     * magic getter
+     * Magic getter
      *
-     * @param string $name
+     * @param string $sName Variable name
+     *
      * @return string | null
      */
-    public function __get($name)
+    public function __get( $sName )
     {
-        switch ($name) {
+        switch ( $sName ) {
             case 'rawValue':
                 return $this->value;
             case 'value':
@@ -95,7 +99,7 @@ class oxField // extends oxSuperCfg
                 return $this->value;
             default:
                 return null;
-        }
+            }
     }
 
     /**
@@ -109,7 +113,7 @@ class oxField // extends oxSuperCfg
     }
 
     /**
-     * converts to formatted db date
+     * Converts to formatted db date
      *
      * @return null
      */
@@ -119,7 +123,7 @@ class oxField // extends oxSuperCfg
     }
 
     /**
-     * converts to pseudo html - new lines to <br /> tags
+     * Converts to pseudo html - new lines to <br /> tags
      *
      * @return null
      */
@@ -128,7 +132,15 @@ class oxField // extends oxSuperCfg
         $this->setValue(str_replace("\r", '', nl2br(htmlentities($this->rawValue))), self::T_RAW);
     }
 
-    protected function _initValue($value = null, $type = self::T_TEXT)
+    /**
+     * Initila field value
+     *
+     * @param mixed $value Field value
+     * @param int   $type  Value type
+     *
+     * @return null
+     */
+    protected function _initValue( $value = null, $type = self::T_TEXT)
     {
         switch ($type) {
             case self::T_TEXT:
@@ -141,7 +153,10 @@ class oxField // extends oxSuperCfg
     }
 
     /**
-     * setter
+     * Sets field value and type
+     *
+     * @param mixed $value Field value
+     * @param int   $type  Value type
      *
      * @return null
      */
@@ -153,7 +168,7 @@ class oxField // extends oxSuperCfg
     }
 
     /**
-     * return raw value
+     * Return raw value
      *
      * @return string
      */

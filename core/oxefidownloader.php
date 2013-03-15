@@ -48,6 +48,7 @@ class oxEfiDownloader extends oxSuperCfg
      * @param string $sPassword         eFire External Transaction password
      * @param string $sShopVersion      eShop version
      * @param bool   $blSaveCredentials whether to save username and password to config for later use
+     *
      * @return string
      */
     public function downloadConnector($sUsername, $sPassword, $sShopVersion, $blSaveCredentials)
@@ -68,8 +69,9 @@ class oxEfiDownloader extends oxSuperCfg
 
         //writing to file
         $fOut = fopen($sFileName, "w");
-        if (!fputs($fOut, $sFileContents))
+        if (!fputs($fOut, $sFileContents)) {
             throw new oxException();
+        }
         fclose($fOut);
 
         return $sFileName;
@@ -108,9 +110,9 @@ class oxEfiDownloader extends oxSuperCfg
     {
         $oResponse = $this->_oClient->getConnectorClassName($sShopVersion);
 
-        if (!$oResponse->blResult)
+        if (!$oResponse->blResult) {
             throw new Exception($oResponse->sMessage);
-
+        }
 
         return $oResponse->sMessage;
     }
@@ -126,8 +128,9 @@ class oxEfiDownloader extends oxSuperCfg
     {
         $oResponse = $this->_oClient->getConnectorFileContents($sShopVersion);
 
-        if (!$oResponse->blResult)
+        if (!$oResponse->blResult) {
             throw new Exception($oResponse->sMessage);
+        }
 
         return $oResponse->sMessage;
     }

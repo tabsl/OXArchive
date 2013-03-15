@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package smartyPlugins
  * @copyright © OXID eSales AG 2003-2008
- * $Id: function.oxgetseourl.php 13615 2008-10-24 09:37:42Z sarunas $
+ * $Id: function.oxgetseourl.php 14410 2008-11-28 16:02:31Z arvydas $
  */
 
 
@@ -31,10 +31,18 @@
 */
 function smarty_function_oxgetseourl( $params, &$smarty )
 {
-    $sUrl = $params['ident'];
+    $sOxid = isset( $params['oxid'] ) ? $params['oxid'] : null;
+    $sType = isset( $params['type'] ) ? $params['type'] : null;
+    $sUrl  = isset( $params['ident'] ) ? $params['ident'] : null;
 
-    // SEO is on ?
-    if ( oxUtils::getInstance()->seoIsActive() ) {
+    // requesting specified object SEO url
+    if ( $sOxid && $sType ) {
+        $oObject = oxNew( $sType );
+        if ( $oObject->load( $sOxid ) ) {
+            $sUrl = $oObject->getLink();
+        }
+    } elseif ( $sUrl && oxUtils::getInstance()->seoIsActive() ) {
+        // if SEO is on ..
         $oEncoder = oxSeoEncoder::getInstance();
         if ( ( $sStaticUrl = $oEncoder->getStaticUrl( $sUrl ) ) ) {
             $sUrl = $sStaticUrl;

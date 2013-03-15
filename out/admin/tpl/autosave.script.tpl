@@ -31,8 +31,14 @@
             if ( parent.edit.submit_form && parent.edit.CopyLongDesc ) {
                 parent.edit.CopyLongDesc();
             }
+console.log(oMyedit);
             oMyedit.fnc.value = 'save';
             oMyedit.submit();
+
+            var oSearch = document.getElementById("search");
+            oSearch.actedit.value = sPos;
+            oSearch.submit();
+
             return;
         }
     }

@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxcaptcha.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxcaptcha.php 14368 2008-11-26 07:36:13Z vilma $
  */
 
 /**
@@ -69,12 +69,16 @@ class oxCaptcha extends oxSuperCfg
     /**
      * Returns text hash
      *
+     * @param string $sText User supplie text
+     *
      * @return string
      */
     public function getHash($sText = null)
     {
-        if (!$sText)
+        if (!$sText) {
             $sText = $this->getText();
+        }
+
         $sText = strtolower($sText);
 
         return md5( "ox{$sText}" );

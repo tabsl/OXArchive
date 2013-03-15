@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package views
  * @copyright © OXID eSales AG 2003-2008
- * $Id: alist.php 14135 2008-11-11 13:54:45Z arvydas $
+ * $Id: alist.php 14276 2008-11-19 13:57:45Z arvydas $
  */
 
 /**
@@ -231,7 +231,7 @@ class aList extends oxUBase
 
         parent::render();
 
-        return $this->_sThisTemplate;
+        return $this->getTemplateName();
     }
 
     /**
@@ -460,29 +460,21 @@ class aList extends oxUBase
 
     /**
      * Assigns Template name ($this->_sThisTemplate) for article list
-     * preview. Name of template may be passed by parameter $sCategorieTPL,
-     * defined in admin, or passed by URL ("tpl" variable).
+     * preview. Name of template can be defined in admin or passed by
+     * URL ("tpl" variable).
      *
-     * @param string $sCategorieTPL category template
-     *
-     * @return null
+     * @return string
      */
-    protected function _loadTemplateName( $sCategorieTPL = null )
+    public function getTemplateName()
     {
         // assign template name
-        $sTemplate = $this->_sThisTemplate;
-
-        if ( $sCategorieTPL ) {
-            $sTemplate = $sCategorieTPL;
-        } elseif ( $this->_oActCategory->oxcategories__oxtemplate->value ) {
-            $sTemplate = $this->_oActCategory->oxcategories__oxtemplate->value;
-        }
-
         if ( ( $sTplName = basename( oxConfig::getParameter( 'tpl' ) ) ) ) {
-            $sTemplate = $sTplName;
+            $this->_sThisTemplate = $sTplName;
+        } elseif ( $this->_oActCategory && $this->_oActCategory->oxcategories__oxtemplate->value ) {
+            $this->_sThisTemplate = $this->_oActCategory->oxcategories__oxtemplate->value;
         }
 
-        $this->_sThisTemplate = $sTemplate;
+        return $this->_sThisTemplate;
     }
 
     /**

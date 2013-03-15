@@ -34,8 +34,8 @@
                 [{capture name=product_price}]
                 [{oxhasrights ident="SHOWARTICLEPRICE"}]
                     <div id="test_price_[{$testid}]" class="price">
-                        [{if $product->getFAmountPrice() || $product->getFPrice()}]
-                          <big>[{ $product->getFAmountPrice()|default:$product->getFPrice() }] [{ $currency->sign}]</big><sup class="dinfo"><a href="#delivery_link" rel="nofollow">*</a></sup>
+                        [{if $product->getFPrice()}]
+                          <big>[{ $product->getFPrice() }] [{ $currency->sign}]</big><sup class="dinfo"><a href="#delivery_link" rel="nofollow">*</a></sup>
                         [{else}]
                           <big>&nbsp;</big>
                         [{/if}]

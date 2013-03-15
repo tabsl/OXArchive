@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package views
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxcmp_user.php 13683 2008-10-26 07:04:42Z vilma $
+ * $Id: oxcmp_user.php 14361 2008-11-25 15:40:16Z arvydas $
  */
 
 /**
@@ -373,11 +373,9 @@ class oxcmp_user extends oxView
 
         // first pass
         $sPassword = oxConfig::getParameter( 'lgn_pwd' );
-        $sPassword = $sPassword?$myUtils->strMan( $sPassword, $myConfig->getConfigParam( 'sConfigKey' ) ):'';
 
         // second pass
         $sPassword2 = oxConfig::getParameter( 'lgn_pwd2' );
-        $sPassword2 = $sPassword2?$myUtils->strMan( $sPassword2, $myConfig->getConfigParam( 'sConfigKey' ) ):'';
 
         $aRawVal = array('oxuser__oxcompany', 'oxuser__oxaddinfo', 'oxuser__oxfname', 'oxuser__oxlname');
         $aInvAdress = oxConfig::getParameter( 'invadr', $aRawVal );
@@ -391,12 +389,12 @@ class oxcmp_user extends oxView
 
             // setting values
             $oUser->oxuser__oxusername = new oxField($sUser, oxField::T_RAW);
-            $oUser->oxuser__oxpassword = new oxField($sPassword, oxField::T_RAW);
+            $oUser->setPassword( $sPassword );
             $oUser->oxuser__oxactive   = new oxField(1, oxField::T_RAW);
 
             $oUser->createUser();
             $oUser->load( $oUser->getId() );
-            $oUser->changeUserData( $oUser->oxuser__oxusername->value, $oUser->oxuser__oxpassword->value, $oUser->oxuser__oxpassword->value, $aInvAdress, $aDelAdress );
+            $oUser->changeUserData( $oUser->oxuser__oxusername->value, $sPassword, $sPassword, $aInvAdress, $aDelAdress );
 
             // assigning to newsletter
             $blOptin = oxConfig::getParameter( 'blnewssubscribed' );
@@ -424,8 +422,10 @@ class oxcmp_user extends oxView
 
         // send register eMail
         //TODO: move into user
-        $oxEMail = oxNew( 'oxemail' );
-        $oxEMail->sendRegisterEmail( $oUser );
+        if ( (int) oxConfig::getParameter( 'option' ) == 3 ) {
+            $oxEMail = oxNew( 'oxemail' );
+            $oxEMail->sendRegisterEmail( $oUser );
+        }
 
         // new registered
         $this->_blIsNewUser = true;
@@ -488,8 +488,7 @@ class oxcmp_user extends oxView
         $aInvAdress = oxConfig::getParameter( 'invadr', $aRawVal );
 
         $sUserName  = $oUser->oxuser__oxusername->value;
-        $sPassword  = $oUser->oxuser__oxpassword->value;
-        $sPassword2 = $oUser->oxuser__oxpassword->value;
+        $sPassword  = $sPassword2 = $oUser->oxuser__oxpassword->value;
 
         try { // testing user input
             $oUser->changeUserData( $sUserName, $sPassword, $sPassword2, $aInvAdress, $aDelAdress );

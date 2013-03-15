@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package views
  * @copyright © OXID eSales AG 2003-2008
- * $Id: order.php 14012 2008-11-06 13:23:45Z arvydas $
+ * $Id: order.php 14327 2008-11-24 12:08:04Z arvydas $
  */
 
 /**
@@ -116,6 +116,11 @@ class Order extends oxUBase
     protected $_blIsOrderStep = true;
 
     /**
+     * Count of wrapping + cards options
+     */
+    protected $_iWrapCnt = null;
+
+    /**
      * Loads basket oxsession::getBasket(), sets $this->oBasket->blCalcNeeded = true to
      * recalculate, sets back basket to session oxsession::setBasket(), executes
      * parent::init().
@@ -196,6 +201,9 @@ class Order extends oxUBase
 
         $this->_aViewData['agb_err']      = $this->isConfirmAGBError();
         $this->_aViewData['custinfo_err'] = $this->isConfirmCustInfoError();
+
+        // for old templates
+        $this->_aViewData['iswishlist'] = (bool) $this->_aViewData['iswishlist'] & $this->isWrapping();
 
         return $this->_sThisTemplate;
     }
@@ -481,4 +489,21 @@ class Order extends oxUBase
         return $this->_blShowOrderButtonOnTop;
     }
 
+    /**
+     * Returns wrapping options availability state (TRUE/FALSE)
+     *
+     * @return bool
+     */
+    public function isWrapping()
+    {
+        if ( $this->_iWrapCnt === null ) {
+            $this->_iWrapCnt = 0;
+
+            $oWrap = oxNew( 'oxwrapping' );
+            $this->_iWrapCnt += $oWrap->getWrappingCount( 'WRAP' );
+            $this->_iWrapCnt += $oWrap->getWrappingCount( 'CARD' );
+        }
+
+        return (bool) $this->_iWrapCnt;
+    }
 }

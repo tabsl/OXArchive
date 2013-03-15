@@ -76,7 +76,7 @@
             <th class="brd"><div class="brd_line">&nbsp;</div></th>
             <th>[{ oxmultilang ident="ORDER_ARTICLE" }]</th>
             <th></th>
-            <th>[{ oxmultilang ident="ORDER_GIFTOPTION" }]</th>
+            <th>[{if $oView->isWrapping() }][{ oxmultilang ident="ORDER_GIFTOPTION" }][{/if}]</th>
             <th class="ta_right">[{ oxmultilang ident="ORDER_UNITPRICE" }]</th>
             <th class="ta_right">[{ oxmultilang ident="ORDER_QUANTITY" }]</th>
             <th class="ta_right">[{ oxmultilang ident="ORDER_TAX" }]</th>
@@ -115,6 +115,7 @@
 
           <!-- product quantity manager -->
           <td>
+            [{if $oView->isWrapping() }]
               [{ if !$basketitem->getWrappingId() }]
                 [{ oxmultilang ident="ORDER_NONE" }]<br />
               [{else}]
@@ -124,6 +125,7 @@
               <span class="wrapmod">
                   <a id="test_orderWrapp_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.testArt.iteration}]" rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=wrapping" params="aid="|cat:$basketitem->getProductId() }]" title="[{ oxmultilang ident="ORDER_MODIFYALT" }]">[{ oxmultilang ident="ORDER_MODIFY" }]</a>
               </span>
+            [{/if}]
           </td>
 
           <!-- product price -->

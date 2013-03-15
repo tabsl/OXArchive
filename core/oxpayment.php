@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxpayment.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxpayment.php 14368 2008-11-26 07:36:13Z vilma $
  */
 
 /**
@@ -120,8 +120,9 @@ class oxPayment extends oxI18n
      */
     public function getDynValues()
     {
-        if ( !$this->_aDynValues )
+        if ( !$this->_aDynValues ) {
             $this->_aDynValues = oxUtils::getInstance()->assignValuesFromText( $this->oxpayments__oxvaldesc->value );
+        }
         return $this->_aDynValues;
     }
 

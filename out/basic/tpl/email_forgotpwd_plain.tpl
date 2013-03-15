@@ -1,3 +1,3 @@
-[{ oxcontent ident="oxpassinfoplainemail" }]
+[{ oxcontent ident="oxupdatepassinfoplainemail" }]
 
 [{ oxcontent ident="oxemailfooterplain" }]

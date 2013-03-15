@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxutils.php 14124 2008-11-11 12:38:52Z vilma $
+ * $Id: oxutils.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -338,8 +338,9 @@ class oxUtils extends oxSuperCfg
         $aInterfaceProfiles = $aInterfaceProfiles;
         if ( is_array( $aInterfaceProfiles ) ) {   //checking for previous profiles
             $sPrevProfile = oxUtilsServer::getInstance()->getOxCookie('oxidadminprofile');
-            if (isset($sPrevProfile))
+            if (isset($sPrevProfile)) {
                 $aPrevProfile = @explode("@", trim($sPrevProfile));
+            }
 
             //array to store profiles
             $aProfiles = array();
@@ -372,8 +373,9 @@ class oxUtils extends oxSuperCfg
 
         //cached currency precision, this saves about 1% of execution time
         $iCurPrecision = null;
-        if (! defined('OXID_PHP_UNIT'))
+        if (! defined('OXID_PHP_UNIT')) {
             $iCurPrecision = $this->_iCurPrecision;
+        }
 
         if (is_null($iCurPrecision)) {
             if ( !$oCur ) {
@@ -388,7 +390,9 @@ class oxUtils extends oxSuperCfg
         static $dprez = null;
         if (!$dprez) {
             $prez = @ini_get("precision");
-            if (!$prez) $prez = 9;
+            if (!$prez) {
+                $prez = 9;
+            }
             $dprez = pow(10, -$prez);
         }
 
@@ -436,13 +440,16 @@ class oxUtils extends oxSuperCfg
      * Cleans all or specific data from static cache
      *
      * @param string $sCacheName Cache name
+     *
+     * @return null
      */
     public function cleanStaticCache($sCacheName = null)
     {
-        if ($sCacheName)
+        if ($sCacheName) {
             unset($this->_aStaticCache[$sCacheName]);
-        else
+        } else {
             $this->_aStaticCache = null;
+        }
     }
 
     /**
@@ -671,8 +678,8 @@ class oxUtils extends oxSuperCfg
     /**
      * Checks if Seo mode should be used
      *
-     * @param bool   $blReset used to reset cached SEO mode
-     * @param string $sShopId shop id (optional; if not passed active session shop id will be used)
+     * @param bool   $blReset  used to reset cached SEO mode
+     * @param string $sShopId  shop id (optional; if not passed active session shop id will be used)
      * @param int    $iActLang language id (optional; if not passed active session language will be used)
      *
      * @return bool
@@ -803,7 +810,7 @@ class oxUtils extends oxSuperCfg
             return;
         }
 
-        if ( $blAddRedirectParam ){
+        if ( $blAddRedirectParam ) {
             $sUrl = $this->_addUrlParameters( $sUrl, array( 'redirected' => 1 ) );
         }
 
@@ -859,8 +866,8 @@ class oxUtils extends oxSuperCfg
     /**
      * Fill array.
      *
-     * @param array $aName Initial array of strings
-     * @param double $dVat Article VAT
+     * @param array  $aName Initial array of strings
+     * @param double $dVat  Article VAT
      *
      * @return string
      *
@@ -886,7 +893,7 @@ class oxUtils extends oxSuperCfg
                 $oObject->price  = substr( $oObject->price, 0, $iPercPos );
             } else {
                 $oCur = $myConfig->getActShopCurrencyObject();
-                $oObject->price = str_replace(',','.',$oObject->price);
+                $oObject->price = str_replace(',', '.', $oObject->price);
                 $oObject->fprice = oxLang::getInstance()->formatCurrency( $oObject->price  * $oCur->rate, $oCur);
                 $oObject->priceUnit = 'abs';
             }
@@ -1004,7 +1011,8 @@ class oxUtils extends oxSuperCfg
      * prepareUrlForNoSession adds extra url params making it usable without session
      * also removes sid=xxxx&
      *
-     * @param string $sUrl
+     * @param string $sUrl given url
+     *
      * @access public
      * @return string
      */

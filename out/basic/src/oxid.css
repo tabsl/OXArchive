@@ -1,4 +1,5 @@
-/* OXID GUI generated CSS file make */
+/* OXID look&feel generated CSS */
+
 /* Base */
 html,body {height: 100%;}
 
@@ -47,7 +48,7 @@ form{margin-top:0px;margin-bottom:0px;}
 input {color: #000;}
 
 span.btn{background: transparent url(bg/buttons_ce_.gif) right -150px no-repeat;padding: 0 1px 0 0;height:18px;line-height:18px;display:-moz-inline-stack;display:inline-block;margin:0;outline:0;}
-span.btn input, span.btn a{border:none;height:18px;line-height:10px;outline:0;position:relative;display:block;padding:2px;margin:0;color:#fff;font-weight: bold;cursor:pointer;background: transparent url(bg/buttons_ce_.gif) no-repeat left -150px;}
+span.btn input, span.btn a{border:none;height:18px;line-height:10px;outline:0;position:relative;display:block;padding:2px 7px;margin:0;color:#fff;font-weight: bold;cursor:pointer;background: transparent url(bg/buttons_ce_.gif) no-repeat left -150px;}
 span.btn a{padding:3px 8px 2px;}
 
 
@@ -80,7 +81,7 @@ ul.menue      {padding:0; margin:0; list-style:none;}
 ul.menue li   {margin:0; white-space:nowrap;position: relative;}
 ul.menue li a {line-height: 100%;}
 ul.menue.horizontall li {float:left;}
-ul.menue.verticall   li {float:none;}
+ul.menue.verticall   li {float:none;height: 100%;}
 
 .dropdown { display:none;  position:absolute; left:0;top:100%;padding:0;margin:0;z-index:1000;}
 .open .dropdown { display:block; }
@@ -92,7 +93,7 @@ ul.tree li {padding:0;margin:0;list-style: none;}
 ul.tree li a{line-height: 100%;}
 
 /* Layout     */
-div#page      { width:980px;margin:0px auto 0;padding:0;}
+div#page      { width:980px;margin:0px auto 0;padding:0;position: relative;}
   div#header  { clear:both; background:#fff;}
   div#content { clear:both; background:url(bg/bd_ce_.gif) repeat-y;}
     div#path  { margin:0 0 0 195px;background:#fff;padding:15px 0 0 0;border-bottom:1px solid #969696;color:#969696;}
@@ -120,7 +121,7 @@ dl.box dd ul     {margin:0;}
 dl.box.open dt   {background:#ff6633;}
 dl.box.open dt   {background-position:0 -35px;color:#fff;}
 dl.box.open dd.dropdown { top:2em;margin-top:3px;width:150px;padding:0;}
-dl.box.open dd.dropdown ul li a  { display:block;padding:5px 5px 5px 15px;text-decoration: none;background:#ffffcc url(bg/oxid_ce_.gif) 0 -50px no-repeat;color:#424c56;}
+dl.box.open dd.dropdown ul li a  { display:block;padding:0 5px 0 15px; line-height: 20px; text-decoration: none;background:#ffffcc url(bg/oxid_ce_.gif) 0 -50px no-repeat;color:#424c56;}
 dl.box.open dd.dropdown ul li a:hover{background-color:#ff6633;color:#fff;background-position:0 -75px;}
 
 dl.box.service dd ul{padding:0}
@@ -324,7 +325,7 @@ a.rss{display:block;position:absolute;right:0;bottom:0; width:14px;height:14px; 
 
 #body .form th {text-align: left;padding: 7px 0;font-weight: bold;font-size:11px; background: url(bg/linedot.gif) repeat-x bottom;}
 #body .form th.mid {/*border-top:1px dotted #000;*/padding-top:3em;}
-#body .form th small{font-weight: normal;}
+#body .form th small{font-weight: normal; font-size: 10px;}
 #body .form td{padding: 3px 0;}
 #body small{font-weight: inherit; font-size:69% ;}
 
@@ -643,7 +644,9 @@ a.rss{display:block;position:absolute;right:0;bottom:0; width:14px;height:14px; 
 
 /* user options step */
 #body strong.useroptboxhead {margin:10px 5px 0;background: #f0f0f0; padding:4px 5px 5px 7px;height:20px;border:1px solid #969696;border-left:8px solid #969696;border-right:1px solid #969696;line-height:20px; font-size: 12px;font-weight: bold;color:#424c56;width:162px; display: block;}
+#body strong.useroptboxheadbig {margin:10px 5px 0;background: #f0f0f0; padding:4px 5px 5px 7px;height:20px;border:1px solid #969696;border-left:8px solid #969696;border-right:1px solid #969696;line-height:20px; font-size: 12px;font-weight: bold;color:#424c56;width:259px; display: block;}
 #body .useroptbox {border:1px solid #969696; border-top: none; width:151px;height:310px;margin:0 5px 10px 5px;padding:5px 15px;position:relative; font-size: 12px;}
+#body .useroptboxbig {border:1px solid #969696; border-top: none; width:248px;height:310px;margin:0 5px 10px 5px;padding:5px 15px;position:relative; font-size: 12px;}
 #body .useroptbox .link {font-size: 10px;}
 #body .useroptbox .err {margin-bottom: 10px; font-size: 10px;}
 
@@ -831,3 +834,7 @@ div.on.popup input.br{position:absolute;bottom:10px;right:10px;}
 #body .recomlistdesc {float: left; width: 415px;}
 
 .verification_code {border: 1px solid #000; color: #000; padding: 2px; text-align:center; width:80px;}
+
+#body #demoAdminLink {border: 1px solid; position:absolute; left:778px; top:160px;  height: 80px; width: 200px; opacity:0.7;z-index:1000;}
+#body #demoAdminLink .closeAdminLink {display: block; width: 15px; height: 12px; border: none; margin-left: 185px;}
+#body #demoAdminLink .openAdminLink  {display: block; width: 185px; height: 18px; border: none; margin-left: 7px; margin-top: 32px;}

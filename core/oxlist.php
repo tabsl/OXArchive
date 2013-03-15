@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxlist.php 13914 2008-10-30 11:12:55Z arvydas $
+ * $Id: oxlist.php 14388 2008-11-26 15:43:17Z vilma $
  */
 
 /**
@@ -69,10 +69,11 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
      */
     public function offsetExists( $offset )
     {
-        if( isset( $this->_aArray[$offset] ) )
+        if( isset( $this->_aArray[$offset] ) ) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     /**
@@ -84,10 +85,11 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
      */
     public function offsetGet( $offset )
     {
-        if( $this->offsetExists( $offset ) )
+        if( $this->offsetExists( $offset ) ) {
             return $this->_aArray[$offset];
-        else
+        } else {
             return false;
+        }
     }
 
     /**
@@ -289,8 +291,9 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
         $this->_aSqlLimit[1] = 0;
         $this->_sShopID   = $myConfig->getShopId();
 
-        if ( $sObjectName )
+        if ( $sObjectName ) {
             $this->init( $sObjectName );
+        }
     }
 
     /**
@@ -306,8 +309,9 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
         //echo( "Access to ".$sName.PHP_EOL);
 
         // TMP
-        if( $sName == 'aList')
+        if( $sName == 'aList') {
             return $this->_aArray;
+        }
     }
 
     /**
@@ -331,14 +335,15 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
     public function init($sObjectName, $sCoreTable = null)
     {
         $this->_sObjectsInListName = $sObjectName;
-        if ($sCoreTable)
+        if ($sCoreTable) {
             $this->_sCoreTable = $sCoreTable;
+        }
     }
 
     /**
      * Sets function to be called on list object before loading it
      *
-     * @param array $aAssignCallbackPrepend
+     * @param array $aAssignCallbackPrepend callback array
      *
      * @return nill
      */
@@ -350,9 +355,9 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
     /**
      * Sets function to be called on list object before loading it
      *
-     * @param array $aAssignCallbackPrepend
+     * @param array $aAssignCallBack callback array
      *
-     * @return nill
+     * @return null
      */
     public function setAssignCallback( $aAssignCallBack)
     {
@@ -389,9 +394,9 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
 
         if ( $this->_aSqlLimit[0] || $this->_aSqlLimit[1]) {
             $rs = oxDb::getDb(true)->SelectLimit( $sSql, $this->_aSqlLimit[1], $this->_aSqlLimit[0]);
-        }
-        else
+        } else {
             $rs = oxDb::getDb(true)->Execute( $sSql);
+        }
 
         //$blFirstLoop = true;
         $oSaved = oxNew( $this->_sObjectsInListName);
@@ -417,10 +422,11 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
                     call_user_func( array( $oListObject, $this->_aAssignCallBack ) );
                 }
 
-                if ($oListObject->getId())
+                if ($oListObject->getId()) {
                     $this->_aArray[$oListObject->getId()] = $oListObject;
-                else
+                } else {
                     $this->_aArray[] = $oListObject;
+                }
 
                 $rs->moveNext();
             }
@@ -483,8 +489,9 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
     {
         $sFieldList = $this->getBaseObject()->getSelectFields();
         $sQ = "select $sFieldList from " . $this->getBaseObject()->getViewName();
-        if ($sActiveSnippet = $this->getBaseObject()->getSqlActiveSnippet())
+        if ($sActiveSnippet = $this->getBaseObject()->getSqlActiveSnippet()) {
             $sQ .= " where $sActiveSnippet ";
+        }
         $this->selectString($sQ);
     }
 
@@ -497,8 +504,9 @@ class oxList extends oxSuperCfg implements ArrayAccess, Iterator, Countable
      */
     protected function _getFieldLongName($sFieldName)
     {
-        if ($this->_sCoreTable)
+        if ($this->_sCoreTable) {
             return $this->_sCoreTable . '__' . $sFieldName;
+        }
 
         return $sFieldName;
     }

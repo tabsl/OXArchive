@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package admin
  * @copyright © OXID eSales AG 2003-2008
- * $Id: user_remark.php 14014 2008-11-06 13:26:22Z arvydas $
+ * $Id: user_remark.php 14266 2008-11-19 10:12:51Z arvydas $
  */
 
 /**
@@ -98,6 +98,8 @@ class User_Remark extends oxAdminDetails
         $oRemark->oxremark__oxparentid = new oxField($soxId);
 
         $oRemark->save();
+
+        return $this->autosave();
     }
 
     /**

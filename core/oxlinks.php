@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxlinks.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxlinks.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -58,7 +58,7 @@ class oxLinks extends oxI18n
      *
      * @param string $sFieldName index OR name (eg. 'oxarticles__oxtitle') of a data field to set
      * @param string $sValue     value of data field
-     * @param int field type
+     * @param int    $iDataType  field type
      *
      * @return null
      */

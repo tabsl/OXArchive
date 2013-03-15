@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxseoencodercategory.php 13770 2008-10-27 13:10:37Z arvydas $
+ * $Id: oxseoencodercategory.php 14340 2008-11-25 08:59:04Z vilma $
  */
 
 /**
@@ -98,7 +98,8 @@ class oxSeoEncoderCategory extends oxSeoEncoder
     /**
      * Returns SEO uri for passed category
      *
-     * @param oxcategory $oCat category object
+     * @param oxcategory $oCat  category object
+     * @param int        $iLang language
      *
      * @return string
      */
@@ -160,6 +161,7 @@ class oxSeoEncoderCategory extends oxSeoEncoder
      *
      * @param oxcategory $oCategory category object
      * @param int        $iPage     page tu prepare number
+     * @param int        $iLang     language
      * @param bool       $blFixed   fixed url marker (default is false)
      *
      * @return string
@@ -185,6 +187,7 @@ class oxSeoEncoderCategory extends oxSeoEncoder
      * If category has subcategories, it iterates through them.
      *
      * @param oxCategory $oCategory Category object
+     * @param int        $iLang     Language
      *
      * @return string
      */

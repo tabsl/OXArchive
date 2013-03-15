@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxnewsletter.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxnewsletter.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -94,10 +94,12 @@ class oxNewsletter extends oxBase
      */
     public function delete( $sOxId = null )
     {
-        if( !$sOxId)
+        if( !$sOxId) {
             $sOxId = $this->getId();
-        if( !$sOxId)
+        }
+        if( !$sOxId) {
             return false;
+        }
 
         $blDeleted = parent::delete( $sOxId );
 
@@ -116,8 +118,9 @@ class oxNewsletter extends oxBase
      */
     public function getGroups()
     {
-        if ( isset( $this->_oGroups ) )
+        if ( isset( $this->_oGroups ) ) {
             return $this->_oGroups;
+        }
 
         // usergroups
         $this->_oGroups = oxNew( "oxList", "oxgroups" );
@@ -192,10 +195,11 @@ class oxNewsletter extends oxBase
     {
         $oxEMail = oxNew( 'oxemail' );
         $blSend = $oxEMail->sendNewsletterMail( $this, $this->_oUser );
-//print_r($oxEMail);
+        //print_r($oxEMail);
         // store failed info
-        if ( !$blSend )
+        if ( !$blSend ) {
             oxDb::getDb()->Execute( "update oxnewssubscribed set oxemailfailed = '1' where oxemail = '".$this->_oUser->oxuser__oxusername->value."'");
+        }
 
         return $blSend;
     }
@@ -241,8 +245,9 @@ class oxNewsletter extends oxBase
     {
         if ( is_string( $sUserid )) {
             $oUser = oxNew( 'oxuser' );
-            if ( $oUser->load( $sUserid ) )
+            if ( $oUser->load( $sUserid ) ) {
                 $this->_oUser = $oUser;
+            }
         } else
             $this->_oUser = $sUserid;   // we expect a full and valid user object
     }
@@ -280,11 +285,13 @@ class oxNewsletter extends oxBase
             $oOneOrder = null;
             $aSimList  = array();
 
-            if ( $oArtList->count() )
+            if ( $oArtList->count() ) {
                 $oOneArt = $oArtList->current();
+            }
 
-            if ( $oOneArt )
+            if ( $oOneArt ) {
                 $oSimList = $oOneArt->getSimilarProducts();
+            }
 
             if ( $oSimList && $oSimList->count() ) {
                 $this->_oSmarty->assign( 'simlist', $oSimList );
@@ -303,7 +310,7 @@ class oxNewsletter extends oxBase
      *
      * @param string $sFieldName index OR name (eg. 'oxarticles__oxtitle') of a data field to set
      * @param string $sValue     value of data field
-     * @param int field type
+     * @param int    $iDataType  field type
      *
      * @return null
      */

@@ -41,7 +41,7 @@ interface oxDisplayErrorInterface
     /**
      * Possibility to access additional values
      *
-     * @param string  $sName
+     * @param string $sName Value name
      *
      * @return an additional value (string) by its name
      */

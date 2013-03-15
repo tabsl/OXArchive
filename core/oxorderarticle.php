@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxorderarticle.php 14033 2008-11-06 14:14:51Z arvydas $
+ * $Id: oxorderarticle.php 14392 2008-11-26 16:50:36Z vilma $
  */
 
 /**
@@ -106,7 +106,7 @@ class oxOrderArticle extends oxBase
     /**
      * Copies passed to method product into $this.
      *
-     * @param object &$oProduct product to copy
+     * @param object $oProduct product to copy
      *
      * @return null
      */
@@ -182,8 +182,9 @@ class oxOrderArticle extends oxBase
         $iStockCount += $dAddAmount;
 
         // #1592A. calculating according new stock option
-        if ( !$blAllowNegativeStock && $iStockCount < 0 )
+        if ( !$blAllowNegativeStock && $iStockCount < 0 ) {
             $iStockCount = 0;
+        }
 
         return $iStockCount;
     }
@@ -196,8 +197,9 @@ class oxOrderArticle extends oxBase
      */
     public function getPersParams()
     {
-        if ( $this->_aPersParam != null )
+        if ( $this->_aPersParam != null ) {
             return $this->_aPersParam;
+        }
 
         if ( $this->oxorderarticles__oxpersparam->value ) {
             $this->_aPersParam = unserialize( $this->oxorderarticles__oxpersparam->value );
@@ -245,7 +247,7 @@ class oxOrderArticle extends oxBase
      *
      * @param string $sFieldName index OR name (eg. 'oxarticles__oxtitle') of a data field to set
      * @param string $sValue     value of data field
-     * @param int field type
+     * @param int    $iDataType  field type
      *
      * @return null
      */

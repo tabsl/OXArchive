@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxpaymentlist.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxpaymentlist.php 14392 2008-11-26 16:50:36Z vilma $
  */
 
 /**
@@ -60,10 +60,11 @@ class oxPaymentList extends oxList
      */
     public function setHomeCountry( $sHomeCountry )
     {
-        if ( is_array( $sHomeCountry ) )
+        if ( is_array( $sHomeCountry ) ) {
             $this->_sHomeCountry = current( $sHomeCountry );
-        else
+        } else {
             $this->_sHomeCountry = $sHomeCountry;
+        }
     }
 
     /**
@@ -117,8 +118,9 @@ class oxPaymentList extends oxList
         if ( $oUser ) {
             // user groups ( maybe would be better to fetch by function oxuser::getUserGroups() ? )
             foreach ( $oUser->getUserGroups() as $oGroup ) {
-                if ( $sGroupIds )
+                if ( $sGroupIds ) {
                     $sGroupIds .= ', ';
+                }
                 $sGroupIds .= "'".$oGroup->getId()."'";
             }
         }
@@ -149,11 +151,13 @@ class oxPaymentList extends oxList
     public function getCountryId( $oUser )
     {
         $sCountryId = null;
-        if ( $oUser )
+        if ( $oUser ) {
             $sCountryId = $oUser->getActiveCountry();
+        }
 
-        if ( !$sCountryId )
+        if ( !$sCountryId ) {
             $sCountryId = $this->_sHomeCountry;
+        }
 
         return $sCountryId;
     }

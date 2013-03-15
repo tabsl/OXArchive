@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package admin
  * @copyright © OXID eSales AG 2003-2008
- * $Id: user_address.php 14015 2008-11-06 13:30:18Z arvydas $
+ * $Id: user_address.php 14266 2008-11-19 10:12:51Z arvydas $
  */
 
 /**
@@ -115,6 +115,8 @@ class User_Address extends oxAdminDetails
         $oAdress->save();
 
         $this->sSavedOxid = $oAdress->getId();
+
+        return $this->autosave();
     }
 
     /**

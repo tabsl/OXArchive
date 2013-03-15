@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxlang.php 14239 2008-11-17 18:36:34Z tomas $
+ * $Id: oxlang.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -120,11 +120,13 @@ class oxLang extends oxSuperCfg
         $blAdmin = $this->isAdmin();
 
         // languages and search engines
-        if ( $blAdmin && ( ( $iSeLang = oxConfig::getParameter( 'changelang' ) ) !== null ) )
+        if ( $blAdmin && ( ( $iSeLang = oxConfig::getParameter( 'changelang' ) ) !== null ) ) {
             $this->_iBaseLanguageId = $iSeLang;
+        }
 
-        if ( is_null( $this->_iBaseLanguageId ) )
+        if ( is_null( $this->_iBaseLanguageId ) ) {
             $this->_iBaseLanguageId = oxConfig::getParameter( 'lang' );
+        }
 
         //or determining by domain
         $aLanguageUrls = $myConfig->getConfigParam( 'aLanguageURLs' );
@@ -138,11 +140,13 @@ class oxLang extends oxSuperCfg
             }
         }
 
-        if ( is_null( $this->_iBaseLanguageId ) )
+        if ( is_null( $this->_iBaseLanguageId ) ) {
             $this->_iBaseLanguageId = oxConfig::getParameter( 'language' );
+        }
 
-        if ( is_null( $this->_iBaseLanguageId ) )
+        if ( is_null( $this->_iBaseLanguageId ) ) {
             $this->_iBaseLanguageId = $myConfig->getConfigParam( 'sDefaultLang' );
+        }
 
         $this->_iBaseLanguageId = (int) $this->_iBaseLanguageId;
 
@@ -170,12 +174,14 @@ class oxLang extends oxSuperCfg
         } else {
             //admin area
 
-            if ( is_null( $this->_iTplLanguageId ) )
+            if ( is_null( $this->_iTplLanguageId ) ) {
                 //$this->_iTplLanguageId = oxConfig::getParameter( 'tpllanguage' );
                 $this->_iTplLanguageId = oxSession::getVar( 'tpllanguage' );
+            }
 
-            if ( is_null( $this->_iTplLanguageId ) )
+            if ( is_null( $this->_iTplLanguageId ) ) {
                 $this->_iTplLanguageId = $this->getBaseLanguage();
+            }
         }
 
         // validating language
@@ -201,8 +207,9 @@ class oxLang extends oxSuperCfg
             $this->_iEditLanguageId = oxConfig::getParameter( 'editlanguage' );
 
             // check if we really need to set the new language
-            if ( "saveinnlang" == $this->getConfig()->getActiveView()->getFncName() )
+            if ( "saveinnlang" == $this->getConfig()->getActiveView()->getFncName() ) {
                 $iNewLanguage = oxConfig::getParameter( "new_lang");
+            }
 
             if ( isset( $iNewLanguage ) ) {
                 if ( isset( $iNewLanguage ) ) {
@@ -211,8 +218,9 @@ class oxLang extends oxSuperCfg
                 }
             }
 
-            if ( is_null( $this->_iEditLanguageId ) )
+            if ( is_null( $this->_iEditLanguageId ) ) {
                 $this->_iEditLanguageId = $this->getBaseLanguage();
+            }
         }
 
         // validating language
@@ -264,12 +272,13 @@ class oxLang extends oxSuperCfg
     /**
      * getLanguageNames returns array of language names e.g. array('Deutch', 'English')
      *
-     * @param int    $iLang  language number
+     * @param int $iLanguage language number
      *
      * @access public
      * @return string
      */
-    public function getLanguageAbbr( $iLanguage = null){
+    public function getLanguageAbbr( $iLanguage = null)
+    {
         $myConfig = oxConfig::getInstance();
 
         if ( !isset($iLanguage) ) {
@@ -278,7 +287,7 @@ class oxLang extends oxSuperCfg
 
         $aLangAbbr = $this->getLanguageIds();
 
-        if( isset($iLanguage,$aLangAbbr[$iLanguage]) ) {
+        if ( isset($iLanguage,$aLangAbbr[$iLanguage]) ) {
             return $aLangAbbr[$iLanguage];
         }
 
@@ -364,7 +373,7 @@ class oxLang extends oxSuperCfg
         $iDecPos = 0;
         $sValue  = ( string ) $dValue;
         if ( ( $iDotPos = strpos( $sValue, '.' ) ) !== false ) {
-        	$iDecPos = strlen( substr( $sValue, $iDotPos + 1 ) );
+            $iDecPos = strlen( substr( $sValue, $iDotPos + 1 ) );
         }
 
         $oActCur = $oActCur ? $oActCur : $this->getConfig()->getActShopCurrencyObject();
@@ -410,8 +419,9 @@ class oxLang extends oxSuperCfg
         $iLang  = ( $iLang === null )?oxSession::getVar( 'blAdminTemplateLanguage' ):$iLang;
         if ( !isset( $iLang ) ) {
             $iLang = $this->getBaseLanguage();
-            if ( !isset( $iLang ) )
+            if ( !isset( $iLang ) ) {
                 $iLang = 0;
+            }
         }
 
         if ( $blAdminMode ) {
@@ -441,8 +451,8 @@ class oxLang extends oxSuperCfg
             }
 
             $aLangCache[$iLang] = array();
-            foreach($aLangFiles as $sLangFile) {
-                require($sLangFile);
+            foreach ($aLangFiles as $sLangFile) {
+                require $sLangFile;
                 $aLangCache[$iLang] = array_merge( $aLangCache[$iLang], $aLang);
             }
 
@@ -470,10 +480,11 @@ class oxLang extends oxSuperCfg
         stopProfile("_getLangTranslationArray");
 
         // if language array exists ..
-        if ( isset( $aLangCache[$iLang] ) )
+        if ( isset( $aLangCache[$iLang] ) ) {
             return $aLangCache[$iLang];
-        else
+        } else {
             return array();
+        }
     }
 
     /**
@@ -490,12 +501,13 @@ class oxLang extends oxSuperCfg
         $iLang  = ( $iLang === null )?oxSession::getVar( 'blAdminTemplateLanguage' ):$iLang;
         if ( !isset( $iLang ) ) {
             $iLang = $this->getBaseLanguage();
-            if ( !isset( $iLang ) )
+            if ( !isset( $iLang ) ) {
                 $iLang = 0;
+            }
         }
 
         $blIsAdmin = isset( $blIsAdmin ) ? $blIsAdmin : $this->isAdmin();
-        $sFileName = $this->getConfig()->getLanguagePath('lang.txt',$blIsAdmin,$iLang);
+        $sFileName = $this->getConfig()->getLanguagePath('lang.txt', $blIsAdmin, $iLang);
 
         if ( is_file ( $sFileName ) ) {
 
@@ -566,10 +578,11 @@ class oxLang extends oxSuperCfg
      */
     public function setBaseLanguage( $iLang = null )
     {
-        if ( is_null($iLang) )
+        if ( is_null($iLang) ) {
             $iLang = $this->getBaseLanguage();
-        else
+        } else {
             $this->_iBaseLanguageId = (int) $iLang;
+        }
 
         if ( defined( 'OXID_PHP_UNIT' ) ) {
             modSession::getInstance();
@@ -587,10 +600,11 @@ class oxLang extends oxSuperCfg
      */
     public function setTplLanguage( $iLang = null )
     {
-        if ( is_null($iLang) )
+        if ( is_null($iLang) ) {
             $iLang = $this->getTplLanguage();
-        else
+        } else {
             $this->_iTplLanguageId = (int) $iLang;
+        }
 
         if ( defined( 'OXID_PHP_UNIT' ) ) {
             modSession::getInstance();

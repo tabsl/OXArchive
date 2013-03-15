@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package lang
  * @copyright © OXID eSales AG 2003-2008
- * $Id: lang.php 13755 2008-10-27 11:24:34Z vilma $
+ * $Id: lang.php 14421 2008-12-01 12:37:55Z rimvydas.paskevicius $
  */
 
 $sLangName  = "English";
@@ -397,8 +397,8 @@ $aLang = array(
 'EMAIL_ORDER_OWNER_HTML_SHIPPINGVAT1'             =>"plus tax",
 'EMAIL_ORDER_OWNER_HTML_SHIPPINGVAT2'             =>"% Amount:",
 'EMAIL_ORDER_OWNER_HTML_MESSAGE'                  =>"Message:",
-'EMAIL_ORDER_OWNER_HTML_PEYMENTINFO'              =>"",
-'EMAIL_ORDER_OWNER_HTML_PEYMENTINFOOFF'           =>"",
+'EMAIL_ORDER_OWNER_HTML_PAYMENTINFO'              =>"",
+'EMAIL_ORDER_OWNER_HTML_PAYMENTINFOOFF'           =>"",
 'EMAIL_OWNER_REMINDER_HTML_STOCKLOW'              =>"Stock low: This Product has reached the specified stock limit.",
 'EMAIL_OWNER_REMINDER_HTML_PRODUCT'               =>"Product",
 'EMAIL_OWNER_REMINDER_HTML_QUANTITY'              =>"Quantity",
@@ -453,11 +453,24 @@ $aLang = array(
 'EXCEPTION_INPUT_PASSTOOSHORT'                    =>"Error: your password is to short",
 'FORGOTPWD_TITLE'                                 =>"Forgot Password ?",
 'FORGOTPWD_FORGOTPWD'                             =>"Have you forgotten your Password ?",
-'FORGOTPWD_WEWILLSENDITTOYOU'                     =>"No problem, we will send it to you.",
+'FORGOTPWD_WEWILLSENDITTOYOU'                     =>"No problem, here you can set up a new password.",
 'FORGOTPWD_YOUREMAIL'                             =>"Your eMail Address:",
 'FORGOTPWD_PWDWASSEND'                            =>"Password was sent to:",
 'FORGOTPWD_REQUESTPWD'                            =>"Request Password",
-'FORGOTPWD_AFTERCLICK'                            =>"When you click on 'Request Password', you'll be sent an eMail containing your Password.",
+'FORGOTPWD_AFTERCLICK'                            =>"When you click on 'Request Password', you'll be sent an eMail with instructions how to set up a new password.",
+'FORGOTPWD_UPDATESUCCESSTITLE'                    => "Change password",
+'FORGOTPWD_UPDATE_SUCCESS'                        => "Your password was changed successfully!",
+'FORGOTPWD_UPDATETITLE'                           => "New password",
+'FORGOTPWD_BACKTOSHOP'                            => "Back to Shop",
+'FORGOTPWD_ENTERNEWPASSWORD'                      => "Please enter new password.",
+'FORGOTPWD_NEWPASSWORD'                           => "New password:",
+'FORGOTPWD_CONFIRMPASSWORD'                       => "Confirm password:",
+'FORGOTPWD_UPDATEPASSWORD'                        => "Change password",
+'FORGOTPWD_BACKTOSHOP'                            => "Back to Shop",
+'FORGOTPWD_ERRPASSWORDTOSHORT'                    => "Error: Your Password is too short.",
+'FORGOTPWD_ERRPASSWDONOTMATCH'                    => "Error: Passwords don't match.",
+'FORGOTPWD_ERRLINKEXPIRED'                        => "Password update page expired. Please use the Forgot Password function again.",
+'FORGOTPWD_ERRUNABLETOSEND'                       => "The e-mail address you have entered is invalid. Please enter a valid e-mail address.",
 'GUESTBOOK_LOGIN_LOGIN'                           =>"Login",
 'GUESTBOOK_TITLE'                                 =>"Guestbook",
 'GUESTBOOK_WRITEENTRY'                            =>"Write entry",
@@ -730,6 +743,7 @@ $aLang = array(
 'NEWSLETTER_EMAIL'                                => "eMail",
 'NEWSLETTER_COMPLETEMARKEDFIELEDS'                => 'Please complete all fields marked with a <span class="req">*</span>',
 'NEWSLETTER_SUBSCRIBE'                            => "Subscribe",
+'NEWSLETTER_UNSUBSCRIBE'                          => "Unsubscribe",
 'NEWSLETTER_THANKYOU'                             => "thank you for subscribing to our newsletter.",
 'NEWSLETTER_YOUHAVEBEENSENTCONFIRMATION'          => "You have just been sent a confirmation eMail, with which you can activate your subscription.",
 'NEWSLETTER_CONGRATULATIONS'                      => "Congratulations and Welcome!",
@@ -1039,7 +1053,7 @@ $aLang = array(
 'USER_LOGINTITLE'                                 => "Login",
 'USER_OPTION1'                                    => "Option 1",
 'USER_ORDERWITHOUTREGISTER1'                      => "Purchase without Registration",
-'USER_ORDERWITHOUTREGISTER2'                      => "(I want to create a customer account.)",
+'USER_ORDERWITHOUTREGISTER2'                      => "(I do not want to create a customer account.)",
 'USER_NEXT'                                       => "Next",
 'USER_OPTION2'                                    => "Option 2",
 'USER_ALREADYCUSTOMER'                            => "I am already customer",

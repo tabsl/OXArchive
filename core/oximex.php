@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oximex.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oximex.php 14388 2008-11-26 15:43:17Z vilma $
  */
 
 /**
@@ -37,10 +37,11 @@ class oxImex extends oxBase
      */
     public function export( $iStart, $iLines, $sFilepath)
     {
-        if ( !$this->getViewName())
+        if ( !$this->getViewName()) {
             return false;
-        elseif ( $this->getViewName() == "lexware")
+        } elseif ( $this->getViewName() == "lexware") {
             return $this->exportLexwareArticles( $iStart, $iLines, $sFilepath);
+        }
 
         $myConfig = $this->getConfig();
         $oDB      = oxDb::getDb();
@@ -48,8 +49,9 @@ class oxImex extends oxBase
         $sWhere = "";
 
         $sSearch = $this->_sCoreTbl . "__oxshopid";
-        if ( isset( $this->$sSearch))
+        if ( isset( $this->$sSearch)) {
             $sWhere = " where oxshopid = '".$myConfig->getShopId()."' ";
+        }
 
         $sSelect = "select count(oxid) from ".$this->getViewName().$sWhere;
         $iSize = $oDB->getOne( $sSelect);
@@ -62,8 +64,9 @@ class oxImex extends oxBase
             // #573 defining decimal separator
             $blDecReplace = false;
             $sDecimalSeparator = $myConfig->getConfigParam( 'sDecimalSeparator' );
-            if ( $sDecimalSeparator != ".")
+            if ( $sDecimalSeparator != ".") {
                 $blDecReplace = true;
+            }
 
             while (!$rs->EOF) {
                 $sLine = "\"".$this->_sCoreTbl."\"";
@@ -71,11 +74,12 @@ class oxImex extends oxBase
                 foreach ( $rs->fields as $iNum => $field) {
                     $sLine .= $myConfig->getConfigParam( 'sCSVSign' );
 
-                    if ( !is_numeric( $field))
+                    if ( !is_numeric( $field)) {
                         $sLine .= "\"".$this->interFormSimple($field)."\"";
-                    else {
-                        if ( $blDecReplace)
+                    } else {
+                        if ( $blDecReplace) {
                             $field = str_replace( ".", $sDecimalSeparator, $field );
+                        }
                         $sLine .= $field;
                     }
                 }
@@ -109,8 +113,9 @@ class oxImex extends oxBase
 
         $aGroups = oxSession::getVar("_agroups");
 
-        if ( !$this->getViewName() || !$aGroups)
+        if ( !$this->getViewName() || !$aGroups) {
             return false;
+        }
 
         $oDB = oxDb::getDb();
 
@@ -118,8 +123,9 @@ class oxImex extends oxBase
         $sInGroup = "";
         $blSep = false;
         foreach ($aGroups as $sGroupId => $iAct) {
-            if ($blSep)
+            if ($blSep) {
                 $sInGroup .= ", ";
+            }
             $sInGroup .= "'".$sGroupId."'";
             $blSep = true;
         }
@@ -128,8 +134,9 @@ class oxImex extends oxBase
         $sSelect .= "left join oxobject2group on ".$this->getViewName().".oxid=oxobject2group.oxobjectid ";
         $sSelect .= "where oxobject2group.oxgroupsid in ($sInGroup) ";
         $sSearch = $this->getViewName() . "__oxshopid";
-        if ( isset( $this->$sSearch))
+        if ( isset( $this->$sSearch)) {
             $sSelect .= $sWhere = "and ".$this->getViewName().".oxshopid = '".$myConfig->getShopId()."' ";
+        }
 
         $iSize = $oDB->getOne( $sSelect);
         if ( $iStart < $iSize) {   // #387A creating object to fetch field information
@@ -147,8 +154,9 @@ class oxImex extends oxBase
             // #573 defining decimal separator
             $blDecReplace = false;
             $sDecimalSeparator = $myConfig->getConfigParam( 'sDecimalSeparator' );
-            if ( $sDecimalSeparator != "." )
+            if ( $sDecimalSeparator != "." ) {
                 $blDecReplace = true;
+            }
 
             while (!$rs->EOF) {
                 $sLine = "\"".$this->getViewName()."\"";
@@ -167,8 +175,9 @@ class oxImex extends oxBase
 
                         $sLine .= "\"".$this->interForm($field, $oFieldObj)."\"";
                     } else {
-                        if ( $blDecReplace)
+                        if ( $blDecReplace) {
                             $field = str_replace( ".", $sDecimalSeparator, $field );
+                        }
                         $sLine .= $field;
                     }
                 }
@@ -211,10 +220,10 @@ class oxImex extends oxBase
             if ( !$iStart) {   // first time, write header
                 fwrite( $fp, "\"Artikelnummer\";\"Bezeichnung\";\"Einheit\";\"Gewicht\";\"Matchcode\";\"Preis pro Anzahl\";\"Warengruppe\";\"Warengr.-Kurzbez.\";\"Warengr.-Steuersatz\";\"Warengr.-Konto Inland\";\"Warengr.-Konto Ausland\";\"Warengr.-Konto EG\";\"Preis 1\";\"Preis 2\";\"Preis 3\";\"Preis I/1\";\"Preis I/2\";\"Preis I/3\";\"Preis II/1\";\"Preis II/2\";\"Preis II/3\";\"Preis III/1\";\"Preis III/2\";\"Preis III/3\";\"B/N\";\"Lagerartikel\";\"EK 1\";\"Währung EK1\";\"EK 2\";\"Währung EK2\";\"Staffelmenge 1\";\"Staffelmenge 2\";\"Staffelmenge 3\";\"Lieferantennummer 1\";\"Lieferantennummer 2\";\"Bestellmenge Lf.1\";\"Bestellmenge Lf.2\";\"Bestellnr. Lf.1\";\"Bestellnr. Lf.2\";\"Lieferzeit Lf.1\";\"Lieferzeit Lf.2\";\"Lagerbestand\";\"Mindestbestand\";\"Lagerort\";\"Bestellte Menge\";\"Stückliste\";\"Internet\";\"Text\"\r\n");
             }
-            $OldMode = $oDB->setFetchMode( ADODB_FETCH_ASSOC);
+            $oldMode = $oDB->setFetchMode( ADODB_FETCH_ASSOC);
             $sSelect = "select * from $sArticleTable ";
             $rs = $oDB->selectLimit( $sSelect, $iLines, $iStart);
-            $oDB->setFetchMode( $OldMode);
+            $oDB->setFetchMode( $oldMode);
 
             while (!$rs->EOF) {
                 $oArticle = oxNew( "oxarticle" );
@@ -226,11 +235,11 @@ class oxImex extends oxBase
 
                 $sSelect = "select oxtitle from oxarticles where oxid = '".$oArticle->oxarticles__oxparentid->value."'";
                 $oTitle = $oDB->getOne( $sSelect);
-                if($oTitle != false && strlen ($oTitle))
+                if($oTitle != false && strlen ($oTitle)) {
                     $nTitle = $this->interForm($oTitle);
-                else
+                } else {
                     $nTitle = $this->interForm($oArticle->oxarticles__oxtitle->value);
-
+                }
 
 
                 $sToFile = $oArticle->oxarticles__oxartnum->value            // Artikelnummer
@@ -320,7 +329,7 @@ class oxImex extends oxBase
      * with replaced chars.
      *
      * @param string $nValue string to replace special chars
-     * @param object $oObj
+     * @param object $oObj   object
      *
      * @return string
      */
@@ -337,10 +346,11 @@ class oxImex extends oxBase
             // you may change field to "fldname" and add to $aFieldTypesToSkip
             // "oxlongdesc" value to skip only longdesc field
             //
-            if ( in_array($oObj->fldtype, $aFieldTypesToSkip))
+            if ( in_array($oObj->fldtype, $aFieldTypesToSkip)) {
                 $blSkipStripTags = true;
-            elseif ( in_array($oObj->fldname, $aFieldTypesToSkip))
+            } elseif ( in_array($oObj->fldname, $aFieldTypesToSkip)) {
                 $blSkipStripTags = true;
+            }
         }
 
         //removing simple & (and not  &uuml; chars)
@@ -350,8 +360,9 @@ class oxImex extends oxBase
             $nValue = str_replace("&", "&amp;", $nValue);
         }
 
-        if ( !$blSkipStripTags)
+        if ( !$blSkipStripTags) {
             $nValue = strip_tags( $nValue);
+        }
 
 
         $nValue = str_replace( "&nbsp;", " ", $nValue);
@@ -397,8 +408,9 @@ class oxImex extends oxBase
         $nValue = str_replace( "\r\n", "", $nValue);
         $nValue = str_replace( "\n", "", $nValue);
 
-        if ( !$blSkipStripTags)
+        if ( !$blSkipStripTags) {
             $nValue = strip_tags ( $nValue );
+        }
 
         return $nValue;
     }
@@ -437,14 +449,16 @@ class oxImex extends oxBase
 
         //array of tables whitch were updated
         $aProcTables = oxSession::getVar("_aProcTables");
-        if ( !$aProcTables)
+        if ( !$aProcTables) {
             $aProcTables = array();
+        }
 
         // #573 defining decimal separator
         $blDecReplace = false;
         $sDecimalSeparator = $myConfig->getConfigParam( 'sDecimalSeparator' );
-        if ( $sDecimalSeparator != "." )
+        if ( $sDecimalSeparator != "." ) {
             $blDecReplace = true;
+        }
 
         for ( $i = 0; $i<=$iEnd; $i++) {
             $aData = $this->_oxFGetCsv( $fp, 40960, $myConfig->getConfigParam( 'sCSVSign' ) );
@@ -458,13 +472,15 @@ class oxImex extends oxBase
                 // remove table from line
                 $aData = array_splice( $aData, 1, count($aData)-1);
                 foreach ($aData as $key => $value) {
-                    if ( $value == "''" || $value == "" || !$value)
+                    if ( $value == "''" || $value == "" || !$value) {
                         $value = null;
+                    }
 
                     // #573 - fixing import
                     $sKey = $this->_aIdx2FldName[$key];
-                    if ( $blDecReplace && $this->$sKey->fldtype == "double")
+                    if ( $blDecReplace && $this->$sKey->fldtype == "double") {
                         $value = str_replace( $sDecimalSeparator, ".", $value );
+                    }
 
                     $aData[$key] = trim($value);
                 }
@@ -492,6 +508,7 @@ class oxImex extends oxBase
      * Returns XML compatible text for LexwareOrders export.
      *
      * @param integer $iFromOrderNr Order from (default null)
+     * @param integer $iToOrderNr   Order number
      *
      * @return string
      */
@@ -509,15 +526,18 @@ class oxImex extends oxBase
 
         $sSelect = "select * from oxorder where 1 ";
 
-        if ( !empty( $iFromOrderNr))
+        if ( !empty( $iFromOrderNr)) {
             $sSelect .= "and oxordernr >= $iFromOrderNr ";
-        if ( !empty( $iToOrderNr))
+        }
+        if ( !empty( $iToOrderNr)) {
             $sSelect .= "and oxordernr <= $iToOrderNr ";
+        }
 
         $oOrderlist->selectString( $sSelect);
 
-        if ( !$oOrderlist->count() )
+        if ( !$oOrderlist->count() ) {
             return null;
+        }
 
         $sExport  = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>$sNewLine";
         $sExport .= "<Bestellliste>$sNewLine";
@@ -587,10 +607,11 @@ class oxImex extends oxBase
             // ermitteln ob steuerbar oder nicht
             $sCountry = strtolower( $oUser->oxuser__oxcountryid->value);
             $aHomeCountry = $myConfig->getConfigParam( 'aHomeCountry' );
-            if ( is_array( $aHomeCountry ) && in_array( $sCountry, $aHomeCountry ) )
+            if ( is_array( $aHomeCountry ) && in_array( $sCountry, $aHomeCountry ) ) {
                 $sSteuerbar = "ja";
-            else
+            } else {
                 $sSteuerbar = "nein";
+            }
 
             $sExport .= "<fSteuerbar>".$this->interForm($sSteuerbar)."</fSteuerbar>$sNewLine";
             $sExport .= "</Kunde>$sNewLine";
@@ -625,8 +646,9 @@ class oxImex extends oxBase
                 $sExport .= "   <Artikelnummer>".$oOrderArt->oxorderarticles__oxartnum->value."</Artikelnummer>$sNewLine";
                 $sExport .= "   <Anzahl>".$oOrderArt->oxorderarticles__oxamount->value."</Anzahl>$sNewLine";
                 $sExport .= "   <Produktname>".$this->interForm( $oOrderArt->oxorderarticles__oxtitle->value);
-                if ( $oOrderArt->oxorderarticles__oxselvariant->value)
+                if ( $oOrderArt->oxorderarticles__oxselvariant->value) {
                     $sExport .= "/".$oOrderArt->oxorderarticles__oxselvariant->value;
+                }
                 $sExport .= "   </Produktname>$sNewLine";
                 $sExport .= "   <Rabatt>0.00</Rabatt>$sNewLine";
                 $sExport .= "   <Preis>".$this->internPrice($oOrderArt->oxorderarticles__oxbrutprice->value/$oOrderArt->oxorderarticles__oxamount->value)."</Preis>$sNewLine";
@@ -730,8 +752,9 @@ class oxImex extends oxBase
                     }
 
                     $iLen = strlen( $sField) - 1;
-                    if ( $sField[$iLen] == "\"" || $sField[$iLen] == "'")
+                    if ( $sField[$iLen] == "\"" || $sField[$iLen] == "'") {
                         $sField = substr( $sField, 0, $iLen);
+                    }
 
                     $aRet[$key] = $sField;
                 }
@@ -739,7 +762,8 @@ class oxImex extends oxBase
             // process "" qoutes
             return str_replace('""', '"', $aRet);
         }
-        else
+        else {
             return null;
+        }
     }
 }

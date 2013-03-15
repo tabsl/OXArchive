@@ -1,5 +1,9 @@
 [{include file="_header.tpl" title=$template_title location="START_TITLE"|oxmultilangassign isStart=true}]
 
+[{if $oView->isDemoShop()}]
+    [{include file="inc/admin_banner.tpl"}]
+[{/if}]
+
 <div class="wellcome">
     [{ oxcontent ident="oxstartwelcome" }]
 </div>

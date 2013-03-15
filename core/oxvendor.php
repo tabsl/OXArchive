@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxvendor.php 13998 2008-11-06 12:00:26Z vilma $
+ * $Id: oxvendor.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -83,7 +83,7 @@ class oxVendor extends oxI18n
         $this->init( 'oxvendor');
     }
 
-   /**
+    /**
      * Extra getter to guarantee compatibility with templates
      *
      * @param string $sName name of variable to return
@@ -159,13 +159,13 @@ class oxVendor extends oxI18n
             $iLang = oxLang::getInstance()->getBaseLanguage();
         }
         if (!self::$_aRootVendor[$iLang]) {
-            $_oRootVendor = oxNew( 'oxvendor' );
-            $_oRootVendor->setId( 'root' );
-            $_oRootVendor->setLanguage( $iLang );
-            $_oRootVendor->oxvendor__oxicon      = new oxField('');
-            $_oRootVendor->oxvendor__oxtitle     = new oxField(oxLang::getInstance()->translateString( 'byBrand', $iLang, false ) );
-            $_oRootVendor->oxvendor__oxshortdesc = new oxField('');
-            self::$_aRootVendor[$iLang] = $_oRootVendor;
+            $oRootVendor = oxNew( 'oxvendor' );
+            $oRootVendor->setId( 'root' );
+            $oRootVendor->setLanguage( $iLang );
+            $oRootVendor->oxvendor__oxicon      = new oxField('');
+            $oRootVendor->oxvendor__oxtitle     = new oxField(oxLang::getInstance()->translateString( 'byBrand', $iLang, false ) );
+            $oRootVendor->oxvendor__oxshortdesc = new oxField('');
+            self::$_aRootVendor[$iLang] = $oRootVendor;
         }
         return self::$_aRootVendor[$iLang];
     }
@@ -173,13 +173,15 @@ class oxVendor extends oxI18n
     /**
      * Returns vendor link Url
      *
+     * @param integer $iLang language
+     *
      * @return string
      */
     public function getLink($iLang = null)
     {
         if (isset($iLang)) {
-            $iLang = (int)$iLang;
-            if ($iLang == (int)$this->getLanguage()) {
+            $iLang = (int) $iLang;
+            if ($iLang == (int) $this->getLanguage()) {
                 $iLang = null;
             }
         }
@@ -204,6 +206,8 @@ class oxVendor extends oxI18n
     /**
      * Returns standard URL to vendor
      *
+     * @param integer $iLang language
+     *
      * @return string
      */
     public function getStdLink($iLang = null)
@@ -211,8 +215,8 @@ class oxVendor extends oxI18n
         $sLangUrl = '';
 
         if (isset($iLang) && !oxUtils::getInstance()->seoIsActive()) {
-            $iLang = (int)$iLang;
-            if ($iLang != (int)$this->getLanguage()) {
+            $iLang = (int) $iLang;
+            if ($iLang != (int) $this->getLanguage()) {
                 $sLangUrl = "&amp;lang={$iLang}";
             }
         }

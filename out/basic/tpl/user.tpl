@@ -3,10 +3,10 @@
 
 <!-- ordering steps -->
 [{include file="inc/steps_item.tpl" highlight=2 }]
-
+[{assign var="_blshownoregopt" value=$oView->getShowNoRegOption()}]
 
   [{ if !$oxcmp_user && !$oView->getLoginOption() }]
-
+    [{if $_blshownoregopt }]
       <div class="left">
           <strong class="useroptboxhead">[{ oxmultilang ident="USER_OPTION1" }]</strong>
           <div class="useroptbox">
@@ -24,10 +24,10 @@
               </form>
           </div>
       </div>
-
+    [{/if}]
       <div class="left">
-          <strong class="useroptboxhead">[{ oxmultilang ident="USER_OPTION2" }]</strong>
-          <div class="useroptbox">
+          <strong class="useroptboxhead[{if !$_blshownoregopt }]big[{/if}]">[{if !$_blshownoregopt }][{ oxmultilang ident="USER_OPTION1" }][{else}][{ oxmultilang ident="USER_OPTION2" }][{/if}]</strong>
+          <div class="useroptbox[{if !$_blshownoregopt }]big[{/if}]">
               <b>[{ oxmultilang ident="USER_ALREADYCUSTOMER" }]</b><br><br>
               [{ oxmultilang ident="USER_PLEASELOGIN" }]<br><br>
               [{foreach from=$Errors.user item=oEr key=key }]
@@ -54,8 +54,8 @@
       </div>
 
       <div class="left">
-          <strong class="useroptboxhead">[{ oxmultilang ident="USER_OPTION3" }]</strong>
-          <div class="useroptbox">
+          <strong class="useroptboxhead[{if !$_blshownoregopt }]big[{/if}]">[{if !$_blshownoregopt }][{ oxmultilang ident="USER_OPTION2" }][{else}][{ oxmultilang ident="USER_OPTION3" }][{/if}]</strong>
+          <div class="useroptbox[{if !$_blshownoregopt }]big[{/if}]">
               <b>[{ oxmultilang ident="USER_OPENPERSONALACCOUNT1" }]</b><br><br>
               [{ oxmultilang ident="USER_OPENPERSONALACCOUNT2" }] [{ $oxcmp_shop->oxshops__oxname->value }] [{ oxmultilang ident="USER_OPENPERSONALACCOUNT3" }]<br>
               <span class="fs11">

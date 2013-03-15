@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package views
  * @copyright © OXID eSales AG 2003-2008
- * $Id: user.php 13676 2008-10-25 13:12:52Z vilma $
+ * $Id: user.php 14347 2008-11-25 10:04:36Z vilma $
  */
 
 /**
@@ -119,7 +119,7 @@ class User extends oxUBase
 
         $this->_aViewData['iOption'] = $this->getLoginOption();
 
-            $this->_aViewData['blshownoregopt'] = $this->getShowNoRegOption();
+        $this->_aViewData['blshownoregopt'] = $this->getShowNoRegOption();
 
         $this->_aViewData['aMustFillFields'] = $this->getMustFillFields();
 

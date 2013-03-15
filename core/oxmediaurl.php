@@ -17,7 +17,7 @@
  *
  * @link http://www.oxid-esales.com * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxmediaurl.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxmediaurl.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -52,8 +52,9 @@ class oxMediaUrl extends oxI18n
     {
         $sUrl = $this->oxmediaurls__oxurl->value;
         //youtube link
-        if (strpos($sUrl, 'youtube.com'))
+        if (strpos($sUrl, 'youtube.com')) {
             return $this->_getYoutubeHtml();
+        }
 
         //simple link
         return $this->getHtmlLink();
@@ -88,8 +89,9 @@ class oxMediaUrl extends oxI18n
     {
         $sFilePath = $this->getConfig()->getConfigParam('sShopDir') . "/out/media/" .
                      $this->oxmediaurls__oxurl->value;
-        if ($this->oxmediaurls__oxisuploaded->value && file_exists($sFilePath))
+        if ($this->oxmediaurls__oxisuploaded->value && file_exists($sFilePath)) {
             unlink($sFilePath);
+        }
 
         return parent::delete( $sOXID );
     }

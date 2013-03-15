@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxarticle.php 14200 2008-11-13 14:58:45Z vilma $
+ * $Id: oxarticle.php 14395 2008-11-26 17:51:07Z tomas $
  */
 
 /**
@@ -122,6 +122,12 @@ class oxArticle extends oxI18n
      * @var bool
      */
     protected $_blIsOnComparisonList = false;
+
+    /**
+     * user object
+     * @var oxUser
+     */
+    protected $_oUser = null;
 
     /**
      * Performance issue. Sometimes you want to load articles without calculating
@@ -326,16 +332,15 @@ class oxArticle extends oxI18n
         return isset( $this->$sName );
     }
 
-
     /**
      * Magic setter. disallows oxlongdesc to go to aFieldNames
      *
-     * @param string $sName
-     * @param mixed  $sValue
+     * @param string $sName  Long field name
+     * @param mixed  $sValue Field value
      *
      * @return null
      */
-    public function __set($sName, $sValue)
+    public function __set( $sName, $sValue)
     {
         if ($sName == 'oxarticles__oxlongdesc') {
             $this->$sName = $sValue;
@@ -441,9 +446,6 @@ class oxArticle extends oxI18n
             case 'amountpricelist' :
                 return $this->loadAmountPriceInfo();
                 break;
-            case 'famountprice' :
-                return $this->getFAmountPrice();
-                break;
             case 'stockstatus' :
                 return $this->getStockStatus();
                 break;
@@ -455,10 +457,10 @@ class oxArticle extends oxI18n
                 break;
             /*case 'oxarticles__oxnid':
                 return $this->getId();*/
-            }
+        }
 
         $sRet = parent::__get($sName);
-        if ($this->$sName) {
+        if ( $this->$sName ) {
             $this->_assignParentFieldValue($sName);
         }
         //checking for picture information
@@ -580,8 +582,9 @@ class oxArticle extends oxI18n
      */
     public function isBuyable()
     {
-        if ($this->_blNotBuyableParent)
+        if ($this->_blNotBuyableParent) {
             return false;
+        }
 
         return !$this->_blNotBuyable;
     }
@@ -653,8 +656,9 @@ class oxArticle extends oxI18n
      */
     public function isMultilingualField($sFieldName)
     {
-        if ($sFieldName == "oxlongdesc")
+        if ($sFieldName == "oxlongdesc") {
             return true;
+        }
 
         return parent::isMultilingualField($sFieldName);
     }
@@ -733,6 +737,15 @@ class oxArticle extends oxI18n
         stopProfile('articleAssign');
     }
 
+    /**
+     * Sets data field value
+     *
+     * @param string $sFieldName index OR name (eg. 'oxarticles__oxtitle') of a data field to set
+     * @param string $sValue     value of data field
+     * @param int    $iDataType  field type
+     *
+     * @return null
+     */
     protected function _setFieldData( $sFieldName, $sValue, $iDataType = oxField::T_TEXT)
     {
         parent::_setFieldData( $sFieldName, $sValue, $iDataType);
@@ -818,8 +831,9 @@ class oxArticle extends oxI18n
         $oRevs = $oReview->loadList('oxarticle', $aIds);
 
         //if no review found, return null
-        if ( $oRevs->count() < 1 )
+        if ( $oRevs->count() < 1 ) {
             return null;
+        }
 
         return $oRevs;
     }
@@ -1028,13 +1042,15 @@ class oxArticle extends oxI18n
         $myConfig = $this->getConfig();
 
         // Performance
-        if( !$this->isAdmin() && !$myConfig->getConfigParam( 'blLoadVariants'))
+        if( !$this->isAdmin() && !$myConfig->getConfigParam( 'blLoadVariants')) {
             return array();
+        }
 
         //do not load variants where variant oxvarcount is 0
         //hint: if variantas are not loaded you should check your data integrity oxvarcount should always be equal to variant count
-        if (!$this->isAdmin() && !$this->oxarticles__oxvarcount->value)
+        if (!$this->isAdmin() && !$this->oxarticles__oxvarcount->value) {
             return array();
+        }
 
         //$this->aList = array();
 
@@ -1058,8 +1074,9 @@ class oxArticle extends oxI18n
 
         $oVariants->selectString( $sSelect);
 
-        if (!$oVariants->count())
+        if (!$oVariants->count()) {
             return array();
+        }
         $oVariants = $this->_removeInactiveVariants($oVariants);
         //$this->calculateMinVarPrice($oVariants);
         //#1104S Load selectlists
@@ -1318,7 +1335,7 @@ class oxArticle extends oxI18n
      */
     public function getTPrice()
     {
-        if( !$this->getConfig()->getConfigParam( 'bl_perfLoadPrice' ) || !$this->_blLoadPrice ) {
+        if ( !$this->getConfig()->getConfigParam( 'bl_perfLoadPrice' ) || !$this->_blLoadPrice ) {
             return;
         }
         // return cached result, since oPrice is created ONLY in this function [or function of EQUAL level]
@@ -1432,24 +1449,51 @@ class oxArticle extends oxI18n
 
         // apply discounts
         if ( !$this->skipDiscounts() ) {
-            $this->_applyDiscounts($this->_oPrice, oxDiscountList::getInstance()->getArticleDiscounts($this, $this->getUser()));
+            $this->_applyDiscounts($this->_oPrice, oxDiscountList::getInstance()->getArticleDiscounts($this, $this->getArticleUser()));
         }
 
         return $this->_oPrice;
     }
 
     /**
+     * sets article user
+     *
+     * @param oxUser $oUser user to set
+     *
+     * @return null
+     */
+    public function setArticleUser($oUser)
+    {
+        $this->_oUser = $oUser;
+    }
+
+    /**
+     * return article user
+     *
+     * @return oxUser
+     */
+    public function getArticleUser()
+    {
+        if ($this->_oUser) {
+            return $this->_oUser;
+        }
+        return $this->getUser();
+    }
+
+    /**
      * Creates, calculates and returns oxprice object for basket product.
      *
-     * @param double $dAmount     Amount
-     * @param string $aSelList    Selection list
-     * @param object $oBasket     User shopping basket object
+     * @param double $dAmount  Amount
+     * @param string $aSelList Selection list
+     * @param object $oBasket  User shopping basket object
      *
      * @return oxPrice
      */
     public function getBasketPrice( $dAmount, $aSelList, $oBasket )
     {
-        $oUser = $this->getUser();
+        $oUser = $oBasket->getBasketUser();
+        $this->setArticleUser($oUser);
+
         $oBasketPrice = oxNew( 'oxPrice' );
 
         // get base price
@@ -1475,6 +1519,39 @@ class oxArticle extends oxI18n
 
         // returning final price object
         return $oBasketPrice;
+    }
+
+    /**
+     * Applies discoutns which are supposed to be applied on amounts greater than zero.
+     * Returns applied discounts.
+     *
+     * @param oxPrice $oPrice     Old article price
+     * @param array   $aDiscounts Discount array
+     * @param amount  $dAmount    Amount in basket
+     *
+     * @return array
+     */
+    public function applyBasketDiscounts(oxPrice $oPrice, $aDiscounts, $dAmount = 1)
+    {
+        $aDiscLog = array();
+        reset( $aDiscounts );
+
+        // price object to correctly perform calculations
+        $dOldPrice = $oPrice->getBruttoPrice();
+
+        while (list( , $oDiscount) = each($aDiscounts)) {
+            $oDiscount->applyDiscount( $oPrice );
+            $dNewPrice = $oPrice->getBruttoPrice();
+
+            if (!isset($aDiscLog[$oDiscount->getId()])) {
+                $aDiscLog[$oDiscount->getId()] = $oDiscount->getSimpleDiscount();
+            }
+
+            $aDiscLog[$oDiscount->getId()]->dDiscount += $dOldPrice - $dNewPrice;
+            $aDiscLog[$oDiscount->getId()]->dDiscount *= $dAmount;
+            $dOldPrice = $dNewPrice;
+        }
+        return $aDiscLog;
     }
 
     /**
@@ -1621,7 +1698,7 @@ class oxArticle extends oxI18n
                 $iCntr++;
             }
             if ($iActPicId == $i) {
-               $sActPic = $sPicVal;
+                $sActPic = $sPicVal;
             }
         }
 
@@ -1651,40 +1728,6 @@ class oxArticle extends oxI18n
 
         return $aPicGallery;
     }
-
-    /**
-     * Generates image icons
-     *
-     */
-    /*
-    public function generateImageIcons()
-    {
-        startProfile("iconGenerator");
-        $myConfig = $this->getConfig();
-
-        //automatically generating icon files for all images
-        if ( $myConfig->getConfigParam( 'blAutoIcons' ) ) {
-            $iPicCount = $myConfig->getConfigParam( 'iPicCount' );
-            for ($i = 1; $i <= $iPicCount; $i++) {
-                $sFieldName = 'oxarticles__oxpic'.$i;
-                $sIconFieldName = 'oxarticles__oxpic'.$i.'_ico';
-                $sFileName = $this->$sIconFieldName->value;
-                $sFile = $myConfig->getAbsDynImageDir() . '/' .$sFileName;
-
-                if ( $myConfig->getConfigParam( 'sIconsize' ) && basename($sFileName) != 'nopic_ico.jpg' && !file_exists($sFile)) {
-                    //generating file
-                    $aSize = explode( '*', $myConfig->getConfigParam( 'sIconsize' ) );
-                    $iX = $aSize[0];
-                    $iY = $aSize[1];
-                    $sFieldName = 'oxarticles__oxpic'.$i;
-                    $sSource = $myConfig->getAbsDynImageDir() . '/' . $this->$sFieldName->value;
-                    oxUtilspic::getInstance()->resizeImage( $sSource, $sFile, $iX, $iY );
-                }
-            }
-        }
-        stopProfile("iconGenerator");
-    }
-    */
 
     /**
      * This function is triggered whenever article is saved or deleted or after the stock is changed.
@@ -1750,8 +1793,9 @@ class oxArticle extends oxI18n
      */
     public function getCustomVAT()
     {
-        if ( isset($this->oxarticles__oxvat->value) )
+        if ( isset($this->oxarticles__oxvat->value) ) {
             return $this->oxarticles__oxvat->value;
+        }
     }
 
     /**
@@ -1822,8 +1866,9 @@ class oxArticle extends oxI18n
         $this->oxarticles__oxlongdesc->table   = 'oxarticles';
         $this->oxarticles__oxlongdesc->fldtype = 'text';
 
-        if ( !$sOXID )
+        if ( !$sOXID ) {
           $sOXID = $this->oxarticles__oxid->value;
+        }
 
         if ( $sOXID ) {
             $sLangField = oxLang::getInstance()->getLanguageTag($this->getLanguage());
@@ -1882,19 +1927,6 @@ class oxArticle extends oxI18n
         }
     }
 
-    protected function _saveArtLongDesc($iLang, $sValue)
-    {
-        $oDB = oxDb::getDb();
-        $iLang = (int)$iLang;
-        $sLangField = ($iLang > '0') ? '_'.$iLang : '';
-        $sLongDesc = $oDB->quote($sValue);
-        $sLongDescSQL = "insert into oxartextends (oxartextends.OXID, oxartextends.OXLONGDESC{$sLangField})
-                       VALUES ('".$this->getId()."', {$sLongDesc})
-                       ON DUPLICATE KEY update oxartextends.OXLONGDESC{$sLangField} = {$sLongDesc} ";
-
-        $oDB->execute($sLongDescSQL);
-    }
-
     /**
      * Loads and returns attribute list associated with this article
      *
@@ -1903,8 +1935,9 @@ class oxArticle extends oxI18n
     public function getAttributes()
     {
 
-        if ($this->_oAttributeList)
+        if ($this->_oAttributeList) {
             return $this->_oAttributeList;
+        }
 
         $oAttributeList = oxNew( 'oxattributelist' );
         $oAttributeList->loadAttributes( $this->getId());
@@ -1920,7 +1953,7 @@ class oxArticle extends oxI18n
      *
      * @param string $sAddParams additional parameters which needs to be added to product url
      *
-     * @var null
+     * @return null
      */
     public function appendLink( $sAddParams )
     {
@@ -1940,8 +1973,8 @@ class oxArticle extends oxI18n
     public function getLink($iLang = null)
     {
         if (isset($iLang)) {
-            $iLang = (int)$iLang;
-            if ($iLang == (int)$this->getLanguage()) {
+            $iLang = (int) $iLang;
+            if ($iLang == (int) $this->getLanguage()) {
                 $iLang = null;
             }
         }
@@ -1991,8 +2024,8 @@ class oxArticle extends oxI18n
         $sUrl  = $this->getConfig()->getShopHomeURL();
         $sUrl .= "cl=details&amp;anid=".$this->getId();
 
-         $blSeo = oxUtils::getInstance()->seoIsActive();
-         if ( !$blSeo || $this->_iLinkType != 0 ) {
+        $blSeo = oxUtils::getInstance()->seoIsActive();
+        if ( !$blSeo || $this->_iLinkType != 0 ) {
 
             if ( !$blSeo ) {
                 $iPgNr = (int) oxConfig::getParameter( 'pgNr' );
@@ -2017,8 +2050,8 @@ class oxArticle extends oxI18n
             }
 
             if (!$blSeo && isset($iLang)) {
-                $iLang = (int)$iLang;
-                if ($iLang != (int)$this->getLanguage()) {
+                $iLang = (int) $iLang;
+                if ($iLang != (int) $this->getLanguage()) {
                     $sUrl .= "&amp;lang={$iLang}";
                 }
             }
@@ -2045,7 +2078,7 @@ class oxArticle extends oxI18n
     /**
      * Saves article tags
      *
-     * @param string $sTags
+     * @param string $sTags article tag
      *
      * @return bool
      */
@@ -2064,7 +2097,7 @@ class oxArticle extends oxI18n
     /**
      * Adds tag
      *
-     * @param string $sTag
+     * @param string $sTag new tag
      *
      * @return bool
      */
@@ -2090,8 +2123,9 @@ class oxArticle extends oxI18n
      */
     public function getMediaUrls()
     {
-        if ($this->_aMediaUrls)
+        if ($this->_aMediaUrls) {
             return $this->_aMediaUrls;
+        }
 
         $this->_aMediaUrls = oxNew("oxlist");
         $this->_aMediaUrls->init("oxmediaurl");
@@ -2101,6 +2135,244 @@ class oxArticle extends oxI18n
         $this->_aMediaUrls->selectString($sQ);
 
         return $this->_aMediaUrls;
+    }
+
+    /**
+     * Get image url
+     *
+     * @return array
+     */
+    public function getDynImageDir()
+    {
+        return $this->_sDynImageDir;
+    }
+
+    /**
+     * Returns select lists to display
+     *
+     * @return array
+     */
+    public function getDispSelList()
+    {
+        if ($this->_aDispSelList === null) {
+            if ( $this->getConfig()->getConfigParam( 'bl_perfLoadSelectLists' ) && $this->getConfig()->getConfigParam( 'bl_perfLoadSelectListsInAList' ) ) {
+                $this->_aDispSelList = $this->getSelectLists();
+            }
+        }
+        return $this->_aDispSelList;
+    }
+
+    /**
+     * Get more details link
+     *
+     * @return string
+     */
+    public function getMoreDetailLink()
+    {
+        return $this->_sMoreDetailLink;
+    }
+
+    /**
+     * Get to basket link
+     *
+     * @return string
+     */
+    public function getToBasketLink()
+    {
+        return $this->_sToBasketLink;
+    }
+
+    /**
+     * Get stock status
+     *
+     * @return integer
+     */
+    public function getStockStatus()
+    {
+        return $this->_iStockStatus;
+    }
+
+    /**
+     * Returns formated delivery date. If the date is not set ('0000-00-00') returns false.
+     *
+     * @return string | bool
+     */
+    public function getDeliveryDate()
+    {
+        if ( $this->oxarticles__oxdelivery->value != '0000-00-00') {
+            return oxUtilsDate::getInstance()->formatDBDate( $this->oxarticles__oxdelivery->value);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Returns rounded T price.
+     *
+     * @return double | bool
+     */
+    public function getFTPrice()
+    {
+        if ( $oPrice = $this->getTPrice() ) {
+            if ( $oPrice->getBruttoPrice() ) {
+                return oxLang::getInstance()->formatCurrency( oxUtils::getInstance()->fRound($oPrice->getBruttoPrice()));
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns formated product's price.
+     *
+     * @return double
+     */
+    public function getFPrice()
+    {
+        if ( $oPrice = $this->getPrice() ) {
+            return $this->getPriceFromPrefix().oxLang::getInstance()->formatCurrency( $oPrice->getBruttoPrice() );
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns formated price per unit (oxarticle::_assignPrices())
+     *
+     * @return string
+     */
+    public function getPricePerUnit()
+    {
+        return $this->_fPricePerUnit;
+    }
+
+    /**
+     * Returns true if parent is not buyable
+     *
+     * @return bool
+     */
+    public function isParentNotBuyable()
+    {
+        return $this->_blNotBuyableParent;
+    }
+
+    /**
+     * Returns true if article is not buyable
+     *
+     * @return bool
+     */
+    public function isNotBuyable()
+    {
+        return $this->_blNotBuyable;
+    }
+
+    /**
+     * Returns variant lists of current product
+     *
+     * @return object
+     */
+    public function getVariantList()
+    {
+        return $this->_oVariantList;
+    }
+
+    /**
+     * Sets selectlists of current product
+     *
+     * @param array $aSelList selectlist
+     *
+     * @return object
+     */
+    public function setSelectlist( $aSelList )
+    {
+        $this->_aDispSelList = $aSelList;
+    }
+
+    /**
+     * Returns article picture
+     *
+     * @return string
+     */
+    public function getPictureUrl( $iIndex )
+    {
+        return $this->getConfig()->getPictureUrl( $this->{"oxarticles__oxpic".$iIndex}->value );
+    }
+
+    /**
+     * Returns article icon picture url
+     *
+     * @param int $iIndex picture index
+     *
+     * @return string
+     */
+    public function getIconUrl( $iIndex = '')
+    {
+        if (!$iIndex) {
+            $sFile = $this->oxarticles__oxicon->value;
+        } else {
+            $sFile = $this->{'oxarticles__oxpic' . $iIndex . '_ico'}->value;
+        }
+
+        $sFile = str_replace('nopic.jpg', 'nopic_ico.jpg', $sFile);
+        return $this->getConfig()->getPictureUrl( $sFile );
+    }
+
+    /**
+     * Returns article thumbnail picture url
+     *
+     * @return string
+     */
+    public function getThumbnailUrl()
+    {
+        return $this->getConfig()->getPictureUrl( $this->oxarticles__oxthumb->value );
+    }
+
+    /**
+     * Returns article zoom picture url
+     *
+     * @param int $iIndex picture index
+     *
+     * @return string
+     */
+    public function getZoomPictureUrl($iIndex)
+    {
+        return $this->getConfig()->getPictureUrl( $this->{'oxarticles__oxzoom'.$iIndex}->value );
+    }
+
+    /**
+     * Returns string prefix (like "ab") if needed or empty string.
+     *
+     * @return string
+     */
+    public function getPriceFromPrefix()
+    {
+        $sPricePrefics = '';
+        if ( $this->_blIsRangePrice) {
+            $sPricePrefics = oxLang::getInstance()->translateString('priceFrom').' ';
+        }
+
+        return $sPricePrefics;
+    }
+
+    /**
+     * inserts article long description to artextends table
+     *
+     * @param int    $iLang  language
+     * @param string $sValue long description
+     *
+     * @return null
+     */
+    protected function _saveArtLongDesc($iLang, $sValue)
+    {
+        $oDB = oxDb::getDb();
+        $iLang = (int) $iLang;
+        $sLangField = ($iLang > '0') ? '_'.$iLang : '';
+        $sLongDesc = $oDB->quote($sValue);
+        $sLongDescSQL = "insert into oxartextends (oxartextends.OXID, oxartextends.OXLONGDESC{$sLangField})
+                       VALUES ('".$this->getId()."', {$sLongDesc})
+                       ON DUPLICATE KEY update oxartextends.OXLONGDESC{$sLangField} = {$sLongDesc} ";
+
+        $oDB->execute($sLongDescSQL);
     }
 
     /**
@@ -2212,7 +2484,7 @@ class oxArticle extends oxI18n
     {
         $dPrice = $this->oxarticles__oxprice->value;
 
-        $oUser = $this->getUser();
+        $oUser = $this->getArticleUser();
         if ( $oUser ) {
             if ( $oUser->inGroup( 'oxidpricea' ) ) {
                 $dPrice = $this->oxarticles__oxpricea->value;
@@ -2235,7 +2507,6 @@ class oxArticle extends oxI18n
      * Modifies article price depending on given amount.
      * Takes data from oxprice2article table.
      *
-     * @param double &$dPrice Modifyable price
      * @param double $dAmount Basket amount
      *
      * @return bool | null
@@ -2248,7 +2519,7 @@ class oxArticle extends oxI18n
 
         $dPrice = $this->_getGroupPrice();
         $oAmtPrices = $this->_getAmountPriceList();
-        foreach($oAmtPrices as $oAmPrice) {
+        foreach ($oAmtPrices as $oAmPrice) {
             if ($oAmPrice->oxprice2article__oxamount->value <= $dAmount
                     && $dAmount <= $oAmPrice->oxprice2article__oxamountto->value
                     && $dPrice > $oAmPrice->oxprice2article__oxaddabs->value ) {
@@ -2307,7 +2578,7 @@ class oxArticle extends oxI18n
         //modifying price
         $oCur = $myConfig->getActShopCurrencyObject();
 
-        $oUser = $this->getUser();
+        $oUser = $this->getArticleUser();
 
         $aDiscountList = oxDiscountList::getInstance()->getArticleDiscounts($this, $oUser );
 
@@ -2331,7 +2602,7 @@ class oxArticle extends oxI18n
 
             if (!$oLowestPrice) {
                 $oLowestPrice = $oItemPrice;
-            } elseif($oLowestPrice->getBruttoPrice() > $oItemPrice->getBruttoPrice()) {
+            } elseif ($oLowestPrice->getBruttoPrice() > $oItemPrice->getBruttoPrice()) {
                 $oLowestPrice = $oItemPrice;
             }
 
@@ -2373,7 +2644,7 @@ class oxArticle extends oxI18n
     protected function _applyVAT( oxPrice $oPrice, $dVat )
     {
         $oPrice->setVAT( $dVat );
-        if ( ( $oUser = $this->getUser() ) )  {
+        if ( ( $oUser = $this->getArticleUser() ) ) {
             if ( ( $dVat = oxNew( 'oxVatSelector' )->getUserVat( $oUser ) ) !== false ) {
                 $oPrice->setUserVat( $dVat );
             }
@@ -2394,39 +2665,6 @@ class oxArticle extends oxI18n
         while ( list( , $oDiscount ) = each( $aDiscounts ) ) {
             $oDiscount->applyDiscount( $oPrice );
         }
-    }
-
-    /**
-     * Applies discoutns which are supposed to be applied on amounts greater than zero.
-     * Returns applied discounts.
-     *
-     * @param oxPrice $oPrice     Old article price
-     * @param array   $aDiscounts Discount array
-     * @param amount  $dAmount    Amount in basket
-     *
-     * @return array
-     */
-    public function applyBasketDiscounts(oxPrice $oPrice, $aDiscounts, $dAmount = 1)
-    {
-        $aDiscLog = array();
-        reset( $aDiscounts );
-
-        // price object to correctly perform calculations
-        $dOldPrice = $oPrice->getBruttoPrice();
-
-        while (list( , $oDiscount) = each($aDiscounts)) {
-            $oDiscount->applyDiscount( $oPrice );
-            $dNewPrice = $oPrice->getBruttoPrice();
-
-            if (!isset($aDiscLog[$oDiscount->getId()])) {
-                $aDiscLog[$oDiscount->getId()] = $oDiscount->getSimpleDiscount();
-            }
-
-            $aDiscLog[$oDiscount->getId()]->dDiscount += $dOldPrice - $dNewPrice;
-            $aDiscLog[$oDiscount->getId()]->dDiscount *= $dAmount;
-            $dOldPrice = $dNewPrice;
-        }
-        return $aDiscLog;
     }
 
     /**
@@ -2513,34 +2751,6 @@ class oxArticle extends oxI18n
 
         return $sIconFile;
     }
-
-    /**
-     * Returns string prefix (like "ab") if needed or empty string.
-     *
-     * @return string
-     */
-    public function getPriceFromPrefix()
-    {
-        $sPricePrefics = '';
-        if ( $this->_blIsRangePrice) {
-            $sPricePrefics = oxLang::getInstance()->translateString('priceFrom').' ';
-        }
-
-        return $sPricePrefics;
-    }
-
-    /**
-     * Assigns SEO details link if possible
-     *
-     * @return null
-     */
-    /*protected function _seoAssign()
-    {
-        // checking if we still need SEO
-        if ( oxUtils::getInstance()->seoIsActive() ) {
-            $this->getLink();
-        }
-    }*/
 
 
     /**
@@ -2812,6 +3022,8 @@ class oxArticle extends oxI18n
     /**
      * Assigns parent field values to article
      *
+     * @param string $sFieldName field name
+     *
      * @return null;
      */
     protected function _assignParentFieldValue($sFieldName)
@@ -2822,8 +3034,9 @@ class oxArticle extends oxI18n
         }
 
         // only overwrite database values
-        if( substr( $name, 0, 12) != 'oxarticles__')
+        if( substr( $name, 0, 12) != 'oxarticles__') {
             continue;
+        }
 
         //do not copy certain fields
         $aNonCopyFields = array('oxarticles__oxinsert',
@@ -2831,19 +3044,20 @@ class oxArticle extends oxI18n
                                 'oxarticles__oxnid',
                                 'oxarticles__oxid',
                                 'oxarticles__oxparentid');
-        if (in_array($name, $aNonCopyFields))
+        if (in_array($name, $aNonCopyFields)) {
             return;
-
+        }
 
         //do not copy parent data for icons
-        if ($name == 'oxarticles__oxicon' && $this->getConfig()->getConfigParam( 'blAutoIcons' ) && $this->oxarticles__oxthumb->value && $this->oxarticles__oxthumb->value != 'nopic.jpg')
+        if ($name == 'oxarticles__oxicon' && $this->getConfig()->getConfigParam( 'blAutoIcons' ) && $this->oxarticles__oxthumb->value && $this->oxarticles__oxthumb->value != 'nopic.jpg') {
             return;
+        }
         //#1101S empty image fields (without nopic.jpg, nopic_ico.jpg) should be copied from parent too
         if ( $this->$name->value == 'nopic.jpg' || $this->$name->value == 'nopic_ico.jpg' || ((stristr($name, '_oxthumb') || stristr($name, '_oxicon') || stristr($name, '_oxpic') || stristr($name, '_oxzoom') ) && $this->$name->value == '')) {
             // pictures
-            if ( $this->_blLoadParentData && $this->isAdmin() )
+            if ( $this->_blLoadParentData && $this->isAdmin() ) {
                 $this->$name = clone $oParentArticle->$name;
-            else {
+            } else {
                 $aFile = explode( '/', $oParentArticle->$name->value);
                 $this->$name->setValue(@$aFile[1]);
             }
@@ -2864,6 +3078,11 @@ class oxArticle extends oxI18n
         }
     }
 
+    /**
+     * get parent article
+     *
+     * @return oxArticle
+     */
     protected function _getParentAricle()
     {
         $sParentId = $this->oxarticles__oxparentid->value;
@@ -2943,8 +3162,9 @@ class oxArticle extends oxI18n
         $sNoPic     = 'nopic.jpg';
         $sNoPicIcon = 'nopic_ico.jpg';
 
-        if( isset($this->_aFieldNames["oxthumb"]) && !$this->oxarticles__oxthumb->value)
+        if( isset($this->_aFieldNames["oxthumb"]) && !$this->oxarticles__oxthumb->value) {
             $this->oxarticles__oxthumb = new oxField($sNoPic);
+        }
         /*
         if( isset($this->_aFieldNames["oxicon"]) && !isset($this->oxarticles__oxicon->value))
             $this->oxarticles__oxicon  = new oxField($sNoPicIcon);
@@ -2966,10 +3186,12 @@ class oxArticle extends oxI18n
 
         if ( !$this->isAdmin() ) {
             // add directories
-            if ( isset($this->_aFieldNames["oxthumb"]))
+            if ( isset($this->_aFieldNames["oxthumb"])) {
                 $this->oxarticles__oxthumb->setValue('0/'.basename($this->oxarticles__oxthumb->value));
-            if ( isset($this->_aFieldNames["oxicon"]))
+            }
+            if ( isset($this->_aFieldNames["oxicon"])) {
                 $this->oxarticles__oxicon = new oxField('icon/'.basename($this->oxarticles__oxicon->value));
+            }
 
             for ( $i=1; $i<= $iPicCount; $i++ ) {
                 $sFieldName = 'oxarticles__oxpic'.$i;
@@ -3001,8 +3223,9 @@ class oxArticle extends oxI18n
         // -----------------------------------
 
         // #1125 A. must round (using floor()) value taken from database and cast to int
-        if (!$myConfig->getConfigParam( 'blAllowUnevenAmounts' ) && !$this->isAdmin() )
+        if (!$myConfig->getConfigParam( 'blAllowUnevenAmounts' ) && !$this->isAdmin() ) {
             $this->oxarticles__oxstock = new oxField((int) floor($this->oxarticles__oxstock->value));
+        }
         //GREEN light
         $this->_iStockStatus = 0;
 
@@ -3011,22 +3234,26 @@ class oxArticle extends oxI18n
             //ORANGE light
             $iStock = $this->oxarticles__oxstock->value;
 
-            if ($this->_blNotBuyableParent)
+            if ($this->_blNotBuyableParent) {
                 $iStock = $this->oxarticles__oxvarstock->value;
+            }
 
 
-            if ( $iStock <= $myConfig->getConfigParam( 'sStockWarningLimit' ) && $iStock > 0)
+            if ( $iStock <= $myConfig->getConfigParam( 'sStockWarningLimit' ) && $iStock > 0) {
                 $this->_iStockStatus = 1;
+            }
 
             //RED light
-            if ($iStock <= 0)
+            if ($iStock <= 0) {
                 $this->_iStockStatus = -1;
+            }
         }
 
 
         // stock
-        if ( $myConfig->getConfigParam( 'blUseStock' ) && $this->oxarticles__oxstock->value <= 0 && ($this->oxarticles__oxstockflag->value == 3 || $this->oxarticles__oxstockflag->value == 2))
+        if ( $myConfig->getConfigParam( 'blUseStock' ) && $this->oxarticles__oxstock->value <= 0 && ($this->oxarticles__oxstockflag->value == 3 || $this->oxarticles__oxstockflag->value == 2)) {
             $this->_blNotBuyable = true;
+        }
 
         //exceptional handling for variant parent stock:
         if ($this->_blNotBuyable && $this->_iVarStock) {
@@ -3043,8 +3270,9 @@ class oxArticle extends oxI18n
         }
 
         //setting to non buyable when variant list is empty (for example not loaded or inactive) and $this is non buyable parent
-        if ($this->_blNotBuyableParent && count($this->_oVariantList) == 0)
+        if ($this->_blNotBuyableParent && count($this->_oVariantList) == 0) {
             $this->_blNotBuyable = true;
+        }
     }
 
     /**
@@ -3067,8 +3295,8 @@ class oxArticle extends oxI18n
 
         $oCur = $myConfig->getActShopCurrencyObject();
         //price per unit handling
-        if ((double)$this->oxarticles__oxunitquantity->value && $this->oxarticles__oxunitname->value) {
-            $this->_fPricePerUnit = oxLang::getInstance()->formatCurrency($dPrice / (double)$this->oxarticles__oxunitquantity->value, $oCur);
+        if ((double) $this->oxarticles__oxunitquantity->value && $this->oxarticles__oxunitname->value) {
+            $this->_fPricePerUnit = oxLang::getInstance()->formatCurrency($dPrice / (double) $this->oxarticles__oxunitquantity->value, $oCur);
         }
 
 
@@ -3101,10 +3329,10 @@ class oxArticle extends oxI18n
 
         $sThisShop = $this->oxarticles__oxshopid->value;
 
-        $this->_sDynImageDir   = $myConfig->getPictureUrl( null , false );
+        $this->_sDynImageDir   = $myConfig->getPictureUrl( null, false );
         $this->dabsimagedir    = $myConfig->getPictureDir( false ); //$sThisShop
-        $this->nossl_dimagedir = $myConfig->getPictureUrl( null, false, false , null ,$sThisShop ); //$sThisShop
-        $this->ssl_dimagedir   = $myConfig->getPictureUrl( null, false, true, null , $sThisShop ); //$sThisShop
+        $this->nossl_dimagedir = $myConfig->getPictureUrl( null, false, false, null, $sThisShop ); //$sThisShop
+        $this->ssl_dimagedir   = $myConfig->getPictureUrl( null, false, true, null, $sThisShop ); //$sThisShop
     }
 
     /**
@@ -3199,8 +3427,9 @@ class oxArticle extends oxI18n
         $now = date('Y-m-d H:i:s', $iInsertTime);
         $this->oxarticles__oxinsert    = new oxField( $now );
         $this->oxarticles__oxtimestamp = new oxField( $now );
-        if( !is_object($this->oxarticles__oxsubclass) || $this->oxarticles__oxsubclass->value == '')
+        if( !is_object($this->oxarticles__oxsubclass) || $this->oxarticles__oxsubclass->value == '') {
             $this->oxarticles__oxsubclass = new oxField('oxarticle');
+        }
 
         return parent::_insert();
     }
@@ -3448,7 +3677,7 @@ class oxArticle extends oxI18n
     protected function _onChangeUpdateMinVarPrice( $sParentID )
     {
         $sQ = 'select min(oxprice) as varminprice from oxarticles where oxparentid = "'.$sParentID.'"';
-        //V #M378: Quicksorting after price in articlelist does not work correctly when parent article is not buyable 
+        //V #M378: Quicksorting after price in articlelist does not work correctly when parent article is not buyable
         if ( $this->isParentNotBuyable() ) {
             $sQ .= ' or oxid = "'.$sParentID.'"';
         }
@@ -3469,8 +3698,9 @@ class oxArticle extends oxI18n
     protected function _applyRangePrice()
     {
         //#buglist_413 if bl_perfLoadPriceForAddList variant price shouldn't be loaded too
-        if( !$this->getConfig()->getConfigParam( 'bl_perfLoadPrice' ) || !$this->_blLoadPrice )
+        if( !$this->getConfig()->getConfigParam( 'bl_perfLoadPrice' ) || !$this->_blLoadPrice ) {
             return;
+        }
 
         $this->_blIsRangePrice = false;
 
@@ -3490,7 +3720,7 @@ class oxArticle extends oxI18n
             }
         }
 
-      /*  $oAmPrices = $this->loadAmountPriceInfo();
+        /*  $oAmPrices = $this->loadAmountPriceInfo();
         foreach ($oAmPrices as $oAmPrice) {
             $aPrices[] = $oAmPrice->oxprice2article__oxaddabs->value;
         }*/
@@ -3520,200 +3750,5 @@ class oxArticle extends oxI18n
             $this->_blIsRangePrice = true;
         }
 
-    }
-
-    /**
-     * Get image url
-     *
-     * @return array
-     */
-    public function getDynImageDir()
-    {
-        return $this->_sDynImageDir;
-    }
-
-    /**
-     * Returns select lists to display
-     *
-     * @return array
-     */
-    public function getDispSelList()
-    {
-        if ($this->_aDispSelList === null) {
-            if ( $this->getConfig()->getConfigParam( 'bl_perfLoadSelectLists' ) && $this->getConfig()->getConfigParam( 'bl_perfLoadSelectListsInAList' ) ) {
-                $this->_aDispSelList = $this->getSelectLists();
-            }
-        }
-        return $this->_aDispSelList;
-    }
-
-    /**
-     * Get more details link
-     *
-     * @return string
-     */
-    public function getMoreDetailLink()
-    {
-        return $this->_sMoreDetailLink;
-    }
-
-    /**
-     * Get to basket link
-     *
-     * @return string
-     */
-    public function getToBasketLink()
-    {
-        return $this->_sToBasketLink;
-    }
-    /**
-     * Get stock status
-     *
-     * @return integer
-     */
-    public function getStockStatus()
-    {
-        return $this->_iStockStatus;
-    }
-
-    /**
-     * Returns formated delivery date. If the date is not set ('0000-00-00') returns false.
-     *
-     * @return string | bool
-     */
-    public function getDeliveryDate()
-    {
-        if ( $this->oxarticles__oxdelivery->value != '0000-00-00') {
-            return oxUtilsDate::getInstance()->formatDBDate( $this->oxarticles__oxdelivery->value);
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Returns rounded T price.
-     *
-     * @return double | bool
-     */
-    public function getFTPrice()
-    {
-        if ( $oPrice = $this->getTPrice() ) {
-            if ( $oPrice->getBruttoPrice() ) {
-                return oxLang::getInstance()->formatCurrency( oxUtils::getInstance()->fRound($oPrice->getBruttoPrice()));
-            }
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Returns formated product's price.
-     *
-     * @return double
-     */
-    public function getFPrice()
-    {
-        if ( $oPrice = $this->getPrice() ) {
-            return $this->getPriceFromPrefix().oxLang::getInstance()->formatCurrency( $oPrice->getBruttoPrice() );
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Returns formated price per unit (oxarticle::_assignPrices())
-     *
-     * @return string
-     */
-    public function getPricePerUnit()
-    {
-        return $this->_fPricePerUnit;
-    }
-
-    /**
-     * Returns true if parent is not buyable
-     *
-     * @return bool
-     */
-    public function isParentNotBuyable()
-    {
-        return $this->_blNotBuyableParent;
-    }
-
-    /**
-     * Returns true if article is not buyable
-     *
-     * @return bool
-     */
-    public function isNotBuyable()
-    {
-        return $this->_blNotBuyable;
-    }
-
-    /**
-     * Returns formatted amount price.
-     *
-     * @return string
-     */
-    public function getFAmountPrice()
-    {
-        if ( $this->_dAmountPrice !== null ) {
-            $oCur = $this->getConfig()->getActShopCurrencyObject();
-            $sPrefix = oxLang::getInstance()->translateString( 'priceFrom' );
-            return $sPrefix.' '.oxLang::getInstance()->formatCurrency( $this->_dAmountPrice, $oCur );
-        }
-        return null;
-    }
-
-    /**
-     * Returns variant lists of current product
-     *
-     * @return object
-     */
-    public function getVariantList()
-    {
-        return $this->_oVariantList;
-    }
-
-    /**
-     * Returns variant lists of current product
-     *
-     * @return object
-     */
-    public function setSelectlist( $aSelList )
-    {
-        $this->_aDispSelList = $aSelList;
-    }
-
-    /**
-     * Returns article picture
-     *
-     * @return strin
-     */
-    public function getPictureUrl( $iIndex )
-    {
-        return $this->getConfig()->getPictureUrl( $this->{"oxarticles__oxpic".$iIndex}->value );
-    }
-
-    public function getIconUrl( $iIndex = '')
-    {
-        if (!$iIndex) {
-            $sFile = $this->oxarticles__oxicon->value;
-        } else {
-            $sFile = $this->{'oxarticles__oxpic' . $iIndex . '_ico'}->value;
-        }
-
-        $sFile = str_replace('nopic.jpg', 'nopic_ico.jpg', $sFile);
-        return $this->getConfig()->getPictureUrl( $sFile );
-    }
-
-    public function getThumbnailUrl()
-    {
-        return $this->getConfig()->getPictureUrl( $this->oxarticles__oxthumb->value );
-    }
-
-    public function getZoomPictureUrl($iIndex)
-    {
-        return $this->getConfig()->getPictureUrl( $this->{'oxarticles__oxzoom'.$iIndex}->value );
     }
 }

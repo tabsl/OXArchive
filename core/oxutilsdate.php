@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxutilsdate.php 13914 2008-10-30 11:12:55Z arvydas $
+ * $Id: oxutilsdate.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -170,10 +170,11 @@ class oxUtilsDate extends oxSuperCfg
         $aDate = explode( ".", $sDate);
 
         if ( isset( $aDate ) && count( $aDate) > 1) {
-            if( count( $aDate) == 2)
+            if( count( $aDate) == 2) {
                 $sDate = $aDate[1]."-".$aDate[0];
-            else
+            } else {
                 $sDate = $aDate[2]."-".$aDate[1]."-".$aDate[0];
+            }
         }
 
         return $sDate;

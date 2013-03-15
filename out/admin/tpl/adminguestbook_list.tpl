@@ -13,9 +13,9 @@ function EditThis( sID)
     var oTransfer = parent.edit.document.getElementById("transfer");
     oTransfer.oxid.value=sID;
     oTransfer.cl.value='[{if $actlocation}][{$actlocation}][{else}][{ $default_edit }][{/if}]';
-    
+
     //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();    
+    top.forceReloadingEditFrame();
 
     var oSearch = document.getElementById("search");
     oSearch.oxid.value=sID;
@@ -30,9 +30,9 @@ function DeleteThis( sID)
         var oTransfer = parent.edit.document.getElementById("transfer");
         oTransfer.oxid.value='-1';
         oTransfer.cl.value='[{ $default_edit }]';
-        
-	    //forcing edit frame to reload after submit
-	    top.forceReloadingEditFrame();    
+
+        //forcing edit frame to reload after submit
+        top.forceReloadingEditFrame();
 
         var oSearch = document.getElementById("search");
         oSearch.oxid.value=sID;
@@ -44,12 +44,13 @@ function DeleteThis( sID)
 
 function ChangeEditBar( sLocation, sPos)
 {
+    [{include file="autosave.script.tpl"}]
 
     var oTransfer = parent.edit.document.getElementById("transfer");
     oTransfer.cl.value=sLocation;
 
     //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();    
+    top.forceReloadingEditFrame();
 
     var oSearch = document.getElementById("search");
     oSearch.actedit.value=sPos;
@@ -66,7 +67,7 @@ function ChangeLanguage()
     var oTransfer = parent.edit.document.getElementById("transfer");
     oTransfer.innerHTML += '<input type="hidden" name="language" value="'+oSearch.changelang.value+'">';
     oTransfer.innerHTML += '<input type="hidden" name="editlanguage" value="'+oSearch.changelang.value+'">';
-    
+
     //forcing edit frame to reload after submit
     top.forceReloadingEditFrame();
 }

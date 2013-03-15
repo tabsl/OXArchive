@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxorderarticlelist.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxorderarticlelist.php 14392 2008-11-26 16:50:36Z vilma $
  */
 
 /**
@@ -38,7 +38,7 @@ class oxOrderArticleList extends oxList
     /**
      * Copies passed to method product into $this.
      *
-     * @param object &$oProduct product to copy
+     * @param string $sOxId object id
      *
      * @return null
      */

@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package views
  * @copyright © OXID eSales AG 2003-2008
- * $Id: account_password.php 14012 2008-11-06 13:23:45Z arvydas $
+ * $Id: account_password.php 14361 2008-11-25 15:40:16Z arvydas $
  */
 
 
@@ -101,15 +101,13 @@ class Account_Password extends Account
             return;
         }
 
-        $blCorrectPassword = ( oxUtils::getInstance()->strMan( $sOldPass, $this->getConfig()->getConfigParam( 'sConfigKey' ) ) == $oUser->oxuser__oxpassword->value ) || ( $sOldPass == $oUser->oxuser__oxpassword->value && strpos( $sOldPass, 'ox_' ) === false );
-
-        if ( !$sOldPass || !$blCorrectPassword ) {
+        if ( !$sOldPass || !$oUser->isSamePassword( $sOldPass ) ) {
             oxUtilsView::getInstance()->addErrorToDisplay('ACCOUNT_PASSWORD_ERRINCORRECTCURRENTPASSW', false, true, 'user');
             return;
         }
 
         // testing passed - changing password
-        $oUser->oxuser__oxpassword = new oxField($sNewPass);
+        $oUser->setPassword( $sNewPass );
         if ( $oUser->save() ) {
             $this->_blPasswordChanged = true;
         }

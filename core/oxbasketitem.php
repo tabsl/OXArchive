@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxbasketitem.php 14226 2008-11-17 08:46:23Z arvydas $
+ * $Id: oxbasketitem.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -196,11 +196,11 @@ class oxBasketItem extends oxSuperCfg
      *  - oxbasketitem::setPersParams().
      *  - oxbasketitem::setBundle();
      *
-     * @param string $sProductID           product id
-     * @param double $dAmount              amount
-     * @param array  $aSel                 selection
-     * @param array  $aPersParam           persistent params
-     * @param bool   $blBundle             bundle
+     * @param string $sProductID product id
+     * @param double $dAmount    amount
+     * @param array  $aSel       selection
+     * @param array  $aPersParam persistent params
+     * @param bool   $blBundle   bundle
      *
      * @throws oxNoArticleException, oxOutOfStockException, oxArticleInputException
      *
@@ -231,8 +231,8 @@ class oxBasketItem extends oxSuperCfg
      * Sets item amount and weight which depends on amount
      * ( oxbasketitem::dAmount, oxbasketitem::dWeight )
      *
-     * @param double $dAmount              amount
-     * @param bool   $blOverride           overide
+     * @param double $dAmount    amount
+     * @param bool   $blOverride overide
      *
      * @throws oxOutOfStockException, oxArticleInputException
      *
@@ -339,8 +339,9 @@ class oxBasketItem extends oxSuperCfg
         }
 
 
-        if ( $this->_oArticle )
+        if ( $this->_oArticle ) {
             return $this->_oArticle;
+        }
 
         $this->_oArticle = oxNew( 'oxarticle' );
 

@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxuserbasket.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxuserbasket.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -127,8 +127,9 @@ class oxUserBasket extends oxBase
     public function getItems( $blReload = false )
     {
         // cached ?
-        if ( $this->_aBasketItems !== null && !$blReload )
+        if ( $this->_aBasketItems !== null && !$blReload ) {
             return $this->_aBasketItems;
+        }
 
         // initializing
         $this->_aBasketItems = array();
@@ -248,8 +249,9 @@ class oxUserBasket extends oxBase
     public function addItemToBasket( $sProductId = null, $dAmount = null, $aSel = null, $blOverride = false )
     {
         // basket info is only written in DB when something is in it
-        if ( $this->_blNewBasket )
+        if ( $this->_blNewBasket ) {
             $this->save();
+        }
 
         if ( ( $oUserBasketItem = $this->getItem( $sProductId, $aSel ) ) ) {
 
@@ -285,10 +287,12 @@ class oxUserBasket extends oxBase
      */
     public function delete( $sOXID = null )
     {
-        if ( !$sOXID )
+        if ( !$sOXID ) {
             $sOXID = $this->getId();
-        if ( !$sOXID )
+        }
+        if ( !$sOXID ) {
             return false;
+        }
 
         if ( ( $blDelete = parent::delete( $sOXID ) ) ) {
             // cleaning up related data

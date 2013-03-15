@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxvendorlist.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxvendorlist.php 14368 2008-11-26 07:36:13Z vilma $
  */
 
 /**
@@ -174,7 +174,7 @@ class oxVendorList extends oxList
     {
         $sHtmlVendTree = '';
         $sSep         = '';
-        foreach ($this->_aPath as $oVendor){
+        foreach ($this->_aPath as $oVendor) {
             $sHtmlVendTree .= " $sSep<a href='".$oVendor->getLink()."'>".$oVendor->oxvendor__oxtitle->value."</a>";
             $sSep = '/ ';
         }
@@ -184,9 +184,7 @@ class oxVendorList extends oxList
     /**
      * Adds category specific fields to vendor object
      *
-     * @param object $oVendor      vendor object
-     * @param string $sLinkTarget  target to link to (class)
-     * @param string $sShopHomeUrl base shop url ($myConfig->getShopHomeURL())
+     * @param object $oVendor vendor object
      *
      * @return null
      */
@@ -230,8 +228,9 @@ class oxVendorList extends oxList
      */
     protected function _seoSetVendorData()
     {
-        if (!oxUtils::getInstance()->seoIsActive())
+        if (!oxUtils::getInstance()->seoIsActive()) {
             return;
+        }
 
         $oEncoder = oxSeoEncoderVendor::getInstance();
 

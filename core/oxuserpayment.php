@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxuserpayment.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxuserpayment.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -141,8 +141,9 @@ class oxUserPayment extends oxBase
     {
         // we do not store credit card information
         // check and in case skip it
-        if ( !$this->getStoreCreditCardInfo() && $this->oxuserpayments__oxpaymentsid->value == 'oxidcreditcard' )
+        if ( !$this->getStoreCreditCardInfo() && $this->oxuserpayments__oxpaymentsid->value == 'oxidcreditcard' ) {
             return true;
+        }
 
         //encode sensitive data
         if ( $sValue = $this->oxuserpayments__oxvalue->value ) {
@@ -194,8 +195,8 @@ class oxUserPayment extends oxBase
     /**
      * Get user payment by payment id
      * 
-     * @param oxUser $oUser      user object
-     * @param string $sPaymentId payment type 
+     * @param oxUser $oUser        user object
+     * @param string $sPaymentType payment type 
      *
      * @return bool
      */
@@ -228,8 +229,9 @@ class oxUserPayment extends oxBase
             return null;
         }
         
-        if ( !$this->_aDynValues )
+        if ( !$this->_aDynValues ) {
             $this->_aDynValues = oxUtils::getInstance()->assignValuesFromText( $this->oxuserpayments__oxvalue->value );
+        }
         return $this->_aDynValues;
     }
 

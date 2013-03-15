@@ -83,9 +83,9 @@
 [{ oxmultilang ident="EMAIL_ORDER_OWNER_HTML_MESSAGE" }] [{ $order->oxorder__oxremark->value }]
 [{/if}]
 
-[{if $payment->oxuserpayments__oxpaymentsid->value != "oxempty"}][{ oxmultilang ident="EMAIL_ORDER_OWNER_HTML_PEYMENTINFO" }]
+[{if $payment->oxuserpayments__oxpaymentsid->value != "oxempty"}][{ oxmultilang ident="EMAIL_ORDER_OWNER_HTML_PAYMENTINFO" }]
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_PAYMENTMETHOD" }][{ $payment->oxpayments__oxdesc->value }]
-[{ oxmultilang ident="EMAIL_ORDER_OWNER_HTML_PEYMENTINFOOFF" }]
+[{ oxmultilang ident="EMAIL_ORDER_OWNER_HTML_PAYMENTINFOOFF" }]
 [{ * foreach from=$payment->aDynValues item=value *}]
 [{ * $value->name * }] : [{ * $value->value *}]
 [{* /foreach *}]

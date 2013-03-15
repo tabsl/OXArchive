@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxutilscount.php 13914 2008-10-30 11:12:55Z arvydas $
+ * $Id: oxutilscount.php 14368 2008-11-26 07:36:13Z vilma $
  */
 
 /**
@@ -275,7 +275,8 @@ class oxUtilsCount extends oxSuperCfg
     /**
      * Returns specified Tag article count
      *
-     * @param string $sTag tag to search article count
+     * @param string $sTag  tag to search article count
+     * @param int    $iLang language
      *
      * @return int
      */

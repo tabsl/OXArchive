@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxarticlelist.php 14204 2008-11-13 15:47:17Z vilma $
+ * $Id: oxarticlelist.php 14388 2008-11-26 15:43:17Z vilma $
  */
 
 /**
@@ -117,16 +117,18 @@ class oxArticleList extends oxList
         // removing dublicates
         $aHistoryArticles = array_unique( $aHistoryArticles);
 
-        if(count($aHistoryArticles) > 5)
+        if(count($aHistoryArticles) > 5) {
             array_shift($aHistoryArticles);
+        }
 
         //add to session
         $mySession->setVar('aHistoryArticles', $aHistoryArticles);
 
         //remove current article and return array
         //asignment =, not ==
-        if (($iCurrentArt = array_search($sArtId, $aHistoryArticles)) !== false)
+        if (($iCurrentArt = array_search($sArtId, $aHistoryArticles)) !== false) {
             unset ($aHistoryArticles[$iCurrentArt]);
+        }
 
         $this->loadIds(array_values($aHistoryArticles));
     }
@@ -134,10 +136,11 @@ class oxArticleList extends oxList
     /**
      * Loads newest shops articles from DB.
      *
-     * @param int $iLimit
+     * @param int $iLimit Select limit
+     *
      * @return null;
      */
-    public function loadNewestArticles($iLimit = null)
+    public function loadNewestArticles( $iLimit = null )
     {
         //has module?
         $myConfig = $this->getConfig();
@@ -164,7 +167,7 @@ class oxArticleList extends oxList
                 }
                 $sSelect  = "select * from $sArticleTable ";
                 $sSelect .= "where oxparentid = '' and ".$this->getBaseObject()->getSqlActiveSnippet()." and oxissearch = 1 order by $sType desc ";
-                if (!($iLimit = (int)$iLimit)) {
+                if (!($iLimit = (int) $iLimit)) {
                     $iLimit = $myConfig->getConfigParam( 'iNrofNewcomerArticles' );
                 }
                 $sSelect .= "limit " . $iLimit;
@@ -220,8 +223,9 @@ class oxArticleList extends oxList
     public function loadAktionArticles( $sActionID )
     {
         // Performance
-        if( !trim( $sActionID) )
+        if( !trim( $sActionID) ) {
             return;
+        }
 
         $sShopID        = $this->getConfig()->getShopId();
         $sActionID      = strtolower( $sActionID);
@@ -325,6 +329,7 @@ class oxArticleList extends oxList
      *
      * @param string $sCatId         Category tree ID
      * @param array  $aSessionFilter Like array ( catid => array( attrid => value,...))
+     * @param int    $iLimit         Limit
      *
      * @return integer total Count of Articles in this Category
      */
@@ -428,8 +433,9 @@ class oxArticleList extends oxList
 
         $sWhere = null;
 
-        if( $sSearchStr )
+        if( $sSearchStr ) {
             $sWhere = $this->_getSearchSelect( $sSearchStr );
+        }
 
         $sArticleTable = getViewName('oxarticles');
 
@@ -549,8 +555,8 @@ class oxArticleList extends oxList
     /**
      * Loads a list of articles having
      *
-     * @param string $sTag
-     * @param int    $iLang active language
+     * @param string $sTag  Searched tag
+     * @param int    $iLang Active language
      *
      * @return int
      */
@@ -660,8 +666,9 @@ class oxArticleList extends oxList
             return;
         }
 
-        foreach ($aOrders as $iKey => $oOrder)
+        foreach ($aOrders as $iKey => $oOrder) {
             $aOrdersIds[] = $oOrder->getId();
+        }
 
         $sArticleTable = $this->getBaseObject()->getViewName();
         $sArticleFields = $this->getBaseObject()->getSelectFields();
@@ -694,10 +701,10 @@ class oxArticleList extends oxList
     }
 
     /**
-     * returns filtered articles sql "oxid in (filtered ids)" part
+     * Returns filtered articles sql "oxid in (filtered ids)" part
      *
-     * @param  string $sCatId  category id
-     * @param  array  $aFilter filters for this category
+     * @param string $sCatId  category id
+     * @param array  $aFilter filters for this category
      *
      * @return string
      */
@@ -904,8 +911,9 @@ class oxArticleList extends oxList
         $sSelect .= "where $sArticleTable.oxvendorid = '$sVendorId' ";
         $sSelect .= " and " . $this->getBaseObject()->getSqlActiveSnippet() . " and $sArticleTable.oxparentid = ''  ";
 
-        if ( $this->_sCustomSorting )
+        if ( $this->_sCustomSorting ) {
             $sSelect .= " ORDER BY {$this->_sCustomSorting} ";
+        }
 
         return $sSelect;
     }

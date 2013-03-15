@@ -1,0 +1,15 @@
+INSTALL:
+
+1. Download the latest version of OXID eShop Community Edition here:
+   http://www.oxid-esales.com/de/download/open-source-software-oxid-eshop-community-edition
+2. Create a new directory on your computer and unpack the downloaded file there
+3. Upload the files to your web server using an FTP client of your choice
+4. Check if your server environment meets our system requirements:
+   http://www.oxid-esales.com/en/products/community-edition/system-requirements
+5. Create a new database on your server and note all given data (db-host, db-name and db-password)
+6. Open your browser on http://www.yourshopurl.com and follow the installation instructions.
+
+NOTE: In any case of hassle, turn to ‘Installation and configuration’ section our community forum:
+http://www.oxid-esales.com/en/resources/forum/
+
+Have fun!

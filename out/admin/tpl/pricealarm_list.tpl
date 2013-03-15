@@ -45,6 +45,8 @@ function DeleteThis( sID)
 
 function ChangeEditBar( sLocation, sPos)
 {
+    [{include file="autosave.script.tpl"}]
+
     var oSearch = document.getElementById("search");
     oSearch.actedit.value=sPos;
     oSearch.submit();
@@ -153,7 +155,7 @@ window.onLoad = top.reloadEditFrame();
 [{foreach from=$mylist item=listitem}]
     [{assign var="_cnt" value=$_cnt+1}]
     <tr id="row.[{$_cnt}]">
-    
+
     [{ if $listitem->blacklist == 1}]
         [{assign var="listclass" value=listitem3 }]
     [{ else}]

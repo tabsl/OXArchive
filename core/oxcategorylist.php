@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxcategorylist.php 14055 2008-11-07 14:20:50Z vilma $
+ * $Id: oxcategorylist.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 
@@ -462,7 +462,9 @@ class oxCategoryList extends oxList
     {
         $oDB = oxDb::getDb();
 
-        if ($isroot) $thisRoot = $oxRootId;
+        if ($isroot) {
+            $thisRoot = $oxRootId;
+        }
 
         // Get sub categories of root categorie
         $rs = $oDB->execute("update oxcategories set oxrootid = '$thisRoot' where oxparentid = '$oxRootId'");
@@ -502,7 +504,7 @@ class oxCategoryList extends oxList
             case 'aPath':
             case 'aFullPath':
                 return $this->getPath();
-        }
+            }
         return parent::__get($sName);
     }
 

@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxutilsview.php 14152 2008-11-11 15:32:36Z vilma $
+ * $Id: oxutilsview.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -152,8 +152,9 @@ class oxUtilsView extends oxSuperCfg
         if ( $blCustomDestination && ( oxConfig::getParameter( 'CustomError' ) || $sCustomDestination!= '' ) ) {
             // check if the current request wants do display exceptions on its own
             $sDestination = oxConfig::getParameter( 'CustomError' );
-            if ( $sCustomDestination != '' )
+            if ( $sCustomDestination != '' ) {
                 $sDestination = $sCustomDestination;
+            }
         } else {
             //default
             $sDestination = 'default';
@@ -204,7 +205,7 @@ class oxUtilsView extends oxSuperCfg
         $oActView->addGlobalParams();
 
         // save old tpl data
-        $_tpl_vars = $oSmarty->_tpl_vars;
+        $sTplVars = $oSmarty->_tpl_vars;
 
         $aViewData = $oActView->getViewData();
         $aActiveViewData = $this->getConfig()->getActiveView()->getViewData();
@@ -218,7 +219,7 @@ class oxUtilsView extends oxSuperCfg
         $sRes = $oSmarty->fetch( "ox:$sOxid" );
 
         // restore tpl vars for continuing smarty processing if it is in one
-        $oSmarty->_tpl_vars = $_tpl_vars;
+        $oSmarty->_tpl_vars = $sTplVars;
 
         return $sRes;
     }

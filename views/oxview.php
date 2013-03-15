@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package views
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxview.php 14088 2008-11-10 16:51:19Z tomas $
+ * $Id: oxview.php 14431 2008-12-01 14:43:08Z rimvydas.paskevicius $
  */
 
 /**
@@ -257,6 +257,12 @@ class oxView extends oxSuperCfg
     protected $_blDemoVersion = null;
 
     /**
+     * If current shop has demo shop
+     * @var bool
+     */
+    protected $_blDemoShop = null;
+
+    /**
      * Rss links
      * @var array
      */
@@ -450,15 +456,8 @@ class oxView extends oxSuperCfg
      */
     public function render()
     {
-        //sending all view to smarty
-        $this->_aViewData['oView'] = $this;
-        $this->_aViewData['oViewConf'] = $this->getViewConfig();
-
-        // @deprecated
-        $this->_aViewData['shop'] = $this->_aViewData['oViewConf'];
-
         $this->_aViewData['meta_description'] = $this->getMetaDescription();
-        $this->_aViewData['meta_keywords'] = $this->getMetaKeywords();
+        $this->_aViewData['meta_keywords']    = $this->getMetaKeywords();
 
         // only if this is no component
         if ( !$this->_blIsComponent ) {
@@ -560,6 +559,10 @@ class oxView extends oxSuperCfg
         if ( $oShop ) {
             $oViewConf->setViewShop( $oShop, $this->_aViewData );
         }
+
+        //sending all view to smarty
+        $this->_aViewData['oView'] = $this;
+        $this->_aViewData['oViewConf'] = $this->getViewConfig();
 
         // @deprecated
         $this->_aViewData['shop'] = $this->getViewConfig();
@@ -1870,7 +1873,7 @@ class oxView extends oxSuperCfg
 
 
     /**
-     * Returns if current shop is demoshop
+     * Returns if current shop is demo version
      *
      * @return string
      */
@@ -1882,6 +1885,19 @@ class oxView extends oxSuperCfg
         return $this->_blDemoVersion;
     }
 
+    /**
+     * Returns if current shop is demoshop
+     *
+     * @return string
+     */
+    public function isDemoShop()
+    {
+        if ( $this->_blDemoShop == null ) {
+            $this->_blDemoShop = $this->getConfig()->isDemoShop();
+        }
+        return $this->_blDemoShop;
+    }
+    
     /**
      * Returns RSS links
      *

@@ -54,6 +54,7 @@ dl.box, ul.menue li {z-index: 1000;}
 /* IE opacity */
 #mask.on { filter:Alpha(Opacity=70);}
 div.bar.links a.language.act img{filter:Alpha(Opacity=70);}
+#body #demoAdminLink {filter:Alpha(opacity=70);}
 
 /* IE6 iframe shim for select boxes */
 #mask.on iframe{_visibility: visible;_width:900px;_height: 100%;_width:100%;_filter:mask();}
@@ -62,4 +63,8 @@ div.bar.links a.language.act img{filter:Alpha(Opacity=70);}
 #mask.on{ _position:absolute;_top:expression((_mask = document.documentElement.scrollTop) + 'px');}
 div.popup { _visibility:hidden;display:none;}
 div.popup.on { _position:absolute;_visibility:visible;display:block;_top:expression((_popup = document.documentElement.scrollTop) + document.documentElement.clientHeight/2 + 'px');}
+
+/* IE fixing problem with collspan when <td> has colspan and nonbreakable content doesn't fit in it */
+.showHideShippAddr {width: 543px; overflow: hidden;}
+
 

@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxnewssubscribed.php 13958 2008-11-04 11:00:00Z vilma $
+ * $Id: oxnewssubscribed.php 14368 2008-11-26 07:36:13Z vilma $
  */
 
 /**
@@ -67,8 +67,9 @@ class oxNewsSubscribed extends oxBase
     {
         $blRet = parent::load( $oxId );
 
-        if ( $this->oxnewssubscribed__oxdboptin->value == 1)
+        if ( $this->oxnewssubscribed__oxdboptin->value == 1) {
             $this->_blWasSubscribed = true;
+        }
 
         return $blRet;
     }

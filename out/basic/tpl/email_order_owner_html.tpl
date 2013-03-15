@@ -308,9 +308,9 @@
     [{ if $order->oxorder__oxremark->value }]
       <br><b>[{ oxmultilang ident="EMAIL_ORDER_OWNER_HTML_MESSAGE" }] </b>[{ $order->oxorder__oxremark->value }]<br>
     [{/if}]
-    [{if $payment->oxuserpayments__oxpaymentsid->value != "oxempty"}]<b>[{ oxmultilang ident="EMAIL_ORDER_OWNER_HTML_PEYMENTINFO" }]</b><br>
+    [{if $payment->oxuserpayments__oxpaymentsid->value != "oxempty"}]<b>[{ oxmultilang ident="EMAIL_ORDER_OWNER_HTML_PAYMENTINFO" }]</b><br>
     [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_PAYMENTMETHOD" }] [{ $payment->oxpayments__oxdesc->value }]<br><br>
-    [{ oxmultilang ident="EMAIL_ORDER_OWNER_HTML_PEYMENTINFOOFF" }]<br>
+    [{ oxmultilang ident="EMAIL_ORDER_OWNER_HTML_PAYMENTINFOOFF" }]<br>
     [{ * foreach from=$payment->aDynValues item=value *}]
       [{ * $value->name * }]: [{ * $value->value *}]  <br>
     [{* /foreach *}]

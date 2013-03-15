@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxvoucher.php 13901 2008-10-30 08:17:41Z vilma $
+ * $Id: oxvoucher.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -72,8 +72,9 @@ class oxVoucher extends oxBase
 
 
             $sQ = 'select * from '.$this->getViewName().' where oxvouchernr = "'.$voucherNr.'" and ';
-            foreach( $aVouchers as $sVoucherId => $sVoucherNr )
+            foreach( $aVouchers as $sVoucherId => $sVoucherNr ) {
                 $sQ .= 'oxid != "'.$sVoucherId.'" and ';
+            }
             $sQ .= '(oxorderid is NULL || oxorderid = "") ';
 
         //voucher timeout for 3 hours
@@ -342,7 +343,7 @@ class oxVoucher extends oxBase
             return true;
         }
 
-        if( ( strtotime( $oSerie->oxvoucherseries__oxbegindate->value ) < time() &&
+        if ( ( strtotime( $oSerie->oxvoucherseries__oxbegindate->value ) < time() &&
               strtotime( $oSerie->oxvoucherseries__oxenddate->value ) > time() ) ||
             !$oSerie->oxvoucherseries__oxenddate->value ||
             $oSerie->oxvoucherseries__oxenddate->value == $sDefTimeStamp ) {
@@ -364,8 +365,9 @@ class oxVoucher extends oxBase
     protected function _isNotReserved()
     {
 
-        if ( $this->oxvouchers__oxreserved->value < time() - 3600 * 3 )
+        if ( $this->oxvouchers__oxreserved->value < time() - 3600 * 3 ) {
             return true;
+        }
 
         $oEx = oxNew( 'oxVoucherException' );
         $oEx->setMessage('EXCEPTION_VOUCHER_ISRESERVED');

@@ -18,7 +18,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxattributelist.php 13617 2008-10-24 09:38:46Z sarunas $
+ * $Id: oxattributelist.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -51,8 +51,9 @@ class oxAttributeList extends oxList
             return;
         }
 
-        foreach ($aIds as $iKey => $sVal)
+        foreach ($aIds as $iKey => $sVal) {
             $aIds[$iKey] = mysql_real_escape_string($sVal);
+        }
 
         $sAttrViewName = getViewName( 'oxattribute' );
         $sLangAdd = oxLang::getInstance()->getLanguageTag();
@@ -66,9 +67,9 @@ class oxAttributeList extends oxList
     }
 
     /**
-     * fills array with keys and products with value
+     * Fills array with keys and products with value
      *
-     * @param string $sSql SQL select
+     * @param string $sSelect SQL select
      *
      * @return array $aAttributes
      */
@@ -96,13 +97,13 @@ class oxAttributeList extends oxList
     /**
      * Load attributes by article Id
      *
-     * @param string $sArtId article id
+     * @param string $sArtId article ids
      *
      * @return null;
      */
-    public function loadAttributes( $aArtId)
+    public function loadAttributes( $sArtId)
     {
-        if ( !$aArtId) {
+        if ( !$sArtId) {
             return;
         }
 
@@ -112,7 +113,7 @@ class oxAttributeList extends oxList
         $sSelect  = "select $sAttrViewName.*, o2a.* ";
         $sSelect .= "from oxobject2attribute as o2a ";
         $sSelect .= "left join $sAttrViewName on $sAttrViewName.oxid = o2a.oxattrid ";
-        $sSelect .= "where o2a.oxobjectid = '$aArtId' and o2a.oxvalue$sSuffix != '' ";
+        $sSelect .= "where o2a.oxobjectid = '$sArtId' and o2a.oxvalue$sSuffix != '' ";
         $sSelect .= "order by o2a.oxpos, $sAttrViewName.oxpos";
 
         $this->selectString( $sSelect );

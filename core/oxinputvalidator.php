@@ -19,7 +19,7 @@
  * @link http://www.oxid-esales.com
  * @package core
  * @copyright © OXID eSales AG 2003-2008
- * $Id: oxinputvalidator.php 14225 2008-11-17 08:42:15Z vilma $
+ * $Id: oxinputvalidator.php 14378 2008-11-26 13:59:41Z vilma $
  */
 
 /**
@@ -76,7 +76,7 @@ class oxInputValidator
     /**
      * Validates basket amount
      *
-     * @param float $dAmount              amount of article
+     * @param float $dAmount amount of article
      *
      * @throws oxArticleInputException if amount is not numeric or smaller 0
      *
@@ -120,8 +120,9 @@ class oxInputValidator
                 $blOK = false;
 
                 foreach ( $this->_aRequiredCCFields as $sFieldName ) {
-                    if ( !isset( $aDynvalue[$sFieldName] ) || !trim( $aDynvalue[$sFieldName] ) )
+                    if ( !isset( $aDynvalue[$sFieldName] ) || !trim( $aDynvalue[$sFieldName] ) ) {
                         break 2;
+                    }
                 }
 
                 if ( in_array( $aDynvalue['kktype'], $this->_aPossibleCCType ) ) {
@@ -143,8 +144,9 @@ class oxInputValidator
                 $blOK = false;
 
                 foreach ( $this->_aRequiredDCFields as $sFieldName ) {
-                    if ( !isset( $aDynvalue[$sFieldName] ) || !trim( $aDynvalue[$sFieldName] ) )
+                    if ( !isset( $aDynvalue[$sFieldName] ) || !trim( $aDynvalue[$sFieldName] ) ) {
                         break 2;
+                    }
                 }
 
                 // cleaning up spaces
@@ -157,8 +159,9 @@ class oxInputValidator
                     $aDynvalue['lsktonr'] = $sNewNum;
                 }
 
-                if ( preg_match( "/\d{8}/", $aDynvalue['lsblz'] ) && preg_match( "/\d{10}/", $aDynvalue['lsktonr'] ) )
+                if ( preg_match( "/\d{8}/", $aDynvalue['lsblz'] ) && preg_match( "/\d{10}/", $aDynvalue['lsktonr'] ) ) {
                     $blOK = true;
+                }
                 break;
         }
 
