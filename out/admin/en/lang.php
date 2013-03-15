@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 40608 2011-12-14 13:36:58Z juergen.busch $
+ * @version   SVN: $Id: lang.php 41876 2012-01-30 10:15:28Z mindaugas.rimgaila $
  */
 
 /*
@@ -1744,7 +1744,7 @@ $aLang = array(
 'PROMOTIONS_ARTICLE_UNASSIGNARTICLE'                       => 'Unassign Product',
 'PROMOTIONS_ARTICLE_ASSIGNEDARTICLE'                       => 'Assigned Product:',
 'PROMOTIONS_ARTICLE_ALLITEMS'                              => 'All available Products',
-
+'SHOP_SYSTEM_SHOWREMEMBERME'                               => 'Show "Remember me" option in login box',
 
 );
 

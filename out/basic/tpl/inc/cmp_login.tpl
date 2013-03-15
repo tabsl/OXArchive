@@ -29,7 +29,7 @@
             </tr>
             <tr>
               <td colspan="2">
-                <input id="test_LoginKeepLoggedIn" class="chbox" type="checkbox" name="lgn_cook" value="1">[{ oxmultilang ident="INC_CMP_LOGIN_KEEPLOGGEDIN" }]
+                [{if $oView->showRememberMe()}]<input id="test_LoginKeepLoggedIn" class="chbox" type="checkbox" name="lgn_cook" value="1">[{ oxmultilang ident="INC_CMP_LOGIN_KEEPLOGGEDIN" }][{else}]&nbsp;[{/if}]
               </td>
               <td>
                 <a id="test_LoginRegister" href="[{ oxgetseourl ident=$oViewConf->getSslSelfLink()|cat:"cl=register" }]" class="link" rel="nofollow">[{ oxmultilang ident="INC_CMP_LOGIN_OPENACCOUNT" }]</a><br />

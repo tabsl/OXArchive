@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: compare.php 38154 2011-08-12 10:23:04Z arunas.paskevicius $
+ * @version   SVN: $Id: compare.php 41805 2012-01-27 08:52:12Z arvydas.vapsva $
  */
 
 /**
@@ -219,13 +219,13 @@ class Compare extends oxUBase
      */
     public function getCompareItems()
     {
-        
+
         if ( $this->_aCompItems === null ) {
-            
+
             $aItems = oxSession::getVar( 'aFiltcompproducts' );
-            
+
             if ( is_array( $aItems ) && count( $aItems ) ) {
-                
+
                 $this->_aCompItems = $aItems;
             }
         }
@@ -276,31 +276,21 @@ class Compare extends oxUBase
      */
     public function getCompArtList()
     {
-        
-        
         if ( $this->_oArtList === null ) {
-
-
-            if ( $aItems = $this->getCompareItems()) {
-
-
-                $oList = oxNew( 'oxarticlelist' );
-
-
+            if ( ( $aItems = $this->getCompareItems() ) ) {
                 // counts how many pages
+                $oList = oxNew( 'oxarticlelist' );
                 $oList->loadIds( array_keys( $aItems ) );
 
-                    // cut page articles
-                    if ( $this->_iArticlesPerPage > 0 ) {
-                        $this->_iCntPages = round( $oList->count() / $this->_iArticlesPerPage + 0.49 );
-                        $aItems = $this->_removeArticlesFromPage( $aItems, $oList );
-                    }
+                // cut page articles
+                if ( $this->_iArticlesPerPage > 0 ) {
+                    $this->_iCntPages = round( $oList->count() / $this->_iArticlesPerPage + 0.49 );
+                    $aItems = $this->_removeArticlesFromPage( $aItems, $oList );
+                }
 
                 $this->_oArtList = $this->_changeArtListOrder( $aItems, $oList );
-
             }
         }
-
 
         return $this->_oArtList;
     }

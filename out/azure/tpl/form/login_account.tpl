@@ -35,10 +35,13 @@
                     <span class="js-oxError_notEmpty">[{ oxmultilang ident="EXCEPTION_INPUT_NOTALLFIELDS" }]</span>
                 </p>
             </li>
+
+            [{if $oView->showRememberMe()}]
             <li>
                 <label>[{ oxmultilang ident="FORM_LOGIN_ACCOUNT_KEEPLOGGEDIN" }]</label>
                 <input type="checkbox" class="checkbox" name="lgn_cook" value="1">
             </li>
+            [{/if}]
 
             <li class="formSubmit">
                 <button id="loginButton" type="submit" class="submitButton largeButton">[{ oxmultilang ident="FORM_LOGIN_ACCOUNT_LOGIN" }]</button>

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_extend.php 39922 2011-11-14 08:41:13Z arvydas.vapsva $
+ * @version   SVN: $Id: article_extend.php 41407 2012-01-16 14:35:55Z mindaugas.rimgaila $
  */
 
 /**
@@ -155,7 +155,7 @@ class Article_Extend extends oxAdminDetails
         $oArticle = oxNew( "oxarticle" );
         $oArticle->loadInLang( $this->_iEditLang, $soxId);
 
-        if ( $aParams['oxarticles__oxtprice'] != $oArticle->oxarticles__oxtprice->value &&  $aParams['oxarticles__oxtprice'] && $aParams['oxarticles__oxtprice'] < $oArticle->oxarticles__oxprice->value) {
+        if ( $aParams['oxarticles__oxtprice'] != $oArticle->oxarticles__oxtprice->value &&  $aParams['oxarticles__oxtprice'] && $aParams['oxarticles__oxtprice'] <= $oArticle->oxarticles__oxprice->value) {
             //$aParams['oxarticles__oxtprice'] = $oArticle->oxarticles__oxtprice->value;
             $this->_aViewData["errorsavingtprice"] = 1;
         }

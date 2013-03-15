@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 40458 2011-12-06 09:01:50Z justinas.straksys $
+ * @version   SVN: $Id: help_lang.php 40995 2012-01-05 12:36:29Z linas.kukulskis $
  */
 
 /**
@@ -277,7 +277,7 @@ $aLang =  array(
 
 
 'HELP_SHOP_MAIN_PRODUCTIVE'                   => 'As long as this setting is <span class="warning_or_important_hint">not</span> active, information about execution times and debug information are displayed  at the bottom of each page. These information is useful when customizing eShop.<br>' .
-                                                 '<span class="warning_or_important_hint">Activate this setting when the eShop is launched. Thereby only the eShop without additional information is displayed to your users.</span><br>',
+                                                 '<span class="warning_or_important_hint">Activate this setting when the eShop is launched. Thereby only the eShop without additional information is displayed to your users.</span><br>' .
                                                  'Find other important information for going live with OXID eShop in our <a href="http://wiki.oxidforge.org/Tutorials/Check_before_going_live" target="_blank">OXIDforge</a>.',
 
 'HELP_SHOP_MAIN_ACTIVE'                       => 'With <span class="navipath_or_inputname">Active</span> you can enable/disable the complete eShop. If the eShop is disabled, a message saying the eShop is temporary offline is displayed to the users. This can be useful for maintenance.',

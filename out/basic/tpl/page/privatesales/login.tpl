@@ -97,7 +97,9 @@
                 <label for="userPassword">[{ oxmultilang ident="INC_CMP_LOGIN_PWD" }]</label>
                 <input id="userPassword" type="password" name="lgn_pwd" value="" size="49" class="txt"><br>
 
+                [{if $oView->showRememberMe()}]
                 <input id="test_LoginKeepLoggedIn" class="chbox" type="checkbox" name="lgn_cook" value="1"><span class="chboxDesc">[{ oxmultilang ident="INC_CMP_LOGIN_KEEPLOGGEDIN" }]</span>
+                [{/if}]
 
                 <div class="loginBtn">
                     <input id="test_Login" type="submit" class="btn" name="send" value="[{ oxmultilang ident="INC_CMP_LOGIN_LOGIN" }]"><br>

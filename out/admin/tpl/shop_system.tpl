@@ -231,6 +231,18 @@ function _groupExp(el) {
 
             <dl>
                 <dt>
+                    <input type=hidden name=confbools[blShowRememberMe] value=false>
+                    <input type=checkbox name=confbools[blShowRememberMe] value=true  [{if ($confbools.blShowRememberMe)}]checked[{/if}] [{ $readonly }]>
+                    [{ oxinputhelp ident="HELP_SHOP_SYSTEM_SHOWREMEMBERME" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_SYSTEM_SHOWREMEMBERME" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+            <dl>
+                <dt>
                     <textarea class="txtfield" name=confarrs[aDeniedDynGroups] [{ $readonly }]>[{$confarrs.aDeniedDynGroups}]</textarea>
                     [{ oxinputhelp ident="HELP_SHOP_SYSTEM_DENIEDDYNGROUPS" }]
                 </dt>

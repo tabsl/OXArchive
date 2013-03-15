@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 40696 2011-12-19 13:43:43Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxubase.php 41876 2012-01-30 10:15:28Z mindaugas.rimgaila $
  */
 
 /**
@@ -3265,5 +3265,15 @@ class oxUBase extends oxView
             $oUtils->setOxCookie( "fbwidgetson", $this->_blFbWidgetsOn ? 1 : 0 );
         }
         return $this->_blFbWidgetsOn;
+    }
+
+    /**
+     * Returns true if "Remember me" are ON
+     *
+     * @return boolean
+     */
+    public function showRememberMe()
+    {
+        return (bool)$this->getConfig()->getConfigParam('blShowRememberMe');
     }
 }

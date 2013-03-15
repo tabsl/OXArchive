@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   smarty_plugins
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: function.oxcontent.php 33129 2011-02-10 10:28:57Z arvydas.vapsva $
+ * @version   SVN: $Id: function.oxcontent.php 41034 2012-01-09 13:11:21Z linas.kukulskis $
  */
 
 /**
@@ -64,7 +64,7 @@ function smarty_function_oxcontent( $params, &$smarty )
             $sProp = 'oxcontents__'.$sField;
             $smarty->oxidcache = clone $oContent->$sProp;
             $smarty->compile_check  = true;
-            $sCacheId = oxLang::getInstance()->getBaseLanguage().(int) $myConfig->getShopCurrency();
+            $sCacheId = oxLang::getInstance()->getBaseLanguage() . $myConfig->getShopId();
             $sText = $smarty->fetch( "ox:".(string)$sIdent.(string)$sOxid.$sField.$sCacheId);
             $smarty->compile_check  = $myConfig->getConfigParam( 'blCheckTemplates' );
         }

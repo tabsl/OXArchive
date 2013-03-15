@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: details.php 40663 2011-12-16 16:06:29Z linas.kukulskis $
+ * @version   SVN: $Id: details.php 41850 2012-01-28 12:09:35Z arvydas.vapsva $
  */
 
 /**
@@ -1428,13 +1428,11 @@ class Details extends oxUBase
         $aPaths = array();
 
         if ( 'search' == oxConfig::getParameter( 'listtype' ) ) {
+            $sSearchParam = $this->getSearchParamForHtml();
 
             $aCatPath = array();
-            $aCatPath['title'] = sprintf(oxLang::getInstance()->translateString( 'searchResult', oxLang::getInstance()->getBaseLanguage(), false ), oxConfig::getParameter( 'searchparam' ));
-            $sLink = $this->getViewConfig()->getSelfLink() . 'stoken=' . oxSession::getVar('sess_stoken')
-                   . "&amp;cl=search&amp;searchparam=" . oxConfig::getParameter( 'searchparam' );
-
-            $aCatPath['link']  = $sLink;
+            $aCatPath['title'] = sprintf( oxLang::getInstance()->translateString( 'searchResult', oxLang::getInstance()->getBaseLanguage(), false ), $sSearchParam );
+            $aCatPath['link']  = $this->getViewConfig()->getSelfLink() . 'stoken=' . oxSession::getVar('sess_stoken') . "&amp;cl=search&amp;searchparam=" . $sSearchParam;
 
             $aPaths[] = $aCatPath;
 

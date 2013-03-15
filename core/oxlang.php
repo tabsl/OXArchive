@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlang.php 38193 2011-08-17 12:24:51Z linas.kukulskis $
+ * @version   SVN: $Id: oxlang.php 41717 2012-01-24 09:58:52Z linas.kukulskis $
  */
 
 /**
@@ -454,6 +454,7 @@ class oxLang extends oxSuperCfg
      * @param string $sFile file name
      *
      * @return null
+     * @deprecated since 2012-01-24 marked in version 4.5.7
      */
     public function registerAdditionalLangFile($sFile)
     {
@@ -674,12 +675,21 @@ class oxLang extends oxSuperCfg
 
         if ( $blAdmin ) {
 
+            // admin lang files
             $sAdminPath = $sOutDir . 'admin/' . $sLang . '/';
             $aLangFiles[] = $sAdminPath . "lang.php";
             $aTmpFiles = glob( $sAdminPath."*_lang.php" );
             if ( is_array( $aTmpFiles ) && count( $aTmpFiles ) ) {
                 $aLangFiles = array_merge( $aLangFiles, $aTmpFiles);
             }
+
+            // themes options lang files
+            $sThemePath = $sOutDir . '*/' . $sLang . '/theme_options.php';
+            $aTmpFiles = glob( $sThemePath );
+            if ( is_array( $aTmpFiles ) && count( $aTmpFiles ) ) {
+                $aLangFiles = array_merge( $aLangFiles, $aTmpFiles);
+            }
+
             return count( $aLangFiles ) ? $aLangFiles : false;
         }
 

@@ -42,9 +42,11 @@
                     <input id="loginPasword" type="password" name="lgn_pwd" class="textbox passwordbox" value=""><strong><a id="forgotPasswordOpener" href="#" title="[{ oxmultilang ident="WIDGET_LOGINBOX_FORGOT_PASSWORD" }]">?</a></strong>
                 </p>
                 [{$smarty.capture.loginErrors}]
+                [{if $oView->showRememberMe()}]
                 <p class="checkFields clear">
                     <input type="checkbox" class="checkbox" value="1" name="lgn_cook" id="remember"><label for="remember">[{ oxmultilang ident="WIDGET_LOGINBOX_REMEMBER_ME" }]</label>
                 </p>
+                [{/if}]
                 <p>
                     <button type="submit" class="submitButton">[{ oxmultilang ident="WIDGET_LOGINBOX_LOGIN" }]</button>
                 </p>

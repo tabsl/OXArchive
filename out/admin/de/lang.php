@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 40609 2011-12-14 13:37:31Z juergen.busch $
+ * @version   SVN: $Id: lang.php 41876 2012-01-30 10:15:28Z mindaugas.rimgaila $
  */
 
 $sLangName  = 'Deutsch';
@@ -1740,6 +1740,7 @@ $aLang = array(
 'PROMOTIONS_ARTICLE_UNASSIGNARTICLE'                       => 'Produktzuordnung löschen',
 'PROMOTIONS_ARTICLE_ASSIGNEDARTICLE'                       => 'Zugeordnetes Produkt:',
 'PROMOTIONS_ARTICLE_ALLITEMS'                              => 'Alle verfügbaren Produkte',
+'SHOP_SYSTEM_SHOWREMEMBERME'                               => 'Option "Passwort merken" beim Login anzeigen',
 
 );
 

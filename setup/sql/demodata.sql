@@ -3904,10 +3904,6 @@ INSERT INTO `oxobject2list` VALUES('e7a0e4aac7db2e6cece2d7574aa24557', 'd86f7753
 INSERT INTO `oxobject2list` VALUES('e7a02053bb5afa05a6796ed5c010ba30', 'd861ad687c60820255dbf8f88516f24d', 'e7a0b1906e0d94e05693f06b0b6fcc32', '', '2011-02-01 09:12:01');
 INSERT INTO `oxobject2list` VALUES('e7add6c1701101ab906a9ece8a606444', '058de8224773a1d5fd54d523f0c823e0', 'e7a0b1906e0d94e05693f06b0b6fcc32', '', '2011-02-01 09:12:51');
 INSERT INTO `oxobject2list` VALUES('e7ad1000d71060c0cf939fb954b56b03', 'fadc492a5807c56eb80b0507accd756b', 'e7a0b1906e0d94e05693f06b0b6fcc32', '', '2011-02-01 09:13:33');
-INSERT INTO `oxobject2list` VALUES('bcbbe91ca2776370cdd3b12ae93cd0cb', 'b56369b1fc9d7b97f9c5fc343b349ece', 'bcb32b40eaec3d986a018d2398532022', '', '2011-02-01 13:42:17');
-INSERT INTO `oxobject2list` VALUES('bcb28aebbe67f8ef45380588e6df635d', '058de8224773a1d5fd54d523f0c823e0', 'bcb32b40eaec3d986a018d2398532022', '', '2011-02-01 13:42:37');
-INSERT INTO `oxobject2list` VALUES('bcbb747ddc358a396309ac55af3a3d72', 'd8631f92ababb452139f222afb81cd36', 'bcb32b40eaec3d986a018d2398532022', '', '2011-02-01 13:43:00');
-INSERT INTO `oxobject2list` VALUES('bcbd60277fa0211a27a90a35ac0b86e9', 'adcb9deae73557006a8ac748f45288b4', 'bcb32b40eaec3d986a018d2398532022', '', '2011-02-01 13:46:12');
 
 #
 # Data for table `oxobject2payment`
@@ -4017,12 +4013,9 @@ INSERT INTO `oxobject2group` VALUES ('c193fddd49b5f65d4.60703125', 'oxbaseshop',
 INSERT INTO `oxobject2group` VALUES ('dfc42e744180bf4a9.98598495', 'oxbaseshop', 'dfc42e74417f07347.45624764', 'oxidnewcustomer');
 INSERT INTO `oxobject2group` VALUES ('92044c0db9271e5b8.58103839', 'oxbaseshop', '92044c0db9220e842.85595739', 'oxidnewcustomer');
 INSERT INTO `oxobject2group` VALUES ('e7a7197c7cf8e878e8ff2c18645788ab', 'oxbaseshop', 'e7af1c3b786fd02906ccd75698f4e6b9', 'oxidnewcustomer');
-INSERT INTO `oxobject2group` VALUES ('bcbd7fdd0cd8740392be22fe6c644dbd', 'oxbaseshop', 'bcbd3f535627a202d92fa745c0fce24a', 'oxidnewcustomer');
 INSERT INTO `oxobject2group` VALUES ('e7a3bc0ffde37901c6c1be9bdd43b9a5', 'oxbaseshop', 'e7af1c3b786fd02906ccd75698f4e6b9', 'oxidcustomer');
 INSERT INTO `oxobject2group` VALUES ('e7a50c8a8a31cb82b8ae4b38c64a78ba', 'oxbaseshop', 'e7af1c3b786fd02906ccd75698f4e6b9', 'oxidgoodcust');
 INSERT INTO `oxobject2group` VALUES ('e5d1d2defe53c30aeca0f86bde4ae531', 'oxbaseshop', 'e7af1c3b786fd02906ccd75698f4e6b9', 'oxidmiddlecust');
-INSERT INTO `oxobject2group` VALUES ('bcb97a5f822f9d661f88619cefd2fc3b', 'oxbaseshop', 'bcbd3f535627a202d92fa745c0fce24a', 'oxidcustomer');
-INSERT INTO `oxobject2group` VALUES ('bcb0cdd993b0ce9a3ca145f7cc8aee79', 'oxbaseshop', 'bcbd3f535627a202d92fa745c0fce24a', 'oxidgoodcust');
 INSERT INTO `oxobject2group` VALUES ('515d07c92d6f3178601adb83ab50d747', 'oxbaseshop', '5158381d9da5cc40384c50600991c74f', 'oxidnewcustomer');
 INSERT INTO `oxobject2group` VALUES ('515eeb3573a79d8ff8dd90dcf9a3ac3e', 'oxbaseshop', '5158381d9da5cc40384c50600991c74f', 'oxidnotyetordered');
 
@@ -4052,7 +4045,6 @@ INSERT INTO `oxprice2article` VALUES('294d8aaea6a29e9e302213d83ac67664', 'oxbase
 # Data for table `oxratings`
 #
 INSERT INTO `oxratings` VALUES('e7aa4c3a8508491a7e875f26b51fe4d0', 'oxbaseshop', 'e7af1c3b786fd02906ccd75698f4e6b9', 'oxarticle', 'b56369b1fc9d7b97f9c5fc343b349ece', 5, '2011-02-01 09:03:56');
-INSERT INTO `oxratings` VALUES('bcb50f4f5f47843276058c16331f5ca6', 'oxbaseshop', 'bcbd3f535627a202d92fa745c0fce24a', 'oxarticle', 'b56369b1fc9d7b97f9c5fc343b349ece', 5, '2011-02-01 13:40:19');
 INSERT INTO `oxratings` VALUES('bcb64c798fd5ec58e5a6de30d52afee2', 'oxbaseshop', 'e7af1c3b786fd02906ccd75698f4e6b9', 'oxarticle', 'f4fe754e1692b9f79f2a7b1a01bb8dee', 4, '2011-02-01 15:44:03');
 INSERT INTO `oxratings` VALUES('13f810d1aa415400c8abdd37a5b2181a', 'oxbaseshop', 'e7af1c3b786fd02906ccd75698f4e6b9', 'oxarticle', 'd86e244c8114c8214fbf83da8d6336b3', 4, '2011-02-16 15:21:20');
 INSERT INTO `oxratings` VALUES('c62d0873a0ed83aeed879c83aa863f23', 'oxbaseshop', 'e7af1c3b786fd02906ccd75698f4e6b9', 'oxarticle', 'dc5ffdf380e15674b56dd562a7cb6aec', 0, '2011-02-16 17:53:00');
@@ -4062,20 +4054,17 @@ INSERT INTO `oxratings` VALUES('944374b68a8b26d8d95a8b11ad574a75', 'oxbaseshop',
 # Data for table `oxrecommlists`
 #
 INSERT INTO `oxrecommlists` VALUES('e7a0b1906e0d94e05693f06b0b6fcc32', 'oxbaseshop', 'e7af1c3b786fd02906ccd75698f4e6b9', 'Marc Muster', 'Kite-Equipment', '', 0, 0);
-INSERT INTO `oxrecommlists` VALUES('bcb32b40eaec3d986a018d2398532022', 'oxbaseshop', 'bcbd3f535627a202d92fa745c0fce24a', 'Patrick Hoffman', 'Best of...', '', 0, 0);
 
 #
 # Data for table `oxremark`
 #
 INSERT INTO `oxremark` VALUES('e7a798db99a5c61a3e56526e947f9d59', 'e7af1c3b786fd02906ccd75698f4e6b9', 'r', '2011-02-01 08:41:25', 'Der Benutzer wird nach der Eingabe seines Passwortes registriert', '2011-02-01 08:41:25');
-INSERT INTO `oxremark` VALUES('bcb565ff0e2dd53823b79438577572bc', 'bcbd3f535627a202d92fa745c0fce24a', 'r', '2011-02-01 13:38:23', 'Der Benutzer wird nach der Eingabe seines Passwortes registriert', '2011-02-01 13:38:23');
 INSERT INTO `oxremark` VALUES('7d0dc307d36ef90f461442579037bfad', 'e7af1c3b786fd02906ccd75698f4e6b9', 'o', '2011-03-30 10:55:17', '\n<p>Folgende Artikel wurden soeben unter OXID eShop EE 4 bestellt:</p>\n\nBestellnr. 1\n\n\nKite CORE GTSGeschenkverp.: KEINEEinzelpreis 879,00 EUR\nAnzahl 1\nMwSt 19%\nGesamt 879,00 EUR\nKuyichi Ledergürtel JEVERGeschenkverp.: KEINEEinzelpreis 29,90 EUR\nAnzahl 1\nMwSt 19%\nGesamt 29,90 EUR\nBindung O''BRIEN DECADE CT 2010Geschenkverp.: KEINEEinzelpreis 359,00 EUR\nAnzahl 1\nMwSt 19%\nGesamt 359,00 EUR\nKiteFix Kleber GLUFIX (30g)Geschenkverp.: KEINEEinzelpreis 12,49 EUR\nAnzahl 1\nMwSt 19%\nGesamt 12,49 EUR\nTrapez ION SOL KITE 2011Geschenkverp.: KEINEEinzelpreis 129,00 EUR\nAnzahl 1\nMwSt 19%\nGesamt 129,00 EUR\nKite NBK EVO 2010Geschenkverp.: KEINEEinzelpreis 699,00 EUR\nAnzahl 1\nMwSt 19%\nGesamt 699,00 EUR\n------------------------------------------------------------------\nSumme Artikel (brutto): 2.108,39 EUR\n    Rabatt Aktion Schnäppchen: -157,80 EUR\n      Summe Artikel (netto): 1.639,15 EUR\n        zzgl. MwSt. 19% Betrag: 311,44 EUR\n  Versandkosten :  EUR\n\n\nGesamtsumme: 1.950,59 EUR\n\nMitteilung: Hier können Sie uns noch etwas mitteilen.\n\nBezahlinformation:\nDie Bezahlung erfolgt mit:Rechnung \n<b>BEZAHLINFORMATIONEN AUSGESCHALTET</b> - um diese einzuschalten bitte email_order_owner_html.tpl\naendern.\n\nE-Mail-Adresse: info@oxid-esales.com\n\nRechnungsanschrift:\n\nHerr Marc Muster\nHauptstr. 13\nBW\n79098 Freiburg\nDeutschland\nTelefon: \n\n\nDer Versand erfolgt mit Standard\n\n-- Bitte fügen Sie hier Ihre vollständige Anbieterkennzeichnung ein.\n', '2011-03-30 10:55:17');
 
 #
 # Data for table `oxreviews`
 #
 INSERT INTO `oxreviews` VALUES('e7af435915814c63c0d6e9084804ac04', 0, 'b56369b1fc9d7b97f9c5fc343b349ece', 'oxarticle', 'Dieser Kite ist sehr gut verarbeitet und überzeugt mit hervorragenden Allround-Eigenschaften. Vor allem aber im Freestyle-Bereich kommt seine Qualität voll zur Geltung. Ich kann ihn nur weiterempfehlen!', 'e7af1c3b786fd02906ccd75698f4e6b9', '2011-02-01 09:03:56', 0, 5);
-INSERT INTO `oxreviews` VALUES('bcbd1d075f78640619179ebd69ccd0cf', 0, 'b56369b1fc9d7b97f9c5fc343b349ece', 'oxarticle', 'Super Kite, blitzschneller Versand!', 'bcbd3f535627a202d92fa745c0fce24a', '2011-02-01 13:40:19', 0, 5);
 INSERT INTO `oxreviews` VALUES('bcb341381858129f7412beb11c827a25', 0, 'f4fe754e1692b9f79f2a7b1a01bb8dee', 'oxarticle', 'Solides Board mit coolem Design', 'e7af1c3b786fd02906ccd75698f4e6b9', '2011-02-01 15:44:03', 0, 4);
 INSERT INTO `oxreviews` VALUES('94415306f824dc1aa2fce0dc4f12783d', 0, 'b56597806428de2f58b1c6c7d3e0e093', 'oxarticle', 'Fantastic kite with great performance!', 'e7af1c3b786fd02906ccd75698f4e6b9', '2011-03-25 16:51:05', 1, 5);
 
@@ -4152,7 +4141,6 @@ INSERT INTO `oxorder` VALUES('7d090db46a124f48cb7e6836ceef3f66', 'oxbaseshop', '
 # Data for table `oxuser`
 #
 INSERT INTO `oxuser` VALUES('e7af1c3b786fd02906ccd75698f4e6b9', 1, 'user', 'oxbaseshop', 'info@oxid-esales.com', '08e4b8e9f77d78d92fe17bf276783d5f', '6537613339316161636532363266356338616564303034326163326235316266', 2, '', '',    'Marc',  'Muster',       'Hauptstr.',  '13', '', 'Freiburg', 'a7c40f631fc920687.20179984', '', '79098', '', '', 'MR', 1000, '2011-02-01 08:41:25', '2011-02-01 08:41:25', '', '', '0000-00-00', '', 0, '', 0, 0, 0);
-INSERT INTO `oxuser` VALUES('bcbd3f535627a202d92fa745c0fce24a', 1, 'user', 'oxbaseshop', 'abc.fg@hi.de', '31d72acc0e5a6d5d905fa6f8cac44ad4', '6263626335396166666263323664363430663064333238383234613435323165',         3, '', '', 'Patrick', 'Hoffman', 'Schwarzwaldstr.', '188', '', 'Freiburg', 'a7c40f631fc920687.20179984', '', '79098', '', '', 'MR', 1000, '2011-02-01 13:38:23', '2011-02-01 13:38:23', '', '', '0000-00-00', '', 0, '', 0, 0, 0);
 
 #
 # Data for table `oxnewssubscribed`
@@ -4163,7 +4151,6 @@ INSERT INTO `oxnewssubscribed` VALUES ('36944b76d6e5bd545.44755823', '36944b76d6
 INSERT INTO `oxnewssubscribed` VALUES ('36944b76daea2c536.99998884', '36944b76dae9ef333.88219217', 'MR', 'Franz', 'Zahlendreher', 'buchhaltung', 0, '', '2006-07-14 12:10:54', '0000-00-00 00:00:00');
 INSERT INTO `oxnewssubscribed` VALUES ('36944b76e7181c237.17167204', '36944b76e717de855.40215733', 'MR', 'Peter', 'Produktmanager', 'produkt', 0, '', '2006-07-14 12:14:09', '0000-00-00 00:00:00');
 INSERT INTO `oxnewssubscribed` VALUES ('e7a194e983a31c078c6d5527a7b9f9ba', 'e7af1c3b786fd02906ccd75698f4e6b9', 'MR', 'Marc', 'Muster', 'info@oxid-esales.com', 0, 0, '2011-02-01 08:41:25', '0000-00-00 00:00:00');
-INSERT INTO `oxnewssubscribed` VALUES ('bcb74f5843265e8ea3a76a52015c47d6', 'bcbd3f535627a202d92fa745c0fce24a', 'MR', 'Patrick', 'Hoffman', 'abc.fg@hi.de', 0, 0, '2011-02-01 13:38:23', '0000-00-00 00:00:00');
 
 #
 # Data for table `oxnewsletter`

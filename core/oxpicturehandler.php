@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxpicturehandler.php 39191 2011-10-12 13:25:16Z arvydas.vapsva $
+ * @version   SVN: $Id: oxpicturehandler.php 41768 2012-01-26 08:35:54Z alfonsas $
  */
 
 /**
@@ -302,28 +302,12 @@ class oxPictureHandler extends oxSuperCfg
      */
     protected function _getPictureInfo( $sFilePath, $sFile, $blAdmin = false, $blSSL = null, $iLang = null, $iShopId = null )
     {
-        $oConfig = $this->getConfig();
-        if (!isset($blSSL)) {
-            $blSSL = $oConfig->isSsl();
-        }
-
         // custom server as image storage?
-        $sAltUrl = $oConfig->getConfigParam( 'sAltImageUrl' );
-        if ( $sAltUrl ) {
-            if ( $blSSL && $oConfig->isSsl() ) {
-                $sSslAltUrl = $oConfig->getConfigParam( 'sSSLAltImageUrl' );
-                if ( $sSslAltUrl ) {
-                    $sAltUrl = $sSslAltUrl;
-                }
-            }
-
-            if ( !is_null( $sFile ) ) {
-                $sAltUrl .= $sFilePath . $sFile;
-            }
-
+        if ( $sAltUrl = $this->getAltImageUrl($sFilePath, $sFile, $blSSL) ) {
             return array( 'path' => false, 'url'=> $sAltUrl );
         }
 
+        $oConfig = $this->getConfig();
         $sPath = $oConfig->getPicturePath( $sFilePath . $sFile, $blAdmin, $iLang, $iShopId );
         if ( !$sPath ) {
             return array( 'path'=> false, 'url' => false );
@@ -333,6 +317,45 @@ class oxPictureHandler extends oxSuperCfg
         $sUrlPrefix = $oConfig->getOutUrl( $blSSL, $blAdmin, $oConfig->getConfigParam( 'blNativeImages' ) );
 
         return array( 'path' => $sPath, 'url'=> str_replace( $sDirPrefix, $sUrlPrefix, $sPath ) );
+    }
+
+    /**
+     * Returns alternative image url
+     *
+     * @param string $sFilePath path to file
+     * @param string $sFile     filename in pictures dir
+     * @param bool   $blSSL     is ssl ?
+     *
+     * @return string
+     */
+    public function getAltImageUrl($sFilePath, $sFile, $blSSL = null)
+    {
+        $oConfig = $this->getConfig();
+
+        $sAltUrl = $oConfig->getConfigParam('sAltImageUrl');
+        if ( !$sAltUrl ) {
+            $sAltUrl = $oConfig->getConfigParam('sAltImageDir');
+        }
+
+        if ( $sAltUrl ) {
+            if ( $blSSL && $oConfig->isSsl() ) {
+
+                $sSslAltUrl = $oConfig->getConfigParam('sSSLAltImageUrl');
+                if ( !$sSslAltUrl ) {
+                    $sSslAltUrl = $oConfig->getConfigParam('sSSLAltImageDir');
+                }
+
+                if ( $sSslAltUrl ) {
+                    $sAltUrl = $sSslAltUrl;
+                }
+            }
+
+            if ( !is_null( $sFile ) ) {
+                $sAltUrl .= '/'.$sFilePath.$sFile;
+            }
+        }
+
+        return $sAltUrl;
     }
 
     /**
@@ -346,7 +369,7 @@ class oxPictureHandler extends oxSuperCfg
      *
      * @return string | bool
      */
-    public function getPicUrl( $sPath, $sFile, $sSize, $sIndex = null, $sAltPath = false )
+    public function getPicUrl( $sPath, $sFile, $sSize, $sIndex = null, $sAltPath = false)
     {
         $sUrl = null;
         if ( $sPath && $sFile && ( $aSize = $this->getImageSize( $sSize, $sIndex ) ) ) {

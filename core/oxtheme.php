@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: $
  */
@@ -76,9 +76,9 @@ class oxTheme extends oxSuperCfg
         $sParent = $this->getInfo('parentTheme');
         if ($sParent) {
             $this->getConfig()->saveShopConfVar("str", 'sTheme', $sParent);
-            $this->getConfig()->saveShopConfVar("str", 'sCustomTheme', $this->getInfo('id'));
+            $this->getConfig()->saveShopConfVar("str", 'sCustomTheme', $this->getId());
         } else {
-            $this->getConfig()->saveShopConfVar("str", 'sTheme', $this->getInfo('id'));
+            $this->getConfig()->saveShopConfVar("str", 'sTheme', $this->getId());
             $this->getConfig()->saveShopConfVar("str", 'sCustomTheme', '');
         }
     }
@@ -156,7 +156,7 @@ class oxTheme extends oxSuperCfg
      */
     public function checkForActivationErrors()
     {
-        if (!$this->getInfo('id')) {
+        if (!$this->getId()) {
             return 'EXCEPTION_THEME_NOT_LOADED';
         }
         $oParent = $this->getParent();
@@ -176,6 +176,16 @@ class oxTheme extends oxSuperCfg
             return 'EXCEPTION_PARENT_THEME_NOT_FOUND';
         }
         return false;
+    }
+
+    /**
+     * Get theme ID
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->getInfo( "id" );
     }
 }
 

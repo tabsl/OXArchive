@@ -34,7 +34,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  $Id: oxemosadapter.php 37969 2011-08-04 15:47:32Z tomas $
+ *  $Id: oxemosadapter.php 41653 2012-01-23 08:15:16Z mindaugas.rimgaila $
  */
 
 
@@ -81,7 +81,7 @@ class oxEmosAdapter extends oxSuperCfg
     public static function getInstance()
     {
         if ( !self::$_instance instanceof oxEmosAdapter ) {
-            self::$_instance = new oxEmosAdapter();
+            self::$_instance = oxNew('oxEmosAdapter');
         }
         return self::$_instance;
     }

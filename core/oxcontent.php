@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2011
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcontent.php 39201 2011-10-12 13:28:37Z arvydas.vapsva $
+ * @version   SVN: $Id: oxcontent.php 40875 2011-12-30 15:17:21Z mindaugas.rimgaila $
  */
 
 /**
@@ -148,7 +148,6 @@ class oxContent extends oxI18n implements oxIUrl
     {
 
         parent::assign( $dbRecord );
-        $this->oxcontents__oxcontent->setValue(str_replace( '&amp;', '&', $this->oxcontents__oxcontent->value ), oxField::T_RAW);
         // workaround for firefox showing &lang= as &9001;= entity, mantis#0001272
         $this->oxcontents__oxcontent->setValue(str_replace( '&lang=', '&amp;lang=', $this->oxcontents__oxcontent->value ), oxField::T_RAW);
     }

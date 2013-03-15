@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: suggest.php 26801 2010-03-24 14:46:21Z arvydas $
  */
@@ -77,6 +77,25 @@ class Invite extends oxUBase
      */
     protected $_iMailStatus = null;
 
+   /**
+     * Executes parent::render(), if invitation is disabled - redirects to main page
+     *
+     * @return string
+     */
+    public function render()
+    {
+        $oConfig = $this->getConfig();
+
+        if ( !$oConfig->getConfigParam( "blInvitationsEnabled" ) ) {
+            oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() );
+            return;
+        }
+
+        parent::render();
+
+        return $this->_sThisTemplate;
+    }
+
     /**
      * Sends product suggestion mail and returns a URL according to
      * URL formatting rules.
@@ -85,6 +104,12 @@ class Invite extends oxUBase
      */
     public function send()
     {
+        $oConfig = $this->getConfig();
+
+        if ( !$oConfig->getConfigParam( "blInvitationsEnabled" ) ) {
+            oxUtils::getInstance()->redirect( $oConfig->getShopHomeURL() );
+        }
+
         $aParams = oxConfig::getParameter( 'editval', true );
         if ( !is_array( $aParams ) ) {
             return;

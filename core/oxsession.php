@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxsession.php 39705 2011-11-03 12:48:44Z arvydas.vapsva $
+ * @version   SVN: $Id: oxsession.php 41876 2012-01-30 10:15:28Z mindaugas.rimgaila $
  */
 
 DEFINE('_DB_SESSION_HANDLER', getShopBasePath() . 'core/adodblite/session/adodb-session.php');
@@ -791,11 +791,14 @@ class oxSession extends oxSuperCfg
     protected function _allowSessionStart()
     {
         $blAllowSessionStart = true;
+        $myConfig = oxConfig::getInstance();
 
         // special handling only in non-admin mode
         if ( !$this->isAdmin() ) {
             if ( oxUtils::getInstance()->isSearchEngine() || oxConfig::getParameter( 'skipSession' ) ) {
                 $blAllowSessionStart = false;
+            } elseif (oxUtilsServer::getInstance()->getOxCookie( 'oxid_'.$myConfig->getShopId().'_autologin' ) === '1') {
+                $blAllowSessionStart = true;
             } elseif ( !$this->_forceSessionStart() && !oxUtilsServer::getInstance()->getOxCookie( 'sid_key' ) ) {
 
                 // session is not needed to start when it is not necessary:

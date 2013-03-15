@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsserver.php 40106 2011-11-22 09:44:21Z arunas.paskevicius $
+ * @version   SVN: $Id: oxutilsserver.php 41881 2012-01-30 12:34:50Z mindaugas.rimgaila $
  */
 
 /**
@@ -85,10 +85,11 @@ class oxUtilsServer extends oxSuperCfg
      * @param string $sPath       The path on the server in which the cookie will be available on
      * @param string $sDomain     The domain that the cookie is available.
      * @param bool   $blToSession is true, records cookie information to session
+     * @param bool   $blSecure    if true, transfer cookie only via SSL
      *
      * @return bool
      */
-    public function setOxCookie( $sName, $sValue = "", $iExpire = 0, $sPath = '/', $sDomain = null, $blToSession = true )
+    public function setOxCookie( $sName, $sValue = "", $iExpire = 0, $sPath = '/', $sDomain = null, $blToSession = true, $blSecure = false )
     {
         //TODO: since setcookie takes more than just 4 params..
         // would be nice to have it sending through https only, if in https mode
@@ -110,7 +111,7 @@ class oxUtilsServer extends oxSuperCfg
             $iExpire,
             $this->_getCookiePath( $sPath ),
             $this->_getCookieDomain( $sDomain ),
-            false,
+            $blSecure,
             true
         );
     }
@@ -331,14 +332,24 @@ class oxUtilsServer extends oxSuperCfg
      * @param string  $sPassword password
      * @param string  $sShopId   shop ID (default null)
      * @param integer $iTimeout  timeout value (default 31536000)
+     * @param string  $sSalt     Salt for password encryption
      *
      * @return null
      */
-    public function setUserCookie( $sUser, $sPassword,  $sShopId = null, $iTimeout = 31536000 )
+    public function setUserCookie( $sUser, $sPassword,  $sShopId = null, $iTimeout = 31536000, $sSalt = 'ox' )
     {
-        $sShopId = ( !$sShopId ) ? $this->getConfig()->getShopId() : $sShopId;
-        $this->_aUserCookie[$sShopId] = $sUser . '@@@' . crypt( $sPassword, 'ox' );
-        $this->setOxCookie( 'oxid_' . $sShopId, $this->_aUserCookie[$sShopId], oxUtilsDate::getInstance()->getTime() + $iTimeout, '/' );
+        $myConfig = $this->getConfig();
+        $sShopId = ( !$sShopId ) ? $myConfig->getShopId() : $sShopId;
+        $sSslUrl = $myConfig->getSslShopUrl();
+        if (stripos($sSslUrl, 'https') === 0) {
+            $blSsl = true;
+        } else {
+            $blSsl = false;
+        }
+
+        $this->_aUserCookie[$sShopId] = $sUser . '@@@' . crypt( $sPassword, $sSalt );
+        $this->setOxCookie( 'oxid_' . $sShopId, $this->_aUserCookie[$sShopId], oxUtilsDate::getInstance()->getTime() + $iTimeout, '/', null, true, $blSsl );
+        $this->setOxCookie( 'oxid_' . $sShopId.'_autologin', '1', oxUtilsDate::getInstance()->getTime() + $iTimeout, '/');
     }
 
     /**
@@ -350,9 +361,18 @@ class oxUtilsServer extends oxSuperCfg
      */
     public function deleteUserCookie( $sShopId = null )
     {
+        $myConfig = $this->getConfig();
         $sShopId = ( !$sShopId ) ? $this->getConfig()->getShopId() : $sShopId;
+        $sSslUrl = $myConfig->getSslShopUrl();
+        if (stripos($sSslUrl, 'https') === 0) {
+            $blSsl = true;
+        } else {
+            $blSsl = false;
+        }
+
         $this->_aUserCookie[$sShopId] = '';
-        $this->setOxCookie( 'oxid_'.$sShopId, '', oxUtilsDate::getInstance()->getTime() - 3600, '/' );
+        $this->setOxCookie( 'oxid_'.$sShopId, '', oxUtilsDate::getInstance()->getTime() - 3600, '/', null, true, $blSsl );
+        $this->setOxCookie( 'oxid_' . $sShopId.'_autologin', '0', oxUtilsDate::getInstance()->getTime() - 3600, '/');
     }
 
     /**
@@ -364,7 +384,17 @@ class oxUtilsServer extends oxSuperCfg
      */
     public function getUserCookie( $sShopId = null )
     {
-        $sShopId = ( !$sShopId ) ? parent::getConfig()->getShopId() : $sShopId;
+        $myConfig = parent::getConfig();
+        $sShopId = ( !$sShopId ) ? $myConfig->getShopId() : $sShopId;
+
+        // check for SSL connection
+        if (!$myConfig->isSsl() && $this->getOxCookie('oxid_'.$sShopId.'_autologin') == '1') {
+            $sSslUrl = $myConfig->getSslShopUrl();
+            if (stripos($sSslUrl, 'https') === 0) {
+                oxUtils::getInstance()->redirect($sSslUrl, true, 302);
+            }
+        }
+
         if ( array_key_exists( $sShopId, $this->_aUserCookie ) && $this->_aUserCookie[$sShopId] !== null ) {
             return $this->_aUserCookie[$sShopId] ? $this->_aUserCookie[$sShopId] : null;
         }

@@ -276,7 +276,7 @@ function editThis( sID )
                 [{assign var=oddclass value="2"}]
               [{/if}]
                 <td class=listitem[{$oddclass}]>
-                  &nbsp;<a href="[{ $oMediaUrl->oxmediaurls__oxurl->value }]" target="_blank">&raquo;&raquo;</a>&nbsp;
+                  &nbsp;<a href="[{ $oMediaUrl->getLink() }]" target="_blank">&raquo;&raquo;</a>&nbsp;
                 </td>
                 <td class=listitem[{$oddclass}]>
                   &nbsp;<a href="[{$oViewConf->getSelfLink()}]&cl=article_extend&amp;mediaid=[{$oMediaUrl->oxmediaurls__oxid->value}]&amp;fnc=deletemedia&amp;oxid=[{$oxid}]&amp;editlanguage=[{ $editlanguage }]" onClick='return confirm("[{ oxmultilang ident="GENERAL_YOUWANTTODELETE" }]")'><img src="[{$oViewConf->getImageUrl()}]/delete_button.gif" border=0></a>&nbsp;
