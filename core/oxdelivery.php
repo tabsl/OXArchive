@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxdelivery.php 40921 2012-01-02 15:34:44Z linas.kukulskis $
+ * @version   SVN: $Id: oxdelivery.php 43217 2012-03-27 13:31:04Z mindaugas.rimgaila $
  */
 
 /**
@@ -224,7 +224,9 @@ class oxDelivery extends oxI18n
 
         // mark free shipping products
         if ( $oProduct->oxarticles__oxfreeshipping->value ) {
-            $this->_blFreeShipping = true;
+            if ($this->_blFreeShipping !== false) {
+                $this->_blFreeShipping = true;
+            }
         } else {
 
             $blExclNonMaterial = $this->getConfig()->getConfigParam( 'blExclNonMaterialFromDelivery' );

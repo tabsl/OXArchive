@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 42702 2012-03-12 10:47:20Z juergen.busch $
+ * @version   SVN: $Id: lang.php 44195 2012-04-23 12:58:55Z juergen.busch $
  */
 
 $sLangName  = 'Deutsch';
@@ -208,6 +208,7 @@ $aLang = array(
 'GENERAL_EXPORTSTATUSNEW'                                  => 'neu',
 'GENERAL_EXPORTSTATUSUSED'                                 => 'gebraucht',
 'GENERAL_EXPORTLANGUAGE'                                   => 'Export für Sprache',
+'GENERAL_EXPORTCUSTOMHEADER'                               => 'Benutzerdefinierte Kopfzeile',
 'GENERAL_EXTERNALSTOCK'                                    => 'Fremdlager',
 'GENERAL_EXTRAINFO'                                        => 'zus. Info',
 'GENERAL_FAX'                                              => 'Fax',
@@ -408,7 +409,7 @@ $aLang = array(
 'ARTICLE_MAIN_INCATEGORY'                                  => 'In Kategorie',
 'ARTICLE_MAIN_EAN'                                         => 'EAN',
 'ARTICLE_MAIN_DISTEAN'                                     => 'Hersteller EAN',
-'ARTICLE_MAIN_MPN'                                         => 'Hersteller-Artikelnummer',
+'ARTICLE_MAIN_MPN'                                         => 'Hersteller-Artikelnummer (MPN)',
 'ARTICLE_MAIN_MANUFACTURERID'                              => 'Hersteller',
 'ARTICLE_OVERVIEW_ARTMADEON'                               => 'Art. erstellt am',
 'ARTICLE_OVERVIEW_LASTCHANGE'                              => 'Letzte Änderung am',
@@ -1742,6 +1743,8 @@ $aLang = array(
 'PROMOTIONS_ARTICLE_ASSIGNEDARTICLE'                       => 'Zugeordnetes Produkt:',
 'PROMOTIONS_ARTICLE_ALLITEMS'                              => 'Alle verfügbaren Produkte',
 'SHOP_SYSTEM_SHOWREMEMBERME'                               => 'Option "Passwort merken" beim Login anzeigen',
+
+'SHOP_PERF_SEO_CACHE'                                      => 'SEO Cache aktivieren',
 
 );
 

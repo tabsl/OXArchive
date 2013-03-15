@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxvoucher.php 42606 2012-03-05 07:53:55Z saulius.stasiukaitis $
+ * @version   SVN: $Id: oxvoucher.php 44095 2012-04-19 16:08:50Z saulius.stasiukaitis $
  */
 
 /**
@@ -340,17 +340,20 @@ class oxVoucher extends oxBase
     protected function _isValidDate()
     {
         $oSerie = $this->getSerie();
-        // if time is not set - keep it as active by default
-        $sDefTimeStamp = oxUtilsDate::getInstance()->formatDBDate( '-' );
-        if ( $oSerie->oxvoucherseries__oxbegindate->value == $sDefTimeStamp &&
-             $oSerie->oxvoucherseries__oxenddate->value == $sDefTimeStamp ) {
-            return true;
-        }
+        
+        // If date is not set will add day before and day after to check if voucher valid today.
+        $iTomorrow = mktime( 0, 0, 0, date( "m" ), date( "d" )+1, date( "Y" ) );
+        $iYesterday = mktime( 0, 0, 0, date( "m" ), date( "d" )-1, date( "Y" ) );
 
-        if ( ( strtotime( $oSerie->oxvoucherseries__oxbegindate->value ) < time() &&
-              strtotime( $oSerie->oxvoucherseries__oxenddate->value ) > time() ) ||
-            !$oSerie->oxvoucherseries__oxenddate->value ||
-            $oSerie->oxvoucherseries__oxenddate->value == $sDefTimeStamp ) {
+        // Checks if beginning date is set, if not set $iFrom to yesterday so it will be valid.
+        $iFrom = ( (int)$oSerie->oxvoucherseries__oxbegindate->value ) ?
+                   strtotime( $oSerie->oxvoucherseries__oxbegindate->value ) : $iYesterday;
+
+        // Checks if end date is set, if no set $iTo to tomorrow so it will be valid.
+        $iTo = ( (int)$oSerie->oxvoucherseries__oxenddate->value ) ?
+                   strtotime( $oSerie->oxvoucherseries__oxenddate->value ) : $iTomorrow;
+
+        if ( $iFrom < time() && $iTo > time() ) {
             return true;
         }
 

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxfunctions.php 38194 2011-08-17 12:38:09Z linas.kukulskis $
+ * @version   SVN: $Id: oxfunctions.php 44073 2012-04-19 10:42:18Z tomas $
  */
 
 /**
@@ -54,7 +54,8 @@ function oxAutoload( $sClass )
     static $aClassPaths;
 
     if (!$aClassPaths) {
-        $aClassPaths = oxUtils::getInstance()->fromPhpFileCache("class_file_paths");
+        //removed due to #2931
+        //$aClassPaths = oxUtils::getInstance()->fromPhpFileCache("class_file_paths");
     }
 
     if (isset($aClassPaths[$sClass])) {
@@ -82,7 +83,7 @@ function oxAutoload( $sClass )
         if ( file_exists( $sFilename ) ) {
             if (!isset($aClassPaths[$sClass])) {
                 $aClassPaths[$sClass] = $sFilename;
-                oxUtils::getInstance()->toPhpFileCache("class_file_paths", $aClassPaths);
+                //oxUtils::getInstance()->toPhpFileCache("class_file_paths", $aClassPaths);
             }
             stopProfile("oxAutoload");
             include $sFilename;

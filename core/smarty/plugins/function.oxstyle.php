@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   smarty_plugins
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: function.oxstyle.php 28124 2010-06-03 11:27:00Z alfonsas $
  */
@@ -28,11 +28,14 @@
  * File: function.oxstyle.php
  * Type: string, html
  * Name: oxstyle
- * Purpose: Collect and output css files.
+ * Purpose: Collect given css files. but include them only at the top of the page.
  *
- * Add [{oxsstyle include="oxis.css"}] to include externall css file.
+ * Add [{oxstyle include="oxid.css"}] to include local css file.
+ * Add [{oxstyle include="oxid.css?20120413"}] to include local css file with query string part.
+ * Add [{oxstyle include="http://www.oxid-esales.com/oxid.css"}] to include externall css file.
  *
- * Add [{oxstyle}] where you need to output all collected css.
+ * IMPORTANT!
+ * Do not forget to add plain [{oxstyle}] tag where you need to output all collected css includes.
  * -------------------------------------------------------------
  *
  * @param array  $params  params
@@ -54,8 +57,26 @@ function smarty_function_oxstyle($params, &$smarty)
     if ( $params['include'] ) {
         $sStyle = $params['include'];
         if (!preg_match('#^https?://#', $sStyle)) {
-            $sStyle = $myConfig->getResourceUrl($sStyle);
+            // Separate query part #3305.
+            $aStyle = explode('?', $sStyle);
+            $sStyle = $aStyle[0] = $myConfig->getResourceUrl($aStyle[0], $myConfig->isAdmin());
+
+            // Append query part if still needed #3305.
+            if ($sStyle && count($aStyle) > 1) {
+                $sStyle .= '?'.$aStyle[1];
+            }
         }
+
+        // File not found ?
+        if (!$sStyle) {
+            if ($myConfig->getConfigParam( 'iDebug' ) != 0) {
+                $sError = "{oxstyle} resource not found: ".htmlspecialchars($params['include']);
+                trigger_error($sError, E_USER_WARNING);
+            }
+            return;
+        }
+
+        // Conditional comment ?
         if ($params['if']) {
             $aCtyles[$sStyle] = $params['if'];
             $myConfig->setGlobalParameter($sCtyles, $aCtyles);

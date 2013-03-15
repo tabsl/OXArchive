@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: details.php 41850 2012-01-28 12:09:35Z arvydas.vapsva $
+ * @version   SVN: $Id: details.php 43564 2012-04-05 14:07:18Z mindaugas.rimgaila $
  */
 
 /**
@@ -1324,6 +1324,10 @@ class Details extends oxUBase
     public function getCanonicalUrl()
     {
         if ( ( $oProduct = $this->getProduct() ) ) {
+            if ( $oProduct->oxarticles__oxparentid->value ) {
+                $oProduct = $this->_getParentProduct( $oProduct->oxarticles__oxparentid->value );
+            }
+
             $oUtils = oxUtilsUrl::getInstance();
             if ( oxUtils::getInstance()->seoIsActive() ) {
                 $sUrl = $oUtils->prepareCanonicalUrl( $oProduct->getBaseSeoLink( $oProduct->getLanguage(), true ) );

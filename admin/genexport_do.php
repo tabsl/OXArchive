@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: genexport_do.php 29921 2010-09-21 12:18:02Z sarunas $
+ * @version   SVN: $Id: genexport_do.php 43957 2012-04-16 13:20:52Z tomas $
  */
 
 /**
@@ -69,6 +69,7 @@ class GenExport_Do extends DynExportBase
         if ( $oArticle = $this->getOneArticle( $iCnt, $blContinue ) ) {
             $myConfig = oxConfig::getInstance();
             $oSmarty = oxUtilsView::getInstance()->getSmarty();
+            $oSmarty->assign( "sCustomHeader", oxSession::getVar("sExportCustomHeader") );
             $oSmarty->assign_by_ref( "linenr", $iCnt );
             $oSmarty->assign_by_ref( "article", $oArticle );
             $oSmarty->assign( "spr", $myConfig->getConfigParam( 'sCSVSign' ) );

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 37318 2011-07-25 13:59:28Z vilma $
+ * @version   SVN: $Id: lang.php 43475 2012-04-03 15:22:16Z juergen.busch $
  */
 
 
@@ -85,8 +85,8 @@ $aLang = array(
 'FACEBOOK_POPUP_UPDATEBTN'                                    => "Update account",
 'FACEBOOK_POPUP_UPDATEDONETEXT'                               => "Your account was updated successfully. Now when you connect using Facebook Connect, you will be automaticly logged in with your existing account.",
 'FACEBOOK_POPUP_UPDATETEXT'                                   => "You have connected using Facebook Connect. If you already have an account in eShop, please enter login data to connect your Facebook account with your existing account. Next time when you will login using Facebook Connect, you'll be automaticly connected to your existing account.",
-'FORGOTPWD_FORGOTPWD'                                         => "Have you forgotten your Password ?",
-'FORGOTPWD_TITLE'                                             => "Forgot Password ?",
+'FORGOTPWD_FORGOTPWD'                                         => "Have you forgotten your Password?",
+'FORGOTPWD_TITLE'                                             => "Forgot Password?",
 'INC_ACCOUNT_HEADER_ADDRESS'                                  => "My Address",
 'INC_ACCOUNT_HEADER_LOGOUT'                                   => "LOGOUT",
 'INC_ACCOUNT_HEADER_PASSWORD'                                 => "My Password",
@@ -120,7 +120,7 @@ $aLang = array(
 'INC_PRODUCT_VARIANTS_VARIANTSELECTIONOF'                     => "Variant Selection of",
 'INC_RIGHTITEM_CURRENCY'                                      => "Currency",
 'INC_RIGHTITEM_FBCONNECT'                                     => "Facebook Connect",
-'INC_RIGHTITEM_HAVEPOUSEEN'                                   => "Have you seen ... ?",
+'INC_RIGHTITEM_HAVEPOUSEEN'                                   => "Have you seen ...?",
 'INC_RIGHTITEM_TOPOFTHESHOP'                                  => "TOP of the Shop",
 'INC_RIGHTITEM_TS_RATINGS_BOX'                                => "Customer Ratings",
 'INC_RIGHTLIST_ORDERNOW'                                      => "Order now!",
@@ -148,8 +148,8 @@ $aLang = array(
 'MOREDETAILS_POPUP_TITLE'                                     => "Zoom Pictures",
 'NEWSLETTER_COMPLETEMARKEDFIELEDS'                            => 'Please complete all fields marked with a <span class="req">*</span>',
 'NEWSLETTER_EMAIL_NOT_EXIST'                                  => "The specified e-mail address is not subscribed to our newsletter.",
-'NEWSLETTER_INVALIDEMAIL'                                     => "Invalid e-mail Address !",
-'NEWSLETTER_STAYINFORMED'                                     => "Stay informed !",
+'NEWSLETTER_INVALIDEMAIL'                                     => "Invalid e-mail Address!",
+'NEWSLETTER_STAYINFORMED'                                     => "Stay informed!",
 'ORDER_DISCOUNTS_NOT_APPLIED_FOR_ARTICLES'                    => "Discounts are not applied for these articles",
 'ORDER_GIFTOPTION'                                            => "Gift option",
 'ORDER_IAGREETORIGHTOFWITHDRAWAL1'                            => "I have been informed about my",
@@ -212,11 +212,11 @@ $aLang = array(
 'REGISTER_ERRALREADYREGISTERED'                               => "Error: You're already registered.",
 'REGISTER_ERRCOMPLETEBILLINGADDRESS'                          => "Error: Please complete the Billing Address.",
 'REGISTER_ERRCOMPLETEMARKEDFIELDS'                            => 'Error: Please complete all fields marked with a <span class="req">*</span>.',
-'REGISTER_ERRINVALIDEMAIL'                                    => "Error: Invalid e-mail Address !",
+'REGISTER_ERRINVALIDEMAIL'                                    => "Error: Invalid e-mail Address!",
 'REGISTER_ERRLINKEXPIRED'                                     => "Your account confirmation link expired.",
 'REGISTER_ERRMINLENGTH'                                       => "Error: The Password minimum length is 6 characters.",
 'REGISTER_ERRWRONGUSERORPWD'                                  => "Error: Wrong Username/Password.",
-'REGISTER_FORGOTPWD'                                          => "Forgot Password ?",
+'REGISTER_FORGOTPWD'                                          => "Forgot Password?",
 'REGISTER_MOBIL'                                              => "Mobile Phone:",
 'REGISTER_PRIVATPHONE'                                        => "Evening Phone:",
 'REVIEW_PASTREVIEW'                                           => "Past Reviews",
@@ -225,7 +225,7 @@ $aLang = array(
 'REVIEW_YOURREVIEW'                                           => "Your Review",
 'SECURITY_INFO_TITLE'                                         => "Data Protection",
 'START_LONGRUNNINGHITS'                                       => "Long-running Hits",
-'START_OURBARGAIN'                                            => "OUR BARGAIN !",
+'START_OURBARGAIN'                                            => "OUR BARGAIN!",
 'SUGGEST_COMPLETEMARKEDFIELDS2'                               => 'Please complete all fields marked with a <span class="req">*</span>',
 'SUGGEST_MESSAGE1'                                            => "Hello, I was looking at",
 'SUGGEST_MESSAGE2'                                            => "today and found something that might be interesting for you. Just click on the link below and you will be directed to the shop.",
@@ -248,8 +248,8 @@ $aLang = array(
 'USER_ERRCOMLETEMARKEDFIELDS'                                 => 'Error: Please complete all fields marked with a <span class="req">*</span>',
 'USER_ERRCOMPLETEBILLINGADDRESS'                              => "Error: Please complete the Billing Address.",
 'USER_ERRCOMPLETEFIELDS'                                      => "<b>Error:</b> Please complete the Billing Address.",
-'USER_ERRINVALIDEMAIL'                                        => "<b>Error:</b> Invalid e-mail Address !",
-'USER_ERRINVALIDEMAIL2'                                       => "Error: Invalid e-mail Address !",
+'USER_ERRINVALIDEMAIL'                                        => "<b>Error:</b> Invalid e-mail Address!",
+'USER_ERRINVALIDEMAIL2'                                       => "Error: Invalid e-mail Address!",
 'USER_ERRMINPWDLENGTH'                                        => "Error: The Password minimum length is 6 characters.",
 'USER_ERROR'                                                  => "<b>Error:</b>",
 'USER_ERRPASSWORDSDONTMATCH'                                  => "<b>Error:</b> Passwords don't match.",

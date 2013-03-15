@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   setup
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: lang.php 25584 2010-02-03 12:11:40Z arvydas $
  */
@@ -1281,15 +1281,15 @@ class OxSetupUtils extends oxSetupCore
     }
 
     /**
-     * Returns base out dir path
+     * Returns base picture dir path
      *
      * @return string
      */
-    public function getBaseOutDir()
+    public function getBasePictureDir()
     {
-        $sBaseOut = 'out/pictures';
+        $sBasePic = 'out/pictures';
 
-        return $sBaseOut;
+        return $sBasePic;
     }
 
     /**
@@ -1301,59 +1301,59 @@ class OxSetupUtils extends oxSetupCore
      */
     public function checkPaths( $aParams )
     {
-        $sBaseOut = $this->getBaseOutDir();
+        $sBasePic = $this->getBasePictureDir();
         $aPaths = array(
             $aParams['sShopDir']."/config.inc.php",
             $aParams['sShopDir']."/log",
             $aParams['sCompileDir'],
 
             // promo & media
-            $aParams['sShopDir']."/$sBaseOut/promo",
-            $aParams['sShopDir']."/$sBaseOut/media",
+            $aParams['sShopDir']."/$sBasePic/promo",
+            $aParams['sShopDir']."/$sBasePic/media",
 
             // Master
                 // product required paths
-                $aParams['sShopDir']."/$sBaseOut/master/product/1",
-                $aParams['sShopDir']."/$sBaseOut/master/product/2",
-                $aParams['sShopDir']."/$sBaseOut/master/product/3",
-                $aParams['sShopDir']."/$sBaseOut/master/product/4",
-                $aParams['sShopDir']."/$sBaseOut/master/product/5",
-                $aParams['sShopDir']."/$sBaseOut/master/product/6",
-                $aParams['sShopDir']."/$sBaseOut/master/product/7",
-                $aParams['sShopDir']."/$sBaseOut/master/product/8",
-                $aParams['sShopDir']."/$sBaseOut/master/product/9",
-                $aParams['sShopDir']."/$sBaseOut/master/product/10",
-                $aParams['sShopDir']."/$sBaseOut/master/product/11",
-                $aParams['sShopDir']."/$sBaseOut/master/product/12",
-                $aParams['sShopDir']."/$sBaseOut/master/product/icon",
-                $aParams['sShopDir']."/$sBaseOut/master/product/thumb",
+                $aParams['sShopDir']."/$sBasePic/master/product/1",
+                $aParams['sShopDir']."/$sBasePic/master/product/2",
+                $aParams['sShopDir']."/$sBasePic/master/product/3",
+                $aParams['sShopDir']."/$sBasePic/master/product/4",
+                $aParams['sShopDir']."/$sBasePic/master/product/5",
+                $aParams['sShopDir']."/$sBasePic/master/product/6",
+                $aParams['sShopDir']."/$sBasePic/master/product/7",
+                $aParams['sShopDir']."/$sBasePic/master/product/8",
+                $aParams['sShopDir']."/$sBasePic/master/product/9",
+                $aParams['sShopDir']."/$sBasePic/master/product/10",
+                $aParams['sShopDir']."/$sBasePic/master/product/11",
+                $aParams['sShopDir']."/$sBasePic/master/product/12",
+                $aParams['sShopDir']."/$sBasePic/master/product/icon",
+                $aParams['sShopDir']."/$sBasePic/master/product/thumb",
                 // category required paths
-                $aParams['sShopDir']."/$sBaseOut/master/category/icon",
-                $aParams['sShopDir']."/$sBaseOut/master/category/promo_icon",
-                $aParams['sShopDir']."/$sBaseOut/master/category/thumb",
+                $aParams['sShopDir']."/$sBasePic/master/category/icon",
+                $aParams['sShopDir']."/$sBasePic/master/category/promo_icon",
+                $aParams['sShopDir']."/$sBasePic/master/category/thumb",
                 // manufacturer required paths
-                $aParams['sShopDir']."/$sBaseOut/master/manufacturer/icon",
+                $aParams['sShopDir']."/$sBasePic/master/manufacturer/icon",
                 // vendor required paths
-                $aParams['sShopDir']."/$sBaseOut/master/vendor/icon",
+                $aParams['sShopDir']."/$sBasePic/master/vendor/icon",
                 // wrapping required paths
-                $aParams['sShopDir']."/$sBaseOut/master/wrapping",
+                $aParams['sShopDir']."/$sBasePic/master/wrapping",
 
             // Generated
                 // product required paths
-                $aParams['sShopDir']."/$sBaseOut/generated/product/1",
-                $aParams['sShopDir']."/$sBaseOut/generated/product/2",
-                $aParams['sShopDir']."/$sBaseOut/generated/product/3",
-                $aParams['sShopDir']."/$sBaseOut/generated/product/4",
-                $aParams['sShopDir']."/$sBaseOut/generated/product/5",
-                $aParams['sShopDir']."/$sBaseOut/generated/product/6",
-                $aParams['sShopDir']."/$sBaseOut/generated/product/icon",
-                $aParams['sShopDir']."/$sBaseOut/generated/product/thumb",
+                $aParams['sShopDir']."/$sBasePic/generated/product/1",
+                $aParams['sShopDir']."/$sBasePic/generated/product/2",
+                $aParams['sShopDir']."/$sBasePic/generated/product/3",
+                $aParams['sShopDir']."/$sBasePic/generated/product/4",
+                $aParams['sShopDir']."/$sBasePic/generated/product/5",
+                $aParams['sShopDir']."/$sBasePic/generated/product/6",
+                $aParams['sShopDir']."/$sBasePic/generated/product/icon",
+                $aParams['sShopDir']."/$sBasePic/generated/product/thumb",
                 // category required paths
-                $aParams['sShopDir']."/$sBaseOut/generated/category/icon",
-                $aParams['sShopDir']."/$sBaseOut/generated/category/promo_icon",
-                $aParams['sShopDir']."/$sBaseOut/generated/category/thumb",
+                $aParams['sShopDir']."/$sBasePic/generated/category/icon",
+                $aParams['sShopDir']."/$sBasePic/generated/category/promo_icon",
+                $aParams['sShopDir']."/$sBasePic/generated/category/thumb",
                 // manufacturer required paths
-                $aParams['sShopDir']."/$sBaseOut/generated/manufacturer/icon",
+                $aParams['sShopDir']."/$sBasePic/generated/manufacturer/icon",
            );
 
         foreach ( $aPaths as $sPath) {

@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxubase.php 42678 2012-03-09 13:48:13Z linas.kukulskis $
+ * @version   SVN: $Id: oxubase.php 44205 2012-04-23 14:40:51Z tomas $
  */
 
 /**
@@ -1082,14 +1082,16 @@ class oxUBase extends oxView
 
             $sCnid = oxConfig::getParameter( 'cnid' );
 
-
             $sSortBy  = oxConfig::getParameter( $this->getSortOrderByParameterName() );
             $sSortDir = oxConfig::getParameter( $this->getSortOrderParameterName() );
 
             $oStr = getStr();
-            if ( (!$sSortBy || !in_array( $oStr->strtolower($sSortBy), $aSortColumns) || !in_array( $oStr->strtolower($sSortDir), $aSortDir) ) && $aSorting = $this->getSorting( $sCnid ) ) {
-                $sSortBy  = $aSorting['sortby'];
-                $sSortDir = $aSorting['sortdir'];
+            if ( (!$sSortBy ||
+                !in_array( $oStr->strtolower($sSortBy), $aSortColumns) ||
+                !in_array( $oStr->strtolower($sSortDir), $aSortDir) ) &&
+                $aSorting = $this->getSorting( "category" ) ) {
+                    $sSortBy  = $aSorting['sortby'];
+                    $sSortDir = $aSorting['sortdir'];
             }
 
             if ( $sSortBy && oxDb::getInstance()->isValidFieldName( $sSortBy ) &&
@@ -1099,7 +1101,7 @@ class oxUBase extends oxView
                 $this->_sListOrderDir = $sSortDir;
 
                 // caching sorting config
-                $this->setItemSorting( $sCnid, $sSortBy, $sSortDir );
+                $this->setItemSorting( "category", $sSortBy, $sSortDir );
             }
         }
     }
@@ -2241,7 +2243,6 @@ class oxUBase extends oxView
         $pageNavigation = new stdClass();
 
         $pageNavigation->NrOfPages = $this->_iCntPages;
-        $pageNavigation->iArtCnt   = $this->_iAllArtCnt;
         $iActPage = $this->getActPage();
         $pageNavigation->actPage   = $iActPage + 1;
         $sUrl = $this->generatePageNavigationUrl();
@@ -2309,6 +2310,7 @@ class oxUBase extends oxView
     /**
      * Article count getter
      *
+     * @deprecated in v4.5.10 (2012-04-19); Moved to alist view
      * @return int
      */
     public function getArticleCount()

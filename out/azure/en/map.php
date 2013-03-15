@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: lang.php 28697 2010-06-29 11:09:58Z vilma $
  */
@@ -513,6 +513,7 @@ $aMap = array(
 'PAGE_ACCOUNT_REGISTER_SUCCESS_EMAILCONFIRMATION'                 => 'MESSAGE_CONFIRMING_REGISTRATION',
 'PAGE_ACCOUNT_REGISTER_SUCCESS_NOTABLETOSENDEMAIL'                => 'MESSAGE_NOT_ABLE_SEND_CONFIRMATION_EMAIL',
 'PAGE_ACCOUNT_REGISTER_SUCCESS_WELCOME'                           => 'MESSAGE_WELCOME_REGISTERED_USER',
+'PAGE_ACCOUNT_USER_USERTITLE'                                     => 'BILLING_SHIPPING_SETTINGS',
 'PAGE_ACCOUNT_WISHLIST_CLICKHERETOSENDWISHLIST'                   => 'MESSAGE_SEND_GIFT_REGISTRY',
 'PAGE_ACCOUNT_WISHLIST_SORRYNOWISHLIST'                           => 'MESSAGE_SORRY_NO_GIFT_REGISTRY',
 'PAGE_ACCOUNT_WISHLIST_TITLE'                                     => 'MY_GIFT_REGISTRY',

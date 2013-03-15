@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: SVN: $Id: oxarticlelist.php 42779 2012-03-13 14:12:36Z vilma $
+ * @version   SVN: SVN: $Id: oxarticlelist.php 43562 2012-04-05 13:42:03Z mindaugas.rimgaila $
  */
 
 /**
@@ -812,8 +812,12 @@ class oxArticleList extends oxList
         $this->selectString( $sSelect );
 
         // not active or not available products must not have button "tobasket"
+        $sNow = date('Y-m-d H:i:s');
         foreach ( $this as $oArticle ) {
-            if ( !$oArticle->oxarticles__oxactive->value ) {
+            if ( !$oArticle->oxarticles__oxactive->value  &&
+             (  $oArticle->oxarticles__oxactivefrom->value > $sNow ||
+                $oArticle->oxarticles__oxactiveto->value < $sNow
+             )) {
                 $oArticle->setBuyableState( false );
             }
         }

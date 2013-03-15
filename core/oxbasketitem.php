@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasketitem.php 37125 2011-07-18 13:12:47Z arvydas.vapsva $
+ * @version   SVN: $Id: oxbasketitem.php 44113 2012-04-20 11:52:27Z mindaugas.rimgaila $
  */
 
 /**
@@ -412,7 +412,6 @@ class oxBasketItem extends oxSuperCfg
     {
         // icon url must be (re)loaded in case icon is not set or shop was switched between ssl/nonssl
         if ( $this->_sIconUrl === null || $this->_blSsl != $this->getConfig()->isSsl() ) {
-            $this->setLanguageId( oxLang::getInstance()->getBaseLanguage() );
             $this->_sIconUrl = $this->getArticle()->getIconUrl();
         }
         return $this->_sIconUrl;
@@ -546,8 +545,6 @@ class oxBasketItem extends oxSuperCfg
     {
         if ( $this->_sTitle === null || $this->getLanguageId() != oxLang::getInstance()->getBaseLanguage() ) {
 
-            $this->setLanguageId( oxLang::getInstance()->getBaseLanguage() );
-
             $oArticle = $this->getArticle( );
             $this->_sTitle = $oArticle->oxarticles__oxtitle->value;
 
@@ -576,6 +573,10 @@ class oxBasketItem extends oxSuperCfg
      */
     public function getLink()
     {
+        if ( $this->_sLink === null || $this->getLanguageId() != oxLang::getInstance()->getBaseLanguage() ) {
+            $this->_sLink = oxUtilsUrl::getInstance()->cleanUrl( $this->getArticle()->getLink(), array( 'force_sid' ) );
+        }
+
         return $this->getSession()->processUrl( $this->_sLink );
     }
 
@@ -696,17 +697,17 @@ class oxBasketItem extends oxSuperCfg
         // product ID
         $this->_sProductId = $sProductId;
 
+        $this->_sTitle = null;
+        $this->_sVarSelect = null;
         $this->getTitle();
 
         // icon and details URL's
         $this->_sIcon    = $oArticle->oxarticles__oxicon->value;
         $this->_sIconUrl = $oArticle->getIconUrl();
-        $this->_sLink    = $oArticle->getLink();
         $this->_blSsl    = $oConfig->isSsl();
 
         // removing force_sid from the link (incase it'll change)
-        $oUrlUtils = oxUtilsUrl::getInstance();
-        $this->_sLink    = $oUrlUtils->cleanUrl( $oArticle->getLink(), array( 'force_sid' ) );
+        $this->_sLink    = oxUtilsUrl::getInstance()->cleanUrl( $oArticle->getLink(), array( 'force_sid' ) );
 
         // shop Ids
         $this->_sShopId       = $oConfig->getShopId();
@@ -966,7 +967,7 @@ class oxBasketItem extends oxSuperCfg
     }
 
     /**
-     * Set language Id
+     * Set language Id, reload basket content on language change.
      *
      * @param integer $iLanguageId language id
      *
@@ -974,6 +975,12 @@ class oxBasketItem extends oxSuperCfg
      */
     public function setLanguageId( $iLanguageId )
     {
+        $iOldLang = $this->_iLanguageId;
         $this->_iLanguageId = $iLanguageId;
+
+        // #0003777: reload content on language change
+        if ($iOldLang !== null && $iOldLang != $iLanguageId) {
+            $this->_setArticle($this->getProductId());
+        }
     }
 }

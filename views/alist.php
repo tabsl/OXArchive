@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: alist.php 38776 2011-09-15 12:21:20Z arvydas.vapsva $
+ * @version   SVN: $Id: alist.php 44203 2012-04-23 14:23:30Z tomas $
  */
 
 /**
@@ -349,7 +349,7 @@ class aList extends oxUBase
         // load only articles which we show on screen
         $oArtList = oxNew( 'oxarticlelist' );
         $oArtList->setSqlLimit( $iNrofCatArticles * $this->_getRequestPageNr(), $iNrofCatArticles );
-        $oArtList->setCustomSorting( $this->getSortingSql( $oCategory->getId() ) );
+        $oArtList->setCustomSorting( $this->getSortingSql( "category" ) );
 
         if ( $oCategory->isPriceCategory() ) {
             $dPriceFrom = $oCategory->oxcategories__oxpricefrom->value;
@@ -762,6 +762,16 @@ class aList extends oxUBase
         }
 
         return $this->_aArticleList;
+    }
+
+    /**
+     * Article count getter
+     *
+     * @return int
+     */
+    public function getArticleCount()
+    {
+        return $this->_iAllArtCnt;
     }
 
     /**

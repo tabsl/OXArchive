@@ -19,7 +19,7 @@
  * @package   views
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxlocator.php 42782 2012-03-13 14:30:25Z vilma $
+ * @version   SVN: $Id: oxlocator.php 44203 2012-04-23 14:23:30Z tomas $
  */
 
 /**
@@ -99,7 +99,7 @@ class oxLocator extends oxSuperCfg
 
             $sOrderBy = null;
             if ( $oLocatorTarget->showSorting() ) {  
-                $aSorting = $oLocatorTarget->getSorting( $sCatId );
+                $aSorting = $oLocatorTarget->getSorting( "category" );
                 // checking if we have defined sorting parameters in the sessions                              
                 if ( !$aSorting && $oCategory->oxcategories__oxdefsort->value ) {
                     // if no sorting parameters are set in the session and the category has default
@@ -109,7 +109,7 @@ class oxLocator extends oxSuperCfg
                     $oLocatorTarget->setItemSorting( $sCatId, $sSortBy, $sSortDir );                   
                 }
                 $oLocatorTarget->prepareSortColumns();
-                $sOrderBy = $oLocatorTarget->getSortingSql( $sCatId );                                 
+                $sOrderBy = $oLocatorTarget->getSortingSql( "category" );
             }
             
             $oIdList = $this->_loadIdsInList( $oCategory, $oCurrArticle, $sOrderBy );

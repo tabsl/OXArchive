@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   modules
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: myorder.php 38173 2011-08-16 09:04:24Z linas.kukulskis $
+ * @version   SVN: $Id: myorder.php 43571 2012-04-06 08:04:20Z mindaugas.rimgaila $
  */
 
 /**
@@ -318,10 +318,10 @@ class PdfArticleSummary extends PdfBlock
      */
     protected function _setDeliveryInfo( &$iStartPos )
     {
-        $oLang = oxLang::getInstance();
         $sAddString = '';
-        if ( $this->_oData->oxorder__oxdelvat->value ) {
-
+        $oLang = oxLang::getInstance();
+        $oConfig = oxConfig::getInstance();
+        if ( $oConfig->getConfigParam( 'blCalcVATForDelivery' ) ) {
             // delivery netto
             $sDelCostNetto = $oLang->formatCurrency( $this->_oData->getOrderDeliveryPrice()->getNettoPrice(), $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
             $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_SHIPCOST' ).' '.$this->_oData->translate('ORDER_OVERVIEW_PDF_NETTO' ) );
@@ -332,25 +332,19 @@ class PdfArticleSummary extends PdfBlock
             $sDelCostVAT = $oLang->formatCurrency( $this->_oData->getOrderDeliveryPrice()->getVATValue(), $this->_oData->getCurrency()).' '.$this->_oData->getCurrency()->name;
             $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_ZZGLVAT' ).$this->_oData->oxorder__oxdelvat->value.$this->_oData->translate( 'ORDER_OVERVIEW_PDF_PERCENTSUM' ) );
             $this->text( 195 - $this->_oPdf->getStringWidth( $sDelCostVAT ), $iStartPos, $sDelCostVAT );
-            $iStartPos += 4;
+            //$iStartPos += 4;
 
             $sAddString = ' '.$this->_oData->translate( 'ORDER_OVERVIEW_PDF_BRUTTO' );
+        } else {
+            // if canceled order, reset value
+            if ( $this->_oData->oxorder__oxstorno->value ) {
+                $this->_oData->oxorder__oxdelcost->setValue(0);
+            }
 
-            // drawing line separator
-            $this->line( 45, $iStartPos - 3, 195, $iStartPos - 3 );
-            $iStartPos++;
+            $sDelCost = $oLang->formatCurrency( $this->_oData->oxorder__oxdelcost->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
+            $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_SHIPCOST' ).$sAddString );
+            $this->text( 195 - $this->_oPdf->getStringWidth( $sDelCost ), $iStartPos, $sDelCost );
         }
-
-        // delivery costs
-
-        // if canceled order, reset value
-        if ( $this->_oData->oxorder__oxstorno->value ) {
-            $this->_oData->oxorder__oxdelcost->setValue(0);
-        }
-
-        $sDelCost = $oLang->formatCurrency( $this->_oData->oxorder__oxdelcost->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
-        $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_SHIPCOST' ).$sAddString );
-        $this->text( 195 - $this->_oPdf->getStringWidth( $sDelCost ), $iStartPos, $sDelCost );
     }
 
     /**
@@ -450,7 +444,7 @@ class PdfArticleSummary extends PdfBlock
     {
         $oLang   = oxLang::getInstance();
         $oConfig = oxConfig::getInstance();
-        if ( $oConfig->getConfigParam( 'blCalcVATForPayCharge' ) ) {
+        if ( $this->_oData->oxorder__oxtsprotectcosts->value && $oConfig->getConfigParam( 'blCalcVATForPayCharge' ) ) {
 
             // payment netto
             $iStartPos += 4;
@@ -464,17 +458,17 @@ class PdfArticleSummary extends PdfBlock
             $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_ZZGLVAT' ).$oConfig->getConfigParam( 'dDefaultVAT' ).$this->_oData->translate( 'ORDER_OVERVIEW_PDF_PERCENTSUM' ) );
             $this->text( 195 - $this->_oPdf->getStringWidth( $sPayCostVAT ), $iStartPos, $sPayCostVAT );
 
-        }
+            $iStartPos++;
 
-        // payment costs
-        if ( $this->_oData->oxorder__oxtsprotectcosts->value ) {
+        } elseif ( $this->_oData->oxorder__oxtsprotectcosts->value ) {
+
             $iStartPos += 4;
             $sPayCost = $oLang->formatCurrency( $this->_oData->oxorder__oxtsprotectcosts->value, $this->_oData->getCurrency() ).' '.$this->_oData->getCurrency()->name;
             $this->text( 45, $iStartPos, $this->_oData->translate( 'ORDER_OVERVIEW_PDF_TSPROTECTION' ) );
             $this->text( 195 - $this->_oPdf->getStringWidth( $sPayCost ), $iStartPos, $sPayCost );
-        }
 
-        $iStartPos++;
+            $iStartPos++;
+        }
     }
 
     /**

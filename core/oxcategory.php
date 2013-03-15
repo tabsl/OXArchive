@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxcategory.php 39706 2011-11-03 12:51:11Z arvydas.vapsva $
+ * @version   SVN: $Id: oxcategory.php 43217 2012-03-27 13:31:04Z mindaugas.rimgaila $
  */
 
 /**
@@ -140,6 +140,13 @@ class oxCategory extends oxI18n implements oxIUrl
      * @var array
      */
     protected static $_aCatAttributes = array();
+
+    /**
+     * Parent category object container.
+     *
+     * @var oxCategory
+     */
+    protected $_oParent = null;
 
     /**
      * Class constructor, initiates parent constructor (parent::oxI18n()).
@@ -758,7 +765,7 @@ class oxCategory extends oxI18n implements oxIUrl
     }
 
     /**
-     * Parent category setter
+     * Set parent category object for internal usage only.
      *
      * @param oxcategory $oCategory parent category object
      *
@@ -770,7 +777,7 @@ class oxCategory extends oxI18n implements oxIUrl
     }
 
     /**
-     * Returns parent category object for current category (is it is available)
+     * Returns parent category object for current category (if it is available).
      *
      * @return oxcategory
      */
@@ -788,6 +795,8 @@ class oxCategory extends oxI18n implements oxIUrl
                 $oCat = oxNew( 'oxcategory' );
                 if ( !$oCat->loadInLang( $this->getLanguage(), $this->oxcategories__oxparentid->value ) ) {
                     $oCat = null;
+                } else {
+                    $this->_oParent = $oCat;
                 }
             }
         }

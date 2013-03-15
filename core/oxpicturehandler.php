@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxpicturehandler.php 41768 2012-01-26 08:35:54Z alfonsas $
+ * @version   SVN: $Id: oxpicturehandler.php 43880 2012-04-13 13:04:01Z alfonsas $
  */
 
 /**
@@ -338,7 +338,7 @@ class oxPictureHandler extends oxSuperCfg
         }
 
         if ( $sAltUrl ) {
-            if ( $blSSL && $oConfig->isSsl() ) {
+            if ( (is_null($blSSL) && $oConfig->isSsl()) || $blSSL) {
 
                 $sSslAltUrl = $oConfig->getConfigParam('sSSLAltImageUrl');
                 if ( !$sSslAltUrl ) {

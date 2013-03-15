@@ -112,7 +112,7 @@ class VoucherSerie_Export extends VoucherSerie_Main
      */
     protected function _getExportFilePath()
     {
-        return $this->getConfig()->getConfigParam( 'sCompileDir' ) . "/". $this->_getExportFileName();
+        return $this->getConfig()->getConfigParam( 'sShopDir' ) . "/export/". $this->_getExportFileName();
     }
 
     /**

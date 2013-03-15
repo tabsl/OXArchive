@@ -59,9 +59,9 @@ class ADODB_Session {
         $db_object =& $GLOBALS['ADODB_SESS_CONN'];
 
         $table = $GLOBALS['ADODB_SESSION_TBL'];
+        $db_object->setFetchMode( ADODB_FETCH_ASSOC );
         $result = $db_object->execute("SELECT $dataFieldName FROM $table WHERE SessionID = '$sess_id'");
         $CurrentTime = time();
-
         if (!$result->RecordCount()) {
             $expire_notify = $GLOBALS['ADODB_SESSION_EXPIRE_NOTIFY'];
             $notify = '';
@@ -75,7 +75,7 @@ class ADODB_Session {
             $db_object->execute("INSERT INTO $table (SessionID, expiry, expireref) VALUES ('$sess_id', '$CurrentTime', '$notify')");
             return '';
         } else {
-            $data = $result->fields[0];
+			$data = $result->fields[$dataFieldName];
             $filter = array_reverse($filter);
             foreach ($filter as $f) {
                 if (is_object($f)) {

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxattributelist.php 39197 2011-10-12 13:27:35Z arvydas.vapsva $
+ * @version   SVN: $Id: oxattributelist.php 44112 2012-04-20 11:36:00Z linas.kukulskis $
  */
 
 /**
@@ -46,7 +46,7 @@ class oxAttributeList extends oxList
      *
      * @return array $aAttributes;
      */
-    public function loadAttributesByIds( $aIds)
+    public function loadAttributesByIds( $aIds )
     {
         if (!count($aIds)) {
             return;
@@ -98,20 +98,36 @@ class oxAttributeList extends oxList
     /**
      * Load attributes by article Id
      *
-     * @param string $sArtId article ids
+     * @param string $sArtId    article id
+     * @param string $sParentId article parent id
      *
      * @return null;
      */
-    public function loadAttributes( $sArtId)
+    public function loadAttributes( $sArtId, $sParentId = null )
     {
         if ( $sArtId ) {
-            $sAttrViewName = getViewName( 'oxattribute' );
-            $sViewName     = getViewName( 'oxobject2attribute' );
 
-            $sSelect  = "select {$sAttrViewName}.*, o2a.* from {$sViewName} as o2a ";
-            $sSelect .= "left join {$sAttrViewName} on {$sAttrViewName}.oxid = o2a.oxattrid ";
-            $sSelect .= "where o2a.oxobjectid = '{$sArtId}' and o2a.oxvalue != '' ";
-            $sSelect .= "order by o2a.oxpos, {$sAttrViewName}.oxpos";
+            $sAttrTableName = getViewName( 'oxattribute' );
+            $sObject2AtrrTableName  = getViewName( 'oxobject2attribute' );
+
+            $sSelect  = "SELECT `Attributes`.`oxid`, `Attributes`.`oxtitle`,  ";
+
+            if ( !$sParentId ) {
+                $sSelect .= "`ArticleAtrr`.`oxvalue` AS `oxvalue` ";
+            } else {
+                $sSelect .= "IFNULL( `ArticleAtrr`.`oxvalue`, `ParentAtrr`.`oxvalue` ) AS `oxvalue` ";
+            }
+
+            $sSelect .= "FROM {$sAttrTableName} AS `Attributes` ";
+            $sSelect .= "LEFT JOIN {$sObject2AtrrTableName} AS `ArticleAtrr` ON `Attributes`.`oxid` = `ArticleAtrr`.`oxattrid` ";
+            $sSelect .= ($sParentId) ? "LEFT JOIN {$sObject2AtrrTableName} AS `ParentAtrr` ON `Attributes`.`oxId` = `ParentAtrr`.`oxattrid` " : "";
+            $sSelect .= "WHERE 1 ";
+            $sSelect .= "AND `ArticleAtrr`.`oxobjectid` = '{$sArtId}' AND `ArticleAtrr`.`oxvalue` != '' ";
+            $sSelect .= ($sParentId) ? "OR `ParentAtrr`.`oxobjectid` = '{$sParentId}' AND `ParentAtrr`.`oxvalue` != '' " : "";
+            $sSelect .= "ORDER BY ";
+            $sSelect .= "`ArticleAtrr`.`oxpos`, ";
+            $sSelect .= ($sParentId) ? "`ParentAtrr`.`oxpos`, " : "";
+            $sSelect .= "`Attributes`.`oxpos`";
 
             $this->selectString( $sSelect );
         }

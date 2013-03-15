@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 42166 2012-02-10 14:44:10Z juergen.busch $
+ * @version   SVN: $Id: lang.php 43474 2012-04-03 15:20:41Z juergen.busch $
  */
 
 
@@ -71,7 +71,7 @@ $aLang = array(
 'BASKET_TSPROTECTIONCHARGETAX1'                               => "zzgl. MwSt..",
 'BASKET_WRONGAMOUNT1'                                         => "Tragen Sie eine gültige Menge für Artikel ",
 'BASKET_WRONGAMOUNT2'                                         => " ein.",
-'CONTACT_COMPLETEMARKEDFIELDS'                                => "Bitte alle Felder mit * ausfüllen !",
+'CONTACT_COMPLETEMARKEDFIELDS'                                => "Bitte alle Felder mit * ausfüllen!",
 'CONTACT_SEND'                                                => "Nachricht abschicken",
 'CONTACT_THANKYOU1'                                           => "Vielen Dank für Ihre Nachricht an",
 'CONTACT_THANKYOU2'                                           => ".",
@@ -161,7 +161,7 @@ $aLang = array(
 'INC_RIGHTITEM_CURRENCY'                                      => "Währung",
 'INC_RIGHTITEM_DISPLAYBASKET'                                 => "Warenkorb anzeigen",
 'INC_RIGHTITEM_FBCONNECT'                                     => "Facebook Connect",
-'INC_RIGHTITEM_HAVEPOUSEEN'                                   => "Kennen Sie schon... ?",
+'INC_RIGHTITEM_HAVEPOUSEEN'                                   => "Kennen Sie schon...?",
 'INC_RIGHTITEM_SIMILARPRODUCTS'                               => "Ähnliche Artikel",
 'INC_RIGHTITEM_TOPOFTHESHOP'                                  => "TOP of the Shop",
 'INC_RIGHTITEM_TS_RATINGS_BOX'                                => "Kundenbewertungen",

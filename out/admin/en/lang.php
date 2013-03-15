@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 42703 2012-03-12 10:47:50Z juergen.busch $
+ * @version   SVN: $Id: lang.php 44196 2012-04-23 12:59:15Z juergen.busch $
  */
 
 /*
@@ -213,6 +213,7 @@ $aLang = array(
 'GENERAL_EXPORTSTATUSNEW'                                  => 'new',
 'GENERAL_EXPORTSTATUSUSED'                                 => 'used',
 'GENERAL_EXPORTLANGUAGE'                                   => 'Export for language',
+'GENERAL_EXPORTCUSTOMHEADER'                               => 'User defined header',
 'GENERAL_EXTERNALSTOCK'                                    => 'External Storehouse',
 'GENERAL_EXTRAINFO'                                        => 'Additional Info',
 'GENERAL_FAX'                                              => 'Fax',
@@ -484,7 +485,7 @@ $aLang = array(
 'ARTICLE_STOCK_MONTHS'                                     => 'Months',
 'ARTICLE_STOCK_WEEKS'                                      => 'Weeks',
 'ARTICLE_USERDEF_USERDEFRANGE'                             => 'User-defined Area - here you can add your own fields.',
-'ARTICLE_VARIANT_YOUWANTTODELETE'                          => 'Do you really want to delete this Variant ?',
+'ARTICLE_VARIANT_YOUWANTTODELETE'                          => 'Do you really want to delete this Variant?',
 'ARTICLE_VARIANT_EDIT'                                     => 'Edit',
 'ARTICLE_VARIANT_ARTSAVE'                                  => 'Save Selection',
 'ARTICLE_VARIANT_NEWVAR'                                   => 'New Variant',
@@ -848,8 +849,8 @@ $aLang = array(
 'NEWSLETTER_SEND_TITLE'                                    => 'OXID Newsletter',
 'NEWSLETTER_SEND_SEND1'                                    => 'Send',
 'NEWSLETTER_SEND_SEND2'                                    => 'of overall',
-'ORDER_ARTICLE_YOUWANTTODELETE'                            => 'Do you really want to delete this product ?',
-'ORDER_ARTICLE_YOUWANTTOSTORNO'                            => 'Do you really want to cancel this product ?',
+'ORDER_ARTICLE_YOUWANTTODELETE'                            => 'Do you really want to delete this product?',
+'ORDER_ARTICLE_YOUWANTTOSTORNO'                            => 'Do you really want to cancel this product?',
 'ORDER_ARTICLE_ENETTO'                                     => 'Net',
 'ORDER_ARTICLE_EBRUTTO'                                    => 'Gross',
 'ORDER_ARTICLE_MWST'                                       => 'VAT',
@@ -861,7 +862,7 @@ $aLang = array(
 'ORDER_ARTICLE_UPDATE_STOCK'                               => 'Update',
 'ORDER_SEARCH_FIELD_ARTID'                                 => 'Product',
 'ORDER_SEARCH_FIELD_PAYMENT'                               => 'Payment',
-'ORDER_LIST_YOUWANTTOSTORNO'                               => 'Do you really want to cancel this order ?',
+'ORDER_LIST_YOUWANTTOSTORNO'                               => 'Do you really want to cancel this order?',
 'ORDER_LIST_FOLDER_ALL'                                    => 'all',
 'ORDER_LIST_ORDERTIME'                                     => 'Order Time',
 'ORDER_LIST_PAID'                                          => 'Payment Date',
@@ -965,7 +966,7 @@ $aLang = array(
 'PAYMENT_LIST_MENUSUBITEM'                                 => 'Payment Methods',
 'PAYMENT_MAIN_ADDPRICE'                                    => 'Price Surcharge/Reduction',
 'PAYMENT_MAIN_ADDSUMRULES'                                 => 'Base of price <br>surcharge/reduction:',
-'PAYMENT_MAIN_ADDSUMRULES_ALLGOODS'                        => '1. Value of all goods in basket',
+'PAYMENT_MAIN_ADDSUMRULES_ALLGOODS'                        => '1. Value of all goods in cart',
 'PAYMENT_MAIN_ADDSUMRULES_DISCOUNTS'                       => '2. Discounts',
 'PAYMENT_MAIN_ADDSUMRULES_VOUCHERS'                        => '3. Vouchers',
 'PAYMENT_MAIN_ADDSUMRULES_SHIPCOSTS'                       => '4. Shipping costs',
@@ -1085,7 +1086,7 @@ $aLang = array(
 'SHOP_CONFIG_DEFAULTLANGUAGE'                              => 'Default Language (0, 1, 2 ...) - 0 for German, 1 for English',
 'SHOP_CONFIG_EXCLUDENONMATERIALPRODUCTS'                   => "Don't consider intangible Products (e.g. Gift Certificates) in Shipping Costs Calculation",
 'SHOP_CONFIG_ENTERNETPRICE'                                => 'Product and Gift Wrapping prices entered/displayed in Admin are Net Prices',
-'SHOP_CONFIG_INLANDCUSTOMERS'                              => 'Domestic Customers - Customers living in the <b>selected</b> Countries are assigned to the User Group "Domestic Customers". For multiple selections use STRG key.',
+'SHOP_CONFIG_INLANDCUSTOMERS'                              => 'Domestic Customers - Customers living in the <b>selected</b> Countries are assigned to the User Group "Domestic Customers". For multiple selections use CTRL key.',
 'SHOP_CONFIG_LARGECUSTOMERPRICE'                           => 'Purchase Price Threshold from which Users are assigned to User Group "Huge Turnover"',
 'SHOP_CONFIG_MAXGBENTRIESPERDAY'                           => 'Number of Guestbook Entries each User is allowed to enter per Day',
 'SHOP_CONFIG_MIDLLECUSTOMERPRICE'                          => 'Purchase Price Threshold from which Users are assigned to User Group "Medium Turnover"',
@@ -1134,9 +1135,9 @@ $aLang = array(
 'SHOP_CONFIG_PSLOGIN'                                      => 'Private Sales Login',
 'SHOP_CONFIG_DISABLE'                                      => 'Disable',
 'SHOP_CONFIG_ENABLE'                                       => 'Enable',
-'SHOP_CONFIG_BASKETEXCLUDE'                                => 'Basket exclusion',
-'SHOP_CONFIG_BASKETRESERVATION'                            => 'Basket expiration',
-'SHOP_CONFIG_BASKETRESERVATIONTIMEOUT'                     => 'Seconds basket expiration timeout',
+'SHOP_CONFIG_BASKETEXCLUDE'                                => 'Cart exclusion',
+'SHOP_CONFIG_BASKETRESERVATION'                            => 'Cart expiration',
+'SHOP_CONFIG_BASKETRESERVATIONTIMEOUT'                     => 'Seconds cart expiration timeout',
 'SHOP_CONFIG_INVITATION'                                   => 'Invitation',
 'SHOP_CONFIG_POINTSFORINVITATION'                          => 'Credit points for inviting user',
 'SHOP_CONFIG_POINTSFORREGISTRATION'                        => 'Credit points for user registering after invitation',
@@ -1745,6 +1746,8 @@ $aLang = array(
 'PROMOTIONS_ARTICLE_ASSIGNEDARTICLE'                       => 'Assigned Product:',
 'PROMOTIONS_ARTICLE_ALLITEMS'                              => 'All available Products',
 'SHOP_SYSTEM_SHOWREMEMBERME'                               => 'Show "Remember me" option in login box',
+
+'SHOP_PERF_SEO_CACHE'                                      => 'Enable SEO cache',
 
 );
 

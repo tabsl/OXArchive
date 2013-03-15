@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   admin
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: article_extend.inc.php 38555 2011-09-05 11:12:26Z arvydas.vapsva $
+ * @version   SVN: $Id: article_extend.inc.php 43523 2012-04-04 11:42:11Z mindaugas.rimgaila $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -232,12 +232,16 @@ class ajaxComponent extends ajaxListComponent
 
         $sShopCheck = "";
 
-        $sQ = "update oxobject2category set oxtime = oxtime + 10 where oxobjectid = " . $oDb->quote( $soxId ) . " $sShopCheck ";
+        // #0003650: increment all product references independent to active shop
+        $sQ = "update oxobject2category set oxtime = oxtime + 10 where oxobjectid = " . $oDb->quote( $soxId );
         oxDb::getInstance()->getDb()->Execute($sQ);
+
+        // set main category for active shop
         $sQ = "update oxobject2category set oxtime = 0 where oxobjectid = " . $oDb->quote( $soxId ) . " and oxcatnid = " . $oDb->quote( $sDefCat ) . " $sShopCheck ";
         oxDb::getInstance()->getDb()->Execute($sQ);
 
-        $this->resetArtSeoUrl( $soxId );
+        // #0003366: invalidate article SEO for all shops
+        oxSeoEncoder::getInstance()->markAsExpired( $soxId, null, 1, null, "oxtype='oxarticle'" );
         $this->resetContentCache();
     }
 }

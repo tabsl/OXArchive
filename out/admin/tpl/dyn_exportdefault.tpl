@@ -143,6 +143,15 @@
             [{ oxinputhelp ident="HELP_GENERAL_EXPORTLANGUAGE" }]
             </td>
         </tr>
+        <tr>
+            <td class="edittext" width="180" height="40">
+                [{ oxmultilang ident="GENERAL_EXPORTCUSTOMHEADER" }]
+            </td>
+            <td class="edittext">
+                <input type="text" class="editinput" size="50" name="sExportCustomHeader" value="" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_EXPORTCUSTOMHEADER" }]
+            </td>
+        </tr>
         </table>
         </form>
         <!--

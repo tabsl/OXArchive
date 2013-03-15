@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxtagcloud.php 33272 2011-02-15 13:51:28Z vilma $
+ * @version   SVN: $Id: oxtagcloud.php 43575 2012-04-06 09:45:38Z vilma $
  */
 
 if (!defined('OXTAGCLOUD_MINFONT')) {
@@ -303,7 +303,12 @@ class oxTagCloud extends oxSuperCfg
             $iAmount = 0;
         }
 
-        $sQ = "select {$sViewName}.oxtags as oxtags from $sArtView as oxarticles left join {$sViewName} on oxarticles.oxid={$sViewName}.oxid where oxarticles.oxactive=1 AND $sArticleSelect";
+        // check if article is still active
+        $oArticle   = oxNew( 'oxarticle' );
+        $oArticle->setLanguage( $iLang );
+        $sArtActive = $oArticle->getActiveCheckQuery(true);
+
+        $sQ = "select {$sViewName}.oxtags as oxtags from $sArtView as oxarticles left join {$sViewName} on oxarticles.oxid={$sViewName}.oxid where $sArtActive AND $sArticleSelect";
         $rs = $oDb->execute( $sQ );
         $aTags = array();
         while ( $rs && $rs->recordCount() && !$rs->EOF ) {

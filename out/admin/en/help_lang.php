@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: help_lang.php 40995 2012-01-05 12:36:29Z linas.kukulskis $
+ * @version   SVN: $Id: help_lang.php 44198 2012-04-23 13:02:11Z juergen.busch $
  */
 
 /**
@@ -153,16 +153,16 @@ $aLang =  array(
 
 'HELP_SHOP_CONFIG_BASKETEXCLUDE'              => 'Allows to insert products only from one (root) category, if category change is ' .
                                                  'detected user is asked to finalize order (go to checkout) or continue shopping ' .
-                                                 '(basket is cleaned in this case). Using this feature in conjunction with ' .
-                                                 ' properly organized category structure you can implement split baskets for different suppliers.',
+                                                 '(cart is cleaned in this case). Using this feature in conjunction with ' .
+                                                 ' properly organized category structure you can implement split carts for different suppliers.',
 
 'HELP_SHOP_CONFIG_BASKETRESERVATION'          => 'When disabling this option eShop reduces product stock exactly at time' .
                                                  'when order is confirmed by customer and checkout is finished.<br><br> ' .
                                                  'With this option enabled this functionality changes: Product stock reduces ' .
-                                                 'and is being <b>reserved</b> when product is put into basket. Reservation is '.
-                                                 'canceled when basket content is bought or basket expires.',
+                                                 'and is being <b>reserved</b> when product is put into cart. Reservation is '.
+                                                 'canceled when cart content is bought or cart expires.',
 
-'HELP_SHOP_CONFIG_BASKETRESERVATIONTIMEOUT'   => 'After this timeout the reserved products are returned to stock and customer\'s basket is cleared.',
+'HELP_SHOP_CONFIG_BASKETRESERVATIONTIMEOUT'   => 'After this timeout the reserved products are returned to stock and customer\'s cart is cleared.',
 
 'HELP_SHOP_CONFIG_INVITATION'                 => 'Invitation is used for inviting your ' .
                                                  'friends to website and getting credit points for inviting.',
@@ -294,7 +294,7 @@ $aLang =  array(
 
 'HELP_ARTICLE_MAIN_ALDPRICE'                  => 'With <span class="navipath_or_inputname">Alt. Prices</span> you can set up special prices for certain users. More information is available in the <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/set-alternative-prices-special-users" target="_blank">eShop Manual</a> on the OXID eSales website.',
 
-'HELP_ARTICLE_MAIN_VAT'                       => 'Here you can enter a special VAT for this product. This VAT is used for this product in all later calculations (basket, order, invoice)',
+'HELP_ARTICLE_MAIN_VAT'                       => 'Here you can enter a special VAT for this product. This VAT is used for this product in all later calculations (cart, order, invoice)',
 
 'HELP_ARTICLE_MAIN_TAGS'                      => 'Here you can enter tags for the product. From these tags the tag cloud on the front page is generated. The tags are separated by a comma.',
 
@@ -490,7 +490,7 @@ $aLang =  array(
                                                  '<ul><li>With <span class="userinput_or_code">abs</span> the price is entered for the payment method (e.g.: if you enter <span class="userinput_or_code">7.50</span> a price of EUR 7.50 is calculated.)</li>' .
                                                  '<li>With <span class="userinput_or_code">%</span>, the price is calculated relative to the purchase price (e.g.: if you enter <span class="userinput_or_code">2</span>, the price is 2 percent of the purchase price)</li></ul>',
 
-'HELP_PAYMENT_MAIN_ADDSUMRULES'               => 'When calculating price surcharge or reduction, basket value is being used as base. Define what costs will be included when calculating basket value.',
+'HELP_PAYMENT_MAIN_ADDSUMRULES'               => 'When calculating price surcharge or reduction, cart value is being used as base. Define what costs will be included when calculating cart value.',
 
 'HELP_SELECTLIST_MAIN_TITLEIDENT'             => 'In <span class="navipath_or_inputname">Working Title</span>, you can enter an additional name that is not displayed to users of your eShop. You can use the working title to differentiate between similar selection lists (e.g., Sizes for trousers and Sizes for shirts).',
 
@@ -563,6 +563,7 @@ $aLang =  array(
 'HELP_DYN_TRUSTED_TSPAYMENT'                  => 'Assign the shop offered payment types at the appropriate payment to Trusted Store.',
 
 'HELP_PROMOTIONS_BANNER_PICTUREANDLINK'       => 'Upload banner image and enter banner URL which will be used when clicking on banner. If article is assigned to banner and URL is not entered, link to assigned article will be used when clicking on banner.',
+'HELP_SHOP_PERF_SEO_CACHE'                    => 'Enabled SEO cache increases performance, but requires a lot of disk space in /tmp directory.',
 
 
 );

@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   core
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorderarticle.php 38546 2011-09-05 09:48:19Z arunas.paskevicius $
+ * @version   SVN: $Id: oxorderarticle.php 43560 2012-04-05 13:06:40Z vilma $
  */
 
 /**
@@ -446,7 +446,12 @@ class oxOrderArticle extends oxBase implements oxIArticle
      */
     public function getBasketPrice( $dAmount, $aSelList, $oBasket )
     {
-        return $this->getPrice();
+        $oArticle = $this->_getOrderArticle();
+        if ( $oArticle ) {
+            return $oArticle->getBasketPrice( $dAmount, $aSelList, $oBasket );
+        } else {
+            return $this->getPrice();
+        }
     }
 
     /**

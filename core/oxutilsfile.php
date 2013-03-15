@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxutilsfile.php 42849 2012-03-14 10:52:27Z saulius.stasiukaitis $
+ * @version   SVN: $Id: oxutilsfile.php 43650 2012-04-10 09:00:56Z saulius.stasiukaitis $
  */
 
 /**
@@ -123,6 +123,14 @@ class oxUtilsFile extends oxSuperCfg
      * @var array
      */
     protected $_aAllowedFiles = array( 'gif', 'jpg', 'jpeg', 'png', 'pdf' );
+    
+    /**
+     * Counts how many new files added.
+     * 
+     * @var integer
+     */
+    protected $_iNewFilesCounter = 0;
+    
     /**
      * Returns object instance
      *
@@ -159,6 +167,28 @@ class oxUtilsFile extends oxSuperCfg
         }
 
         $this->_iMaxZoomImgCount = $this->_iMaxPicImgCount;
+    }
+
+    /**
+     * Getter for param _iNewFilesCounter which counts how many new files added.
+     *
+     * @return integer
+     */
+    public function getNewFilesCounter()
+    {
+        return $this->_iNewFilesCounter;
+    }
+    
+    /**
+     * Setter for param _iNewFilesCounter which counts how many new files added.
+     * 
+     * @param integer $iNewFilesCounter New files count.
+     * 
+     * @return void
+     */
+    protected function _setNewFilesCounter( $iNewFilesCounter )
+    {
+        $this->_iNewFilesCounter = (int) $iNewFilesCounter;
     }
 
     /**
@@ -433,7 +463,7 @@ class oxUtilsFile extends oxSuperCfg
             // folder where images will be processed
             $sTmpFolder = $oConfig->getConfigParam( "sCompileDir" );
 
-            $iNewImagesCounter = 0;
+            $iNewFilesCounter = 0;
             $aSource   = $aFiles['myfile']['tmp_name'];
             $aError    = $aFiles['myfile']['error'];
             $sErrorsDescription = '';
@@ -474,19 +504,18 @@ class oxUtilsFile extends oxSuperCfg
                         }
 
                         if ( $blMoved ) {
-                            // New image successfully add
-                            $iNewImagesCounter++;
+                            // New image successfully add.
+                            $iNewFilesCounter++;
                             // assign the name
                             if ( $oObject && isset( $oObject->$sKey ) ) {
                                 $oObject->{$sKey}->setValue( $sValue );
-                                
-                                // Return that no new image added
-                                $oObject->iNewImagesCounter = $iNewImagesCounter;
                             }
                         }
                     }
                 }
             }
+            
+            $this->_setNewFilesCounter( $iNewFilesCounter );
         }
 
         return $oObject;

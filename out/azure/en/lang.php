@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: lang.php 28697 2010-06-29 11:09:58Z vilma $
  */
@@ -72,7 +72,6 @@ $aLang = array(
 'FORM_WISHLIST_SUGGEST_BUYFORME1'                             => "Hi, I created a Gift Registry at",
 'FORM_WISHLIST_SUGGEST_BUYFORME2'                             => ". Great if you could buy something for me.",
 'PAGE_ACCOUNT_DASHBOARD_LOGOUT'                               => "LOGOUT",
-'PAGE_ACCOUNT_USER_USERTITLE'                                 => "Billings and Shipping settings",
 'PAGE_ACCOUNT_WISHLIST_SENDSUCCESSFULLY1'                     => "Your Gift Registry was sent successfully to:",
 'PAGE_ACCOUNT_WISHLIST_SENDSUCCESSFULLY2'                     => "",
 'PAGE_CHECKOUT_BASKETCONTENTS_PAYMENTTAX1'                    => "Surcharge VAT",

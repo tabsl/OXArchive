@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   views
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxview.php 39704 2011-11-03 12:48:07Z arvydas.vapsva $
+ * @version   SVN: $Id: oxview.php 43803 2012-04-12 08:53:54Z tomas $
  */
 
 /**
@@ -227,7 +227,7 @@ class oxView extends oxSuperCfg
      */
     public function render()
     {
-        return $this->_sThisTemplate;
+        return $this->getTemplateName();
     }
 
     /**

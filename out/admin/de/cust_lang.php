@@ -17,9 +17,9 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   lang
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: cust_lang.php 34107 2011-03-31 15:18:40Z juergen.busch $
+ * @version   SVN: $Id: cust_lang.php 43526 2012-04-04 11:54:49Z juergen.busch $
  */
 
 $sLangName  = "Deutsch";
@@ -33,7 +33,7 @@ $aLang = array(
 'EMAIL_PRICEALARM_CUSTOMER_ITEM1'          => 'Der Artikel',
 'EMAIL_PRICEALARM_CUSTOMER_ITEM2'          => 'für den Sie sich interessieren und einen Preis von',
 'EMAIL_PRICEALARM_CUSTOMER_ITEM3'          => 'geboten haben ist jetzt für',
-'EMAIL_PRICEALARM_CUSTOMER_ITEM4'          => 'zu haben !',
+'EMAIL_PRICEALARM_CUSTOMER_ITEM4'          => 'zu haben!',
 'EMAIL_PRICEALARM_CUSTOMER_CLICKHERE1'     => 'Um direkt zu dem Artikel zu gelangen klicken Sie bitte ',
 'EMAIL_PRICEALARM_CUSTOMER_CLICKHERE2'     => 'hier',
 'EMAIL_PRICEALARM_CUSTOMER_TEAM1'          => 'Ihr',

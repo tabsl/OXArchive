@@ -19,7 +19,7 @@
  * @package   admin
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: shop_license.php 42088 2012-02-08 14:24:08Z arvydas.vapsva $
+ * @version   SVN: $Id: shop_license.php 44035 2012-04-18 12:38:44Z tomas $
  */
 
 /**
@@ -64,7 +64,32 @@ class Shop_License extends Shop_Config
 
 
 
+        if (!$this->_canUpdate()) {
+            $this->_aViewData['readonly'] = true;
+        }
+
         return $this->_sThisTemplate;
     }
 
+
+    /**
+     * Checks if the license key update is allowed.
+     *
+     * @return bool
+     */
+    protected function _canUpdate()
+    {
+        $myConfig = $this->getConfig();
+
+        $blIsMallAdmin = oxSession::getVar( 'malladmin' );
+        if (!$blIsMallAdmin) {
+            return false;
+        }
+
+        if ($myConfig->isDemoShop()) {
+            return false;
+        }
+
+        return true;
+    }
 }

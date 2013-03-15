@@ -17,7 +17,7 @@
  *
  * @link      http://www.oxid-esales.com
  * @package   smarty_plugins
- * @copyright (C) OXID eSales AG 2003-2011
+ * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
  * @version   SVN: $Id: block.oxid_content.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
@@ -71,6 +71,7 @@ function smarty_block_oxifcontent( $params, $content, &$smarty, &$repeat)
                 }
             }
 
+            $blLoaded = false;
             if ( $oContent && $oContent->oxcontents__oxactive->value ) {
                 $smarty->assign($sObject, $oContent);
                 $blLoaded = true;
@@ -83,7 +84,7 @@ function smarty_block_oxifcontent( $params, $content, &$smarty, &$repeat)
         $oStr = getStr();
         $blHasSmarty = $oStr->strstr( $content, '[{' );
         if ( $blHasSmarty  ) {
-            $content = oxUtilsView::getInstance()->parseThroughSmarty( $content, $sIdent.md5($content) );
+            $content = oxUtilsView::getInstance()->parseThroughSmarty( $content, $sIdent.md5($content), $myConfig->getActiveView() );
         }
 
         if ($sAssign) {

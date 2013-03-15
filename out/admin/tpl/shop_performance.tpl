@@ -111,6 +111,18 @@
            [{ oxmultilang ident="SHOP_PERF_CLEARCACHEONLOGOUT" }]
          </td>
         </tr>
+
+        <tr class="conftext[{cycle}]">
+         <td valign="top">
+            <input type="hidden" name="confbools[blEnableSeoCache]" value="false">
+            <input type="checkbox" class="confinput" name="confbools[blEnableSeoCache]" value="true"  [{if ($confbools.blEnableSeoCache)}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_SHOP_PERF_SEO_CACHE" }]
+         </td>
+         <td valign="top" width="100%" >
+           [{ oxmultilang ident="SHOP_PERF_SEO_CACHE" }]
+         </td>
+        </tr>
+
     </table>
     <br>
 
