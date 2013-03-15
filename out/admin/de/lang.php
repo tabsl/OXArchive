@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 47360 2012-07-16 08:42:36Z juergen.busch $
+ * @version   SVN: $Id: lang.php 49796 2012-09-26 12:36:30Z juergen.busch $
  */
 
 $sLangName  = 'Deutsch';
@@ -1275,8 +1275,8 @@ $aLang = array(
 'SHOP_CONFIG_CONFIRMAGB'                                   => 'Kunden müssen die AGB bestätigen, um bestellen zu können',
 'SHOP_CONFIG_SHOWORDERBUTTONONTHETOP'                      => 'Im 4. Bestellschritt einen zusätzlichen "Zahlungspflichtig bestellen" Button oben anzeigen (wenn die Einstellung nicht aktiv ist, wird nur der "Zahlungspflichtig bestellen" Button weiter unten angezeigt).',
 'SHOP_CONFIG_CALCULATEVATFORDELIVERY'                      => 'Im Warenkorb und in der Rechnung die Versandkosten als Nettobetrag und Mehrwertsteuer anstatt als Bruttobetrag anzeigen',
-'SHOP_CONFIG_CALCDELVATONTOP'                              => 'Versandkosten als Nettopreise eingeben (zuzüglich MwSt.)',
-'SHOP_CONFIG_CALCULATEVATFORWRAPPING'                      => 'Die in den Geschenkverpackungskosten enthaltene Mehrwertsteuer im Warenkorb und in der Rechnung anzeigen',
+'SHOP_CONFIG_CALCDELVATONTOP'                              => 'Kosten für Geschenkverpackungen und Grußkarten als Nettopreise eingeben (zuzüglich MwSt.)',
+'SHOP_CONFIG_CALCULATEVATFORWRAPPING'                      => 'Die in Geschenkverpackungen und Grußkarten enthaltene Mehrwertsteuer im Warenkorb und in der Rechnung anzeigen',
 'SHOP_CONFIG_CALCWRAPVATONTOP'                             => 'Verpackungskosten als Nettopreise eingeben (zuzüglich MwSt.)',
 'SHOP_CONFIG_CALCPAYVATONTOP'                              => 'Zahlungsarten-Gebühren als Nettopreise eingeben (zuzüglich MwSt.)',
 'SHOP_CONFIG_CALCULATEVATOFORPAYCHARGE'                    => 'Die in den Zahlungsarten-Gebühren enthaltene Mehrwertsteuer im Warenkorb und in der Rechnung anzeigen',

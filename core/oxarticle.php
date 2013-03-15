@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxarticle.php 45766 2012-05-31 08:54:04Z alfonsas $
+ * @version   SVN: $Id: oxarticle.php 49951 2012-10-01 19:56:16Z tomas $
  */
 
 // defining supported link types
@@ -1341,7 +1341,6 @@ class oxArticle extends oxI18n implements oxIArticle, oxIUrl
                            $this->getActiveCheckQuery( $blUseCoreTable ) .
                            $this->getVariantsQuery( $blRemoveNotOrderables, $blUseCoreTable ) .
                            " order by $sArticleTable.oxsort";
-
 
                 $oVariants->selectString( $sSelect );
 

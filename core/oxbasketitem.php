@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasketitem.php 44105 2012-04-20 07:12:12Z mindaugas.rimgaila $
+ * @version   SVN: $Id: oxbasketitem.php 49697 2012-09-21 14:30:21Z tomas $
  */
 
 /**
@@ -326,7 +326,7 @@ class oxBasketItem extends oxSuperCfg
             throw $oEx;
         }
 
-        $oArticle = $this->getArticle();
+        $oArticle = $this->getArticle( true );
 
 
         // setting default
@@ -424,7 +424,7 @@ class oxBasketItem extends oxSuperCfg
      * Retrieves the article .Throws an execption if article does not exist,
      * is not buyable or visible.
      *
-     * @param bool   $blCheckProduct       checks if product is buyable and visible
+     * @param bool   $blCheckProduct       checks if product is buyable and visible.
      * @param string $sProductId           product id
      * @param bool   $blDisableLazyLoading disable lazy loading
      *

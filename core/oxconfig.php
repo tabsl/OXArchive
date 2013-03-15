@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxconfig.php 46714 2012-06-27 09:02:56Z arturas.sevcenko $
+ * @version   SVN: $Id: oxconfig.php 49755 2012-09-25 12:51:45Z tomas $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -377,6 +377,8 @@ class oxConfig extends oxSuperCfg
 
     /**
      * Starts session manager
+     *
+     * @throws oxConnectionException
      *
      * @return null
      */

@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxbasket.php 48926 2012-08-22 13:42:31Z tomas $
+ * @version   SVN: $Id: oxbasket.php 49802 2012-09-26 13:10:58Z tomas $
  */
 
 /**
@@ -526,7 +526,7 @@ class oxBasket extends oxSuperCfg
             return $aBundles;
         }
 
-        $oArticle = $oBasketItem->getArticle();
+        $oArticle = $oBasketItem->getArticle( true );
         if ( $oArticle && $oArticle->oxarticles__oxbundleid->value ) {
             $aBundles[$oArticle->oxarticles__oxbundleid->value] = 1;
         }
@@ -549,7 +549,7 @@ class oxBasket extends oxSuperCfg
         }
 
         // does this object still exists ?
-        if ( $oArticle = $oBasketItem->getArticle() ) {
+        if ( $oArticle = $oBasketItem->getArticle( true ) ) {
             $aDiscounts = oxDiscountList::getInstance()->getBasketItemBundleDiscounts( $oArticle, $this, $this->getBasketUser() );
 
             foreach ( $aDiscounts as $oDiscount ) {
@@ -697,7 +697,7 @@ class oxBasket extends oxSuperCfg
             $this->_dItemsCnt += $oBasketItem->getAmount();
             $this->_dWeight   += $oBasketItem->getWeight();
 
-            if ( !$oBasketItem->isDiscountArticle() && ( $oArticle = $oBasketItem->getArticle() ) ) {
+            if ( !$oBasketItem->isDiscountArticle() && ( $oArticle = $oBasketItem->getArticle( true ) ) ) {
                 $oBasketPrice = $oArticle->getBasketPrice( $oBasketItem->getAmount(), $oBasketItem->getSelList(), $this );
                 $oBasketItem->setPrice( $oBasketPrice );
                 //P adding product price
@@ -1736,7 +1736,7 @@ class oxBasket extends oxSuperCfg
 
         foreach ( $this->_aBasketContents as $sItemKey => $oBasketItem ) {
             try {
-                $oProduct = $oBasketItem->getArticle();
+                $oProduct = $oBasketItem->getArticle( true );
 
                 if ( $this->getConfig()->getConfigParam( 'bl_perfLoadSelectLists' ) ) {
                     // marking chosen select list
@@ -2451,7 +2451,7 @@ class oxBasket extends oxSuperCfg
         $dArtStock = 0;
         foreach ( $this->_aBasketContents as $sItemKey => $oOrderArticle ) {
             if ( $oOrderArticle && ( $sExpiredArtId == null || $sExpiredArtId != $sItemKey ) ) {
-                if ( $oOrderArticle->getArticle()->getId() == $sArtId ) {
+                if ( $oOrderArticle->getArticle( true )->getId() == $sArtId ) {
                     $dArtStock += $oOrderArticle->getAmount();
                 }
             }
@@ -2732,7 +2732,7 @@ class oxBasket extends oxSuperCfg
         foreach ( $this->_aBasketContents as $sItemKey => $oOrderArticle ) {
             //#4411 getArticle() might throw an Exception
             try {
-                if ( $oOrderArticle->getArticle()->isDownloadable() ) {
+                if ( $oOrderArticle->getArticle( true )->isDownloadable() ) {
                     $this->_blDownloadableProducts = true;
                     break;
                 }

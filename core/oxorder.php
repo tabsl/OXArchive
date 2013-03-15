@@ -19,7 +19,7 @@
  * @package   core
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: oxorder.php 47210 2012-07-11 14:47:07Z arturas.sevcenko $
+ * @version   SVN: $Id: oxorder.php 49697 2012-09-21 14:30:21Z tomas $
  */
 
 /**
@@ -1174,7 +1174,7 @@ class oxOrder extends oxBase
     {
         foreach ( $oBasket->getContents() as $key => $oContent ) {
             try {
-                $oProd = $oContent->getArticle();
+                $oProd = $oContent->getArticle( true );
             } catch ( oxNoArticleException $oEx ) {
                 $oBasket->removeItem( $key );
                 throw $oEx;

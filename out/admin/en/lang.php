@@ -19,7 +19,7 @@
  * @package   lang
  * @copyright (C) OXID eSales AG 2003-2012
  * @version OXID eShop CE
- * @version   SVN: $Id: lang.php 48831 2012-08-20 09:31:02Z juergen.busch $
+ * @version   SVN: $Id: lang.php 49797 2012-09-26 12:36:58Z juergen.busch $
  */
 
 /*
@@ -1273,8 +1273,8 @@ $aLang = array(
 'SHOP_CONFIG_SHOWORDERBUTTONONTHETOP'                      => 'Show an additional "Order now" button at the top in 4th order step (by default "Order now" button is shown only on the bottom of the page).',
 'SHOP_CONFIG_CALCULATEVATFORDELIVERY'                      => 'Display shipping costs as net price and VAT (instead of gross) in shopping cart and invoice',
 'SHOP_CONFIG_CALCDELVATONTOP'                              => 'Enter Shipping Costs as net Price (plus VAT)',
-'SHOP_CONFIG_CALCULATEVATFORWRAPPING'                      => 'Display VAT contained in Gift Wrapping in Shopping Cart and Invoice',
-'SHOP_CONFIG_CALCWRAPVATONTOP'                             => 'Enter Gift Wrapping Prices as net Price (plus VAT)',
+'SHOP_CONFIG_CALCULATEVATFORWRAPPING'                      => 'Display VAT contained in Gift Wrappings and Greeting Cards in Shopping Cart and Invoice',
+'SHOP_CONFIG_CALCWRAPVATONTOP'                             => 'Enter Gift Wrapping and Greeting Card Prices as net Price (plus VAT)',
 'SHOP_CONFIG_CALCULATEVATOFORPAYCHARGE'                    => 'Display VAT contained in Payment Method Charges in Shopping Cart and Invoice',
 'SHOP_CONFIG_CALCPAYVATONTOP'                              => 'Enter Payment Method Charges as net Price (plus VAT)',
 'SHOP_CONFIG_CMSFOLDER'                                    => 'CMS Page Folders',
