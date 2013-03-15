@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: actions_main.php 17188 2009-03-13 12:19:11Z arvydas $
+ * @version   SVN: $Id: actions_main.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -34,6 +34,7 @@ class Actions_Main extends oxAdminDetails
     /**
      * Loads article actionss info, passes it to Smarty engine and
      * returns name of template file "actions_main.tpl".
+     *
      * @return string
      */
     public function render()
@@ -59,8 +60,28 @@ class Actions_Main extends oxAdminDetails
 
             // load object
             $oAction = oxNew( "oxactions" );
-            $oAction->load( $soxId);
+            $oAction->loadInLang( $this->_iEditLang, $soxId);
+
+            $oOtherLang = $oAction->getAvailableInLangs();
+            if (!isset($oOtherLang[$this->_iEditLang])) {
+                // echo "language entry doesn't exist! using: ".key($oOtherLang);
+                $oAction->loadInLang( key($oOtherLang), $soxId );
+            }
+
             $this->_aViewData["edit"] =  $oAction;
+
+            // remove already created languages
+            $aLang = array_diff ( oxLang::getInstance()->getLanguageNames(), $oOtherLang );
+
+            if ( count( $aLang))
+                $this->_aViewData["posslang"] = $aLang;
+
+            foreach ( $oOtherLang as $id => $language) {
+                $oLang= new oxStdClass();
+                $oLang->sLangDesc = $language;
+                $oLang->selected = ($id == $this->_iEditLang);
+                $this->_aViewData["otherlang"][$id] = clone $oLang;
+            }
         }
         $aColumns = array();
         if ( oxConfig::getParameter("aoc") ) {
@@ -87,23 +108,28 @@ class Actions_Main extends oxAdminDetails
         $aParams = oxConfig::getParameter( "editval");
 
         $oAction = oxNew( "oxactions" );
-        if ( $soxId != "-1" ) {
-            $oAction->load( $soxId);
-        } else {
-            return;
+        if ( $soxId != "-1" && $oAction->load( $soxId ) ) {
+
+            if ( !$aParams['oxactions__oxactive'] ) {
+                $aParams['oxactions__oxactive'] = 0;
+            }
+
+            $oAction->setLanguage( 0 );
+            $oAction->assign( $aParams );
+            $oAction->setLanguage( $this->_iEditLang );
+            $oAction = oxUtilsFile::getInstance()->processFiles( $oAction );
+            $oAction->save();
+            $this->_aViewData["updatelist"] = "1";
         }
+    }
 
-        if ( !$aParams['oxactions__oxactive'] ) {
-            $aParams['oxactions__oxactive'] = 0;
-        }
-
-        $oAction->assign( $aParams);
-        $oAction = oxUtilsFile::getInstance()->processFiles( $oAction );
-        $oAction->save();
-        $this->_aViewData["updatelist"] = "1";
-
-        // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oAction->oxactions__oxid->value);
+    /**
+     * Saves changed selected action parameters in different language.
+     *
+     * @return null
+     */
+    public function saveinnlang()
+    {
+        $this->save();
     }
 }

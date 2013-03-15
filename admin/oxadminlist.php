@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxadminlist.php 22642 2009-09-25 12:13:51Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxadminlist.php 25640 2010-02-05 06:42:24Z alfonsas $
  */
 
 /**
@@ -186,7 +186,8 @@ class oxAdminList extends oxAdminView
             $this->_aViewData['listTable'] = getViewName( $oListObject->getCoreTableName() );
             $myConfig->setGlobalParameter( 'ListCoreTable', $oListObject->getCoreTableName() );
 
-            if ( $oListObject->isMultilang() ) { // is the object multilingual?
+            if ( $oListObject->isMultilang() ) {
+                // is the object multilingual?
                 $oListObject->setLanguage( oxLang::getInstance()->getBaseLanguage() );
 
                 if ( isset( $this->_blEmployMultilanguage ) ) {
@@ -447,8 +448,7 @@ class oxAdminList extends oxAdminView
      * For each search value if german umlauts exist, adds them
      * and replaced by spec. char to query
      *
-     * @param array  $aWhere  SQL condition array
-     * @param string $sqlFull SQL query string
+     * @param string $sFieldValue Filters
      *
      * @return string
      */
@@ -836,7 +836,7 @@ class oxAdminList extends oxAdminView
 
             $sOxId = oxConfig::getParameter( 'oxid' );
 
-            if( $sOxId == -1) {
+            if ( $sOxId == -1) {
                 //on first call or when pressed creating new item button, reseting active tab
                 $iActTab = $this->_iDefEdit;
             } else {
@@ -857,5 +857,15 @@ class oxAdminList extends oxAdminView
             // passign active tab number
             $this->_aViewData['actedit'] = $iActTab;
         }
+    }
+
+    /**
+     * Returns items list
+     *
+     * @return oxlist
+     */
+    public function getItemList()
+    {
+        return $this->_oList;
     }
 }

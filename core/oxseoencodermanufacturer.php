@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxseoencodermanufacturer.php 23319 2009-10-16 14:03:21Z arvydas $
+ * @version   SVN: $Id: oxseoencodermanufacturer.php 25467 2010-02-01 14:14:26Z alfonsas $
  */
 
 /**
@@ -46,12 +46,19 @@ class oxSeoEncoderManufacturer extends oxSeoEncoder
     /**
      * Singleton method
      *
-     * @return oxseoencoder
+     * @return oxSeoEncoderManufacturer
      */
     public static function getInstance()
     {
+        if ( defined( 'OXID_PHP_UNIT' ) ) {
+            self::$_instance = modInstances::getMod( __CLASS__ );
+        }
+
         if (!self::$_instance) {
             self::$_instance = oxNew("oxSeoEncoderManufacturer");
+            if ( defined( 'OXID_PHP_UNIT' ) ) {
+                modInstances::addMod( __CLASS__, self::$_instance);
+            }
         }
 
         if ( defined( 'OXID_PHP_UNIT' ) ) {
@@ -119,21 +126,24 @@ class oxSeoEncoderManufacturer extends oxSeoEncoder
      * @param oxManufacturer $oManufacturer manufacturer object
      * @param int            $iPage         page tu prepare number
      * @param int            $iLang         language
-     * @param bool           $blFixed       fixed url marker (default is false)
+     * @param bool           $blFixed       fixed url marker (default is null)
      *
      * @return string
      */
-    public function getManufacturerPageUrl( $oManufacturer, $iPage, $iLang = null, $blFixed = false )
+    public function getManufacturerPageUrl( $oManufacturer, $iPage, $iLang = null, $blFixed = null )
     {
         if (!isset($iLang)) {
             $iLang = $oManufacturer->getLanguage();
         }
         $sStdUrl = $oManufacturer->getStdLink() . '&amp;pgNr=' . $iPage;
-        $sParams = sprintf( "%0" . ceil( $this->_iCntPages / 10 + 1 ) . "d", $iPage + 1 );
+        $sParams = $sParams = (int) ($iPage + 1);
 
         $sStdUrl = $this->_trimUrl( $sStdUrl, $iLang );
         $sSeoUrl = $this->getManufacturerUri( $oManufacturer, $iLang ) . $sParams . "/";
 
+        if ( $blFixed === null ) {
+            $blFixed = $this->_isFixed( 'oxmanufacturers', $oManufacturer->getId(), $iLang );
+        }
         return $this->_getFullUrl( $this->_getPageUri( $oManufacturer, 'oxmanufacturers', $sStdUrl, $sSeoUrl, $sParams, $iLang, $blFixed ), $iLang );
     }
 

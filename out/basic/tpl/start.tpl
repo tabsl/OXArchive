@@ -4,9 +4,9 @@
     [{include file="inc/admin_banner.tpl"}]
 [{/if}]
 
-<div class="welcome">
-    [{ oxcontent ident="oxstartwelcome" }]
-</div>
+[{oxifcontent ident="oxstartwelcome" object="oCont"}]
+<div class="welcome">[{$oCont->oxcontents__oxcontent->value}]</div>
+[{/oxifcontent}]
 
 [{if $oView->getTopArticleList() }]
   [{foreach from=$oView->getTopArticleList() item=actionproduct name=WeekArt}]
@@ -15,8 +15,10 @@
 [{/if}]
 
 [{if $oView->getFirstArticle() }]
-  [{oxcontent ident="oxfirststart" field="oxtitle" assign="oxfirststart_title"}]
-  [{oxcontent ident="oxfirststart" assign="oxfirststart_text"}]
+  [{oxifcontent ident="oxfirststart" object="oCont"}]
+    [{assign var="oxfirststart_title" value=$oCont->oxcontents__oxtitle->value}]
+    [{assign var="oxfirststart_text" value=$oCont->oxcontents__oxcontent->value}]
+  [{/oxifcontent}]
   [{assign var="firstarticle" value=$oView->getFirstArticle()}]
   [{include file="inc/product.tpl" size='big' showMainLink=true class='topshop' head=$oxfirststart_title head_desc=$oxfirststart_text product=$firstarticle testid="FirstArticle_"|cat:$firstarticle->oxarticles__oxid->value testHeader=FirstArticle}]
 [{/if}]

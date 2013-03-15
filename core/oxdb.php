@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxdb.php 22896 2009-10-02 11:04:57Z sarunas $
+ * @version   SVN: $Id: oxdb.php 26784 2010-03-23 16:07:09Z tomas $
  */
 
 
@@ -36,14 +36,14 @@ class oxDb extends oxSuperCfg
      *
      * @var oxdb
      */
-    private static $_instance = null;
+    protected static $_instance = null;
 
     /**
      * Database object
      *
      * @var oxdb
      */
-    private static  $_oDB = null;
+    protected static  $_oDB = null;
 
     /**
      * Database tables descriptions cache array
@@ -61,8 +61,7 @@ class oxDb extends oxSuperCfg
     {
         // disable caching for test modules
         if ( defined( 'OXID_PHP_UNIT' ) ) {
-            static $inst = array();
-            self::$_instance = $inst[oxClassCacheKey()];
+            self::$_instance = modInstances::getMod( __CLASS__ );
         }
 
 
@@ -72,7 +71,7 @@ class oxDb extends oxSuperCfg
             self::$_instance = oxNew( 'oxdb' );
 
             if ( defined( 'OXID_PHP_UNIT' ) ) {
-                $inst[oxClassCacheKey()] = self::$_instance;
+                modInstances::addMod( __CLASS__, self::$_instance);
             }
         }
         return self::$_instance;
@@ -89,18 +88,19 @@ class oxDb extends oxSuperCfg
      */
     public static function getDb( $blAssoc = false )
     {
+        global $ADODB_FETCH_MODE;
+
+        if ( $blAssoc ) {
+            $ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
+        } else {
+            $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+        }
+
         if ( defined( 'OXID_PHP_UNIT' ) ) {
             if ( isset( modDB::$unitMOD ) && is_object( modDB::$unitMOD ) ) {
                 return modDB::$unitMOD;
             }
         }
-
-        global  $ADODB_FETCH_MODE;
-
-        if ( $blAssoc )
-            $ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
-        else
-            $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 
         if ( self::$_oDB !== null ) {
             return self::$_oDB;
@@ -121,7 +121,7 @@ class oxDb extends oxSuperCfg
         $myConfig = self::getInstance()->getConfig();
         $iDebug = $myConfig->getConfigParam( 'iDebug' );
         if ( $iDebug ) {
-            require_once getShopBasePath() . 'core/adodblite/adodb-exceptions.inc.php';
+            include_once getShopBasePath() . 'core/adodblite/adodb-exceptions.inc.php';
         }
 
         // session related parameters. don't change.
@@ -132,9 +132,7 @@ class oxDb extends oxSuperCfg
         //You can find the redefinition of ADODB_SESS_LIFE @ oxconfig.php:: line ~ 390.
         $ADODB_SESS_LIFE       = 3000 * 60;
         $ADODB_SESSION_TBL     = "oxsessions";
-        //hardcoding to mysql as otherwise it is not set in some cases
-        //$ADODB_SESSION_DRIVER  = $ADODB_DRIVER;
-        $ADODB_SESSION_DRIVER  = "mysql";
+        $ADODB_SESSION_DRIVER  = $myConfig->getConfigParam( 'dbType' );
         $ADODB_SESSION_USER    = $myConfig->getConfigParam( 'dbUser' );
         $ADODB_SESSION_PWD     = $myConfig->getConfigParam( 'dbPwd' );
         $ADODB_SESSION_DB      = $myConfig->getConfigParam( 'dbName' );
@@ -162,7 +160,7 @@ class oxDb extends oxSuperCfg
             if ( strpos( $sConfig, '<dbHost'.$sVerPrefix.'>' ) !== false &&
                  strpos( $sConfig, '<dbName'.$sVerPrefix.'>' ) !== false ) {
                 header( 'location:setup/index.php' ); // pop to setup as there is something wrong
-                exit();
+                oxUtils::getInstance()->showMessageAndExit( "" );
             } else {
 
                 // notifying shop owner about connection problems

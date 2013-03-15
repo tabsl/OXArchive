@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package lang
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   lang
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: help_lang.php 23326 2009-10-16 15:21:46Z rimvydas.paskevicius $
+ * @version   SVN: $Id: help_lang.php 26630 2010-03-17 16:01:48Z rimvydas.paskevicius $
  */
 
 /**
@@ -152,6 +152,11 @@ $aLang =  array(
 
 'HELP_SHOP_CONFIG_DELETERATINGLOGS'				=>	'If users rate a product, they cannot rate the product again. Here you can set after how many days users are allowed to rate a product again. Leave empty to disable - products can be rated only once per user.',
 
+'HELP_SHOP_CONFIG_DISABLEONLINEVATIDCHECK'      =>  'The online VAT ID check is executed if a customer from a foreign country inside the EU enters a VAT ID when ordering. If the VAT ID is valid, no VAT is calculated for this order.<br />'.
+                                                    'If the check is disabled, the normal VAT for the according country is always calculated.',
+
+'HELP_SHOP_CONFIG_ALTVATIDCHECKINTERFACEWSDL'   =>  'Here you can enter an alternative URL for the online VAT ID check. If the online VAT ID check isn\'t reachable under the normal URL, the eShop tries to reach it using the URL given here.',
+
 'HELP_SHOP_MALL_MALLMODE'                       =>  'Here you can set what is shown as front page of this eShop:' .
                                                     '<ul><li><span class="navipath_or_inputname">Show shop selector</span>: A page where the different eShops can be selected is shown.</li>' .
                                                     '<li><span class="navipath_or_inputname">Show main shop front page</span>: The normal front page of this Shop is shown.</li></ul>',
@@ -257,18 +262,22 @@ $aLang =  array(
 
 'HELP_ARTICLE_EXTEND_TEMPLATE'					=>	'The detail view of a product can be displayed with a different template. For doing so, enter the filename of the template to be used. Further information is available in the <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/display-certain-products-or-categories-another-template" target="_blank">accordant manual entry</a>.',
 
+'HELP_ARTICLE_EXTEND_ISCONFIGURABLE'            =>  'If the product is customizable, an additional input field is displayed on the products detail page and in the shopping cart. Here customers can enter text for customizing the product.<br /><br />'.
+                                                    'A typical example are t-shirts which can be imprinted with custom text. In the input field customers can enter the text to be printed on the t-shirt.',
 
 
 'HELP_ARTICLE_PICTURES_ICON'                    =>  'Icons are the smallest pictures of a product. For example, they are used in the shopping cart.<br />'.
-                                                    'You can upload an icon in <span class="navipath_or_inputname">Icon upload</span>. After uploading, the filename is shown in <span class="navipath_or_inputname">Icon</span>. If no icon is uploaded yet, <span class="userinput_or_code">nopic.jpg</span> is displayed. <br />' .
+                                                    'Uploading custom icon will override icon, generated from the first product picture.<br />' .
+                                                    'After uploading, the filename is shown in Icon. If no icon is uploaded yet, --- is displayed.<br />' .
                                                     'Further information is available in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/product-images-basics" target="_blank">product pictures manual entry</a>.',
 
 'HELP_ARTICLE_PICTURES_THUMB'                   =>  'Thumbnails are small product pictures. For example, they are used in product lists (categories, search results).<br />' .
-                                                    'You can upload a thumbnail in <span class="navipath_or_inputname">Thumb. upload</span>. After uploading, the filename is shown in <span class="navipath_or_inputname">Thumbnail</span>. If no thumbnail is uploaded yet, <span class="userinput_or_code">nopic.jpg</span> is displayed.<br />' .
+                                                    'Uploading custom thumbnail will override the thumbnail generated from the first product picture.<br />' .
+                                                    'After uploading, the filename is shown in Thumbnail. If no thumbnail is uploaded yet, ---- is displayed.<br />' .
                                                     'Further information is available in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/product-images-basics" target="_blank">product pictures manual entry</a>.',
 
-'HELP_ARTICLE_PICTURES_PIC1'                    =>  'Pictures are used in the detail view of a product. You can upload up to 7 pictures per product. </br>' .
-                                                    'You can upload pictures in <span class="navipath_or_inputname">Picture x upload</span>. After uploading, the filename is shown in <span class="navipath_or_inputname">Pic X</span>. If no picture is uploaded yet, <span class="userinput_or_code">nopic.jpg</span> is displayed.<br />' .
+'HELP_ARTICLE_PICTURES_PIC1'                    =>  'Pictures are used in the detail view of a product. You can upload up to 7 pictures per product. After uploading, the filename is shown in the accordant input field. If no picture is uploaded yet, --- is displayed.<br />' .
+                                                    'You should upload picture with maximum resolution.  After uploading, the main picture, zoom picture, thumbnail and icon will be generated automatically.<br />' .
                                                     'Further information is available in the <a href="http://www.oxid-esales.com/en/resources/help-faq/eshop-manual/product-images-basics" target="_blank">product pictures manual entry</a>.',
 
 'HELP_ARTICLE_PICTURES_ZOOM1'                   =>  'Zoom pictures are extra large pictures which can be opened from the detail view of a product. </br>' .

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxstrregular.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: oxstrregular.php 26366 2010-03-08 12:18:14Z arvydas $
  */
 
 /**
@@ -52,9 +52,9 @@ class oxStrRegular
      *
      * @return null;
      */
-	public function __construct()
-	{
-	}
+    public function __construct()
+    {
+    }
 
     /**
      * PHP strlen() function wrapper
@@ -97,11 +97,15 @@ class oxStrRegular
      */
     public function strpos($sHaystack, $sNeedle, $iOffset = null)
     {
-        if (is_null($iOffset)) {
-            return strpos($sHaystack, $sNeedle);
-        } else {
-            return strpos($sHaystack, $sNeedle, $iOffset);
+        $iPos = false;
+        if ( $sHaystack && $sNeedle ) {
+            if ( is_null( $iOffset ) ) {
+                $iPos = strpos( $sHaystack, $sNeedle );
+            } else {
+                $iPos = strpos( $sHaystack, $sNeedle, $iOffset );
+            }
         }
+        return $iPos;
     }
 
     /**

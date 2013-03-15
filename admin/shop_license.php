@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: shop_license.php 22945 2009-10-05 15:40:36Z alfonsas $
+ * @version   SVN: $Id: shop_license.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -30,13 +30,11 @@
  */
 class Shop_License extends Shop_Config
 {
-
     /**
      * Current class template.
      * @var string
      */
     protected $_sThisTemplate = "shop_license.tpl";
-
 
 
     /**
@@ -54,7 +52,7 @@ class Shop_License extends Shop_Config
 
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid");
+        $soxId = oxConfig::getParameter( "oxid" );
 
         // dodger: only first shop can store serials
 
@@ -62,8 +60,8 @@ class Shop_License extends Shop_Config
             $soxId = "1";*/
 
         // check if we right now saved a new entry
-        $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($soxId == "-1" || !isset( $soxId)) && isset( $sSavedID) ) {
+        $sSavedID = oxConfig::getParameter( "saved_oxid" );
+        if ( ($soxId == "-1" || !isset( $soxId ) ) && isset( $sSavedID ) ) {
             $soxId = $sSavedID;
             oxSession::deleteVar( "saved_oxid");
             $this->_aViewData["oxid"] =  $soxId;
@@ -71,15 +69,14 @@ class Shop_License extends Shop_Config
             $this->_aViewData["updatelist"] =  "1";
         }
 
-        if ( $soxId != "-1" && isset( $soxId)) {
+        if ( $soxId != "-1" && isset( $soxId ) ) {
             // load object
             $oShop = oxNew( "oxshop" );
-            $oShop->load( $soxId);
+            $oShop->load( $soxId );
             $this->_aViewData["edit"] =  $oShop;
         }
 
-        $this->_aViewData["version"]         = $myConfig->getVersion();
-
+        $this->_aViewData["version"] = $myConfig->getVersion();
 
 
 

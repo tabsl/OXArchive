@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxaddress.php 17768 2009-04-02 10:52:12Z tomas $
+ * @version   SVN: $Id: oxaddress.php 17768 2009-04-02 10:52:12Z tomas $
  */
 
 /**
@@ -46,8 +46,6 @@ class oxAddress extends oxBase
     /**
      * Class constructor
      *
-     * @param array $aParams The array of names and values of oxArticle instance properties to be set on object instantiation
-     *
      * @return null
      */
     public function __construct()
@@ -61,7 +59,8 @@ class oxAddress extends oxBase
      *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->toString();
     }
 
@@ -89,4 +88,15 @@ class oxAddress extends oxBase
 
         return $sAddress;
     }
+
+    /**
+     * Returns string representation of address state
+     *
+     * @return string
+     */
+    public function getState()
+    {
+        return $this->oxaddress__oxstateid->value;
+    }
+
 }

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: compare.php 18040 2009-04-09 12:22:44Z arvydas $
+ * @version   SVN: $Id: compare.php 26725 2010-03-22 09:48:54Z arvydas $
  */
 
 /**
@@ -324,6 +324,10 @@ class Compare extends oxUBase
      */
     public function getSimilarRecommLists()
     {
+        if (!$this->getViewConfig()->getShowListmania()) {
+            return false;
+        }
+
         if ( $this->_oRecommList === null ) {
             $this->_oRecommList = false;
             if ( $oArtList = $this->getCompArtList()) {
@@ -393,17 +397,15 @@ class Compare extends oxUBase
             $oNewList[$sOxid] = $oList[$sOxid];
 
             // hide arrow if article is first in the list
+            $oNewList[$sOxid]->hidePrev = false;
             if ( $iActPage == 0 && $iCnt==1 ) {
                 $oNewList[$sOxid]->hidePrev = true;
-            } else {
-                $oNewList[$sOxid]->hidePrev = false;
             }
 
             // hide arrow if article is last in the list
+            $oNewList[$sOxid]->hideNext = false;
             if ( ( $iActPage + 1 ) == $this->_iCntPages && $iCnt == count( $aItems ) ) {
                 $oNewList[$sOxid]->hideNext = true;
-            } else {
-                $oNewList[$sOxid]->hideNext = false;
             }
         }
         return $oNewList;

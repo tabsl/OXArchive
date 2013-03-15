@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: shop_config.php 22945 2009-10-05 15:40:36Z alfonsas $
+ * @version   SVN: $Id: shop_config.php 26303 2010-03-04 16:11:37Z sarunas $
  */
 
 /**
@@ -31,7 +31,7 @@
 class Shop_Config extends oxAdminDetails
 {
     protected $_sThisTemplate = 'shop_config.tpl';
-    protected $_aSkipMultiline = array('aRssSelected', 'aHomeCountry', 'iShopID_TrustedShops');
+    protected $_aSkipMultiline = array('aHomeCountry', 'iShopID_TrustedShops');
 
     /**
      * Executes parent method parent::render(), passes shop configuration parameters
@@ -167,7 +167,7 @@ class Shop_Config extends oxAdminDetails
         $myConfig = $this->getConfig();
 
 
-        $soxId      = oxConfig::getParameter( "oxid" );
+        $sOxId      = oxConfig::getParameter( "oxid" );
         $aConfBools = oxConfig::getParameter( "confbools" );
         $aConfStrs  = oxConfig::getParameter( "confstrs" );
         $aConfArrs  = oxConfig::getParameter( "confarrs" );
@@ -180,13 +180,13 @@ class Shop_Config extends oxAdminDetails
 
         if ( is_array( $aConfBools ) ) {
             foreach ( $aConfBools as $sVarName => $sVarVal ) {
-                $myConfig->saveShopConfVar( "bool", $sVarName, $sVarVal, $soxId );
+                $myConfig->saveShopConfVar( "bool", $sVarName, $sVarVal, $sOxId );
             }
         }
 
         if ( is_array( $aConfStrs ) ) {
             foreach ( $aConfStrs as $sVarName => $sVarVal ) {
-                $myConfig->saveShopConfVar( "str", $sVarName, $sVarVal, $soxId );
+                $myConfig->saveShopConfVar( "str", $sVarName, $sVarVal, $sOxId );
             }
         }
 
@@ -194,15 +194,15 @@ class Shop_Config extends oxAdminDetails
             foreach ( $aConfArrs as $sVarName => $aVarVal ) {
                 // home country multiple selectlist feature
                 if ( !is_array( $aVarVal ) ) {
-                    $aVarVal = $this->_multilineToArray($aVarVal);
+                    $aVarVal = $this->_multilineToArray( $aVarVal );
                 }
-                $myConfig->saveShopConfVar("arr", $sVarName, $aVarVal, $soxId);
+                $myConfig->saveShopConfVar( "arr", $sVarName, $aVarVal, $sOxId );
             }
         }
 
         if ( is_array( $aConfAarrs ) ) {
             foreach ( $aConfAarrs as $sVarName => $aVarVal ) {
-                $myConfig->saveShopConfVar( "aarr", $sVarName, $this->_multilineToAarray( $aVarVal ) , $soxId );
+                $myConfig->saveShopConfVar( "aarr", $sVarName, $this->_multilineToAarray( $aVarVal ), $sOxId );
             }
         }
     }
@@ -218,15 +218,13 @@ class Shop_Config extends oxAdminDetails
         $this->saveConfVars();
 
         //saving additional fields ("oxshops__oxdefcat"") that goes directly to shop (not config)
-        $soxId   = oxConfig::getParameter( "oxid" );
-        $aParams = oxConfig::getParameter( "editval" );
-
         $oShop = oxNew( "oxshop" );
-        $oShop->load( $soxId);
-        $oShop->assign( $aParams);
-        $oShop->save();
+        if ( $oShop->load( oxConfig::getParameter( "oxid" ) ) ) {
+            $oShop->assign( oxConfig::getParameter( "editval" ) );
+            $oShop->save();
 
-        oxUtils::getInstance()->rebuildCache();
+            oxUtils::getInstance()->rebuildCache();
+        }
     }
 
 
@@ -237,12 +235,13 @@ class Shop_Config extends oxAdminDetails
      *
      * @return string
      */
-    protected function _arrayToMultiline($aInput)
+    protected function _arrayToMultiline( $aInput )
     {
-        if (!is_array($aInput)) {
-            return '';
+        $sVal = '';
+        if ( is_array( $aInput ) ) {
+            $sVal = implode( "\n", $aInput );
         }
-        return implode("\n", $aInput);
+        return $sVal;
     }
 
     /**
@@ -252,19 +251,18 @@ class Shop_Config extends oxAdminDetails
      *
      * @return array
      */
-    protected function _multilineToArray($sMultiline)
+    protected function _multilineToArray( $sMultiline )
     {
-        $aArr = explode("\n", $sMultiline);
-
-        if (!is_array($aArr))
-            return ;
-
-        foreach ($aArr as $key=>$val) {
-            $aArr[$key] = trim($val);
-            if ($aArr[$key] == "")
-                unset($aArr[$key]);
+        $aArr = explode( "\n", $sMultiline );
+        if ( is_array( $aArr ) ) {
+            foreach ( $aArr as $sKey => $sVal ) {
+                $aArr[$sKey] = trim( $sVal );
+                if ( $aArr[$sKey] == "" ) {
+                    unset( $aArr[$sKey] );
+                }
+            }
+            return $aArr;
         }
-        return $aArr;
     }
 
     /**
@@ -274,18 +272,18 @@ class Shop_Config extends oxAdminDetails
      *
      * @return string
      */
-    protected function _aarrayToMultiline($aInput)
+    protected function _aarrayToMultiline( $aInput )
     {
-        $sMultiline = "";
-
-        if (!is_array($aInput))
-            return ;
-
-        foreach ($aInput as $key => $val) {
-            $sMultiline .= $key." => ".$val."\n";
+        if ( is_array( $aInput ) ) {
+            $sMultiline = '';
+            foreach ( $aInput as $sKey => $sVal ) {
+                if ( $sMultiline ) {
+                    $sMultiline .= "\n";
+                }
+                $sMultiline .= $sKey." => ".$sVal;
+            }
+            return $sMultiline;
         }
-        $sMultiline = getStr()->substr($sMultiline, 0, -1);
-        return $sMultiline;
     }
 
     /**
@@ -295,19 +293,18 @@ class Shop_Config extends oxAdminDetails
      *
      * @return array
      */
-    protected function _multilineToAarray($sMultiline)
+    protected function _multilineToAarray( $sMultiline )
     {
         $aArr = array();
-
-        $aLines = explode("\n", $sMultiline);
-
-        foreach ($aLines as $sLine) {
-            $sLine = trim($sLine);
-            if ($sLine != "" && preg_match("/(.+)=>(.+)/", $sLine, $regs)) {
-                $key = trim($regs[1]);
-                $val = trim($regs[2]);
-                if ($key != "" && $val != "")
-                    $aArr[$key] = $val;
+        $aLines = explode( "\n", $sMultiline );
+        foreach ( $aLines as $sLine ) {
+            $sLine = trim( $sLine );
+            if ( $sLine != "" && preg_match( "/(.+)=>(.+)/", $sLine, $aRegs ) ) {
+                $sKey = trim( $aRegs[1] );
+                $sVal = trim( $aRegs[2] );
+                if ( $sKey != "" && $sVal != "" ) {
+                    $aArr[$sKey] = $sVal;
+                }
             }
         }
 

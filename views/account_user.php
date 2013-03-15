@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: account_user.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: account_user.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
@@ -54,13 +54,6 @@ class Account_User extends Account
     protected $_oCountryList = null;
 
     /**
-     * check all "must-be-fields" if they are completely
-     *
-     * @var array
-     */
-    protected $_aMustFillFields = null;
-
-    /**
      * If user is not logged in - returns name of template account_user::_sThisLoginTemplate,
      * or if user is allready logged in additionally loads user delivery address
      * info and forms country list. Returns name of template account_user::_sThisTemplate
@@ -90,7 +83,7 @@ class Account_User extends Account
     /**
      * Return deliver address
      *
-     * @return oxbase | false
+     * @return oxAddress | null
      */
     public function getDeliverAddress()
     {
@@ -104,11 +97,10 @@ class Account_User extends Account
                         return $oAddress;
                     }
                 }
+                $oAdresses->rewind();
+                return $oAdresses->current();
             }
         }
-
-        $oAdresses->rewind();
-        return $oAdresses->current();;
     }
 
     /**
@@ -124,42 +116,5 @@ class Account_User extends Account
             $this->_oCountryList->loadActiveCountries();
         }
         return $this->_oCountryList;
-    }
-
-    /**
-     * return all must-be-fields.
-     *
-     * @return array | bool
-     */
-    public function getMustFillFields()
-    {
-        if ( $this->_aMustFillFields === null ) {
-            $this->_aMustFillFields = false;
-
-            $aMustFillFields = $this->getConfig()->getConfigParam( 'aMustFillFields' );
-            if ( is_array( $aMustFillFields ) ) {
-                $this->_aMustFillFields = array_flip( $aMustFillFields );
-            }
-        }
-
-        return $this->_aMustFillFields;
-    }
-
-    /**
-     * Returns if field is required.
-     *
-     * @param string $sField required field to check
-     *
-     * @return array | bool
-     */
-    public function isFieldRequired( $sField )
-    {
-        if ( $aMustFillFields = $this->getMustFillFields() ) {
-            if ( isset( $aMustFillFields[$sField] ) ) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

@@ -15,23 +15,28 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package smartyPlugins
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   smarty_plugins
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: function.oxcontent.php 22213 2009-09-08 08:22:51Z sarunas $
+ * @version   SVN: $Id: function.oxcontent.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
-/*
-* Smarty plugin
-* -------------------------------------------------------------
-* File: insert.oxid_content.php
-* Type: string, html
-* Name: oxid_content
-* Purpose: Output content snippet
-* add [{ insert name="oxid_content" ident="..." }] where you want to display content
-* -------------------------------------------------------------
-*/
+/**
+ * Smarty plugin
+ * -------------------------------------------------------------
+ * File: insert.oxid_content.php
+ * Type: string, html
+ * Name: oxid_content
+ * Purpose: Output content snippet
+ * add [{ insert name="oxid_content" ident="..." }] where you want to display content
+ * -------------------------------------------------------------
+ *
+ * @param array  $params  params
+ * @param Smarty &$smarty clever simulation of a method
+ *
+ * @return string
+ */
 function smarty_function_oxcontent( $params, &$smarty )
 {
     $myConfig = oxConfig::getInstance();
@@ -41,7 +46,7 @@ function smarty_function_oxcontent( $params, &$smarty )
     $sIdent = isset( $params['ident'] )?$params['ident']:null;
     $sOxid  = isset( $params['oxid'] )?$params['oxid']:null;
 
-    if( $sIdent || $sOxid ) {
+    if ( $sIdent || $sOxid ) {
         $oContent = oxNew( "oxcontent" );
         if ( $sOxid ) {
             $blLoaded = $oContent->load( $sOxid );

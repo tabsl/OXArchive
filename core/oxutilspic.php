@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxutilspic.php 22111 2009-09-03 11:00:40Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxutilspic.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
@@ -50,8 +50,7 @@ class oxUtilsPic extends oxSuperCfg
     {
         // disable caching for test modules
         if ( defined( 'OXID_PHP_UNIT' ) ) {
-            static $inst = array();
-            self::$_instance = $inst[oxClassCacheKey()];
+            self::$_instance = modInstances::getMod( __CLASS__ );
         }
 
         if ( !self::$_instance instanceof oxUtilsPic ) {
@@ -60,7 +59,7 @@ class oxUtilsPic extends oxSuperCfg
             self::$_instance = oxNew( 'oxUtilsPic' );
 
             if ( defined( 'OXID_PHP_UNIT' ) ) {
-                $inst[oxClassCacheKey()] = self::$_instance;
+                modInstances::addMod( __CLASS__, self::$_instance);
             }
         }
         return self::$_instance;
@@ -150,13 +149,14 @@ class oxUtilsPic extends oxSuperCfg
 
             $sFile = "$sAbsDynImageDir/$sPicName";
 
-            if ( file_exists( $sFile ) ) {
+            if ( file_exists( $sFile ) && is_file( $sFile ) ) {
                 $blDeleted = unlink( $sFile );
             }
 
             // additionally deleting icon ..
             $sIconFile = preg_replace( "/(\.[a-z0-9]*$)/i", "_ico\\1", $sFile );
-            if ( file_exists( $sIconFile ) ) {
+
+            if ( file_exists( $sIconFile ) && is_file( $sIconFile ) ) {
                 unlink( $sIconFile );
             }
         }
@@ -216,17 +216,19 @@ class oxUtilsPic extends oxSuperCfg
     }
 
     /**
-     * Returns icon name for give image filename
+     * Returns icon name for give image filename.
+     * This function is deprecated. Use oxPictureHandler::getIconName() instead.
      *
-     * @param string $sFilename file name(withou path)
+     * @param string $sFilename file name(without path)
+     *
+     * @deprecated
      *
      * @return string
      */
     public function iconName( $sFilename )
     {
-        $sIconName = preg_replace( '/(\.jpg|\.gif|\.png)$/i', '_ico\\1', $sFilename );
-
-        return $sIconName;
+        $oPictureHandler = oxPictureHandler::getInstance();
+        return $oPictureHandler->getIconName( $sFilename );
     }
 
 

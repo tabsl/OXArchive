@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: dynscreen.php 22380 2009-09-17 13:08:34Z arvydas $
+ * @version   SVN: $Id: dynscreen.php 26430 2010-03-09 15:05:54Z sarunas $
  */
 
 /**
@@ -40,6 +40,8 @@ class Dynscreen extends oxAdminList
     /**
      * Sets up navigation for current view
      *
+     * @param string $sNode None name
+     *
      * @return null
      */
     protected function _setupNavigation( $sNode )
@@ -58,9 +60,9 @@ class Dynscreen extends oxAdminList
 
         // edit url
         $sEditUrl = $myAdminNavig->getEditUrl( $sNode, $iActTab ).$sActTab;
-        if (!preg_match("/^http(s)?:\/\//", $sEditUrl)) {
+        if ( !preg_match( "/^http(s)?:\/\//", $sEditUrl ) ) {
             //internal link, adding path
-            $sEditUrl = $this->getViewConfig()->getViewConfigParam( 'selflink' ) . '?' . $sEditUrl;
+            $sEditUrl = oxUtilsUrl::getInstance()->appendParamSeparator($this->getViewConfig()->getViewConfigParam( 'selflink' )) . $sEditUrl;
         }
 
         $this->_aViewData['editurl'] = $sEditUrl;

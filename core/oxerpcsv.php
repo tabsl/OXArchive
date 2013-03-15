@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxerpcsv.php 23188 2009-10-13 06:59:38Z sarunas $
+ * @version   SVN: $Id: oxerpcsv.php 25471 2010-02-01 14:35:11Z alfonsas $
  */
 
 /**
@@ -458,7 +458,8 @@ class oxErpCsv extends oxERPBase
     protected function _importArticle2Action( oxERPType $oType, $aRow)
     {
 
-        if ( $this->_sCurrVersion == "0.1" && !isset( $this->_aImportedActions2Article[$aRow['OXARTID']] ) ) { //only in V0.1 and only once per import/article
+        if ( $this->_sCurrVersion == "0.1" && !isset( $this->_aImportedActions2Article[$aRow['OXARTID']] ) ) {
+            //only in V0.1 and only once per import/article
             $myConfig = oxConfig::getInstance();
             $oDb = oxDb::getDb();
             $oDb->execute( "delete from oxactions2article where oxartid = ".$oDb->quote( $aRow['OXARTID'] ) );
@@ -621,9 +622,9 @@ class oxErpCsv extends oxERPBase
                 $aStatuses = unserialize( $oOrderArt->oxorderarticles__oxerpstatus->value );
 
                 $oStatus = new stdClass();
-                $oStatus->STATUS 		= $aRow['OXERPSTATUS_STATUS'];
-                $oStatus->date 			= $aRow['OXERPSTATUS_TIME'];
-                $oStatus->trackingid 	= $aRow['OXERPSTATUS_TRACKID'];
+                $oStatus->STATUS = $aRow['OXERPSTATUS_STATUS'];
+                $oStatus->date = $aRow['OXERPSTATUS_TIME'];
+                $oStatus->trackingid = $aRow['OXERPSTATUS_TRACKID'];
 
                 $aStatuses[$aRow['OXERPSTATUS_TIME']] = $oStatus;
                 $oOrderArt->oxorderarticles__oxerpstatus = new oxField(serialize( $aStatuses), oxField::T_RAW);

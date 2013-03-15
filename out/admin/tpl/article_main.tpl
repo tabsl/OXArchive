@@ -141,6 +141,17 @@ window.onload = function ()
                     [{ oxinputhelp ident="HELP_ARTICLE_MAIN_DISTEAN" }]
                   </td>
                 </tr>
+
+                <tr>
+                  <td class="edittext">
+                    [{ oxmultilang ident="ARTICLE_MAIN_MPN" }]&nbsp;
+                  </td>
+                  <td class="edittext">
+                    <input type="text" class="editinput" size="32" maxlength="[{$edit->oxarticles__oxmpn->fldmax_length}]" name="editval[oxarticles__oxmpn]" value="[{$edit->oxarticles__oxmpn->value}]">
+                    [{ oxinputhelp ident="HELP_ARTICLE_MAIN_MPN" }]
+                  </td>
+                </tr>
+
               <tr>
                 <td class="edittext">
                     [{ oxmultilang ident="ARTICLE_MAIN_SHORTDESC" }]&nbsp;

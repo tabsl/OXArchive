@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxcountry.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxcountry.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 
@@ -34,6 +34,13 @@ class oxCountry extends oxI18n
      * @var string
      */
     protected $_sClassName = 'oxcountry';
+
+    /**
+     * State list
+     *
+     * @var oxStateList
+     */
+    protected $_aStates = null;
 
     /**
      * Class constructor, initiates parent constructor (parent::oxI18n()).
@@ -62,5 +69,24 @@ class oxCountry extends oxI18n
     public function isInEU()
     {
         return (bool) ($this->oxcountry__oxvatstatus->value == 1);
+    }
+
+    /**
+     * Returns current state list
+     *
+     * @return unknown
+     */
+    public function getStates()
+    {
+        if (!is_null($this->_aStates))
+            return $this->_aStates;
+
+        $sCountryId = $this->getId();
+        $sQ = "select * from oxstates where oxcountryid = '$sCountryId' ";
+        $this->_aStates = oxNew("oxlist");
+        $this->_aStates->init("oxstate");
+        $this->_aStates->selectString($sQ);
+
+        return $this->_aStates;
     }
 }

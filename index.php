@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package main
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   main
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: index.php 23188 2009-10-13 06:59:38Z sarunas $
+ * @version   SVN: $Id: index.php 26911 2010-03-26 17:29:31Z tomas $
  */
 
 // Setting error reporting mode
@@ -52,12 +52,13 @@ function getShopBasePath()
     return dirname(__FILE__).'/';
 }
 
-/**
- * Returns false.
- *
- * @return bool
- */
+
 if ( !function_exists( 'isAdmin' )) {
+    /**
+     * Returns false.
+     *
+     * @return bool
+     */
     function isAdmin()
     {
         return false;
@@ -65,7 +66,7 @@ if ( !function_exists( 'isAdmin' )) {
 }
 
 // custom functions file
-include getShopBasePath() . 'modules/functions.php';
+require getShopBasePath() . 'modules/functions.php';
 
 // Generic utility method file
 require_once getShopBasePath() . 'core/oxfunctions.php';
@@ -114,11 +115,10 @@ if (!isAdmin() && $iDebug) {
 
 if (!isAdmin() && $iDebug && is_array($aProfileTimes)) {
     echo "----------------------------------------------------------<br>".PHP_EOL;
-    $iTotalTime = $oShopControl->dTimeEnd - $oShopControl->dTimeStart;
+    $iTotalTime = $oShopControl->getTotalTime();
     arsort($aProfileTimes);
     echo "<table cellspacing='10px' style='border: 1px solid #000'>";
-    foreach ($aProfileTimes as $sKey => $sVal)
-    {
+    foreach ($aProfileTimes as $sKey => $sVal) {
         echo "<tr><td style='border-bottom: 1px dotted #000;min-width:300px;'>Profile $sKey: </td><td style='border-bottom: 1px dotted #000;min-width:100px;'>" . round($sVal, 5) ."s</td>" ;
         if ($iTotalTime) {
             echo "<td style='border-bottom: 1px dotted #000;min-width:100px;'>".round($sVal*100/$iTotalTime, 2)."%</td>";
@@ -126,7 +126,7 @@ if (!isAdmin() && $iDebug && is_array($aProfileTimes)) {
         if ($aExecutionCounts[$sKey]) {
             echo " <td style='border-bottom: 1px dotted #000;min-width:50px;padding-right:30px;' align='right'>" . $aExecutionCounts[$sKey] .  "</td>"
                  ."<td style='border-bottom: 1px dotted #000;min-width:15px; '>*</td>"
-                 ."<td style='border-bottom: 1px dotted #000;min-width:100px;'>" . round($sVal / $aExecutionCounts[$sKey],  5) . "s</td></tr>" . PHP_EOL;
+                 ."<td style='border-bottom: 1px dotted #000;min-width:100px;'>" . round($sVal / $aExecutionCounts[$sKey], 5) . "s</td></tr>" . PHP_EOL;
         } else {
             echo " <td colspan=3 style='border-bottom: 1px dotted #000;min-width:100px;'> not stopped correctly! </td></tr>" . PHP_EOL;
         }
@@ -134,19 +134,17 @@ if (!isAdmin() && $iDebug && is_array($aProfileTimes)) {
     echo "</table>";
 }
 
-if (!isAdmin() && ($iDebug == 7))
-{
+if (!isAdmin() && ($iDebug == 7)) {
     echo "----------------------------------------------------------<br>".PHP_EOL;
     echo "-- oxdebugdb --<br>".PHP_EOL;
     $oDbgDb = oxNew('oxdebugdb');
     $aWarnings = $oDbgDb->getWarnings();
-    $_iNr = 1;
-    foreach ($aWarnings as $w)
-    {
+    $iNr = 1;
+    foreach ($aWarnings as $w) {
         echo "{$w['check']}: {$w['time']} - <span style='color:#900000;margin:5px'>".htmlentities($w['sql'], ENT_QUOTES, 'UTF-8')."</span>";
-        echo "<div id='dbgdb_trace_$_iNr' style='display:none'>".nl2br($w['trace'])."</div>";
-        echo "<a style='color:#00AA00;margin:5px;cursor:pointer' onclick='var el=document.getElementById(\"dbgdb_trace_$_iNr\"); if (el.style.display==\"block\")el.style.display=\"none\"; else el.style.display = \"block\";'>TRACE (show/hide)</a><br><br>";
-        ++$_iNr;
+        echo "<div id='dbgdb_trace_$iNr' style='display:none'>".nl2br($w['trace'])."</div>";
+        echo "<a style='color:#00AA00;margin:5px;cursor:pointer' onclick='var el=document.getElementById(\"dbgdb_trace_$iNr\"); if (el.style.display==\"block\")el.style.display=\"none\"; else el.style.display = \"block\";'>TRACE (show/hide)</a><br><br>";
+        ++$iNr;
     }
 }
 

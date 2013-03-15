@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: user_remark.php 22494 2009-09-22 07:41:21Z arvydas $
+ * @version   SVN: $Id: user_remark.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -34,14 +34,15 @@ class User_Remark extends oxAdminDetails
      * Executes parent method parent::render(), creates oxuser, oxlist and
      * oxRemark objects, passes data to Smarty engine and returns name of
      * template file "user_remark.tpl".
+     *
      * @return string
      */
     public function render()
     {
         parent::render();
 
-        $soxId      = oxConfig::getParameter( "oxid");
-        $sRemoxId   = oxConfig::getParameter( "rem_oxid");
+        $soxId    = oxConfig::getParameter( "oxid");
+        $sRemoxId = oxConfig::getParameter( "rem_oxid");
         if ( $soxId != "-1" && isset( $soxId)) {
             // load object
             $oUser = oxNew( "oxuser" );
@@ -82,19 +83,15 @@ class User_Remark extends oxAdminDetails
     public function save()
     {
 
-        $soxId      = oxConfig::getParameter( "oxid");
-        $sRemoxId   = oxConfig::getParameter( "rem_oxid");
-
         $oRemark = oxNew( "oxremark" );
-        $oRemark->load( $sRemoxId);
 
-        $sNewText   = oxConfig::getParameter( "remarktext");
-        $sNewHeader = oxConfig::getParameter( "remarkheader");
-        $oRemark->oxremark__oxtext = new oxField($sNewText);
-        $oRemark->oxremark__oxheader = new oxField($sNewHeader);
-        $oRemark->oxremark__oxparentid = new oxField($soxId);
-        $oRemark->oxremark__oxtype = new oxField("r");
+        // try to load if exists
+        $oRemark->load( oxConfig::getParameter( "rem_oxid" ) );
 
+        $oRemark->oxremark__oxtext     = new oxField( oxConfig::getParameter( "remarktext") );
+        $oRemark->oxremark__oxheader   = new oxField( oxConfig::getParameter( "remarkheader") );
+        $oRemark->oxremark__oxparentid = new oxField( oxConfig::getParameter( "oxid" ) );
+        $oRemark->oxremark__oxtype     = new oxField( "r" );
         $oRemark->save();
     }
 
@@ -105,9 +102,7 @@ class User_Remark extends oxAdminDetails
      */
     public function delete()
     {
-        $sRemoxId = oxConfig::getParameter( "rem_oxid");
-        $oRemark  = oxNew( "oxRemark" );
-        $oRemark->load( $sRemoxId);
-        $oRemark->delete();
+        $oRemark = oxNew( "oxRemark" );
+        $oRemark->delete( oxConfig::getParameter( "rem_oxid" ) );
     }
 }

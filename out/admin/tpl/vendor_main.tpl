@@ -115,7 +115,7 @@ window.onload = function ()
     <!-- Anfang rechte Seite -->
     <td valign="top" class="edittext" align="left" width="55%">
     [{ if $oxid != "-1"}]
-    <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNARTICLES" }]" class="edittext" onclick="JavaScript:showDialog('?cl=vendor_main&aoc=1&oxid=[{ $oxid }]');" [{ $readonly }]>
+    <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNARTICLES" }]" class="edittext" onclick="JavaScript:showDialog('&cl=vendor_main&aoc=1&oxid=[{ $oxid }]');" [{ $readonly }]>
     [{ /if}]
     </td>
     <!-- Ende rechte Seite -->

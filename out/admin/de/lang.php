@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package lang
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   lang
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: lang.php 23594 2009-10-26 13:19:30Z alfonsas $
+ * @version   SVN: $Id: lang.php 26930 2010-03-29 13:30:53Z alfonsas $
  */
 
 $sLangName  = 'Deutsch';
@@ -64,6 +64,7 @@ $aLang = array(
 'GENERAL_AJAX_SORT_OXARTNUM'                    => 'Art.Nr',
 'GENERAL_AJAX_SORT_OXTITLE'                     => 'Titel',
 'GENERAL_AJAX_SORT_OXEAN'                       => 'EAN',
+'GENERAL_AJAX_SORT_OXMPN'                       => 'MPN',
 'GENERAL_AJAX_SORT_OXPRICE'                     => 'Preis',
 'GENERAL_AJAX_SORT_OXSTOCK'                     => 'Lager',
 'GENERAL_ALLGROUPS2'                            => 'Alle Benutzergruppen',
@@ -94,6 +95,8 @@ $aLang = array(
 'GENERAL_ARTICLE_OXVAT'                         => 'Artikel Mwst.',
 'GENERAL_ARTICLE_OXTHUMB'                       => 'Vorschaubild',
 'GENERAL_ARTICLE_OXICON'                        => 'oxicon',
+'GENERAL_ARTICLE_OXPICSGENERATED'               => 'Bilder erzeugt',
+'GENERAL_ARTICLE_PICTURES'                      => 'Artikelbilder',
 'GENERAL_ARTICLE_OXPIC1'                        => 'Bild1',
 'GENERAL_ARTICLE_OXPIC2'                        => 'Bild2',
 'GENERAL_ARTICLE_OXPIC3'                        => 'Bild3',
@@ -125,6 +128,7 @@ $aLang = array(
 'GENERAL_ARTICLE_OXTEMPLATE'                    => 'alt. Template',
 'GENERAL_ARTICLE_OXQUESTIONEMAIL'               => 'E-Mail bei Frage',
 'GENERAL_ARTICLE_OXISSEARCH'                    => 'Kann gesucht werden',
+'GENERAL_ARTICLE_OXISCONFIGURABLE'              => 'Artikel ist individualisierbar',
 'GENERAL_ARTICLE_OXVARNAME'                     => 'Name der Variante',
 'GENERAL_ARTICLE_OXVARSELECT'                   => 'oxvarselect',
 'GENERAL_ARTICLE_OXVARMINPRICE'                 => 'Niedrigster Variantenpreis',
@@ -138,12 +142,13 @@ $aLang = array(
 'GENERAL_ARTICLE_OXREMINDAMOUNT'                => 'Zuwenig Lagerbestand Mindestmenge',
 'GENERAL_ARTICLE_OXAMITEMID'                    => 'oxamitemid',
 'GENERAL_ARTICLE_OXAMTASKID'                    => 'oxamtaskid',
-'GENERAL_ARTICLE_OXVENDORID'                    => 'Lieferant',
-'GENERAL_ARTICLE_OXMANUFACTURERID'              => 'Hersteller',
+'GENERAL_ARTICLE_OXVENDORID'                    => 'Lieferant ID',
+'GENERAL_ARTICLE_OXMANUFACTURERID'              => 'Hersteller ID',
 'GENERAL_ARTICLE_OXVARCOUNT'                    => 'Varianten Anzahl',
 'GENERAL_ARTICLE_OXSHOPINCL'                    => 'Shop einschließen',
 'GENERAL_ARTICLE_OXSHOPEXCL'                    => 'Shop ausschließen',
 'GENERAL_ARTICLE_OXEAN'                         => 'EAN',
+'GENERAL_ARTICLE_OXMPN'                         => 'Hersteller-Artikelnummer',
 'GENERAL_ARTICLE_OXDISTEAN'                     => 'Hersteller EAN',
 'GENERAL_ARTICLE_OXSTOCKTEXT'                   => 'Info falls Artikel auf Lager',
 'GENERAL_ARTICLE_OXNOSTOCKTEXT'                 => 'Info falls Artikel nicht auf Lager',
@@ -154,6 +159,7 @@ $aLang = array(
 'GENERAL_ARTICLE_OXRRBUY'                       => 'Ausschließlich kaufbar',
 'GENERAL_ARTICLE_OXORDERINFO'                   => 'Bestell. Info',
 'GENERAL_ARTICLE_OXSEOID'                       => 'SEOID',
+
 'GENERAL_ARTICLE_OXBUNDLEID'                    => 'Bundle Identnr.',
 'GENERAL_ARTICLE_OXVARSTOCK'                    => 'Varianten Lagerbestand',
 'GENERAL_ASSIGNUSERS'                           => 'Benutzer zuordnen',
@@ -213,6 +219,7 @@ $aLang = array(
 'GENERAL_IDENT'                                 => 'Ident',
 'GENERAL_INGROUP'                               => 'In Benutzergruppe',
 'GENERAL_INETTO'                                => 'Artikel netto',
+'GENERAL_IVAT'                                  => 'VAT',
 'GENERAL_INFOLDER'                              => 'Ordner',
 'GENERAL_LIST_FIRST'                            => 'Erste Seite',
 'GENERAL_LIST_PREV'                             => 'zurück',
@@ -232,7 +239,7 @@ $aLang = array(
 'GENERAL_MANUEL'                                => 'Manuell',
 'GENERAL_MANUELL'                               => 'manuell',
 'GENERAL_MENUITEM'                              => 'Artikel verwalten',
-'GENERAL_MANUFACTURER'                          => 'Hersteller',
+'GENERAL_MANUFACTURER'                          => 'Lieferant',
 'GENERAL_NAME'                                  => 'Name',
 'GENERAL_NO'                                    => 'Nein',
 'GENERAL_NOITEMSSEL'                            => 'Kein Artikel ausgewählt',
@@ -269,6 +276,8 @@ $aLang = array(
 'GENERAL_SEO_VND'                               => '-- Lieferant --',
 'GENERAL_SEO_MANUFACTURER'                      => '-- Hersteller --',
 'GENERAL_SEO_TAG'                               => '-- Stichworte --',
+'GENERAL_SEO_MAINCAT'                           => '(Hauptkategorie)', // product seo tab near main category title
+'GENERAL_SEO_NOCAT'                             => '(keine Kategorie zugeordnet)',   // product seo tab, article ha no category assigned
 
 'GENERAL_SEO_URL'                               => 'SEO URL',
 'GENERAL_SEO_OXKEYWORDS'                        => 'Stichworte für Meta-Tags',
@@ -278,6 +287,7 @@ $aLang = array(
 'GENERAL_SORT'                                  => 'Sortierung',
 'GENERAL_STANDARD'                              => 'Standard',
 'GENERAL_STARTLISTING'                          => 'Ausgabe der Liste starten',
+'GENERAL_STATE'                                 => 'Bundesland',
 'GENERAL_STREET'                                => 'Staße',
 'GENERAL_STREETNUM'                             => 'Straße, Nr.',
 'GENERAL_SUM'                                   => 'Anzahl',
@@ -349,6 +359,7 @@ $aLang = array(
 'ARTICLE_EXTEND_TEMPLATE'                       => 'Alt. Template',
 'ARTICLE_EXTEND_QUESTIONEMAIL'                  => 'Alt. Anspr.partn.',
 'ARTICLE_EXTEND_ISSEARCH'                       => 'Kann gesucht werden',
+'ARTICLE_EXTEND_ISCONFIGURABLE'                 => 'Artikel ist individualisierbar',
 'ARTICLE_EXTEND_NONMATERIAL'                    => 'Immaterieller Artikel',
 'ARTICLE_EXTEND_FREESHIPPING'                   => 'Versandkostenfrei',
 'ARTICLE_EXTEND_BLFIXEDPRICE'                   => 'Sonderaktionen nicht erlaubt (Preisalarm)',
@@ -389,6 +400,7 @@ $aLang = array(
 'ARTICLE_MAIN_INCATEGORY'                       => 'In Kategorie',
 'ARTICLE_MAIN_EAN'                              => 'EAN',
 'ARTICLE_MAIN_DISTEAN'                          => 'Hersteller EAN',
+'ARTICLE_MAIN_MPN'                              => 'Hersteller-Artikelnummer',
 'ARTICLE_MAIN_MANUFACTURERID'                   => 'Hersteller',
 'ARTICLE_OVERVIEW_ARTMADEON'                    => 'Art. erstellt am',
 'ARTICLE_OVERVIEW_LASTCHANGE'                   => 'Letzte Änderung am',
@@ -413,6 +425,7 @@ $aLang = array(
 'ARTICLE_PICTURES_ICONUPLOAD'                   => 'Icon hochladen: ',
 'ARTICLE_PICTURES_THUMB'                        => 'Thumbnail',
 'ARTICLE_PICTURES_ICON'                         => 'Icon',
+'ARTICLE_PICTURES_CUSTOM_PICTURES'              => 'Thumbnail/Icon manuell hochladen',
 'ARTICLE_PICTURES_PIC1'                         => 'Bild 1',
 'ARTICLE_PICTURES_PIC2'                         => 'Bild 2',
 'ARTICLE_PICTURES_PIC3'                         => 'Bild 3',
@@ -420,6 +433,7 @@ $aLang = array(
 'ARTICLE_PICTURES_PIC5'                         => 'Bild 5',
 'ARTICLE_PICTURES_PIC6'                         => 'Bild 6',
 'ARTICLE_PICTURES_PIC7'                         => 'Bild 7',
+'ARTICLE_PICTURES_PREVIEW'                      => 'Vorschau',
 'ARTICLE_PICTURES_ZOOM1'                        => 'Zoom 1',
 'ARTICLE_PICTURES_ZOOM2'                        => 'Zoom 2',
 'ARTICLE_PICTURES_ZOOM3'                        => 'Zoom 3',
@@ -432,8 +446,8 @@ $aLang = array(
 'ARTICLE_RIGHTS_SETGROUPS_BUYABLE'              => 'Ausschließlich kaufbar für die Benutzergruppe ',
 'ARTICLE_RIGHTS_SETGROUPS_VISIBLE'              => 'Ausschließlich sichtbar für die Benutzergruppe',
 'ARTICLE_RIGHTS_ALLGROUPS'                      => 'Alle Benutzergruppen',
-'ARTICLE_RIGHTS_ASSIGNVISIBLE'                  => 'Benutzergruppen zuordnen ( Ausschließlich sichtbar)',
-'ARTICLE_RIGHTS_ASSIGNBUYABLE'                  => 'Benutzergruppen zuordnen ( Ausschließlich kaufbar)',
+'ARTICLE_RIGHTS_ASSIGNVISIBLE'                  => 'Benutzergruppen zuordnen (Ausschließlich sichtbar)',
+'ARTICLE_RIGHTS_ASSIGNBUYABLE'                  => 'Benutzergruppen zuordnen (Ausschließlich kaufbar)',
 'ARTICLE_STOCK_AMOUNTPRICE_ABS'                 => 'abs',
 'ARTICLE_STOCK_AMOUNTPRICE_DISCOUNT'            => '% Rabatt',
 'ARTICLE_STOCK_AMOUNTPRICE_PRICE'               => 'Preis',
@@ -589,7 +603,7 @@ $aLang = array(
 'DISCOUNT_USERS_SETUSER'                        => 'Zugeordnete Benutzer',
 'DYN_ADBUTLER_PARTNERID'                        => 'adbutler Partner-ID',
 'DYN_AFFILI24_PARTNERID'                        => 'Affili24-Partner-ID',
-'DYN_AFFILINET_SITEID'                          => 'Affili.Net-Site-ID',
+'DYN_AFFILINET_SITEID'                          => 'Affili.Net Partnerprogramm-ID',
 'DYN_AFFILIWELT_PARTNERID'                      => 'AffiliWelt-Partner-ID (alt)',
 'DYN_ECONDA_ACTIVE'                             => 'ECONDA Webcontrolling aktivieren',
 'DYN_ECONDA_ATTENTION'                          => 'Bitte beachten Sie: ',
@@ -862,6 +876,7 @@ $aLang = array(
 'LANGUAGE_ERROR_RESETING_MULTILANG_FIELDS'      => 'Achtung: Während des Löschens einer Sprache ist beim Zurücksetzens der Multisprachen-Felder ein Fehler aufgetreten!',
 'LANGUAGE_DELETINGMAINLANG_WARNING'             => 'Warnung: Sie können nicht die Hauptsprache löschen (Sprach-ID 0)',
 'LANGUAGE_ALREADYEXISTS_ERROR'                  => 'Fehler: Eine Sprache mit diesem Sprachkürzel existiert bereits',
+'LANGUAGE_EMPTYLANGUAGENAME_ERROR'              => 'Bitte geben Sie den Namen der Sprache ein!',
 'SETUP_DIRNOTDELETED_WARNING'                   => 'Bitte löschen Sie das Setup-Verzeichnis',
 'SETUP_CONFIGPERMISSIONS_WARNING'               => 'WICHTIG: Aus Sicherheitsgründen setzen Sie Ihre config.inc.php Datei auf read-only-Modus!',
 'LOGIN_TITLE'                                   => 'OXID eShop Login',
@@ -940,6 +955,8 @@ $aLang = array(
 'LOOKNFEEL_THEME_PASTEL'                        => 'Pastell',
 'MAIN_TITLE'                                    => '[OXID Startpage]',
 'MAIN_INFO'                                     => 'Information',
+'MR'                                            => 'Herr',
+'MRS'                                           => 'Frau',
 'HOME_DESC'                                     => 'Willkommen im OXID eShop Administrationsbereich. Hier finden Sie eine Übersicht über die grundlegenden Bereiche und Funktionen',
 'HOME_EXPLAIN'                                  => '',
 'NAVIGATION_TITLE'                              => 'Navigation',
@@ -1230,6 +1247,7 @@ $aLang = array(
 'SHOP_CONFIG_SETORDELETELANGUAGE'               => 'Hier können Sie Sprachen löschen oder hinzufügen. Bitte achten Sie bei neuen Sprachen darauf, dass die entsprechenden Datenbankfelder auch bestehen.<br /><b>ACHTUNG:</b> Vermeiden Sie das Löschen ALLER Sprachen!',
 'SHOP_CONFIG_SETORDELETELANGUAGEURL'            => 'Unterschiedliche Basis-URLs pro Sprache, falls gewünscht. Geben Sie eine URL pro Zeile ein. Die URL in der ersten Zeile wird für die erste Sprache verwendet, die URL in der zweiten Zeile für die zweite Sprache usw. Beispiel:<br />http://www.meinshop.de/<br />http://www.myshop.com/',
 'SHOP_CONFIG_SETORDELETELANGUAGESSLURL'         => 'Unterschiedliche Basis-SSL-URLs pro Sprache, falls gewünscht. Geben Sie eine URL pro Zeile ein. Die URL in der ersten Zeile wird für die erste Sprache verwendet, die URL in der zweiten Zeile für die zweite Sprache usw. Beispiel:<br />https://www.meinsslshop.de/<br />https://www.mysslshop.com/',
+'SHOP_CONFIG_SHIPPINGCOUNTRYVAT'                => 'Die Lieferadresse anstatt der Rechnungsadresse für die Mehrwertsteuerberechnung verwenden',
 'SHOP_CONFIG_STOCKWARNINGLIMIT'                 => 'Lagerbestand, ab dem den Benutzern angezeigt wird, dass nur noch wenige Artikel auf Lager sind',
 'SHOP_CONFIG_STOCKOFFDEFAULTMESSAGE'            => 'Die "Nicht-auf-Lager"-Standardmeldung nutzen',
 'SHOP_CONFIG_STOCKONDEFAULTMESSAGE'             => 'Die "Auf-Lager"-Standardmeldung nutzen',
@@ -1243,7 +1261,7 @@ $aLang = array(
 'SHOP_CONFIG_ZOOMIMAGESIZE'                     => 'Größe der Zoom-Bilder (Zoom 1-4) in Pixeln (Breite*Höhe)',
 'SHOP_CONFIG_DELETERATINGLOGS'                  => 'Wie lange Artikel-Bewertungen gespeichert werden (in Tagen)',
 'SHOP_CONFIG_RSSITEMSCOUNT'                     => 'Anzahl der Objekte, die in RSS Feeds angezeigt werden',
-'SHOP_CONFIG_RSSSELECTED'                       => 'Angezeigte RSS Feeds (Mehrfachauswahl mit gedrückter STRG-Taste)',
+'SHOP_CONFIG_RSSSELECTED'                       => 'Angezeigte RSS Feeds',
 'SHOP_CONFIG_RSSTOPSHOP'                        => 'Top of the Shop',
 'SHOP_CONFIG_RSSBARGAIN'                        => 'Schnäppchen',
 'SHOP_CONFIG_RSSNEWEST'                         => 'Neue Artikel',
@@ -1253,6 +1271,13 @@ $aLang = array(
 'SHOP_CONFIG_RSSRECOMMLISTARTS'                 => 'Lieblingslisten (Artikel)',
 'SHOP_CONFIG_LOAD_DYNAMIC_PAGES'                => 'Zusätzliche Informationen vom OXID Server laden',
 'SHOP_CONFIG_CHECK_UPDATES'                     => 'Regelmäßig überprüfen, ob Aktualisierungen vorhanden sind',
+'SHOP_CONFIG_SELECTSHOPCOMPONENTS'              => 'eShop Funktionen an/ausschalten',
+'SHOP_CONFIG_SHOWLISTMANIA'                     => 'Lieblingslisten aktivieren',
+'SHOP_CONFIG_SHOWWISHLIST'                      => 'Wunschzettel aktivieren',
+'SHOP_CONFIG_SHOWCOMPARELIST'                   => 'Artikelvergleich aktivieren',
+'SHOP_CONFIG_SHOWVOUCHERS'                      => 'Gutscheine aktivieren',
+'SHOP_CONFIG_SHOWOPENID'                        => 'Open ID Login aktivieren',
+'SHOP_CONFIG_SHOWGIFTWRAPPING'                  => 'Geschenkverpackungen aktivieren',
 
 'SHOP_SYSTEM_ATTRIBUTESPERCENT'                 => 'Prozentsatz gleicher Attribute, damit Artikel ähnlich sind',
 'SHOP_SYSTEM_DEFAULTIMAGEQUALITY'               => 'Bildqualität - von 0 (schlechteste Qualität, kleine Dateigröße) bis 100 (beste Qualität, große Dateigröße)',
@@ -1347,6 +1372,7 @@ $aLang = array(
 'SYSREQ_PHP_EXTENNSIONS'                        => 'PHP Erweiterungen',
 'SYSREQ_PHP_CONFIG'                             => 'PHP Konfiguration',
 'SYSREQ_SERVER_CONFIG'                          => 'Server-Konfiguration',
+'SYSREQ_SERVER_PERMISSIONS'                     => 'Dateizugriffsrechte',
 'SYSREQ_MOD_REWRITE'                            => 'Apache mod_rewrite Modul',
 'SYSREQ_ALLOW_URL_FOPEN'                        => 'allow_url_fopen oder fsockopen auf Port 80',
 'SYSREQ_PHP4_COMPAT'                            => 'Zend Kompatibilitätsmodus muss ausgeschaltet sein',
@@ -1359,12 +1385,14 @@ $aLang = array(
 'SYSREQ_TOKENIZER'                              => 'Tokenizer',
 'SYSREQ_BC_MATH'                                => 'BCMath',
 'SYSREQ_MYSQL_CONNECT'                          => 'MySQL Modul für MySQL 5',
+'SYSREQ_MYSQL_VERSION'                          => 'MySQL Version 5',
 'SYSREQ_GD_INFO'                                => 'GDlib v2 [v1] incl. JPEG Unterstützung',
 'SYSREQ_INI_SET'                                => 'ini_set erlaubt',
 'SYSREQ_REGISTER_GLOBALS'                       => 'register_globals muss ausgeschaltet sein',
-'SYSREQ_ZEND_OPTIMIZER'                         => 'Zend Optimizer installiert',
+'SYSREQ_ZEND_OPTIMIZER'                         => 'Zend Optimizer oder Zend Guard Loader installiert',
 'SYSREQ_ZEND_PLATFORM_OR_SERVER'                => 'Zend Platform oder Zend Server installiert',
 'SYSREQ_MB_STRING'                              => 'mbstring',
+'SYSREQ_CURL'                                   => 'cURL',
 'SYSREQ_UNICODE_SUPPORT'                        => 'UTF-8 Unterstützung',
 'SYSREQ_MEMORY_LIMIT'                           => 'PHP Memory limit (min. 14MB, 30MB empfohlen)',
 'SYSREQ_DESCRIPTION_PASS'                       => 'Die Voraussetzung ist erfüllt.',
@@ -1507,6 +1535,7 @@ $aLang = array(
 'VOUCHERSERIE_MAIN_AVAILABLE'                   => 'Verfügbar',
 'VOUCHERSERIE_MAIN_USED'                        => 'Benutzt',
 'VOUCHERSERIE_MAIN_DISCOUNT'                    => 'Rabatt',
+'VOUCHERSERIE_MAIN_CALCULATEONCE'               => 'Nur einmalig berechnen (gültig nur bei zugewiesenen Gutscheinen)',
 'WRAPPING_LIST_PICTURE'                         => 'Bild',
 'WRAPPING_LIST_PRESENTPACKUNG'                  => 'Geschenkverpackung',
 'WRAPPING_LIST_MENUITEM'                        => 'Shopeinstellungen',
@@ -1562,8 +1591,8 @@ $aLang = array(
 'SHOP_PERF_USETIMECHECKINARTLOAD'               => 'Beim Laden von Artikeln "Aktiv von/bis" berücksichtigen',
 'SHOP_PERF_SHOWTOPBASKET'                       => 'Warenkorb oben anzeigen',
 'SHOP_PERF_DISBASKETSAVING'                     => 'Warenkörbe von angemeldeten Benutzern <strong>nicht</strong> speichern',
-'DYNSCREEN_LOCAL_TITLE'                         => 'E-Commerce Services',
-'DYNSCREEN_LOCAL_TEXT'                          => 'Some general info about e-commerce services...',
+'DYNSCREEN_LOCAL_TITLE'                         => 'eCommerce Services',
+'DYNSCREEN_LOCAL_TEXT'                          => 'Some general info about eCommerce services...',
 
 'GENIMPORT_MENUITEM'                            => 'Service',
 'GENIMPORT_MENUSUBITEM'                         => 'Gener. Import',
@@ -1593,11 +1622,12 @@ $aLang = array(
 'GENEXPORT_MENUITEM'                            => 'Service',
 'GENEXPORT_MENUSUBITEM'                         => 'Gener. Export',
 
-# menu
+/* menu*/
 'dyn_menu'                                      => 'Servicebereich',
 'dyn_about'                                     => 'Allgemein',
 'dyn_interface'                                 => 'Interface',
 'dyn_technics'                                  => 'Technik',
+'dyn_efire'                                     => 'OXID eFire',
 'mxactions'                                     => 'Aktionen verwalten',
 'mxarticles'                                    => 'Artikel',
 'mxattributes'                                  => 'Attribute',
@@ -1622,7 +1652,7 @@ $aLang = array(
 'mxremlist'                                     => 'Alle Bewertungen',
 'mxsellist'                                     => 'Auswahllisten',
 'mxservice'                                     => 'Service',
-'mxservicearea'                                 => 'E-Commerce Services',
+'mxservicearea'                                 => 'eCommerce Services',
 'mxshipping'                                    => 'Versandkostenregeln',
 'mxshippingset'                                 => 'Versandarten',
 'mxshopsett'                                    => 'Shopeinstellungen',
@@ -1645,7 +1675,7 @@ $aLang = array(
 'mxshow'                                        => 'ausgeben',
 'mxstat'                                        => 'Statistiken',
 
-# tabs
+/* tabs */
 //  actions',
 'tbclactions_main'                              => 'Stamm',
 //  adminlinks_list',
@@ -1729,7 +1759,7 @@ $aLang = array(
 'tbclmanufacturer_main'                         => 'Stamm',
 //  voucherserie_list',
 'tbclvoucherserie_main'                         => 'Stamm',
-'tbclvoucherserie_groups'                       => 'Benutzergruppen',
+'tbclvoucherserie_groups'                       => 'Benutzergruppen & Artikel',
 'tbclwrapping_main'                             => 'Stamm',
 'tbclcontent_seo'                               => 'SEO',
 'tbclarticle_seo'                               => 'SEO',

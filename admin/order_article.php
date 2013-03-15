@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: order_article.php 22931 2009-10-05 11:51:31Z arvydas $
+ * @version   SVN: $Id: order_article.php 26305 2010-03-04 23:17:31Z alfonsas $
  */
 
 /**
@@ -73,6 +73,7 @@ class Order_Article extends oxAdminDetails
 
         if ( $oOrder = $this->getEditObject() ) {
             $this->_aViewData["edit"] = $oOrder;
+            $this->_aViewData["aProductVats"] = $oOrder->getProductVats();
         }
 
         return "order_article.tpl";
@@ -128,7 +129,7 @@ class Order_Article extends oxAdminDetails
     /**
      * Returns product found by search. If product is variant - returns parent object
      *
-     * @return
+     * @return object
      */
     public function getMainProduct()
     {
@@ -193,13 +194,11 @@ class Order_Article extends oxAdminDetails
             $sOrderId = oxConfig::getParameter( 'oxid' );
             $oOrder   = oxNew( 'oxorder' );
             if ( $sOrderId && $oOrder->load( $sOrderId ) ) {
-
                 $oOrderArticle = oxNew( 'oxorderArticle' );
                 $oOrderArticle->oxorderarticles__oxartid  = new oxField( $oProduct->getId() );
                 $oOrderArticle->oxorderarticles__oxartnum = new oxField( $oProduct->oxarticles__oxartnum->value );
                 $oOrderArticle->oxorderarticles__oxamount = new oxField( $dAmount );
                 $oOrderArticle->oxorderarticles__oxselvariant = new oxField( oxConfig::getParameter( 'sel' ) );
-
                 $oOrder->recalculateOrder( array( $oOrderArticle ) );
             }
         }

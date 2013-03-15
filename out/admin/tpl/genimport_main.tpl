@@ -22,7 +22,7 @@
     [{ if $sNavStep == 2 || $sNavStep == 3 }]
         [{assign var="blLinkToFirstStep" value="1"}]
     [{/if}]
-    <li class="[{ if $sNavStep == 1}]active[{/if}][{ if $blLinkToFirstStep}] link[{/if}]">[{ if $blLinkToFirstStep}]<a href="[{$shop->selflink}]?cl=genimport_main">[{/if}][{ oxmultilang ident="GENIMPORT_STEP" }] 1[{ if $blLinkToFirstStep}]</a>[{/if}]</li>
+    <li class="[{ if $sNavStep == 1}]active[{/if}][{ if $blLinkToFirstStep}] link[{/if}]">[{ if $blLinkToFirstStep}]<a href="[{$shop->selflink}]&cl=genimport_main">[{/if}][{ oxmultilang ident="GENIMPORT_STEP" }] 1[{ if $blLinkToFirstStep}]</a>[{/if}]</li>
     <li class="[{ if $sNavStep == 2}]active[{/if}]">[{ oxmultilang ident="GENIMPORT_STEP" }] 2</li>
     <li class="[{ if $sNavStep == 3}]active[{/if}]">[{ oxmultilang ident="GENIMPORT_FINISH" }]</li>
 </ul>

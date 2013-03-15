@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxcmp_news.php 16306 2009-02-05 10:28:05Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxcmp_news.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
@@ -46,17 +46,18 @@ class oxcmp_news extends oxView
         parent::render();
 
         $myConfig = $this->getConfig();
+        $oActView = $myConfig->getActiveView();
 
         // news loading is disabled
         if ( !$myConfig->getConfigParam( 'bl_perfLoadNews' ) ||
               ( $myConfig->getConfigParam( 'blDisableNavBars' ) &&
-                $myConfig->getActiveView()->getIsOrderStep() ) ) {
+                $oActView->getIsOrderStep() ) ) {
             return;
         }
 
         // if news must be displayed only on start page ?
         if ( $myConfig->getConfigParam( 'bl_perfLoadNewsOnlyStart' ) &&
-             $myConfig->getActiveView()->getClassName() != "start" ) {
+             $oActView->getClassName() != "start" ) {
             return;
         }
 

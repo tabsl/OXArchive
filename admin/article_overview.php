@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: article_overview.php 22482 2009-09-22 06:53:41Z arvydas $
+ * @version   SVN: $Id: article_overview.php 26697 2010-03-20 12:24:07Z arvydas $
  */
 
 /**
@@ -53,6 +53,7 @@ class Article_Overview extends oxAdminDetails
 
 
             $oDB = oxDb::getDb();
+
                 // variant handling
                 if ( $oArticle->oxarticles__oxparentid->value) {
                     $oParentArticle = oxNew( "oxarticle");
@@ -81,7 +82,8 @@ class Article_Overview extends oxAdminDetails
 
                 // position in top ten
                 $sSelect =  "select oxartid,sum(oxamount) as cnt from oxorderarticles group by oxartid order by cnt desc";
-            $rs = $oDB->execute( $sSelect);
+
+            $rs = $oDB->execute( $sSelect );
             $iTopPos = 0;
             $iPos    = 0;
             if ( $rs != false && $rs->recordCount() > 0) {

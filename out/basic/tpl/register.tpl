@@ -4,7 +4,7 @@
 <form action="[{ $oViewConf->getSslSelfLink() }]" name="order" method="post">
 
     <strong id="test_openAccHeader" class="boxhead">[{ oxmultilang ident="REGISTER_OPENACCOUNT" }]</strong>
-    [{assign var="aMustFillFields" value=$oView->getMustFillFields() }]
+
     <div class="box info">
         [{ $oViewConf->getHiddenSid() }]
         [{ $oViewConf->getNavFormParams() }]
@@ -47,22 +47,22 @@
                 <td><label>[{ oxmultilang ident="REGISTER_TITLE" }]</label></td>
                 <td>
                     [{include file="inc/salutation.tpl" name="invadr[oxuser__oxsal]" value=$oxcmp_user->oxuser__oxsal->value value2=$invadr.oxuser__oxsal}]
-                    [{if isset($aMustFillFields.oxuser__oxsal) }]<span class="req">*</span>[{/if}]
+                    [{if $oView->isFieldRequired(oxuser__oxsal) }]<span class="req">*</span>[{/if}]
                 </td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_FIRSTNAME" }]</label></td>
-                <td><input type="text" size="37" maxlength="255" name="invadr[oxuser__oxfname]" value="[{if isset( $invadr.oxuser__oxfname ) }][{$invadr.oxuser__oxfname }][{else}][{$oxcmp_user->oxuser__oxfname->value }][{/if}]"> [{if isset($aMustFillFields.oxuser__oxfname)}]<span class="req">*</span>[{/if}]</td>
+                <td><input type="text" size="37" maxlength="255" name="invadr[oxuser__oxfname]" value="[{if isset( $invadr.oxuser__oxfname ) }][{$invadr.oxuser__oxfname }][{else}][{$oxcmp_user->oxuser__oxfname->value }][{/if}]"> [{if $oView->isFieldRequired(oxuser__oxfname) }]<span class="req">*</span>[{/if}]</td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_LASTNAME" }]</label></td>
-                <td><input type="text" size="37" maxlength="255" name="invadr[oxuser__oxlname]" value="[{if isset( $invadr.oxuser__oxlname ) }][{$invadr.oxuser__oxlname }][{else}][{$oxcmp_user->oxuser__oxlname->value }][{/if}]"> [{if isset($aMustFillFields.oxuser__oxlname) }]<span class="req">*</span>[{/if}]</td>
+                <td><input type="text" size="37" maxlength="255" name="invadr[oxuser__oxlname]" value="[{if isset( $invadr.oxuser__oxlname ) }][{$invadr.oxuser__oxlname }][{else}][{$oxcmp_user->oxuser__oxlname->value }][{/if}]"> [{if $oView->isFieldRequired(oxuser__oxlname) }]<span class="req">*</span>[{/if}]</td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_COMPANY" }]</label></td>
                 <td>
                 <input type="text" size="37" maxlength="255" name="invadr[oxuser__oxcompany]" value="[{if isset( $invadr.oxuser__oxcompany ) }][{$invadr.oxuser__oxcompany }][{else}][{$oxcmp_user->oxuser__oxcompany->value }][{/if}]">
-                [{if isset($aMustFillFields.oxuser__oxcompany) }]<span class="req">*</span>[{/if}]
+                [{if $oView->isFieldRequired(oxuser__oxcompany) }]<span class="req">*</span>[{/if}]
               </td>
             </tr>
             <tr>
@@ -70,7 +70,7 @@
                 <td>
                     <input type="text" size="28" maxlength="255" name="invadr[oxuser__oxstreet]" value="[{if isset( $invadr.oxuser__oxstreet ) }][{$invadr.oxuser__oxstreet }][{else}][{$oxcmp_user->oxuser__oxstreet->value }][{/if}]">
                     <input type="text" size="5" maxlength="16" name="invadr[oxuser__oxstreetnr]" value="[{if isset( $invadr.oxuser__oxstreetnr ) }][{$invadr.oxuser__oxstreetnr }][{else}][{$oxcmp_user->oxuser__oxstreetnr->value }][{/if}]">
-                    [{if isset($aMustFillFields.oxuser__oxstreet) || isset($aMustFillFields.oxuser__oxstreetnr) }]<span class="req">*</span>[{/if}]
+                    [{if $oView->isFieldRequired(oxuser__oxstreet) || $oView->isFieldRequired(oxuser__oxstreetnr) }]<span class="req">*</span>[{/if}]
                 </td>
             </tr>
             <tr>
@@ -78,53 +78,64 @@
                 <td>
                     <input type="text" size="5" maxlength="16" name="invadr[oxuser__oxzip]" value="[{if isset( $invadr.oxuser__oxzip ) }][{$invadr.oxuser__oxzip }][{else}][{$oxcmp_user->oxuser__oxzip->value }][{/if}]">
                     <input type="text" size="28" maxlength="255" name="invadr[oxuser__oxcity]" value="[{if isset( $invadr.oxuser__oxcity ) }][{$invadr.oxuser__oxcity }][{else}][{$oxcmp_user->oxuser__oxcity->value }][{/if}]">
-                    [{if isset($aMustFillFields.oxuser__oxzip) || isset($aMustFillFields.oxuser__oxcity) }]<span class="req">*</span>[{/if}]
+                    [{if $oView->isFieldRequired(oxuser__oxzip) || $oView->isFieldRequired(oxuser__oxcity) }]<span class="req">*</span>[{/if}]
                 </td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_VATID" }]</label></td>
-                <td><input type="text" size="37" maxlength="255" name="invadr[oxuser__oxustid]" value="[{if isset( $invadr.oxuser__oxustid ) }][{$invadr.oxuser__oxustid }][{else}][{$oxcmp_user->oxuser__oxustid->value }][{/if}]"> [{if isset($aMustFillFields.oxuser__oxustid) }]<span class="req">*</span>[{/if}]</td>
+                <td><input type="text" size="37" maxlength="255" name="invadr[oxuser__oxustid]" value="[{if isset( $invadr.oxuser__oxustid ) }][{$invadr.oxuser__oxustid }][{else}][{$oxcmp_user->oxuser__oxustid->value }][{/if}]"> [{if $oView->isFieldRequired(oxuser__oxustid) }]<span class="req">*</span>[{/if}]</td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_ADDITIONALINFO" }]</label></td>
-                <td><input type="text" size="37" maxlength="255" name="invadr[oxuser__oxaddinfo]" value="[{if isset( $invadr.oxuser__oxaddinfo ) }][{$invadr.oxuser__oxaddinfo }][{else}][{$oxcmp_user->oxuser__oxaddinfo->value }][{/if}]"> [{if isset($aMustFillFields.oxuser__oxaddinfo) }]<span class="req">*</span>[{/if}]</td>
+                <td><input type="text" size="37" maxlength="255" name="invadr[oxuser__oxaddinfo]" value="[{if isset( $invadr.oxuser__oxaddinfo ) }][{$invadr.oxuser__oxaddinfo }][{else}][{$oxcmp_user->oxuser__oxaddinfo->value }][{/if}]"> [{if $oView->isFieldRequired(oxuser__oxaddinfo) }]<span class="req">*</span>[{/if}]</td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_COUNTRY" }]</label></td>
                 <td>
-                    <select name="invadr[oxuser__oxcountryid]" >
+                    <select id="inv_country_select" name="invadr[oxuser__oxcountryid]" >
                         <option value="">-</option>
                         [{foreach from=$oView->getCountryList() item=country key=country_id}]
-                        <option value="[{$country->oxcountry__oxid->value}]"[{if isset( $invadr.oxuser__oxcountryid ) && $invadr.oxuser__oxcountryid == $country->oxcountry__oxid->value}] selected[{elseif $oxcmp_user->oxuser__oxcountryid->value == $country->oxcountry__oxid->value}] selected[{/if}]>[{$country->oxcountry__oxtitle->value}]</option>
+                          <option value="[{$country->oxcountry__oxid->value}]"[{if isset( $invadr.oxuser__oxcountryid ) && $invadr.oxuser__oxcountryid == $country->oxcountry__oxid->value}] selected[{elseif $oxcmp_user->oxuser__oxcountryid->value == $country->oxcountry__oxid->value}] selected[{/if}]>[{$country->oxcountry__oxtitle->value}]</option>
                         [{/foreach}]
                     </select>
-                    [{if isset($aMustFillFields.oxuser__oxcountryid) }]<span class="req">*</span>[{/if}]
+                    [{if $oView->isFieldRequired(oxuser__oxcountryid) }]<span class="req">*</span>[{/if}]
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    [{include file="inc/state_selector.snippet.tpl"
+                        countrySelectId="inv_country_select"
+                        stateSelectName="invadr[oxuser__oxstateid]"
+                        selectedStateIdPrim=$invadr.oxuser__oxstateid
+                        selectedStateId=$oxcmp_user->oxuser__oxstateid->value
+                     }]
                 </td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_PHONE" }]</label></td>
-                <td><input type="text" size="37" maxlength="128" name="invadr[oxuser__oxfon]" value="[{if isset( $invadr.oxuser__oxfon ) }][{$invadr.oxuser__oxfon }][{else}][{$oxcmp_user->oxuser__oxfon->value }][{/if}]"> [{if isset($aMustFillFields.oxuser__oxfon) }]<span class="req">*</span>[{/if}]</td>
+                <td><input type="text" size="37" maxlength="128" name="invadr[oxuser__oxfon]" value="[{if isset( $invadr.oxuser__oxfon ) }][{$invadr.oxuser__oxfon }][{else}][{$oxcmp_user->oxuser__oxfon->value }][{/if}]"> [{if $oView->isFieldRequired(oxuser__oxfon) }]<span class="req">*</span>[{/if}]</td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_FAX" }]</label></td>
-                <td><input type="text" size="37" maxlength="128" name="invadr[oxuser__oxfax]" value="[{if isset( $invadr.oxuser__oxfax ) }][{$invadr.oxuser__oxfax }][{else}][{$oxcmp_user->oxuser__oxfax->value }][{/if}]"> [{if isset($aMustFillFields.oxuser__oxfax) }]<span class="req">*</span>[{/if}]</td>
+                <td><input type="text" size="37" maxlength="128" name="invadr[oxuser__oxfax]" value="[{if isset( $invadr.oxuser__oxfax ) }][{$invadr.oxuser__oxfax }][{else}][{$oxcmp_user->oxuser__oxfax->value }][{/if}]"> [{if $oView->isFieldRequired(oxuser__oxfax) }]<span class="req">*</span>[{/if}]</td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_MOBIL" }]</label></td>
-                <td><input type="text" size="37" maxlength="128" name="invadr[oxuser__oxmobfon]" value="[{if isset( $invadr.oxuser__oxmobfon ) }][{$invadr.oxuser__oxmobfon }][{else}][{$oxcmp_user->oxuser__oxmobfon->value }][{/if}]"> [{if isset($aMustFillFields.oxuser__oxmobfon) }]<span class="req">*</span>[{/if}]</td>
+                <td><input type="text" size="37" maxlength="128" name="invadr[oxuser__oxmobfon]" value="[{if isset( $invadr.oxuser__oxmobfon ) }][{$invadr.oxuser__oxmobfon }][{else}][{$oxcmp_user->oxuser__oxmobfon->value }][{/if}]"> [{if $oView->isFieldRequired(oxuser__oxmobfon) }]<span class="req">*</span>[{/if}]</td>
             </tr>
             <tr [{if !$oViewConf->showBirthdayFields() }]class="td_sep"[{/if}]>
                 <td><label>[{ oxmultilang ident="REGISTER_PRIVATPHONE" }]</label></td>
-                <td><input type="text" size="37" maxlength="128" name="invadr[oxuser__oxprivfon]" value="[{if isset( $invadr.oxuser__oxprivfon ) }][{$invadr.oxuser__oxprivfon }][{else}][{$oxcmp_user->oxuser__oxprivfon->value }][{/if}]"> [{if isset($aMustFillFields.oxuser__oxprivfon) }]<span class="req">*</span>[{/if}]</td>
+                <td><input type="text" size="37" maxlength="128" name="invadr[oxuser__oxprivfon]" value="[{if isset( $invadr.oxuser__oxprivfon ) }][{$invadr.oxuser__oxprivfon }][{else}][{$oxcmp_user->oxuser__oxprivfon->value }][{/if}]"> [{if $oView->isFieldRequired(oxuser__oxprivfon) }]<span class="req">*</span>[{/if}]</td>
             </tr>
             [{if $oViewConf->showBirthdayFields() }]
-            <tr class="td_sep">
+            <tr class="td_sep" nowrap>
                 <td><label>[{ oxmultilang ident="REGISTER_BIRTHDATE" }]</label></td>
                 <td valign="top">
                     <input type="text" size="3" maxlength="2" name="invadr[oxuser__oxbirthdate][day]" value="[{if isset( $invadr.oxuser__oxbirthdate.day ) }][{$invadr.oxuser__oxbirthdate.day }][{elseif $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00"}][{$oxcmp_user->oxuser__oxbirthdate->value|date_format:"%d" }][{/if}]">&nbsp;&nbsp;
                     <input type="text" size="3" maxlength="2" name="invadr[oxuser__oxbirthdate][month]" value="[{if isset( $invadr.oxuser__oxbirthdate.month ) }][{$invadr.oxuser__oxbirthdate.month }][{elseif $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00" }][{$oxcmp_user->oxuser__oxbirthdate->value|date_format:"%m" }][{/if}]">&nbsp;&nbsp;
                     <input type="text" size="8" maxlength="4" name="invadr[oxuser__oxbirthdate][year]" value="[{if isset( $invadr.oxuser__oxbirthdate.year ) }][{$invadr.oxuser__oxbirthdate.year }][{elseif $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00" }][{$oxcmp_user->oxuser__oxbirthdate->value|date_format:"%Y" }][{/if}]">
-                [{if isset($aMustFillFields.oxuser__oxbirthdate) }]<span class="req">*</span>[{/if}]
+                [{if $oView->isFieldRequired(oxuser__oxbirthdate) }]<span class="req">*</span>[{/if}]
             </td>
             </tr>
             [{/if}]
@@ -166,27 +177,27 @@
                 <td><label>[{ oxmultilang ident="REGISTER_TITLE2" }]</label></td>
                 <td>
                     [{include file="inc/salutation.tpl" name="deladr[oxaddress__oxsal]" value=$delivadr->oxaddress__oxsal->value}]
-                    [{if isset($aMustFillFields.oxaddress__oxsal) }]<span class="req">*</span>[{/if}]
+                    [{if $oView->isFieldRequired(oxaddress__oxsal) }]<span class="req">*</span>[{/if}]
                 </td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_FIRSTNAME2" }]</label></td>
-                <td><input type="text" size="37" maxlength="255" name="deladr[oxaddress__oxfname]" value="[{if isset( $deladr.oxaddress__oxfname ) }][{$deladr.oxaddress__oxfname}][{else}][{$delivadr->oxaddress__oxfname->value }][{/if}]"> [{if isset($aMustFillFields.oxaddress__oxfname) }]<span class="req">*</span>[{/if}]</td>
+                <td><input type="text" size="37" maxlength="255" name="deladr[oxaddress__oxfname]" value="[{if isset( $deladr.oxaddress__oxfname ) }][{$deladr.oxaddress__oxfname}][{else}][{$delivadr->oxaddress__oxfname->value }][{/if}]"> [{if $oView->isFieldRequired(oxaddress__oxfname) }]<span class="req">*</span>[{/if}]</td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_LASTNAME2" }]</label></td>
-                <td><input type="text" size="37" maxlength="255" name="deladr[oxaddress__oxlname]" value="[{if isset( $deladr.oxaddress__oxlname ) }][{$deladr.oxaddress__oxlname}][{else}][{$delivadr->oxaddress__oxlname->value }][{/if}]"> [{if isset($aMustFillFields.oxaddress__oxlname) }]<span class="req">*</span>[{/if}]</td>
+                <td><input type="text" size="37" maxlength="255" name="deladr[oxaddress__oxlname]" value="[{if isset( $deladr.oxaddress__oxlname ) }][{$deladr.oxaddress__oxlname}][{else}][{$delivadr->oxaddress__oxlname->value }][{/if}]"> [{if $oView->isFieldRequired(oxaddress__oxlname) }]<span class="req">*</span>[{/if}]</td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_COMPANY2" }]</label></td>
-                <td><input type="text" size="37" maxlength="255" name="deladr[oxaddress__oxcompany]" value="[{if isset( $deladr.oxaddress__oxcompany ) }][{$deladr.oxaddress__oxcompany}][{else}][{$delivadr->oxaddress__oxcompany->value }][{/if}]"> [{if isset($aMustFillFields.oxaddress__oxcompany) }]<span class="req">*</span>[{/if}]</td>
+                <td><input type="text" size="37" maxlength="255" name="deladr[oxaddress__oxcompany]" value="[{if isset( $deladr.oxaddress__oxcompany ) }][{$deladr.oxaddress__oxcompany}][{else}][{$delivadr->oxaddress__oxcompany->value }][{/if}]"> [{if $oView->isFieldRequired(oxaddress__oxcompany) }]<span class="req">*</span>[{/if}]</td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_STREET2" }]</label></td>
                 <td>
                     <input type="text" size="28" maxlength="255" name="deladr[oxaddress__oxstreet]" value="[{if isset( $deladr.oxaddress__oxstreet ) }][{$deladr.oxaddress__oxstreet}][{else}][{$delivadr->oxaddress__oxstreet->value}][{/if}]">
                     <input type="text" size="5" maxlength="16" name="deladr[oxaddress__oxstreetnr]" value="[{if isset( $deladr.oxaddress__oxstreetnr ) }][{$deladr.oxaddress__oxstreetnr}][{else}][{$delivadr->oxaddress__oxstreetnr->value }][{/if}]">
-                    [{if isset($aMustFillFields.oxaddress__oxstreet) || isset($aMustFillFields.oxaddress__oxstreetnr) }]<span class="req">*</span>[{/if}]
+                    [{if $oView->isFieldRequired(oxaddress__oxstreet) || $oView->isFieldRequired(oxaddress__oxstreetnr) }]<span class="req">*</span>[{/if}]
                 </td>
             </tr>
             <tr>
@@ -194,32 +205,43 @@
                 <td>
                     <input type="text" size="5" maxlength="16" name="deladr[oxaddress__oxzip]" value="[{if isset( $deladr.oxaddress__oxzip ) }][{$deladr.oxaddress__oxzip}][{else}][{$delivadr->oxaddress__oxzip->value }][{/if}]">
                     <input type="text" size="28" maxlength="255" name="deladr[oxaddress__oxcity]" value="[{if isset( $deladr.oxaddress__oxcity ) }][{$deladr.oxaddress__oxcity}][{else}][{$delivadr->oxaddress__oxcity->value }][{/if}]">
-                    [{if isset($aMustFillFields.oxaddress__oxzip) || isset($aMustFillFields.oxaddress__oxcity) }]<span class="req">*</span>[{/if}]
+                    [{if $oView->isFieldRequired(oxaddress__oxzip) || $oView->isFieldRequired(oxaddress__oxcity) }]<span class="req">*</span>[{/if}]
                 </td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_ADDITIONALINFO2" }]</label></td>
-                <td><input type="text" size="37" maxlength="255" name="deladr[oxaddress__oxaddinfo]" value="[{if isset( $deladr.oxaddress__oxaddinfo ) }][{$deladr.oxaddress__oxaddinfo}][{else}][{$delivadr->oxaddress__oxaddinfo->value }][{/if}]"> [{if isset($aMustFillFields.oxaddress__oxaddinfo) }]<span class="req">*</span>[{/if}]</td>
+                <td><input type="text" size="37" maxlength="255" name="deladr[oxaddress__oxaddinfo]" value="[{if isset( $deladr.oxaddress__oxaddinfo ) }][{$deladr.oxaddress__oxaddinfo}][{else}][{$delivadr->oxaddress__oxaddinfo->value }][{/if}]"> [{if $oView->isFieldRequired(oxaddress__oxaddinfo) }]<span class="req">*</span>[{/if}]</td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_COUNTRY2" }]</label></td>
                 <td>
-                    <select name="deladr[oxaddress__oxcountryid]" >
+                    <select id="dev_country_select" name="deladr[oxaddress__oxcountryid]" >
                         <option value="">-</option>
                         [{foreach from=$oView->getCountryList() item=country key=country_id}]
                         <option value="[{$country->oxcountry__oxid->value}]" [{if isset( $deladr.oxaddress__oxcountryid ) && $deladr.oxaddress__oxcountryid == $country->oxcountry__oxid->value}]selected[{elseif $delivadr->oxaddress__oxcountry->value == $country->oxcountry__oxtitle->value}]selected[{/if}]>[{$country->oxcountry__oxtitle->value}]</option>
                         [{/foreach}]
                     </select>
-                    [{if isset($aMustFillFields.oxaddress__oxcountryid) }]<span class="req">*</span>[{/if}]
+                    [{if $oView->isFieldRequired(oxaddress__oxcountryid) }]<span class="req">*</span>[{/if}]
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    [{include file="inc/state_selector.snippet.tpl"
+                        countrySelectId="dev_country_select"
+                        stateSelectName="deladr[oxaddress__oxstateid]"
+                        selectedStateIdPrim=$deladr.oxaddress__oxstateid
+                        selectedStateId=$delivadr->oxaddress__oxstateid->value
+                     }]
                 </td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_PHONE2" }]</label></td>
-                <td><input type="text" size="37" maxlength="128" name="deladr[oxaddress__oxfon]" value="[{if isset( $deladr.oxaddress__oxfon ) }][{$deladr.oxaddress__oxfon}][{else}][{$delivadr->oxaddress__oxfon->value }][{/if}]"> [{if isset($aMustFillFields.oxaddress__oxfon) }]<span class="req">*</span>[{/if}]</td>
+                <td><input type="text" size="37" maxlength="128" name="deladr[oxaddress__oxfon]" value="[{if isset( $deladr.oxaddress__oxfon ) }][{$deladr.oxaddress__oxfon}][{else}][{$delivadr->oxaddress__oxfon->value }][{/if}]"> [{if $oView->isFieldRequired(oxaddress__oxfon) }]<span class="req">*</span>[{/if}]</td>
             </tr>
             <tr>
                 <td><label>[{ oxmultilang ident="REGISTER_FAX2" }]</label></td>
-                <td><input type="text" size="37" maxlength="128" name="deladr[oxaddress__oxfax]" value="[{if isset( $deladr.oxaddress__oxfax ) }][{$deladr.oxaddress__oxfax}][{else}][{$delivadr->oxaddress__oxfax->value }][{/if}]"> [{if isset($aMustFillFields.oxaddress__oxfax) }]<span class="req">*</span>[{/if}]</td>
+                <td><input type="text" size="37" maxlength="128" name="deladr[oxaddress__oxfax]" value="[{if isset( $deladr.oxaddress__oxfax ) }][{$deladr.oxaddress__oxfax}][{else}][{$delivadr->oxaddress__oxfax->value }][{/if}]"> [{if $oView->isFieldRequired(oxaddress__oxfax) }]<span class="req">*</span>[{/if}]</td>
             </tr>
             [{/if}]
         </table>

@@ -18,24 +18,25 @@
 
 
 <form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
+  [{ $shop->hiddensid }]
   <input type=hidden name=cl value=efire_downloader>
   <input type=hidden name=fnc value=getConnector>
 <p>
 [{ oxmultilang ident="EFIRE_USERNAME" }]:<br>
-<input type="text" name=etUsername value="[{$sEfiUsername}]">
+<input type="text" name=etUsername value="[{$sEfiUsername}]" [{ $readonly }]>
 
 <p>
 [{ oxmultilang ident="EFIRE_PASSWORD" }]:<br>
-<input type="password" name=etPassword value="[{$sEfiPassword}]">
+<input type="password" name=etPassword value="[{$sEfiPassword}]" [{ $readonly }]>
 
 <p>
 
 <input type="hidden" name="blSaveCredentials" value="0">
-<input type="checkbox" name="blSaveCredentials" value="1" checked>
+<input type="checkbox" name="blSaveCredentials" value="1" checked [{ $readonly }]>
 [{ oxmultilang ident="EFIRE_SAVECREDENTIALS" }]
 
 <p>
-<input type=Submit name=etSubmit>
+<input type=Submit name=etSubmit [{ $readonly }]>
 </form>
 <br />
 [{assign var="blWhite" value=""}]

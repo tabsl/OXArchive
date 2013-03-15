@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxstart.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: oxstart.php 26460 2010-03-10 14:22:54Z rimvydas.paskevicius $
  */
 
 /**
@@ -62,17 +62,6 @@ class oxStart extends oxUBase
 
         $sTemplate = '';
 
-        if ( $sErrorNo == 'unlicensed' ) {
-            $sTemplate = 'err_unlicensed.tpl';
-        }
-
-        if ( $sErrorNo == 'expireddemo' ) {
-            $sTemplate = 'err_expired_days.tpl';
-        }
-
-        if ( $sErrorNo == 'pro_exceeded' ) {
-            $sTemplate = 'err_overloaded_articles.tpl';
-        }
 
 
         if ( $sErrorNo == 'unknown' ) {
@@ -89,7 +78,7 @@ class oxStart extends oxUBase
 
 
     /**
-     * Creates and starts session object, sets default session language and currency.
+     * Creates and starts session object, sets default currency.
      *
      * @return null
      */
@@ -98,8 +87,6 @@ class oxStart extends oxUBase
         $myConfig  = $this->getConfig();
 
         // assign default values
-        if ( !oxSession::hasVar( 'language') )
-            oxSession::setVar( 'language', $myConfig->getConfigParam( 'sDefaultLang' ) );
         if ( !oxSession::hasVar('currency') )
             oxSession::setVar( 'currency', '0' );
 

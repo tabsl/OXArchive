@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: tag.php 23400 2009-10-20 14:38:13Z arvydas $
+ * @version   SVN: $Id: tag.php 25542 2010-02-02 11:28:16Z alfonsas $
  */
 
 /**
@@ -74,17 +74,6 @@ class Tag extends aList
     protected $_iViewIndexState = VIEW_INDEXSTATE_INDEX;
 
     /**
-     * Initiates tag view and calls parent::init();
-     *
-     * @return null
-     */
-    public function init()
-    {
-        $this->_sTag = oxConfig::getParameter("searchtag", 1);
-        return parent::init();
-    }
-
-    /**
      * Executes parent::render(), loads article list according active tag
      *
      * Template variables:
@@ -125,7 +114,7 @@ class Tag extends aList
     }
 
     /**
-     * Returns additional URL paramerets which must be added to list products urls
+     * Returns additional URL parameters which must be added to list products dynamic urls
      *
      * @return string
      */
@@ -133,11 +122,9 @@ class Tag extends aList
     {
         $sAddParams  = parent::getAddUrlParams();
         $sAddParams .= ($sAddParams?'&amp;':'') . "listtype={$this->_sListType}";
-
-        if ( $sParam = rawurlencode( oxConfig::getParameter( 'searchtag', 1 ) ) ) {
-            $sAddParams .= "&amp;searchtag={$sParam}";
+        if ( $sParam = oxConfig::getParameter( 'searchtag', 1 ) ) {
+            $sAddParams .= "&amp;searchtag=" . rawurlencode( $sParam );
         }
-
         return $sAddParams;
     }
 
@@ -159,7 +146,7 @@ class Tag extends aList
         $oArtList->setCustomSorting( $this->getSortingSql( 'oxtags' ) );
 
         // load the articles
-        $this->_iAllArtCnt = $oArtList->loadTagArticles( $this->_sTag, oxLang::getInstance()->getBaseLanguage());
+        $this->_iAllArtCnt = $oArtList->loadTagArticles( $this->getTag(), oxLang::getInstance()->getBaseLanguage());
         $this->_iCntPages  = round( $this->_iAllArtCnt / $iNrofCatArticles + 0.49 );
 
         return $oArtList;
@@ -172,7 +159,7 @@ class Tag extends aList
      */
     protected function _getCatPathString()
     {
-        return $this->_sTag;
+        return $this->getTag();
     }
 
     /**
@@ -182,7 +169,7 @@ class Tag extends aList
      */
     protected function _getSeoObjectId()
     {
-        return md5("tag" . $this->_sTag);
+        return md5("tag" . $this->getTag() );
     }
 
     /**
@@ -220,9 +207,8 @@ class Tag extends aList
     {
         if ( ( oxUtils::getInstance()->seoIsActive() && ( $sTag = $this->getTag() ) ) ) {
             return oxSeoEncoderTag::getInstance()->getTagUrl( $sTag, oxLang::getInstance()->getBaseLanguage() );
-        } else {
-            return oxUBase::generatePageNavigationUrl();
         }
+        return oxUBase::generatePageNavigationUrl();
     }
 
     /**
@@ -237,7 +223,8 @@ class Tag extends aList
     protected function _addPageNrParam( $sUrl, $iPage, $iLang = null)
     {
         if ( oxUtils::getInstance()->seoIsActive() && ( $sTag = $this->getTag() ) ) {
-            if ( $iPage ) { // only if page number > 0
+            if ( $iPage ) {
+                // only if page number > 0
                 $sUrl = oxSeoEncoderTag::getInstance()->getTagPageUrl( $sTag, $iPage, $iLang );
             }
         } else {
@@ -268,6 +255,9 @@ class Tag extends aList
      */
     public function getTag()
     {
+        if ( $this->_sTag === null ) {
+            $this->_sTag = oxConfig::getParameter("searchtag", 1);
+        }
         return $this->_sTag;
     }
 

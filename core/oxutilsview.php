@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxutilsview.php 23250 2009-10-14 13:40:12Z alfonsas $
+ * @version   SVN: $Id: oxutilsview.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
@@ -50,8 +50,7 @@ class oxUtilsView extends oxSuperCfg
     {
         // disable caching for test modules
         if ( defined( 'OXID_PHP_UNIT' ) ) {
-            static $inst = array();
-            self::$_instance = $inst[oxClassCacheKey()];
+            self::$_instance = modInstances::getMod( __CLASS__ );
         }
 
         if ( !self::$_instance instanceof oxUtilsView ) {
@@ -60,7 +59,7 @@ class oxUtilsView extends oxSuperCfg
             self::$_instance = oxNew( 'oxUtilsView' );
 
             if ( defined( 'OXID_PHP_UNIT' ) ) {
-                $inst[oxClassCacheKey()] = self::$_instance;
+                modInstances::addMod( __CLASS__, self::$_instance);
             }
         }
         return self::$_instance;
@@ -169,12 +168,12 @@ class oxUtilsView extends oxSuperCfg
              $oEx->setStackTrace( $oEr->getTraceAsString() );
              $oEx->setDebug( $blFull );
              $oEr = $oEx;
-        } elseif ( $oEr && ! ( $oEr instanceof oxDisplayErrorInterface ) ) {
+        } elseif ( $oEr && ! ( $oEr instanceof oxIDisplayError ) ) {
             // assuming that a string was given
             $sTmp = $oEr;
             $oEr = oxNew( 'oxDisplayError' );
             $oEr->setMessage( $sTmp );
-        } elseif ( $oEr instanceof oxDisplayErrorInterface ) {
+        } elseif ( $oEr instanceof oxIDisplayError ) {
             // take the object
         } else {
             $oEr = null;
@@ -247,8 +246,48 @@ class oxUtilsView extends oxSuperCfg
      */
     protected function _fillCommonSmartyProperties( $oSmarty )
     {
+
         $myConfig = $this->getConfig();
 
+        //T2010-01-13
+        //#1531
+        $sTplDir1 = $myConfig->getTemplateDir( $this->isAdmin() );
+        $sTplDir2 = $myConfig->getOutDir() . $myConfig->getConfigParam('sTheme') . "/tpl/";
+        $aTemplateDir = array($sTplDir1);
+        if (!$this->isAdmin() && $sTplDir1 != $sTplDir2)
+            $aTemplateDir[] = $sTplDir2;
+
+
+        $aTemplateDir = array($myConfig->getTemplateDir( $this->isAdmin() ));
+        $aTemplateDir[] = "/htdocs/oxideshop/eshop/source/out/basic/tpl/";
+
+
+        $aTemplateDir = array($myConfig->getTemplateDir( $this->isAdmin() ));
+        $aTemplateDir[] = $myConfig->getOutDir()."basic/tpl/";
+
+        $oSmarty->left_delimiter  = '[{';
+        $oSmarty->right_delimiter = '}]';
+
+        $oSmarty->register_resource( 'ox', array( 'ox_get_template',
+                                                  'ox_get_timestamp',
+                                                  'ox_get_secure',
+                                                  'ox_get_trusted' ) );
+
+        // $myConfig->blTemplateCaching; // DODGER #655 : permanently switched off as it doesnt work good enough
+        $oSmarty->caching      = false;
+        $oSmarty->compile_dir  = $myConfig->getConfigParam( 'sCompileDir' );
+        $oSmarty->cache_dir    = $myConfig->getConfigParam( 'sCompileDir' );
+        $oSmarty->template_dir = $aTemplateDir;
+        $oSmarty->compile_id   = md5( $oSmarty->template_dir[0] );
+
+        $oSmarty->default_template_handler_func = array(oxUtilsView::getInstance(),'_smartyDefaultTemplateHandler');
+
+        $iDebug = $myConfig->getConfigParam( 'iDebug' );
+        if (  $iDebug == 1 || $iDebug == 3 || $iDebug == 4 ) {
+            $oSmarty->debugging = true;
+        }
+
+        //demoshop security
         if ( !$myConfig->isDemoShop() ) {
             $oSmarty->php_handling = (int) $myConfig->getConfigParam( 'iSmartyPhpHandling' );
             $oSmarty->security     = false;
@@ -260,30 +299,10 @@ class oxUtilsView extends oxSuperCfg
             $oSmarty->security_settings['MODIFIER_FUNCS'][] = 'trim';
             $oSmarty->security_settings['MODIFIER_FUNCS'][] = 'is_array';
             $oSmarty->security_settings['ALLOW_CONSTANTS'] = true;
+            $oSmarty->secure_dir = $oSmarty->template_dir;
         }
 
-        $oSmarty->left_delimiter  = '[{';
-        $oSmarty->right_delimiter = '}]';
 
-        $oSmarty->register_resource( 'ox', array( 'ox_get_template',
-                                                  'ox_get_timestamp',
-                                                  'ox_get_secure',
-                                                  'ox_get_trusted' ) );
-
-
-        // $myConfig->blTemplateCaching; // DODGER #655 : permanently switched off as it doesnt work good enough
-        $oSmarty->caching      = false;
-        $oSmarty->compile_dir  = $myConfig->getConfigParam( 'sCompileDir' );
-        $oSmarty->cache_dir    = $myConfig->getConfigParam( 'sCompileDir' );
-        $oSmarty->template_dir = $myConfig->getTemplateDir( $this->isAdmin() );
-        $oSmarty->compile_id   = md5( $oSmarty->template_dir );
-
-        $oSmarty->default_template_handler_func = array(oxUtilsView::getInstance(),'_smartyDefaultTemplateHandler');
-
-        $iDebug = $myConfig->getConfigParam( 'iDebug' );
-        if (  $iDebug == 1 || $iDebug == 3 || $iDebug == 4 ) {
-            $oSmarty->debugging = true;
-        }
     }
 
     /**
@@ -315,7 +334,7 @@ class oxUtilsView extends oxSuperCfg
     {
         $myConfig = oxConfig::getInstance();
         if ( $sResourceType == 'file' && !is_readable($sResourceName) ) {
-            $sResourceName      = $myConfig->getTemplatePath($sResourceName,$myConfig->isAdmin());
+            $sResourceName      = $myConfig->getTemplatePath($sResourceName, $myConfig->isAdmin());
             $sResourceContent   = $oSmarty->_read_file($sResourceName);
             $sResourceTimestamp = filemtime($sResourceName);
             return is_file($sResourceName) && is_readable($sResourceName);

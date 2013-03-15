@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: newsletter_send.php 22484 2009-09-22 06:57:02Z arvydas $
+ * @version   SVN: $Id: newsletter_send.php 26670 2010-03-19 10:10:38Z arvydas $
  */
 
 /**
@@ -48,21 +48,21 @@ class Newsletter_Send extends oxAdminList
         $myConfig  = $this->getConfig();
         parent::render();
 
-        $iStart = oxConfig::getParameter( "iStart");
-        $iUser  = oxConfig::getParameter( "user");
-        $sID      = oxConfig::getParameter( "id");
+        $iStart = (int) oxConfig::getParameter( "iStart" );
+        $iUser  = oxConfig::getParameter( "user" );
+        $sID    = oxConfig::getParameter( "id" );
 
         $oNewsletter = oxNew( "oxNewsLetter" );
         $oNewsletter->load( $sID );
         $oNewsletterGroups = $oNewsletter->getGroups();
 
         // #493A - fetching cached newsletter info
-        $oCachedNewsletter = oxSession::getVar("_oNewsletter");
-        if ( isset($oCachedNewsletter)) {
+        $oCachedNewsletter = oxSession::getVar( "_oNewsletter" );
+        if ( isset( $oCachedNewsletter ) ) {
             //checking if cached session id is the same as current user session id
-            if ($oCachedNewsletter->sID != $sID)
-                oxSession::deleteVar("_oNewsletter");
-            else {
+            if ( $oCachedNewsletter->sID != $sID ) {
+                oxSession::deleteVar( "_oNewsletter" );
+            } else {
                 // setting cached values
                 $iStart = $oCachedNewsletter->iStart;
                 $iUser  = $oCachedNewsletter->iUser;
@@ -80,60 +80,64 @@ class Newsletter_Send extends oxAdminList
         $oDB = oxDb::getDb();
         $sSelectGroups =  " ( oxobject2group.oxgroupsid in ( ";
         $blSep = false;
-        foreach ( $oNewsletterGroups as $sInGroup) {
+        foreach ( $oNewsletterGroups as $sInGroup ) {
             $sSearchKey = $sInGroup->oxgroups__oxid->value;
-            if ( $blSep)
+            if ( $blSep ) {
                 $sSelectGroups .= ",";
+            }
             $sSelectGroups .= $oDB->quote( $sSearchKey );
             $blSep = true;
         }
         $sSelectGroups .= ") )";
+
         // no group selected
-        if ( !$blSep)
+        if ( !$blSep ) {
             $sSelectGroups = " oxobject2group.oxobjectid is null ";
+        }
 
-        $sSelect = "select oxnewssubscribed.oxuserid, oxnewssubscribed.oxemail, oxnewssubscribed.oxsal, oxnewssubscribed.oxfname, oxnewssubscribed.oxlname from oxnewssubscribed left join oxobject2group on oxobject2group.oxobjectid = oxnewssubscribed.oxuserid where ( oxobject2group.oxshopid = '".$myConfig->getShopID()."' or oxobject2group.oxshopid is null ) and $sSelectGroups and oxnewssubscribed.oxdboptin = 1 and (not (oxnewssubscribed.oxemailfailed = '1')) and (not(oxnewssubscribed.oxemailfailed = \"1\")) group by oxnewssubscribed.oxemail";
+        $sSelect = "select oxnewssubscribed.oxuserid, oxnewssubscribed.oxemail, oxnewssubscribed.oxsal, oxnewssubscribed.oxfname, oxnewssubscribed.oxlname from oxnewssubscribed left join oxobject2group on oxobject2group.oxobjectid = oxnewssubscribed.oxuserid where ( oxobject2group.oxshopid = '".$myConfig->getShopId()."' or oxobject2group.oxshopid is null ) and $sSelectGroups and oxnewssubscribed.oxdboptin = 1 and (not (oxnewssubscribed.oxemailfailed = '1')) group by oxnewssubscribed.oxemail";
+        $rs = $oDB->selectLimit( $sSelect, $myConfig->getConfigParam( 'iCntofMails' ), $iStart );
+        ini_set( "session.gc_maxlifetime", 36000 );
 
-        $rs = $oDB->selectLimit( $sSelect, $myConfig->getConfigParam( 'iCntofMails' ), $iStart);
+        if ( $rs != false && $rs->recordCount() > 0 ) {
 
-        ini_set("session.gc_maxlifetime", 36000);
+            $sShopID = oxSession::getVar( "actshop");
+            $blLoadAction = $myConfig->getConfigParam( 'bl_perfLoadAktion' );
 
-        if ($rs != false && $rs->recordCount() > 0) {
-            while (!$rs->EOF) {
+            while ( !$rs->EOF ) {
                 $sUserID = $rs->fields[0];
 
                 // must check if such user is in DB
-                if( !$oDB->getOne("select oxid from oxuser where oxid = '$sUserID'"))
+                if ( !$oDB->getOne( "select oxid from oxuser where oxid = '$sUserID'" ) ) {
                     $sUserID = null;
+                }
 
                 // #559
-                if ( !isset( $sUserID) || !$sUserID) {
+                if ( !isset( $sUserID ) || !$sUserID ) {
                      // there is no user object so we fake one
                     $oUser = oxNew( "oxuser" );
-                    $oUser->oxuser__oxusername = new oxField($rs->fields[1]);
-                    $oUser->oxuser__oxsal      = new oxField($rs->fields[2]);
-                    $oUser->oxuser__oxfname    = new oxField($rs->fields[3]);
-                    $oUser->oxuser__oxlname    = new oxField($rs->fields[4]);
-                    $oNewsletter->prepare( $oUser, $myConfig->getConfigParam( 'bl_perfLoadAktion' ) );
+                    $oUser->oxuser__oxusername = new oxField( $rs->fields[1] );
+                    $oUser->oxuser__oxsal      = new oxField( $rs->fields[2] );
+                    $oUser->oxuser__oxfname    = new oxField( $rs->fields[3] );
+                    $oUser->oxuser__oxlname    = new oxField( $rs->fields[4] );
+                    $oNewsletter->prepare( $oUser, $blLoadAction );
+                } else {
+                    $oNewsletter->prepare( $sUserID, $blLoadAction );
                 }
-                else
-                    $oNewsletter->prepare( $sUserID, $myConfig->getConfigParam( 'bl_perfLoadAktion' ) );
 
                 if ( $oNewsletter->send() ) {
                      // add user history
                     $oRemark = oxNew( "oxremark" );
-                    $oRemark->oxremark__oxtext     = new oxField($oNewsletter->sPlainText);
-                    $oRemark->oxremark__oxparentid = new oxField($sUserID);
-                    $sShopID = oxSession::getVar( "actshop");
-                    $sShopID = oxSession::setVar( "keepalive", "yes");
-                    $oRemark->oxremark__oxshopid   = new oxField($sShopID);
+                    $oRemark->oxremark__oxtext     = new oxField( $oNewsletter->sPlainText );
+                    $oRemark->oxremark__oxparentid = new oxField( $sUserID );
+                    $oRemark->oxremark__oxshopid   = new oxField( $sShopID );
                     $oRemark->save();
+                    oxSession::setVar( "keepalive", "yes");
                 } else {
                     $this->_aMailErrors[] = "problem sending to : ".$rs->fields[1]."<br>";
                 }
 
-
-                   $rs->moveNext();
+               $rs->moveNext();
             }
         }
 
@@ -145,20 +149,19 @@ class Newsletter_Send extends oxAdminList
         $oCachedNewsletter->iUser  = $iUser;
         $oCachedNewsletter->sID    = $sID;
 
-        $this->_aViewData["iStart"]     =  $iStart;
-        $this->_aViewData["user"]     =  $iUser;
-        $this->_aViewData["id"]         =  $sID;
-
+        $this->_aViewData["iStart"] =  $iStart;
+        $this->_aViewData["user"]   =  $iUser;
+        $this->_aViewData["id"]     =  $sID;
 
         // end ?
         if ( $iStart < $iUser) {
-               $sPage = "newsletter_send.tpl";
+            $sPage = "newsletter_send.tpl";
             // #493A - saving changes
-            oxSession::setVar("_oNewsletter", $oCachedNewsletter);
+            oxSession::setVar( "_oNewsletter", $oCachedNewsletter );
         } else {
-           $sPage = "newsletter_done.tpl";
+            $sPage = "newsletter_done.tpl";
             // #493A - deleting cache variable
-            oxSession::deleteVar("_oNewsletter");
+            oxSession::deleteVar( "_oNewsletter" );
         }
 
         return $sPage;
@@ -174,10 +177,12 @@ class Newsletter_Send extends oxAdminList
         return $this->_aMailErrors;
     }
 
-    /*
+    /**
      * Overrides parent method to pass referred id
      *
-     * @param string $sId class name
+     * @param string $sId referred id
+     *
+     * @return null
      */
     protected function _setupNavigation( $sId )
     {

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: systeminfo.php 17794 2009-04-03 06:34:31Z rimvydas.paskevicius $
+ * @version   SVN: $Id: systeminfo.php 26273 2010-03-04 08:51:32Z arvydas $
  */
 
 /**
@@ -47,10 +47,10 @@ class SystemInfo extends oxAdminView
         $blisMallAdmin = $oAuthUser->oxuser__oxrights->value == "malladmin";
 
         if ( $blisMallAdmin && !$myConfig->isDemoShop()) {
-            $aClass_vars = get_object_vars( $myConfig);
+            $aClassVars = get_object_vars( $myConfig);
             $aSystemInfo = array();
             $oSmarty = oxUtilsView::getInstance()->getSmarty();
-            while (list($name, $value) = each($aClass_vars)) {
+            while (list($name, $value) = each($aClassVars)) {
                 if (gettype($value)=="object")
                     continue;
                 // security fix - we do not output dbname and dbpwd cause of demoshops
@@ -71,9 +71,9 @@ class SystemInfo extends oxAdminView
 
             phpinfo();
 
-            exit();
+            oxUtils::getInstance()->showMessageAndExit( "" );
+        } else {
+            return oxUtils::getInstance()->showMessageAndExit( "Access denied !" );
         }
-        else
-            die("Access denied !");
     }
 }

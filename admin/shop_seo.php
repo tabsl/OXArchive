@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: shop_seo.php 23224 2009-10-13 14:24:30Z arvydas $
+ * @version   SVN: $Id: shop_seo.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -91,7 +91,7 @@ class Shop_Seo extends Shop_Config
             $oRs = $oDb->execute( $sQ );
             if ( $oRs != false && $oRs->recordCount() > 0 ) {
                 while ( !$oRs->EOF ) {
-                    $aSeoUrls[$oRs->fields['oxlang']] = array( $oRs->fields['oxobjectid'], $oRs->fields['oxseourl'] );
+                    $aSeoUrls[$oRs->fields['oxlang']] = array( $sActObject, $oRs->fields['oxseourl'] );
                     $oRs->moveNext();
                 }
                 $this->_aViewData['aSeoUrls'] = $aSeoUrls;
@@ -110,26 +110,21 @@ class Shop_Seo extends Shop_Config
         // saving config params
         $this->saveConfVars();
 
-        $soxId = oxConfig::getParameter( 'oxid' );
-        $aParams = oxConfig::getParameter( 'editval' );
-        $aConfParams = oxConfig::getParameter( 'confstrs' );
-
-        $oEncoder = oxSeoEncoder::getInstance();
-
         $oShop = oxNew( 'oxshop' );
-        $oShop->loadInLang( $this->_iEditLang, $soxId );
+        if ( $oShop->loadInLang( $this->_iEditLang, oxConfig::getParameter( 'oxid' ) ) ) {
 
-        //assigning values
-        $oShop->setLanguage(0);
-        $oShop->assign( $aParams );
-        $oShop->setLanguage( $this->_iEditLang );
-        $oShop->save();
+            //assigning values
+            $oShop->setLanguage( 0 );
+            $oShop->assign( oxConfig::getParameter( 'editval' ) );
+            $oShop->setLanguage( $this->_iEditLang );
+            $oShop->save();
 
-        oxUtils::getInstance()->rebuildCache();
+            oxUtils::getInstance()->rebuildCache();
 
-        // saving static url changes
-        if ( is_array( $aStaticUrl = oxConfig::getParameter( 'aStaticUrl' ) ) ) {
-            $this->_sActSeoObject = $oEncoder->encodeStaticUrls( $this->_processUrls( $aStaticUrl ), $oShop->getId(), $this->_iEditLang );
+            // saving static url changes
+            if ( is_array( $aStaticUrl = oxConfig::getParameter( 'aStaticUrl' ) ) ) {
+                $this->_sActSeoObject = oxSeoEncoder::getInstance()->encodeStaticUrls( $this->_processUrls( $aStaticUrl ), $oShop->getId(), $this->_iEditLang );
+            }
         }
     }
 

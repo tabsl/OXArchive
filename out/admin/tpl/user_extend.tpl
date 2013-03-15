@@ -104,11 +104,11 @@
         <table cellspacing="0" cellpadding="0" border="0">
         <tr>
             <td class="copypastetext" id="test_userAddress">
-            [{assign var=_sal value=$edit->oxuser__oxsal->value}]
-            [{oxmultilang ident="GENERAL_SALUTATION_$_sal" noerror="yes" alternative=$_sal }]<br>
+            [{$edit->oxuser__oxsal->value|oxmultilangsal}]<br>
             [{$edit->oxuser__oxfname->value }] [{$edit->oxuser__oxlname->value }]<br>
             [{$edit->oxuser__oxcompany->value }]<br>
             [{$edit->oxuser__oxstreet->value }] [{$edit->oxuser__oxstreetnr->value }]<br>
+            [{$edit->getState()}]
             [{$edit->oxuser__oxzip->value }] [{$edit->oxuser__oxcity->value }]<br>
             [{$edit->oxuser__oxaddinfo->value }]<br>
             [{$edit->oxuser__oxcountry->value }]<br>

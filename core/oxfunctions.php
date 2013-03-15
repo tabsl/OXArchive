@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxfunctions.php 22884 2009-10-02 08:54:10Z sarunas $
+ * @version   SVN: $Id: oxfunctions.php 26922 2010-03-29 08:21:45Z tomas $
  */
 
 /**
@@ -29,16 +29,39 @@
  *
  * @return null
  */
-function __autoload( $sClass )
+function oxAutoload( $sClass )
 {
-
+    startProfile("oxAutoload");
     $sClass = basename( $sClass );
+    $sClass = strtolower($sClass);
 
     static $sBasePath  = null;
     static $aClassDirs = null;
 
     // preventing infinite loop
     static $aTriedClasses = array();
+
+    //loading very base classes. We can do this as we know they exists,
+    //moreover even further method code could not execute without them
+    $sBaseClassLocation = null;
+    $aBaseClasses = array("oxutils", "oxsupercfg", "oxutilsobject", "oxconfig");
+    if (in_array(strtolower($sClass), $aBaseClasses)) {
+        $sFilename = getShopBasePath() ."core/" . strtolower($sClass) . ".php" ;
+        include $sFilename;
+        return;
+    }
+
+    static $aClassPaths;
+
+    if (!$aClassPaths) {
+        $aClassPaths = oxUtils::getInstance()->fromPhpFileCache("class_file_paths");
+    }
+
+    if (isset($aClassPaths[$sClass])) {
+        stopProfile("oxAutoload");
+        include $aClassPaths[$sClass];
+        return;
+    }
 
     // initializing paths
     if ( $aClassDirs == null ) {
@@ -57,7 +80,12 @@ function __autoload( $sClass )
     foreach ( $aClassDirs as $sDir ) {
         $sFilename = $sDir . strtolower( $sClass ) . '.php';
         if ( file_exists( $sFilename ) ) {
-            require_once $sFilename;
+            if (!isset($aClassPaths[$sClass])) {
+                $aClassPaths[$sClass] = $sFilename;
+                oxUtils::getInstance()->toPhpFileCache("class_file_paths", $aClassPaths);
+            }
+            stopProfile("oxAutoload");
+            include $sFilename;
             return;
         }
     }
@@ -78,6 +106,8 @@ function __autoload( $sClass )
         }
         $aTriedClasses[] = $sClass;
     }
+
+    stopProfile("oxAutoload");
 }
 
 if ( !function_exists( 'error_404_handler' ) ) {
@@ -90,20 +120,7 @@ if ( !function_exists( 'error_404_handler' ) ) {
      */
     function error_404_handler($sUrl = '')
     {
-        $oUtils = oxUtils::getInstance();
-        $oUtils->setHeader("HTTP/1.0 404 Not Found");
-        $sReturn = "Page not found.";
-        try {
-            $oView = oxNew('oxubase');
-            $oView->init();
-            $oView->render();
-            $oView->addTplParam('sUrl', $sUrl);
-            if ($sRet = oxUtilsView::getInstance()->getTemplateOutput('err_404.tpl', $oView)) {
-                $sReturn = $sRet;
-            }
-        } catch (Exception $e) {
-        }
-        $oUtils->showMessageAndExit( $sReturn );
+        oxUtils::getInstance()->handlePageNotFoundError($sUrl);
     }
 }
 
@@ -403,7 +420,8 @@ if ( !function_exists( 'getRequestUrl' ) ) {
 
             if ( isset( $_SERVER['REQUEST_URI'] ) && $_SERVER['REQUEST_URI'] ) {
                 $sRequest = $_SERVER['REQUEST_URI'];
-            } else {    // try something else
+            } else {
+                // try something else
                 $sRequest = $_SERVER['SCRIPT_URI'];
             }
 
@@ -421,6 +439,9 @@ if ( !function_exists( 'getRequestUrl' ) ) {
         }
     }
 }
+
+//registering oxAutoload() as autoload handler
+spl_autoload_register("oxAutoload");
 
 //strips magics quote if any
 oxUtils::getInstance()->stripGpcMagicQuotes();

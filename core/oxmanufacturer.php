@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxmanufacturer.php 23323 2009-10-16 14:59:42Z sarunas $
+ * @version   SVN: $Id: oxmanufacturer.php 25755 2010-02-10 13:59:48Z sarunas $
  */
 
 /**
@@ -73,6 +73,13 @@ class oxManufacturer extends oxI18n implements oxIUrl
      * @var int
      */
     protected $_blHasVisibleSubCats;
+
+    /**
+     * Seo article urls for languages
+     *
+     * @var array
+     */
+    protected $_aSeoUrls = array();
 
     /**
      * Class constructor, initiates parent constructor (parent::oxI18n()).
@@ -203,65 +210,81 @@ class oxManufacturer extends oxI18n implements oxIUrl
     }
 
     /**
+     * Returns raw manufacturer seo url
+     *
+     * @param int $iLang language id
+     * @param int $iPage page number [optional]
+     *
+     * @return string
+     */
+    public function getBaseSeoLink( $iLang, $iPage = 0 )
+    {
+        $oEncoder = oxSeoEncoderManufacturer::getInstance();
+        if ( !$iPage ) {
+            return $oEncoder->getManufacturerUrl( $this, $iLang );
+        }
+        return $oEncoder->getManufacturerPageUrl( $this, $iPage, $iLang );
+    }
+
+    /**
      * Returns manufacturer link Url
      *
-     * @param integer $iLang language
+     * @param int $iLang language id [optional]
      *
      * @return string
      */
     public function getLink( $iLang = null )
     {
-        if ( isset( $iLang ) ) {
-            $iLang = (int) $iLang;
-            if ( $iLang == (int) $this->getLanguage() ) {
-                $iLang = null;
-            }
+        if ( !oxUtils::getInstance()->seoIsActive() ) {
+            return $this->getStdLink( $iLang );
         }
 
-        if ( $this->link === null || isset( $iLang ) ) {
-
-            if ( oxUtils::getInstance()->seoIsActive() ) {
-                $sLink = oxSeoEncoderManufacturer::getInstance()->getManufacturerUrl( $this, $iLang );
-            } else {
-                $sLink = $this->getStdLink( $iLang );
-            }
-
-            if ( isset( $iLang ) ) {
-                return $sLink;
-            }
-
-            $this->link = $sLink;
+        if ( $iLang === null ) {
+            $iLang = $this->getLanguage();
         }
 
-        return $this->link;
+        if ( !isset( $this->_aSeoUrls[$iLang] ) ) {
+            $this->_aSeoUrls[$iLang] = $this->getBaseSeoLink( $iLang );
+        }
+
+        return $this->_aSeoUrls[$iLang];
+    }
+
+    /**
+     * Returns base dynamic url: shopurl/index.php?cl=details
+     *
+     * @param int  $iLang   language id
+     * @param bool $blAddId add current object id to url or not
+     * @param bool $blFull  return full including domain name [optional]
+     *
+     * @return string
+     */
+    public function getBaseStdLink( $iLang, $blAddId = true, $blFull = true )
+    {
+        $sUrl = '';
+        if ( $blFull ) {
+            //always returns shop url, not admin
+            $sUrl = $this->getConfig()->getShopUrl( $iLang, false );
+        }
+
+        return $sUrl . "index.php?cl=manufacturerlist" . ( $blAddId ? "&amp;mnid=".$this->getId() : "" );
     }
 
     /**
      * Returns standard URL to manufacturer
      *
-     * @param int   $iLang language
+     * @param int   $iLang   language
      * @param array $aParams additional params to use [optional]
      *
      * @return string
      */
-    public function getStdLink($iLang = null, $aParams = array() )
+    public function getStdLink( $iLang = null, $aParams = array() )
     {
-        $sLangUrl = '';
-
-        if (isset($iLang) && !oxUtils::getInstance()->seoIsActive()) {
-            $iLang = (int) $iLang;
-            if ($iLang != (int) $this->getLanguage()) {
-                $sLangUrl = "&amp;lang={$iLang}";
-            }
+        if ( $iLang === null ) {
+            $iLang = $this->getLanguage();
         }
 
-        foreach ($aParams as $key => $value) {
-            if ( $value ) {
-                $sLangUrl .= "&amp;$key=$value";
-            }
-        }
-
-        return $this->getConfig()->getShopHomeURL().'cl=manufacturerlist&amp;mnid='.$this->getId().$sLangUrl;
+        return oxUtilsUrl::getInstance()->processStdUrl( $this->getBaseStdLink( $iLang ), $aParams, $iLang, $iLang != $this->getLanguage() );
     }
 
     /**

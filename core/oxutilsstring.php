@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxutilsstring.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: oxutilsstring.php 25467 2010-02-01 14:14:26Z alfonsas $
  */
 
 /**
@@ -39,9 +39,9 @@ class oxUtilsString
      *
      * @return null;
      */
-	public function __construct()
-	{
-	}
+    public function __construct()
+    {
+    }
 
     /**
      * Returns string manipulation utility instance
@@ -52,8 +52,7 @@ class oxUtilsString
     {
         // disable caching for test modules
         if ( defined( 'OXID_PHP_UNIT' ) ) {
-            static $inst = array();
-            self::$_instance = $inst[oxClassCacheKey()];
+            self::$_instance = modInstances::getMod( __CLASS__ );
         }
 
         if ( !self::$_instance instanceof oxUtilsString ) {
@@ -62,7 +61,7 @@ class oxUtilsString
             self::$_instance = oxNew( 'oxUtilsString' );
 
             if ( defined( 'OXID_PHP_UNIT' ) ) {
-                $inst[oxClassCacheKey()] = self::$_instance;
+                modInstances::addMod( __CLASS__, self::$_instance);
             }
         }
         return self::$_instance;

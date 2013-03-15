@@ -67,7 +67,7 @@
         //
         YAHOO.oxid.container2.subscribe( "rowSelectEvent", function( oParam )
         {
-            var sOxid = oParam.record._oData._6;
+            var sOxid = oParam.record._oData._7;
             if ( YAHOO.oxid.container3 == null) {
                 YAHOO.oxid.container3 = new YAHOO.oxid.aoc( 'container3',
                                                 [ [{ foreach from=$oxajax.container3 item=aItem key=iKey }]

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: user_address.php 21704 2009-08-19 14:39:14Z tomas $
+ * @version   SVN: $Id: user_address.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -31,6 +31,8 @@
 class User_Address extends oxAdminDetails
 {
     /**
+     * If true, means that address was deleted
+     *
      * @var bool
      */
     protected $_blDelete = false;
@@ -93,21 +95,18 @@ class User_Address extends oxAdminDetails
     public function save()
     {
 
-        if ( !$this->_allowAdminEdit( oxConfig::getParameter( "oxid" ) ) )
-            return false;
+        if ( $this->_allowAdminEdit( oxConfig::getParameter( "oxid" ) ) ) {
+            $aParams = oxConfig::getParameter( "editval" );
+            if ( isset( $aParams['oxaddress__oxid'] ) && $aParams['oxaddress__oxid'] == "-1" ) {
+                $aParams['oxaddress__oxid'] = null;
+            }
 
-        $aParams = oxConfig::getParameter( "editval");
+            $oAdress = oxNew( "oxaddress" );
+            $oAdress->assign( $aParams );
+            $oAdress->save();
 
-        $oAdress = oxNew( "oxaddress" );
-
-        if ( $aParams['oxaddress__oxid'] == "-1")
-            $aParams['oxaddress__oxid'] = null;
-
-        //$aParams = $oAdress->ConvertNameArray2Idx( $aParams);
-        $oAdress->assign( $aParams);
-        $oAdress->save();
-
-        $this->sSavedOxid = $oAdress->getId();
+            $this->sSavedOxid = $oAdress->getId();
+        }
     }
 
     /**
@@ -117,16 +116,13 @@ class User_Address extends oxAdminDetails
      */
     public function delAddress()
     {
-        $aParams = oxConfig::getParameter( "editval" );
-        if ( !$this->_allowAdminEdit( oxConfig::getParameter( "oxid" ) ) )
-            return false;
-
-        $oAdress = oxNew( "oxaddress" );
-
-        if ( $aParams['oxaddress__oxid'] != "-1") {
-            $oAdress->load( $aParams['oxaddress__oxid']);
-            $oAdress->delete();
-            $this->_blDelete = true;
+        $this->_blDelete = false;
+        if ( $this->_allowAdminEdit( oxConfig::getParameter( "oxid" ) ) ) {
+            $aParams = oxConfig::getParameter( "editval" );
+            if ( isset( $aParams['oxaddress__oxid'] ) && $aParams['oxaddress__oxid'] != "-1" ) {
+                $oAdress = oxNew( "oxaddress" );
+                $this->_blDelete = $oAdress->delete( $aParams['oxaddress__oxid'] );
+            }
         }
     }
 }

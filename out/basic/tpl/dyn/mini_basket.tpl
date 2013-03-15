@@ -11,9 +11,9 @@
         <div id="test_[{$_basket_testid}]Title_[{$_product->getProductId()}]_[{$smarty.foreach.rightlist.iteration}]" class="listitem">
           [{ assign var="sRightListArtTitle" value=$_product->getTitle() }]
           <a id="test_[{$_basket_testid}]Pic_[{$_product->getProductId()}]_[{$smarty.foreach.rightlist.iteration}]" href="[{$_product->getLink()}]" class="picture">
-              <img src="[{$_product->getImageUrl()}]/[{$_product->getIcon()}]" alt="[{ $sRightListArtTitle|strip_tags }]">
+              <img src="[{$_product->getIconUrl()}]" alt="[{ $sRightListArtTitle|strip_tags }]">
           </a>
-          <a id="test_[{$_basket_testid}]TitleLink_[{$_product->getProductId()}]_[{$smarty.foreach.rightlist.iteration}]" href="[{$_product->getLink()}]" class="arttitle">[{ $sRightListArtTitle|strip_tags }]</a>
+          <a id="test_[{$_basket_testid}]TitleLink_[{$_product->getProductId()}]_[{$smarty.foreach.rightlist.iteration}]" href="[{$_product->getLink()}]">[{ $sRightListArtTitle|strip_tags }]</a>
           <br>
           ( [{$_product->getAmount()}] [{ oxmultilang ident="INC_CMP_BASKET_QTY" }] )
          </div>

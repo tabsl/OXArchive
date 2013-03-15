@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: vendor_main.php 17191 2009-03-13 12:21:00Z arvydas $
+ * @version   SVN: $Id: vendor_main.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -83,7 +83,7 @@ class Vendor_Main extends oxAdminDetails
             }
         }
 
-        if ( oxConfig::getParameter("aoc") ) {
+        if ( oxConfig::getParameter( "aoc" ) ) {
 
             $aColumns = array();
             include_once 'inc/'.strtolower(__CLASS__).'.inc.php';
@@ -102,36 +102,35 @@ class Vendor_Main extends oxAdminDetails
     public function save()
     {
 
-        $soxId   = oxConfig::getParameter( "oxid");
-        $aParams = oxConfig::getParameter( "editval");
+        $soxId   = oxConfig::getParameter( "oxid" );
+        $aParams = oxConfig::getParameter( "editval" );
 
-        if ( !isset( $aParams['oxvendor__oxactive']))
+        if ( !isset( $aParams['oxvendor__oxactive'] ) ) {
             $aParams['oxvendor__oxactive'] = 0;
+        }
 
             // shopid
-            $sShopID = oxSession::getVar( "actshop");
-            $aParams['oxvendor__oxshopid'] = $sShopID;
+            $aParams['oxvendor__oxshopid'] = oxSession::getVar( "actshop");
 
         $oVendor = oxNew( "oxvendor" );
-
-        if ( $soxId != "-1")
+        if ( $soxId != "-1" )
             $oVendor->loadInLang( $this->_iEditLang, $soxId );
         else {
             $aParams['oxvendor__oxid'] = null;
         }
 
 
-        //$aParams = $oVendor->ConvertNameArray2Idx( $aParams);
         $oVendor->setLanguage(0);
-        $oVendor->assign( $aParams);
-        $oVendor->setLanguage($this->_iEditLang);
+        $oVendor->assign( $aParams );
+        $oVendor->setLanguage( $this->_iEditLang );
         $oVendor = oxUtilsFile::getInstance()->processFiles( $oVendor );
         $oVendor->save();
         $this->_aViewData["updatelist"] = "1";
 
         // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oVendor->oxvendor__oxid->value);
+        if ( $soxId == "-1" ) {
+            oxSession::setVar( "saved_oxid", $oVendor->oxvendor__oxid->value );
+        }
     }
 
     /**
@@ -141,15 +140,15 @@ class Vendor_Main extends oxAdminDetails
      */
     public function saveinnlang()
     {
-        $soxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
+        $soxId   = oxConfig::getParameter( "oxid" );
+        $aParams = oxConfig::getParameter( "editval" );
 
-        if ( !isset( $aParams['oxvendor__oxactive']))
+        if ( !isset( $aParams['oxvendor__oxactive'] ) ) {
             $aParams['oxvendor__oxactive'] = 0;
+        }
 
             // shopid
-            $sShopID = oxSession::getVar( "actshop");
-            $aParams['oxvendor__oxshopid'] = $sShopID;
+            $aParams['oxvendor__oxshopid'] = oxSession::getVar( "actshop" );
 
         $oVendor = oxNew( "oxvendor" );
 
@@ -160,16 +159,16 @@ class Vendor_Main extends oxAdminDetails
         }
 
 
-        //$aParams = $oVendor->ConvertNameArray2Idx( $aParams);
         $oVendor->setLanguage(0);
-        $oVendor->assign( $aParams);
-        $oVendor->setLanguage($this->_iEditLang);
+        $oVendor->assign( $aParams );
+        $oVendor->setLanguage( $this->_iEditLang );
         $oVendor = oxUtilsFile::getInstance()->processFiles( $oVendor );
         $oVendor->save();
         $this->_aViewData["updatelist"] = "1";
 
         // set oxid if inserted
-        if ( $soxId == "-1")
+        if ( $soxId == "-1" ) {
             oxSession::setVar( "saved_oxid", $oVendor->oxvendor__oxid->value);
+        }
     }
 }

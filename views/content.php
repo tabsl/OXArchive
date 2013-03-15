@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: content.php 23255 2009-10-14 15:25:09Z sarunas $
+ * @version   SVN: $Id: content.php 26777 2010-03-23 15:32:19Z sarunas $
  */
 
 /**
@@ -58,16 +58,6 @@ class Content extends oxUBase
      protected $_oContentCat = null;
 
     /**
-     * Unsets SEO category and call parent::init();
-     *
-     * @return null
-     */
-    public function init()
-    {
-        parent::init();
-    }
-
-    /**
      * Returns prefix ID used by template engine.
      *
      * @return string    $this->_sViewId
@@ -98,6 +88,9 @@ class Content extends oxUBase
             $this->_sThisTemplate = $sTpl = $sTplName;
         } else {
             $this->_aViewData['oxcid'] = $sTpl = $this->getContentId();
+            if ( !$sTpl ) {
+                error_404_handler( );
+            }
             $this->_aViewData['oContent'] = $this->getContent();
         }
 

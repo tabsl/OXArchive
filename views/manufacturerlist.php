@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: manufacturerlist.php 23400 2009-10-20 14:38:13Z arvydas $
+ * @version   SVN: $Id: manufacturerlist.php 26737 2010-03-22 14:04:23Z arvydas $
  */
 
 /**
@@ -108,7 +108,7 @@ class ManufacturerList extends aList
         $myConfig = $this->getConfig();
 
         // load Manufacturer
-        if ( ( $oManufacturerTree = $this->getManufacturerTree() ) ) {
+        if ( $this->getManufacturerTree() ) {
             if ( ( $oManufacturer = $this->getActManufacturer() ) ) {
                 if ( $oManufacturer->getId() != 'root' ) {
                     // load only articles which we show on screen
@@ -174,7 +174,7 @@ class ManufacturerList extends aList
     /**
      * Loads and returns article list of active Manufacturer.
      *
-     * @param object $oManufacturer Manufacturer object
+     * @param oxmanufacturer $oManufacturer Manufacturer object
      *
      * @return array
      */
@@ -203,9 +203,11 @@ class ManufacturerList extends aList
      */
     protected function _getSeoObjectId()
     {
+        $sId = null;
         if ( ( $oManufacturer = $this->getActManufacturer() ) ) {
-            return $oManufacturer->getId();
+            $sId = $oManufacturer->getId();
         }
+        return $sId;
     }
 
     /**
@@ -221,8 +223,9 @@ class ManufacturerList extends aList
     protected function _addPageNrParam( $sUrl, $iPage, $iLang = null)
     {
         if ( oxUtils::getInstance()->seoIsActive() && ( $oManufacturer = $this->getActManufacturer() ) ) {
-            if ( $iPage ) { // only if page number > 0
-                $sUrl = oxSeoEncoderManufacturer::getInstance()->getManufacturerPageUrl( $oManufacturer, $iPage, $iLang, $this->_isFixedUrl( $oManufacturer ) );
+            if ( $iPage ) {
+                // only if page number > 0
+                $sUrl = oxSeoEncoderManufacturer::getInstance()->getManufacturerPageUrl( $oManufacturer, $iPage, $iLang );
             }
         } else {
             $sUrl = parent::_addPageNrParam( $sUrl, $iPage, $iLang );
@@ -235,7 +238,7 @@ class ManufacturerList extends aList
      *
      * @return string
      */
-    public function generatePageNavigationUrl( )
+    public function generatePageNavigationUrl()
     {
         if ( ( oxUtils::getInstance()->seoIsActive() && ( $oManufacturer = $this->getActManufacturer() ) ) ) {
             return $oManufacturer->getLink();
@@ -273,10 +276,7 @@ class ManufacturerList extends aList
     public function getSubCatList()
     {
         if ( $this->_oSubCatList === null ) {
-            $this->_oSubCatList = array();
-            if ( $this->hasVisibleSubCats() ) {
-                return $this->_oSubCatList;
-            }
+            $this->_oSubCatList = $this->hasVisibleSubCats() ? $this->_oSubCatList : array();
         }
         return $this->_oSubCatList;
     }
@@ -345,9 +345,11 @@ class ManufacturerList extends aList
      */
     public function getTreePath()
     {
+        $aPath = null;
         if ( $oManufacturerTree = $this->getManufacturerTree() ) {
-            return $oManufacturerTree->getPath();
+            $aPath = $oManufacturerTree->getPath();
         }
+        return $aPath;
     }
 
     /**
@@ -391,9 +393,11 @@ class ManufacturerList extends aList
      */
     public function getTitleSuffix()
     {
+        $sSuffix = null;
         if ( $this->getActManufacturer()->oxmanufacturers__oxshowsuffix->value ) {
-            return $this->getConfig()->getActiveShop()->oxshops__oxtitlesuffix->value;
+            $sSuffix = $this->getConfig()->getActiveShop()->oxshops__oxtitlesuffix->value;
         }
+        return $sSuffix;
     }
 
     /**
@@ -437,5 +441,20 @@ class ManufacturerList extends aList
     protected function _getSubject( $iLang )
     {
         return $this->getActManufacturer();
+    }
+
+    /**
+     * Returns additional URL parameters which must be added to list products dynamic urls
+     *
+     * @return string
+     */
+    public function getAddUrlParams()
+    {
+        $sAddParams  = parent::getAddUrlParams();
+        $sAddParams .= ($sAddParams?'&amp;':'') . "listtype={$this->_sListType}";
+        if ( $oManufacturer = $this->getActManufacturer() ) {
+            $sAddParams .= "&amp;mnid=" . $oManufacturer->getId();
+        }
+        return $sAddParams;
     }
 }

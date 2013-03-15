@@ -56,6 +56,7 @@
             [{/if}]
             [{ $oViewConf->getHiddenSid() }]
             [{ $oViewConf->getNavFormParams() }]
+            [{oxid_include_dynamic file="dyn/formparams.tpl" }]
             <input type="hidden" name="fnc" value="savereview">
             <input type="hidden" name="cl" value="[{ $oViewConf->getActiveClassName() }]">
             [{if $product}]

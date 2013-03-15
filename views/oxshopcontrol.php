@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxshopcontrol.php 22590 2009-09-24 06:24:00Z alfonsas $
+ * @version   SVN: $Id: oxshopcontrol.php 26910 2010-03-26 17:29:06Z tomas $
  */
 
 /**
@@ -29,6 +29,20 @@
  */
 class oxShopControl extends oxSuperCfg
 {
+    /**
+     * Profiler start time
+     *
+     * @var double
+     */
+    protected $_dTimeStart = null;
+
+    /**
+     * Profiler end time
+     *
+     * @var double
+     */
+    protected $_dTimeEnd = null;
+
     /**
      * Main shop manager, that sets shop status, executes configuration methods.
      * Executes oxShopControl::_runOnce(), if needed sets default class (according
@@ -86,11 +100,11 @@ class oxShopControl extends oxSuperCfg
         } catch( oxSystemComponentException $oEx ) {
             //possible reason: class does not exist etc. --> just redirect to start page
             oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
-            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=start' );
+            oxUtils::getInstance()->redirect( $myConfig->getShopHomeUrl() .'cl=start' );
         } catch ( oxCookieException $oEx ) {
             // redirect to start page and display the error
             oxUtilsView::getInstance()->addErrorToDisplay( $oEx );
-            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() .'cl=start' );
+            oxUtils::getInstance()->redirect( $myConfig->getShopHomeUrl() .'cl=start' );
         }
     }
 
@@ -106,12 +120,12 @@ class oxShopControl extends oxSuperCfg
     protected function _log( $sClass, $sFnc )
     {
         $oDb = oxDb::getDb();
-        $sShopID    = oxSession::getVar( 'actshop' );
-        $sTime      = date( 'Y-m-d H:i:s' );
-        $sSidQuoted       = $oDb->quote( $this->getSession()->getId() );
-        $sUserIDQuoted    = $oDb->quote( oxSession::getVar( 'usr' ) );
-        $sCnid      = oxConfig::getParameter( 'cnid' );
-        $sAnid      = oxConfig::getParameter( 'aid' )?oxConfig::getParameter( 'aid' ):oxConfig::getParameter( 'anid' );
+        $sShopID = oxSession::getVar( 'actshop' );
+        $sTime   = date( 'Y-m-d H:i:s' );
+        $sSidQuoted    = $oDb->quote( $this->getSession()->getId() );
+        $sUserIDQuoted = $oDb->quote( oxSession::getVar( 'usr' ) );
+        $sCnid = oxConfig::getParameter( 'cnid' );
+        $sAnid = oxConfig::getParameter( 'aid' ) ? oxConfig::getParameter( 'aid' ) : oxConfig::getParameter( 'anid' );
         $sParameter = '';
 
         if ( $sClass == 'info' ) {
@@ -124,8 +138,9 @@ class oxShopControl extends oxSuperCfg
         $sClassQuoted = $oDb->quote( $sClass );
         $sParameterQuoted = $oDb->quote( $sParameter );
 
-        $oDb->execute( "insert into oxlogs (oxtime, oxshopid, oxuserid, oxsessid, oxclass, oxfnc, oxcnid, oxanid, oxparameter)
-                                 values( '$sTime', '$sShopID', $sUserIDQuoted, $sSidQuoted, $sClassQuoted, $sFncQuoted, '$sCnid', '$sAnid', $sParameterQuoted )" );
+        $sQ = "insert into oxlogs (oxtime, oxshopid, oxuserid, oxsessid, oxclass, oxfnc, oxcnid, oxanid, oxparameter) ".
+              "values( '$sTime', '$sShopID', $sUserIDQuoted, $sSidQuoted, $sClassQuoted, $sFncQuoted, '$sCnid', '$sAnid', $sParameterQuoted )";
+        $oDb->execute( $sQ );
     }
 
     // OXID : add timing
@@ -138,7 +153,7 @@ class oxShopControl extends oxSuperCfg
     {
         if ( !$this->isAdmin() && $this->getConfig()->getConfigParam( 'iDebug' ) ) {
             list ( $sUsec, $sSec ) = explode( ' ', microtime() );
-            $this->dTimeStart = ( ( float ) $sUsec + ( float ) $sSec );
+            $this->_dTimeStart = ( ( float ) $sUsec + ( float ) $sSec );
         }
     }
 
@@ -156,56 +171,71 @@ class oxShopControl extends oxSuperCfg
     {
         $myConfig = $this->getConfig();
         if ( !$this->isAdmin() && $myConfig->getConfigParam( 'iDebug' ) != 0 ) {
-            echo '<div align="left">';
+            $sLog = '<div align="left">';
 
             // outputting template params
             if ( $myConfig->getConfigParam( 'iDebug' ) == 4 ) {
 
                 reset( $aViewData );
-                while ( list( $sViewName, $oViewData ) =each( $aViewData ) ) {
+                while ( list( $sViewName, $oViewData ) = each( $aViewData ) ) {
                     // show debbuging information
-                        echo( "TemplateData[$sViewName] : <br />\n");
+                        $sLog .= "TemplateData[$sViewName] : <br />\n";
                         print_r( $oViewData );
                 }
             }
 
             // output timing
             list( $sUsec, $sSec ) = explode( ' ', microtime() );
-            $this->dTimeEnd = ( ( float ) $sUsec + ( float ) $sSec );
-            $dTimeSpent = $this->dTimeEnd - $this->dTimeStart;
+            $this->_dTimeEnd = ( ( float ) $sUsec + ( float ) $sSec );
+            //getting rid of float precission shift
+            $dTimeSpent = ((int)( $this->_dTimeEnd * 10000 - $this->_dTimeStart * 10000 ) ) / 10000;
 
-            echo 'Execution time :'.$dTimeSpent.'<br />';
+            $sLog .= 'Execution time :'.$dTimeSpent.'<br />';
 
             // memory usage info
             if ( function_exists( 'memory_get_usage' ) ) {
                 $iKb = ( int ) ( memory_get_usage() / 1024 );
                 $iMb = round($iKb / 1024, 3);
-                echo 'Memory usage: '.$iMb.' MB';
+                $sLog .= 'Memory usage: '.$iMb.' MB';
 
                 if ( function_exists( 'memory_get_peak_usage' ) ) {
                     $iPeakKb = ( int ) ( memory_get_peak_usage() / 1024 );
                     $iPeakMb = round($iPeakKb / 1024, 3);
-                    echo ' (peak: '.$iPeakMb.' MB)';
+                    $sLog .= ' (peak: '.$iPeakMb.' MB)';
                 }
-                echo '<br />';
+                $sLog .= '<br />';
 
                 if ( version_compare( PHP_VERSION, '5.2.0', '>=' ) ) {
                     $iKb = ( int ) ( memory_get_usage( true ) / 1024 );
                     $iMb = round($iKb / 1024, 3);
-                    echo 'System memory usage: '.$iMb.' MB';
+                    $sLog .= 'System memory usage: '.$iMb.' MB';
 
                     if ( function_exists( 'memory_get_peak_usage' ) ) {
                         $iPeakKb = ( int ) ( memory_get_peak_usage( true ) / 1024 );
                         $iPeakMb = round($iPeakKb / 1024, 3);
-                        echo ' (peak: '.$iPeakMb.' MB)';
+                        $sLog .= ' (peak: '.$iPeakMb.' MB)';
                     }
-                    echo '<br />';
+                    $sLog .= '<br />';
                 }
             }
 
-            echo '</div>';
+            $sLog .= '</div>';
+            $this->_output( $sLog );
+        }
+    }
+
+    /**
+     * Returns the differnece between stored profiler end time and start time. Works only after _stopMonitor() is called, otherwise returns 0.
+     *
+     * @return  double
+     */
+    public function getTotalTime()
+    {
+        if ($this->_dTimeEnd && $this->_dTimeStart) {
+            return $this->_dTimeEnd - $this->_dTimeStart;
         }
 
+        return 0;
     }
 
     /**
@@ -226,8 +256,10 @@ class oxShopControl extends oxSuperCfg
     protected function _process( $sClass, $sFunction )
     {
         $myConfig = $this->getConfig();
+        $myUtils  = oxUtils::getInstance();
+        $sViewID = null;
 
-        if ( !oxUtils::getInstance()->isSearchEngine() &&
+        if ( !$myUtils->isSearchEngine() &&
              !( $this->isAdmin() || !$myConfig->getConfigParam( 'blLogging' ) ) ) {
             $this->_log( $sClass, $sFunction );
         }
@@ -306,17 +338,28 @@ class oxShopControl extends oxSuperCfg
         }
 
 
-        // show output
-        //ob_Start("gzip");
-
         // #M1047 Firefox duplicated GET fix
-        header("Content-Type: text/html; charset=".oxLang::getInstance()->translateString( 'charset' ));
-        echo ( $sOutput );
+        $myUtils->setHeader( "Content-Type: text/html; charset=".oxLang::getInstance()->translateString( 'charset' ) );
+
+        // show output
+        $this->_output( $sOutput );
 
         $myConfig->pageClose();
 
         // stopping resource monitor
         $this->_stopMonitor( $blIsCachable, $blIsCached, $sViewID, $oViewObject->getViewData() );
+    }
+
+    /**
+     * Outputs passed data
+     *
+     * @param string $sOutput data to output
+     *
+     * @return null
+     */
+    protected function _output( $sOutput )
+    {
+        echo $sOutput;
     }
 
     /**
@@ -354,13 +397,20 @@ class oxShopControl extends oxSuperCfg
 
         if ( !$blRunOnceExecuted && !$this->isAdmin() && $blProductive ) {
 
+            $sTpl = false;
             // perform stuff - check if setup is still there
             if ( file_exists( $myConfig->getConfigParam( 'sShopDir' ) . '/setup/index.php' ) ) {
+                $sTpl = 'err_setup.tpl';
+            } elseif ( file_exists( $myConfig->getConfigParam( 'sShopDir' ) . '/updateApp' ) ) {
+                $sTpl = 'err_update.tpl';
+            }
+
+            if ( $sTpl ) {
                 $oActView = oxNew( 'oxubase' );
                 $oSmarty = oxUtilsView::getInstance()->getSmarty();
-                $oSmarty->assign('oView', $oActView);
-                $oSmarty->assign('oViewConf', $oActView->getViewConfig());
-                oxUtils::getInstance()->showMessageAndExit( $oSmarty->fetch( 'err_setup.tpl' ) );
+                $oSmarty->assign('oView', $oActView );
+                $oSmarty->assign('oViewConf', $oActView->getViewConfig() );
+                oxUtils::getInstance()->showMessageAndExit( $oSmarty->fetch( $sTpl ) );
             }
 
             oxSession::setVar( 'blRunOnceExecuted', true );

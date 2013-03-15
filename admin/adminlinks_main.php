@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: adminlinks_main.php 18288 2009-04-16 14:06:18Z arvydas $
+ * @version   SVN: $Id: adminlinks_main.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -33,6 +33,7 @@ class Adminlinks_Main extends oxAdminDetails
     /**
      * Sets link information data (or leaves empty), returns name of template
      * file "adminlinks_main.tpl".
+     *
      * @return string
      */
     public function render()

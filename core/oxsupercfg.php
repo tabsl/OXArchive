@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxsupercfg.php 21460 2009-08-05 16:28:33Z tomas $
+ * @version   SVN: $Id: oxsupercfg.php 25471 2010-02-01 14:35:11Z alfonsas $
  */
 
 /**
@@ -93,9 +93,9 @@ class oxSuperCfg
      *
      * @return null;
      */
-	public function __construct()
-	{
-	}
+    public function __construct()
+    {
+    }
 
     /**
      * oxConfig instance getter

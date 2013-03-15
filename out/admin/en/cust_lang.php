@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package lang
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   lang
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: cust_lang.php 18350 2009-04-20 08:53:22Z vilma $
+ * @version   SVN: $Id: cust_lang.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 $sLangName  = "English";

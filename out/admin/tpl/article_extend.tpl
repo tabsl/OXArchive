@@ -184,6 +184,16 @@ function editThis( sID )
             </td>
           </tr>
           <tr>
+            <td class="edittext" width="140">
+              [{ oxmultilang ident="ARTICLE_EXTEND_ISCONFIGURABLE" }]
+            </td>
+            <td class="edittext">
+              <input type="hidden" name="editval[oxarticles__oxisconfigurable]" value='0'>
+              <input class="edittext" type="checkbox" name="editval[oxarticles__oxisconfigurable]" value='1' [{if $edit->oxarticles__oxisconfigurable->value == 1}]checked[{/if}]>
+              [{ oxinputhelp ident="HELP_ARTICLE_EXTEND_ISCONFIGURABLE" }]
+            </td>
+          </tr>
+          <tr>
             <td class="edittext" width="120">
               [{ oxmultilang ident="ARTICLE_EXTEND_NONMATERIAL" }]
             </td>
@@ -228,7 +238,7 @@ function editThis( sID )
             </td>
             <td class="edittext">
               [{ $bundle_artnum }] [{ $bundle_title|oxtruncate:21:"...":true }]
-              <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNARTICLES" }]" class="edittext" onclick="JavaScript:showDialog('?cl=article_extend&aoc=2&oxid=[{ $oxid }]');">
+              <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNARTICLES" }]" class="edittext" onclick="JavaScript:showDialog('&cl=article_extend&aoc=2&oxid=[{ $oxid }]');">
             </td>
           </tr>
           <tr>
@@ -250,7 +260,7 @@ function editThis( sID )
 
       <td valign="top" class="edittext" align="left" width="55%" style="table-layout:fixed">
 
-        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNCATEGORIES" }]" class="edittext" onclick="JavaScript:showDialog('?cl=article_extend&aoc=1&oxid=[{ $oxid }]');">
+        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNCATEGORIES" }]" class="edittext" onclick="JavaScript:showDialog('&cl=article_extend&aoc=1&oxid=[{ $oxid }]');">
 
 
         <p>
@@ -269,7 +279,7 @@ function editThis( sID )
                   &nbsp;<a href="[{ $oMediaUrl->oxmediaurls__oxurl->value }]" target="_blank">&raquo;&raquo;</a>&nbsp;
                 </td>
                 <td class=listitem[{$oddclass}]>
-                  &nbsp;<a href="[{ $shop->selflink }]?cl=article_extend&amp;mediaid=[{$oMediaUrl->oxmediaurls__oxid->value}]&amp;fnc=deletemedia&amp;oxid=[{$oxid}]&amp;editlanguage=[{ $editlanguage }]" onClick='return confirm("[{ oxmultilang ident="GENERAL_YOUWANTTODELETE" }]")'><img src="[{$shop->imagedir}]/delete_button.gif" border=0></a>&nbsp;
+                  &nbsp;<a href="[{$shop->selflink}]&cl=article_extend&amp;mediaid=[{$oMediaUrl->oxmediaurls__oxid->value}]&amp;fnc=deletemedia&amp;oxid=[{$oxid}]&amp;editlanguage=[{ $editlanguage }]" onClick='return confirm("[{ oxmultilang ident="GENERAL_YOUWANTTODELETE" }]")'><img src="[{$shop->imagedir}]/delete_button.gif" border=0></a>&nbsp;
                 </td>
                 <td class="listitem[{$oddclass}]" width=250>
                   <input style="width:100%" class="edittext" type="text" name="aMediaUrls[[{ $oMediaUrl->oxmediaurls__oxid->value }]][oxmediaurls__oxdesc]" value="[{ $oMediaUrl->oxmediaurls__oxdesc->value }]">

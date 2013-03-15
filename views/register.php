@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: register.php 21711 2009-08-19 15:03:40Z tomas $
+ * @version   SVN: $Id: register.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
@@ -47,13 +47,6 @@ class Register extends User
      * @var string
      */
     protected $_sSuccessTemplate = 'register_success.tpl';
-
-    /**
-     * Array of fields which must be filled during registration
-     *
-     * @var array
-     */
-    protected $_aMustFillFields = null;
 
     /**
      * Current view search engine indexing state
@@ -108,25 +101,6 @@ class Register extends User
     }
 
     /**
-     * Returns array of fields which must be filled during registration
-     *
-     * @return array | bool
-     */
-    public function getMustFillFields()
-    {
-        if ( $this->_aMustFillFields === null ) {
-            $this->_aMustFillFields = false;
-
-            // passing must-be-filled-fields info
-            $aMustFillFields = $this->getConfig()->getConfigParam( 'aMustFillFields' );
-            if ( is_array( $aMustFillFields ) ) {
-                $this->_aMustFillFields = array_flip( $aMustFillFields );
-            }
-        }
-        return $this->_aMustFillFields;
-    }
-
-    /**
      * Return deliver address
      *
      * @return oxbase | false
@@ -158,6 +132,24 @@ class Register extends User
      */
     protected function _addFakeAddress( $oAddresses )
     {
+    }
+
+    /**
+     * Check if field is required.
+     *
+     * @param string $sField required field to check
+     *
+     * @return bool
+     */
+    public function isFieldRequired( $sField )
+    {
+        if ( $aMustFillFields = $this->getMustFillFields() ) {
+            if ( isset( $aMustFillFields[$sField] ) ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

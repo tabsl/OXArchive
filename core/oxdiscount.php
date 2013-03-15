@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxdiscount.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: oxdiscount.php 25467 2010-02-01 14:14:26Z alfonsas $
  */
 
 /**
@@ -202,9 +202,10 @@ class oxDiscount extends oxI18n
             }
 
             if ( $blForBasketItem ) {
+                $dRate = $oBasket->getBasketCurrency()->rate;
                 if ( $this->oxdiscount__oxprice->value ) {
                     if ( ( $oPrice = $oBasketArticle->getPrice() ) ) {
-                        $dAmount += $oPrice->getBruttoPrice() * $oBasketItem->getAmount();
+                        $dAmount += ($oPrice->getBruttoPrice() * $oBasketItem->getAmount())/$dRate;
                     }
                 } elseif ( $this->oxdiscount__oxamount->value ) {
                     $dAmount += $oBasketItem->getAmount();
@@ -225,6 +226,7 @@ class oxDiscount extends oxI18n
     public function isForAmount( $dAmount )
     {
         $blIs = true;
+
         if ( $this->oxdiscount__oxprice->value &&
             ( $dAmount < $this->oxdiscount__oxprice->value || $dAmount > $this->oxdiscount__oxpriceto->value ) ) {
             $blIs = false;
@@ -255,8 +257,8 @@ class oxDiscount extends oxI18n
             return false;
             // price check
         } elseif ($this->oxdiscount__oxprice->value) {
-            $dRate = $this->getConfig()->getActShopCurrencyObject()->rate;
-            if ( $oSummary->dArticlePrice < $this->oxdiscount__oxprice->value*$dRate || $oSummary->dArticlePrice > $this->oxdiscount__oxpriceto->value*$dRate ) {
+            $dRate = $oBasket->getBasketCurrency()->rate;
+            if ( $oSummary->dArticleDiscountablePrice < $this->oxdiscount__oxprice->value*$dRate || $oSummary->dArticleDiscountablePrice > $this->oxdiscount__oxpriceto->value*$dRate ) {
                 return false;
             }
         }

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxstrmb.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: oxstrmb.php 26366 2010-03-08 12:18:14Z arvydas $
  */
 
 /**
@@ -52,9 +52,9 @@ class oxStrMb
      *
      * @return null;
      */
-	public function __construct()
-	{
-	}
+    public function __construct()
+    {
+    }
 
     /**
      * PHP  multibute compliant strlen() function wrapper
@@ -94,8 +94,12 @@ class oxStrMb
      */
     public function strpos( $sHaystack, $sNeedle, $iOffset = null )
     {
-        $iOffset = is_null( $iOffset ) ? 0 : $iOffset;
-        return mb_strpos( $sHaystack, $sNeedle, $iOffset, $this->_sEncoding );
+        $iPos = false;
+        if ( $sHaystack && $sNeedle ) {
+            $iOffset = is_null( $iOffset ) ? 0 : $iOffset;
+            $iPos = mb_strpos( $sHaystack, $sNeedle, $iOffset, $this->_sEncoding );
+        }
+        return $iPos;
     }
 
     /**

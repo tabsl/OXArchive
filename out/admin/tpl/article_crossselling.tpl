@@ -31,13 +31,13 @@
     <tr>
       <td valign="top" class="edittext">
         [{oxhasrights object=$edit readonly=$readonly }]
-          <input type="button" value="[{ oxmultilang ident="ARTICLE_CROSSSELLING_ASSIGNCROSSSELLING" }]" class="edittext" onclick="JavaScript:showDialog('?cl=article_crossselling&aoc=1&oxid=[{ $oxid }]');">
+          <input type="button" value="[{ oxmultilang ident="ARTICLE_CROSSSELLING_ASSIGNCROSSSELLING" }]" class="edittext" onclick="JavaScript:showDialog('&cl=article_crossselling&aoc=1&oxid=[{ $oxid }]');">
         [{/oxhasrights}]
       </td>
     <!-- Anfang rechte Seite -->
       <td valign="top" class="edittext" align="left" width="50%">
         [{oxhasrights object=$edit readonly=$readonly }]
-          <input type="button" value="[{ oxmultilang ident="ARTICLE_CROSSSELLING_ASSIGNACCESSORIES" }]" class="edittext" onclick="JavaScript:showDialog('?cl=article_crossselling&aoc=2&oxid=[{ $oxid }]');">
+          <input type="button" value="[{ oxmultilang ident="ARTICLE_CROSSSELLING_ASSIGNACCESSORIES" }]" class="edittext" onclick="JavaScript:showDialog('&cl=article_crossselling&aoc=2&oxid=[{ $oxid }]');">
         [{/oxhasrights}]
       </td>
     <!-- Ende rechte Seite -->

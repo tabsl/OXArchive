@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: order_list.php 23390 2009-10-20 13:48:50Z vilma $
+ * @version   SVN: $Id: order_list.php 26511 2010-03-15 10:02:18Z arvydas $
  */
 
 /**
@@ -129,7 +129,7 @@ class Order_List extends oxAdminList
         $sSearchField = oxConfig::getParameter( 'addsearchfld' );
 
         if ( $sSearch ) {
-            switch ($sSearchField) {
+            switch ( $sSearchField ) {
             case 'oxorderarticles':
                 $sQ = "oxorder left join oxorderarticles on oxorderarticles.oxorderid=oxorder.oxid where ( oxorderarticles.oxartnum like ".$oDb->quote( "%{$sSearch}%" ) ." or oxorderarticles.oxtitle like ".$oDb->quote( "%{$sSearch}%" )." ) and ";
                 break;
@@ -176,10 +176,10 @@ class Order_List extends oxAdminList
     protected function _prepareOrderByQuery( $sSql = null )
     {
         $sSortParam = oxConfig::getParameter( 'sort' );
-
         //setting sort order as ASC for oxbilllname column
-        if ( $sSortParam && $sSortParam == 'oxorder.oxbilllname' )
+        if ( $sSortParam && $sSortParam == 'oxorder.oxbilllname' ) {
            $this->_blDesc = false;
+        }
 
         return parent::_prepareOrderByQuery( $sSql );
     }

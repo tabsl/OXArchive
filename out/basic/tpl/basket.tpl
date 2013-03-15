@@ -94,6 +94,8 @@
         <div class="art_num" id="test_basketNo_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.test_Contents.iteration}]">[{ oxmultilang ident="BASKET_ARTNOMBER" }] [{ $basketproduct->oxarticles__oxartnum->value }]</div>
         [{if !$basketitem->isBundle() || !$basketitem->isDiscountArticle()}]
 
+           [{if $basketproduct->selectlist }]
+             <div class="variants">
              [{foreach key=iSel from=$basketproduct->selectlist item=oList }]
                <select id="test_basketSelect_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.test_Contents.iteration}]_[{ $iSel }]" name="aproducts[[{ $basketindex }]][sel][[{ $iSel }]]">
                  [{foreach key=iSelIdx from=$oList item=oSelItem }]
@@ -103,6 +105,8 @@
                  [{/foreach }]
                </select>
              [{/foreach }]
+             </div>
+           [{/if}]
 
           [{/if }]
       </td>
@@ -113,14 +117,16 @@
          <input type="hidden" name="aproducts[[{ $basketindex }]][aid]" value="[{ $basketitem->sProduct }]">
          <input type="hidden" name="aproducts[[{ $basketindex }]][basketitemid]" value="[{ $basketindex }]">
          <input type="hidden" name="aproducts[[{ $basketindex }]][override]" value="1">
-
+         [{if $basketitem->isBundle() }]
+             <input type="hidden" name="aproducts[[{ $basketindex }]][bundle]" value="1">
+         [{/if}]
          [{if $basketitem->getdBundledAmount() > 0 && ($basketitem->isBundle() || $basketitem->isDiscountArticle()) }]
              <div id="test_basketAmount_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.test_Contents.iteration}]" align="center">+[{ $basketitem->getdBundledAmount() }]</div>
          [{/if}]
 
          [{if !$basketitem->isBundle() || !$basketitem->isDiscountArticle()}]
              [{foreach key=sVar from=$basketitem->getPersParams() item=aParam }]
-               <b>[{ $sVar }]:</b>&nbsp;<input type="text" name="aproducts[[{ $basketindex }]][persparam][[{ $sVar }]]" value="[{ $aParam }]"><br>
+               <b>[{ $sVar }]:</b>&nbsp;<input id="persparamInput_[{$basketitem->getProductId()}]_[{$sVar}]" type="text" name="aproducts[[{ $basketindex }]][persparam][[{ $sVar }]]" value="[{ $aParam }]"><br>
              [{/foreach }]
              <input id="test_basketAm_[{ $basketproduct->oxarticles__oxid->value }]_[{$smarty.foreach.test_Contents.iteration}]" type="text" name="aproducts[[{ $basketindex }]][am]" value="[{ $basketitem->getAmount() }]" size="2">
         [{/if}]
@@ -157,7 +163,7 @@
                <tr>
                  <td class="brd"></td>
                  <td id="test_basket_StockError_[{ $basketproduct->oxarticles__oxid->value }]_[{$key}]" colspan="6">
-                     <span class=err">[{ $oEr->getOxMessage() }] [{ $oEr->getValue('remainingAmount') }]</span>
+                     <span class="err">[{ $oEr->getOxMessage() }] [{ $oEr->getValue('remainingAmount') }]</span>
                  </td>
                  <td></td>
                </tr>
@@ -263,7 +269,7 @@
       [{/foreach }]
     [{/if }]
 
-    [{if $oxcmp_basket->getVoucherDiscValue() }]
+    [{if $oViewConf->getShowVouchers() && $oxcmp_basket->getVoucherDiscValue() }]
       <tr class="bsk_sep">
         <td class="brd"></td>
         <td colspan="6" class="line"></td>
@@ -333,7 +339,7 @@
       [{/if }]
     [{/if }]
 
-    [{ if $oxcmp_basket->getWrappCostNet() }]
+    [{ if $oViewConf->getShowGiftWrapping() && $oxcmp_basket->getWrappCostNet() }]
         <tr class="sumrow">
           <td class="brd"></td>
           <td colspan="5" class="sumdesc">[{if $oxcmp_basket->getWrappCostVat() }][{ oxmultilang ident="ORDER_WRAPPINGNET" }][{else}][{ oxmultilang ident="ORDER_WRAPPINGGROSS1" }][{/if}]</td>
@@ -381,30 +387,30 @@
   </table>
  </form>
 
+  [{if $oViewConf->getShowVouchers()}]
+      <strong id="test_VoucherHeader" class="boxhead">[{ oxmultilang ident="BASKET_REDEEMCOUPON" }]</strong>
+      <div class="box">
+         [{foreach from=$Errors.basket item=oEr key=key }]
+         [{if $oEr->getErrorClassType() == 'oxVoucherException'}]
+             <span class="err">[{ oxmultilang ident="BASKET_COUPONNOTACCEPTED1" }] [{ $oEr->getValue('voucherNr') }] [{ oxmultilang ident="BASKET_COUPONNOTACCEPTED2" }]</span><br>
+             <span class="err">[{ oxmultilang ident="BASKET_REASON" }]</span>
+             <span class="err">[{ $oEr->getOxMessage() }]</span><br>
+          [{/if}]
+          [{/foreach}]
 
-  <strong id="test_VoucherHeader" class="boxhead">[{ oxmultilang ident="BASKET_REDEEMCOUPON" }]</strong>
-  <div class="box">
-     [{foreach from=$Errors.basket item=oEr key=key }]
-     [{if $oEr->getErrorClassType() == 'oxVoucherException'}]
-         <span class="err">[{ oxmultilang ident="BASKET_COUPONNOTACCEPTED1" }] [{ $oEr->getValue('voucherNr') }] [{ oxmultilang ident="BASKET_COUPONNOTACCEPTED2" }]</span><br>
-         <span class="err">[{ oxmultilang ident="BASKET_REASON" }]</span>
-         <span class="err">[{ $oEr->getOxMessage() }]</span><br>
-      [{/if}]
-      [{/foreach}]
-
-      <form name="voucher" action="[{ $oViewConf->getSelfActionLink() }]" method="post" class="left">
-          <div>
-              <label>[{ oxmultilang ident="BASKET_ENTERCOUPONNUMBER" }]</label>
-              [{ $oViewConf->getHiddenSid() }]
-              <input type="hidden" name="cl" value="basket">
-              <input type="hidden" name="fnc" value="addVoucher">
-              <input type="text" size="20" name="voucherNr">
-              <span class="btn"><input id="test_basketVoucherAdd" class="btn" type="submit" value="[{ oxmultilang ident="BASKET_SUBMITCOUPON" }]"></span>
-              <input type="hidden" name="CustomError" value='basket'>
-          </div>
-      </form>
-  </div>
-
+          <form name="voucher" action="[{ $oViewConf->getSelfActionLink() }]" method="post" class="left">
+              <div>
+                  <label>[{ oxmultilang ident="BASKET_ENTERCOUPONNUMBER" }]</label>
+                  [{ $oViewConf->getHiddenSid() }]
+                  <input type="hidden" name="cl" value="basket">
+                  <input type="hidden" name="fnc" value="addVoucher">
+                  <input type="text" size="20" name="voucherNr">
+                  <span class="btn"><input id="test_basketVoucherAdd" class="btn" type="submit" value="[{ oxmultilang ident="BASKET_SUBMITCOUPON" }]"></span>
+                  <input type="hidden" name="CustomError" value='basket'>
+              </div>
+          </form>
+      </div>
+  [{/if}]
 
   <div class="bar prevnext bottom">
     [{if $oView->showBackToShop()}]

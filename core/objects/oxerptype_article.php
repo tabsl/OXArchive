@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxerptype_article.php 23188 2009-10-13 06:59:38Z sarunas $
+ * @version   SVN: $Id: oxerptype_article.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 require_once 'oxerptype.php';
@@ -45,6 +45,7 @@ class oxERPType_Article extends oxERPType
             'OXARTNUM'         => 'OXARTNUM',
             'OXEAN'            => 'OXEAN',
             'OXDISTEAN'        => 'OXDISTEAN',
+            'OXMPN'            => 'OXMPN',
             'OXTITLE'          => 'OXTITLE',
             'OXSHORTDESC'      => 'OXSHORTDESC',
             'OXLONGDESC'       => 'OXLONGDESC',
@@ -161,6 +162,7 @@ class oxERPType_Article extends oxERPType
             'OXARTNUM' => 'OXARTNUM',
             'OXEAN' => 'OXEAN',
             'OXDISTEAN' => 'OXDISTEAN',
+            'OXMPN' => 'OXMPN',
             'OXTITLE' => 'OXTITLE',
             'OXSHORTDESC' => 'OXSHORTDESC',
             'OXPRICE' => 'OXPRICE',

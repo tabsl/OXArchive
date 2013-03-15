@@ -5,7 +5,12 @@
             <p>[{ oxmultilang ident="TAGS_HIGHLIHGT_INSTRUCTIONS" }]</p>
         [{/if}]
 
-        <p class="tags" id="tags.cloud">[{$oView->getTagCloud()}]</p>
+        <p class="tags" id="tags.cloud">
+          [{assign var="oCloudManager" value=$oView->getTagCloudManager() }]
+          [{foreach from=$oCloudManager->getCloudArray() item=iCount key=sTagTitle}]
+            <a class="tagitem_[{$oCloudManager->getTagSize($sTagTitle)}]" href="[{$oCloudManager->getTagLink($sTagTitle)}]">[{$oCloudManager->getTagTitle($sTagTitle)}]</a>
+          [{/foreach}]
+        </p>
 
         [{if !$product && $oView->isMoreTagsVisible()}]
             <a href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=tags" }]">[{ oxmultilang ident="TAGS_MORE" }]...</a>

@@ -15,14 +15,17 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package main
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   main
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxseo.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxseo.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
-$_blIsSearchEngine = true;
+// mod_rewrite check
+if ( isset( $_REQUEST['mod_rewrite_module_is'] ) ) {
+    die( "mod_rewrite_".$_REQUEST['mod_rewrite_module_is'] );
+}
 
 /**
  * Detects serchengine URLs

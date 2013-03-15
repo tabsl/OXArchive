@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: start.php 23255 2009-10-14 15:25:09Z sarunas $
+ * @version   SVN: $Id: start.php 26310 2010-03-05 08:57:22Z rimvydas.paskevicius $
  */
 
 /**
@@ -162,18 +162,15 @@ class Start extends oxUBase
         $this->_aViewData['blMoreTags'] = $this->isMoreTagsVisible();
         stopProfile("tagCloud");
 
-        $aRssSelected = $myConfig->getConfigParam( 'aRssSelected' );
         $oRss = oxNew('oxrssfeed');
-        if ( is_array( $aRssSelected ) ) {
-            if ($myConfig->getConfigParam( 'iTop5Mode' ) && in_array( 'oxrss_topshop', $aRssSelected ) ) {
-                $this->addRssFeed( $oRss->getTopInShopTitle(), $oRss->getTopInShopUrl(), 'topArticles' );
-            }
-            if ( $myConfig->getConfigParam( 'iNewestArticlesMode' ) && in_array( 'oxrss_newest', $aRssSelected ) ) {
-                $this->addRssFeed( $oRss->getNewestArticlesTitle(), $oRss->getNewestArticlesUrl(), 'newestArticles' );
-            }
-            if ( in_array( 'oxrss_bargain', $aRssSelected ) ) {
-                $this->addRssFeed( $oRss->getBargainTitle(), $oRss->getBargainUrl(), 'bargainArticles' );
-            }
+        if ($myConfig->getConfigParam( 'iTop5Mode' ) && $myConfig->getConfigParam( 'bl_rssTopShop' ) ) {
+            $this->addRssFeed( $oRss->getTopInShopTitle(), $oRss->getTopInShopUrl(), 'topArticles' );
+        }
+        if ( $myConfig->getConfigParam( 'iNewestArticlesMode' ) && $myConfig->getConfigParam( 'bl_rssNewest' ) ) {
+            $this->addRssFeed( $oRss->getNewestArticlesTitle(), $oRss->getNewestArticlesUrl(), 'newestArticles' );
+        }
+        if ( $myConfig->getConfigParam( 'bl_rssBargain' ) ) {
+            $this->addRssFeed( $oRss->getBargainTitle(), $oRss->getBargainUrl(), 'bargainArticles' );
         }
 
         parent::render();
@@ -365,6 +362,8 @@ class Start extends oxUBase
     /**
      * Template variable getter. Returns tag cloud
      *
+     * @deprecated should be used start::getTagCloudManager()
+     *
      * @return array
      */
     public function getTagCloud()
@@ -375,6 +374,16 @@ class Start extends oxUBase
             $this->_sTagCloud = $oTagHandler->getTagCloud();
         }
         return $this->_sTagCloud;
+    }
+
+    /**
+     * Returns tag cloud manager class
+     *
+     * @return oxTagCloud
+     */
+    public function getTagCloudManager()
+    {
+        return oxNew( "oxTagCloud" );
     }
 
     /**

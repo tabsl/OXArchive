@@ -161,7 +161,7 @@
     <td valign="top" class="edittext" align="left" width="50%">
     [{ if $oxid != "-1"}]
 
-        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('?cl=payment_main&aoc=1&oxid=[{ $oxid }]');">
+        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('&cl=payment_main&aoc=1&oxid=[{ $oxid }]');">
 
     [{ /if}]
     </td>

@@ -26,7 +26,7 @@
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
   <tr>
     <td valign="top" class="edittext">
-        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="DELIVERYSET_PAYMENT_ASSIGNPAYMENT" }]" class="edittext" onclick="JavaScript:showDialog('?cl=deliveryset_payment&aoc=1&oxid=[{ $oxid }]');">
+        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="DELIVERYSET_PAYMENT_ASSIGNPAYMENT" }]" class="edittext" onclick="JavaScript:showDialog('&cl=deliveryset_payment&aoc=1&oxid=[{ $oxid }]');">
     </td>
 
     <td valign="top" width="50%">

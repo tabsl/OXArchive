@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: login.php 17622 2009-03-26 14:02:31Z rimvydas.paskevicius $
+ * @version   SVN: $Id: login.php 26649 2010-03-18 13:19:59Z arvydas $
  */
 
 /**
@@ -61,41 +61,24 @@ class Login extends oxAdminView
 
         $this->getViewConfig()->setViewConfigParam( 'sShopVersion', $sVersion );
 
-        if ( $myConfig->detectVersion() == 1) {   // demo
+        if ( $myConfig->isDemoShop() ) {
+            // demo
             $this->addTplParam( "user", "admin");
             $this->addTplParam( "pwd", "admin");
         }
         //#533 user profile
-        $this->addTplParam( "profiles", oxUtils::getInstance()->loadAdminProfile($myConfig->getConfigParam( 'aInterfaceProfiles' )));
+        $this->addTplParam( "profiles", oxUtils::getInstance()->loadAdminProfile( $myConfig->getConfigParam( 'aInterfaceProfiles' ) ) );
 
-        // #656 add admin languages
-        $aLanguages = array();
-        $sSourceDir = $myConfig->getConfigParam('sShopDir') . $myConfig->getTemplateBase( true );
+        $aLanguages = $this->_getAvailableLanguages();
+        $this->addTplParam( "aLanguages", $aLanguages);
 
-        $iDefLangCache = (int) oxUtilsServer::getInstance()->getOxCookie('oxidadminlanguage');
-
-        // setting template language ..
-        $aLangParams = $myConfig->getConfigParam('aLanguageParams');
-
-        $aLangArr = oxLang::getInstance()->getLanguageArray();
-
-        $handle = opendir( $sSourceDir);
-        while ( false !== ( $file = readdir( $handle ) ) ) {
-            $sLangName = "";
-            $iLangNr = 0;
-
-            if ( is_dir("$sSourceDir/$file") && file_exists("$sSourceDir/$file/lang.php") ) {
-                    include "$sSourceDir/$file/lang.php";
-                    $oLang = new stdClass();
-                    $oLang->sValue      = $sLangName;
-                    $oLang->blSelected  = ($iLangNr == $iDefLangCache);
-                    if ( isset($aLangParams[$file]['baseId']) ) {
-                        $iLangNr = $aLangParams[$file]['baseId'];
-                    }
-                    $aLanguages[$iLangNr] = $oLang;
+        // setting templates language to selected language id
+        foreach ($aLanguages as $iKey => $oLang) {
+            if ( $aLanguages[$iKey]->blSelected ) {
+                oxLang::getInstance()->setTplLanguage( $iKey );
+                break;
             }
         }
-        $this->addTplParam( "aLanguages", $aLanguages);
 
         return "login.tpl";
     }
@@ -108,46 +91,50 @@ class Login extends oxAdminView
     public function checklogin()
     {
         $myUtilsServer = oxUtilsServer::getInstance();
+        $myUtilsView   = oxUtilsView::getInstance();
 
-        $user    = oxConfig::getParameter(  'user' );
-        $pwd     = oxConfig::getParameter(  'pwd' );
-        $profile = oxConfig::getParameter(  'profile' );
+        $sLoginName = oxConfig::getParameter( 'user', true );
+        $sPass      = oxConfig::getParameter( 'pwd', true );
+        $sProfile   = oxConfig::getParameter( 'profile' );
 
         try { // trying to login
             $oUser = oxNew( "oxuser" );
-            $oUser->login( $user, $pwd);
+            $oUser->login( $sLoginName, $sPass );
         } catch ( oxUserException $oEx ) {
-            oxUtilsView::getInstance()->addErrorToDisplay('LOGIN_ERROR');
-            $this->addTplParam( 'user', $user );
-            $this->addTplParam( 'pwd', $pwd );
-            $this->addTplParam( 'profile', $profile );
+            $myUtilsView->addErrorToDisplay( 'LOGIN_ERROR' );
+            $this->addTplParam( 'user', $sLoginName );
+            $this->addTplParam( 'pwd', $sPass );
+            $this->addTplParam( 'profile', $sProfile );
             return;
-        } catch (oxCookieException $oEx) {
-            oxUtilsView::getInstance()->addErrorToDisplay('LOGIN_NO_COOKIE_SUPPORT');
-            $this->addTplParam( 'user', $user );
-            $this->addTplParam( 'pwd', $pwd );
-            $this->addTplParam( 'profile', $profile );
+        } catch ( oxCookieException $oEx ) {
+            $myUtilsView->addErrorToDisplay( 'LOGIN_NO_COOKIE_SUPPORT' );
+            $this->addTplParam( 'user', $sLoginName );
+            $this->addTplParam( 'pwd', $sPass );
+            $this->addTplParam( 'profile', $sProfile );
             return;
-        } catch (oxConnectionException $oEx) {
-            oxUtilsView::getInstance()->addErrorToDisplay($oEx);
+        } catch ( oxConnectionException $oEx ) {
+            $myUtilsView->addErrorToDisplay( $oEx );
         }
 
         // success
         oxUtils::getInstance()->logger( "login successful" );
         // #533
-        if ( isset( $profile ) ) {
+        if ( isset( $sProfile ) ) {
             $aProfiles = oxSession::getVar( "aAdminProfiles" );
-            if ( $aProfiles && isset($aProfiles[$profile])) {
+            if ( $aProfiles && isset( $aProfiles[$sProfile] ) ) {
                 // setting cookie to store last locally used profile
-                $myUtilsServer->setOxCookie ("oxidadminprofile", $profile."@".implode( "@", $aProfiles[$profile]), time()+31536000, "/" );
-                oxSession::setVar( "profile", $aProfiles[$profile] );
+                $myUtilsServer->setOxCookie( "oxidadminprofile", $sProfile."@".implode( "@", $aProfiles[$sProfile]), time()+31536000, "/" );
+                oxSession::setVar( "profile", $aProfiles[$sProfile] );
             }
-        } else //deleting cookie info, as setting profile to default
-            $myUtilsServer->setOxCookie ("oxidadminprofile", "", time()-3600, "/" );
+        } else {
+            //deleting cookie info, as setting profile to default
+            $myUtilsServer->setOxCookie( "oxidadminprofile", "", time()-3600, "/" );
+        }
 
         // languages
-        $iLang = oxConfig::getParameter(  "chlanguage" );
-        $myUtilsServer->setOxCookie ("oxidadminlanguage", $iLang, time()+31536000, "/" );
+        $iLang = oxConfig::getParameter( "chlanguage" );
+        $myUtilsServer->setOxCookie( "oxidadminlanguage", $iLang, time()+31536000, "/" );
+
         //P
         //oxSession::setVar( "blAdminTemplateLanguage", $iLang );
         oxLang::getInstance()->setTplLanguage( $iLang );
@@ -174,5 +161,66 @@ class Login extends oxAdminView
     public function getViewId()
     {
         return strtolower( get_class( $this ) );
+    }
+
+    /**
+     * Get available admin interface languages
+     *
+     * @return array
+     */
+    protected function _getAvailableLanguages()
+    {
+        $myConfig = $this->getConfig();
+
+        // #656 add admin languages
+        $aLanguages = array();
+        $sSourceDir = $myConfig->getConfigParam('sShopDir') . $myConfig->getTemplateBase( true );
+        $iDefLangId = oxUtilsServer::getInstance()->getOxCookie('oxidadminlanguage');
+        $sBrowserLang = $this->_getBrowserLanguage();
+
+        // setting template language ..
+        $aLangParams = $myConfig->getConfigParam('aLanguageParams');
+
+        $handle = opendir( $sSourceDir );
+        while ( false !== ( $file = readdir( $handle ) ) ) {
+            $sLangName = "";
+            $iLangNr = 0;
+
+            if ( is_dir("$sSourceDir/$file") && file_exists("$sSourceDir/$file/lang.php") ) {
+                    include "$sSourceDir/$file/lang.php";
+                    $oLang = new stdClass();
+                    $oLang->sValue = $sLangName;
+                    $oLang->sFile = $file;
+
+                    if ( isset($aLangParams[$file]['baseId']) ) {
+                        $iLangNr = $aLangParams[$file]['baseId'];
+                    }
+
+                    $aLanguages[$iLangNr] = $oLang;
+            }
+        }
+
+        ksort($aLanguages);
+
+        foreach ($aLanguages as $iKey => $oLang) {
+            $aLanguages[$iKey]->blSelected = false;
+            if ( is_null($iDefLangId) || $iDefLangId == "" ) {
+                $aLanguages[$iKey]->blSelected  = ( strtolower($aLanguages[$iKey]->sFile) == $sBrowserLang );
+            } else {
+                $aLanguages[$iKey]->blSelected  = ( $iKey == $iDefLangId );
+            }
+        }
+
+        return $aLanguages;
+    }
+
+    /**
+     * Get detected user browser language abbervation
+     *
+     * @return string
+     */
+    protected function _getBrowserLanguage()
+    {
+        return strtolower( substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2) );
     }
 }

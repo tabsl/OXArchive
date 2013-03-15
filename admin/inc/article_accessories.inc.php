@@ -15,17 +15,18 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package inc
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: article_accessories.inc.php 22935 2009-10-05 12:26:25Z vilma $
+ * @version   SVN: $Id: article_accessories.inc.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
                                         array( 'oxartnum', 'oxarticles', 1, 0, 0 ),
                                         array( 'oxtitle',  'oxarticles', 1, 1, 0 ),
                                         array( 'oxean',    'oxarticles', 1, 0, 0 ),
+                                        array( 'oxmpn',    'oxarticles', 0, 0, 0 ),
                                         array( 'oxprice',  'oxarticles', 0, 0, 0 ),
                                         array( 'oxstock',  'oxarticles', 0, 0, 0 ),
                                         array( 'oxid',     'oxarticles', 0, 0, 1 )
@@ -34,6 +35,7 @@ $aColumns = array( 'container1' => array(    // field , table,         visible, 
                                         array( 'oxartnum', 'oxarticles', 1, 0, 0 ),
                                         array( 'oxtitle',  'oxarticles', 1, 1, 0 ),
                                         array( 'oxean',    'oxarticles', 1, 0, 0 ),
+                                        array( 'oxmpn',    'oxarticles', 0, 0, 0 ),
                                         array( 'oxprice',  'oxarticles', 0, 0, 0 ),
                                         array( 'oxstock',  'oxarticles', 0, 0, 0 ),
                                         array( 'oxid',     'oxaccessoire2article', 0, 0, 1 )

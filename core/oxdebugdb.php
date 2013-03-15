@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxdebugdb.php 23366 2009-10-20 08:53:58Z arvydas $
+ * @version   SVN: $Id: oxdebugdb.php 26908 2010-03-26 17:20:25Z tomas $
  */
 
 /**
@@ -65,11 +65,13 @@ class oxDebugDb
     protected static function _isSkipped($sSql)
     {
         if ( !count(self::$_aSkipSqls ) ) {
-            $file = file_get_contents( oxConfig::getInstance()->getLogsDir() . 'oxdebugdb_skipped.sql' );
-            $m = explode('-- -- ENTRY END', $file);
-            foreach ( $m as $n ) {
-                if ( ( $n = self::_skipWhiteSpace( $n ) ) ) {
-                    self::$_aSkipSqls[md5($n)] = true;
+            $sFile = oxConfig::getInstance()->getLogsDir() . 'oxdebugdb_skipped.sql';
+            if (is_readable($sFile)) {
+                $aSkip = explode('-- -- ENTRY END', file_get_contents( $sFile ));
+                foreach ( $aSkip as $sQ ) {
+                    if ( ( $sQ = self::_skipWhiteSpace( $sQ ) ) ) {
+                        self::$_aSkipSqls[md5($sQ)] = true;
+                    }
                 }
             }
         }
@@ -88,7 +90,9 @@ class oxDebugDb
         $aWarnings = array();
         $aHistory = array();
         $oDb = oxDb::getDb();
-        $iLastDbgState = $oDb->logSQL( false );
+        if (method_exists($oDb, "logSQL")) {
+            $iLastDbgState = $oDb->logSQL( false );
+        }
         $rs = $oDb->execute( "select sql0, sql1, tracer from adodb_logsql order by created limit 5000" );
         if ($rs != false && $rs->recordCount() > 0 ) {
             $aLastRecord = null;
@@ -128,7 +132,9 @@ class oxDebugDb
         }
         $aWarnings = $this->_generateWarningsResult($aWarnings);
         $this->_logToFile( $aWarnings );
-        $oDb->logSQL( $iLastDbgState );
+        if (method_exists($oDb, "logSQL")) {
+            $oDb->logSQL( $iLastDbgState );
+        }
         return $aWarnings;
     }
 
@@ -198,6 +204,10 @@ class oxDebugDb
     private function _missingKeysChecker($aExplain)
     {
         if ( $aExplain['type'] == 'system' ) {
+            return false;
+        }
+
+        if ( strstr($aExplain['Extra'], 'Impossible WHERE' ) !== false ) {
             return false;
         }
 

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: vendor_seo.php 22897 2009-10-02 11:24:07Z arvydas $
+ * @version   SVN: $Id: vendor_seo.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -27,6 +27,13 @@
  */
 class Vendor_Seo extends Object_Seo
 {
+    /**
+     * Executes parent method parent::render(),
+     * and returns name of template file
+     * "object_main.tpl".
+     *
+     * @return string
+     */
     public function render()
     {
         $this->_aViewData['blShowSuffixEdit'] = true;
@@ -51,9 +58,9 @@ class Vendor_Seo extends Object_Seo
 
     /**
      * Returns objects seo url
-
+     *
      * @param oxvendor $oVendor active vendor object
-
+     *
      * @return string
      */
     protected function _getSeoUrl( $oVendor )
@@ -64,6 +71,8 @@ class Vendor_Seo extends Object_Seo
 
     /**
      * Returns seo object
+     *
+     * @param string $sOxid object id
      *
      * @return mixed
      */
@@ -87,21 +96,9 @@ class Vendor_Seo extends Object_Seo
     }
 
     /**
-     * Returns objects std url
-     *
-     * @return string
-     */
-    protected function _getStdUrl( $sOxid )
-    {
-        $oVendor = oxNew( 'oxvendor' );
-        $oVendor->loadInLang( $this->_iEditLang, $sOxid );
-        return $oVendor->getStdLink();
-    }
-
-    /**
      * Updating showsuffix field
      *
-     * return null
+     * @return null
      */
     public function save()
     {
@@ -111,7 +108,6 @@ class Vendor_Seo extends Object_Seo
             if ( $oVendor->load( $sOxid ) ) {
                 $oVendor->oxvendor__oxshowsuffix = new oxField( (int) oxConfig::getParameter( 'blShowSuffix' ) );
                 $oVendor->save();
-
             }
         }
 

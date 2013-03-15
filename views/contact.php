@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: contact.php 21018 2009-07-20 15:00:38Z vilma $
+ * @version   SVN: $Id: contact.php 26581 2010-03-16 15:59:53Z vilma $
  */
 
 /**
@@ -160,7 +160,7 @@ class Contact extends oxUBase
     }
 
     /**
-     * Template variable getter. Returns entered user data
+     * Template variable getter. Returns entered contact subject
      *
      * @return object
      */
@@ -173,7 +173,7 @@ class Contact extends oxUBase
     }
 
     /**
-     * Template variable getter. Returns entered user data
+     * Template variable getter. Returns entered message
      *
      * @return object
      */

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxconfig.php 23366 2009-10-20 08:53:58Z arvydas $
+ * @version   SVN: $Id: oxconfig.php 26557 2010-03-16 08:38:14Z rimvydas.paskevicius $
  */
 
 define( 'MAX_64BIT_INTEGER', '18446744073709551615' );
@@ -244,6 +244,13 @@ class oxConfig extends oxSuperCfg
     protected $_sPictureDir = 'pictures';
 
     /**
+     * Master pictures dir name
+     *
+     * @var string
+     */
+    protected $_sMasterPictureDir = 'master';
+
+    /**
      * Template dir name
      *
      * @var string
@@ -353,7 +360,7 @@ class oxConfig extends oxSuperCfg
         // #1173M  for EE - not all pic are deleted
         $iPicCount = $this->getConfigParam( 'iPicCount' );
         if( !isset( $iPicCount ) )
-            $this->setConfigParam( 'iPicCount', 12 );
+            $this->setConfigParam( 'iPicCount', 7 );
 
         $iZoomPicCount = $this->getConfigParam( 'iZoomPicCount' );
         if( !isset( $iZoomPicCount ) )
@@ -399,11 +406,11 @@ class oxConfig extends oxSuperCfg
             $this->_loadVarsFromDb( $sShopID );
 
         } catch ( oxConnectionException $oEx ) {
-            $oEx->debugOut( $this->iDebug);
+            $oEx->debugOut();
             if ( defined( 'OXID_PHP_UNIT' ) ) {
                 return false;
             } elseif ( 0 != $this->iDebug ) {
-                exit( $oEx->getString() );
+                oxUtils::getInstance()->showMessageAndExit( $oEx->getString() );
             } else {
                 header( "HTTP/1.1 500 Internal Server Error");
                 header( "Location: offline.html");
@@ -834,7 +841,7 @@ class oxConfig extends oxSuperCfg
             $sURL = $this->getShopURL( $iLang );
         }
 
-        return $this->getSession()->url( $sURL.'index.php' );
+        return oxUtilsUrl::getInstance()->processUrl( $sURL.'index.php', false );
     }
 
     /**
@@ -847,7 +854,7 @@ class oxConfig extends oxSuperCfg
      */
     public function getShopHomeUrl( $iLang = null, $blAdmin = null )
     {
-        return $this->getSession()->url( $this->getShopUrl( $iLang, $blAdmin).'index.php' );
+        return oxUtilsUrl::getInstance()->processUrl($this->getShopUrl( $iLang, $blAdmin).'index.php', false );
     }
 
     /**
@@ -857,7 +864,7 @@ class oxConfig extends oxSuperCfg
      */
     public function getShopSecureHomeUrl()
     {
-        return $this->getSession()->url( $this->getSslShopUrl().'index.php' );
+        return  oxUtilsUrl::getInstance()->processUrl( $this->getSslShopUrl().'index.php', false );
     }
 
     /**
@@ -1051,17 +1058,18 @@ class oxConfig extends oxSuperCfg
     /**
      * Finds and returns files or folders path in out dir
      *
-     * @param string $sFile      File name
-     * @param string $sDir       Directory name
-     * @param bool   $blAdmin    Whether to force admin
-     * @param int    $iLang      Language id
-     * @param int    $iShop      Shop id
-     * @param string $sTheme     Theme name
-     * @param bool   $blAbsolute mode - absolute/relative path
+     * @param string $sFile        File name
+     * @param string $sDir         Directory name
+     * @param bool   $blAdmin      Whether to force admin
+     * @param int    $iLang        Language id
+     * @param int    $iShop        Shop id
+     * @param string $sTheme       Theme name
+     * @param bool   $blAbsolute   mode - absolute/relative path
+     * @param bool   $blIgnoreCust Ignore custom theme
      *
      * @return string
      */
-    public function getDir($sFile, $sDir, $blAdmin, $iLang = null, $iShop = null, $sTheme = null, $blAbsolute = true )
+    public function getDir($sFile, $sDir, $blAdmin, $iLang = null, $iShop = null, $sTheme = null, $blAbsolute = true, $blIgnoreCust = false )
     {
         if ( is_null($sTheme) ) {
             $sTheme = $this->getConfigParam( 'sTheme' );
@@ -1088,7 +1096,7 @@ class oxConfig extends oxSuperCfg
 
         //Load from
         $sPath = "$sTheme/$iShop/$sLang/$sDir/$sFile";
-        $sCacheKey = $sPath . "_$blAbsolute";
+        $sCacheKey = $sPath . "_{$blIgnoreCust}{$blAbsolute}";
 
         if ( ( $sReturn = oxutils::getInstance()->fromStaticCache( $sCacheKey ) ) !== null ) {
             return $sReturn;
@@ -1098,8 +1106,8 @@ class oxConfig extends oxSuperCfg
 
         // Check for custom template
         $sCustomTheme = $this->getConfigParam( 'sCustomTheme' );
-        if( !$blAdmin && $sCustomTheme && $sCustomTheme != $sTheme) {
-            $sReturn = $this->getDir($sFile, $sDir, $blAdmin, $iLang, $iShopl, $sCustomTheme, $blAbsolute, $blReturnArray);
+        if ( !$blAdmin && !$blIgnoreCust && $sCustomTheme && $sCustomTheme != $sTheme) {
+            $sReturn = $this->getDir( $sFile, $sDir, $blAdmin, $iLang, $iShop, $sCustomTheme, $blAbsolute );
         }
 
         //test lang level ..
@@ -1226,6 +1234,31 @@ class oxConfig extends oxSuperCfg
     }
 
     /**
+     * Finds and returns master pictures folder path
+     *
+     * @param bool $blAdmin Whether to force admin
+     *
+     * @return string
+     */
+    public function getMasterPictureDir( $blAdmin = false )
+    {
+        return $this->getDir( null, $this->_sPictureDir . "/" . $this->_sMasterPictureDir, $blAdmin );
+    }
+
+    /**
+     * Finds and returns master picture path
+     *
+     * @param string $sFile   File name
+     * @param bool   $blAdmin Whether to force admin
+     *
+     * @return string
+     */
+    public function getMasterPicturePath( $sFile, $blAdmin = false )
+    {
+        return $this->getDir( $sFile, $this->_sPictureDir . "/" . $this->_sMasterPictureDir, $blAdmin );
+    }
+
+    /**
      * Finds and returns product picture file or folder url
      *
      * @param string $sFile   File name
@@ -1254,12 +1287,13 @@ class oxConfig extends oxSuperCfg
         $blNativeImg = $this->getConfigParam( 'blNativeImages' );
 
         $sUrl = $this->getUrl( $sFile, $this->_sPictureDir, $blAdmin, $blSSL, $blNativeImg, $iLang, $iShopId );
-        if ( $sFile && $this->getConfigParam('blFormerTplSupport') ) {
+        if ( $sFile && $this->getConfigParam( 'blFormerTplSupport' ) && !$blAdmin ) {
             $sUrl = str_replace( $this->getPictureUrl( null, $blAdmin, $blSSL, $iLang, $iShopId ), '', $sUrl );
         }
+
         //anything is better than empty name, because <img src=""> calls shop once more = x2 SLOW.
-        if (!$sUrl) {
-            return $this->getTemplateUrl()."../".$this->_sPictureDir."/0/nopic.jpg";
+        if ( !$sUrl ) {
+            $sUrl = $this->getUrl( "0/nopic.jpg", $this->_sPictureDir, $blAdmin, $blSSL, $blNativeImg, $iLang, $iShopId );
         }
         return $sUrl;
     }
@@ -1382,6 +1416,20 @@ class oxConfig extends oxSuperCfg
     public function getLanguagePath( $sFile, $blAdmin, $iLang = null )
     {
         return $this->getDir( $sFile, oxLang::getInstance()->getLanguageAbbr( $iLang ), $blAdmin, $iLang );
+    }
+
+    /**
+     * Returns standard ("basic" theme) language files or folders path
+     *
+     * @param string $sFile   File name
+     * @param bool   $blAdmin Whether to force admin
+     * @param int    $iLang   Language id
+     *
+     * @return string
+     */
+    public function getStdLanguagePath( $sFile, $blAdmin, $iLang = null )
+    {
+        return $this->getDir( $sFile, oxLang::getInstance()->getLanguageAbbr( $iLang ), $blAdmin, $iLang, null, $this->getConfigParam( "sTheme" ), true, true );
     }
 
     /**
@@ -1752,7 +1800,10 @@ class oxConfig extends oxSuperCfg
                 }
                 break;
             case 'bool':
-                $sValue  =  $sVarVal = ( $sVarVal == 'true' || $sVarVal == '1' );
+                //config param
+                $sVarVal = (( $sVarVal == 'true' || $sVarVal) && $sVarVal && strcasecmp($sVarVal, "false"));
+                //db value
+                $sValue  = $sVarVal?"1":"";
                 break;
             default:
                 $sValue  = $sVarVal;
@@ -1818,7 +1869,7 @@ class oxConfig extends oxSuperCfg
                 default:
                     $sValue = $sVarVal;
                     break;
-                }
+            }
         }
         return $sValue;
     }

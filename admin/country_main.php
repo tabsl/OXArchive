@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: country_main.php 17188 2009-03-13 12:19:11Z arvydas $
+ * @version   SVN: $Id: country_main.php 26463 2010-03-10 14:37:54Z rimvydas.paskevicius $
  */
 
 /**
@@ -153,7 +153,7 @@ class Country_Main extends oxAdminDetails
         $oCountry->setLanguage(0);
         $oCountry->assign( $aParams);
         $oCountry->setLanguage($this->_iEditLang);
-        $oCountry = oxUtilsFile::getInstance()->processFiles( $oCountry );
+
         $oCountry->save();
         $this->_aViewData["updatelist"] = "1";
 

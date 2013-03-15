@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: alist.php 23591 2009-10-26 11:18:34Z arvydas $
+ * @version   SVN: $Id: alist.php 26303 2010-03-04 16:11:37Z sarunas $
  */
 
 /**
@@ -208,7 +208,7 @@ class aList extends oxUBase
         $this->_aViewData['actCategory'] = $this->getActCategory();
 
         $oCat = $this->getActCategory();
-        if ($oCat && is_array($myConfig->getConfigParam( 'aRssSelected' )) && in_array('oxrss_categories', $myConfig->getConfigParam( 'aRssSelected' ))) {
+        if ($oCat && $myConfig->getConfigParam( 'bl_rssCategories' )) {
             $oRss = oxNew('oxrssfeed');
             $this->addRssFeed($oRss->getCategoryArticlesTitle($oCat), $oRss->getCategoryArticlesUrl($oCat), 'activeCategory');
         }
@@ -237,10 +237,51 @@ class aList extends oxUBase
     {
         if ( $aArtList = $this->getArticleList() ) {
             $iLinkType = $this->_getProductLinkType();
+            $sAddDynParams = $this->getAddUrlParams();
+            $sAddSeoParams = $this->getAddSeoUrlParams();
+
             foreach ( $aArtList as $oArticle ) {
                 $oArticle->setLinkType( $iLinkType );
+
+                // appending dynamic urls
+                if ( $sAddDynParams ) {
+                    $oArticle->appendStdLink( $sAddDynParams );
+                }
+
+                // appending seo urls
+                if ( $sAddSeoParams ) {
+                    $oArticle->appendLink( $sAddSeoParams );
+                }
             }
         }
+    }
+
+
+    /**
+     * Returns additional URL parameters which must be added to list products dynamic urls
+     *
+     * @return string
+     */
+    public function getAddUrlParams()
+    {
+        $sParams = parent::getAddUrlParams();
+        if ( !oxUtils::getInstance()->seoIsActive() ) {
+            $iPgNr = (int) oxConfig::getParameter( 'pgNr' );
+            if ( $iPgNr > 0 ) {
+                $sParams .= ($sParams?'&amp;':'') . "pgNr={$iPgNr}";
+            }
+        }
+
+        return $sParams;
+    }
+
+    /**
+     * Returns additional URL parameters which must be added to list products seo urls
+     *
+     * @return string
+     */
+    public function getAddSeoUrlParams()
+    {
     }
 
     /**
@@ -556,8 +597,9 @@ class aList extends oxUBase
     protected function _addPageNrParam( $sUrl, $iPage, $iLang = null)
     {
         if ( oxUtils::getInstance()->seoIsActive() && ( $oCategory = $this->getActCategory() ) ) {
-            if ( $iPage ) { // only if page number > 0
-                $sUrl = oxSeoEncoderCategory::getInstance()->getCategoryPageUrl( $oCategory, $iPage, $iLang, $this->_isFixedUrl( $oCategory ) );
+            if ( $iPage ) {
+                // only if page number > 0
+                $sUrl = oxSeoEncoderCategory::getInstance()->getCategoryPageUrl( $oCategory, $iPage, $iLang );
             }
         } else {
             $sUrl = parent::_addPageNrParam( $sUrl, $iPage, $iLang );
@@ -569,6 +611,8 @@ class aList extends oxUBase
      * Returns category seo url status (fixed or not)
      *
      * @param oxcategory $oCategory active category
+     *
+     * @deprecated is not used any more
      *
      * @return bool
      */
@@ -615,9 +659,8 @@ class aList extends oxUBase
     {
         if ( ( oxUtils::getInstance()->seoIsActive() && ( $oCategory = $this->getActCategory() ) ) ) {
             return $oCategory->getLink();
-        } else {
-            return parent::generatePageNavigationUrl( );
         }
+        return parent::generatePageNavigationUrl( );
     }
 
     /**
@@ -723,6 +766,10 @@ class aList extends oxUBase
      */
     public function getSimilarRecommLists()
     {
+        if (!$this->getViewConfig()->getShowListmania()) {
+            return false;
+        }
+
         if ( $this->_oRecommList === null ) {
             $this->_oRecommList = false;
             if ( $aCatArtList = $this->getArticleList() ) {
@@ -888,7 +935,7 @@ class aList extends oxUBase
     /**
      * Template variable getter. Returns active search
      *
-     * @return object
+     * @return oxcategory
      */
     public function getActiveCategory()
     {
@@ -902,10 +949,12 @@ class aList extends oxUBase
      */
     public function getCanonicalUrl()
     {
-        if ( ( $iPage = $this->getActPage() ) ) {
-            return $this->_addPageNrParam( $this->generatePageNavigationUrl(), $iPage );
-        } elseif ( ( $oCategory = $this->getActiveCategory() ) ) {
-            return $oCategory->getLink();
+        if ( ( $oCategory = $this->getActiveCategory() ) ) {
+            $oUtils = oxUtilsUrl::getInstance();
+            if ( oxUtils::getInstance()->seoIsActive() ) {
+                return $oUtils->processUrl( $oCategory->getBaseSeoLink( $oCategory->getLanguage(), $this->getActPage() ) );
+            }
+            return $oUtils->processUrl( $oCategory->getBaseStdLink( $oCategory->getLanguage(), $this->getActPage() ) );
         }
     }
 }

@@ -55,7 +55,7 @@
               [{assign var="product" value=$oView->getProduct() }]
               <input type="hidden" name="anid" value="[{ $product->oxarticles__oxnid->value }]">
           [{/if}]
-          [{if $oView->getActiveRecommList()}]
+          [{if $oViewConf->getShowListmania() && $oView->getActiveRecommList()}]
               [{assign var="actvrecommlist" value=$oView->getActiveRecommList() }]
             <input type="hidden" name="recommid" value="[{ $actvrecommlist->oxrecommlists__oxid->value }]">
           [{/if}]

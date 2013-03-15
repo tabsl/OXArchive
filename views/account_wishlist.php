@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: account_wishlist.php 17315 2009-03-17 16:18:58Z arvydas $
+ * @version   SVN: $Id: account_wishlist.php 26802 2010-03-24 15:01:12Z arvydas $
  */
 
 /**
@@ -164,13 +164,10 @@ class Account_Wishlist extends Account
     {
         if ( $this->_oWishList === null ) {
             $this->_oWishList = false;
-
             if ( $oUser = $this->getUser() ) {
-                $oWishList = $oUser->getBasket( 'wishlist' );
-                if ( $oWishListProducts = $oWishList->getArticles() ) {
-                    // wish list
-                    $this->_aWishProductList = $oWishListProducts;
-                    $this->_oWishList = $oWishList;
+                $this->_oWishList = $oUser->getBasket( 'wishlist' );
+                if ( $this->_oWishList->isEmpty() ) {
+                    $this->_oWishList = false;
                 }
             }
         }
@@ -187,9 +184,8 @@ class Account_Wishlist extends Account
     {
         if ( $this->_aWishProductList === null ) {
             $this->_aWishProductList = false;
-
             if ( $oWishList = $this->getWishList() ) {
-                return $this->_aWishProductList;
+                $this->_aWishProductList = $oWishList->getArticles();
             }
         }
         return $this->_aWishProductList;
@@ -202,6 +198,10 @@ class Account_Wishlist extends Account
      */
     public function getSimilarRecommLists()
     {
+        if ( !$this->getViewConfig()->getShowListmania() ) {
+            return false;
+        }
+
         // recomm list
         if ( $this->_aRecommList === null ) {
 
@@ -211,8 +211,7 @@ class Account_Wishlist extends Account
             // loading recomm list
             $aWishProdList = $this->getWishProductList();
             if ( is_array( $aWishProdList ) && ( $oSimilarProd = current( $aWishProdList ) ) ) {
-                $oRecommList = oxNew('oxrecommlist');
-                $this->_aRecommList = $oRecommList->getRecommListsByIds( array( $oSimilarProd->getId() ) );
+                $this->_aRecommList = oxNew( 'oxrecommlist' )->getRecommListsByIds( array( $oSimilarProd->getId() ) );
             }
         }
 
@@ -229,42 +228,32 @@ class Account_Wishlist extends Account
      */
     public function sendWishList()
     {
-        $aParams = oxConfig::getParameter( 'editval' );
+        $aParams = oxConfig::getParameter( 'editval', true );
+        if ( is_array( $aParams ) ) {
 
-        if ( !is_array( $aParams ) ) {
-            return;
-        }
+            $oParams = ( object ) $aParams;
+            $this->setEnteredData( ( object ) oxConfig::getParameter( 'editval' ) );
 
-        //setting pointer to first element
-        reset( $aParams );
-        $oParams = new OxstdClass();
-        while ( list( $sName, $sValue ) = each( $aParams ) ) {
-            $oParams->$sName = $sValue;
-        }
-        $this->_aEditValues = $oParams;
-
-        if ( !$aParams['rec_name'] || !$aParams['rec_email'] ) {
-            oxUtilsView::getInstance()->addErrorToDisplay('ACCOUNT_WISHLIST_ERRCOMLETEFIELDSCORRECTLY', false, true );
-            return;
-        }
-
-        if ( $oUser = $this->getUser() ) {
-
-            $oParams->send_email = $oUser->oxuser__oxusername->value;
-            $oParams->send_name  = $oUser->oxuser__oxfname->value.' '.$oUser->oxuser__oxlname->value;
-            $oParams->send_id    = $oUser->getId();
-
-            $oEmail = oxNew( 'oxemail' );
-            if ( !$oEmail->sendWishlistMail( $oParams ) ) {
-                oxUtilsView::getInstance()->addErrorToDisplay( 'ACCOUNT_WISHLIST_ERRWRONGEMAIL', false, true );
-                return;
+            if ( !isset( $aParams['rec_name'] ) || !isset( $aParams['rec_email'] ) ||
+                 !$aParams['rec_name'] || !$aParams['rec_email'] ) {
+                return oxUtilsView::getInstance()->addErrorToDisplay( 'ACCOUNT_WISHLIST_ERRCOMLETEFIELDSCORRECTLY', false, true );
             } else {
-                $this->_blEmailSent = true;
+
+                if ( $oUser = $this->getUser() ) {
+                    $oParams->send_email = $oUser->oxuser__oxusername->value;
+                    $oParams->send_name  = $oUser->oxuser__oxfname->getRawValue().' '.$oUser->oxuser__oxlname->getRawValue();
+                    $oParams->send_id    = $oUser->getId();
+
+                    $this->_blEmailSent = oxNew( 'oxemail' )->sendWishlistMail( $oParams );
+                    if ( !$this->_blEmailSent ) {
+                        return oxUtilsView::getInstance()->addErrorToDisplay( 'ACCOUNT_WISHLIST_ERRWRONGEMAIL', false, true );
+                    }
+                }
+
+                $this->_aViewData['success'] = $this->isWishListEmailSent();
+                $this->_aViewData['editval'] = $this->getEnteredData();
             }
         }
-
-        $this->_aViewData['success'] = $this->isWishListEmailSent();
-        $this->_aViewData['editval'] = $this->getEnteredData();
     }
 
     /**
@@ -275,6 +264,18 @@ class Account_Wishlist extends Account
     public function isWishListEmailSent()
     {
         return $this->_blEmailSent;
+    }
+
+    /**
+     * Wishlist data setter
+     *
+     * @param object $oData suggest data object
+     *
+     * @return null
+     */
+    public function setEnteredData( $oData )
+    {
+        $this->_aEditValues = $oData;
     }
 
     /**
@@ -298,10 +299,9 @@ class Account_Wishlist extends Account
         if ( $oUser = $this->getUser() ) {
 
             $blPublic = (int) oxConfig::getParameter( 'blpublic' );
-            $blPublic = ( $blPublic == 1 )?$blPublic:0;
 
             $oBasket = $oUser->getBasket( 'wishlist' );
-            $oBasket->oxuserbaskets__oxpublic = new oxField($blPublic);
+            $oBasket->oxuserbaskets__oxpublic = new oxField( ( $blPublic == 1 ) ? $blPublic : 0 );
             $oBasket->save();
         }
     }

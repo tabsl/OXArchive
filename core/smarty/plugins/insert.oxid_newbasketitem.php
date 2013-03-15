@@ -15,22 +15,27 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package smartyPlugins
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   smarty_plugins
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: insert.oxid_newbasketitem.php 23250 2009-10-14 13:40:12Z alfonsas $
+ * @version   SVN: $Id: insert.oxid_newbasketitem.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
-/*
-* Smarty plugin
-* -------------------------------------------------------------
-* File: insert.oxid_newbasketitem.php
-* Type: string, html
-* Name: newbasketitem
-* Purpose: Used for tracking in econda, etracker etc.
-* -------------------------------------------------------------
-*/
+/**
+ * Smarty plugin
+ * -------------------------------------------------------------
+ * File: insert.oxid_newbasketitem.php
+ * Type: string, html
+ * Name: newbasketitem
+ * Purpose: Used for tracking in econda, etracker etc.
+ * -------------------------------------------------------------
+ *
+ * @param array  $params  params
+ * @param Smarty &$smarty clever simulation of a method
+ *
+ * @return string
+ */
 function smarty_insert_oxid_newbasketitem($params, &$smarty)
 {
     $myConfig  = oxConfig::getInstance();
@@ -39,7 +44,7 @@ function smarty_insert_oxid_newbasketitem($params, &$smarty)
     $iType  = $myConfig->getConfigParam( 'iNewBasketItemMessage' );
 
     // If corect type of message is expected
-    if($iType && $params['type'] && $params['type'] != $aTypes[$iType] ){
+    if ($iType && $params['type'] && ($params['type'] != $aTypes[$iType] )) {
         return '';
     }
 
@@ -47,7 +52,7 @@ function smarty_insert_oxid_newbasketitem($params, &$smarty)
     $sTemplate = $params['tpl']?$params['tpl']:'inc_newbasketitem.snippet.tpl';
 
     //allways render for ajaxstyle popup
-    $blRender = $params['ajax'];
+    $blRender = $params['ajax'] && ($iType == 2);
 
     //fetching article data
     $oNewItem = oxSession::getVar( '_newitem' );
@@ -68,7 +73,7 @@ function smarty_insert_oxid_newbasketitem($params, &$smarty)
     }
 
     // returning generated message content
-    if( $blRender ) {
+    if ( $blRender ) {
         return $smarty->fetch( $sTemplate );
     }
 }

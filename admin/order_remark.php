@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: order_remark.php 22485 2009-09-22 06:59:12Z arvydas $
+ * @version   SVN: $Id: order_remark.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -81,22 +81,17 @@ class Order_Remark extends oxAdminDetails
     public function save()
     {
 
-        $soxId      = oxConfig::getParameter( "oxid");
-        $sRemoxId   = oxConfig::getParameter( "rem_oxid");
-
         $oOrder = oxNew( "oxorder" );
-        $oOrder->load( $soxId);
+        if ( $oOrder->load( oxConfig::getParameter( "oxid" ) ) ) {
+            $oRemark = oxNew( "oxremark" );
+            $oRemark->load( oxConfig::getParameter( "rem_oxid" ) );
 
-        $oRemark = oxNew( "oxremark" );
-        $oRemark->load( $sRemoxId);
-
-        $sNewText   = oxConfig::getParameter( "remarktext");
-        $sNewHeader = oxConfig::getParameter( "remarkheader");
-        $oRemark->oxremark__oxtext = new oxField($sNewText);
-        $oRemark->oxremark__oxheader = new oxField($sNewHeader);
-        $oRemark->oxremark__oxtype = new oxField("r");
-        $oRemark->oxremark__oxparentid = new oxField($oOrder->oxorder__oxuserid->value);
-        $oRemark->save();
+            $oRemark->oxremark__oxtext     = new oxField( oxConfig::getParameter( "remarktext" ) );
+            $oRemark->oxremark__oxheader   = new oxField( oxConfig::getParameter( "remarkheader" ) );
+            $oRemark->oxremark__oxtype     = new oxField( "r" );
+            $oRemark->oxremark__oxparentid = new oxField( $oOrder->oxorder__oxuserid->value );
+            $oRemark->save();
+        }
     }
 
     /**
@@ -106,9 +101,7 @@ class Order_Remark extends oxAdminDetails
      */
     public function delete()
     {
-        $sRemoxId   = oxConfig::getParameter( "rem_oxid");
         $oRemark = oxNew( "oxRemark" );
-        $oRemark->load( $sRemoxId);
-        $oRemark->delete();
+        $oRemark->delete( oxConfig::getParameter( "rem_oxid" ) );
     }
 }

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: vendorlist.php 23400 2009-10-20 14:38:13Z arvydas $
+ * @version   SVN: $Id: vendorlist.php 25542 2010-02-02 11:28:16Z alfonsas $
  */
 
 /**
@@ -226,8 +226,9 @@ class VendorList extends aList
     protected function _addPageNrParam( $sUrl, $iPage, $iLang = null)
     {
         if ( oxUtils::getInstance()->seoIsActive() && ( $oVendor = $this->getActVendor() ) ) {
-            if ( $iPage ) { // only if page number > 0
-                $sUrl = oxSeoEncoderVendor::getInstance()->getVendorPageUrl( $oVendor, $iPage, $iLang, $this->_isFixedUrl( $oVendor ) );
+            if ( $iPage ) {
+                // only if page number > 0
+                $sUrl = oxSeoEncoderVendor::getInstance()->getVendorPageUrl( $oVendor, $iPage, $iLang );
             }
         } else {
             $sUrl = oxUBase::_addPageNrParam( $sUrl, $iPage, $iLang );
@@ -441,5 +442,20 @@ class VendorList extends aList
     protected function _getSubject( $iLang )
     {
         return $this->getActVendor();
+    }
+
+    /**
+     * Returns additional URL parameters which must be added to list products dynamic urls
+     *
+     * @return string
+     */
+    public function getAddUrlParams()
+    {
+        $sAddParams  = parent::getAddUrlParams();
+        $sAddParams .= ($sAddParams?'&amp;':'') . "listtype={$this->_sListType}";
+        if ( $oVendor = $this->getActVendor() ) {
+            $sAddParams .= "&amp;cnid=v_" . $oVendor->getId();
+        }
+        return $sAddParams;
     }
 }

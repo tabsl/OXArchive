@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: account_newsletter.php 20619 2009-07-03 06:16:01Z vilma $
+ * @version   SVN: $Id: account_newsletter.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
@@ -116,15 +116,16 @@ class Account_Newsletter extends Account
             return false;
         }
 
+        $oSubscription = $oUser->getNewsSubscription();
         if ( ! ( $iStatus = oxConfig::getParameter( 'status' ) ) ) {
             $oUser->removeFromGroup( 'oxidnewsletter' );
-            $oUser->getNewsSubscription()->setOptInStatus( 0 );
+            $oSubscription->setOptInStatus( 0 );
             $this->_iSubscriptionStatus = -1;
         } else {
             // assign user to newsletter group
             $oUser->addToGroup( 'oxidnewsletter' );
-            $oUser->getNewsSubscription()->setOptInEmailStatus( 0 );
-            $oUser->getNewsSubscription()->setOptInStatus( 1 );
+            $oSubscription->setOptInEmailStatus( 0 );
+            $oSubscription->setOptInStatus( 1 );
             $this->_iSubscriptionStatus = 1;
         }
 

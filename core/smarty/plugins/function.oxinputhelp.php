@@ -15,20 +15,25 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package smartyPlugins
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   smarty_plugins
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: function.oxinputhelp.php 23250 2009-10-14 13:40:12Z alfonsas $
+ * @version   SVN: $Id: function.oxinputhelp.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
-/*
-* Smarty function
-* -------------------------------------------------------------
-* Purpose: Output help popup icon and help text
-* add [{ oxinputhelp ident="..." }] where you want to display content
-* -------------------------------------------------------------
-*/
+/**
+ * Smarty function
+ * -------------------------------------------------------------
+ * Purpose: Output help popup icon and help text
+ * add [{ oxinputhelp ident="..." }] where you want to display content
+ * -------------------------------------------------------------
+ *
+ * @param array  $params  params
+ * @param Smarty &$smarty clever simulation of a method
+ *
+ * @return string
+ */
 function smarty_function_oxinputhelp($params, &$smarty)
 {
     $sIdent = $params['ident'];
@@ -50,7 +55,7 @@ function smarty_function_oxinputhelp($params, &$smarty)
     //name of template file where is stored message text
     $sTemplate = 'inputhelp.tpl';
 
-    $smarty->assign( 'sHelpId',   $sIdent );
+    $smarty->assign( 'sHelpId', $sIdent );
     $smarty->assign( 'sHelpText', $sTranslation );
 
     return $smarty->fetch( $sTemplate );

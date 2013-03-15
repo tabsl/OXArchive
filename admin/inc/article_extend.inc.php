@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package inc
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: article_extend.inc.php 22508 2009-09-22 09:57:39Z vilma $
+ * @version   SVN: $Id: article_extend.inc.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,         visible, multilanguage, ident
@@ -135,6 +135,7 @@ class ajaxComponent extends ajaxListComponent
 
         }
 
+        $this->resetArtSeoUrl( $soxId );
         $this->resetContentCache();
     }
 
@@ -182,6 +183,7 @@ class ajaxComponent extends ajaxListComponent
                 $oNew->save();
             }
 
+            $this->resetArtSeoUrl( $soxId );
             $this->resetContentCache();
         }
     }
@@ -205,5 +207,8 @@ class ajaxComponent extends ajaxListComponent
         oxDb::getInstance()->getDb()->Execute($sQ);
         $sQ = "update oxobject2category set oxtime = 0 where oxobjectid = " . $oDb->quote( $soxId ) . " and oxcatnid = " . $oDb->quote( $sDefCat ) . " $sShopCheck ";
         oxDb::getInstance()->getDb()->Execute($sQ);
+
+        $this->resetArtSeoUrl( $soxId );
+        $this->resetContentCache();
     }
 }

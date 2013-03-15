@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxi18n.php 19761 2009-06-10 14:28:43Z arvydas $
+ * @version   SVN: $Id: oxi18n.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
@@ -35,12 +35,14 @@ class oxI18n extends oxBase
 
     /**
      * Name of class.
+     *
      * @var string
      */
     protected $_sClassName = 'oxI18n';
 
     /**
      * Active object language.
+     *
      * @var int
      */
     protected $_iLanguage = null;
@@ -48,6 +50,7 @@ class oxI18n extends oxBase
     /**
      * Sometimes you need to deal with all fields not only with active
      * language, then set to false (default is true).
+     *
      * @var bool
      */
     protected $_blEmployMultilanguage = true;
@@ -195,9 +198,7 @@ class oxI18n extends oxBase
      */
     public function assign($dbRecord)
     {
-        $oLang = oxLang::getInstance();
-        $oLang->getBaseLanguage();
-        $sLangTag = $oLang->getLanguageTag($this->getLanguage());
+        $sLangTag = oxLang::getInstance()->getLanguageTag($this->getLanguage());
         if ($this->_blEmployMultilanguage && $sLangTag) {
             foreach ($dbRecord as $sField => $sVal) {
                 //handling multilang

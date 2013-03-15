@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxsimplevariant.php 23500 2009-10-22 12:52:38Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxsimplevariant.php 25755 2010-02-10 13:59:48Z sarunas $
  */
 
 /**
@@ -51,19 +51,18 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
     protected $_oParent = null;
 
     /**
-     * Details link
+     * Stardard/dynamic article urls for languages
      *
-     * @var string
+     * @var array
      */
-    protected $_sDetailLink = null;
+    protected $_aStdUrls = array();
 
     /**
-     * User specified stardard article url (default is null)
+     * Seo article urls for languages
      *
-     * @var string
+     * @var array
      */
-    protected $_sStdLink = null;
-
+    protected $_aSeoUrls = array();
 
     /**
      * Initializes instance
@@ -207,10 +206,8 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
      */
     public function getFPrice()
     {
-        if ( $oPrice = $this->getPrice() ) {
+        if ( ( $oPrice = $this->getPrice() ) ) {
             return oxLang::getInstance()->formatCurrency( $oPrice->getBruttoPrice() );
-        } else {
-            return null;
         }
     }
 
@@ -275,11 +272,9 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
     public function inCategory( $sCatNid )
     {
         $oParent = $this->getParent();
-        if (!($oParent instanceof oxarticle)) {
-            return;
+        if ( ( $oParent instanceof oxarticle ) ) {
+            return $oParent->inCategory( $sCatNid );
         }
-
-        return $oParent->inCategory( $sCatNid );
     }
 
     /**
@@ -292,11 +287,9 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
     public function inPriceCategory( $sCatNid )
     {
         $oParent = $this->getParent();
-        if (!($oParent instanceof oxarticle)) {
-            return;
+        if ( ( $oParent instanceof oxarticle ) ) {
+            return $oParent->inPriceCategory( $sCatNid );
         }
-
-        return $oParent->inPriceCategory( $sCatNid );
     }
 
     /**
@@ -309,45 +302,55 @@ class oxSimpleVariant extends oxI18n implements oxIUrl
      */
     public function getStdLink( $iLang = null, $aParams = array() )
     {
-        if ( $this->_sStdLink === null ) {
-            $oArticle = oxNew( "oxArticle" );
-            $oArticle->setId( $this->getId() );
-            $oArticle->setLinkType( $this->getLinkType() );
-            $this->_sStdLink = $oArticle->getStdLink( $iLang );
+        if ( $iLang === null ) {
+            $iLang = (int) $this->getLanguage();
         }
 
-        return $this->_sStdLink;
+        $iLinkType = $this->getLinkType();
+        if ( !isset( $this->_aStdUrls[$iLang][$iLinkType] ) ) {
+            $oArticle = oxNew( "oxArticle" );
+            $oArticle->setId( $this->getId() );
+            $oArticle->setLinkType( $iLinkType );
+            $this->_aStdUrls[$iLang][$iLinkType] = $oArticle->getStdLink( $iLang, $aParams );
+        }
+
+        return $this->_aStdUrls[$iLang][$iLinkType];
+    }
+
+    /**
+     * Returns raw recommlist seo url
+     *
+     * @param int $iLang language id
+     *
+     * @return string
+     */
+    public function getBaseSeoLink( $iLang )
+    {
+        return oxSeoEncoderArticle::getInstance()->getArticleUrl( $this, $iLang, $iLinkType );
     }
 
     /**
      * Gets article link
      *
-     * @param int $iLang required language. optional
+     * @param int $iLang required language id [optional]
      *
      * @return string
      */
     public function getLink( $iLang = null )
     {
-        if ( isset($iLang) ) {
-            $iLang = (int) $iLang;
-            if ($iLang == (int) $this->getLanguage() ) {
-                $iLang = null;
-            }
-        }
-        if ( $this->_sDetailLink === null || isset($iLang) ) {
-            if ( oxUtils::getInstance()->seoIsActive() ) {
-                $oxdetaillink = oxSeoEncoderArticle::getInstance()->getArticleUrl( $this, $iLang, $this->getLinkType() );
-            } else {
-                $oxdetaillink = $this->getStdLink( $iLang );
-            }
-
-            if ( isset($iLang) ) {
-                return $oxdetaillink;
-            } else {
-                $this->_sDetailLink = $oxdetaillink;
-            }
+        if ( $iLang === null ) {
+            $iLang = (int) $this->getLanguage();
         }
 
-        return $this->_sDetailLink;
+        if ( !oxUtils::getInstance()->seoIsActive() ) {
+            return $this->getStdLink( $iLang );
+        }
+
+        $iLinkType = $this->getLinkType();
+        if ( !isset( $this->_aSeoUrls[$iLang][$iLinkType] ) ) {
+            $this->_aSeoUrls[$iLang][$iLinkType] = $this->getBaseSeoLink( $iLang );
+        }
+        return $this->_aSeoUrls[$iLang][$iLinkType];
+
     }
 }

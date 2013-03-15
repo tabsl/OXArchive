@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: article_main.php 23492 2009-10-22 11:10:44Z arvydas $
+ * @version   SVN: $Id: article_main.php 26695 2010-03-20 11:52:45Z arvydas $
  */
 
 /**
@@ -146,10 +146,11 @@ class Article_Main extends oxAdminDetails
 
         // varianthandling
         $soxparentId = oxConfig::getParameter( "oxparentid");
-        if ( isset( $soxparentId) && $soxparentId && $soxparentId != "-1")
+        if ( isset( $soxparentId) && $soxparentId && $soxparentId != "-1") {
             $aParams['oxarticles__oxparentid'] = $soxparentId;
-        else
+        } else {
             unset( $aParams['oxarticles__oxparentid']);
+        }
 
         $oArticle = oxNew( "oxarticle");
 
@@ -161,8 +162,7 @@ class Article_Main extends oxAdminDetails
             $aParams['oxarticles__oxissearch']  = 1;
             $aParams['oxarticles__oxstockflag'] = 1;
                 // shopid
-                $sShopID = oxSession::getVar( "actshop");
-                $aParams['oxarticles__oxshopid'] = $sShopID;
+                $aParams['oxarticles__oxshopid'] = oxSession::getVar( "actshop");
         }
 
         //article number handling, warns for artnum dublicates
@@ -187,11 +187,11 @@ class Article_Main extends oxAdminDetails
                 //check categories
                 $oDb = oxDb::getDb();
                 $sQ = "select oxcatnid from oxobject2category where oxobjectid = ".$oDb->quote( $oArticle->oxarticles__oxid->value );
-                $rs = $oDb->execute($sQ);
-                if ( $rs !== false && $rs->recordCount() > 0 ) {
-                    while (!$rs->EOF) {
-                        $this->resetCounter( "catArticle", $rs->fields[0] );
-                        $rs->moveNext();
+                $oRs = $oDb->execute($sQ);
+                if ( $oRs !== false && $oRs->recordCount() > 0 ) {
+                    while (!$oRs->EOF) {
+                        $this->resetCounter( "catArticle", $oRs->fields[0] );
+                        $oRs->moveNext();
                     }
                 }
 
@@ -263,34 +263,33 @@ class Article_Main extends oxAdminDetails
      * @param string $sOldId    old product id (default null)
      * @param string $sNewId    new product id (default null)
      * @param string $sParentId product parent id
-     * @param bool
      *
      * @return null
      */
     public function copyArticle( $sOldId = null, $sNewId = null, $sParentId = null )
     {
-        $myConfig  = $this->getConfig();
+        $myConfig = $this->getConfig();
 
-        $sOldId = $sOldId?$sOldId:oxConfig::getParameter( 'oxid' );
-        $sNewId = $sNewId?$sNewId:oxUtilsObject::getInstance()->generateUID();
+        $sOldId = $sOldId ? $sOldId : oxConfig::getParameter( 'oxid' );
+        $sNewId = $sNewId ? $sNewId : oxUtilsObject::getInstance()->generateUID();
 
         $oArticle = oxNew( 'oxbase' );
         $oArticle->init( 'oxarticles' );
         if ( $oArticle->load( $sOldId ) ) {
 
             if ( $myConfig->getConfigParam( 'blDisableDublArtOnCopy' ) ) {
-                $oArticle->oxarticles__oxactive->setValue(0);
-                $oArticle->oxarticles__oxactivefrom->setValue(0);
-                $oArticle->oxarticles__oxactiveto->setValue(0);
+                $oArticle->oxarticles__oxactive->setValue( 0 );
+                $oArticle->oxarticles__oxactivefrom->setValue( 0 );
+                $oArticle->oxarticles__oxactiveto->setValue( 0 );
             }
 
             // setting parent id
             if ( $sParentId ) {
-                $oArticle->oxarticles__oxparentid->setValue($sParentId);
+                $oArticle->oxarticles__oxparentid->setValue( $sParentId );
             }
 
             // setting oxinsert/oxtimestamp
-            $iNow = date('Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() );
+            $iNow = date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() );
             $oArticle->oxarticles__oxinsert    = new oxField( $iNow );
             $oArticle->oxarticles__oxtimestamp = new oxField( $iNow );
 
@@ -329,11 +328,11 @@ class Article_Main extends oxAdminDetails
 
             //copy variants
             $sQ = "select oxid from oxarticles where oxparentid = ".$oDb->quote( $sOldId );
-            $rs = $oDb->execute($sQ);
-            if ( $rs !== false && $rs->recordCount() > 0) {
-                while ( !$rs->EOF ) {
-                    $this->copyArticle( $rs->fields[0], $myUtilsObject->generateUID(), $sNewId );
-                    $rs->moveNext();
+            $oRs = $oDb->execute( $sQ );
+            if ( $oRs !== false && $oRs->recordCount() > 0) {
+                while ( !$oRs->EOF ) {
+                    $this->copyArticle( $oRs->fields[0], $myUtilsObject->generateUid(), $sNewId );
+                    $oRs->moveNext();
                 }
             }
 
@@ -359,34 +358,33 @@ class Article_Main extends oxAdminDetails
     /**
      * Copying category assignments
      *
-     * @param $sOldID string Id from old article
-     * @param $sNewID string Id from new article
+     * @param string $sOldId Id from old article
+     * @param string $sNewId Id from new article
      *
      * @return null
      */
-    protected function _copyCategories( $sOldID, $sNewID )
+    protected function _copyCategories( $sOldId, $sNewId )
     {
-        $myConfig = $this->getConfig();
-        $myUtils  = oxUtils::getInstance();
-        $oActShop = $myConfig->getActiveShop();
-        $myUtilsCount  = oxUtilsCount::getInstance();
         $myUtilsObject = oxUtilsObject::getInstance();
         $oDb = oxDb::getDb();
 
-        $sO2CView = getViewName('oxobject2category');
-        $sQ = "select oxcatnid, oxtime from $sO2CView where oxobjectid = ".$oDb->quote( $sOldID );
-        $rs = $oDb->execute($sQ);
-        if ($rs !== false && $rs->recordCount() > 0) {
-            while (!$rs->EOF) {
-                $sUID = $myUtilsObject->generateUID();
-                $sCatID = $rs->fields[0];
-                $sTime =  $rs->fields[1];
 
-                    $oDb->execute("insert into oxobject2category (oxid, oxobjectid, oxcatnid, oxtime) VALUES (".$oDb->quote( $sUID ).", ".$oDb->quote( $sNewID ).", ".$oDb->quote( $sCatID ).", ".$oDb->quote( $sTime ).") ");
-                $rs->moveNext();
+        $sO2CView = getViewName( 'oxobject2category' );
+        $sQ = "select oxcatnid, oxtime from {$sO2CView} where oxobjectid = ".$oDb->quote( $sOldId );
+        $oRs = $oDb->execute( $sQ );
+        if ( $oRs !== false && $oRs->recordCount() > 0 ) {
+            while ( !$oRs->EOF ) {
+                $sUid = $myUtilsObject->generateUid();
+                $sCatId = $oRs->fields[0];
+                $sTime  = $oRs->fields[1];
+
+
+                    $oDb->execute("insert into oxobject2category (oxid, oxobjectid, oxcatnid, oxtime) VALUES (".$oDb->quote( $sUid ).", ".$oDb->quote( $sNewId ).", ".$oDb->quote( $sCatId ).", ".$oDb->quote( $sTime ).") ");
+
+                $oRs->moveNext();
 
                     // resetting article count in category
-                    $this->resetCounter( "catArticle", $sCatID );
+                    $this->resetCounter( "catArticle", $sCatId );
             }
         }
     }
@@ -394,28 +392,28 @@ class Article_Main extends oxAdminDetails
     /**
      * Copying attributes assignments
      *
-     * @param $sOldID string Id from old article
-     * @param $sNewID string Id from new article
+     * @param string $sOldId Id from old article
+     * @param string $sNewId Id from new article
      *
      * @return null
      */
-    protected function _copyAttributes( $sOldID, $sNewID )
+    protected function _copyAttributes( $sOldId, $sNewId )
     {
         $myUtilsObject = oxUtilsObject::getInstance();
         $oDb = oxDb::getDb();
 
-        $sQ = "select oxid from oxobject2attribute where oxobjectid = ".$oDb->quote( $sOldID );
-        $rs = $oDb->Execute($sQ);
-        if ($rs !== false && $rs->recordCount() > 0) {
-            while (!$rs->EOF) {
+        $sQ = "select oxid from oxobject2attribute where oxobjectid = ".$oDb->quote( $sOldId );
+        $oRs = $oDb->execute($sQ);
+        if ( $oRs !== false && $oRs->recordCount() > 0 ) {
+            while ( !$oRs->EOF ) {
                 // #1055A
-                $oAttr = oxNew( "oxbase");
+                $oAttr = oxNew( "oxbase" );
                 $oAttr->init( "oxobject2attribute" );
-                $oAttr->load( $rs->fields[0]);
+                $oAttr->load( $oRs->fields[0] );
                 $oAttr->setId( $myUtilsObject->generateUID() );
-                $oAttr->oxobject2attribute__oxobjectid->setValue($sNewID);
+                $oAttr->oxobject2attribute__oxobjectid->setValue( $sNewId );
                 $oAttr->save();
-                $rs->moveNext();
+                $oRs->moveNext();
             }
         }
     }
@@ -423,25 +421,24 @@ class Article_Main extends oxAdminDetails
     /**
      * Copying selectlists assignments
      *
-     * @param $sOldID string Id from old article
-     * @param $sNewID string Id from new article
+     * @param string $sOldId Id from old article
+     * @param string $sNewId Id from new article
      *
      * @return null
      */
-    protected function _copySelectlists( $sOldID, $sNewID)
+    protected function _copySelectlists( $sOldId, $sNewId )
     {
         $myUtilsObject = oxUtilsObject::getInstance();
         $oDb = oxDb::getDb();
 
-        $sQ = "select oxselnid from oxobject2selectlist where oxobjectid = ".$oDb->quote( $sOldID );
-        $rs = $oDb->Execute($sQ);
-
-        if ($rs !== false && $rs->recordCount() > 0) {
-            while (!$rs->EOF) {
-                $sUID = $myUtilsObject->generateUID();
-                $sID = $rs->fields[0];
-                $oDb->Execute("insert into oxobject2selectlist (oxid, oxobjectid, oxselnid) VALUES (".$oDb->quote( $sUID ).", ".$oDb->quote( $sNewID ).", ".$oDb->quote( $sID ).") ");
-                $rs->moveNext();
+        $sQ = "select oxselnid from oxobject2selectlist where oxobjectid = ".$oDb->quote( $sOldId );
+        $oRs = $oDb->execute( $sQ );
+        if ( $oRs !== false && $oRs->recordCount() > 0 ) {
+            while ( !$oRs->EOF ) {
+                $sUid = $myUtilsObject->generateUID();
+                $sId = $oRs->fields[0];
+                $oDb->execute( "insert into oxobject2selectlist (oxid, oxobjectid, oxselnid) VALUES (".$oDb->quote( $sUid ).", ".$oDb->quote( $sNewId ).", ".$oDb->quote( $sId ).") " );
+                $oRs->moveNext();
             }
         }
     }
@@ -449,24 +446,24 @@ class Article_Main extends oxAdminDetails
     /**
      * Copying crossseling assignments
      *
-     * @param $sOldID string Id from old article
-     * @param $sNewID string Id from new article
+     * @param string $sOldId Id from old article
+     * @param string $sNewId Id from new article
      *
      * @return null
      */
-    protected function _copyCrossseling( $sOldID, $sNewID )
+    protected function _copyCrossseling( $sOldId, $sNewId )
     {
         $myUtilsObject = oxUtilsObject::getInstance();
         $oDb = oxDb::getDb();
 
-        $sQ = "select oxobjectid from oxobject2article where oxarticlenid = ".$oDb->quote( $sOldID );
-        $rs = $oDb->Execute($sQ);
-        if ($rs !== false && $rs->recordCount() > 0) {
-            while (!$rs->EOF) {
-                $sUID = $myUtilsObject->generateUID();
-                $sID = $rs->fields[0];
-                $oDb->Execute("insert into oxobject2article (oxid, oxobjectid, oxarticlenid) VALUES (".$oDb->quote( $sUID ).", ".$oDb->quote( $sID ).", ".$oDb->quote( $sNewID )." ) ");
-                $rs->moveNext();
+        $sQ = "select oxobjectid from oxobject2article where oxarticlenid = ".$oDb->quote( $sOldId );
+        $oRs = $oDb->execute( $sQ );
+        if ( $oRs !== false && $oRs->recordCount() > 0 ) {
+            while ( !$oRs->EOF ) {
+                $sUid = $myUtilsObject->generateUID();
+                $sId = $oRs->fields[0];
+                $oDb->execute("insert into oxobject2article (oxid, oxobjectid, oxarticlenid) VALUES (".$oDb->quote( $sUid ).", ".$oDb->quote( $sId ).", ".$oDb->quote( $sNewId )." ) ");
+                $oRs->moveNext();
             }
         }
     }
@@ -474,24 +471,24 @@ class Article_Main extends oxAdminDetails
     /**
      * Copying accessoires assignments
      *
-     * @param $sOldID string Id from old article
-     * @param $sNewID string Id from new article
+     * @param string $sOldId Id from old article
+     * @param string $sNewId Id from new article
      *
      * @return null
      */
-    protected function _copyAccessoires( $sOldID, $sNewID )
+    protected function _copyAccessoires( $sOldId, $sNewId )
     {
         $myUtilsObject = oxUtilsObject::getInstance();
         $oDb = oxDb::getDb();
 
-        $sQ = "select oxobjectid from oxaccessoire2article where oxarticlenid= ".$oDb->quote( $sOldID );
-        $rs = $oDb->Execute($sQ);
-        if ($rs !== false && $rs->recordCount() > 0) {
-            while (!$rs->EOF) {
-                $sUID = $myUtilsObject->generateUID();
-                $sID = $rs->fields[0];
-                $oDb->Execute("insert into oxaccessoire2article (oxid, oxobjectid, oxarticlenid) VALUES (".$oDb->quote( $sUID ).", ".$oDb->quote( $sID ).", ".$oDb->quote( $sNewID ).") ");
-                $rs->moveNext();
+        $sQ = "select oxobjectid from oxaccessoire2article where oxarticlenid= ".$oDb->quote( $sOldId );
+        $oRs = $oDb->execute( $sQ );
+        if ( $oRs !== false && $oRs->recordCount() > 0 ) {
+            while ( !$oRs->EOF ) {
+                $sUId = $myUtilsObject->generateUid();
+                $sId = $oRs->fields[0];
+                $oDb->execute( "insert into oxaccessoire2article (oxid, oxobjectid, oxarticlenid) VALUES (".$oDb->quote( $sUId ).", ".$oDb->quote( $sId ).", ".$oDb->quote( $sNewId ).") " );
+                $oRs->moveNext();
             }
         }
     }
@@ -499,23 +496,22 @@ class Article_Main extends oxAdminDetails
     /**
      * Copying staffelpreis assignments
      *
-     * @param $sOldID string Id from old article
-     * @param $sNewID string Id from new article
+     * @param string $sOldId Id from old article
+     * @param string $sNewId Id from new article
      *
      * @return null
      */
-    protected function _copyStaffelpreis( $sOldID, $sNewID )
+    protected function _copyStaffelpreis( $sOldId, $sNewId )
     {
-        $myConfig = $this->getConfig();
-        $sShopID = $myConfig->getShopID();
-        $oPriceList = oxNew("oxlist");
-        $oPriceList->init( "oxbase", "oxprice2article");
-        $sQ = "select * from oxprice2article where oxartid = '$sOldID' and oxshopid = '$sShopID' and (oxamount > 0 or oxamountto > 0) order by oxamount ";
-        $oPriceList->selectString($sQ);
-        if ($oPriceList->count()) {
-            foreach ($oPriceList as $oItem) {
-                $oItem->oxprice2article__oxid->setValue($oItem->setId());
-                $oItem->oxprice2article__oxartid->setValue($sNewID);
+        $sShopId = $this->getConfig()->getShopId();
+        $oPriceList = oxNew( "oxlist" );
+        $oPriceList->init( "oxbase", "oxprice2article" );
+        $sQ = "select * from oxprice2article where oxartid = '$sOldId' and oxshopid = '$sShopId' and (oxamount > 0 or oxamountto > 0) order by oxamount ";
+        $oPriceList->selectString( $sQ );
+        if ( $oPriceList->count() ) {
+            foreach ( $oPriceList as $oItem ) {
+                $oItem->oxprice2article__oxid->setValue( $oItem->setId() );
+                $oItem->oxprice2article__oxartid->setValue( $sNewId );
                 $oItem->save();
             }
         }
@@ -524,17 +520,17 @@ class Article_Main extends oxAdminDetails
     /**
      * Copying article extends
      *
-     * @param $sOldID string Id from old article
-     * @param $sNewID string Id from new article
+     * @param string $sOldId Id from old article
+     * @param string $sNewId Id from new article
      *
      * @return null
      */
-    protected function _copyArtExtends( $sOldID, $sNewID)
+    protected function _copyArtExtends( $sOldId, $sNewId)
     {
         $oExt = oxNew( "oxbase");
         $oExt->init( "oxartextends" );
-        $oExt->load( $sOldID);
-        $oExt->setId( $sNewID );
+        $oExt->load( $sOldId );
+        $oExt->setId( $sNewId );
         $oExt->save();
     }
 
@@ -546,9 +542,6 @@ class Article_Main extends oxAdminDetails
      */
     public function saveinnlang()
     {
-        $myConfig  = $this->getConfig();
-        $myUtilsCount = oxUtilsCount::getInstance();
-
         $soxId   = oxConfig::getParameter( "oxid" );
         $aParams = oxConfig::getParameter( "editval" );
 
@@ -558,27 +551,29 @@ class Article_Main extends oxAdminDetails
         }
 
         // default values
-        $aParams = $this->addDefaultValues( $aParams);
+        $aParams = $this->addDefaultValues( $aParams );
 
         // null values
-        if ($aParams['oxarticles__oxvat'] === '')
+        if ($aParams['oxarticles__oxvat'] === '') {
             $aParams['oxarticles__oxvat'] = null;
+        }
 
         // varianthandling
         $soxparentId = oxConfig::getParameter( "oxparentid");
-        if ( isset( $soxparentId) && $soxparentId && $soxparentId != "-1")
+        if ( isset( $soxparentId) && $soxparentId && $soxparentId != "-1") {
             $aParams['oxarticles__oxparentid'] = $soxparentId;
+        }
 
         $oArticle = oxNew( "oxarticle");
         $oArticle->setLanguage($this->_iEditLang);
 
-        if ( $soxId != "-1")
+        if ( $soxId != "-1") {
             $oArticle->load( $soxId);
-        else {
+        } else {
             $aParams['oxarticles__oxid'] = null;
                 // shopid
-                $sShopID = oxSession::getVar( "actshop");
-                $aParams['oxarticles__oxshopid'] = $sShopID;
+                $sShopId = oxSession::getVar( "actshop");
+                $aParams['oxarticles__oxshopid'] = $sShopId;
         }
 
             // #905A resetting article count in price categories if price has been changed
@@ -592,11 +587,11 @@ class Article_Main extends oxAdminDetails
                 $oDb = oxDb::getDb();
                 //check categories
                 $sQ = "select oxcatnid from oxobject2category where oxobjectid = ".$oDb->quote( $oArticle->oxarticles__oxid->value );
-                $rs = $oDb->Execute($sQ);
-                if ($rs !== false && $rs->recordCount() > 0)
-                    while (!$rs->EOF) {
-                        $this->resetCounter( "catArticle", $rs->fields[0] );
-                        $rs->moveNext();
+                $oRs = $oDb->execute($sQ);
+                if ($oRs !== false && $oRs->recordCount() > 0)
+                    while (!$oRs->EOF) {
+                        $this->resetCounter( "catArticle", $oRs->fields[0] );
+                        $oRs->moveNext();
                     }
                 // vendors
                 $aResetIds['vendor'][$oArticle->oxarticles__oxvendorid->value] = 1;
@@ -618,22 +613,21 @@ class Article_Main extends oxAdminDetails
             $this->_resetCounts( $aResetIds );
 
 
-        //$aParams = $oArticle->ConvertNameArray2Idx( $aParams);
-
-        $oArticle->setLanguage(0);
-        $oArticle->assign( $aParams);
+        $oArticle->setLanguage( 0 );
+        $oArticle->assign( $aParams );
 
         // apply new language
         $sNewLanguage = oxConfig::getParameter( "new_lang");
-        $oArticle->setLanguage( $sNewLanguage);
+        $oArticle->setLanguage( $sNewLanguage );
         $oArticle->save();
 
         // set for reload
         oxSession::setVar( "new_lang", $sNewLanguage );
 
         // set oxid if inserted
-        if ( $soxId == "-1" )
+        if ( $soxId == "-1" ) {
             $this->_sSavedId = $oArticle->getId();
+        }
     }
 
     /**
@@ -652,7 +646,7 @@ class Article_Main extends oxAdminDetails
     /**
      * Function forms article variants jump list.
      *
-     * @param object &$oArticle      article object
+     * @param object $oArticle       article object
      * @param object $oParentArticle article parent object
      *
      * @return null
@@ -693,7 +687,7 @@ class Article_Main extends oxAdminDetails
     /**
      * Returns formed variant title
      *
-     * @param object &$oObj product object
+     * @param object $oObj product object
      *
      * @return string
      */

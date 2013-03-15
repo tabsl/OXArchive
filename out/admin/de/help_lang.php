@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package lang
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   lang
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: help_lang.php 23326 2009-10-16 15:21:46Z rimvydas.paskevicius $
+ * @version   SVN: $Id: help_lang.php 26630 2010-03-17 16:01:48Z rimvydas.paskevicius $
  */
 
 /**
@@ -152,6 +152,12 @@ $aLang =  array(
 
 
 'HELP_SHOP_CONFIG_DELETERATINGLOGS'				=>	'Wenn Benutzer einen Artikel bewerten, können Sie den Artikel nicht erneut bewerten. Hier können Sie einstellen, dass die Benutzer nach einer bestimmten Anzahl von Tagen den Artikel erneut bewerten können.',
+
+'HELP_SHOP_CONFIG_DISABLEONLINEVATIDCHECK'      =>  'Die Online UST-ID Prüfung wird immer ausgeführt, wenn ein Kunde aus dem Ausland (aber innerhalb der EU) eine Umsatzsteuer-ID beim bestellen angibt. Wenn die UST-ID gültig ist, wird für die Bestellung keine Umsatzsteuer berechnet.<br />'.
+                                                    'Wenn die Prüfung ausgeschaltet ist, wird immer die für das entsprechende Land eingestelle Umsatzsteuer berechnet.',
+
+'HELP_SHOP_CONFIG_ALTVATIDCHECKINTERFACEWSDL'   =>  'Hier können Sie eine alternative URL für die Online UST-ID Prüfung eingeben. Wenn die Prüfung unter der normalen URL nicht erreichbar ist versucht der eShop, die Prüfung unter der hier eingetragenen URL zu erreichen.',
+
 'HELP_SHOP_MALL_MALLMODE'                       =>  'Hier stellen Sie ein, was auf der Startseite dieses eShops angezeigt werden soll: '.
                                                     '<ul><li><span class="navipath_or_inputname">Shop-Auswahlseite</span>: Eine Seite wird angezeigt, auf der Kunden zwischen den verschiedenen Shops wählen können.</li>' .
                                                     '<li><span class="navipath_or_inputname">Hauptschop anzeigen</span>: Die normale Startseite des Hauptshops wird angezeigt.</li></ul>',
@@ -258,18 +264,23 @@ $aLang =  array(
 
 'HELP_ARTICLE_EXTEND_TEMPLATE'                  =>  'Sie können die Detailansicht des Artikels mit einem anderen Template anzeigen lassen. Tragen Sie dazu den Dateinamen des Templates ein, das verwendet werden soll. Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/bestimmte-artikel-oder-kategorien-mit-anderen-templates-anzeigen" target="_blank">eShop Handbuch</a>.',
 
+'HELP_ARTICLE_EXTEND_ISCONFIGURABLE'            =>  'Wenn der Artikel individualisierbar ist, wird den Kunden ein zusätzliches Eingabefeld auf der Detailseite des Artikels und im Warenkorb angezeigt. In dieses Eingabefeld können Kunden Text eingeben, um den Artikel zu individualisieren.<br /><br />'.
+                                                    'Ein typisches Beispiel sind T-Shirts, die bedruckt werden können. In das Eingabefeld können Kunden den Text eingeben, mit dem ein T-Shirt bedruckt werden soll.',
+
 
 
 'HELP_ARTICLE_PICTURES_ICON'                    =>  'Icons sind die kleinsten Bilder eines Artikels, sie werden z. B. im Warenkorb verwendet. <br />'.
-                                                    'Ein Icon können Sie bei <span class="navipath_or_inputname">Icon hochladen</span> hochladen. Bei <span class="navipath_or_inputname">Icon</span> wird nach dem Hochladen der Dateiname des Icons angezeigt,  wenn noch kein Icon hochgeladen wurde, wird <span class="userinput_or_code">nopic.jpg</span> angezeigt. <br />' .
+                                                    'Wenn Sie ein Icon manuell hochladen, wird das automatisch erzeugte Icon überschrieben.<br />' .
+                                                    'Nach dem Upload wird der Dateiname des Bildes in Icon angezeigt. Solange noch kein Icon hochgeladen/automatisch generiert wurde, wird --- angezeigt.<br />' .
                                                     'Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/artikelbilder-grundlagen" target="_blank">Artikelbilder-Kapitel des Handbuchs</a>.',
 
 'HELP_ARTICLE_PICTURES_THUMB'                   =>  'Thumbnails sind kleine Bilder eines Artikels, sie werden z. B. in der in Artikellisten verwendet. <br />' .
-                                                    'Ein Thumbnail können Sie bei <span class="navipath_or_inputname">Thumbn. hochladen</span> hochladen. Bei <span class="navipath_or_inputname">Thumbnail</span> wird nach dem Hochladen der Dateiname des Thumbnails angezeigt, wenn noch kein Thumbnail hochgeladen wurde, wird <span class="userinput_or_code">nopic.jpg</span> angezeigt.<br />' .
+                                                    'Wenn Sie ein Thumbnail manuell hochladen, wird das automatisch erzeugte Thumbnail überschrieben.<br />' .
+                                                    'Nach dem Upload wird der Dateiname des Bildes in Thumbnail angezeigt. Solange noch kein Thumbnail hochgeladen/automatisch generiert wurde, wird --- angezeigt.<br />' .
                                                     'Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/artikelbilder-grundlagen" target="_blank">Artikelbilder-Kapitel des Handbuchs</a>.',
 
-'HELP_ARTICLE_PICTURES_PIC1'                    =>  'Bilder sind normal große Artikelbilder, sie werden in der Detailansicht eines Artikels verwendet. </br>' .
-                                                    'Bilder können Sie bei <span class="navipath_or_inputname">Bild X hochladen</span> hochladen. Bei <span class="navipath_or_inputname">Bild X</span> wird nach dem Hochladen der Dateiname des Bildes angezeigt, wenn noch kein Bild hochgeladen wurde, wird <span class="userinput_or_code">nopic.jpg</span> angezeigt.<br />' .
+'HELP_ARTICLE_PICTURES_PIC1'                    =>  'Artikelbilder werden in der Detailansicht eines Artikels verwendet. Sie können bis zu 7 Artikelbilder pro Artikel hochladen. Nach dem Hochladen wird der Dateiname im jeweiligen Eingabefeld angezeigt. Wenn noch kein Bild hochgeladen wurde, wird --- angezeigt. <br />' .
+                                                    'Sie sollten ein Bild mit maximaler Auflösung hochladen. Danach wird aus diesem Bild automatisch das Artikelbild, Zoombild, Thumbnail und Icon generiert.<br />' .
                                                     'Weitere Informationen finden Sie im <a href="http://www.oxid-esales.com/de/resources/help-faq/eshop-manual/artikelbilder-grundlagen" target="_blank">Artikelbilder-Kapitel des Handbuchs</a>.',
 
 'HELP_ARTICLE_PICTURES_ZOOM1'                   =>  'Zoom-Bilder sind extra große Artikelbilder, Die in der Detailansicht eines Artikels verlinkt werden. </br>' .

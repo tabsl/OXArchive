@@ -15,25 +15,25 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package smartyPlugins
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   smarty_plugins
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: modifier.oxformdate.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * @version   SVN: $Id: modifier.oxformdate.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
- * Smarty cat modifier plugin
- *
- * Type:     modifier<br>
+ * Smarty modifier
+ * -------------------------------------------------------------
  * Name:     smarty_modifier_oxformdate<br>
- * Date:     05/27/2005
  * Purpose:  Conterts date/timestamp/datetime type value to user defined format
- * Input:    object to convert
  * Example:  {$object|oxformdate:"foo"}
- * @param oConvObject oxField object
- * @param sFieldType additional type if field (this may help to force formatting)
- * @param $blPassedValue bool if true, will simulate object as sometimes we need to apply formatting to some regulat values
+ * -------------------------------------------------------------
+ *
+ * @param object $oConvObject   oxField object
+ * @param string $sFieldType    additional type if field (this may help to force formatting)
+ * @param bool   $blPassedValue bool if true, will simulate object as sometimes we need to apply formatting to some regulat values
+ *
  * @return string
  */
 function smarty_modifier_oxformdate( $oConvObject, $sFieldType = null, $blPassedValue = false)

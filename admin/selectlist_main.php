@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: selectlist_main.php 18115 2009-04-14 08:32:39Z sarunas $
+ * @version   SVN: $Id: selectlist_main.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 DEFINE("ERR_SUCCESS", 1);
@@ -223,25 +223,24 @@ class SelectList_Main extends oxAdminDetails
      */
     public function delFields()
     {
-        $sOxId       = oxConfig::getParameter( "oxid");
         $oSelectlist = oxNew( "oxselectlist" );
-        $oSelectlist->loadInLang( $this->_iEditLang, $sOxId );
+        if ( $oSelectlist->loadInLang( $this->_iEditLang, oxConfig::getParameter( "oxid" ) ) ) {
 
+            $aDelFields = oxConfig::getParameter( "aFields" );
+            $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oSelectlist->oxselectlist__oxvaldesc->getRawValue() );
 
-        $aDelFields = oxConfig::getParameter("aFields");
-        $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oSelectlist->oxselectlist__oxvaldesc->getRawValue() );
-
-        if ( isset( $aDelFields) && count( $aDelFields)) {
-            foreach ( $aDelFields as $sDelField) {
-                foreach ( $this->aFieldArray as $key => $oField) {
-                    $sDel = $this->parseFieldName($sDelField);
-                    if ( $oField->name == $sDel) {
-                        unset(  $this->aFieldArray[$key]);
-                        break;
+            if ( is_array( $aDelFields ) && count( $aDelFields ) ) {
+                foreach ( $aDelFields as $sDelField ) {
+                    $sDel = $this->parseFieldName( $sDelField );
+                    foreach ( $this->aFieldArray as $sKey => $oField ) {
+                        if ( $oField->name == $sDel ) {
+                            unset(  $this->aFieldArray[$sKey]);
+                            break;
+                        }
                     }
                 }
+                $this->save();
             }
-            $this->save();
         }
     }
 
@@ -252,34 +251,32 @@ class SelectList_Main extends oxAdminDetails
      */
     public function addField()
     {
-        $sOxId = oxConfig::getParameter( "oxid");
         $oSelectlist = oxNew( "oxselectlist" );
-        $oSelectlist->loadInLang( $this->_iEditLang, $sOxId );
+        if ( $oSelectlist->loadInLang( $this->_iEditLang, oxConfig::getParameter( "oxid" ) ) ) {
 
 
-        $sAddField = oxConfig::getParameter("sAddField");
-        if (empty($sAddField)) {
-            oxSession::setVar("iErrorCode", ERR_REQUIREDMISSING);
-            return;
-        }
-        $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oSelectlist->oxselectlist__oxvaldesc->getRawValue() );
-
-        $sAddFieldPrice = oxConfig::getParameter("sAddFieldPriceMod");
-        $sAddFieldPriceUnit = oxConfig::getParameter("sAddFieldPriceModUnit");
-
-        $oField = new stdClass();
-        $oField->name = $sAddField;
-        $oField->price = $sAddFieldPrice;
-        $oField->priceUnit = $sAddFieldPriceUnit;
-
-        $this->aFieldArray[] = $oField;
-        $pos = oxConfig::getParameter("sAddFieldPos");
-        if ($pos) {
-            if ($this->_rearrangeFields($oField, $pos-1))
+            $sAddField = oxConfig::getParameter("sAddField");
+            if ( empty( $sAddField ) ) {
+                oxSession::setVar( "iErrorCode", ERR_REQUIREDMISSING );
                 return;
-        }
+            }
 
-        $this->save();
+            $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oSelectlist->oxselectlist__oxvaldesc->getRawValue() );
+
+            $oField = new stdClass();
+            $oField->name      = $sAddField;
+            $oField->price     = oxConfig::getParameter( "sAddFieldPriceMod" );
+            $oField->priceUnit = oxConfig::getParameter( "sAddFieldPriceModUnit" );
+
+            $this->aFieldArray[] = $oField;
+            if ( $iPos = oxConfig::getParameter( "sAddFieldPos" ) ) {
+                if ( $this->_rearrangeFields( $oField, $iPos-1 ) ) {
+                    return;
+                }
+            }
+
+            $this->save();
+        }
     }
 
     /**
@@ -289,78 +286,88 @@ class SelectList_Main extends oxAdminDetails
     */
     public function changeField()
     {
-        $sAddField = oxConfig::getParameter("sAddField");
-        if (empty($sAddField)) {
-            oxSession::setVar("iErrorCode", ERR_REQUIREDMISSING);
+        $sAddField = oxConfig::getParameter( "sAddField" );
+        if ( empty( $sAddField ) ) {
+            oxSession::setVar("iErrorCode", ERR_REQUIREDMISSING );
             return;
         }
 
-        $sOxId = oxConfig::getParameter( "oxid");
-        $oSelectlist = oxNew( "oxselectlist" );
-        $oSelectlist->loadInLang( $this->_iEditLang, $sOxId );
+        $aChangeFields = oxConfig::getParameter( "aFields" );
+        if ( is_array( $aChangeFields ) && count( $aChangeFields ) ) {
 
-        $aChangeFields = oxConfig::getParameter("aFields");
-        $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oSelectlist->oxselectlist__oxvaldesc->getRawValue() );
+            $oSelectlist = oxNew( "oxselectlist" );
+            if ( $oSelectlist->loadInLang( $this->_iEditLang, oxConfig::getParameter( "oxid" ) ) ) {
 
-        if ( isset( $aChangeFields) && count( $aChangeFields)) {
-            $sChangeFieldName = $this->parseFieldName($aChangeFields[0]);
-            foreach ( $this->aFieldArray as $key => $oField) {
-                if ( $oField->name == $sChangeFieldName) {
-                    $this->aFieldArray[$key]->name  = $sAddField;
-                    $this->aFieldArray[$key]->price = oxConfig::getParameter("sAddFieldPriceMod");
-                    $this->aFieldArray[$key]->priceUnit = oxConfig::getParameter("sAddFieldPriceModUnit");
-                    $pos = oxConfig::getParameter("sAddFieldPos");
-                    if ($pos) {
-                        if ($this->_rearrangeFields($this->aFieldArray[$key], $pos-1))
-                            return;
+                $this->aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oSelectlist->oxselectlist__oxvaldesc->getRawValue() );
+                $sChangeFieldName = $this->parseFieldName( $aChangeFields[0] );
+
+                foreach ( $this->aFieldArray as $sKey => $oField ) {
+                    if ( $oField->name == $sChangeFieldName ) {
+                        $this->aFieldArray[$sKey]->name      = $sAddField;
+                        $this->aFieldArray[$sKey]->price     = oxConfig::getParameter( "sAddFieldPriceMod" );
+                        $this->aFieldArray[$sKey]->priceUnit = oxConfig::getParameter( "sAddFieldPriceModUnit" );
+                        if ( $iPos = oxConfig::getParameter( "sAddFieldPos" ) ) {
+                            if ( $this->_rearrangeFields( $this->aFieldArray[$sKey], $iPos-1 ) ) {
+                                return;
+                            }
+                        }
+                        break;
                     }
-                    break;
                 }
+                $this->save();
             }
-            $this->save();
         }
     }
 
     /**
-    * Resorts fields list and moves $oField to $pos,
+    * Resorts fields list and moves $oField to $iPos,
     * uses $this->aFieldArray for fields storage.
     *
     * @param object  $oField field to be moved
-    * @param integer $pos    new pos of the field
+    * @param integer $iPos   new pos of the field
     *
     * @return bool - true if failed.
     */
-    protected function _rearrangeFields($oField, $pos)
+    protected function _rearrangeFields( $oField, $iPos )
     {
-        if (!isset($this->aFieldArray) || !is_array($this->aFieldArray))
+        if ( !isset( $this->aFieldArray ) || !is_array( $this->aFieldArray ) ) {
            return true;
-        $iCurrentPos = -1;
-        $iFieldCount = count($this->aFieldArray);
-        if ($pos < 0 || $pos >= $iFieldCount) {
-            oxSession::setVar("iErrorCode", ERR_POSOUTOFBOUNDS);
+        }
+
+        $iFieldCount = count( $this->aFieldArray );
+        if ( $iPos < 0 || $iPos >= $iFieldCount ) {
+            oxSession::setVar( "iErrorCode", ERR_POSOUTOFBOUNDS );
             return true;
         }
-        for ($i=0;$i<$iFieldCount;$i++) {
-            if ($this->aFieldArray[$i] == $oField) {
+
+        $iCurrentPos = -1;
+        for ( $i = 0; $i < $iFieldCount; $i++ ) {
+            if ( $this->aFieldArray[$i] == $oField ) {
                 $iCurrentPos = $i;
                 break;
             }
         }
-        if ($iCurrentPos == -1)
-            return true;
-        if ($iCurrentPos == $pos)
-            return false;
 
-        $field = $this->aFieldArray[$iCurrentPos];
-        if ($iCurrentPos < $pos) {
-            for ($i=$iCurrentPos;$i<$pos;$i++)
+        if ( $iCurrentPos == -1 ) {
+            return true;
+        }
+
+        if ( $iCurrentPos == $iPos ) {
+            return false;
+        }
+
+        $sField = $this->aFieldArray[$iCurrentPos];
+        if ( $iCurrentPos < $iPos ) {
+            for ( $i = $iCurrentPos; $i < $iPos; $i++ ) {
                 $this->aFieldArray[$i] = $this->aFieldArray[$i+1];
-            $this->aFieldArray[$pos] = $field;
+            }
+            $this->aFieldArray[$iPos] = $sField;
             return false;
         } else {
-            for ($i=$iCurrentPos;$i>$pos;$i--)
+            for ( $i = $iCurrentPos; $i > $iPos; $i-- ) {
                 $this->aFieldArray[$i] = $this->aFieldArray[$i-1];
-            $this->aFieldArray[$pos] = $field;
+            }
+            $this->aFieldArray[$iPos] = $sField;
             return false;
         }
     }

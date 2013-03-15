@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxlocator.php 20503 2009-06-26 14:54:11Z vilma $
+ * @version   SVN: $Id: oxlocator.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -409,7 +409,7 @@ class oxLocator extends oxSuperCfg
      */
     protected function _setRecommlistLocatorData( $oLocatorTarget, $oCurrArticle )
     {
-        if ( ( $oRecommList = $oLocatorTarget->getActRecommList() ) ) {
+        if ( ( $oRecommList = $oLocatorTarget->getActiveRecommList() ) ) {
 
             // loading data for article navigation
             $oIdList = oxNew( 'oxarticlelist' );
@@ -429,11 +429,20 @@ class oxLocator extends oxSuperCfg
             // setting product position in list, amount of articles etc
             $oRecommList->iCntOfProd  = $oIdList->count();
             $oRecommList->iProductPos = $this->_getProductPos( $oCurrArticle, $oIdList, $oLocatorTarget );
+            $blSeo = oxUtils::getInstance()->seoIsActive();
 
-            $sPageNr = $this->_getPageNumber( $iPage );
-            $oRecommList->toListLink  = $this->_makeLink( $oRecommList->getLink(), $sPageNr.(($sPageNr && $sAddSearch)?'&amp;':'').$sAddSearch );
+            if ( $blSeo && $iPage ) {
+                $oRecommList->toListLink = oxSeoEncoderRecomm::getInstance()->getRecommPageUrl( $oRecommList, $iPage );
+            } else {
+                $oRecommList->toListLink  = $this->_makeLink( $oRecommList->getLink(), $this->_getPageNumber( $iPage ) );
+            }
+            $oRecommList->toListLink  = $this->_makeLink( $oRecommList->toListLink, $sAddSearch );
 
-            $sAdd = 'recommid='.$oRecommList->getId().'&amp;listtype=recommlist'.($sAddSearch?'&amp;':'').$sAddSearch;
+            $sAdd = '';
+            if ( !$blSeo ) {
+                $sAdd = 'recommid='.$oRecommList->getId().'&amp;listtype=recommlist'.($sAddSearch?'&amp;':'');
+            }
+            $sAdd .= $sAddSearch;
             $oRecommList->nextProductLink = $this->_oNextProduct?$this->_makeLink( $this->_oNextProduct->getLink(), $sAdd ):null;
             $oRecommList->prevProductLink = $this->_oBackProduct?$this->_makeLink( $this->_oBackProduct->getLink(), $sAdd ):null;
 

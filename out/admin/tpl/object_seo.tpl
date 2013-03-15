@@ -36,7 +36,7 @@
                 [{assign var="blCat" value="1"}]
                 <optgroup label="[{ oxmultilang ident="GENERAL_SEO_CAT" }]">
                 [{ foreach from=$oCategories item=oCategory }]
-                <option value="oxcategory#[{ $oCategory->getId() }]" [{if $sCatId == $oCategory->getId() }]selected[{/if}]>[{$oCategory->oxcategories__oxtitle->value}]</option>
+                <option value="oxcategory#[{ if $oCategory->getId() == $oView->getNoCatId() }][{else}][{ $oCategory->getId() }][{/if}]" [{if $sCatId == $oCategory->getId() }]selected[{/if}]>[{$oCategory->oxcategories__oxtitle->value}]</option>
                 [{ /foreach }]
                 </optgroup>
               [{/if}]

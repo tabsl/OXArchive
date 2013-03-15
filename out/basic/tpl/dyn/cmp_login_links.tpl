@@ -9,7 +9,7 @@
 </dl>
 [{/if}]
 
-[{if $oxcmp_user && $oxcmp_user->getWishListArtCnt() }]
+[{if $oxcmp_user && $oxcmp_user->getWishListArtCnt() && $oViewConf->getShowWishlist() }]
 <dl class="actionslist">
     <dt>[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_WISHLISTE" }]</dt>
     <dd>
@@ -20,7 +20,7 @@
 </dl>
 [{/if}]
 
-[{ if $isfiltering && $oView->getCompareItemsCnt() }]
+[{ if $isfiltering && $oViewConf->getShowCompareList() && $oView->getCompareItemsCnt() }]
 <dl class="actionslist">
     <dt>[{ oxmultilang ident="INC_CMP_LOGIN_RIGHT_MYPRODUCTCOMPARISON" }]</dt>
     <dd>

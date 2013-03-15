@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: user_list.php 17243 2009-03-16 15:16:57Z arvydas $
+ * @version   SVN: $Id: user_list.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -65,17 +65,16 @@ class User_List extends oxAdminList
      */
     public function init()
     {
-        parent::Init();
+        parent::init();
 
         // set mark for blacklists
-        foreach ( $this->_oList as $name => $value ) {
-            if ( $value->inGroup( "oxidblacklist") || $value->inGroup( "oxidblocked")) {
-                $value->blacklist = "1";
-                $this->_oList[$name] = $value;
+        foreach ( $this->getItemList() as $sId => $oUser ) {
+            if ( $oUser->inGroup( "oxidblacklist" ) || $oUser->inGroup( "oxidblocked" ) ) {
+                $oUser->blacklist = "1";
             }
-            $this->_oList[$name]->blPreventDelete = false;
-            if (!$this->_allowAdminEdit($name)) {
-                $this->_oList[$name]->blPreventDelete = true;
+            $oUser->blPreventDelete = false;
+            if ( !$this->_allowAdminEdit( $sId ) ) {
+                $oUser->blPreventDelete = true;
             }
         }
     }
@@ -84,15 +83,12 @@ class User_List extends oxAdminList
      * Admin user is allowed to be deleted only by mall admin
      *
      * @return null
-     *
      */
     public function deleteEntry()
     {
-        $soxId = oxConfig::getParameter( "oxid");
-        if (!$this->_allowAdminEdit($soxId))
-            return;
-
-        return parent::deleteEntry();
+        if ( $this->_allowAdminEdit( oxConfig::getParameter( "oxid" ) ) ) {
+            return parent::deleteEntry();
+        }
     }
 
     /**
@@ -100,12 +96,12 @@ class User_List extends oxAdminList
      * For each search value if german umlauts exist, adds them
      * and replaced by spec. char to query
      *
-     * @param array  $aWhere  SQL condition array
-     * @param string $sqlFull SQL query string
+     * @param array  $aWhere     SQL condition array
+     * @param string $sQueryFull SQL query string
      *
      * @return string
      */
-    public function _prepareWhereQuery( $aWhere, $sqlFull )
+    public function _prepareWhereQuery( $aWhere, $sQueryFull )
     {
         $aNameWhere = null;
         if ( isset( $aWhere['oxuser.oxlname'] ) && ( $sName = $aWhere['oxuser.oxlname'] ) ) {
@@ -117,7 +113,7 @@ class User_List extends oxAdminList
             // unsetting..
             unset( $aWhere['oxuser.oxlname'] );
         }
-        $sQ = parent::_prepareWhereQuery( $aWhere, $sqlFull );
+        $sQ = parent::_prepareWhereQuery( $aWhere, $sQueryFull );
 
         if ( $aNameWhere ) {
 

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: category_update.php 21896 2009-08-27 07:59:00Z arvydas $
+ * @version   SVN: $Id: category_update.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -45,15 +45,24 @@ class Category_Update extends oxAdminView
     /**
      * Returns category list object
      *
-     * @return
+     * @return oxCategoryList
      */
-    public function getCatListUpdateInfo()
+    protected function _getCategoryList()
     {
         if ( $this->_oCatList == null ) {
             $this->_oCatList = oxNew( "oxCategoryList" );
             $this->_oCatList->updateCategoryTree( false );
         }
+        return $this->_oCatList;
+    }
 
-        return $this->_oCatList->getUpdateInfo();
+    /**
+     * Returns category list object
+     *
+     * @return array
+     */
+    public function getCatListUpdateInfo()
+    {
+        return $this->_getCategoryList()->getUpdateInfo();
     }
 }

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: payment_country.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * @version   SVN: $Id: payment_country.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -99,16 +99,15 @@ class Payment_Country extends oxAdminDetails
      */
     public function addcountry()
     {
-        $soxId = oxConfig::getParameter( "oxid");
-        $aChosenCntr = oxConfig::getParameter( "allcountries");
-
-        if ( isset( $soxId) && $soxId != "-1" && isset( $aChosenCntr) && $aChosenCntr) {
-            foreach ( $aChosenCntr as $sChosenCntr) {
+        $sOxId = oxConfig::getParameter( "oxid" );
+        $aChosenCntr = oxConfig::getParameter( "allcountries" );
+        if ( isset( $sOxId ) && $sOxId != "-1" && is_array( $aChosenCntr ) ) {
+            foreach ( $aChosenCntr as $sChosenCntr ) {
                 $oObject2Payment = oxNew( 'oxbase' );
                 $oObject2Payment->init( 'oxobject2payment' );
-                $oObject2Payment->oxobject2payment__oxpaymentid = new oxField($soxId);
-                $oObject2Payment->oxobject2payment__oxobjectid  = new oxField($sChosenCntr);
-                $oObject2Payment->oxobject2payment__oxtype      = new oxField("oxcountry");
+                $oObject2Payment->oxobject2payment__oxpaymentid = new oxField( $sOxId );
+                $oObject2Payment->oxobject2payment__oxobjectid  = new oxField( $sChosenCntr );
+                $oObject2Payment->oxobject2payment__oxtype      = new oxField( "oxcountry" );
                 $oObject2Payment->save();
             }
         }
@@ -121,11 +120,10 @@ class Payment_Country extends oxAdminDetails
      */
     public function removecountry()
     {
-        $soxId = oxConfig::getParameter( "oxid");
-        $aChosenCntr = oxConfig::getParameter( "countries");
-
-        if ( isset( $soxId) && $soxId != "-1" && isset( $aChosenCntr) && $aChosenCntr) {
-            foreach ( $aChosenCntr as $sChosenCntr) {
+        $sOxId = oxConfig::getParameter( "oxid" );
+        $aChosenCntr = oxConfig::getParameter( "countries" );
+        if ( isset( $sOxId ) && $sOxId != "-1" && is_array( $aChosenCntr ) ) {
+            foreach ( $aChosenCntr as $sChosenCntr ) {
                 $oObject2Payment = oxNew( 'oxbase' );
                 $oObject2Payment->init( 'oxobject2payment' );
                 $oObject2Payment->delete( $sChosenCntr );

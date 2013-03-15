@@ -85,7 +85,7 @@
     <td valign="top" class="edittext vr" align="left" width="50%">
     [{ if $oxid != "-1"}]
 
-       <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('?cl=news_main&aoc=1&oxid=[{ $oxid }]');">
+       <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('&cl=news_main&aoc=1&oxid=[{ $oxid }]');">
 
     [{ /if}]
     </td>

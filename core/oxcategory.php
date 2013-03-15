@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxcategory.php 23323 2009-10-16 14:59:42Z sarunas $
+ * @version   SVN: $Id: oxcategory.php 25755 2010-02-10 13:59:48Z sarunas $
  */
 
 /**
@@ -118,6 +118,20 @@ class oxCategory extends oxI18n implements oxIUrl
      * @var array
      */
     protected $_aIds = array();
+
+    /**
+     * Stardard/dynamic article urls for languages
+     *
+     * @var array
+     */
+    protected $_aStdUrls = array();
+
+    /**
+     * Seo article urls for languages
+     *
+     * @var array
+     */
+    protected $_aSeoUrls = array();
 
     /**
      * Class constructor, initiates parent constructor (parent::oxI18n()).
@@ -237,11 +251,11 @@ class oxCategory extends oxI18n implements oxIUrl
 
             $oDB->execute( "UPDATE oxcategories SET OXLEFT = OXLEFT - 2
                             WHERE  OXROOTID = ".$oDB->quote($this->oxcategories__oxrootid->value)."
-                            AND OXLEFT >   ".((int)$this->oxcategories__oxleft->value).$sAdd );
+                            AND OXLEFT >   ".((int) $this->oxcategories__oxleft->value).$sAdd );
 
             $oDB->execute( "UPDATE oxcategories SET OXRIGHT = OXRIGHT - 2
                             WHERE  OXROOTID = ".$oDB->quote($this->oxcategories__oxrootid->value)."
-                            AND OXRIGHT >   ".((int)$this->oxcategories__oxright->value).$sAdd );
+                            AND OXRIGHT >   ".((int) $this->oxcategories__oxright->value).$sAdd );
 
             // delete entry
             $blRet = parent::delete();
@@ -498,36 +512,44 @@ class oxCategory extends oxI18n implements oxIUrl
     }
 
     /**
-     * returns the url of the category
+     * Returns raw category seo url
      *
-     * @param int $iLang language
+     * @param int $iLang language id
+     * @param int $iPage page number [optional]
      *
      * @return string
      */
-    public function getLink($iLang = null)
+    public function getBaseSeoLink( $iLang, $iPage = 0 )
     {
-        if (isset($iLang)) {
-            $iLang = (int) $iLang;
-            if ($iLang == (int) $this->getLanguage()) {
-                $iLang = null;
-            }
+        $oEncoder = oxSeoEncoderCategory::getInstance();
+        if ( !$iPage ) {
+            return $oEncoder->getCategoryUrl( $this, $iLang );
         }
-        if ( ($this->link === null ) || isset($iLang)) {
-            if ( (!isset( $this->oxcategories__oxextlink->value ) || !$this->oxcategories__oxextlink->value ) &&
-                 oxUtils::getInstance()->seoIsActive() ) {
-                $link = oxSeoEncoderCategory::getInstance()->getCategoryUrl( $this, $iLang );
-            } else {
-                $link = $this->getStdLink($iLang);
-            }
+        return $oEncoder->getCategoryPageUrl( $this, $iPage, $iLang );
+    }
 
-            if (isset($iLang)) {
-                return $link;
-            } else {
-                $this->link = $link;
-            }
+    /**
+     * returns the url of the category
+     *
+     * @param int $iLang language id
+     *
+     * @return string
+     */
+    public function getLink( $iLang = null )
+    {
+        if ( !oxUtils::getInstance()->seoIsActive() ||
+             ( isset( $this->oxcategories__oxextlink ) && $this->oxcategories__oxextlink->value ) ) {
+            return $this->getStdLink( $iLang );
         }
 
-        return $this->link;
+        if ( $iLang === null ) {
+            $iLang = $this->getLanguage();
+        }
+
+        if ( !isset( $this->_aSeoUrls[$iLang] ) ) {
+            $this->_aSeoUrls[$iLang] = $this->getBaseSeoLink( $iLang );
+        }
+        return $this->_aSeoUrls[$iLang];
     }
 
     /**
@@ -539,7 +561,12 @@ class oxCategory extends oxI18n implements oxIUrl
      */
     public function setLink( $sLink )
     {
-        $this->link = $sLink;
+        $iLang = $this->getLanguage();
+        if ( oxUtils::getInstance()->seoIsActive() ) {
+            $this->_aSeoUrls[$iLang] = $sLink;
+        } else {
+            $this->_aStdUrls[$iLang] = $sLink;
+        }
     }
 
     /**
@@ -561,36 +588,49 @@ class oxCategory extends oxI18n implements oxIUrl
     }
 
     /**
+     * Returns base dynamic url: shopurl/index.php?cl=details
+     *
+     * @param int  $iLang   language id
+     * @param bool $blAddId add current object id to url or not
+     * @param bool $blFull  return full including domain name [optional]
+     *
+     * @return string
+     */
+    public function getBaseStdLink( $iLang, $blAddId = true, $blFull = true )
+    {
+        $sUrl = '';
+        if ( $blFull ) {
+            //always returns shop url, not admin
+            $sUrl = $this->getConfig()->getShopUrl( $iLang, false );
+        }
+
+        //always returns shop url, not admin
+        return $sUrl . "index.php?cl=alist" . ( $blAddId ? "&amp;cnid=".$this->getId() : "" );
+    }
+
+    /**
      * Returns standard URL to category
      *
-     * @param int $iLang language
+     * @param int   $iLang   language
      * @param array $aParams additional params to use [optional]
      *
      * @return string
      */
-    public function getStdLink($iLang = null, $aParams = array() )
+    public function getStdLink( $iLang = null, $aParams = array() )
     {
-        $sLink = '';
-        if ( $this->oxcategories__oxextlink->value ) {
-            return $this->getSession()->url( $this->oxcategories__oxextlink->value );
-        } else {
-            $sLink = $this->getConfig()->getShopHomeURL(). "cl=alist&amp;cnid=" . $this->getId();
+        if ( isset( $this->oxcategories__oxextlink ) && $this->oxcategories__oxextlink->value ) {
+            return  oxUtilsUrl::getInstance()->processUrl( $this->oxcategories__oxextlink->value, false );
         }
 
-        if ( isset($iLang) && !oxUtils::getInstance()->seoIsActive() ) {
-            $iLang = (int) $iLang;
-            if ($iLang != (int) $this->getLanguage()) {
-                $sLink .= "&amp;lang={$iLang}";
-            }
+        if ( $iLang === null ) {
+            $iLang = $this->getLanguage();
         }
 
-        foreach ($aParams as $key => $value) {
-            if ( $value ) {
-                $sLink .= "&amp;$key=$value";
-            }
+        if ( !isset( $this->_aStdUrls[$iLang] ) ) {
+            $this->_aStdUrls[$iLang] = $this->getBaseStdLink( $iLang );
         }
 
-        return $sLink;
+        return oxUtilsUrl::getInstance()->processStdUrl( $this->_aStdUrls[$iLang], $aParams, $iLang, $iLang != $this->getLanguage() );
     }
 
     /**
@@ -697,7 +737,7 @@ class oxCategory extends oxI18n implements oxIUrl
                        "WHERE att.oxid = o2a.oxattrid AND c2a.oxobjectid = $sActCatQuoted AND c2a.oxattrid = att.oxid AND o2a.oxvalue{$sLngSuf} !='' AND o2a.oxobjectid IN ($sArtIds) ".
                        "ORDER BY c2a.oxsort , att.oxpos, att.oxtitle{$sLngSuf}, o2a.oxvalue{$sLngSuf}";
 
-            $rs = $oDb->Execute( $sSelect);
+            $rs = $oDb->execute( $sSelect );
             if ($rs != false && $rs->recordCount() > 0) {
                 $oStr = getStr();
                 while ( !$rs->EOF && list($sAttId,$sAttTitle, $sAttValue) = $rs->fields ) {
@@ -844,13 +884,13 @@ class oxCategory extends oxI18n implements oxIUrl
             $oDB = oxDb::getDb();
             $oDB->execute( "UPDATE oxcategories SET OXLEFT = OXLEFT + 2
                             WHERE  OXROOTID = ".$oDB->quote($oParent->oxcategories__oxrootid->value)."
-                            AND OXLEFT >   ".((int)$oParent->oxcategories__oxright->value)."
-                            AND OXRIGHT >= ".((int)$oParent->oxcategories__oxright->value).$sAdd);
+                            AND OXLEFT >   ".((int) $oParent->oxcategories__oxright->value)."
+                            AND OXRIGHT >= ".((int) $oParent->oxcategories__oxright->value).$sAdd);
 
 
             $oDB->execute( "UPDATE oxcategories SET OXRIGHT = OXRIGHT + 2
                             WHERE  OXROOTID = ".$oDB->quote($oParent->oxcategories__oxrootid->value)."
-                            AND OXRIGHT >= ".((int)$oParent->oxcategories__oxright->value).$sAdd );
+                            AND OXRIGHT >= ".((int) $oParent->oxcategories__oxright->value).$sAdd );
 
             //if ( !isset( $this->_sOXID) || trim( $this->_sOXID) == "")
             //    $this->_sOXID = oxUtilsObject::getInstance()->generateUID();

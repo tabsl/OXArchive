@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: payment_main.php 17194 2009-03-13 12:22:55Z arvydas $
+ * @version   SVN: $Id: payment_main.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -43,8 +43,7 @@ class Payment_Main extends oxAdminDetails
      * @return string
      */
     public function render()
-    {   $myConfig = $this->getConfig();
-
+    {
         parent::render();
 
         // remove itm from list
@@ -54,10 +53,11 @@ class Payment_Main extends oxAdminDetails
             $oGroups = oxNew( "oxlist" );
             $oGroups->init( "oxgroups");
             $oGroups->selectString( "select * from oxgroups" );
+
         $soxId = oxConfig::getParameter( "oxid");
         // check if we right now saved a new entry
         $sSavedID = oxConfig::getParameter( "saved_oxid");
-        if ( ($soxId == "-1" || !isset( $soxId)) && isset( $sSavedID) ) {
+        if ( ($soxId == "-1" || !isset( $soxId ) ) && isset( $sSavedID ) ) {
             $soxId = $sSavedID;
             oxSession::deleteVar( "saved_oxid");
             $this->_aViewData["oxid"] =  $soxId;
@@ -91,7 +91,6 @@ class Payment_Main extends oxAdminDetails
 
             // #708
             $this->_aViewData['aFieldNames'] = oxUtils::getInstance()->assignValuesFromText( $oPayment->oxpayments__oxvaldesc->value );
-
         }
 
         if ( oxConfig::getParameter("aoc") ) {
@@ -112,8 +111,6 @@ class Payment_Main extends oxAdminDetails
      */
     public function save()
     {
-        $myConfig  = $this->getConfig();
-
 
         $soxId      = oxConfig::getParameter( "oxid");
         $aParams    = oxConfig::getParameter( "editval");
@@ -159,8 +156,6 @@ class Payment_Main extends oxAdminDetails
      */
     public function saveinnlang()
     {
-        $myConfig  = $this->getConfig();
-
 
         $soxId      = oxConfig::getParameter( "oxid");
         $aParams    = oxConfig::getParameter( "editval");
@@ -200,26 +195,24 @@ class Payment_Main extends oxAdminDetails
      */
     public function delFields()
     {
-        $myConfig = $this->getConfig();
 
-
-        $soxId    = oxConfig::getParameter( "oxid");
         $oPayment = oxNew( "oxpayment" );
-        $oPayment->loadInLang( $this->_iEditLang, $soxId );
+        if ( $oPayment->loadInLang( $this->_iEditLang, oxConfig::getParameter( "oxid") ) ) {
 
-        $aDelFields = oxConfig::getParameter("aFields");
-        $this->_aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oPayment->oxpayments__oxvaldesc->value );
+            $aDelFields = oxConfig::getParameter( "aFields" );
+            $this->_aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oPayment->oxpayments__oxvaldesc->value );
 
-        if ( isset( $aDelFields) && count( $aDelFields)) {
-            foreach ( $aDelFields as $sDelField) {
-                foreach ( $this->_aFieldArray as $key => $oField) {
-                    if ( $oField->name == $sDelField) {
-                        unset(  $this->_aFieldArray[$key]);
-                        break;
+            if ( is_array( $aDelFields ) && count( $aDelFields ) ) {
+                foreach ( $aDelFields as $sDelField ) {
+                    foreach ( $this->_aFieldArray as $sKey => $oField ) {
+                        if ( $oField->name == $sDelField ) {
+                            unset( $this->_aFieldArray[$sKey] );
+                            break;
+                        }
                     }
                 }
+                $this->save();
             }
-            $this->save();
         }
     }
 
@@ -230,22 +223,19 @@ class Payment_Main extends oxAdminDetails
      */
     public function addField()
     {
-        $myConfig = $this->getConfig();
 
-
-        $soxId = oxConfig::getParameter( "oxid");
         $oPayment = oxNew( "oxpayment" );
-        $oPayment->loadInLang( $this->_iEditLang, $soxId );
+        if ( $oPayment->loadInLang( $this->_iEditLang, oxConfig::getParameter( "oxid" ) ) ) {
 
-        $sAddField = oxConfig::getParameter("sAddField");
-        $this->_aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oPayment->oxpayments__oxvaldesc->value );
+            $this->_aFieldArray = oxUtils::getInstance()->assignValuesFromText( $oPayment->oxpayments__oxvaldesc->value );
 
-        $oField = new stdClass();
-        $oField->name = $sAddField;
+            $oField = new OxstdClass();
+            $oField->name = oxConfig::getParameter( "sAddField" );
 
-        $this->_aFieldArray[] = $oField;
+            $this->_aFieldArray[] = $oField;
 
-        $this->save();
+            $this->save();
+        }
     }
 
 }

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: user_extend.php 17191 2009-03-13 12:21:00Z arvydas $
+ * @version   SVN: $Id: user_extend.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -40,11 +40,11 @@ class User_Extend extends oxAdminDetails
     {
         parent::render();
 
-        $soxId = oxConfig::getParameter( "oxid");
-        if ( $soxId != "-1" && isset( $soxId)) {
+        $soxId = oxConfig::getParameter( "oxid" );
+        if ( $soxId != "-1" && isset( $soxId ) ) {
             // load object
             $oUser = oxNew( "oxuser" );
-            $oUser->load( $soxId);
+            $oUser->load( $soxId );
 
             //show country in active language
             $oCountry = oxNew( "oxCountry" );
@@ -54,8 +54,9 @@ class User_Extend extends oxAdminDetails
             $this->_aViewData["edit"] =  $oUser;
         }
 
-        if (!$this->_allowAdminEdit($soxId))
+        if ( !$this->_allowAdminEdit( $soxId ) ) {
             $this->_aViewData['readonly'] = true;
+        }
 
         return "user_extend.tpl";
     }
@@ -68,35 +69,36 @@ class User_Extend extends oxAdminDetails
     public function save()
     {
 
+        $soxId = oxConfig::getParameter( "oxid" );
 
-        $soxId         = oxConfig::getParameter( "oxid" );
-        $aParams       = oxConfig::getParameter( "editval" );
-        $blNewsParams  = oxConfig::getParameter( "editnews" );
-        $blEmailFailed = oxConfig::getParameter( "emailfailed" );
-
-        if (!$this->_allowAdminEdit($soxId))
+        if ( !$this->_allowAdminEdit( $soxId ) )
             return false;
 
+        $aParams       = oxConfig::getParameter( "editval" );
 
         $oUser = oxNew( "oxuser" );
-        if ( $soxId != "-1")
-            $oUser->load( $soxId);
-        else
+        if ( $soxId != "-1" ) {
+            $oUser->load( $soxId );
+        } else {
             $aParams['oxuser__oxid'] = null;
+        }
 
         // checkbox handling
         $aParams['oxuser__oxactive'] = $oUser->oxuser__oxactive->value;
+
+        $blNewsParams  = oxConfig::getParameter( "editnews" );
         if ( isset( $blNewsParams ) ) {
             $oNewsSubscription = $oUser->getNewsSubscription();
-            $oNewsSubscription->setOptInStatus( (int)$blNewsParams );
-            $oNewsSubscription->setOptInEmailStatus( (int)$blEmailFailed );
+            $oNewsSubscription->setOptInStatus( (int) $blNewsParams );
+            $oNewsSubscription->setOptInEmailStatus( (int) oxConfig::getParameter( "emailfailed" ) );
         }
 
-        $oUser->assign( $aParams);
+        $oUser->assign( $aParams );
         $oUser->save();
 
         // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oUser->oxuser__oxid->value);
+        if ( $soxId == "-1" ) {
+            oxSession::setVar( "saved_oxid", $oUser->getId() );
+        }
     }
 }

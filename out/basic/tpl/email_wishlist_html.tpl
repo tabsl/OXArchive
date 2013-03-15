@@ -29,10 +29,10 @@
       <tr>
         <td bgcolor="#CECCCD" width="1" rowspan="2"><img src="[{$oViewConf->getNoSslImageDir()}]/leer.gif" width="1" border="0" hspace="0" vspace="0" alt=""></td>
         <td bgcolor="#FFFFFF"><font face="Verdana,Arial" size="2">
-          [{$userinfo->send_message}]<br><br>
+          [{$userinfo->send_message|oxescape}]<br><br>
           [{ oxmultilang ident="EMAIL_WISHLIST_HTML_TOMYWISHLISTCLICKHERE1" }] <a href="[{ $oViewConf->getBaseDir() }]index.php?cl=wishlist&wishid=[{$userinfo->send_id}]"><font face="Verdana,Arial" size="2"><b>[{ oxmultilang ident="EMAIL_WISHLIST_HTML_TOMYWISHLISTCLICKHERE2" }]</b></font></a><br><br>
           [{ oxmultilang ident="EMAIL_WISHLIST_HTML_WITHLOVE" }]<br><br>
-          [{$userinfo->send_name}]</font>
+          [{$userinfo->send_name|oxescape}]</font>
         </td>
         <td bgcolor="#CECCCD" width="1" rowspan="2"><img src="[{$oViewConf->getNoSslImageDir()}]/leer.gif" width="1" border="0" hspace="0" vspace="0" alt=""></td>
       </tr>

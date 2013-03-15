@@ -37,7 +37,7 @@
             <td class="edittext">
                 <select name="oxpaymentid" class="editinput" style="width:320px;" onChange="document.myedit.submit();" [{ $readonly}]>
                     <option value="-1">[{ oxmultilang ident="USER_PAYMENT_NEWPAYMENT" }]</option>
-                    [{foreach from=$edituser->oPayments item=payment}]
+                    [{foreach from=$userpayments item=payment}]
                     <option value="[{ $payment->oxuserpayments__oxid->value }]" [{ if $payment->selected}]SELECTED[{/if}]>[{ $payment->oxpayments__oxdesc->value }]</option>
                     [{/foreach}]
                 </select>

@@ -6,20 +6,25 @@
 
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_ORDERNOMBER" }] [{ $order->oxorder__oxordernr->value }]
 
+[{if $oViewConf->getShowVouchers() }]
 [{ foreach from=$vouchers item=voucher}]
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_USEDCOUPONS" }] [{$voucher->oxmodvouchers__oxvouchernr->value}] - [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_REBATE" }] [{$voucher->oxmodvouchers__oxdiscount->value}] [{ if $voucher->oxmodvouchers__oxdiscounttype->value == "absolute"}][{ $currency->name}][{else}]%[{/if}]
 [{/foreach }]
+[{/if}]
 
 [{assign var="basketitemlist" value=$basket->getBasketArticles() }]
 [{foreach key=basketindex from=$basket->getContents() item=basketitem}]
 [{assign var="basketproduct" value=$basketitemlist.$basketindex }]
-[{ $basketproduct->oxarticles__oxtitle->value|strip_tags }][{ if $basketproduct->oxarticles__oxvarselect->value}], [{ $basketproduct->oxarticles__oxvarselect->value}][{/if}]
+[{ $basketproduct->oxarticles__oxtitle->getRawValue()|strip_tags }][{ if $basketproduct->oxarticles__oxvarselect->value}], [{ $basketproduct->oxarticles__oxvarselect->value}][{/if}]
 [{ if $basketitem->chosen_selectlist }][{foreach from=$basketitem->chosen_selectlist item=oList}][{ $oList->name }] [{ $oList->value }][{/foreach}][{/if}]
 [{ if $basketitem->aPersParam }][{foreach key=sVar from=$basketitem->aPersParam item=aParam}][{$sVar}] : [{$aParam}][{/foreach}][{/if}]
-[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_WRAPPING" }] [{ if !$basketitem->wrapping }][{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_NONE" }][{else}][{$basketitem->oWrap->oxwrapping__oxname->value}][{/if}]
-[{ if $basketproduct->oxarticles__oxorderinfo->value }][{ $basketproduct->oxarticles__oxorderinfo->value }][{/if}]
-[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_QUANTITY" }] [{$basketitem->dAmount}]
+[{if $oViewConf->getShowGiftWrapping() }]
+[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_WRAPPING" }] [{ if !$basketitem->wrapping }][{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_NONE" }][{else}][{$basketitem->oWrap->oxwrapping__oxname->getRawValue()}][{/if}]
+[{/if}]
+[{ if $basketproduct->oxarticles__oxorderinfo->value }][{ $basketproduct->oxarticles__oxorderinfo->getRawValue() }][{/if}]
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_UNITPRICE" }] [{ $basketitem->getFUnitPrice() }] [{ $currency->name}]
+[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_QUANTITY" }] [{$basketitem->dAmount}]
+[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_VAT" }] [{$basketitem->getVatPercent() }]%
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_TOTAL" }] [{ $basketitem->getFTotalPrice() }] [{ $currency->name}]
 [{/foreach}]
 ------------------------------------------------------------------
@@ -46,7 +51,7 @@
   [{/foreach}]
 [{/if}]
 [{* voucher discounts *}]
-[{if $basket->dVoucherDiscount }]
+[{if $oViewConf->getShowVouchers() && $basket->dVoucherDiscount }]
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_COUPON" }] [{ if $basket->fVoucherDiscount > 0 }]-[{/if}][{ $basket->fVoucherDiscount|replace:"-":"" }] [{ $currency->name}]
 [{/if}]
 [{* delivery costs *}]
@@ -65,7 +70,7 @@
   [{/if}]
 [{/if}]
 
-[{ if $basket->dWrappingPrice }]
+[{ if $oViewConf->getShowGiftWrapping() && $basket->dWrappingPrice }]
   [{if $basket->fWrappingVAT}]
     [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_WRAPPINGNET" }][{ $basket->fWrappingNetto }] [{ $currency->name}]
     [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_PLUSTAX21" }] [{ $basket->fWrappingVATPercent }][{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_PLUSTAX22" }] [{ $basket->fWrappingVAT }] [{ $currency->name}]
@@ -82,38 +87,40 @@
 [{/if}]
 
 [{ if $order->oxorder__oxremark->value }]
-[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_YOURMESSAGE" }] [{ $order->oxorder__oxremark->value }]
+[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_YOURMESSAGE" }] [{ $order->oxorder__oxremark->getRawValue() }]
 [{/if}]
 
-[{if $payment->oxuserpayments__oxpaymentsid->value != "oxempty"}][{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_PAYMENTMETHOD" }] [{ $payment->oxpayments__oxdesc->value }]
+[{if $payment->oxuserpayments__oxpaymentsid->value != "oxempty"}][{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_PAYMENTMETHOD" }] [{ $payment->oxpayments__oxdesc->getRawValue() }]
 [{/if}]
 
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_EMAILADDRESS" }] [{ $user->oxuser__oxusername->value }]
 
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_BILLINGADDRESS" }]
-[{ $order->oxorder__oxbillcompany->value }]
-[{ $order->oxorder__oxbillsal->value }] [{ $order->oxorder__oxbillfname->value }] [{ $order->oxorder__oxbilllname->value }]
-[{if $order->oxorder__oxbilladdinfo->value }][{ $order->oxorder__oxbilladdinfo->value }][{/if}]
-[{ $order->oxorder__oxbillstreet->value }] [{ $order->oxorder__oxbillstreetnr->value }]
-[{ $order->oxorder__oxbillzip->value }] [{ $order->oxorder__oxbillcity->value }]
-[{ $order->oxorder__oxbillcountry->value }]
+[{ $order->oxorder__oxbillcompany->getRawValue() }]
+[{ $order->oxorder__oxbillsal->value|oxmultilangsal}] [{ $order->oxorder__oxbillfname->getRawValue() }] [{ $order->oxorder__oxbilllname->getRawValue() }]
+[{if $order->oxorder__oxbilladdinfo->value }][{ $order->oxorder__oxbilladdinfo->getRawValue() }][{/if}]
+[{ $order->oxorder__oxbillstreet->getRawValue() }] [{ $order->oxorder__oxbillstreetnr->value }]
+[{ $order->oxorder__oxbillstateid->value }]
+[{ $order->oxorder__oxbillzip->value }] [{ $order->oxorder__oxbillcity->getRawValue() }]
+[{ $order->oxorder__oxbillcountry->getRawValue() }]
 [{if $order->oxorder__oxbillustid->value}][{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_VATIDNOMBER" }] [{ $order->oxorder__oxbillustid->value }][{/if}]
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_PHONE" }] [{ $order->oxorder__oxbillfon->value }]
 
 [{ if $order->oxorder__oxdellname->value }][{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_SHIPPINGADDRESS" }]
-[{ $order->oxorder__oxdelcompany->value }]
-[{ $order->oxorder__oxdelsal->value }] [{ $order->oxorder__oxdelfname->value }] [{ $order->oxorder__oxdellname->value }]
-[{if $order->oxorder__oxdeladdinfo->value }][{ $order->oxorder__oxdeladdinfo->value }][{/if}]
-[{ $order->oxorder__oxdelstreet->value }] [{ $order->oxorder__oxdelstreetnr->value }]
-[{ $order->oxorder__oxdelzip->value }] [{ $order->oxorder__oxdelcity->value }]
-[{ $order->oxorder__oxdelcountry->value }]
+[{ $order->oxorder__oxdelcompany->getRawValue() }]
+[{ $order->oxorder__oxdelsal->value|oxmultilangsal }] [{ $order->oxorder__oxdelfname->getRawValue() }] [{ $order->oxorder__oxdellname->getRawValue() }]
+[{if $order->oxorder__oxdeladdinfo->value }][{ $order->oxorder__oxdeladdinfo->getRawValue() }][{/if}]
+[{ $order->oxorder__oxdelstreet->getRawValue() }] [{ $order->oxorder__oxdelstreetnr->value }]
+[{ $order->oxorder__oxdelstateid->getRawValue() }]
+[{ $order->oxorder__oxdelzip->value }] [{ $order->oxorder__oxdelcity->getRawValue() }]
+[{ $order->oxorder__oxdelcountry->getRawValue() }]
 [{/if}]
 
-[{if $payment->oxuserpayments__oxpaymentsid->value != "oxempty"}][{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_SHIPPINGCARRIER" }] [{ $order->oDelSet->oxdeliveryset__oxtitle->value }]
+[{if $payment->oxuserpayments__oxpaymentsid->value != "oxempty"}][{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_SHIPPINGCARRIER" }] [{ $order->oDelSet->oxdeliveryset__oxtitle->getRawValue() }]
 [{/if}]
 
 [{if $payment->oxuserpayments__oxpaymentsid->value == "oxidpayadvance"}]
-[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_BANK" }] [{$shop->oxshops__oxbankname->value}]<br>
+[{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_BANK" }] [{$shop->oxshops__oxbankname->getRawValue()}]<br>
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_ROUTINGNOMBER" }] [{$shop->oxshops__oxbankcode->value}]<br>
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_ACCOUNTNOMBER" }] [{$shop->oxshops__oxbanknumber->value}]<br>
 [{ oxmultilang ident="EMAIL_ORDER_CUST_HTML_BIC" }] [{$shop->oxshops__oxbiccode->value}]<br>

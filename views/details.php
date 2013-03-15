@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: details.php 23463 2009-10-21 16:43:24Z tomas $
+ * @version   SVN: $Id: details.php 26303 2010-03-04 16:11:37Z sarunas $
  */
 
 /**
@@ -50,7 +50,7 @@ class Details extends oxUBase
      *
      * @var oxarticle
      */
-    protected $_oParent = null;
+    protected $_oParentProd = null;
 
     /**
      * Marker if user can rate current product
@@ -233,19 +233,19 @@ class Details extends oxUBase
      */
     protected function _getParentProduct( $sParentId )
     {
-        if ( $sParentId && $this->_oParent === null ) {
-            $this->_oParent = false;
+        if ( $sParentId && $this->_oParentProd === null ) {
+            $this->_oParentProd = false;
             if ( ( $oParent = oxNewArticle( $sParentId ) ) ) {
                 $this->_processProduct( $oParent );
-                $this->_oParent = $oParent;
+                $this->_oParentProd = $oParent;
             }
         }
-        return $this->_oParent;
+        return $this->_oParentProd;
     }
 
     /**
      * loading full list of variants,
-     * if we are child and do not have any variants then please load all parent variants as ours
+     * if we are child and do not have any variants then let's load all parent variants as ours
      *
      * @return null
      */
@@ -257,7 +257,7 @@ class Details extends oxUBase
             //loading full list of variants
             $this->_aVariantList = $oProduct->getVariants( false );
 
-            //if we are child and do not have any variants then please load all parent variants as ours
+            //if we are child and do not have any variants then let's load all parent variants as ours
             if ( ( $oParent = $this->_getParentProduct( $oProduct->oxarticles__oxparentid->value ) ) && count( $this->_aVariantList ) == 0 ) {
                 $myConfig = $this->getConfig();
 
@@ -274,11 +274,6 @@ class Details extends oxUBase
                     $oParent->aSelectlist = $oParent->getSelectLists();
                     $this->_aVariantList = array_merge( array( $oParent ), $this->_aVariantList->getArray() );
                 }
-
-                //..and skip myself from the list
-                if ( isset( $this->_aVariantList[$oProduct->getId()] ) ) {
-                    unset( $this->_aVariantList[$oProduct->getId()] );
-                }
             }
 
             // setting link type for variants ..
@@ -287,6 +282,7 @@ class Details extends oxUBase
             }
 
         }
+
         return $this->_aVariantList;
     }
 
@@ -305,7 +301,7 @@ class Details extends oxUBase
     /**
      * Processes product by setting link type and in case list type is search adds search parameters to details link
      *
-     * @param object $oProduct
+     * @param object $oProduct product to process
      *
      * @return null
      */
@@ -444,7 +440,7 @@ class Details extends oxUBase
         //media files
         $this->_aViewData['aMediaUrls'] = $this->getMediaFiles();
 
-        if (in_array('oxrss_recommlists', $myConfig->getConfigParam( 'aRssSelected' )) && $this->getSimilarRecommLists()) {
+        if ($myConfig->getConfigParam( 'bl_rssRecommLists' ) && $this->getSimilarRecommLists()) {
             $oRss = oxNew('oxrssfeed');
             $this->addRssFeed($oRss->getRecommListsTitle( $oProduct ), $oRss->getRecommListsUrl( $oProduct ), 'recommlists');
         }
@@ -548,42 +544,37 @@ class Details extends oxUBase
      */
     public function saveReview()
     {
-        $sReviewText = trim( ( string ) oxConfig::getParameter( 'rvw_txt', true ) );
-        $dRating     = oxConfig::getParameter( 'artrating' );
-        if ($dRating < 0 || $dRating > 5) {
-            $dRating = null;
-        }
+        if ( $this->canAcceptFormData() &&
+             ( $oUser = $this->getUser() ) && ( $oProduct = $this->getProduct() ) ) {
 
-        $sArtId  = oxConfig::getParameter( 'anid' );
-        $sUserId = oxSession::getVar( 'usr' );
-
-        //save rating
-        if ( $dRating && $sUserId ) {
-            $oProduct = $this->getProduct();
-
-            $oRating = oxNew( 'oxrating' );
-            $blRate = $oRating->allowRating( $sUserId, 'oxarticle', $oProduct->getId());
-            if ( $blRate) {
-                $oRating->oxratings__oxuserid = new oxField($sUserId);
-                $oRating->oxratings__oxtype   = new oxField('oxarticle', oxField::T_RAW);
-                $oRating->oxratings__oxobjectid = new oxField($sArtId);
-                $oRating->oxratings__oxrating = new oxField($dRating);
-                $oRating->save();
-                $oProduct->addToRatingAverage( $dRating);
-            } else {
-                $dRating = null;
+            $dRating = oxConfig::getParameter( 'artrating' );
+            if ( $dRating !== null ) {
+                $dRating = (int) $dRating;
             }
-        }
 
-        if ( $sReviewText && $sUserId ) {
-            $oReview = oxNew( 'oxreview' );
-            $oReview->oxreviews__oxobjectid = new oxField($sArtId);
-            $oReview->oxreviews__oxtype = new oxField('oxarticle', oxField::T_RAW);
-            $oReview->oxreviews__oxtext = new oxField($sReviewText, oxField::T_RAW);
-            $oReview->oxreviews__oxlang = new oxField(oxLang::getInstance()->getBaseLanguage());
-            $oReview->oxreviews__oxuserid = new oxField($sUserId);
-            $oReview->oxreviews__oxrating = new oxField(( $dRating) ? $dRating : null);
-            $oReview->save();
+            //save rating
+            if ( $dRating !== null && $dRating >= 0 && $dRating <= 5 ) {
+                $oRating = oxNew( 'oxrating' );
+                if ( $oRating->allowRating( $oUser->getId(), 'oxarticle', $oProduct->getId() ) ) {
+                    $oRating->oxratings__oxuserid   = new oxField( $oUser->getId() );
+                    $oRating->oxratings__oxtype     = new oxField( 'oxarticle' );
+                    $oRating->oxratings__oxobjectid = new oxField( $oProduct->getId() );
+                    $oRating->oxratings__oxrating   = new oxField( $dRating );
+                    $oRating->save();
+                    $oProduct->addToRatingAverage( $dRating );
+                }
+            }
+
+            if ( ( $sReviewText = trim( ( string ) oxConfig::getParameter( 'rvw_txt', true ) ) ) ) {
+                $oReview = oxNew( 'oxreview' );
+                $oReview->oxreviews__oxobjectid = new oxField( $oProduct->getId() );
+                $oReview->oxreviews__oxtype     = new oxField( 'oxarticle' );
+                $oReview->oxreviews__oxtext     = new oxField( $sReviewText, oxField::T_RAW );
+                $oReview->oxreviews__oxlang     = new oxField( oxLang::getInstance()->getBaseLanguage() );
+                $oReview->oxreviews__oxuserid   = new oxField( $oUser->getId() );
+                $oReview->oxreviews__oxrating   = new oxField( ( $dRating !== null ) ? $dRating : null );
+                $oReview->save();
+            }
         }
     }
 
@@ -609,6 +600,10 @@ class Details extends oxUBase
      */
     public function addToRecomm()
     {
+        if (!$this->getViewConfig()->getShowListmania()) {
+            return;
+        }
+
         $sRecommText = trim( ( string ) oxConfig::getParameter( 'recomm_txt' ) );
         $sRecommList = oxConfig::getParameter( 'recomm' );
         $sArtId      = oxConfig::getParameter( 'anid' );
@@ -628,7 +623,11 @@ class Details extends oxUBase
     public function addTags()
     {
         $sTag  = $this->getConfig()->getParameter('newTags', true );
-        $sTag .= " ".getStr()->html_entity_decode( $this->getConfig()->getParameter( 'highTags', true ) );
+        $sHighTag  = $this->getConfig()->getParameter( 'highTags', true );
+        if ( !$sTag && !$sHighTag) {
+            return;
+        }
+        $sTag .= " ".getStr()->html_entity_decode( $sHighTag );
 
         $oProduct = $this->getProduct();
         $oProduct->addTag( $sTag );
@@ -711,6 +710,8 @@ class Details extends oxUBase
     /**
      * Returns tag cloud
      *
+     * @deprecated should be used details::getTagCloudManager()
+     *
      * @return string
      */
     public function getTagCloud()
@@ -723,6 +724,18 @@ class Details extends oxUBase
         return $this->_sTagCloud;
     }
 
+    /**
+     * Returns tag cloud manager class
+     *
+     * @return oxTagCloud
+     */
+    public function getTagCloudManager()
+    {
+        $oManager = oxNew( "oxTagCloud" );
+        $oManager->setExtendedMode( true );
+        $oManager->setProductId( $this->getProduct()->getId() );
+        return $oManager;
+    }
 
     /**
      * Returns login form anchor
@@ -787,15 +800,17 @@ class Details extends oxUBase
             $sListType = oxConfig::getParameter( 'listtype' );
             if ( 'vendor' == $sListType ) {
                 $this->_iLinkType = OXARTICLE_LINKTYPE_VENDOR;
-        } elseif ( 'manufacturer' == $sListType ) {
-                $this->_iLinkType = OXARTICLE_LINKTYPE_MANUFACTURER;
+            } elseif ( 'manufacturer' == $sListType ) {
+                    $this->_iLinkType = OXARTICLE_LINKTYPE_MANUFACTURER;
             } elseif ( 'tag' == $sListType ) {
-                $this->_iLinkType = OXARTICLE_LINKTYPE_TAG;
-        } else {
+                    $this->_iLinkType = OXARTICLE_LINKTYPE_TAG;
+            } elseif ( 'recommlist' == $sListType ) {
+                    $this->_iLinkType = OXARTICLE_LINKTYPE_RECOMM;
+            } else {
                 $this->_iLinkType = OXARTICLE_LINKTYPE_CATEGORY;
 
                 // price category has own type..
-                if ( ( $oCat = $this->getCategory() ) && $oCat->isPriceCategory() ) {
+                if ( ( $oCat = $this->getActCategory() ) && $oCat->isPriceCategory() ) {
                     $this->_iLinkType = OXARTICLE_LINKTYPE_PRICECATEGORY;
                 }
             }
@@ -812,6 +827,25 @@ class Details extends oxUBase
     public function getVariantList()
     {
         return $this->loadVariantInformation();
+    }
+
+    /**
+     * Returns variant lists of current product
+     * excludes currently viewed product
+     *
+     * @return array
+     */
+    public function getVariantListExceptCurrent()
+    {
+        $oList = $this->getVariantList();
+        if (is_object($oList)) {
+            $oList = clone $oList;
+        }
+        $sOxid = $this->getProduct()->getId();
+        if (isset($oList[$sOxid])) {
+            unset($oList[$sOxid]);
+        }
+        return $oList;
     }
 
     /**
@@ -1126,6 +1160,10 @@ class Details extends oxUBase
      */
     public function getSimilarRecommLists()
     {
+        if (!$this->getViewConfig()->getShowListmania()) {
+            return false;
+        }
+
         if ( $this->_oRecommList === null ) {
             $this->_oRecommList = false;
             if ( $oProduct = $this->getProduct() ) {
@@ -1287,8 +1325,12 @@ class Details extends oxUBase
      */
     public function getCanonicalUrl()
     {
-        if ( $oProduct = $this->getProduct() ) {
-            return $oProduct->getMainLink();
+        if ( ( $oProduct = $this->getProduct() ) ) {
+            $oUtils = oxUtilsUrl::getInstance();
+            if ( oxUtils::getInstance()->seoIsActive() ) {
+                return $oUtils->processUrl( $oProduct->getBaseSeoLink( $oProduct->getLanguage(), true ) );
+            }
+            return $oUtils->processUrl( $oProduct->getBaseStdLink( $oProduct->getLanguage()  ) );
         }
     }
 
@@ -1299,13 +1341,73 @@ class Details extends oxUBase
      */
     public function isMdVariantView()
     {
-        if(!is_null($this->_blMdView))
-            return $this->_blMdView;
-
-        $iMaxMdDepth = $this->getProduct()->getMdVariants()->getMaxDepth();
-
-        $this->_blMdView = ($iMaxMdDepth > 1);
+        if ( $this->_blMdView === null ) {
+            $this->_blMdView = false;
+            if ( $this->getConfig()->getConfigParam( 'blUseMultidimensionVariants' ) ) {
+                $iMaxMdDepth = $this->getProduct()->getMdVariants()->getMaxDepth();
+                $this->_blMdView = ($iMaxMdDepth > 1);
+            }
+        }
 
         return $this->_blMdView;
     }
+
+    /**
+     * Checks should persistent parametere input field be displayed
+     *
+     * @return bool
+     */
+    public function isPersParam()
+    {
+        $oProduct = $this->getProduct();
+        return $oProduct->oxarticles__oxisconfigurable->value;
+    }
+
+    /**
+     * Returns tag separator
+     *
+     * @return string
+     */
+    public function getTagSeparator()
+    {
+        $sSepartor = $this->getConfig()->getConfigParam("sTagSeparator");
+        return $sSepartor;
+    }
+
+    /**
+     * Returns seo parameter to filter meta data by it e.g. article
+     * meta data for active category
+     *
+     * @return string
+     */
+    protected function _getMetaSeoParam()
+    {
+        $sParam = null;
+        switch ( $this->getLinkType() ) {
+            case OXARTICLE_LINKTYPE_VENDOR:
+                $sParam = $this->getVendorId();
+                break;
+            case OXARTICLE_LINKTYPE_MANUFACTURER:
+                $sParam = $this->getManufacturerId();
+                break;
+            case OXARTICLE_LINKTYPE_TAG:
+                if ( ( $oTag = $this->getActTag() ) ) {
+                    $sParam = $oTag->sTag;
+                }
+                break;
+            case OXARTICLE_LINKTYPE_RECOMM:
+                if ( ( $oRecomm = $this->getActiveRecommList() ) ) {
+                    $sParam = $oRecomm->getId();
+                }
+                break;
+            default:
+                if ( ( $oCat = $this->getActCategory() ) ) {
+                    $sParam = $oCat->getId();
+                }
+                break;
+        }
+
+        return $sParam;
+    }
+
 }

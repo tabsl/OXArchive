@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxsysrequirements.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: oxsysrequirements.php 26930 2010-03-29 13:30:53Z alfonsas $
  */
 
 /**
@@ -129,6 +129,7 @@ class oxSysRequirements
                                           'mysql_connect',
                                           'gd_info',
                                           'mb_string',
+                                          'curl',
                                       );
 
                 $aRequiredPHPExtensions[] = 'bc_math';
@@ -144,15 +145,29 @@ class oxSysRequirements
                                    );
 
             $aRequiredServerConfigs = array(
-                                          'mod_rewrite'
+                                          'mod_rewrite',
+                                          'server_permissions'
                                       );
 
 
+            if ( isAdmin() ) {
+                $aRequiredServerConfigs[] = 'mysql_version';
+            }
             $this->_aRequiredModules = array_fill_keys( $aRequiredPHPExtensions, 'php_extennsions' ) +
                                        array_fill_keys( $aRequiredPHPConfigs, 'php_config' ) +
                                        array_fill_keys( $aRequiredServerConfigs, 'server_config' );
         }
         return $this->_aRequiredModules;
+    }
+
+    /**
+     * Checks if curl extension is loaded
+     *
+     * @return integer
+     */
+    public function checkCurl()
+    {
+        return extension_loaded( 'curl' ) ? 2 : 1;
     }
 
     /**
@@ -166,6 +181,69 @@ class oxSysRequirements
     }
 
     /**
+     * Checks if permissions on servers are correctly setup
+     *
+     * @param string $sPath    check path [optional]
+     * @param int    $iMinPerm min permission level, default 777 [optional]
+     *
+     * @return int
+     */
+    public function checkServerPermissions( $sPath = null, $iMinPerm = 777 )
+    {
+        $sVerPrefix = '';
+
+        clearstatcache();
+        $sPath = $sPath ? $sPath : getShopBasePath();
+
+        // special config file check
+        $sFullPath = $sPath . "config.inc.php";
+        if ( !is_readable( $sFullPath ) ||
+             ( isAdmin() && is_writable( $sFullPath ) ) ||
+             ( !isAdmin() && !is_writable( $sFullPath ) )
+           ) {
+            return 0;
+        }
+
+        $aPathsToCheck = array(
+                            "out/pictures{$sVerPrefix}/",
+                            "out/media/",
+                            "out/basic/src/",
+                            "log/",
+                            "tmp{$sVerPrefix}/"
+                            );
+
+        $iModStat = 2;
+        $sPathToCheck = reset( $aPathsToCheck );
+        while ( $sPathToCheck ) {
+            $sFullPath = $sPath.$sPathToCheck;
+
+            // missing file/folder?
+            if ( !file_exists( $sFullPath ) ) {
+                $iModStat = 0;
+                break;
+            }
+
+            if ( is_dir( $sFullPath ) ) {
+                // adding subfolders
+                foreach ( glob( $sFullPath."*", GLOB_ONLYDIR ) as $sNewFolder ) {
+                    $aPathsToCheck[] = str_replace( $sPath, "", $sNewFolder ) . "/";
+                }
+            }
+
+            // testing if file permissions >= $iMinPerm
+            //if ( ( (int) substr( decoct( fileperms( $sFullPath ) ), 2 ) ) < $iMinPerm ) {
+            if ( !is_readable( $sFullPath ) || !is_writable( $sFullPath ) ) {
+                $iModStat = 0;
+                break;
+            }
+
+            $sPathToCheck = next( $aPathsToCheck );
+        }
+
+        return $iModStat;
+    }
+
+    /**
      * Checks if mod_rewrite extension is loaded
      *
      * @return integer
@@ -176,7 +254,7 @@ class oxSysRequirements
         $sHost   = $_SERVER['HTTP_HOST'];
         $sScript = $_SERVER['SCRIPT_NAME'];
         if ( $sScript && $rFp = @fsockopen( $sHost, 80, $iErrNo, $sErrStr, 10 ) ) {
-            $sScript = str_replace( basename($sScript), '../admin/test.php', $sScript );
+            $sScript = str_replace( basename($sScript), '../oxseo.php?mod_rewrite_module_is=off', $sScript );
 
             $sReq  = "POST $sScript HTTP/1.1\r\n";
             $sReq .= "Host: $sHost\r\n";
@@ -328,7 +406,7 @@ class oxSysRequirements
     public function checkMysqlConnect()
     {
         // MySQL module for MySQL5
-        $iModStat = extension_loaded( 'mysql' ) ? 2 : 0;
+        $iModStat = ( extension_loaded( 'mysql' ) || extension_loaded( 'mysqli' ) || extension_loaded( 'pdo_mysql' ) ) ? 2 : 0;
         // client version must be >=5
         if ( $iModStat ) {
             $sClientVersion = mysql_get_client_info();
@@ -341,7 +419,36 @@ class oxSysRequirements
                 // mantis#0001003: Problems with MySQL version 5.0.37
                 $iModStat = 0;
             }
+            if (strpos($sClientVersion, 'mysqlnd') !== false) {
+                // PHP 5.3 includes new mysqlnd extension
+                $iModStat = 1;
+            }
         }
+        return $iModStat;
+    }
+
+    /**
+     * Checks if current mysql version matches requirements ( >=5 )
+     *
+     * @param string $sVersion MySQL version
+     *
+     * @return int
+     */
+    public function checkMysqlVersion( $sVersion = null )
+    {
+        if ( $sVersion === null ) {
+            $aRez = oxDb::getDb()->getAll( "SHOW VARIABLES LIKE 'version'" );
+            foreach ( $aRez as $aRecord ) {
+                $sVersion = $aRecord[1];
+                break;
+            }
+        }
+
+        $iModStat = 0;
+        if ( version_compare( $sVersion, '5', '>=' ) && version_compare( $sVersion, '5.0.37', '<>' ) ) {
+            $iModStat = 2;
+        }
+
         return $iModStat;
     }
 
@@ -410,7 +517,7 @@ class oxSysRequirements
     public function checkZendOptimizer()
     {
         $iMinStat = 0;
-        $iModStat = extension_loaded( 'Zend Optimizer' ) ? 2 : $iMinStat;
+        $iModStat = (extension_loaded( 'Zend Optimizer' ) || (function_exists('zend_loader_enabled') && zend_loader_enabled())) ? 2 : $iMinStat;
         $sHost   = $_SERVER['HTTP_HOST'];
         $sScript = $_SERVER['SCRIPT_NAME'];
         if ( $iModStat > $iMinStat && $sScript && $rFp = @fsockopen( $sHost, 80, $iErrNo, $sErrStr, 10 ) ) {

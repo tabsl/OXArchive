@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: list_review.php 22642 2009-09-25 12:13:51Z rimvydas.paskevicius $
+ * @version   SVN: $Id: list_review.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -113,7 +113,7 @@ class List_Review extends Article_List
         $sLangTag = oxLang::getInstance()->getLanguageTag( $this->_iEditLang );
 
         $sSql  = "select oxreviews.oxid, oxreviews.oxcreate, oxreviews.oxtext, oxreviews.oxobjectid, {$sArtTable}.oxparentid, {$sArtTable}.oxtitle{$sLangTag} as oxtitle, {$sArtTable}.oxvarselect{$sLangTag} as oxvarselect, oxparentarticles.oxtitle{$sLangTag} as parenttitle, ";
-        $sSql .= "concat( {$sArtTable}.oxtitle{$sLangTag}, if(isnull(oxparentarticles.oxtitle{$sLangTag}), '', oxparentarticles.oxtitle{$sLangTag}), {$sArtTable}.oxvarselect_1) as arttitle from oxreviews ";
+        $sSql .= "concat( {$sArtTable}.oxtitle{$sLangTag}, if(isnull(oxparentarticles.oxtitle{$sLangTag}), '', oxparentarticles.oxtitle{$sLangTag}), {$sArtTable}.oxvarselect{$sLangTag}) as arttitle from oxreviews ";
         $sSql .= "left join $sArtTable as {$sArtTable} on {$sArtTable}.oxid=oxreviews.oxobjectid and 'oxarticle' = oxreviews.oxtype ";
         $sSql .= "left join $sArtTable as oxparentarticles on oxparentarticles.oxid = {$sArtTable}.oxparentid ";
         $sSql .= "where 1 and oxreviews.oxlang = '{$this->_iEditLang}' ";
@@ -136,6 +136,10 @@ class List_Review extends Article_List
         $sLangTag = oxLang::getInstance()->getLanguageTag( $this->_iEditLang );
 
         $sSql = parent::_prepareWhereQuery( $aWhere, $sSql );
+
+        //removing parent id checking from sql
+        $sStr = "/\s+and\s+".getViewName( 'oxarticles' )."\.oxparentid\s*=\s*''/";
+        $sSql = preg_replace( $sStr, " ", $sSql );
 
         // if searching in article title field, updating sql for this case
         if ( $this->_aWhere[$sArtTitleField] ) {

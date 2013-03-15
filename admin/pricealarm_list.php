@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: pricealarm_list.php 17243 2009-03-16 15:16:57Z arvydas $
+ * @version   SVN: $Id: pricealarm_list.php 26692 2010-03-20 08:55:36Z arvydas $
  */
 
 /**
@@ -103,8 +103,9 @@ class PriceAlarm_List extends oxAdminList
 
             if ( $oArticle->oxarticles__oxparentid->value && !$oArticle->oxarticles__oxtitle->value) {
                 $oParent = oxNew( "oxarticle" );
-                $oParent->load($oArticle->oxarticles__oxparentid->value);
-                $oListItem->oxpricealarm__articletitle = new oxField( $oParent->oxarticles__oxtitle->value." ".$oArticle->oxarticles__oxvarselect->value );
+                $oParent->load( $oArticle->oxarticles__oxparentid->value );
+                $sFieldName = "oxpricealarm__articletitle";
+                $oListItem->$sFieldName = new oxField( $oParent->oxarticles__oxtitle->value . " " . $oArticle->oxarticles__oxvarselect->value );
             }
 
             $oListItem->fpricealarmprice = $myLang->formatCurrency( $oListItem->oxpricealarm__oxprice->value, $oThisCurr);
@@ -131,19 +132,16 @@ class PriceAlarm_List extends oxAdminList
      */
     public function buildWhere()
     {
-        $this->_aWhere = parent::buildWhere();
-
-        if ( !is_array($this->_aWhere))
-            $this->_aWhere = array();
+        $this->_aWhere = ( array ) parent::buildWhere();
 
         // updating price fields values for correct search in DB
         if ( $this->_aWhere['oxpricealarm.oxprice'] ) {
-            $sPriceParam = (double) str_replace(array('%',','), array('', '.'), $this->_aWhere['oxpricealarm.oxprice']);
+            $sPriceParam = (double) str_replace( array( '%', ',' ), array( '', '.' ), $this->_aWhere['oxpricealarm.oxprice'] );
             $this->_aWhere['oxpricealarm.oxprice'] = '%'. $sPriceParam. '%';
         }
 
         if ( $this->_aWhere['oxarticles.oxprice'] ) {
-            $sPriceParam = (double) str_replace(array('%',','), array('', '.'), $this->_aWhere['oxarticles.oxprice']);
+            $sPriceParam = (double) str_replace( array( '%', ',' ), array( '', '.' ), $this->_aWhere['oxarticles.oxprice'] );
             $this->_aWhere['oxarticles.oxprice'] = '%'. $sPriceParam. '%';
         }
 

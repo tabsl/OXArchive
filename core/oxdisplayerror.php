@@ -15,17 +15,17 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxdisplayerror.php, v 1.0 2007.8.23 17.34.22 mathiasf Exp
+ * @version   SVN: $Id: oxdisplayerror.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
  * simple class to add a error message to display
  */
-class oxDisplayError implements oxDisplayErrorInterface
+class oxDisplayError implements oxIDisplayError
 {
     /**
      * Error message

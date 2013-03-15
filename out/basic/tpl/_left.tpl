@@ -1,6 +1,6 @@
 [{if $oView->showSearch() }]
     <strong class="h2 search">[{ oxmultilang ident="INC_LEFTITEM_PRODUCTSEARCH" }]</strong>
-    <form action="[{ $oViewConf->getBaseDir() }]index.php" method="get" class="search" id="f.search">
+    <form action="[{ $oViewConf->getSelfActionLink() }]" method="get" class="search" id="f.search">
         <p>
             [{ $oViewConf->getHiddenSid() }]
             <input type="hidden" name="cl" value="search">

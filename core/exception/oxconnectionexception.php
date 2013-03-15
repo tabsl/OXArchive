@@ -15,13 +15,12 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxconnectionexception.php, v 1.0 2007.7.31 09.54.24 mathiasf Exp
+ * @version   SVN: $Id: oxconnectionexception.php 25635 2010-02-04 21:29:50Z alfonsas $
  */
-
 
 /**
  * exception class for all kind of connection problems to external servers, e.g.:

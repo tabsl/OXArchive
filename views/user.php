@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: user.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: user.php 26826 2010-03-25 09:25:31Z arvydas $
  */
 
 /**
@@ -39,12 +39,6 @@ class User extends oxUBase
      * @var bool
      */
     protected $_blIsOrderStep = true;
-
-    /**
-     * Must be filled fields
-     * @var array
-     */
-    protected $_aMustFillFields = null;
 
     /**
      * Revers of option blOrderDisWithoutReg
@@ -196,24 +190,6 @@ class User extends oxUBase
     }
 
     /**
-     * Template variable getter. Returns array of must-be-filled-fields
-     *
-     * @return array
-     */
-    public function getMustFillFields()
-    {
-        // passing must-be-filled-fields info
-        if ( $this->_aMustFillFields === null ) {
-            $this->_aMustFillFields = false;
-            $aMustFillFields = $this->getConfig()->getConfigParam( 'aMustFillFields');
-            if ( is_array( $aMustFillFields ) ) {
-                $this->_aMustFillFields = array_flip( $aMustFillFields );
-            }
-        }
-        return $this->_aMustFillFields;
-    }
-
-    /**
      * Template variable getter. Returns reverse option blOrderDisWithoutReg
      *
      * @return bool
@@ -274,8 +250,8 @@ class User extends oxUBase
         if ( $this->_sOrderRemark === null ) {
             $this->_sOrderRemark = false;
             if ( $sOrderRemark = oxSession::getVar( 'ordrem' ) ) {
-                $this->_sOrderRemark = $sOrderRemark;
-            } elseif ($sOrderRemark = oxConfig::getParameter( 'order_remark' )) {
+                $this->_sOrderRemark = oxConfig::checkSpecialChars( $sOrderRemark );
+            } elseif ( $sOrderRemark = oxConfig::getParameter( 'order_remark' ) ) {
                 $this->_sOrderRemark = $sOrderRemark;
             }
         }
@@ -309,9 +285,9 @@ class User extends oxUBase
     /**
      * Sets if show user shipping address
      *
-     * @deprecated
-     *
      * @param bool $blShowShipAddress if TRUE - shipping address is shown
+     *
+     * @deprecated
      *
      * @return null
      */
@@ -379,8 +355,7 @@ class User extends oxUBase
             if ( $this->showShipAddress() ) {
                 $sAddressId = $this->_getSelectedAddress();
                 if ( $sAddressId && $sAddressId != '-1' ) {
-                    $oAdress = oxNew( 'oxbase' );
-                    $oAdress->init( 'oxaddress' );
+                    $oAdress = oxNew( 'oxaddress' );
                     if ( $oAdress->load( $sAddressId ) ) {
                         $this->_oDelAddress = $oAdress;
                         $this->_aViewData['deladr'] = null;

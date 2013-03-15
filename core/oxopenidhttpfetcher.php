@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxopenidhttpfetcher.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: oxopenidhttpfetcher.php 25471 2010-02-01 14:35:11Z alfonsas $
  */
 
 require_once "Auth/Yadis/HTTPFetcher.php";
@@ -197,8 +197,7 @@ class oxOpenIdHTTPFetcher extends Auth_Yadis_ParanoidHTTPFetcher
         Auth_OpenID::log("Successfully fetched '%s': POST response code %s",
                          $url, $code);
 
-        return new Auth_Yadis_HTTPResponse($url, $code,
-                                           $new_headers, $body);
+        return new Auth_Yadis_HTTPResponse($url, $code, $new_headers, $body);
     }
 
     /**

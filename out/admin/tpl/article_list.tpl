@@ -54,9 +54,21 @@ window.onload = function ()
         <div class="r1"><div class="b1">
         <select name="art_category" class="editinput" onChange="Javascript:document.search.lstrt.value=0;document.search.submit();">
         <option value="">[{ oxmultilang ident="ARTICLE_LIST_ALLPRODUCTS" }]</option>
+        <optgroup label="[{ oxmultilang ident="GENERAL_CATEGORY" }]">
         [{foreach from=$cattree->aList item=pcat}]
-        <option value="[{ $pcat->oxcategories__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value }]</option>
+        <option value="cat@@[{ $pcat->oxcategories__oxid->value }]" [{ if $pcat->selected}]SELECTED[{/if}]>[{ $pcat->oxcategories__oxtitle->value }]</option>
         [{/foreach}]
+        </optgroup>
+        <optgroup label="[{ oxmultilang ident="GENERAL_MANUFACTURER" }]">
+        [{foreach from=$mnftree item=pmnf}]
+        <option value="mnf@@[{ $pmnf->oxmanufacturers__oxid->value }]" [{ if $pmnf->selected}]SELECTED[{/if}]>[{ $pmnf->oxmanufacturers__oxtitle->value }]</option>
+        [{/foreach}]
+        </optgroup>
+        <optgroup label="[{ oxmultilang ident="GENERAL_VENDOR" }]">
+        [{foreach from=$vndtree item=pvnd}]
+        <option value="vnd@@[{ $pvnd->oxvendor__oxid->value }]" [{ if $pvnd->selected}]SELECTED[{/if}]>[{ $pvnd->oxvendor__oxtitle->value }]</option>
+        [{/foreach}]
+        </optgroup>
         </select>
         <select name="pwrsearchfld" class="editinput" onChange="Javascript:document.search.lstrt.value=0;document.search.sort.value=this.value;document.forms.search.submit();">
             [{foreach from=$pwrsearchfields key=field item=desc}]

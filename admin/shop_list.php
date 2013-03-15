@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: shop_list.php 22487 2009-09-22 07:03:10Z arvydas $
+ * @version   SVN: $Id: shop_list.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -30,6 +30,11 @@
  */
 class Shop_List extends oxAdminList
 {
+    /**
+     * Forces main frame update is set TRUE
+     *
+     * @var bool
+     */
     protected $_blUpdateMain = false;
 
     /**
@@ -132,12 +137,9 @@ class Shop_List extends oxAdminList
     {
         // we override this to add our shop if we are not malladmin
         $this->_aWhere = parent::buildWhere();
-
-        $blisMallAdmin = oxSession::getVar( 'malladmin' );
-        if ( !$blisMallAdmin) {
+        if ( !oxSession::getVar( 'malladmin' ) ) {
             // we only allow to see our shop
-            $sShopID = oxSession::getVar( "actshop" );
-            $this->_aWhere['oxshops.oxid'] = "$sShopID";
+            $this->_aWhere['oxshops.oxid'] = oxSession::getVar( "actshop" );
         }
 
         return $this->_aWhere;

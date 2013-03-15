@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: manufacturer_seo.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: manufacturer_seo.php 25640 2010-02-05 06:42:24Z alfonsas $
  */
 
 /**
@@ -27,6 +27,11 @@
  */
 class Manufacturer_Seo extends Object_Seo
 {
+    /**
+     * Render manufacturer seo view.
+     *
+     * @return string
+     */
     public function render()
     {
         $this->_aViewData['blShowSuffixEdit'] = true;
@@ -51,9 +56,9 @@ class Manufacturer_Seo extends Object_Seo
 
     /**
      * Returns objects seo url
-
+     *
      * @param oxmanufacturer $oManufacturer active manufacturer object
-
+     *
      * @return string
      */
     protected function _getSeoUrl( $oManufacturer )
@@ -75,7 +80,7 @@ class Manufacturer_Seo extends Object_Seo
     /**
      * Updating showsuffix field
      *
-     * return null
+     * @return null
      */
     public function save()
     {

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxpdf.php 23188 2009-10-13 06:59:38Z sarunas $
+ * @version   SVN: $Id: oxpdf.php 25471 2010-02-01 14:35:11Z alfonsas $
  */
 
 $myConfig = oxConfig::getInstance();
@@ -231,7 +231,7 @@ class oxPDF extends TCPDF
         $myConfig = oxConfig::getInstance();
         $unicode  = $myConfig->isUtf();
         $encoding = $unicode ? 'UTF-8' : oxLang::getInstance()->translateString( "charset" );
-        //#1161: Thin line and unknown characters on every pdf page 
+        //#1161: Thin line and unknown characters on every pdf page
         //we use myorder::pdfFooter()
         $this->setPrintFooter(false);
 
@@ -352,16 +352,16 @@ class oxPDF extends TCPDF
     /**
      * Put a hyperlink
      *
-     * @param object $URL link url
-     * @param object $txt link text
+     * @param object $sURL  link url
+     * @param object $sText link text
      *
      * @return null
      */
-    public function PutLink($URL, $txt)
+    public function PutLink($sURL, $sText)
     {
         $this->SetTextColor( 0, 0, 255 );
         $this->SetStyle( 'U', true );
-        $this->Write( 5, $txt, $URL );
+        $this->Write( 5, $sText, $sURL );
         $this->SetStyle( 'U', false );
         $this->SetTextColor( 0 );
     }

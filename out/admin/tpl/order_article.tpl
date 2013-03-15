@@ -150,15 +150,27 @@ function StornoThisArticle( sID)
     <b>[{ oxmultilang ident="GENERAL_ATALL" }] : </b><br>
     <table border="0" cellspacing="0" cellpadding="0" id="order.info">
     <tr>
-    <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_INETTO" }]</td>
-    <td class="edittext" align="right"><b>[{ $edit->ftotalnetsum }]</b></td>
-    <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
-    </tr>
-    <tr>
     <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_IBRUTTO" }]</td>
     <td class="edittext" align="right"><b>[{ $edit->ftotalbrutsum }]</b></td>
     <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
     </tr>
+    <tr>
+    <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_DISCOUNT" }]&nbsp;&nbsp;</td>
+    <td class="edittext" align="right"><b>- [{ $edit->fdiscount }]</b></td>
+    <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
+    </tr>
+    <tr>
+    <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_INETTO" }]</td>
+    <td class="edittext" align="right"><b>[{ $edit->ftotalnetsum }]</b></td>
+    <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
+    </tr>
+    [{foreach key=iVat from=$aProductVats item=dVatPrice}]
+    <tr>
+    <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_IVAT" }] ([{ $iVat }]%)</td>
+    <td class="edittext" align="right"><b>[{ $dVatPrice }]</b></td>
+    <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
+    </tr>
+    [{/foreach}]
     [{if $edit->totalvouchers}]
     <tr>
     <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_VOUCHERS" }]</td>
@@ -174,11 +186,6 @@ function StornoThisArticle( sID)
     <tr>
     <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_PAYCOST" }]&nbsp;&nbsp;</td>
     <td class="edittext" align="right"><b>[{ $edit->fpaycost }]</b></td>
-    <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
-    </tr>
-    <tr>
-    <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_DISCOUNT" }]&nbsp;&nbsp;</td>
-    <td class="edittext" align="right"><b>- [{ $edit->fdiscount }]</b></td>
     <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] &euro; [{/if}]</b></td>
     </tr>
     [{if $edit->oxorder__oxwrapcost->value }]

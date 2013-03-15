@@ -616,7 +616,11 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
                     if ( me.aIdentFields ) { //
                         for ( var c=0, sIdent; sIdent = me.aIdentFields[c]; c++ ) {
                             if ( oData[sIdent] ) {
-                                sNextAction += '&'+sIdent + '[]=' + oData[sIdent];
+                                var dataString = oData[sIdent];
+                                //T2010-01-06
+                                //fixing #1580
+                                dataString = escape(dataString);
+                                sNextAction += '&'+sIdent + '[]=' + dataString;
                             }
                         }
                     }
@@ -642,6 +646,7 @@ YAHOO.oxid.aoc = function( elContainer , aColumnDefs , sDataSource , oConfigs )
                          failure:  me.onFailure,
                          argument: [ oSource, oTarget ]
                        };
+
         YAHOO.util.Connect.asyncRequest( 'GET', me.getDropUrl() + '&' + me.getDropParams() + '&' + me.getDropAction(), callback, null );
     };
 

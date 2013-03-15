@@ -15,19 +15,25 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: navigation.php 23384 2009-10-20 12:58:12Z vilma $
+ * @version   SVN: $Id: navigation.php 26850 2010-03-25 15:33:10Z arvydas $
  */
-
-/**
+ /**
  * Administrator GUI navigation manager class.
  * @package admin
  */
 class Navigation extends oxAdminView
 {
+    /**
+     * Allowed host url
+     *
+     * @var string
+     */
+    protected $_sAllowedHost = "http://admin.oxid-esales.com";
+
     /**
      * Executes parent method parent::render(), generates menu HTML code,
      * passes data to Smarty engine, returns name of template file "nav_frame.tpl".
@@ -39,23 +45,23 @@ class Navigation extends oxAdminView
         parent::render();
         $myUtilsServer = oxUtilsServer::getInstance();
 
-        $sItem = oxConfig::getParameter( "item");
-        if ( !isset( $sItem) || !$sItem ) {
+        $sItem = oxConfig::getParameter("item");
+        $sItem = $sItem ? basename( $sItem ) : false;
+        if ( !$sItem ) {
             $sItem = "nav_frame.tpl";
-
-            $aFavorites = oxConfig::getParameter( "favorites");
-            if(is_array($aFavorites)) {
-                $myUtilsServer->setOxCookie('oxidadminfavorites',implode('|',$aFavorites));
+            $aFavorites = oxConfig::getParameter( "favorites" );
+            if ( is_array( $aFavorites ) ) {
+                $myUtilsServer->setOxCookie('oxidadminfavorites', implode( '|', $aFavorites ) );
             }
-
         } else {
+            $oNavTree = $this->getNavigation();
 
             // set menu structure
-            $this->_aViewData["menustructure"] =  $this->getNavigation()->getDomXml()->documentElement->childNodes;
+            $this->_aViewData["menustructure"] = $oNavTree->getDomXml()->documentElement->childNodes;
 
             // version patch strin
-            $sVersion = str_replace( array("EE.","PE."), "", $this->_sShopVersion);
-            $this->_aViewData["sVersion"] =  trim($sVersion);
+            $sVersion = str_replace( array ("EE.", "PE."), "", $this->_sShopVersion);
+            $this->_aViewData["sVersion"] = trim($sVersion);
 
             //checking requirements if this is not nav frame reload
             if ( !oxConfig::getParameter( "navReload" ) ) {
@@ -65,21 +71,21 @@ class Navigation extends oxAdminView
                 }
             } else {
                 //removing reload param to force requirements checking next time
-                oxSession::deleteVar( "navReload" );
+                oxSession::deleteVar("navReload");
             }
 
             // favorite navigation
-            $aFavorites = explode('|',$myUtilsServer->getOxCookie('oxidadminfavorites'));
+            $aFavorites = explode( '|', $myUtilsServer->getOxCookie( 'oxidadminfavorites' ) );
 
-            if ( is_array ( $aFavorites ) && count( $aFavorites ) ) {
-                 $this->_aViewData["menufavorites"] = $this->getNavigation()->getListNodes($aFavorites);
-                 $this->_aViewData["aFavorites"]    = $aFavorites;
+            if ( is_array( $aFavorites ) && count( $aFavorites ) ) {
+                $this->_aViewData["menufavorites"] = $oNavTree->getListNodes( $aFavorites );
+                $this->_aViewData["aFavorites"]    = $aFavorites;
             }
 
             // history navigation
-            $aHistory = explode('|',$myUtilsServer->getOxCookie('oxidadminhistory'));
-            if(is_array($aHistory) && count($aHistory)) {
-                $this->_aViewData["menuhistory"] = $this->getNavigation()->getListNodes($aHistory);
+            $aHistory = explode( '|', $myUtilsServer->getOxCookie( 'oxidadminhistory' ) );
+            if ( is_array( $aHistory ) && count( $aHistory ) ) {
+                $this->_aViewData["menuhistory"] = $oNavTree->getListNodes( $aHistory );
             }
 
             // open history node ?
@@ -91,16 +97,37 @@ class Navigation extends oxAdminView
 
         $sWhere = '';
         $blisMallAdmin = oxSession::getVar( 'malladmin' );
-        if ( !$blisMallAdmin) {
+        if (!$blisMallAdmin) {
             // we only allow to see our shop
-            $sShopID = oxSession::getVar( "actshop" );
+            $sShopID = oxSession::getVar("actshop");
             $sWhere = "where oxshops.oxid = '$sShopID'";
         }
 
-        $oShoplist->selectString( "select ".$oBaseShop->getSelectFields()." from " . $oBaseShop->getViewName() . " $sWhere" );
+        $oShoplist->selectString("select ".$oBaseShop->getSelectFields()." from ".$oBaseShop->getViewName()." $sWhere");
         $this->_aViewData['shoplist'] = $oShoplist;
 
         return $sItem;
+    }
+
+    /**
+     * Changing active shop
+     *
+     * @return string
+     */
+    public function chshp()
+    {
+        parent::chshp();
+
+        // informing about basefrm parameters
+        $this->_aViewData['loadbasefrm'] = true;
+        $sListView = oxConfig::getParameter( 'listview' );
+        $sEditView = oxConfig::getParameter( 'editview' );
+        $iActEdit  = oxConfig::getParameter( 'actedit' );
+
+
+        $this->_aViewData['listview'] = $sListView;
+        $this->_aViewData['editview'] = $sEditView;
+        $this->_aViewData['actedit']  = $iActEdit;
     }
 
     /**
@@ -111,32 +138,26 @@ class Navigation extends oxAdminView
     public function logout()
     {
         $mySession = $this->getSession();
-        $myConfig  = $this->getConfig();
+        $myConfig = $this->getConfig();
 
-        $oUser = oxNew( "oxuser" );
+        $oUser = oxNew("oxuser");
         $oUser->logout();
-
-        // dodger - Task #1364 - Logout-Button
-        // store
-        $sSID = $mySession->getId();
 
         // kill session
         $mySession->destroy();
 
         // delete also, this is usually not needed but for security reasons we execute still
-        if ( $myConfig->getConfigParam( 'blAdodbSessionHandler' ) ) {
+        if ( $myConfig->getConfigParam('blAdodbSessionHandler' ) ) {
             $oDb = oxDb::getDb();
-            $sSQL = "delete from oxsessions where SessionID = ".$oDb->quote( $sSID );
-            $oDb->execute( $sSQL );
+            $oDb->execute("delete from oxsessions where SessionID = ".$oDb->quote($mySession->getId()));
         }
 
         //reseting content cache if needed
-        $blDeleteCache = $this->getConfig()->getConfigParam( 'blClearCacheOnLogout' );
-        if ( $blDeleteCache ) {
-            $this->resetContentCache( $blDeleteCache );
+        if ( $blDeleteCache = $myConfig->getConfigParam('blClearCacheOnLogout' ) ) {
+            $this->resetContentCache($blDeleteCache);
         }
 
-        oxUtils::getInstance()->redirect( 'index.php' );
+        oxUtils::getInstance()->redirect('index.php');
     }
 
     /**
@@ -146,40 +167,36 @@ class Navigation extends oxAdminView
      */
     public function exturl()
     {
-        $myOxUtlis         = oxUtils::getInstance();
-        $blLoadDynContents = $this->getConfig()->getConfigParam( 'blLoadDynContents' );
-        $sAllowedHost      = "http://admin.oxid-esales.com";
+        $myUtils = oxUtils::getInstance();
+        if ( $sUrl = oxConfig::getParameter( "url" ) ) {
 
-        $sUrl = oxConfig::getParameter( "url");
-        if ( isset( $sUrl) || $sUrl ) {
+            // Limit external url's only allowed host
+            $myConfig = $this->getConfig();
+            if ( $myConfig->getConfigParam('blLoadDynContents') && strpos( $sUrl, $this->_sAllowedHost ) === 0 ) {
 
-             // Limit external url's only allowed host
-            if( $blLoadDynContents && strpos($sUrl,$sAllowedHost) === 0 ) {
+                $sPath = $myConfig->getConfigParam('sCompileDir') . "/" . md5( $sUrl ) . '.html';
+                if ( $myUtils->getRemoteCachePath( $sUrl, $sPath ) ) {
 
-                $sPath = $this->getConfig()->getConfigParam( 'sCompileDir' ) . "/".md5($sUrl).'.html';
-                $sBase = dirname($sUrl).'/';
-
-                if( $myOxUtlis->getRemoteCachePath($sUrl, $sPath) ) {
+                    $sVersion = $myConfig->getVersion();
+                    $sEdition = $myConfig->getFullEdition();
+                    $sCurYear = date( "Y" );
 
                     // Get ceontent
-                    $sOutput = file_get_contents($sPath);
+                    $sOutput = file_get_contents( $sPath );
 
                     // Fix base path
-                    $sOutput = preg_replace("/<\/head>/i", "<base href=\"{$sBase}\"></head>\n  <!-- OXID eShop {$sEdition}, Version {$sVersion}, Shopping Cart System (c) OXID eSales AG 2003 - {$sCurYear} - http://www.oxid-esales.com -->", $sOutput);
+                    $sOutput = preg_replace( "/<\/head>/i", "<base href=\"".dirname( $sUrl ).'/'."\"></head>\n  <!-- OXID eShop {$sEdition}, Version {$sVersion}, Shopping Cart System (c) OXID eSales AG 2003 - {$sCurYear} - http://www.oxid-esales.com -->", $sOutput );
 
                     // Fix self url's
-                    $sOutput = preg_replace("/href=\"#\"/i", 'href="javascript::void();"', $sOutput);
-
-                    die($sOutput);
-               }
-
-            }else{
+                    $myUtils->showMessageAndExit( preg_replace( "/href=\"#\"/i", 'href="javascript::void();"', $sOutput ) );
+                }
+            } else {
                 // Caching not allowed, redirecting
-                header('Location: '.$sUrl);
+                $myUtils->redirect( $sUrl  );
             }
         }
 
-        die;
+        $myUtils->showMessageAndExit( "" );
     }
 
     /**
@@ -190,54 +207,33 @@ class Navigation extends oxAdminView
      */
     protected function _doStartUpChecks()
     {   // #661
-        $aMessage = array();
-/*
-            // check if there are any links in oxobject2category which are outdated or old
-            $sSQL = "select oxobject2category.oxid from oxcategories, oxobject2category left join oxarticles on oxarticles.oxid = oxobject2category.oxobjectid  where oxcategories.oxid = oxobject2category.oxcatnid and oxarticles.oxid is null";
-            $iCnt = 0;
-            $sDel = "";
-            $rs = oxDb::getDb()->Execute( $sSQL);
-            if ($rs != false && $rs->recordCount() > 0) {
-                while (!$rs->EOF) {
-                    if ( $iCnt)
-                        $sDel .= ",";
-                    $sDel .= "'".$rs->fields[0]."'";
-                    $iCnt++;
-                    $rs->moveNext();
-                }
-                // delete it now
-                oxDb::getDb()->Execute("delete from oxobject2category where oxid in ($sDel)");
-                $aMessage['message'] = "- Deleted $iCnt old/outdated entries in table oxobject2category.<br>";
-            }
-*/
+        $aMessage = array ();
+
         // check if system reguirements are ok
         $oSysReq = new oxSysRequirements();
-
-
         if ( !$oSysReq->getSysReqStatus() ) {
             $aMessage['warning']  = oxLang::getInstance()->translateString('NAVIGATION_SYSREQ_MESSAGE');
-            $aMessage['warning'] .= '<a href="?cl=sysreq" target="basefrm">';
+            $aMessage['warning'] .= '<a href="?cl=sysreq&amp;stoken='.$this->getSession()->getSessionChallengeToken().'" target="basefrm">';
             $aMessage['warning'] .= oxLang::getInstance()->translateString('NAVIGATION_SYSREQ_MESSAGE2').'</a>';
         }
 
         // version check
-        if ( $this->getConfig()->getConfigParam( 'blCheckForUpdates' ) ) {
-	        if ( $sVersionNotice = $this->_checkVersion() ) {
-	            $aMessage['message'] .= $sVersionNotice;
-	        }
+        if ( $this->getConfig()->getConfigParam('blCheckForUpdates' ) ) {
+            if ( $sVersionNotice = $this->_checkVersion() ) {
+                $aMessage['message'] .= $sVersionNotice;
+            }
         }
 
 
         // check if setup dir is deleted
-        if ( file_exists( $this->getConfig()->getConfigParam( 'sShopDir' ) . '/setup/index.php' ) ) {
-            $aMessage['warning']  .= ( ( !empty($aMessage['warning']) ) ? "<br>" : '' ) . oxLang::getInstance()->translateString('SETUP_DIRNOTDELETED_WARNING');
+        if ( file_exists( $this->getConfig()->getConfigParam('sShopDir').'/setup/index.php' ) ) {
+            $aMessage['warning'] .= ((! empty($aMessage['warning']))?"<br>":'').oxLang::getInstance()->translateString('SETUP_DIRNOTDELETED_WARNING');
         }
 
         // check if config file is writable
-        $sConfPath = $this->getConfig()->getConfigParam( 'sShopDir' )."/config.inc.php";
-        $sPerms = substr( decoct( fileperms($sConfPath) ), 2 );
-        if ( $sPerms > 644 ) {
-            $aMessage['warning']  .= ( ( !empty($aMessage['warning']) ) ? "<br>" : '' ) . oxLang::getInstance()->translateString('SETUP_CONFIGPERMISSIONS_WARNING');
+        $sConfPath = $this->getConfig()->getConfigParam( 'sShopDir' ) . "/config.inc.php";
+        if ( !is_readable( $sConfPath ) || is_writable( $sConfPath ) ) {
+            $aMessage['warning'] .= ( ( ! empty($aMessage['warning'] ) )?"<br>":'' ).oxLang::getInstance()->translateString('SETUP_CONFIGPERMISSIONS_WARNING' );
         }
 
         return $aMessage;
@@ -253,10 +249,10 @@ class Navigation extends oxAdminView
             $sVersion = 'CE';
 
         $sQuery = 'http://admin.oxid-esales.com/'.$sVersion.'/onlinecheck.php?getlatestversion';
-        if ( $sVersion = oxUtilsFile::getInstance()->readRemoteFileAsString( $sQuery ) ) {
+        if ($sVersion = oxUtilsFile::getInstance()->readRemoteFileAsString($sQuery)) {
             // current version is older ..
-            if ( version_compare( $this->getConfig()->getVersion(), $sVersion ) == '-1' ) {
-                return sprintf( oxLang::getInstance()->translateString( 'NAVIGATION_NEWVERSIONAVAILABLE' ), $sVersion );
+            if (version_compare($this->getConfig()->getVersion(), $sVersion) == '-1') {
+                return sprintf(oxLang::getInstance()->translateString('NAVIGATION_NEWVERSIONAVAILABLE'), $sVersion);
             }
         }
     }

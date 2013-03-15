@@ -8,19 +8,32 @@
 
 <script type="text/javascript">
 <!--
-function editThis( sID)
+function editThis( sID )
 {
-    var oTransfer = top.basefrm.edit.document.getElementById( "transfer" );
-    oTransfer.oxid.value = sID;
-    oTransfer.cl.value = top.oxid.admin.getClass( sID );
-    oTransfer.fnc.value = 'chshp';
+    var oForm = top.navigation.adminnav.document.getElementById( "search" );
+    if ( oForm ) {
+        // passing this info about active view and tab to nav frame
+        var oInputElement = document.createElement( 'input' );
+        oInputElement.setAttribute( 'name', 'listview');
+        oInputElement.setAttribute( 'type', 'hidden' );
+        oInputElement.value = "[{ $shop->cl }]";
+        oForm.appendChild( oInputElement );
 
-    //forcing edit frame to reload after submit
-    top.forceReloadingEditFrame();
+        var oInputElement = document.createElement( 'input' );
+        oInputElement.setAttribute( 'name', 'actedit');
+        oInputElement.setAttribute( 'type', 'hidden' );
+        oInputElement.value = "[{ $actedit }]";
+        oForm.appendChild( oInputElement );
 
-    var oSearch = top.basefrm.list.document.getElementById( "search" );
-    oSearch.oxid.value = sID;
-    oSearch.submit();
+        var oInputElement = document.createElement( 'input' );
+        oInputElement.setAttribute( 'name', 'editview');
+        oInputElement.setAttribute( 'type', 'hidden' );
+        oInputElement.value = top.oxid.admin.getClass( sID );
+        oForm.appendChild( oInputElement );
+
+        // selecting shop
+        top.navigation.adminnav.selectShop( sID );
+    }
 }
 
 

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxuser.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: oxuser.php 26374 2010-03-08 15:53:00Z arvydas $
  */
 
 /**
@@ -336,6 +336,8 @@ class oxUser extends oxBase
      * Selected user address setter
      *
      * @param string $sAddressId selected address id
+     *
+     * @return null
      */
     public function setSelectedAddressId( $sAddressId )
     {
@@ -730,7 +732,8 @@ class oxUser extends oxBase
         if ( isset( $sOXID ) && $sOXID ) {
             // try to update
             $this->delete( $sOXID );
-        } elseif ( $this->_blMallUsers ) { // must be sure if there is no dublicate user
+        } elseif ( $this->_blMallUsers ) {
+            // must be sure if there is no dublicate user
             $sQ = "select oxid from oxuser where oxusername = " . $oDB->quote( $this->oxuser__oxusername->value ) . " and oxusername != '' ";
             if ( $oDB->getOne( $sQ ) ) {
                 $oEx = oxNew( 'oxUserException' );
@@ -983,7 +986,7 @@ class oxUser extends oxBase
     public function checkValues( $sLogin, $sPassword, $sPassword2, $aInvAddress, $aDelAddress )
     {
         // 1. checking user name
-        $this->_checkLogin( $sLogin, $aInvAddress );
+        $sLogin = $this->_checkLogin( $sLogin, $aInvAddress );
 
         // 2. cheking email
         $this->_checkEmail( $sLogin );
@@ -1034,7 +1037,8 @@ class oxUser extends oxBase
                 $oEmail = oxNew( 'oxemail' );
                 $blSuccess = $oEmail->sendNewsletterDBOptInMail( $this );
             }
-        } elseif ( !$blSubscribe ) { // removing user from newsletter subscribers
+        } elseif ( !$blSubscribe ) {
+            // removing user from newsletter subscribers
             $this->removeFromGroup( 'oxidnewsletter' );
             $oNewsSubscription->setOptInStatus( 0 );
             $blSuccess = true;
@@ -1213,7 +1217,8 @@ class oxUser extends oxBase
 
 
         //login successfull?
-        if ( $this->oxuser__oxid->value ) {   // yes, successful login
+        if ( $this->oxuser__oxid->value ) {
+            // yes, successful login
             if ( $this->isAdmin() ) {
                 oxSession::setVar( 'auth', $this->oxuser__oxid->value );
             } else {
@@ -1267,7 +1272,8 @@ class oxUser extends oxBase
         }
 
         //login successfull?
-        if ( $this->oxuser__oxid->value ) {   // yes, successful login
+        if ( $this->oxuser__oxid->value ) {
+            // yes, successful login
             oxSession::setVar( 'usr', $this->oxuser__oxid->value );
             return true;
         } else {
@@ -1412,13 +1418,15 @@ class oxUser extends oxBase
         $oLDAP->login( $sUser, $sPassword, $aLDAPParams['USERQUERY'], $aLDAPParams['BASEDN'], $aLDAPParams['FILTER']);
 
         $aData = $oLDAP->mapData($aLDAPParams['DATAMAP']);
-        if ( isset( $aData['OXUSERNAME']) && $aData['OXUSERNAME']) {   // login successful
+        if ( isset( $aData['OXUSERNAME']) && $aData['OXUSERNAME']) {
+            // login successful
 
             // check if user is already in database
             $sSelect =  "select oxid from oxuser where oxuser.oxusername = ".$oDb->quote($aData['OXUSERNAME'])." $sShopSelect";
             $sOXID = $oDb->getOne( $sSelect);
 
-            if ( !isset( $sOXID) || !$sOXID) {   // we need to create a new user
+            if ( !isset( $sOXID) || !$sOXID) {
+                // we need to create a new user
                 //$oUser->oxuser__oxid->setValue($oUser->setId());
                 $this->setId();
 
@@ -1435,7 +1443,8 @@ class oxUser extends oxBase
                 $this->setPassword( "ldap user" );
 
                 $this->save();
-            } else {   // LDAP user is already in OXID DB, load it
+            } else {
+                // LDAP user is already in OXID DB, load it
                 $this->load( $sOXID);
             }
 
@@ -1571,14 +1580,14 @@ class oxUser extends oxBase
      *    needed when creating new users.
      * On any error exception is thrown.
      *
-     * @param string &$sLogin     user preferred login name
+     * @param string $sLogin      user preferred login name
      * @param array  $aInvAddress user information
      *
      * @throws oxUserException, oxInputException
      *
-     * @return null
+     * @return string login name
      */
-    protected function _checkLogin( &$sLogin, $aInvAddress )
+    protected function _checkLogin( $sLogin, $aInvAddress )
     {
         $myConfig = $this->getConfig();
 
@@ -1614,6 +1623,8 @@ class oxUser extends oxBase
             $oEx->setMessage( sprintf( $oLang->translateString( 'EXCEPTION_USER_USEREXISTS', $oLang->getTplLanguage() ), $sLogin ) );
             throw $oEx;
         }
+
+        return $sLogin;
     }
 
     /**
@@ -1810,6 +1821,8 @@ class oxUser extends oxBase
      * @param array $aDelAddress delivery address info
      *
      * @throws oxInputException
+     *
+     * @return null
      */
     protected function _checkCountries( $aInvAddress, $aDelAddress )
     {
@@ -1927,8 +1940,7 @@ class oxUser extends oxBase
      */
     protected function _checkVatId( $aInvAddress )
     {
-        // vat ID must be checked only for business customers
-        if ( $aInvAddress['oxuser__oxustid'] && $aInvAddress['oxuser__oxcompany'] ) {
+        if ( $aInvAddress['oxuser__oxustid'] ) {
 
             if (!($sCountryId = $aInvAddress['oxuser__oxcountryid'])) {
                 // no country
@@ -1945,7 +1957,6 @@ class oxUser extends oxBase
                         throw $oEx;
                     }
             }
-
         }
     }
 
@@ -2315,6 +2326,16 @@ class oxUser extends oxBase
         $oDb = oxDb::getDb();
         $sUserId = $oDb->getOne('select oxid from oxuser where md5(concat("oxid", oxpassword, oxusername )) = ' . $oDb->quote( $sReviewUserHash ) .'');
         return $sUserId;
+    }
+
+    /**
+     * Returns string representation of user state
+     *
+     * @return string
+     */
+    public function getState()
+    {
+        return $this->oxuser__oxstateid->value;
     }
 
 }

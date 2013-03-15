@@ -1,10 +1,26 @@
 <?php
 /**
- * Smarty plugin
- * @package Smarty
- * @subpackage plugins
+ *    This file is part of OXID eShop Community Edition.
+ *
+ *    OXID eShop Community Edition is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    OXID eShop Community Edition is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @link      http://www.oxid-esales.com
+ * @package   smarty_plugins
+ * @copyright (C) OXID eSales AG 2003-2010
+ * @version OXID eShop CE
+ * @version   SVN: $Id: modifier.oxtruncate.php 25555 2010-02-02 12:49:21Z sarunas $
  */
-
 
 /**
  * This method replaces existing Smarty function for truncating strings
@@ -12,41 +28,40 @@
  * additionally we need to convert &#039;/&quot; entities to '/"
  * and after truncating convert them back.
  *
- * Type:     modifier<br>
+ * -------------------------------------------------------------
  * Name:     truncate<br>
  * Purpose:  Truncate a string to a certain length if necessary,
  *           optionally splitting in the middle of a word, and
  *           appending the $etc string or inserting $etc into the middle.
- * @link http://smarty.php.net/manual/en/language.modifier.truncate.php
- *          truncate (Smarty online manual)
- * @author   Monte Ohrt <monte at ohrt dot com>
- * @param string
- * @param integer
- * @param string
- * @param boolean
- * @param boolean
+ *  -------------------------------------------------------------
+ *
+ * @param string  $sString      String to truncate
+ * @param integer $iLength      To length
+ * @param string  $sSufix       Truncation mark
+ * @param bool    $blBreakWords break words
+ * @param bool    $middle       middle ?
+ *
  * @return string
  */
-function smarty_modifier_oxtruncate($string, $length = 80, $etc = '...',
-                                  $break_words = false, $middle = false)
+function smarty_modifier_oxtruncate($sString, $iLength = 80, $sSufix = '...', $blBreakWords = false, $middle = false)
 {
-    if ($length == 0) {
+    if ($iLength == 0) {
         return '';
-    } elseif ( $length > 0 && getStr()->strlen( $string ) > $length ) {
-        $length -= getStr()->strlen( $etc );
+    } elseif ( $iLength > 0 && getStr()->strlen( $sString ) > $iLength ) {
+        $iLength -= getStr()->strlen( $sSufix );
 
-        $string = str_replace( array('&#039;', '&quot;'), array( "'",'"' ), $string );
+        $sString = str_replace( array('&#039;', '&quot;'), array( "'",'"' ), $sString );
 
-        if ( !$break_words ) {
-            $string = getStr()->preg_replace( '/\s+?(\S+)?$/', '', getStr()->substr( $string, 0, $length + 1 ) );
+        if (!$blBreakWords ) {
+            $sString = getStr()->preg_replace( '/\s+?(\S+)?$/', '', getStr()->substr( $sString, 0, $iLength + 1 ) );
         }
 
-        $string = getStr()->substr( $string, 0, $length ).$etc;
+        $sString = getStr()->substr( $sString, 0, $iLength ).$sSufix;
 
-        return str_replace( array( "'",'"' ), array('&#039;', '&quot;'), $string );
+        return str_replace( array( "'",'"' ), array('&#039;', '&quot;'), $sString );
     }
 
-    return $string;
+    return $sString;
 }
 
 /* vim: set expandtab: */

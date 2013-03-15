@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: attribute_main.php 17188 2009-03-13 12:19:11Z arvydas $
+ * @version   SVN: $Id: attribute_main.php 26706 2010-03-20 13:37:49Z arvydas $
  */
 
 /**
@@ -109,8 +109,7 @@ class Attribute_Main extends oxAdminDetails
         $aParams = oxConfig::getParameter( "editval");
 
             // shopid
-            $sShopID = oxSession::getVar( "actshop");
-            $aParams['oxattribute__oxshopid'] = $sShopID;
+            $aParams['oxattribute__oxshopid'] = oxSession::getVar( "actshop" );
         $oAttr = oxNew( "oxattribute" );
 
         if ( $soxId != "-1")
@@ -144,15 +143,14 @@ class Attribute_Main extends oxAdminDetails
         $aParams    = oxConfig::getParameter( "editval");
 
             // shopid
-            $sShopID = oxSession::getVar( "actshop");
-            $aParams['oxattribute__oxshopid'] = $sShopID;
+            $aParams['oxattribute__oxshopid'] = oxSession::getVar( "actshop");
         $oAttr = oxNew( "oxattribute" );
 
-        if ( $soxId != "-1")
+        if ( $soxId != "-1") {
             $oAttr->loadInLang( $this->_iEditLang, $soxId );
-        else
+        } else {
             $aParams['oxattribute__oxid'] = null;
-        //$aParams = $oAttr->ConvertNameArray2Idx( $aParams);
+        }
 
 
         $oAttr->setLanguage(0);

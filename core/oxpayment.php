@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxpayment.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: oxpayment.php 25467 2010-02-01 14:14:26Z alfonsas $
  */
 
 /**
@@ -246,7 +246,22 @@ class oxPayment extends oxI18n
      */
     public function isValidPayment( $aDynvalue, $sShopId, $oUser, $dBasketPrice, $sShipSetId )
     {
+        $myConfig = $this->getConfig();
         if ( $this->oxpayments__oxid->value == 'oxempty' ) {
+            // inactive or blOtherCountryOrder is off
+            if ( !$this->oxpayments__oxactive->value || !$myConfig->getConfigParam( "blOtherCountryOrder" ) ) {
+                $this->_iPaymentError = -2;
+                return false;
+            }
+            if (count(oxDeliverySetList::getInstance()
+                            ->getDeliverySetList(
+                                        $oUser,
+                                        $oUser->getActiveCountry()
+                                )
+                    )) {
+                $this->_iPaymentError = -3;
+                return false;
+            }
             return true;
         }
 
@@ -256,7 +271,7 @@ class oxPayment extends oxI18n
             return false;
         }
 
-        $oCur = $this->getConfig()->getActShopCurrencyObject();
+        $oCur = $myConfig->getActShopCurrencyObject();
         $dBasketPrice = $dBasketPrice / $oCur->rate;
 
         if ( $sShipSetId ) {

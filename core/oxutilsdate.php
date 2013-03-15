@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxutilsdate.php 21097 2009-07-23 07:05:52Z vilma $
+ * @version   SVN: $Id: oxutilsdate.php 25471 2010-02-01 14:35:11Z alfonsas $
  */
 
 /**
@@ -43,15 +43,14 @@ class oxUtilsDate extends oxSuperCfg
     {
         // disable caching for test modules
         if ( defined( 'OXID_PHP_UNIT' ) ) {
-            static $inst = array();
-            self::$_instance = $inst[oxClassCacheKey()];
+            self::$_instance = modInstances::getMod( __CLASS__ );
         }
 
         if ( !self::$_instance instanceof oxUtilsDate ) {
             self::$_instance = oxNew( 'oxUtilsDate' );
 
             if ( defined( 'OXID_PHP_UNIT' ) ) {
-                $inst[oxClassCacheKey()] = self::$_instance;
+                modInstances::addMod( __CLASS__, self::$_instance);
             }
         }
         return self::$_instance;
@@ -84,7 +83,8 @@ class oxUtilsDate extends oxSuperCfg
         }
 
         // is it a timestamp ?
-        if ( is_numeric( $sDBDateIn ) ) {   // db timestamp : 20030322100409
+        if ( is_numeric( $sDBDateIn ) ) {
+            // db timestamp : 20030322100409
             $sNew  = substr( $sDBDateIn, 0, 4 ).'-'.substr( $sDBDateIn, 4, 2 ).'-'.substr( $sDBDateIn, 6, 2 ).' ';
             // check if it is a timestamp or wrong data: 20030322
             if ( strlen($sDBDateIn) > 8 ) {

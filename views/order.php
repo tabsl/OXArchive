@@ -15,18 +15,18 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: order.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: order.php 26825 2010-03-25 09:24:44Z arvydas $
  */
 
 /**
  * Order manager. Arranges user ordering data, checks/validates
  * it, on success stores ordering data to DB.
  */
-class Order extends oxUBase
+class order extends oxUBase
 {
     /**
      * Payment object
@@ -225,6 +225,10 @@ class Order extends oxUBase
      */
     public function execute()
     {
+        if (!$this->getSession()->checkSessionChallenge()) {
+            return;
+        }
+
         $myConfig = $this->getConfig();
 
         if ( !oxConfig::getParameter( 'ord_agb' ) && $myConfig->getConfigParam( 'blConfirmAGB' ) ) {
@@ -375,7 +379,7 @@ class Order extends oxUBase
         if ( $this->_sOrderRemark === null ) {
             $this->_sOrderRemark = false;
             if ( $sRemark = oxSession::getVar( 'ordrem' ) ) {
-                $this->_sOrderRemark = $sRemark;
+                $this->_sOrderRemark = oxConfig::checkSpecialChars( $sRemark );
             }
         }
         return $this->_sOrderRemark;
@@ -505,6 +509,10 @@ class Order extends oxUBase
      */
     public function isWrapping()
     {
+        if (!$this->getViewConfig()->getShowGiftWrapping() ) {
+            return false;
+        }
+
         if ( $this->_iWrapCnt === null ) {
             $this->_iWrapCnt = 0;
 

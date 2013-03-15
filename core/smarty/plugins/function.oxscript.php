@@ -15,24 +15,29 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package smartyPlugins
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   smarty_plugins
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: function.oxscript.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * @version   SVN: $Id: function.oxscript.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
-/*
-* Smarty plugin
-* -------------------------------------------------------------
-* File: function.oxscript.php
-* Type: string, html
-* Name: oxscript
-* Purpose: Collect needed javascript calls, and execute them at he bottom of the page
-* add [{ oxscript add="oxid.popup.load" }] where you need to add stripts and
-* execute and  [{ oxscript }] where you need to output all collected script calls
-* -------------------------------------------------------------
-*/
+/**
+ * Smarty plugin
+ * -------------------------------------------------------------
+ * File: function.oxscript.php
+ * Type: string, html
+ * Name: oxscript
+ * Purpose: Collect needed javascript calls, and execute them at he bottom of the page
+ * add [{ oxscript add="oxid.popup.load" }] where you need to add stripts and
+ * execute and  [{ oxscript }] where you need to output all collected script calls
+ * -------------------------------------------------------------
+ *
+ * @param array  $params  params
+ * @param Smarty &$smarty clever simulation of a method
+ *
+ * @return string
+ */
 function smarty_function_oxscript($params, &$smarty)
 {
     $myConfig = oxConfig::getInstance();
@@ -47,7 +52,7 @@ function smarty_function_oxscript($params, &$smarty)
     if ( $params['add'] ) {
         $myConfig->setGlobalParameter($sVarname, $sScript.$params['add']);
         return '';
-    }else{
+    } else {
         return $sScript;
     }
 }

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxcmp_basket.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: oxcmp_basket.php 26611 2010-03-17 12:02:26Z sarunas $
  */
 
 /**
@@ -62,8 +62,6 @@ class oxcmp_basket extends oxView
      */
     public function render()
     {
-        // Performance
-        $myConfig = $this->getConfig();
         // recalculating
         if ( $oBasket = $this->getSession()->getBasket() ) {
             $oBasket->calculateBasket( false );
@@ -114,13 +112,12 @@ class oxcmp_basket extends oxView
                 // passing article
                 oxSession::setVar( '_newitem', $oNewItem );
             }
-
         }
 
-        // fetching redirect URL
-        $sReturn = $this->_getRedirectUrl();
-
-        return $sReturn;
+        if ( $this->getConfig()->getConfigParam( 'iNewBasketItemMessage' ) == 3 ) {
+            // redirect to basket
+            return $this->_getRedirectUrl();
+        }
     }
 
     /**
@@ -137,7 +134,6 @@ class oxcmp_basket extends oxView
     public function changebasket( $sProductId = null, $dAmount = null, $aSel = null, $aPersParam = null, $blOverride = true )
     {
         // adding to basket is not allowed ?
-        $myConfig = $this->getConfig();
         if ( oxUtils::getInstance()->isSearchEngine() ) {
             return;
         }
@@ -191,7 +187,6 @@ class oxcmp_basket extends oxView
     public function wl_tobasket( $sProductId = null, $dAmount = null, $aSel = null, $aPersParam = null, $blOverride = false )
     {
         // adding to basket is not allowed ?
-        $myConfig = $this->getConfig();
         if ( oxUtils::getInstance()->isSearchEngine() ) {
             return;
         }
@@ -350,10 +345,11 @@ class oxcmp_basket extends oxView
             $aSelList = isset( $aProductInfo['sel'] )?$aProductInfo['sel']:null;
             $aPersParam = isset( $aProductInfo['persparam'] )?$aProductInfo['persparam']:null;
             $blOverride = isset( $aProductInfo['override'] )?$aProductInfo['override']:null;
+            $blIsBundle = isset( $aProductInfo['bundle'] )?true:false;
             $sOldBasketItemId = isset( $aProductInfo['basketitemid'] )?$aProductInfo['basketitemid']:null;
 
             try {
-                $oBasketItem = $oBasket->addToBasket( $sProductId, $dAmount, $aSelList, $aPersParam, $blOverride, false, $sOldBasketItemId );
+                $oBasketItem = $oBasket->addToBasket( $sProductId, $dAmount, $aSelList, $aPersParam, $blOverride, $blIsBundle, $sOldBasketItemId );
             } catch ( oxOutOfStockException $oEx ) {
                 $oEx->setDestination( $sErrorDest );
                 // #950 Change error destination to basket popup

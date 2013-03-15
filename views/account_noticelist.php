@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: account_noticelist.php 17315 2009-03-17 16:18:58Z arvydas $
+ * @version   SVN: $Id: account_noticelist.php 26147 2010-03-01 14:38:04Z arvydas $
  */
 
 /**
@@ -140,20 +140,22 @@ class Account_Noticelist extends Account
      */
     public function getSimilarRecommLists()
     {
-        // recommlist
-        if ( $this->_aRecommList === null ) {
+        if ( $this->getViewConfig()->getShowListmania() ) {
+            // recommlist
+            if ( $this->_aRecommList === null ) {
 
-            // just ensuring that next call will skip this check
-            $this->_aRecommList = false;
+                // just ensuring that next call will skip this check
+                $this->_aRecommList = false;
 
-            // loading recomm list
-            $aNoticeProdList = $this->getNoticeProductList();
-            if ( is_array( $aNoticeProdList ) && count( $aNoticeProdList ) ) {
-                $oRecommList = oxNew('oxrecommlist');
-                $this->_aRecommList = $oRecommList->getRecommListsByIds( array_keys( $aNoticeProdList ));
+                // loading recomm list
+                $aNoticeProdList = $this->getNoticeProductList();
+                if ( is_array( $aNoticeProdList ) && count( $aNoticeProdList ) ) {
+                    $oRecommList = oxNew('oxrecommlist');
+                    $this->_aRecommList = $oRecommList->getRecommListsByIds( array_keys( $aNoticeProdList ));
 
+                }
             }
+            return $this->_aRecommList;
         }
-        return $this->_aRecommList;
     }
 }

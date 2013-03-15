@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: tags.php 23589 2009-10-26 10:44:06Z arvydas $
+ * @version   SVN: $Id: tags.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
@@ -61,8 +61,19 @@ class Tags extends oxUBase
      */
     public function getTagCloud()
     {
-        $oTagHandler = oxNew('oxTagCloud');
-        return $oTagHandler->getTagCloud(null, true);
+        return oxNew( 'oxTagCloud' )->getTagCloud( null, true );
+    }
+
+    /**
+     * Returns tag cloud manager class
+     *
+     * @return oxTagCloud
+     */
+    public function getTagCloudManager()
+    {
+        $oManager = oxNew( "oxTagCloud" );
+        $oManager->setExtendedMode( true );
+        return $oManager;
     }
 
     /**

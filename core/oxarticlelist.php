@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxarticlelist.php 22590 2009-09-24 06:24:00Z alfonsas $
+ * @version   SVN: SVN: $Id: oxarticlelist.php 26828 2010-03-25 09:49:28Z sarunas $
  */
 
 /**
@@ -102,6 +102,38 @@ class oxArticleList extends oxList
     }
 
     /**
+     * Get history article id's from session or cookie.
+     *
+     * @return array
+     */
+    public function getHistoryArticles()
+    {
+        if ($aArticlesIds = $this->getSession()->getVar('aHistoryArticles')) {
+            return $aArticlesIds;
+        } elseif ( $sArticlesIds = oxUtilsServer::getInstance()->getOxCookie('aHistoryArticles')) {
+            return explode('|', $sArticlesIds);
+        }
+    }
+
+    /**
+     * Set history article id's to session or cookie
+     *
+     * @param array $aArticlesIds array history article ids
+     *
+     * @return null
+     */
+    public function setHistoryArticles($aArticlesIds)
+    {
+        if ($this->getSession()->getId()) {
+            $this->getSession()->setVar('aHistoryArticles', $aArticlesIds);
+            // clean cookie, if session started
+            oxUtilsServer::getInstance()->setOxCookie('aHistoryArticles', '');
+        } else {
+            oxUtilsServer::getInstance()->setOxCookie('aHistoryArticles', implode('|', $aArticlesIds));
+        }
+    }
+
+    /**
      * Loads up to 4 history (normally recently seen) articles from session, and adds $sArtId to history.
      * Returns article id array.
      *
@@ -111,8 +143,7 @@ class oxArticleList extends oxList
      */
     public function loadHistoryArticles($sArtId)
     {
-        $mySession = $this->getSession();
-        $aHistoryArticles = $mySession->getVar('aHistoryArticles');
+        $aHistoryArticles = $this->getHistoryArticles();
         $aHistoryArticles[] = $sArtId;
 
         // removing dublicates
@@ -122,14 +153,14 @@ class oxArticleList extends oxList
             array_shift($aHistoryArticles);
         }
 
-        //add to session
-        $mySession->setVar('aHistoryArticles', $aHistoryArticles);
+        $this->setHistoryArticles($aHistoryArticles);
 
         //remove current article and return array
         //asignment =, not ==
         if (($iCurrentArt = array_search($sArtId, $aHistoryArticles)) !== false) {
             unset ($aHistoryArticles[$iCurrentArt]);
         }
+
         $aHistoryArticles = array_values($aHistoryArticles);
         $this->loadIds($aHistoryArticles);
         $this->_sortByIds($aHistoryArticles);
@@ -661,10 +692,9 @@ class oxArticleList extends oxList
         $oTagHandler = oxNew( 'oxtagcloud' );
         $sTag = $oTagHandler->prepareTags( $sTag );
 
-        $sQ = "select {$sArticleFields} from oxartextends inner join {$sArticleTable} on
-               {$sArticleTable}.oxid = oxartextends.oxid where {$sArticleTable}.oxissearch = 1
-               and match ( oxartextends.oxtags{$sLangExt} )
-               against( ".oxDb::getDb()->quote( $sTag )." )";
+        $sQ = "select {$sArticleFields} from oxartextends inner join {$sArticleTable} on ".
+              "{$sArticleTable}.oxid = oxartextends.oxid where match ( oxartextends.oxtags{$sLangExt} ) ".
+              "against( ".oxDb::getDb()->quote( $sTag )." IN BOOLEAN MODE )";
 
         // checking stock etc
         if ( ( $sActiveSnippet = $oListObject->getSqlActiveSnippet() ) ) {
@@ -702,10 +732,10 @@ class oxArticleList extends oxList
         $oTagHandler = oxNew( 'oxtagcloud' );
         $sTag = $oTagHandler->prepareTags( $sTag );
 
-        $sQ = "select oxartextends.oxid from oxartextends inner join {$sArticleTable} on
-               {$sArticleTable}.oxid = oxartextends.oxid where {$sArticleTable}.oxissearch = 1 and
-               match ( oxartextends.oxtags{$sLangExt} )
-               against( ".oxDb::getDb()->quote( $sTag )." )";
+        $sQ = "select oxartextends.oxid from oxartextends inner join {$sArticleTable} on ".
+              "{$sArticleTable}.oxid = oxartextends.oxid where {$sArticleTable}.oxissearch = 1 and ".
+              "match ( oxartextends.oxtags{$sLangExt} ) ".
+              "against( ".oxDb::getDb()->quote( $sTag )." IN BOOLEAN MODE )";
 
         // checking stock etc
         if ( ( $sActiveSnippet = $oListObject->getSqlActiveSnippet() ) ) {

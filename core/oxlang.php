@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxlang.php 23422 2009-10-21 07:22:02Z tomas $
+ * @version   SVN: $Id: oxlang.php 26574 2010-03-16 13:50:09Z alfonsas $
  */
 
 /**
@@ -33,6 +33,13 @@ class oxLang extends oxSuperCfg
      * @var oxlang
      */
     private static $_instance = null;
+
+    /**
+     * Language parameter name
+     *
+     * @var string
+     */
+    protected $_sName = 'lang';
 
     /**
      * Current shop base language Id
@@ -145,6 +152,19 @@ class oxLang extends oxSuperCfg
             $this->_iBaseLanguageId = oxConfig::getParameter( 'language' );
         }
 
+        // if language still not setted and not search engine browsing,
+        // getting language from browser
+        if ( is_null( $this->_iBaseLanguageId ) && !$blAdmin && !oxUtils::getInstance()->isSearchEngine() ) {
+
+            // getting from cookie
+            $this->_iBaseLanguageId = oxUtilsServer::getInstance()->getOxCookie( 'language' );
+
+            // getting from browser
+            if ( is_null( $this->_iBaseLanguageId ) ) {
+                $this->_iBaseLanguageId = $this->detectLanguageByBrowser();
+            }
+        }
+
         if ( is_null( $this->_iBaseLanguageId ) ) {
             $this->_iBaseLanguageId = $myConfig->getConfigParam( 'sDefaultLang' );
         }
@@ -153,6 +173,9 @@ class oxLang extends oxSuperCfg
 
         // validating language
         $this->_iBaseLanguageId = $this->validateLanguage( $this->_iBaseLanguageId );
+
+        // setting language to cookie
+        oxUtilsServer::getInstance()->setOxCookie( 'language', $this->_iBaseLanguageId );
 
         return $this->_iBaseLanguageId;
     }
@@ -166,28 +189,24 @@ class oxLang extends oxSuperCfg
      */
     public function getTplLanguage()
     {
-        if ( $this->_iTplLanguageId !== null ) {
-            return $this->_iTplLanguageId;
-        }
-
-        if ( !$this->isAdmin() ) {
-            $this->_iTplLanguageId = $this->getBaseLanguage();
-        } else {
-            //admin area
-
-            if ( is_null( $this->_iTplLanguageId ) ) {
-                //$this->_iTplLanguageId = oxConfig::getParameter( 'tpllanguage' );
-                $this->_iTplLanguageId = oxSession::getVar( 'tpllanguage' );
-            }
-
-            if ( is_null( $this->_iTplLanguageId ) ) {
+        if ( $this->_iTplLanguageId === null ) {
+            if ( !$this->isAdmin() ) {
                 $this->_iTplLanguageId = $this->getBaseLanguage();
+            } else {
+
+                //admin area
+                if ( is_null( $this->_iTplLanguageId ) ) {
+                    $this->_iTplLanguageId = oxSession::getVar( 'tpllanguage' );
+                }
+
+                if ( is_null( $this->_iTplLanguageId ) ) {
+                    $this->_iTplLanguageId = $this->getBaseLanguage();
+                }
             }
+
+            // validating language
+            $this->_iTplLanguageId = $this->validateLanguage( $this->_iTplLanguageId );
         }
-
-        // validating language
-        $this->_iTplLanguageId = $this->validateLanguage( $this->_iTplLanguageId );
-
         return $this->_iTplLanguageId;
     }
 
@@ -260,7 +279,7 @@ class oxLang extends oxSuperCfg
                     //skipping non active languages
                     if ( !$aLangParams[$key]['active'] ) {
                         $i++;
-                    	continue;
+                        continue;
                     }
                 }
 
@@ -539,15 +558,25 @@ class oxLang extends oxSuperCfg
      */
     protected function _getLangFilesPathArray( $blAdmin, $iLang )
     {
-        $aLangFiles = false;
-        if ( ( $sDir = dirname( $this->getConfig()->getLanguagePath( 'lang.php', $blAdmin, $iLang ) ) ) ) {
-            //get all lang files
-            //#M681: content of cust_lang.php should be prefered to lang.php
-            $aLangFiles = glob( $sDir."/*_lang.php" );
-            array_unshift( $aLangFiles, $sDir."/lang.php");
+        $myConfig = $this->getConfig();
+        $aLangFiles = array();
+
+        //get all lang files
+        $sStdPath = $myConfig->getStdLanguagePath( "", $blAdmin, $iLang );
+        if ( $sStdPath ) {
+            $aLangFiles[] = $sStdPath . "lang.php";
+            $aLangFiles = array_merge( $aLangFiles, glob( $sStdPath."*_lang.php" ) );
         }
 
-        return $aLangFiles;
+        $sCustPath = $myConfig->getLanguagePath( "", $blAdmin, $iLang );
+        if ( $sCustPath && $sCustPath != $sStdPath ) {
+            if ( is_readable( $sCustPath . "lang.php" ) ) {
+                $aLangFiles[] = $sCustPath . "lang.php";
+            }
+            $aLangFiles = array_merge( $aLangFiles, glob( $sCustPath."*_lang.php" ) );
+        }
+
+        return count( $aLangFiles ) ? $aLangFiles : false;
     }
 
     /**
@@ -583,7 +612,12 @@ class oxLang extends oxSuperCfg
             $aLangCache[$iLang] = array();
             $sBaseCharset = false;
             foreach ( $aLangFiles as $sLangFile ) {
-                require $sLangFile;
+
+                if (!file_exists($sLangFile)) {
+                    continue;
+                }
+
+                include $sLangFile;
 
                 // including only (!) thoose, which has charset defined
                 if ( isset( $aLang['charset'] ) ) {
@@ -740,41 +774,104 @@ class oxLang extends oxSuperCfg
      *
      * @return bool
      */
-    /**
-     * Language sorting callback function
-     *
-     * @param object $a1 first value to check
-     * @param object $a2 second value to check
-     *
-     * @return bool
-     */
-    /**
-     * Language sorting callback function
-     *
-     * @param object $a1 first value to check
-     * @param object $a2 second value to check
-     *
-     * @return bool
-     */
-    /**
-     * Language sorting callback function
-     *
-     * @param object $a1 first value to check
-     * @param object $a2 second value to check
-     *
-     * @return bool
-     */
-    /**
-     * Language sorting callback function
-     *
-     * @param object $a1 first value to check
-     * @param object $a2 second value to check
-     *
-     * @return bool
-     */
     protected function _sortLanguagesCallback( $a1, $a2 )
     {
         return ($a1->sort > $a2->sort);
     }
 
+    /**
+     * Returns language id param name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->_sName;
+    }
+
+    /**
+     * Returns form hidden language parameter
+     *
+     * @return string
+     */
+    public function getFormLang()
+    {
+        if ( !$this->isAdmin()) {
+            return "<input type=\"hidden\" name=\"".$this->getName()."\" value=\"". $this->getBaseLanguage() . "\">";
+        }
+    }
+
+    /**
+     * Returns url language parameter
+     *
+     * @param int $iLang lanugage id [optional]
+     *
+     * @return string
+     */
+    public function getUrlLang( $iLang = null )
+    {
+        if ( !$this->isAdmin()) {
+            $iLang = isset( $iLang ) ? $iLang : $this->getBaseLanguage();
+            return $this->getName()."=". $iLang;
+        }
+    }
+
+    /**
+     * Is needed appends url with language parameter
+     * Direct usage of this method to retrieve end url result is discouraged - instead
+     * see oxUtilsUrl::processUrl
+     *
+     * @param string $sUrl  url to process
+     * @param int    $iLang language id [optional]
+     *
+     * @see oxUtilsUrl::processUrl
+     *
+     * @return string
+     */
+    public function processUrl( $sUrl, $iLang = null )
+    {
+        $iLang = isset( $iLang ) ? $iLang : $this->getBaseLanguage();
+        $oStr = getStr();
+
+        if ( !$this->isAdmin() ) {
+            $sParam = $this->getUrlLang( $iLang );
+            if (!preg_match('/(\?|&(amp;)?)lang=[0-9]+/', $sUrl)  && ($iLang != oxConfig::getInstance()->getConfigParam( 'sDefaultLang' ))) {
+                if ( $sUrl ) {
+                    if ($oStr->strpos( $sUrl, '?') === false) {
+                        $sUrl .= "?";
+                    } elseif (!preg_match('/(\?|&(amp;)?)$/', $sUrl)) {
+                        $sUrl .= "&amp;";
+                    }
+                }
+                $sUrl .= $sParam."&amp;";
+            } else {
+                $sUrl = preg_replace('/(\?|&(amp;)?)lang=[0-9]+/', '\1'.$sParam, $sUrl);
+            }
+        }
+
+        return $sUrl;
+    }
+
+    /**
+     * Detect language by user browser settings. Returns language ID if
+     * detected, otherwise returns null.
+     *
+     * @return int
+     */
+    public function detectLanguageByBrowser()
+    {
+        $sBrowserLang = strtolower( substr( $_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2 ) );
+
+        if ( !$sBrowserLang ) {
+            return;
+        }
+
+        $aLangs = $this->getLanguageArray(null, true );
+
+        foreach ( $aLangs as $oLang ) {
+            if ( $oLang->abbr == $sBrowserLang ) {
+                return (int) $oLang->id;
+            }
+        }
+    }
 }

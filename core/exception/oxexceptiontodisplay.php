@@ -15,18 +15,18 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxexceptiontodisplay.php, v 1.0 2007.8.9 17.47.16 developer_name Exp
+ * @version   SVN: $Id: oxexceptiontodisplay.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
  * simplified Exception classes for simply displaying errors
  * saves resources when exception functionality is not needed
  */
-class oxExceptionToDisplay implements oxDisplayErrorInterface
+class oxExceptionToDisplay implements oxIDisplayError
 {
     /**
      * Language const of a Message

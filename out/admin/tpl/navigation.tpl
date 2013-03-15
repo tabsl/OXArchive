@@ -6,8 +6,36 @@
     <link rel="stylesheet" href="[{$shop->basetpldir}]colors.css">
     <meta http-equiv="Content-Type" content="text/html; charset=[{$charset}]">
     <script language="javascript">
-        //reloading list frame if needed
-        window.onload = top.reloadListEditFrames;
+
+        [{if $loadbasefrm}]
+        //reloading main frame
+        window.onload = function ()
+        {
+            if ( '[{ $listview }]' != '' ) {
+                top.basefrm.list.location = "[{ $shop->selflink }]&cl=[{ $listview }]&oxid=[{$shop->id}]&actedit=[{$actedit}]";
+                top.basefrm.edit.location = "[{ $shop->selflink }]&cl=[{ $editview }]&oxid=[{$shop->id}]";
+            } else if ( top.basefrm ) {
+                top.basefrm.location = "[{ $shop->selflink }]&cl=navigation&item=home.tpl";
+            }
+        }
+        [{/if}]
+
+        [{if $ismall}]
+        // changes active shop
+        function selectShop( iShopId )
+        {
+            var oForm = document.getElementById( "search" );
+            if ( ! oForm.shp ) {
+                // inserting new form element
+                var oInputElement = document.createElement( 'input' );
+                oInputElement.setAttribute( 'name', 'shp' );
+                oInputElement.setAttribute( 'type', 'hidden' );
+                oForm.appendChild( oInputElement );
+            }
+            oForm.shp.value = iShopId;
+            oForm.submit();
+        }
+        [{/if}]
     </script>
 </head>
 <body>
@@ -16,12 +44,12 @@
     <ul>
       <li class="">
         [{if $ismall}]
-          <form name="search" id="search" action="[{ $shop->selflink }]" method="post" target="basefrm">
+          <form name="search" id="search" action="[{ $shop->selflink }]" method="post">
             [{ $shop->hiddensid }]
-            <input type="hidden" name="actshop" value="[{ $shopid }]">
-            <input type="hidden" name="cl" value="shop">
+            <input type="hidden" name="cl" value="[{ $shop->cl }]">
+            <input type="hidden" name="item" value="navigation.tpl">
             <input type="hidden" name="fnc" value="chshp">
-            <select id="selectshop" class="folderselect" onChange="Javascript:selectShop();return false;">
+            <select id="selectshop" class="folderselect" onChange="selectShop( this.value );">
             [{foreach from=$shoplist item=oShop}]
               <option value="[{ $oShop->oxshops__oxid->value|default:$shop->id }]" [{ if $shop->id == $oShop->oxshops__oxid->value|default:$shop->id }]SELECTED[{/if}] >[{$oShop->oxshops__oxname->value|default:$actshop}]</option>
             [{/foreach}]
@@ -37,7 +65,7 @@
         [{assign var='mh' value=$mh+1 }]
         [{assign var='mn' value=0 }]
         <h2>
-            [{if $menuholder->getAttribute('url')}]<a href="[{ $shop->selflink }]?cl=navigation&amp;fnc=exturl&amp;url=[{ $menuholder->getAttribute('url')|escape:'url'}]" target="basefrm" >[{/if}]
+            [{if $menuholder->getAttribute('url')}]<a href="[{ $shop->selflink }]&cl=navigation&amp;fnc=exturl&amp;url=[{ $menuholder->getAttribute('url')|escape:'url'}]" target="basefrm" >[{/if}]
             [{ oxmultilang ident=$menuholder->getAttribute('name')|default:$menuholder->getAttribute('id') noerror=true }]
             [{if $menuholder->getAttribute('url')}]</a>[{/if}]
         </h2>
@@ -48,7 +76,7 @@
             [{if $menuitem->nodeType == XML_ELEMENT_NODE}]
                 [{assign var='mn' value=$mn+1 }]
                 [{assign var='sm' value=0 }]
-                <li class="" id="nav-[{$mh}]-[{$mn}]">
+                <li class="[{if $menuitem->getAttribute('active')}]exp[{assign var='sNavExpId' value="nav-`$mh`-`$mn`" }][{/if}]" id="nav-[{$mh}]-[{$mn}]">
                     [{if $menuitem->getAttribute('url')}]
                         <a href="[{$menuitem->getAttribute('url')}]" onclick="_navAct(this);" class="rc" target="[{if $menuitem->getAttribute('target')}][{$menuitem->getAttribute('target')}][{else}]basefrm[{/if}]"><b>[{ oxmultilang ident=$menuitem->getAttribute('name')|default:$menuitem->getAttribute('id') noerror=true }]</b></a>
                     [{elseif $menuitem->getAttribute('expand') == 'none'}]
@@ -62,7 +90,7 @@
                         [{if $submenuitem->nodeType == XML_ELEMENT_NODE}]
                             [{assign var='sm' value=$sm+1 }]
                             [{if $submenuitem->getAttribute('linkicon')}] [{assign var='linkicon' value=$submenuitem->getAttribute('linkicon') }][{/if}]
-                            <li class="" id="nav-[{$mh}]-[{$mn}]-[{$sm}]">
+                            <li class="[{if $submenuitem->getAttribute('active')}]act[{assign var='sNavActId' value="nav-`$mh`-`$mn`-`$sm`" }][{/if}]" id="nav-[{$mh}]-[{$mn}]-[{$sm}]">
                                 <a href="[{if $submenuitem->getAttribute('url')}][{$submenuitem->getAttribute('url')}][{else}][{ $submenuitem->getAttribute('link') }][{/if}]" onclick="_navAct(this);" target="basefrm" class="rc"><b>[{if $linkicon}]<span class="[{$linkicon}]">[{/if}][{ oxmultilang ident=$submenuitem->getAttribute('name')|default:$submenuitem->getAttribute('id') noerror=true }][{if $linkicon}]</span>[{/if}]</b></a>
                             </li>
                             [{assign var='linkicon' value='' }]
@@ -87,7 +115,7 @@
             [{assign var='mn' value=1 }]
             [{assign var='sm' value=0 }]
             <li id="nav-[{$mh}]-[{$mn}]" class="[{if $blOpenHistory}]exp[{assign var='sHistoryId' value="nav-`$mh`-`$mn`" }][{/if}]">
-                <a class="rc" name="_hist" href="[{ $shop->selflink }]?cl=navigation&item=navigation.tpl&openHistory=1&[{$smarty.now}]#_hist"><b>[{ oxmultilang ident=NAVIGATION_HISTORY noerror=true }]</b></a>
+                <a class="rc" name="_hist" href="[{ $shop->selflink }]&cl=navigation&item=navigation.tpl&openHistory=1&[{$smarty.now}]#_hist"><b>[{ oxmultilang ident=NAVIGATION_HISTORY noerror=true }]</b></a>
 
                 <ul>
                     [{foreach from=$menuhistory item=submenuitem }]
@@ -110,7 +138,7 @@
             [{assign var='sm' value=0 }]
             <li id="nav-[{$mh}]-[{$mn}]">
                 <a class="rc" onclick="_navExp(this);return false;" href="#" ><b>[{ oxmultilang ident=NAVIGATION_FAVORITES noerror=true }]</b></a>
-                <a class="ed" href="index.php?cl=navigation&amp;item=favorites.tpl" target="basefrm" >[{ oxmultilang ident=NAVIGATION_FAVORITES_EDIT noerror=true }]</a>
+                <a class="ed" href="[{$shop->selflink}]&cl=navigation&amp;item=favorites.tpl" target="basefrm" >[{ oxmultilang ident=NAVIGATION_FAVORITES_EDIT noerror=true }]</a>
                 <ul>
                     [{foreach from=$menufavorites item=submenuitem }]
                         [{if $submenuitem->nodeType == XML_ELEMENT_NODE}]
@@ -130,16 +158,7 @@
 
     <script type="text/javascript">
     <!--
-    function selectShop() {
-        var oSearch = document.getElementById("search");
-        for (var i=0;i<oSearch.selectshop.length;i++) {
-            if (oSearch.selectshop.options[i].selected)
-                oSearch.actshop.value = oSearch.selectshop.options[i].value;
-        };
-        oSearch.submit();
-    };
-
-    var _expid = [{if $blOpenHistory}]'[{$sHistoryId}]'[{else}]0[{/if}];
+    var _expid = [{if $blOpenHistory}]'[{$sHistoryId}]'[{elseif $sNavExpId}]'[{$sNavExpId}]'[{else}]0[{/if}];
     function _navExp(el){
         var _cur = el.parentNode,
             _exp = document.getElementById(_expid);
@@ -148,7 +167,7 @@
         if(_expid == _cur.id){ _expid = 0;}else{_expid = _cur.id;}
     }
 
-    var _actid = 0;
+    var _actid = [{if $sNavActId}]'[{$sNavActId}]'[{else}]0[{/if}];
     function _navAct(el){
          var _cur = el.parentNode,
              _act = document.getElementById(_actid);

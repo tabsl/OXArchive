@@ -25,7 +25,7 @@
 
   [{oxhasrights object=$edit readonly=$readonly right=$smarty.const.RIGHT_VIEW }]
     [{ if $oxid != "-1"}]
-      <input type="button" value="[{ oxmultilang ident="CATEGORY_ORDER_SORTCATEGORIES" }]" class="edittext" onclick="JavaScript:showDialog('?cl=category_order&aoc=1&oxid=[{ $oxid }]');">
+      <input type="button" value="[{ oxmultilang ident="CATEGORY_ORDER_SORTCATEGORIES" }]" class="edittext" onclick="JavaScript:showDialog('&cl=category_order&aoc=1&oxid=[{ $oxid }]');">
     [{ /if}]
   [{/oxhasrights}]
 

@@ -4,7 +4,7 @@
 <!--
 function changeEditBar( sLocation, sPos )
 {
-    parent.edit.location = '[{ $shop->selflink }]?cl=' + sLocation;
+    parent.edit.location = '[{$shop->selflink}]&cl=' + sLocation;
 
     var oSearch = document.getElementById("search");
     oSearch.actedit.value = sPos;

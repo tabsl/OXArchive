@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxcmp_user.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: oxcmp_user.php 26827 2010-03-25 09:29:41Z arvydas $
  */
 
 // defining login/logout states
@@ -100,38 +100,39 @@ class oxcmp_user extends oxView
             oxSession::setVar( 'dgr', $sDynGoup );
         }
 
+        $oParentView = $this->getParent();
         /*
         if ( $blNewsReg = oxConfig::getParameter( 'blnewssubscribed' )) {
-            $this->_oParent->setNewsSubscribed( $blNewsReg );
+            $oParentView->setNewsSubscribed( $blNewsReg );
             // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-            $this->_oParent->addTplParam( 'blnewssubscribed', $this->_oParent->isNewsSubscribed() );
+            $oParentView->addTplParam( 'blnewssubscribed', $oParentView->isNewsSubscribed() );
         }*/
 
         if ( $aInvAdress = oxConfig::getParameter( 'invadr') ) {
-            $this->_oParent->addTplParam( 'invadr', $aInvAdress );
+            $oParentView->addTplParam( 'invadr', $aInvAdress );
         }
 
         if ( ( $aDelAdress = oxConfig::getParameter( 'deladr') ) && !oxConfig::getParameter( 'reloadaddress' ) ) {
-               $this->_oParent->addTplParam( 'deladr', $aDelAdress );
+               $oParentView->addTplParam( 'deladr', $aDelAdress );
         }
 
         if ( $sUser = oxConfig::getParameter( 'lgn_usr' ) ) {
-            $this->_oParent->addTplParam( 'lgn_usr', $sUser );
+            $oParentView->addTplParam( 'lgn_usr', $sUser );
         }
 
         /*
         if ( $aDelAdressID = oxConfig::getParameter( 'deladrid' ) ) {
             $oAddress = oxNew( 'oxaddress' );
             $oAddress->load( $aDelAdressID );
-            $this->_oParent->setDelAddress( $oAddress );
-            $this->_oParent->addTplParam( 'delivadr', $this->_oParent->getDelAddress() );
+            $oParentView->setDelAddress( $oAddress );
+            $oParentView->addTplParam( 'delivadr', $oParentView->getDelAddress() );
         }
 
         // clicked on show address ?
         if ( $blShowAddress = oxSession::getVar( 'blshowshipaddress' ) ) {
-            $this->_oParent->setShowShipAddress( 1 );
+            $oParentView->setShowShipAddress( 1 );
             // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-            $this->_oParent->addTplParam( 'blshowshipaddress', 1 );
+            $oParentView->addTplParam( 'blshowshipaddress', 1 );
         }*/
 
         return $this->getUser();
@@ -196,7 +197,7 @@ class oxcmp_user extends oxView
         // trying to login user
         try {
             $oUser = oxNew( 'oxuser' );
-            if ( $sOpenId ) {
+            if ( $this->getViewConfig()->getShowOpenIdLogin() && $sOpenId ) {
                 $iOldErrorReproting = error_reporting();
                 error_reporting($iOldErrorReproting & ~E_STRICT);
                 $oOpenId = oxNew( "oxOpenID" );
@@ -425,6 +426,7 @@ class oxcmp_user extends oxView
             $blOptin = oxConfig::getParameter( 'blnewssubscribed' );
             $this->_blNewsSubscriptionStatus = $oUser->setNewsSubscription( $blOptin, true );
 
+            $oUser->addToGroup( 'oxidnotyetordered' );
             $oUser->logout();
 
         } catch ( oxUserException $oEx ) {
@@ -447,9 +449,9 @@ class oxcmp_user extends oxView
 
         // order remark
         //V #427: order remark for new users
-        $sOrd_Remark = oxConfig::getParameter( 'order_remark' );
-        if ( $sOrd_Remark ) {
-            oxSession::setVar( 'ordrem', $sOrd_Remark );
+        $sOrderRemark = oxConfig::getParameter( 'order_remark', true );
+        if ( $sOrderRemark ) {
+            oxSession::setVar( 'ordrem', $sOrderRemark );
         }
 
         // send register eMail
@@ -479,15 +481,13 @@ class oxcmp_user extends oxView
 
         // registered new user ?
         if ( $this->createuser()!= false && $this->_blIsNewUser ) {
-            // #1672 R
-            $this->getUser()->addToGroup( 'oxidnotyetordered' );
-
             if ( $this->_blNewsSubscriptionStatus === null || $this->_blNewsSubscriptionStatus ) {
                 return 'register?success=1';
             } else {
                 return 'register?success=1&newslettererror=4';
             }
-        } else { // problems with registration ...
+        } else {
+            // problems with registration ...
             $this->logout();
         }
     }
@@ -507,6 +507,10 @@ class oxcmp_user extends oxView
      */
     protected function _changeUser_noRedirect( )
     {
+        if (!$this->getSession()->checkSessionChallenge()) {
+            return;
+        }
+
         // no user ?
         $oUser = $this->getUser();
         if ( !$oUser ) {
@@ -550,9 +554,9 @@ class oxcmp_user extends oxView
 
 
         // order remark
-        $sOrd_Remark = oxConfig::getParameter( 'order_remark' );
-        if ( $sOrd_Remark ) {
-            oxSession::setVar( 'ordrem', $sOrd_Remark );
+        $sOrderRemark = oxConfig::getParameter( 'order_remark', true );
+        if ( $sOrderRemark ) {
+            oxSession::setVar( 'ordrem', $sOrderRemark );
         }
 
         if ( $oBasket = $this->getSession()->getBasket() ) {
@@ -570,7 +574,11 @@ class oxcmp_user extends oxView
     protected function _getDelAddressData()
     {
         // if user company name, user name and additional info has special chars
-        $aRawVal = array('oxaddress__oxcompany', 'oxaddress__oxaddinfo', 'oxaddress__oxfname', 'oxaddress__oxlname', 'oxaddress__oxcity');
+        $aRawVal = array('oxaddress__oxcompany', 'oxaddress__oxaddinfo', 'oxaddress__oxfname',
+                         'oxaddress__oxlname', 'oxaddress__oxcity', 'oxaddress__oxstreet',
+                         'oxaddress__oxstreetnr', 'oxaddress__oxzip', 'oxaddress__oxfon',
+                         'oxaddress__oxfax');
+
         $aDelAdress = $aDeladr = oxConfig::getParameter( 'deladr', $aRawVal );
 
         if ( is_array( $aDeladr ) ) {
@@ -598,7 +606,7 @@ class oxcmp_user extends oxView
         if ( $myConfig->isSsl() ) {
             $sLogoutLink = $myConfig->getShopHomeUrl();
         }
-        $sLogoutLink .= 'cl='.oxConfig::getParameter('cl').$this->_oParent->getDynUrlParams();
+        $sLogoutLink .= 'cl='.oxConfig::getParameter('cl').$this->getParent()->getDynUrlParams();
         if ( $sParam = oxConfig::getParameter('anid') ) {
             $sLogoutLink .= '&amp;anid='.$sParam;
         }
@@ -646,7 +654,9 @@ class oxcmp_user extends oxView
         }
 
         oxSession::setVar( 'blshowshipaddress', $blShowShipAddress );
-        $this->_oParent->_aViewData['blshowshipaddress'] = $blShowShipAddress;
+        if ($this->getParent()) {
+            $this->getParent()->addTplParam( 'blshowshipaddress', $blShowShipAddress );
+        }
 
         return $blShowIt;
     }
@@ -659,13 +669,16 @@ class oxcmp_user extends oxView
      */
     public function loginOid()
     {
+        if (!$this->getViewConfig()->getShowOpenIdLogin()) {
+            return;
+        }
         $this->setLoginStatus( USER_LOGIN_FAIL );
 
         $iOldErrorReproting = error_reporting();
         //for 3rd part library disabling our E_STRICT error reporting
         error_reporting($iOldErrorReproting & ~E_STRICT);
         try {
-            $oOpenId = oxNew( "oxOpenID" );
+            $oOpenId = $this->getOpenId();
             $aData = $oOpenId->getOidResponse( $this->_getReturnUrl() );
         } catch ( oxUserException $oEx ) {
             // for login component send excpetion text to a custom component (if defined)
@@ -737,9 +750,9 @@ class oxcmp_user extends oxView
     protected function _getUserTitle( $sGender )
     {
         if ( $sGender == "F" ) {
-            return oxLang::getInstance()->translateString( "ACCOUNT_USER_MRS" );
+            return 'MRS';
         } else {
-            return oxLang::getInstance()->translateString( "ACCOUNT_USER_MR" );
+            return 'MR';
         }
     }
 
@@ -753,7 +766,7 @@ class oxcmp_user extends oxView
         $this->getParent()->setFncName( 'loginOid' );
         $sReturnUrl = str_replace( '&amp;', '&', $this->getParent()->getLink() );
         if ( !strpos( $sReturnUrl, 'loginOid' ) ) {
-            if ( !strpos( $sReturnUrl, 'loginOid' ) ) {
+            if ( strpos( $sReturnUrl, '?' ) ) {
                 $sReturnUrl = $sReturnUrl . "&fnc=loginOid";
             } else {
                 $sReturnUrl = $sReturnUrl . "?fnc=loginOid";
@@ -785,5 +798,15 @@ class oxcmp_user extends oxView
     public function getLoginStatus()
     {
         return $this->_iLoginStatus;
+    }
+
+    /**
+     * Returns oxOpenId class
+     *
+     * @return oxOpenId
+     */
+    public function getOpenId()
+    {
+        return oxNew( "oxOpenID" );
     }
 }

@@ -15,20 +15,25 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package smartyPlugins
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   smarty_plugins
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: modifier.oxaddparams.php 19252 2009-05-21 07:52:04Z arvydas $
+ * @version   SVN: $Id: modifier.oxaddparams.php 25774 2010-02-11 08:55:28Z sarunas $
  */
 
-/*
-* Smarty function
-* -------------------------------------------------------------
-* Purpose: add additional parameters to SEO url
-* add |oxaddparams:"...." to link
-* -------------------------------------------------------------
-*/
+/**
+ * Smarty function
+ * -------------------------------------------------------------
+ * Purpose: add additional parameters to SEO url
+ * add |oxaddparams:"...." to link
+ * -------------------------------------------------------------
+ *
+ * @param string $sUrl       Url
+ * @param string $sDynParams Dynamic URL parameters
+ *
+ * @return string
+ */
 function smarty_modifier_oxaddparams( $sUrl, $sDynParams )
 {
     // removing empty parameters
@@ -37,5 +42,5 @@ function smarty_modifier_oxaddparams( $sUrl, $sDynParams )
     if ( $sDynParams ) {
         $sUrl .= ( ( strpos( $sUrl, '?' ) !== false ) ? "&amp;":"?" ) . $sDynParams;
     }
-    return oxSession::getInstance()->processUrl( $sUrl );
+    return oxUtilsUrl::getInstance()->processSeoUrl( $sUrl );
 }

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: sysreq_main.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: sysreq_main.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -46,7 +46,14 @@ class sysreq_main extends oxAdminDetails
 
         return "sysreq_main.tpl";
     }
-    
+
+    /**
+     * Returns module state
+     *
+     * @param int $iModuleState state integer value
+     *
+     * @return string
+     */
     public function getModuleClass( $iModuleState )
     {
         switch ( $iModuleState ) {

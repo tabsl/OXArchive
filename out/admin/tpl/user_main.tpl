@@ -100,8 +100,8 @@ function chkInsert()
             </td>
             <td class="edittext">
               <select name="editval[oxuser__oxsal]" class="editinput" [{ $readonly }]>
-                <option value="MR"  [{if $edit->oxuser__oxsal->value|lower  == "mr"  }]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_SALUTATION_MR"  }]</option>
-                <option value="MRS" [{if $edit->oxuser__oxsal->value|lower  == "mrs" }]SELECTED[{/if}]>[{ oxmultilang ident="GENERAL_SALUTATION_MRS" }]</option>
+                <option value="MR"  [{if $edit->oxuser__oxsal->value|lower  == "mr"  }]SELECTED[{/if}]>[{ oxmultilang ident="MR"  }]</option>
+                <option value="MRS" [{if $edit->oxuser__oxsal->value|lower  == "mrs" }]SELECTED[{/if}]>[{ oxmultilang ident="MRS" }]</option>
               </select>
             [{ oxinputhelp ident="HELP_GENERAL_BILLSAL" }]
             </td>
@@ -160,6 +160,15 @@ function chkInsert()
             <td class="edittext">
             <input type="text" class="editinput" size="37" maxlength="[{$edit->oxuser__oxaddinfo->fldmax_length}]" name="editval[oxuser__oxaddinfo]" value="[{$edit->oxuser__oxaddinfo->value }]" [{ $readonly }]>
             [{ oxinputhelp ident="HELP_GENERAL_EXTRAINFO" }]
+            </td>
+        </tr>
+        <tr>
+            <td class="edittext">
+            [{ oxmultilang ident="GENERAL_STATE" }]
+            </td>
+            <td class="edittext">
+            <input type="text" class="editinput" size="15" maxlength="[{$edit->oxuser__oxstateid->fldmax_length}]" name="editval[oxuser__oxstateid]" value="[{$edit->oxuser__oxstateid->value }]" [{ $readonly }]>
+            [{ oxinputhelp ident="HELP_GENERAL_STATE" }]
             </td>
         </tr>
         <tr>
@@ -238,7 +247,7 @@ function chkInsert()
     <!-- Anfang rechte Seite -->
     <td valign="top" class="edittext vr" align="left" width="50%">
     [{ if $oxid != "-1"}]
-       <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('?cl=user_main&aoc=1&oxid=[{ $oxid }]');">
+       <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('&cl=user_main&aoc=1&oxid=[{ $oxid }]');">
     [{ /if}]
     </td>
     </tr>

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: search.php 23255 2009-10-14 15:25:09Z sarunas $
+ * @version   SVN: $Id: search.php 26303 2010-03-04 16:11:37Z sarunas $
  */
 
 /**
@@ -220,7 +220,7 @@ class Search extends oxUBase
         parent::render();
 
         $myConfig = $this->getConfig();
-        if ( is_array( $myConfig->getConfigParam( 'aRssSelected' ) ) && in_array( 'oxrss_search', $myConfig->getConfigParam( 'aRssSelected' ) ) ) {
+        if ( $myConfig->getConfigParam( 'bl_rssSearch' ) ) {
             $oRss = oxNew('oxrssfeed');
             $sSearch = oxConfig::getParameter( 'searchparam', true );
             $sCnid = oxConfig::getParameter( 'searchcnid', true );
@@ -236,7 +236,25 @@ class Search extends oxUBase
     }
 
     /**
-     * Returns additional URL paramerets which must be added to list products urls
+     * Iterates through list articles and performs list view specific tasks:
+     *  - sets type of link whicn needs to be generated (Manufacturer link)
+     *
+     * @return null
+     */
+    protected function _processListArticles()
+    {
+        $sAddDynParams = $this->getAddUrlParams();
+        if ( $sAddDynParams && ( $aArtList = $this->getArticleList() ) ) {
+            foreach ( $aArtList as $oArticle ) {
+                // appending sen and dynamic urls
+                $oArticle->appendStdLink( $sAddDynParams );
+                $oArticle->appendLink( $sAddDynParams );
+            }
+        }
+    }
+
+    /**
+     * Returns additional URL parameters which must be added to list products urls
      *
      * @return string
      */
@@ -331,6 +349,10 @@ class Search extends oxUBase
      */
     public function getSimilarRecommLists()
     {
+        if (!$this->getViewConfig()->getShowListmania()) {
+            return false;
+        }
+
         if ( $this->_oRecommList === null ) {
             $this->_oRecommList = false;
             $aList = $this->getArticleList();

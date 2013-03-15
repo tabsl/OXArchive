@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package lang
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   lang
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: lang.php 23588 2009-10-26 10:39:45Z arvydas $
+ * @version   SVN: $Id: lang.php 26901 2010-03-26 15:56:26Z rimvydas.paskevicius $
  */
 
 
@@ -347,8 +347,9 @@ $aLang = array(
 'EMAIL_NEWSLETTERDBOPTINMAIL_SUBJECT'             => "Newsletter",
 'EMAIL_ORDER_CUST_HTML_ORDERNOMBER'               =>"Bestellnr.",
 'EMAIL_ORDER_CUST_HTML_PRODUCT'                   =>"Artikel",
-'EMAIL_ORDER_CUST_HTML_QUANTITY'                  =>"Anzahl",
 'EMAIL_ORDER_CUST_HTML_UNITPRICE'                 =>"Einzelpreis",
+'EMAIL_ORDER_CUST_HTML_QUANTITY'                  =>"Anzahl",
+'EMAIL_ORDER_CUST_HTML_VAT'                       =>"MwSt",
 'EMAIL_ORDER_CUST_HTML_TOTAL'                     =>"Gesamt",
 'EMAIL_ORDER_CUST_HTML_PRODUCTREVIEW'             =>"Prod. bewerten",
 'EMAIL_ORDER_CUST_HTML_WRAPPING'                  =>"Geschenkverp.:",
@@ -434,11 +435,6 @@ $aLang = array(
 'ERR_EXPIRED_DAYS_VERSIONEXPIRED1'                =>"Ihre Version ist leider abgelaufen - bitte kontaktieren Sie",
 'ERR_EXPIRED_DAYS_VERSIONEXPIRED2'                =>"OXID eSales",
 'ERR_EXPIRED_DAYS_VERSIONEXPIRED3'                =>"für mehr Informationen.",
-'ERR_OVERLOADED_ARTICLES_TITLE'                   =>"OXID eShop Fehler",
-'ERR_OVERLOADED_ARTICLES_OXIDESHOPERROR'          =>"OXID eShop FEHLER!",
-'ERR_OVERLOADED_ARTICLES_VERSIONEXPIRED1'         =>"Die Artikelanzahl übersteigt die max. zulässige Anzahl von Artikeln - bitte kontaktieren Sie",
-'ERR_OVERLOADED_ARTICLES_VERSIONEXPIRED2'         =>"OXID eSales",
-'ERR_OVERLOADED_ARTICLES_VERSIONEXPIRED3'         =>"für mehr Informationen.",
 'ERR_SETUP_TITLE'                                 =>"OXID eShop Fehler",
 'ERR_SETUP_OXIDESHOPERROR'                        =>"OXID eShop FEHLER!",
 'ERR_SETUP_VERSIONEXPIRED1'                       =>"Bitte löschen Sie das Setupverzeichnis:",
@@ -451,6 +447,9 @@ $aLang = array(
 'ERR_UNLICENSED_VERSIONEXPIRED1'                  =>"Ihr Shop ist nicht lizensiert, tragen Sie bitte im Shop Admin eine gültige Lizenznr. ein - oder kontaktieren Sie",
 'ERR_UNLICENSED_VERSIONEXPIRED2'                  =>"OXID eSales",
 'ERR_UNLICENSED_VERSIONEXPIRED3'                  =>"für mehr Informationen.",
+'ERR_UPDATE_OXIDESHOPERROR'                       =>"Ein OXID eShop Fehler ist aufgetreten",
+'ERR_UPDATE_DELETEDIRECTORY1'                     =>"Bitte löschen Sie folgendes Verzeichnis:",
+'ERR_UPDATE_DELETEDIRECTORY2'                     =>"updateApp",
 'ERR_MANDATES_EXCEEDED_TITLE'                     =>"OXID eShop Fehler",
 'ERR_MANDATES_EXCEEDED_OXIDESHOPERROR'            =>"OXID eShop FEHLER!",
 'ERR_MANDATES_EXCEEDED_VERSIONEXPIRED1'           =>"Die Anzahl der lizenzierten Mandanten ist überschritten, tragen Sie bitte im Shop Admin eine gültige Lizenznr. ein - oder kontaktieren Sie",
@@ -735,6 +734,8 @@ $aLang = array(
 'MALLCATITEM_PLEASECHOOSE'                        => "Bitte wählen Sie:",
 'MEDIA'                                           => "Zusatzinformationen",
 'MOREDETAILS_POPUP_TITLE'                         => "Zoombilder",
+'MR'                                              => "Herr",
+'MRS'                                             => "Frau",
 'NEWS_TITLE'                                      => "Neuigkeiten bei uns",
 'NEWS_LATESTNEWSBY'                               => "Neuigkeiten bei",
 'NEWSLETTER_NEWSLWTTERTITLE'                      => "Neuigkeiten bei uns",
@@ -826,8 +827,8 @@ $aLang = array(
 'ORDER_MODIFY2'                                   => "ändern",
 'ORDER_IAGREETOTERMS1'                            => "Ich habe die",
 'ORDER_IAGREETOTERMS2'                            => "AGB",
-'ORDER_IAGREETOTERMS3'                            => "gelesen und bin einverstanden",
-'ORDER_IAGREETORIGHTOFWITHDRAWAL1'                => "die",
+'ORDER_IAGREETOTERMS3'                            => "gelesen und erkläre mich mit ihnen einverstanden.",
+'ORDER_IAGREETORIGHTOFWITHDRAWAL1'                => "Die Informationen zum",
 'ORDER_IAGREETORIGHTOFWITHDRAWAL3'                => "habe ich gelesen.",
 'ORDER_RIGHTOFWITHDRAWAL'                         => "Widerrufsrecht",
 'ORDER_RIGHTOFWITHDRAWAL_TEXT'                    => "Verbraucher können ihre Vertragserklärung innerhalb von zwei Wochen ohne Angabe von
@@ -919,7 +920,7 @@ $aLang = array(
 'REGISTER_FORGOTPWD'                              => "Passwort vergessen?",
 'REGISTER_CLICKHERE'                              => "KLICKEN SIE HIER!",
 'REGISTER_ERRADDRESSUNKNOWN'                      => "Fehler: Adresse unbekannt!",
-'REGISTER_ERRMINLENGTH'                           => "Fehler: Passwort zu kurz! ( Mind. 6 Zeichen )",
+'REGISTER_ERRMINLENGTH'                           => "Fehler: Passwort zu kurz! (Mind. 6 Zeichen)",
 'REGISTER_OPENACCOUNT'                            => "Neues Konto eröffnen",
 'REGISTER_ACCOUNTINFO'                            => "Kontoinformationen",
 'REGISTER_COMPLETEMARKEDFIELDS'                   => '(Felder mit einem <span class="req">*</span> müssen ausgefüllt werden)',
@@ -1012,6 +1013,7 @@ $aLang = array(
 'START_LONGRUNNINGHITS'                           => "Die Dauerbrenner",
 'START_JUSTARRIVED'                               => "Frisch eingetroffen!",
 'START_CATEGORIES'                                => "Kategorien",
+'STATE_PROMPT'                                    => "Bitte wählen Sie ein Bundesland aus",
 'SUGGEST_TITLE'                                   => "Artikel weiterempfehlen",
 'SUGGEST_COMLETECORRECTLYFIELDS'                  => "Bitte alle Felder ausfüllen, sonst kann die Karte nicht zugestellt werden.",
 'SUGGEST_INVALIDMAIL'                             => "Fehler beim versenden - bitte E-Mail-Adressen überprüfen.",
@@ -1031,8 +1033,10 @@ $aLang = array(
 'SUGGEST_MESSAGE2'                                => "unterwegs und habe dabei etwas Interessantes gefunden, auf das ich Dich gerne aufmerksam machen möchte. Klicke einfach auf das Bild oder auf die Beschreibung und Du landest direkt im Shop.",
 'SUGGEST_SEND'                                    => "Empfehlung abschicken",
 'SUGGEST_ABOUTDATAPROTECTION'                     => "Zum Datenschutz: Ihr Name und Ihre E-Mail-Adresse sowie der Name und die E-Mail-Adresse des Empfängers werden ausschließlich zu Übertragungszwecken verwendet und um den Adressaten über den Absender zu informieren, bzw. um im Fall eines Übertragungsfehlers eine Benachrichtigung übermitteln zu können.",
+'SUGGEST_VERIFICATIONCODE'                        => "Prüfcode:",
 'TAGS'                                            => "Stichworte",
 'TAGS_ADD'                                        => "Stichwort hinzufügen",
+'TAGS_SEPARATEBY'                                 => "Tags mit folgenden Zeichen trennen",
 'TAGS_EDIT'                                       => "Stichwort ändern",
 'TAGS_HIGHLIHGT_INSTRUCTIONS'                     => "Stichworte anklicken oder Neues eintragen:",
 'TAGS_MORE'                                       => "Mehr",
@@ -1078,10 +1082,10 @@ $aLang = array(
 'USER_FORGOTPWD'                                  => "Passwort vergessen",
 'USER_OPTION3'                                    => "Option 3",
 'USER_OPENPERSONALACCOUNT1'                       => "Persönliches Kunden-<br>Konto eröffnen.",
-'USER_OPENPERSONALACCOUNT2'                       => "Ein Kundenkonto bei",
-'USER_OPENPERSONALACCOUNT3'                       => "bietet mir Vorteile wie:",
-'USER_OPENPERSONALACCOUNT4'                       => "- Verwaltung meiner Adressdaten",
-'USER_OPENPERSONALACCOUNT5'                       => "- Einsichten den Status meiner Bestellungen (Tracking)",
+'USER_OPENPERSONALACCOUNT2'                       => "Mit einem Kundenaccount",
+'USER_OPENPERSONALACCOUNT3'                       => "haben sie folgende Vorteile:",
+'USER_OPENPERSONALACCOUNT4'                       => "- Verwaltung der Lieferadressen",
+'USER_OPENPERSONALACCOUNT5'                       => "- Prüfung des Bestellstatus",
 'USER_OPENPERSONALACCOUNT6'                       => "- Bestellhistorie",
 'USER_OPENPERSONALACCOUNT7'                       => "- persönlicher Merkzettel",
 'USER_OPENPERSONALACCOUNT8'                       => "- persönliche Wunschliste",
@@ -1097,7 +1101,7 @@ $aLang = array(
 'USER_ERRINVALIDEMAIL2'                           => "Fehler: Keine gültige E-Mail-Adresse!",
 'USER_ERRALREADYREGISTERED2'                      => "Fehler: Sie sind bereits registriert! Bitte geben Sie das korrekte Passwort ein.",
 'USER_ERRUNKNOWNADDRESS2'                         => "Fehler: Adresse unbekannt!",
-'USER_ERRMINPWDLENGTH'                            => "Fehler: Passwort zu kurz! ( Mind. 6 Zeichen )",
+'USER_ERRMINPWDLENGTH'                            => "Fehler: Passwort zu kurz! (Mind. 6 Zeichen)",
 'USER_LOGIN3'                                     => "Anmeldung",
 'USER_ENTEREMAILANDPWD'                           => "Bitte geben Sie Ihre E-Mail-Adresse und ein Passwort ein.",
 'USER_RECEIVECONFIRMATION'                        => "Sie erhalten eine Anmeldebestätigung mit Ihren Daten, die Sie sorgfältig aufbewahren sollten.",
@@ -1179,7 +1183,7 @@ $aLang = array(
 'WRAPPING_OPTIONALMESSAGE'                        => "Falls gewünscht geben Sie, hier Ihre Grußnachricht ein:",
 'WRAPPING_ADDFORANDFROM'                          => 'Bitte fügen Sie auch "Für" und "Von" hinzu.',
 'WRAPPING_BACKTOORDER'                            => "Zurück zur Bestellung",
-'priceFrom'                                       => '<span style="font-size: 50%;" class="pricefrom">ab</span>',
+'priceFrom'                                       => '<span class="pricefrom">ab</span>',
 'byBrand'                                         => 'Nach Marke/Hersteller',
 'byVendor'                                        => 'Nach Lieferant',
 'byManufacturer'                                  => 'Nach Marke/Hersteller',

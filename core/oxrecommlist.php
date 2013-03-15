@@ -15,17 +15,17 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxrecommlist.php 22590 2009-09-24 06:24:00Z alfonsas $
+ * @version   SVN: $Id: oxrecommlist.php 25755 2010-02-10 13:59:48Z sarunas $
  */
 
 /**
  * Recommendation list manager class.
  */
-class oxRecommList extends oxBase
+class oxRecommList extends oxBase implements oxIUrl
 {
     /**
      * Current object class name
@@ -47,6 +47,13 @@ class oxRecommList extends oxBase
      * @var string
      */
     protected $_sArticlesFilter = '';
+
+    /**
+     * Seo article urls for languages
+     *
+     * @var array
+     */
+    protected $_aSeoUrls = array();
 
     /**
      * Class constructor, initiates parent constructor (parent::oxBase()).
@@ -406,22 +413,81 @@ class oxRecommList extends oxBase
     }
 
     /**
-     * return url to this recomm list page
+     * Returns raw recommlist seo url
+     *
+     * @param int $iLang language id
+     * @param int $iPage page number [optional]
      *
      * @return string
      */
-    public function getLink()
+    public function getBaseSeoLink( $iLang, $iPage = 0 )
     {
-        $sUrl = $this->getConfig()->getShopHomeURL().'cl=recommlist';
-        if ( oxUtils::getInstance()->seoIsActive() ) {
-            $oEncoder = oxSeoEncoder::getInstance();
-            if ( ( $sStaticUrl = $oEncoder->getStaticUrl( $sUrl ) ) ) {
-                $sUrl = $sStaticUrl;
-            }
+        $oEncoder = oxSeoEncoderRecomm::getInstance();
+        if ( !$iPage ) {
+            return $oEncoder->getRecommUrl( $this, $iLang );
         }
-        $sUrl .= ( ( strpos( $sUrl, '?' ) !== false ) ? "&amp;":"?" ) . "recommid=".$this->getId();
+        return $oEncoder->getRecommPageUrl( $this, $iPage, $iLang );
+    }
 
-        return $sUrl;
+    /**
+     * return url to this recomm list page
+     *
+     * @param int $iLang language id [optional]
+     *
+     * @return string
+     */
+    public function getLink( $iLang = null )
+    {
+        if ( $iLang === null ) {
+            $iLang = oxLang::getInstance()->getBaseLanguage();
+        }
+
+        if ( !oxUtils::getInstance()->seoIsActive() ) {
+            return $this->getStdLink( $iLang );
+        }
+
+        if ( !isset( $this->_aSeoUrls[$iLang] ) ) {
+            $this->_aSeoUrls[$iLang] = $this->getBaseSeoLink( $iLang );
+        }
+
+        return $this->_aSeoUrls[$iLang];
+    }
+
+    /**
+     * Returns standard (dynamic) object URL
+     *
+     * @param int   $iLang   language id [optional]
+     * @param array $aParams additional params to use [optional]
+     *
+     * @return string
+     */
+    public function getStdLink( $iLang = null, $aParams = array() )
+    {
+        if ( $iLang === null ) {
+            $iLang = oxLang::getInstance()->getBaseLanguage();
+        }
+
+        return oxUtilsUrl::getInstance()->processStdUrl( $this->getBaseStdLink( $iLang ), $aParams, $iLang, $iLang != oxLang::getInstance()->getBaseLanguage() );
+    }
+
+    /**
+     * Returns base dynamic recommlist url: shopurl/index.php?cl=recommlist
+     *
+     * @param int  $iLang   language id
+     * @param bool $blAddId add current object id to url or not
+     * @param bool $blFull  return full including domain name [optional]
+     *
+     * @return string
+     */
+    public function getBaseStdLink( $iLang, $blAddId = true, $blFull = true )
+    {
+        $sUrl = '';
+        if ( $blFull ) {
+            //always returns shop url, not admin
+            $sUrl = $this->getConfig()->getShopUrl( $iLang, false );
+        }
+
+        return $sUrl . "index.php?cl=recommlist" . ( $blAddId ? "&amp;recommid=".$this->getId() : "" );
     }
 
     /**

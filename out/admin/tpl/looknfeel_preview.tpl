@@ -21,7 +21,7 @@
         <table width="100%">
           <colgroup><col width="20%"><col width="80%"></colgroup>
           <tbody><tr height="100%">
-            <td><a href="#"><img src="[{ if $ActLogo }]index.php?cl=looknfeel_preview_logo&standart[{else}][{$ResourceUrl}]/images/logo.jpg[{/if}]" class="logo_header"></a></td>
+            <td><a href="#"><img src="[{ if $ActLogo }][{$shop->selflink}]&cl=looknfeel_preview_logo&standart[{else}][{$ResourceUrl}]/images/logo.jpg[{/if}]" class="logo_header"></a></td>
             <td align="right" valign="bottom">
               <table align="right" cellpadding="4">
                 <tbody><tr>

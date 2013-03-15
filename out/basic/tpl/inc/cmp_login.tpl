@@ -39,6 +39,7 @@
           </table>
     </div>
   </form>
+  [{if $oViewConf->getShowOpenIdLogin() }]
   <div class="dot_sep"></div>
   <br>
   [{ oxmultilang ident="INC_CMP_LOGIN_FOROPENID" }]
@@ -69,4 +70,5 @@
             </table>
     </div>
   </form>
+  [{/if}]
 </div>

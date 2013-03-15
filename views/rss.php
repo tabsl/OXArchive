@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: rss.php 21912 2009-08-27 12:05:37Z arvydas $
+ * @version   SVN: $Id: rss.php 26674 2010-03-19 12:05:19Z sarunas $
  */
 
 /**
@@ -63,7 +63,19 @@ class Rss extends oxUBase
             oxSession::setVar('currency', (int) $iCur);
         }
         parent::init();
-        $this->_oRss = oxNew('oxRssFeed');
+    }
+
+    /**
+     * get oxRssFeed
+     *
+     * @return oxRssFeed
+     */
+    protected function _getRssFeed()
+    {
+        if (!$this->_oRss) {
+            $this->_oRss = oxNew('oxRssFeed');
+        }
+        return $this->_oRss;
     }
 
     /**
@@ -87,11 +99,13 @@ class Rss extends oxUBase
         $oSmarty->assign('channel', $this->getChannel());
         $oSmarty->assign('xmldef', $this->getXmlDef());
 
-        header( "Content-Type: text/xml; charset=".oxLang::getInstance()->translateString( "charset" ) );
-        echo $this->_processOutput( $oSmarty->fetch('rss.tpl', $this->getViewId()) );
-
-        // returned rss xml: no further processing
-        exit (0);
+        // return rss xml, no further processing
+        oxUtils::getInstance()->setHeader( "Content-Type: text/xml; charset=".oxLang::getInstance()->translateString( "charset" ) );
+        oxUtils::getInstance()->showMessageAndExit(
+                    $this->_processOutput( 
+                            $oSmarty->fetch('rss.tpl', $this->getViewId())
+                    )
+                );
     }
 
     /**
@@ -114,8 +128,8 @@ class Rss extends oxUBase
      */
     public function topshop()
     {
-        if (in_array('oxrss_topshop', $this->getConfig()->getConfigParam( 'aRssSelected' ))) {
-            $this->_oRss->loadTopInShop();
+        if ($this->getConfig()->getConfigParam( 'bl_rssTopShop' )) {
+            $this->_getRssFeed()->loadTopInShop();
         } else {
             error_404_handler();
         }
@@ -129,8 +143,8 @@ class Rss extends oxUBase
      */
     public function newarts()
     {
-        if (in_array('oxrss_newest', $this->getConfig()->getConfigParam( 'aRssSelected' ))) {
-            $this->_oRss->loadNewestArticles();
+        if ($this->getConfig()->getConfigParam( 'bl_rssNewest' )) {
+            $this->_getRssFeed()->loadNewestArticles();
         } else {
             error_404_handler();
         }
@@ -144,10 +158,10 @@ class Rss extends oxUBase
      */
     public function catarts()
     {
-        if (in_array('oxrss_categories', $this->getConfig()->getConfigParam( 'aRssSelected' ))) {
+        if ($this->getConfig()->getConfigParam( 'bl_rssCategories' )) {
             $oCat = oxNew('oxCategory');
             if ($oCat->load(oxConfig::getParameter('cat'))) {
-                $this->_oRss->loadCategoryArticles($oCat);
+                $this->_getRssFeed()->loadCategoryArticles($oCat);
             }
         } else {
             error_404_handler();
@@ -162,8 +176,8 @@ class Rss extends oxUBase
      */
     public function searcharts()
     {
-        if (in_array('oxrss_search', $this->getConfig()->getConfigParam( 'aRssSelected' ))) {
-            $this->_oRss->loadSearchArticles( oxConfig::getParameter('searchparam', true), oxConfig::getParameter('searchcnid'), oxConfig::getParameter('searchvendor'), oxConfig::getParameter('searchmanufacturer'));
+        if ($this->getConfig()->getConfigParam( 'bl_rssSearch' )) {
+            $this->_getRssFeed()->loadSearchArticles( oxConfig::getParameter('searchparam', true), oxConfig::getParameter('searchcnid'), oxConfig::getParameter('searchvendor'), oxConfig::getParameter('searchmanufacturer'));
         } else {
             error_404_handler();
         }
@@ -177,10 +191,10 @@ class Rss extends oxUBase
      */
     public function recommlists()
     {
-        if (in_array('oxrss_recommlists', $this->getConfig()->getConfigParam( 'aRssSelected' ))) {
+        if ($this->getViewConfig()->getShowListmania() && $this->getConfig()->getConfigParam( 'bl_rssRecommLists' )) {
             $oArticle = oxNew('oxarticle');
             if ($oArticle->load(oxConfig::getParameter('anid'))) {
-                $this->_oRss->loadRecommLists($oArticle);
+                $this->_getRssFeed()->loadRecommLists($oArticle);
                 return;
             }
         }
@@ -195,10 +209,10 @@ class Rss extends oxUBase
      */
     public function recommlistarts()
     {
-        if (in_array('oxrss_recommlistarts', $this->getConfig()->getConfigParam( 'aRssSelected' ))) {
+        if ($this->getConfig()->getConfigParam( 'bl_rssRecommListArts' )) {
             $oRecommList = oxNew('oxrecommlist');
             if ($oRecommList->load(oxConfig::getParameter('recommid'))) {
-                $this->_oRss->loadRecommListArticles($oRecommList);
+                $this->_getRssFeed()->loadRecommListArticles($oRecommList);
                 return;
             }
         }
@@ -213,8 +227,8 @@ class Rss extends oxUBase
      */
     public function bargain()
     {
-        if (in_array('oxrss_bargain', $this->getConfig()->getConfigParam( 'aRssSelected' ))) {
-            $this->_oRss->loadBargain();
+        if ($this->getConfig()->getConfigParam( 'bl_rssBargain' )) {
+            $this->_getRssFeed()->loadBargain();
         } else {
             error_404_handler();
         }
@@ -228,10 +242,7 @@ class Rss extends oxUBase
     public function getChannel()
     {
         if ( $this->_oChannel === null ) {
-            $this->_oChannel = false;
-            if ( $this->_oRss ) {
-                $this->_oChannel = $this->_oRss->getChannel();
-            }
+            $this->_oChannel = $this->_getRssFeed()->getChannel();
         }
         return $this->_oChannel;
     }

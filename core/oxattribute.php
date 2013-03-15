@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxattribute.php 23441 2009-10-21 11:37:48Z vilma $
+ * @version   SVN: SVN: $Id: oxattribute.php 25467 2010-02-01 14:14:26Z alfonsas $
  */
 
 /**
@@ -84,7 +84,7 @@ class oxAttribute extends oxI18n
      * Assigns attribute to variant
      *
      * @param array $aMDVariants article ids with selectionlist values
-     * @param array $aSelTitle   selection list titles 
+     * @param array $aSelTitle   selection list titles
      *
      * @return null
      */
@@ -97,29 +97,29 @@ class oxAttribute extends oxI18n
             $sAttrId = $this->_createAttribute( $aSelTitle );
         }
         foreach ( $aMDVariants as $sVarId => $oValue ) {
-        	if ( strpos( $sVarId, "mdvar_" ) === 0 ) {
-            	foreach ( $oValue as $sId ) {
-	                //var_dump($sVarId, $oAttribute->oxattribute__oxid->value);
-            		$sVarId = substr($sVarId, 6);
-            		$oNewAssign = oxNew( "oxbase" );
-	                $oNewAssign->init( "oxobject2attribute" );
-	                $sNewId = oxUtilsObject::getInstance()->generateUID();
-	                if ($oNewAssign->load($sId)) {
+            if ( strpos( $sVarId, "mdvar_" ) === 0 ) {
+                foreach ( $oValue as $sId ) {
+                    //var_dump($sVarId, $oAttribute->oxattribute__oxid->value);
+                    $sVarId = substr($sVarId, 6);
+                    $oNewAssign = oxNew( "oxbase" );
+                    $oNewAssign->init( "oxobject2attribute" );
+                    $sNewId = oxUtilsObject::getInstance()->generateUID();
+                    if ($oNewAssign->load($sId)) {
                         $oNewAssign->oxobject2attribute__oxobjectid = new oxField($sVarId);
-	                    $oNewAssign->setId($sNewId);
-	                    $oNewAssign->save();
-	                }
-            	}
+                        $oNewAssign->setId($sNewId);
+                        $oNewAssign->save();
+                    }
+                }
             } else {
-	        	$oNewAssign = oxNew( "oxbase" );
-	            $oNewAssign->init( "oxobject2attribute" );
-	            $oNewAssign->oxobject2attribute__oxobjectid = new oxField($sVarId);
-	            $oNewAssign->oxobject2attribute__oxattrid   = new oxField($sAttrId);
-	            foreach ($aConfLanguages as $sKey => $sLang) {
-	                $sPrefix = $myLang->getLanguageTag($sKey);
-	                $oNewAssign->{'oxobject2attribute__oxvalue'.$sPrefix} = new oxField($oValue[$sKey]->name);
-	            }
-	            $oNewAssign->save();
+                $oNewAssign = oxNew( "oxbase" );
+                $oNewAssign->init( "oxobject2attribute" );
+                $oNewAssign->oxobject2attribute__oxobjectid = new oxField($sVarId);
+                $oNewAssign->oxobject2attribute__oxattrid   = new oxField($sAttrId);
+                foreach ($aConfLanguages as $sKey => $sLang) {
+                    $sPrefix = $myLang->getLanguageTag($sKey);
+                    $oNewAssign->{'oxobject2attribute__oxvalue'.$sPrefix} = new oxField($oValue[$sKey]->name);
+                }
+                $oNewAssign->save();
             }
         }
     }
@@ -141,7 +141,7 @@ class oxAttribute extends oxI18n
     /**
      * Checks if attribute exists
      *
-     * @param string $sSelTitle selection list title
+     * @param array $aSelTitle selection list title
      *
      * @return string attribute id
      */

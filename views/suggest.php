@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: suggest.php 18680 2009-04-29 14:20:46Z vilma $
+ * @version   SVN: $Id: suggest.php 26801 2010-03-24 14:46:21Z arvydas $
  */
 
 /**
@@ -66,6 +66,12 @@ class Suggest extends oxUBase
     protected $_aSuggestData = null;
 
     /**
+     * Class handling CAPTCHA image.
+     * @var object
+     */
+    protected $_oCaptcha = null;
+
+    /**
      * Loads and passes article and related info to template engine
      * (oxarticle::getReviews(), oxarticle::getCrossSelling(),
      * oxarticle::GetSimilarProducts()), executes parent::render()
@@ -85,6 +91,8 @@ class Suggest extends oxUBase
         $this->_aViewData['crossselllist']     = $this->getCrossSelling();
         $this->_aViewData['similarlist']       = $this->getSimilarProducts();
         $this->_aViewData['similarrecommlist'] = $this->getRecommList();
+        //captcha
+        $this->_aViewData['oCaptcha'] = $this->getCaptcha();
 
         $this->_aViewData['editval'] = $this->getSuggestData();
 
@@ -102,18 +110,25 @@ class Suggest extends oxUBase
      */
     public function send()
     {
-        $aParams = oxConfig::getParameter( 'editval' );
+        $aParams = oxConfig::getParameter( 'editval', true );
         if ( !is_array( $aParams ) ) {
             return;
         }
 
         // storing used written values
-        $oParams = new Oxstdclass();
-        reset( $aParams );
-        while ( list( $sName, $sValue ) = each( $aParams ) ) {
-            $oParams->$sName = $sValue;
+        $oParams = (object) $aParams;
+        $this->setSuggestData( (object) oxConfig::getParameter( 'editval' ) );
+
+        // spam spider prevension
+        $sMac     = oxConfig::getParameter( 'c_mac' );
+        $sMacHash = oxConfig::getParameter( 'c_mach' );
+        $oCaptcha = oxNew('oxCaptcha');
+
+        if ( !$oCaptcha->pass($sMac, $sMacHash ) ) {
+            // even if there is no exception, use this as a default display method
+            oxUtilsView::getInstance()->addErrorToDisplay( 'EXCEPTION_INPUT_NOTALLFIELDS' );
+            return false;
         }
-        $this->_aSuggestData = $oParams;
 
         $oUtilsView = oxUtilsView::getInstance();
         // filled not all fields ?
@@ -216,6 +231,10 @@ class Suggest extends oxUBase
      */
     public function getRecommList()
     {
+        if (!$this->getViewConfig()->getShowListmania()) {
+            return false;
+        }
+
         if ( $this->_oRecommList === null ) {
             $this->_oRecommList = false;
             if ( $oProduct = $this->getProduct() ) {
@@ -224,6 +243,18 @@ class Suggest extends oxUBase
             }
         }
         return $this->_oRecommList;
+    }
+
+    /**
+     * Suggest data setter
+     *
+     * @param object $oData suggest data object
+     *
+     * @return null
+     */
+    public function setSuggestData( $oData )
+    {
+        $this->_aSuggestData = $oData;
     }
 
     /**
@@ -246,7 +277,7 @@ class Suggest extends oxUBase
     public function getLink( $iLang = null )
     {
         $sLink = parent::getLink( $iLang );
-        
+
         // active category
         if ( $sVal = oxConfig::getParameter( 'cnid' ) ) {
             $sLink .= ( ( strpos( $sLink, '?' ) === false ) ? '?' : '&amp;' ) . "cnid={$sVal}";
@@ -258,6 +289,19 @@ class Suggest extends oxUBase
         }
 
         return $sLink;
+    }
+
+    /**
+     * Template variable getter. Returns object of handling CAPTCHA image
+     *
+     * @return object
+     */
+    public function getCaptcha()
+    {
+        if ( $this->_oCaptcha === null ) {
+            $this->_oCaptcha = oxNew('oxCaptcha');
+        }
+        return $this->_oCaptcha;
     }
 
 }

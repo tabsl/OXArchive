@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: account_recommlist.php 22274 2009-09-11 07:01:32Z arvydas $
+ * @version   SVN: $Id: account_recommlist.php 26162 2010-03-02 08:35:15Z arvydas $
  */
 
 /**
@@ -98,19 +98,16 @@ class Account_Recommlist extends Account
             return $this->_sThisTemplate = $this->_sThisLoginTemplate;
         }
 
-        $this->_aViewData['recommlists']    = $this->getRecommLists();
+        $this->_aViewData['recommlists']    = $oLists   = $this->getRecommLists();
+        $this->_aViewData['actvrecommlist'] = $oActList = $this->getActiveRecommList();
         $this->_aViewData['itemList']       = $this->getActiveRecommItems();
-        $this->_aViewData['actvrecommlist'] = $this->getActiveRecommList();
 
-        if ( !( $this->getActiveRecommList() ) ) {
-            // list of found oxrecommlists
-            if ( $this->getRecommLists()->count() ) {
-                $this->_iAllArtCnt = $oUser->getRecommListsCount();
-
-                $iNrofCatArticles = (int) $this->getConfig()->getConfigParam( 'iNrofCatArticles' );
-                $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 10;
-                $this->_iCntPages  = round( $this->_iAllArtCnt / $iNrofCatArticles + 0.49 );
-            }
+        // list of found oxrecommlists
+        if ( !$oActList && $oLists->count() ) {
+            $this->_iAllArtCnt = $oUser->getRecommListsCount();
+            $iNrofCatArticles = (int) $this->getConfig()->getConfigParam( 'iNrofCatArticles' );
+            $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 10;
+            $this->_iCntPages  = round( $this->_iAllArtCnt / $iNrofCatArticles + 0.49 );
         }
 
         $this->_aViewData['pageNavigation'] = $this->getPageNavigation();
@@ -183,6 +180,10 @@ class Account_Recommlist extends Account
      */
     public function getActiveRecommList()
     {
+        if (!$this->getViewConfig()->getShowListmania()) {
+            return false;
+        }
+
         if ( $this->_oActRecommList === null ) {
             $this->_oActRecommList = false;
 
@@ -199,6 +200,13 @@ class Account_Recommlist extends Account
         return $this->_oActRecommList;
     }
 
+    /**
+     * Set active recommlist
+     *
+     * @param object $oRecommList Recommendation list
+     *
+     * @return null
+     */
     public function setActiveRecommList( $oRecommList )
     {
         $this->_oActRecommList = $oRecommList;
@@ -211,6 +219,10 @@ class Account_Recommlist extends Account
      */
     public function saveRecommList()
     {
+        if (!$this->getViewConfig()->getShowListmania()) {
+            return;
+        }
+
         if ( ( $oUser = $this->getUser() ) ) {
             if ( !( $oRecommList = $this->getActiveRecommList() ) ) {
                 $oRecommList = oxNew( 'oxrecommlist' );
@@ -222,9 +234,9 @@ class Account_Recommlist extends Account
             $sAuthor = trim( ( string ) oxConfig::getParameter( 'recomm_author', 1 ) );
             $sText   = trim( ( string ) oxConfig::getParameter( 'recomm_desc', 1 ) );
 
-            $oRecommList->oxrecommlists__oxtitle  = new oxField( $sTitle, oxField::T_RAW );
-            $oRecommList->oxrecommlists__oxauthor = new oxField( $sAuthor, oxField::T_RAW );
-            $oRecommList->oxrecommlists__oxdesc   = new oxField( $sText, oxField::T_RAW );
+            $oRecommList->oxrecommlists__oxtitle  = new oxField( $sTitle );
+            $oRecommList->oxrecommlists__oxauthor = new oxField( $sAuthor );
+            $oRecommList->oxrecommlists__oxdesc   = new oxField( $sText );
 
             try {
                 // marking entry as saved
@@ -253,6 +265,10 @@ class Account_Recommlist extends Account
      */
     public function editList()
     {
+        if (!$this->getViewConfig()->getShowListmania()) {
+            return;
+        }
+
         // deleting on demand
         if ( ( $sAction = oxConfig::getParameter( 'deleteList' ) ) &&
              ( $oRecommList = $this->getActiveRecommList() ) ) {
@@ -268,6 +284,10 @@ class Account_Recommlist extends Account
      */
     public function removeArticle()
     {
+        if (!$this->getViewConfig()->getShowListmania()) {
+            return;
+        }
+
         if ( ( $sArtId = oxConfig::getParameter( 'aid' ) ) &&
              ( $oRecommList = $this->getActiveRecommList() ) ) {
             $oRecommList->removeArticle( $sArtId );

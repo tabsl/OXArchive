@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oximex.php 23188 2009-10-13 06:59:38Z sarunas $
+ * @version   SVN: $Id: oximex.php 26767 2010-03-23 13:36:51Z vilma $
  */
 
 /**
@@ -27,171 +27,6 @@
  */
 class oxImex extends oxBase
 {
-    /**
-     * Exports table contents to file, returns true on success.
-     *
-     * @param integer $iStart    Start writing export data from
-     * @param integer $iLines    Write number of lines
-     * @param string  $sFilepath Path to export file
-     *
-     * @deprecated
-     *
-     * @return bool
-     */
-    public function export( $iStart, $iLines, $sFilepath)
-    {
-        if ( !$this->getViewName()) {
-            return false;
-        } elseif ( $this->getViewName() == "lexware") {
-            return $this->exportLexwareArticles( $iStart, $iLines, $sFilepath);
-        }
-
-        $myConfig = $this->getConfig();
-        $oDB      = oxDb::getDb();
-
-        $sWhere = "";
-
-        $sSearch = $this->_sCoreTbl . "__oxshopid";
-        if ( isset( $this->$sSearch)) {
-            $sWhere = " where oxshopid = '".$myConfig->getShopId()."' ";
-        }
-
-        $sSelect = "select count(oxid) from ".$this->getViewName().$sWhere;
-        $iSize = $oDB->getOne( $sSelect);
-        if ( $iStart < $iSize) {
-            // if first, delete the file
-            $fp = fopen( $sFilepath, "a");
-
-            $sSelect = "select * from ".$this->getViewName().$sWhere;
-            $rs = $oDB->selectLimit( $sSelect, $iLines, $iStart);
-            // #573 defining decimal separator
-            $blDecReplace = false;
-            $sDecimalSeparator = $myConfig->getConfigParam( 'sDecimalSeparator' );
-            if ( $sDecimalSeparator != ".") {
-                $blDecReplace = true;
-            }
-
-            while (!$rs->EOF) {
-                $sLine = "\"".$this->_sCoreTbl."\"";
-
-                foreach ( $rs->fields as $iNum => $field) {
-                    $sLine .= $myConfig->getConfigParam( 'sCSVSign' );
-
-                    if ( !is_numeric( $field)) {
-                        $sLine .= "\"".$this->interFormSimple($field)."\"";
-                    } else {
-                        if ( $blDecReplace) {
-                            $field = str_replace( ".", $sDecimalSeparator, $field );
-                        }
-                        $sLine .= $field;
-                    }
-                }
-                $sLine .= "\r\n";
-
-                fputs( $fp, $sLine);
-
-                $rs->moveNext();
-            }
-
-            fclose( $fp);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Exports users table contents to file, returns true on success.
-     *
-     * @param integer $iStart    Start writing export data from
-     * @param integer $iLines    Write number of lines
-     * @param string  $sFilepath Path to export file
-     *
-     * @deprecated
-     *
-     * @return bool
-     */
-    public function exportUsers( $iStart, $iLines, $sFilepath)
-    {
-        $myConfig  = $this->getConfig();
-
-        $aGroups = oxSession::getVar("_agroups");
-
-        if ( !$this->getViewName() || !$aGroups) {
-            return false;
-        }
-
-        $oDB = oxDb::getDb();
-
-        $sWhere = "";
-        $sInGroup = implode(',',oxDb::getInstance()->quoteArray(array_keys($aGroups)));
-
-        $sSelect  = "select count(".$this->getViewName().".oxid) from ".$this->getViewName()." ";
-        $sSelect .= "left join oxobject2group on ".$this->getViewName().".oxid=oxobject2group.oxobjectid ";
-        $sSelect .= "where oxobject2group.oxgroupsid in (".$sInGroup.") ";
-        $sSearch = $this->getViewName() . "__oxshopid";
-        if ( isset( $this->$sSearch)) {
-            $sSelect .= $sWhere = "and ".$this->getViewName().".oxshopid = '".$myConfig->getShopId()."' ";
-        }
-
-        $iSize = $oDB->getOne( $sSelect);
-        if ( $iStart < $iSize) {   // #387A creating object to fetch field information
-            $oObj = oxNew( "oxbase" );
-            $oObj->init($this->getViewName());
-
-            // if first, delete the file
-            $fp = fopen( $sFilepath, "a");
-
-            $sSelect  = "select * from ".$this->getViewName()." ";
-            $sSelect .= "left join oxobject2group on ".$this->getViewName().".oxid=oxobject2group.oxobjectid ";
-            $sSelect .= "where oxobject2group.oxgroupsid in ($sInGroup) ".$sWhere;
-            $rs = $oDB->selectLimit( $sSelect, $iLines, $iStart);
-
-            // #573 defining decimal separator
-            $blDecReplace = false;
-            $sDecimalSeparator = $myConfig->getConfigParam( 'sDecimalSeparator' );
-            if ( $sDecimalSeparator != "." ) {
-                $blDecReplace = true;
-            }
-
-            while (!$rs->EOF) {
-                $sLine = "\"".$this->getViewName()."\"";
-
-                foreach ( $rs->fields as $iNum => $field) {
-                    $sLine .= $myConfig->getConfigParam( 'sCSVSign' );
-
-                    if ( !is_numeric( $field)) {   // #387A
-                        $oFieldObj = null;
-                        $aIdx2FldName = $oObj->getIdx2FldName();
-                        if ( isset($aIdx2FldName[$iNum])) {
-                            $sFieldName = $aIdx2FldName[$iNum];
-                            //#1096S full copy instead of reference.
-                            $oFieldObj = clone $oObj->$sFieldName;
-                        }
-
-                        $sLine .= "\"".$this->interForm($field, $oFieldObj)."\"";
-                    } else {
-                        if ( $blDecReplace) {
-                            $field = str_replace( ".", $sDecimalSeparator, $field );
-                        }
-                        $sLine .= $field;
-                    }
-                }
-                $sLine .= "\r\n";
-
-                fputs( $fp, $sLine);
-
-                $rs->moveNext();
-            }
-
-            fclose( $fp);
-            return true;
-        }
-
-        return false;
-    }
-
     /**
      * Performs Lexware export to file.
      *
@@ -213,7 +48,8 @@ class oxImex extends oxBase
 
         if ( $iStart < $iSize) {
             $fp = fopen( $sFilepath, "ab");
-            if ( !$iStart) {   // first time, write header
+            if ( !$iStart) {
+                // first time, write header
                 fwrite( $fp, "\"Artikelnummer\";\"Bezeichnung\";\"Einheit\";\"Gewicht\";\"Matchcode\";\"Preis pro Anzahl\";\"Warengruppe\";\"Warengr.-Kurzbez.\";\"Warengr.-Steuersatz\";\"Warengr.-Konto Inland\";\"Warengr.-Konto Ausland\";\"Warengr.-Konto EG\";\"Preis 1\";\"Preis 2\";\"Preis 3\";\"Preis I/1\";\"Preis I/2\";\"Preis I/3\";\"Preis II/1\";\"Preis II/2\";\"Preis II/3\";\"Preis III/1\";\"Preis III/2\";\"Preis III/3\";\"B/N\";\"Lagerartikel\";\"EK 1\";\"Währung EK1\";\"EK 2\";\"Währung EK2\";\"Staffelmenge 1\";\"Staffelmenge 2\";\"Staffelmenge 3\";\"Lieferantennummer 1\";\"Lieferantennummer 2\";\"Bestellmenge Lf.1\";\"Bestellmenge Lf.2\";\"Bestellnr. Lf.1\";\"Bestellnr. Lf.2\";\"Lieferzeit Lf.1\";\"Lieferzeit Lf.2\";\"Lagerbestand\";\"Mindestbestand\";\"Lagerort\";\"Bestellte Menge\";\"Stückliste\";\"Internet\";\"Text\"\r\n");
             }
             $oldMode = $oDB->setFetchMode( ADODB_FETCH_ASSOC);
@@ -391,85 +227,8 @@ class oxImex extends oxBase
     function internPrice( $nPrice)
     {  // thnx to Volker Dörk for this function and his help here
         $nPrice = $this->interForm($nPrice);
-        $nPrice = number_format($nPrice, 2, '.', '');
+        $nPrice = number_format( (double)$nPrice, 2, '.', '');
         return $nPrice;
-    }
-
-    /**
-     * Performs CSV format file reading and parsing, returns true on success.
-     *
-     * @param integer $iStart    Start reading from
-     * @param integer $iLines    Read number of lines
-     * @param string  $sFilepath Path to file
-     *
-     * @deprecated
-     *
-     * @return bool
-     */
-    function import( $iStart, $iLines, $sFilepath)
-    {
-        $myConfig  = $this->getConfig();
-        $blContinue = true;
-
-        $fp     = fopen( $sFilepath, "r");
-        $iEnd   = $iStart+$iLines;
-        $aData  = null;
-
-        //array of tables whitch were updated
-        $aProcTables = oxSession::getVar("_aProcTables");
-        if ( !$aProcTables) {
-            $aProcTables = array();
-        }
-
-        // #573 defining decimal separator
-        $blDecReplace = false;
-        $sDecimalSeparator = $myConfig->getConfigParam( 'sDecimalSeparator' );
-        if ( $sDecimalSeparator != "." ) {
-            $blDecReplace = true;
-        }
-
-        for ( $i = 0; $i<=$iEnd; $i++) {
-            $aData = $this->_oxFGetCsv( $fp, 40960, $myConfig->getConfigParam( 'sCSVSign' ) );
-
-            if ( $aData && $i >= $iStart) {   // import
-
-                // read table description if needed
-                $sTable = $aData[0];
-                $aProcTables[] = $sTable;
-                $this->init( $sTable);
-                // remove table from line
-                $aData = array_splice( $aData, 1, count($aData)-1);
-                foreach ($aData as $key => $value) {
-                    if ( $value == "''" || $value == "" || !$value) {
-                        $value = null;
-                    }
-
-                    // #573 - fixing import
-                    $sKey = $this->_aIdx2FldName[$key];
-                    if ( $blDecReplace && $this->$sKey->fldtype == "double") {
-                        $value = str_replace( $sDecimalSeparator, ".", $value );
-                    }
-
-                    $aData[$key] = trim($value);
-                }
-                $this->assign($aData);
-                $this->save();
-            }
-
-            if ( feof( $fp)) {
-                $blContinue = false;
-                if ( $sTable == "oxcategories" || in_array( "oxcategories", $aProcTables)) {
-                    $oDB = oxDb::getDb();
-                    $oDB->execute( "update oxcategories set oxhidden = '0' where oxhidden='' ");
-                }
-                $aProcTables = array();
-                break;
-            }
-        }
-        oxSession::setVar( "_aProcTables", $aProcTables);
-        fclose( $fp);
-
-        return $blContinue;
     }
 
     /**
@@ -521,6 +280,7 @@ class oxImex extends oxBase
 
             $sExport  = "<Bestellung " . $this->_convertStr( "zurückgestellt" ) . "=\"Nein\" bearbeitet=\"Nein\" " . $this->_convertStr( "übertragen" ) . "=\"Nein\">$sNewLine";
             $sExport .= "<Bestellnummer>".$oOrder->oxorder__oxordernr->value."</Bestellnummer>$sNewLine";
+            $sExport .= "<Rechnungsnummer>".$oOrder->oxorder__oxbillnr->value."</Rechnungsnummer>$sNewLine";
             $sExport .= "<Standardwaehrung>978</Standardwaehrung>$sNewLine";
             $sExport .= "<Bestelldatum>$sNewLine";
             $sDBDate = oxUtilsDate::getInstance()->formatDBDate($oOrder->oxorder__oxorderdate->value);
@@ -531,6 +291,7 @@ class oxImex extends oxBase
 
             $sExport .= "<Kundennummer>"./*$this->interForm($oUser->oxuser__oxcustnr->value).*/"</Kundennummer>$sNewLine";
             $sExport .= "<Firmenname>".$this->interForm($oOrder->oxorder__oxbillcompany->value)."</Firmenname>$sNewLine";
+            $sExport .= "<Anrede>".$this->interForm(oxLang::getInstance()->translateString($oOrder->oxorder__oxbillsal->value))."</Anrede>$sNewLine";
             $sExport .= "<Vorname>".$this->interForm($oOrder->oxorder__oxbillfname->value)."</Vorname>$sNewLine";
             $sExport .= "<Name>".$this->interForm($oOrder->oxorder__oxbilllname->value)."</Name>$sNewLine";
             $sExport .= "<Strasse>".$this->interForm($oOrder->oxorder__oxbillstreet->value)." ".$this->interForm($oOrder->oxorder__oxbillstreetnr->value)."</Strasse>$sNewLine";
@@ -538,7 +299,7 @@ class oxImex extends oxBase
             $sExport .= "<Ort>".$this->interForm($oOrder->oxorder__oxbillcity->value)."</Ort>$sNewLine";
             $sExport .= "<Bundesland>".""."</Bundesland>$sNewLine";
             $sExport .= "<Land>".$this->interForm($oOrder->oxorder__oxbillcountry->value)."</Land>$sNewLine";
-            $sExport .= "<Email>".$this->interForm($oUser->oxuser__oxusername->value)."</Email>$sNewLine";
+            $sExport .= "<Email>".$this->interForm($oOrder->oxorder__oxbillemail->value)."</Email>$sNewLine";
             $sExport .= "<Telefon>".$this->interForm($oOrder->oxorder__oxbillfon->value)."</Telefon>$sNewLine";
             $sExport .= "<Telefon2>".$this->interForm($oUser->oxuser__oxprivfon->value)."</Telefon2>$sNewLine";
             $sExport .= "<Fax>".$this->interForm($oOrder->oxorder__oxbillfax->value)."</Fax>$sNewLine";
@@ -653,71 +414,6 @@ class oxImex extends oxBase
         $sRet .= $sExport;
 
         return $sRet;
-    }
-
-    /**
-     * CSV file parser. Returns an array of parsed values.
-     *
-     * @param mixed   $fp      Resource to file
-     * @param integer $iMaxLen Max file line length
-     * @param string  $sSep    parameter/value separator
-     *
-     * @deprecated
-     *
-     * @return array
-     */
-    protected function _oxFGetCsv( $fp, $iMaxLen, $sSep )
-    {
-        $aRet = null;
-
-        $iField = 0;
-        $iQuote = 0;
-
-        for ( $i=0; $i<$iMaxLen; $i++) {
-            $c = fread( $fp, 1);
-
-            if ( ($c === false || !isset( $c)) || (($c == "\n") && !$iQuote)) {
-                break;  // end
-            } elseif ( $c == $sSep && !$iQuote) {
-                $iField++;
-                $aRet[$iField] = "";
-                continue;
-            } elseif ( $c == "\"") {
-                if ( $iQuote) {
-                    $iQuote--;
-                } else {
-                    $iQuote++;
-                }
-            }
-            if ( !isset( $aRet[$iField])) {
-                $aRet[$iField] = "";
-            }
-            $aRet[$iField] .= $c;
-        }
-
-        if ( count( $aRet) > 1) {
-            $oStr = getStr();
-            // remove " or '
-            foreach ( $aRet as $key => $sField) {
-                $sField = trim($sField);
-                if ( $sField) {
-                    if ( $sField[0] == "\"" || $sField[0] == "'") {
-                        $sField = $oStr->substr( $sField, 1);
-                    }
-
-                    $iLen = $oStr->strlen( $sField) - 1;
-                    if ( $sField[$iLen] == "\"" || $sField[$iLen] == "'") {
-                        $sField = $oStr->substr( $sField, 0, $iLen);
-                    }
-
-                    $aRet[$key] = $sField;
-                }
-            }
-            // process "" qoutes
-            return str_replace('""', '"', $aRet);
-        } else {
-            return null;
-        }
     }
 
     /**

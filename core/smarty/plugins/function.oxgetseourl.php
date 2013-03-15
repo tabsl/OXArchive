@@ -15,21 +15,26 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package smartyPlugins
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   smarty_plugins
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: function.oxgetseourl.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * @version   SVN: $Id: function.oxgetseourl.php 25755 2010-02-10 13:59:48Z sarunas $
  */
 
 
-/*
-* Smarty function
-* -------------------------------------------------------------
-* Purpose: output SEO style url
-* add [{ oxgetseourl ident="..." }] where you want to display content
-* -------------------------------------------------------------
-*/
+/**
+ * Smarty function
+ * -------------------------------------------------------------
+ * Purpose: output SEO style url
+ * add [{ oxgetseourl ident="..." }] where you want to display content
+ * -------------------------------------------------------------
+ *
+ * @param array  $params  params
+ * @param Smarty &$smarty clever simulation of a method
+ *
+ * @return string
+ */
 function smarty_function_oxgetseourl( $params, &$smarty )
 {
     $sOxid = isset( $params['oxid'] ) ? $params['oxid'] : null;
@@ -51,12 +56,15 @@ function smarty_function_oxgetseourl( $params, &$smarty )
         $oEncoder = oxSeoEncoder::getInstance();
         if ( ( $sStaticUrl = $oEncoder->getStaticUrl( $sUrl ) ) ) {
             $sUrl = $sStaticUrl;
+        } else {
+            // in case language parameter is not added to url
+            $sUrl = oxUtilsUrl::getInstance()->processUrl( $sUrl );
         }
     }
 
     $sDynParams = isset( $params['params'] )?$params['params']:false;
     if ( $sDynParams ) {
-        require_once $smarty->_get_plugin_filepath( 'modifier','oxaddparams' );
+        include_once $smarty->_get_plugin_filepath( 'modifier', 'oxaddparams' );
         $sUrl = smarty_modifier_oxaddparams( $sUrl, $sDynParams );
     }
 

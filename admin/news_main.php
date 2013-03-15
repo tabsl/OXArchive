@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: news_main.php 17189 2009-03-13 12:19:59Z arvydas $
+ * @version   SVN: $Id: news_main.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 
@@ -43,7 +43,7 @@ class News_Main extends oxAdminDetails
      */
     public function render()
     {
-        $myConfig  = $this->getConfig();
+        $myConfig = $this->getConfig();
 
         parent::render();
 
@@ -51,6 +51,7 @@ class News_Main extends oxAdminDetails
             $oGroups = oxNew( "oxlist" );
             $oGroups->init( "oxgroups" );
             $oGroups->selectString( "select * from oxgroups" );
+
         $soxId = oxConfig::getParameter( "oxid");
         // check if we right now saved a new entry
         $sSavedID = oxConfig::getParameter( "saved_oxid");
@@ -190,7 +191,8 @@ class News_Main extends oxAdminDetails
         $this->_aViewData["updatelist"] = "1";
 
         // set oxid if inserted
-        if ( $soxId == "-1")
+        if ( $soxId == "-1" ) {
             oxSession::setVar( "saved_oxid", $oNews->oxnews__oxid->value);
+        }
     }
 }

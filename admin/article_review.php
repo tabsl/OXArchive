@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: article_review.php 22482 2009-09-22 06:53:41Z arvydas $
+ * @version   SVN: $Id: article_review.php 26440 2010-03-10 07:54:49Z arvydas $
  */
 
 /**
@@ -84,7 +84,8 @@ class Article_Review extends oxAdminDetails
     /**
      * returns reviews list for article
      *
-     * @param oxArticle $oArticle
+     * @param oxArticle $oArticle Article object
+     *
      * @return oxList
      */
     protected function _getReviewList($oArticle)
@@ -124,23 +125,16 @@ class Article_Review extends oxAdminDetails
      */
     public function save()
     {
-        $myConfig  = $this->getConfig();
-
 
         $aParams = oxConfig::getParameter( "editval");
         // checkbox handling
-        if ( $myConfig->getConfigParam( 'blGBModerate' ) && !isset( $aParams['oxreviews__oxactive'] ) ) {
+        if ( $this->getConfig()->getConfigParam( 'blGBModerate' ) && !isset( $aParams['oxreviews__oxactive'] ) ) {
             $aParams['oxreviews__oxactive'] = 0;
         }
 
-        $sRevoxId = oxConfig::getParameter( "rev_oxid" );
-        $oReview  = oxNew( "oxreview" );
-        $oReview->load( $sRevoxId );
-
-            // shopid
-            $oReview->oxreviews__oxshopid->value = oxSession::getVar( "actshop");
-
-        $oReview->assign( $aParams);
+        $oReview = oxNew( "oxreview" );
+        $oReview->load( oxConfig::getParameter( "rev_oxid" ) );
+        $oReview->assign( $aParams );
         $oReview->save();
     }
 

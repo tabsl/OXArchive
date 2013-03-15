@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxvatselector.php 20503 2009-06-26 14:54:11Z vilma $
+ * @version   SVN: $Id: oxvatselector.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
@@ -77,7 +77,9 @@ class oxVatSelector extends oxSuperCfg
 
         $ret = false;
 
-        if ($sCountryId = $oUser->oxuser__oxcountryid->value) {
+        $sCountryId = $this->_getVatCountry($oUser);
+
+        if ($sCountryId) {
             $oCountry = oxNew('oxcountry');
             if (!$oCountry->load($sCountryId)) {
                 throw new oxObjectException();
@@ -102,7 +104,7 @@ class oxVatSelector extends oxSuperCfg
     protected function _getForeignCountryUserVat(oxUser $oUser, oxCountry $oCountry )
     {
         if ($oCountry->isInEU()) {
-            if ($oUser->oxuser__oxustid->value && $oUser->oxuser__oxcompany->value) {
+            if ($oUser->oxuser__oxustid->value) {
                 return 0;
             }
             return false;
@@ -210,6 +212,31 @@ class oxVatSelector extends oxSuperCfg
             return $this->getUserVat( $oUser );
         }
         return false;
+    }
+
+
+    /**
+     * Returns country id which VAT should be applied to.
+     * Depending on configuration option either user billing country or shipping country (if available) is returned.
+     *
+     * @param oxUser $oUser user object
+     *
+     * @return string
+     */
+    protected function _getVatCountry(oxUser $oUser = null)
+    {
+        $blUseShippingCountry = $this->getConfig()->getConfigParam("blShippingCountryVat");
+
+        if ($blUseShippingCountry) {
+            $aAddresses = $oUser->getUserAddresses($oUser->getId());
+            $sSelectedAddress = $oUser->getSelectedAddressId();
+
+            if (isset($aAddresses[$sSelectedAddress])) {
+                return $aAddresses[$sSelectedAddress]->oxaddress__oxcountryid->value;
+            }
+        }
+
+        return $oUser->oxuser__oxcountryid->value;
     }
 
 }

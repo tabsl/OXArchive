@@ -21,7 +21,7 @@
     <li class="clear"></li>
 </ul>
 
-[{if !$aCollations}]
+[{if $aCollations}]
     <ul class="req">
         <h3>[{ oxmultilang ident="SYSREQ_DESCRIPTION_COLL" }]:</h3>
         [{foreach from=$aCollations item=aColumns key=sTable}]

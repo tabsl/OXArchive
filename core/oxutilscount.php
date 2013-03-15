@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxutilscount.php 23567 2009-10-23 14:40:30Z arvydas $
+ * @version   SVN: $Id: oxutilscount.php 26828 2010-03-25 09:49:28Z sarunas $
  */
 
 /**
@@ -50,15 +50,14 @@ class oxUtilsCount extends oxSuperCfg
     {
         // disable caching for test modules
         if ( defined( 'OXID_PHP_UNIT' ) ) {
-            static $inst = array();
-            self::$_instance = $inst[oxClassCacheKey()];
+            self::$_instance = modInstances::getMod( __CLASS__ );
         }
 
         if ( !self::$_instance instanceof oxUtilsCount ) {
 
             self::$_instance = oxNew( 'oxUtilsCount' );
             if ( defined( 'OXID_PHP_UNIT' ) ) {
-                $inst[oxClassCacheKey()] = self::$_instance;
+                modInstances::addMod( __CLASS__, self::$_instance);
             }
         }
         return self::$_instance;
@@ -266,15 +265,15 @@ class oxUtilsCount extends oxSuperCfg
         }
 
         $oArticle = oxNew( 'oxarticle' );
-        $sTable   = $oArticle->getViewName();
+        $sArtTable   = $oArticle->getViewName();
+        $sManTable = getViewName('oxmanufacturers');
 
         // select each Manufacturer articles count
-        $sQ  = "select $sTable.oxmanufacturerid AS manufacturerId, count(*) from $sTable where ";
-        $sQ .= "$sTable.oxmanufacturerid <> '' and $sTable.oxparentid = '' and ".$oArticle->getSqlActiveSnippet()." group by $sTable.oxmanufacturerid ";
+        $sQ = "select oxmanufacturers.oxid, count($sArtTable.oxid) from $sManTable as oxmanufacturers left outer join $sArtTable on $sArtTable.oxmanufacturerid=oxmanufacturers.oxid and $sArtTable.oxparentid = '' and ".$oArticle->getSqlActiveSnippet()." group by oxmanufacturers.oxid";
         $aDbResult = oxDb::getDb()->getAssoc( $sQ );
 
         foreach ( $aDbResult as $sKey => $sValue ) {
-            $aCache[$sKey][$sActIdent] = $sValue;
+            $aCache[$sKey][$sActIdent] = (int) $sValue;
         }
 
         $this->_setManufacturerCache( $aCache );
@@ -292,7 +291,8 @@ class oxUtilsCount extends oxSuperCfg
     {
         if ( !$sCatId ) {
             $this->getConfig()->setGlobalParameter( 'aLocalCatCache', null );
-        } else {   // loading from cache
+        } else {
+            // loading from cache
             $aCatData = $this->_getCatCache();
             if ( isset( $aCatData[$sCatId] ) ) {
                 unset( $aCatData[$sCatId] );
@@ -354,7 +354,7 @@ class oxUtilsCount extends oxSuperCfg
                on {$sArticleTable}.oxid = oxartextends.oxid where {$sActiveSnippet}
                and {$sArticleTable}.oxissearch = 1
                and match(oxartextends.oxtags{$sLangExt})
-               against ( ".$oDb->quote( $sTag )." ) ";
+               against ( ".$oDb->quote( $sTag )." IN BOOLEAN MODE ) ";
 
         return $oDb->getOne( $sQ );
     }
@@ -371,7 +371,8 @@ class oxUtilsCount extends oxSuperCfg
         if ( !$sVendorId ) {
             $this->getConfig()->setGlobalParameter( 'aLocalVendorCache', null );
             oxUtils::getInstance()->toFileCache( 'aLocalVendorCache', '' );
-        } else { // loading from cache
+        } else {
+            // loading from cache
             $aVendorData = $this->_getVendorCache();
             if ( isset( $aVendorData[$sVendorId] ) ) {
                 unset( $aVendorData[$sVendorId] );
@@ -393,7 +394,8 @@ class oxUtilsCount extends oxSuperCfg
         if ( !$sManufacturerId ) {
             $this->getConfig()->setGlobalParameter( 'aLocalManufacturerCache', null );
             oxUtils::getInstance()->toFileCache( 'aLocalManufacturerCache', '' );
-        } else { // loading from cache
+        } else {
+            // loading from cache
             $aManufacturerData = $this->_getManufacturerCache();
             if ( isset( $aManufacturerData[$sManufacturerId] ) ) {
                 unset( $aManufacturerData[$sManufacturerId] );

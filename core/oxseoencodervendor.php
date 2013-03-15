@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxseoencodervendor.php 23319 2009-10-16 14:03:21Z arvydas $
+ * @version   SVN: $Id: oxseoencodervendor.php 25467 2010-02-01 14:14:26Z alfonsas $
  */
 
 /**
@@ -46,13 +46,26 @@ class oxSeoEncoderVendor extends oxSeoEncoder
     /**
      * Singleton method
      *
-     * @return oxseoencoder
+     * @return oxSeoEncoderVendor
      */
     public static function getInstance()
     {
+        if ( defined( 'OXID_PHP_UNIT' ) ) {
+            self::$_instance = modInstances::getMod( __CLASS__ );
+        }
+
         if (!self::$_instance) {
             self::$_instance = oxNew("oxSeoEncoderVendor");
+            if ( defined( 'OXID_PHP_UNIT' ) ) {
+                modInstances::addMod( __CLASS__, self::$_instance);
+            }
         }
+
+        if ( defined( 'OXID_PHP_UNIT' ) ) {
+            // resetting cache
+            self::$_instance->_aSeoCache = array();
+        }
+
         return self::$_instance;
     }
 
@@ -113,21 +126,24 @@ class oxSeoEncoderVendor extends oxSeoEncoder
      * @param oxvendor $oVendor vendor object
      * @param int      $iPage   page tu prepare number
      * @param int      $iLang   language
-     * @param bool     $blFixed fixed url marker (default is false)
+     * @param bool     $blFixed fixed url marker (default is null)
      *
      * @return string
      */
-    public function getVendorPageUrl( $oVendor, $iPage, $iLang = null, $blFixed = false )
+    public function getVendorPageUrl( $oVendor, $iPage, $iLang = null, $blFixed = null )
     {
         if (!isset($iLang)) {
             $iLang = $oVendor->getLanguage();
         }
         $sStdUrl = $oVendor->getStdLink() . '&amp;pgNr=' . $iPage;
-        $sParams = sprintf( "%0" . ceil( $this->_iCntPages / 10 + 1 ) . "d", $iPage + 1 );
+        $sParams = (int) ($iPage + 1);
 
         $sStdUrl = $this->_trimUrl( $sStdUrl, $iLang );
         $sSeoUrl = $this->getVendorUri( $oVendor, $iLang ) . $sParams . "/";
 
+        if ( $blFixed === null ) {
+            $blFixed = $this->_isFixed( 'oxvendor', $oVendor->getId(), $iLang );
+        }
         return $this->_getFullUrl( $this->_getPageUri( $oVendor, 'oxvendor', $sStdUrl, $sSeoUrl, $sParams, $iLang, $blFixed ), $iLang );
     }
 

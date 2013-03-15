@@ -23,10 +23,10 @@
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
 <tr>
     <td valign="top" class="edittext" align="left" width="50%">
-        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('?cl=discount_users&aoc=1&oxid=[{ $oxid }]');">
+        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('&cl=discount_users&aoc=1&oxid=[{ $oxid }]');">
     </td>
     <td valign="top" class="edittext" align="left">
-        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNUSERS" }]" class="edittext" onclick="JavaScript:showDialog('?cl=discount_users&aoc=2&oxid=[{ $oxid }]');">
+        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNUSERS" }]" class="edittext" onclick="JavaScript:showDialog('&cl=discount_users&aoc=2&oxid=[{ $oxid }]');">
     </td>
     </tr>
 </table>

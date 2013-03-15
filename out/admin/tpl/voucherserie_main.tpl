@@ -133,6 +133,23 @@ function changeFnc( fncName )
             [{ oxinputhelp ident="HELP_VOUCHERSERIE_MAIN_SAMESEROTHERORDER" }]
             </td>
         </tr>
+        <tr>
+            <td class="edittext">
+            [{ oxmultilang ident="VOUCHERSERIE_MAIN_CALCULATEONCE" }]
+            [{ oxinputhelp ident="HELP_VOUCHERSERIE_MAIN_CALCULATEONCE" }]
+            </td>
+            <td class="edittext">
+            <input type="hidden" name="editval[oxvoucherseries__oxcalculateonce]" value="0" [{ $readonly }]>
+            <input type="checkbox" name="editval[oxvoucherseries__oxcalculateonce]" value="1" [{if $edit->oxvoucherseries__oxcalculateonce->value}]checked[{/if}] [{ $readonly }]>
+            </td>
+        </tr>
+        <tr>
+            <td class="edittext">
+            </td>
+            <td class="edittext"><br>
+            <input type="submit" class="edittext" name="save" value="[{ oxmultilang ident="GENERAL_SAVE" }]" [{ $readonly }]>
+            </td>
+        </tr>
         </table>
     </td>
     <td width="355" valign="top">

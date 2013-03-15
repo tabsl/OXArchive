@@ -12,8 +12,7 @@
 
 &nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_REVIEW" }]<br>
 <br>
-[{assign var=_sal value=$edit->oxuser__oxsal->value}]
-&nbsp;&nbsp;&nbsp;[{oxmultilang ident="GENERAL_SALUTATION_$_sal" noerror="yes" alternative=$_sal }] [{$edit->oxuser__oxfname->value }] [{$edit->oxuser__oxlname->value }]<br>
+&nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_NAME" }] : [{$edit->oxuser__oxsal->value|oxmultilangsal}] [{$edit->oxuser__oxfname->value }] [{$edit->oxuser__oxlname->value }]<br>
 &nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_FON" }] : [{$edit->oxuser__oxfon->value }]<br>
 &nbsp;&nbsp;&nbsp;[{ oxmultilang ident="GENERAL_EMAIL" }] : <a href="mailto:[{$edit->oxuser__oxusername->value}]">[{$edit->oxuser__oxusername->value}]</a><br>
 <br>

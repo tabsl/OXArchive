@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxuserbasket.php 22548 2009-09-22 13:50:42Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxuserbasket.php 26434 2010-03-09 16:25:56Z rimvydas.paskevicius $
  */
 
 /**
@@ -98,6 +98,30 @@ class oxUserBasket extends oxBase
     public function setIsNewBasket()
     {
         $this->_blNewBasket = true;
+    }
+
+    /**
+     * Checks if user basket is newly created
+     *
+     * @return bool
+     */
+    public function isNewBasket()
+    {
+        return $this->_blNewBasket;
+    }
+
+    /**
+     * Checks if user basket is empty
+     *
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        if ( $this->isNewBasket() || $this->getItemCount() < 1 ) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -267,7 +291,8 @@ class oxUserBasket extends oxBase
                     unset( $this->_aBasketItems[$this->_getItemKey($sProductId, $aSel)] );
                 }
 
-            } else { // updating object info and adding (if not yet added) item into basket items array
+            } else {
+                // updating object info and adding (if not yet added) item into basket items array
                 if ( !$blOverride && !empty($oUserBasketItem->oxuserbasketitems__oxamount->value) ) {
                     $dAmount += $oUserBasketItem->oxuserbasketitems__oxamount->value;
                 }

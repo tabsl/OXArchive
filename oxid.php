@@ -15,17 +15,18 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package main
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   main
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxid.php 18761 2009-05-04 12:25:36Z vilma $
+ * @version   SVN: $Id: oxid.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
+
 /**
  * Search engine URL parser
  */
-// set the HTTP GET parameters manually if search_engine_friendly_urls is enabled
 
+// set the HTTP GET parameters manually if search_engine_friendly_urls is enabled
 if ( isset( $_SERVER["REQUEST_URI"]) && $_SERVER["REQUEST_URI"]) {
     $sParams = $_SERVER["REQUEST_URI"];
 } else {
@@ -33,6 +34,14 @@ if ( isset( $_SERVER["REQUEST_URI"]) && $_SERVER["REQUEST_URI"]) {
     $sParams = $_SERVER["SCRIPT_URI"];
 }
 
+/**
+ * Get requested URL
+ *
+ * @param string $sParams     URL paremeters
+ * @param bool   $blReturnUrl Return just request URL
+ *
+ * @return string
+ */
 function getRequestUrl( $sParams = '', $blReturnUrl = false )
 {
     static $sProcUrl = null;
@@ -88,7 +97,8 @@ function getRequestUrl( $sParams = '', $blReturnUrl = false )
             @$_GET[$aArg[$iCtr]] = rawurldecode($aArg[$iCtr+1]);
             @$_REQUEST[$aArg[$iCtr]] = rawurldecode($aArg[$iCtr+1]);
 
-            if ( $aArg[$iCtr] != 'sid' && $aArg[$iCtr+1] ) { // skipping session id
+            // skipping session id
+            if ( $aArg[$iCtr] != 'sid' && $aArg[$iCtr+1] ) {
                 $sProcUrl .= $aArg[$iCtr]."=".$aArg[$iCtr+1]."&amp;";
             }
         }

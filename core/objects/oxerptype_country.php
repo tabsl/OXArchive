@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxerptype_country.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: oxerptype_country.php 25542 2010-02-02 11:28:16Z alfonsas $
  */
 
 require_once 'oxerptype.php';
@@ -106,7 +106,7 @@ class oxERPType_Country extends oxERPType
                 case 'OXACTIV':
                     return "OXACTIVE as OXACTIV";
                     break;
-                }
+            }
         }
         return parent::getSqlFieldName($sField, $iLanguage, $iShopID);
     }

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: category_text.php 17188 2009-03-13 12:19:11Z arvydas $
+ * @version   SVN: $Id: category_text.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -91,28 +91,25 @@ class Category_Text extends oxAdminDetails
         $soxId      = oxConfig::getParameter( "oxid");
         $aParams    = oxConfig::getParameter( "editval");
 
-
         $oCategory = oxNew( "oxcategory" );
-        //P
-        //$oCategory->setLanguage(oxConfig::getParameter("editlanguage"));
-
         $iCatLang = oxConfig::getParameter("catlang");
+        $iCatLang = $iCatLang ? $iCatLang : 0;
 
-        if (!$iCatLang)
-            $iCatLang = 0;
-
-        if(  $soxId != "-1")
+        if ( $soxId != "-1" ) {
             $oCategory->loadInLang( $iCatLang, $soxId );
-        else
+        } else {
             $aParams['oxcategories__oxid'] = null;
+        }
 
 
         $oCategory->setLanguage(0);
-        $oCategory->assign( $aParams);
-        $oCategory->setLanguage($iCatLang);
+        $oCategory->assign( $aParams );
+        $oCategory->setLanguage( $iCatLang );
         $oCategory->save();
+
         // set oxid if inserted
-        if ( $soxId == "-1")
+        if ( $soxId == "-1") {
             oxSession::setVar( "saved_oxid", $oCategory->oxcategories__oxid->value);
+        }
     }
 }

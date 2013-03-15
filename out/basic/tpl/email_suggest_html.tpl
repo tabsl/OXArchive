@@ -42,25 +42,25 @@
                         </tr>
                         <tr>
                           <td bgcolor="#FFFFFF" width="10%"><font face="Verdana,Arial" size="1"><b>[{ oxmultilang ident="EMAIL_SUGGEST_HTML_FROM" }]</b></font></td>
-                          <td bgcolor="#FFFFFF" align="left"><font face="Verdana,Arial" size="1">[{$userinfo->send_name}]<br></font></td>
+                          <td bgcolor="#FFFFFF" align="left"><font face="Verdana,Arial" size="1">[{$userinfo->send_name|oxescape}]<br></font></td>
                         </tr>
                         <tr>
                           <td bgcolor="#FFFFFF" width="10%"><font face="Verdana,Arial" size="1"><b>[{ oxmultilang ident="EMAIL_SUGGEST_HTML_EMAIL" }]</b></font></td>
-                          <td bgcolor="#FFFFFF" align="left"><font face="Verdana,Arial" size="1">[{$userinfo->send_email}]</font></td>
+                          <td bgcolor="#FFFFFF" align="left"><font face="Verdana,Arial" size="1">[{$userinfo->send_email|oxescape}]</font></td>
                         </tr>
                         <tr>
                           <td bgcolor="#FFFFFF" width="10%"><font face="Verdana,Arial" size="1"><b>[{ oxmultilang ident="EMAIL_SUGGEST_HTML_TO" }]</b></font></td>
-                          <td bgcolor="#FFFFFF" align="left"><font face="Verdana,Arial" size="1">[{$userinfo->rec_name}]</font></td>
+                          <td bgcolor="#FFFFFF" align="left"><font face="Verdana,Arial" size="1">[{$userinfo->rec_name|oxescape}]</font></td>
                         </tr>
                         <tr>
                           <td bgcolor="#FFFFFF" width="10%"><font face="Verdana,Arial" size="1"><b>[{ oxmultilang ident="EMAIL_SUGGEST_HTML_EMAIL2" }]</b></font></td>
-                          <td bgcolor="#FFFFFF" align="left"><font face="Verdana,Arial" size="1">[{$userinfo->rec_email}]</font></td>
+                          <td bgcolor="#FFFFFF" align="left"><font face="Verdana,Arial" size="1">[{$userinfo->rec_email|oxescape}]</font></td>
                         </tr>
                         <tr>
-                          <td bgcolor="#FFFFFF" colspan="2"><font face="Verdana,Arial" size="1">[{$userinfo->send_message|nl2br}]</font></td>
+                          <td bgcolor="#FFFFFF" colspan="2"><font face="Verdana,Arial" size="1">[{$userinfo->send_message|oxescape|nl2br}]</font></td>
                         </tr>
                         <tr>
-                          <td bgcolor="#FFFFFF" colspan="2"><font face="Verdana,Arial" size="1">[{ oxmultilang ident="EMAIL_SUGGEST_HTML_MENYGREETINGS" }] [{$userinfo->send_name}]</font></td>
+                          <td bgcolor="#FFFFFF" colspan="2"><font face="Verdana,Arial" size="1">[{ oxmultilang ident="EMAIL_SUGGEST_HTML_MENYGREETINGS" }] [{$userinfo->send_name|oxescape}]</font></td>
                         </tr>
                       </table>
                     </td>

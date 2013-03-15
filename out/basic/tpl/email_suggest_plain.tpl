@@ -12,8 +12,8 @@
 
 [{ oxmultilang ident="EMAIL_SUGGEST_PLAIN_RECOMMENDED" }]
 
-[{ $product->oxarticles__oxtitle->value|strip_tags }]
-[{ $product->oxarticles__oxshortdesc->value }]
+[{ $product->oxarticles__oxtitle->getRawValue()|strip_tags }]
+[{ $product->oxarticles__oxshortdesc->getRawValue() }]
 
 [{ oxmultilang ident="EMAIL_SUGGEST_PLAIN_CHECK" }] [{ $oViewConf->getBaseDir()  }]index.php?cl=details&anid=[{ $product->sOXID}]&shp=[{ $shop->oxshops__oxid->value }]
 

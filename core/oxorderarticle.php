@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxorderarticle.php 22931 2009-10-05 11:51:31Z arvydas $
+ * @version   SVN: $Id: oxorderarticle.php 26878 2010-03-26 12:44:47Z vilma $
  */
 
 /**
@@ -182,7 +182,7 @@ class oxOrderArticle extends oxBase implements oxIArticle
 
         // #874A. added oxarticles.oxtimestamp = oxarticles.oxtimestamp to keep old timestamp value
         $oArticle->oxarticles__oxstock = new oxField($iStockCount);
-        $oDb->execute( 'update oxarticles set oxarticles.oxstock = '.$oDb->quote( $iStockCount ).', oxarticles.oxtimestamp = oxarticles.oxtimestamp where oxarticles.oxid = '.$oDb->quote( $this->oxorderarticles__oxartid->value ) );
+        $oDb->execute( 'update oxarticles set oxarticles.oxstock = '.$oDb->quote( $iStockCount ).' where oxarticles.oxid = '.$oDb->quote( $this->oxorderarticles__oxartid->value ) );
         $oArticle->onChange( ACTION_UPDATE_STOCK );
 
         //update article sold amount
@@ -381,11 +381,12 @@ class oxOrderArticle extends oxBase implements oxIArticle
     /**
      * Returns true, implements iBaseArticle interface method
      *
-     * @param double $dAmount stock to check
+     * @param double $dAmount         stock to check
+     * @param double $dArtStockAmount stock amount
      *
      * @return bool
      */
-    public function checkForStock( $dAmount )
+    public function checkForStock( $dAmount, $dArtStockAmount = 0 )
     {
         return true;
     }
@@ -660,6 +661,8 @@ class oxOrderArticle extends oxBase implements oxIArticle
      * Deletes order article object. If deletion succeded - updates
      * article stock information. Returns deletion status
      *
+     * @param string $sOXID Article id
+     *
      * @return bool
      */
    public function delete( $sOXID = null)
@@ -691,5 +694,21 @@ class oxOrderArticle extends oxBase implements oxIArticle
        }
 
        return $blSave;
+   }
+
+   /**
+    * get used wrapping
+    *
+    * @return oxWrapping
+    */
+   public function getWrapping()
+   {
+       if ($this->oxorderarticles__oxwrapid->value) {
+           $oWrapping = oxNew('oxwrapping');
+           if ($oWrapping->load($this->oxorderarticles__oxwrapid->value)) {
+               return $oWrapping;
+           }
+       }
+       return null;
    }
 }

@@ -15,26 +15,56 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxfield.php 20457 2009-06-25 13:21:33Z vilma $
+ * @version   SVN: $Id: oxfield.php 25467 2010-02-01 14:14:26Z alfonsas $
  */
 
 /**
  * Database field description object.
+ *
+ * when a value is requested from oxField, it either takes 'value' field or
+ * 'rawValue' (depending which one is available).
+ * In case 'rawValue' is taken, it is escaped first before returning.
+ *
+ * T_RAW and T_TEXT types represent not the assignment logic, but rather a
+ * returned value escaping status.
+ *
  * @package core
  */
 class oxField // extends oxSuperCfg
 {
+    /**
+     * escaping functionality type: expected value is escaped text.
+     */
     const T_TEXT = 1;
+
+    /**
+     * escaping functionality type: expected value is not escaped (raw) text.
+     */
     const T_RAW  = 2;
 
     /**
      * Constructor
      * Initial value assigment is coded here by not calling a function is for performance
      * because oxField is created MANY times and even a function call matters
+     *
+     * if T_RAW is used, then it fills $value, because this is the value, that does
+     * not need to be escaped and is by definition equal to $rawValue (which is not set
+     * for less memory usage).
+     *
+     * if T_TEXT is used, then $rawValue is assigned and retrieved $value (which is not
+     * set initially) is escaped $rawValue.
+     *
+     * e.g.
+     * > if your input is "<b>string</b>" and you want your output to be exactly same,
+     *   you should use T_RAW - in this way it will be assigned to $value property as
+     *   the result.
+     * > if your input is "1 & (a < b)" and you want your output to be escaped, you
+     *   should use T_TEXT - in this way it will be assigned to $rawValue property and
+     *   it will be escaped.
      *
      * @param mixed $value Field value
      * @param int   $type  Value type
@@ -139,7 +169,7 @@ class oxField // extends oxSuperCfg
     }
 
     /**
-     * Initila field value
+     * Initial field value
      *
      * @param mixed $value Field value
      * @param int   $type  Value type

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: statistic_main.php 22452 2009-09-21 08:28:12Z arvydas $
+ * @version   SVN: $Id: statistic_main.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -100,8 +100,7 @@ class Statistic_Main extends oxAdminDetails
         // passing assigned reports count
         $this->_aViewData['ireports'] = count($aReports);
 
-         if ( oxConfig::getParameter("aoc") ) {
-
+        if ( oxConfig::getParameter("aoc") ) {
             $aColumns = array();
             include_once 'inc/'.strtolower(__CLASS__).'.inc.php';
             $this->_aViewData['oxajax'] = $aColumns;
@@ -165,23 +164,23 @@ class Statistic_Main extends oxAdminDetails
         $oShop->load( $myConfig->getShopId());
         $oShop = $this->addGlobalParams( $oShop );
 
-        $sTime_from = oxConfig::getParameter( "time_from" );
-        $sTime_to   = oxConfig::getParameter( "time_to" );
-        if ( $sTime_from && $sTime_to ) {
-            $sTime_from = oxUtilsDate::getInstance()->formatDBDate( $sTime_from, true );
-            $sTime_from = date( "Y-m-d", strtotime( $sTime_from ) );
-            $sTime_to = oxUtilsDate::getInstance()->formatDBDate( $sTime_to, true );
-            $sTime_to = date( "Y-m-d", strtotime( $sTime_to ) );
+        $sTimeFrom = oxConfig::getParameter( "time_from" );
+        $sTimeTo   = oxConfig::getParameter( "time_to" );
+        if ( $sTimeFrom && $sTimeTo ) {
+            $sTimeFrom = oxUtilsDate::getInstance()->formatDBDate( $sTimeFrom, true );
+            $sTimeFrom = date( "Y-m-d", strtotime( $sTimeFrom ) );
+            $sTimeTo = oxUtilsDate::getInstance()->formatDBDate( $sTimeTo, true );
+            $sTimeTo = date( "Y-m-d", strtotime( $sTimeTo ) );
         } else {
             $dDays = oxConfig::getParameter( "timeframe" );
             $dNow  = time();
-            $sTime_from = date( "Y-m-d", mktime( 0, 0, 0, date( "m", $dNow ), date( "d", $dNow ) - $dDays, date( "Y", $dNow ) ) );
-            $sTime_to   = date( "Y-m-d", time() );
+            $sTimeFrom = date( "Y-m-d", mktime( 0, 0, 0, date( "m", $dNow ), date( "d", $dNow ) - $dDays, date( "Y", $dNow ) ) );
+            $sTimeTo   = date( "Y-m-d", time() );
         }
 
         $oSmarty = oxUtilsView::getInstance()->getSmarty();
-        $oSmarty->assign( "time_from", $sTime_from." 23:59:59" );
-        $oSmarty->assign( "time_to", $sTime_to." 23:59:59" );
+        $oSmarty->assign( "time_from", $sTimeFrom." 23:59:59" );
+        $oSmarty->assign( "time_to", $sTimeTo." 23:59:59" );
         $oSmarty->assign( "shop", $oShop );
 
         echo( $oSmarty->fetch( "report_pagehead.tpl" ) );
@@ -197,7 +196,6 @@ class Statistic_Main extends oxAdminDetails
             }
         }
 
-        echo( $oSmarty->fetch( "report_bottomitem.tpl" ) );
-        exit();
+        oxUtils::getInstance()->showMessageAndExit( $oSmarty->fetch( "report_bottomitem.tpl" ) );
     }
 }

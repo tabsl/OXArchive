@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: article_userdef.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * @version   SVN: $Id: article_userdef.php 26701 2010-03-20 12:49:04Z arvydas $
  */
 
 /**
@@ -43,9 +43,8 @@ class Article_Userdef extends oxAdminDetails
 
         $soxId = oxConfig::getParameter( "oxid" );
         if ( $soxId != "-1" && isset( $soxId ) ) {
+
             // load object
-
-
             $oArticle->load( $soxId );
         }
 

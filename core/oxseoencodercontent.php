@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxseoencodercontent.php 23319 2009-10-16 14:03:21Z arvydas $
+ * @version   SVN: $Id: oxseoencodercontent.php 25467 2010-02-01 14:14:26Z alfonsas $
  */
 
 /**
@@ -37,12 +37,19 @@ class oxSeoEncoderContent extends oxSeoEncoder
     /**
      * Singleton method
      *
-     * @return oxseoencoder
+     * @return oxSeoEncoderContent
      */
     public static function getInstance()
     {
+        if ( defined( 'OXID_PHP_UNIT' ) ) {
+            self::$_instance = modInstances::getMod( __CLASS__ );
+        }
+
         if (!self::$_instance) {
             self::$_instance = oxNew("oxSeoEncoderContent");
+            if ( defined( 'OXID_PHP_UNIT' ) ) {
+                modInstances::addMod( __CLASS__, self::$_instance);
+            }
         }
 
         if ( defined( 'OXID_PHP_UNIT' ) ) {
@@ -81,7 +88,9 @@ class oxSeoEncoderContent extends oxSeoEncoder
         if ( !( $sSeoUrl = $this->_loadFromDb( 'oxcontent', $oCont->getId(), $iLang ) ) ) {
 
             if ( $iLang != $oCont->getLanguage() ) {
-                $oCont->loadInLang( $iLang, $oCont->getId() );
+                $sId = $oCont->getId();
+                $oCont = oxNew('oxcontent');
+                $oCont->loadInLang( $iLang, $sId );
             }
 
             $sSeoUrl = '';

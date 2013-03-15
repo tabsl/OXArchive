@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: adminguestbook_main.php 20714 2009-07-10 08:38:53Z sarunas $
+ * @version   SVN: $Id: adminguestbook_main.php 26691 2010-03-20 08:01:52Z arvydas $
  */
 
 /**
@@ -62,8 +62,8 @@ class Adminguestbook_Main extends oxAdminDetails
             $oLinks->load( $soxId );
 
             // #580A - setting GB entry as viewed in admin
-            if ( !$oLinks->oxgbentries__oxviewed->value ) {
-                $oLinks->oxgbentries__oxviewed->setValue(1);
+            if ( !isset( $oLinks->oxgbentries__oxviewed ) || !$oLinks->oxgbentries__oxviewed->value ) {
+                $oLinks->oxgbentries__oxviewed = new oxField( 1 );
                 $oLinks->save();
             }
             $this->_aViewData["edit"] =  $oLinks;
@@ -87,23 +87,21 @@ class Adminguestbook_Main extends oxAdminDetails
         $aParams = oxConfig::getParameter( "editval" );
 
         // checkbox handling
-        if ( !isset( $aParams['oxgbentries__oxactive'] ) )
+        if ( !isset( $aParams['oxgbentries__oxactive'] ) ) {
             $aParams['oxgbentries__oxactive'] = 0;
+        }
 
             // shopid
-            $sShopID = oxSession::getVar( "actshop");
-            $aParams['oxgbentries__oxshopid'] = $sShopID;
+            $aParams['oxgbentries__oxshopid'] = oxSession::getVar( "actshop");
 
         $oLinks = oxNew( "oxgbentry" );
-
         if ( $soxId != "-1" ) {
             $oLinks->load( $soxId );
         } else {
             $aParams['oxgbentries__oxid'] = null;
 
             // author
-            $iUsrID = oxSession::getVar( 'auth' );
-            $aParams['oxgbentries__oxuserid'] = $iUsrID;
+            $aParams['oxgbentries__oxuserid'] = oxSession::getVar( 'auth' );
         }
 
         $oLinks->assign( $aParams );

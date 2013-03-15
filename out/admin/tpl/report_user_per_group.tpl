@@ -2,7 +2,7 @@
   <br><br>
 
   [{if $oView->drawReport()}]
-    <img src="[{ $shop->basedir }][{ $shop->admindir }]/index.php?cl=reports/report_user_per_group&fnc=user_per_group&time_from=[{ $time_from }]&time_to=[{ $time_to }]" hspace="0" vspace="0" border="0" align="baseline" alt="">
+    <img src="[{$shop->selflink}]&cl=reports/report_user_per_group&fnc=user_per_group&time_from=[{ $time_from }]&time_to=[{ $time_to }]" hspace="0" vspace="0" border="0" align="baseline" alt="">
   [{else}]
     <b>[{ oxmultilang ident="GENERAL_NODATA" }]</b>
   [{/if}]

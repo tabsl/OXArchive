@@ -144,7 +144,7 @@
         var gui;
 
         YAHOO.util.Event.onDOMReady(function() {
-            gui = new YAHOO.oxid.gui( 'gui-dialog', 'gui-tabs', 'gui-picker', 'gui-tree', 'gui-preview', '[{ $shop->selflink }]', '[{ $shop->basetpldir }]');
+            gui = new YAHOO.oxid.gui( 'gui-dialog', 'gui-tabs', 'gui-picker', 'gui-tree', 'gui-preview', '[{ $shop->selflink }]', '[{ $shop->basetpldir }]', '[{$sAddData}]');
             gui.render();
             gui.show();
         });

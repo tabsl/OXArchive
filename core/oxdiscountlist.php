@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxdiscountlist.php 22657 2009-09-25 15:39:22Z arvydas $
+ * @version   SVN: $Id: oxdiscountlist.php 25467 2010-02-01 14:14:26Z alfonsas $
  */
 
 /**
@@ -69,8 +69,7 @@ class oxDiscountList extends oxList
     {
         // disable cashing for test modules
         if ( defined( 'OXID_PHP_UNIT' ) ) {
-            static $inst = array();
-            self::$_instance = $inst[oxClassCacheKey()];
+            self::$_instance = modInstances::getMod( __CLASS__ );
         }
 
         if ( !isset( self::$_instance ) ) {
@@ -78,7 +77,7 @@ class oxDiscountList extends oxList
             self::$_instance = oxNew( 'oxDiscountList' );
 
             if ( defined( 'OXID_PHP_UNIT' ) ) {
-                $inst[oxClassCacheKey()] = self::$_instance;
+                modInstances::addMod( __CLASS__, self::$_instance);
             }
         }
 

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxexception.php, v 1.0 2007.7.24 09.54.24 mathiasf Exp
+ * @version   SVN: $Id: oxexception.php 25635 2010-02-04 21:29:50Z alfonsas $
  */
 
 /**
@@ -138,15 +138,17 @@ class oxException extends Exception
     /**
      * Prints exception in file EXCEPTION_LOG.txt
      *
-     * @param integer $iDebug current debug level (will only print out on debug != 0)
+     * @param integer $iDebug current debug level. This parameter is deprecated.
      *
      * @return null
      */
     public function debugOut($iDebug = -1)
     {
-        if (0 != $iDebug) {
+        //We are most likely are already dealing with an exception so making sure no other exceptions interfere
+        try {
             $sLogMsg = $this->getString() . "\n---------------------------------------------\n";
             oxUtils::getInstance()->writeToLog( $sLogMsg, $this->getLogFileName() );
+        } catch (Exception $e) {
         }
     }
 

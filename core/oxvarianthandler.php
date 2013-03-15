@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxvarianthandler.php 22524 2009-09-22 11:47:27Z tomas $
+ * @version   SVN: $Id: oxvarianthandler.php 22524 2009-09-22 11:47:27Z tomas $
  */
 
 /**
@@ -57,7 +57,7 @@ class oxVariantHandler extends oxSuperCfg
      *
      * @return null
      */
-    public function init($oArticles)
+    public function init( $oArticles )
     {
         $this->_oArticles = $oArticles;
     }
@@ -76,7 +76,7 @@ class oxVariantHandler extends oxSuperCfg
         $oMdVariants->setParentId( $sParentId );
         $oMdVariants->setName( "_parent_product_" );
         foreach ( $oVariants as $sKey => $oVariant ) {
-            $aNames = explode(trim($this->_sMdSeparator), $oVariant->oxarticles__oxvarselect->value);
+            $aNames = explode( trim( $this->_sMdSeparator ), $oVariant->oxarticles__oxvarselect->value );
             foreach ( $aNames as $sNameKey => $sName ) {
                 $aNames[$sNameKey] = trim($sName);
             }
@@ -119,15 +119,15 @@ class oxVariantHandler extends oxSuperCfg
                 $aSelTitle[$sKey] = $oSel->{"oxselectlist__oxtitle".$sPrefix}->value;
                 $sMdSeparator = ($oArticle->oxarticles__oxvarname->value) ? $this->_sMdSeparator: '';
                 if ( $sVarNameUpdate ) {
-                	$sVarNameUpdate .= ", ";
+                    $sVarNameUpdate .= ", ";
                 }
                 $sVarName = oxDb::getDb()->quote($sMdSeparator.$aSelTitle[$sKey]);
                 $sVarNameUpdate .= "oxvarname".$sPrefix." = CONCAT(oxvarname".$sPrefix.", ".$sVarName.")";
             }
-            $MDVariants = $this->_assignValues( $aValues, $oVariants, $oArticle, $aConfLanguages);
+            $oMDVariants = $this->_assignValues( $aValues, $oVariants, $oArticle, $aConfLanguages);
             if ( $myConfig->getConfigParam( 'blUseMultidimensionVariants' ) ) {
                 $oAttribute = oxNew("oxattribute");
-                $oAttribute->assignVarToAttribute( $MDVariants, $aSelTitle );
+                $oAttribute->assignVarToAttribute( $oMDVariants, $aSelTitle );
             }
             $this->_updateArticleVarName( $sVarNameUpdate, $oArticle->oxarticles__oxid->value );
         }
@@ -161,8 +161,8 @@ class oxVariantHandler extends oxSuperCfg
                         //cannot use setEnableMultilang() at this place
                         //$oVariant = oxNew("oxarticle");
                         //$oVariant->setEnableMultilang(false);
-                        $oVariant = oxNew("oxbase");
-                        $oVariant->init( 'oxarticles' );
+                        $oVariant = oxNew("oxarticle");
+                        $oVariant->setEnableMultilang(false);
                         $oVariant->load($oSimpleVariant->oxarticles__oxid->value);
                         $oVariant->oxarticles__oxprice->setValue( $oVariant->oxarticles__oxprice->value + $dPriceMod );
                         //assign for all languages
@@ -188,15 +188,15 @@ class oxVariantHandler extends oxSuperCfg
                         $aParams['oxarticles__oxstock'] = 0;
                         $aParams['oxarticles__oxstockflag'] = $oSimpleVariant->oxarticles__oxstockflag->value;
                         $sVarId = $this->_craeteNewVariant( $aParams, $oArticle->oxarticles__oxid->value );
-	                    if ( $myConfig->getConfigParam( 'blUseMultidimensionVariants' ) ) {
-	                        $oAttrList = oxNew('oxattribute');
-	                        $aIds = $oAttrList->getAttributeAssigns( $oSimpleVariant->oxarticles__oxid->value);
-	                        $MDVariants["mdvar_".$sVarId] = $aIds;
-	                    }
+                        if ( $myConfig->getConfigParam( 'blUseMultidimensionVariants' ) ) {
+                            $oAttrList = oxNew('oxattribute');
+                            $aIds = $oAttrList->getAttributeAssigns( $oSimpleVariant->oxarticles__oxid->value);
+                            $aMDVariants["mdvar_".$sVarId] = $aIds;
+                        }
                     }
-		            if ( $myConfig->getConfigParam( 'blUseMultidimensionVariants' ) ) {
-		                $MDVariants[$sVarId] = $aValues[$i];
-		            }
+                    if ( $myConfig->getConfigParam( 'blUseMultidimensionVariants' ) ) {
+                        $aMDVariants[$sVarId] = $aValues[$i];
+                    }
                 }
                 $iCounter++;
             } else {
@@ -214,11 +214,11 @@ class oxVariantHandler extends oxSuperCfg
                 $aParams['oxarticles__oxstockflag'] = $oArticle->oxarticles__oxstockflag->value;
                 $sVarId = $this->_craeteNewVariant( $aParams, $oArticle->oxarticles__oxid->value );
                 if ( $myConfig->getConfigParam( 'blUseMultidimensionVariants' ) ) {
-	                $MDVariants[$sVarId] = $aValues[$i];
-	            }
-    		}
+                    $aMDVariants[$sVarId] = $aValues[$i];
+                }
+            }
         }
-        return $MDVariants;
+        return $aMDVariants;
     }
 
     /**
@@ -290,7 +290,7 @@ class oxVariantHandler extends oxSuperCfg
     {
         $sUpdate = "update oxarticles set " . $sUpdate . " where oxid = '" . $sArtId . "'";
 
-    	oxDb::getDb()->Execute( $sUpdate);
+        oxDb::getDb()->Execute( $sUpdate);
     }
 
     /**

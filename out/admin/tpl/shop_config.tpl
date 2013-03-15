@@ -457,6 +457,19 @@ function _groupExp(el) {
                 <div class="spacer"></div>
             </dl>
 
+            <dl>
+                <dt>
+                    <input type=hidden name=confbools[blShippingCountryVat] value=false>
+                    <input type=checkbox name=confbools[blShippingCountryVat] value=true  [{if ($confbools.blShippingCountryVat)}]checked[{/if}] [{ $readonly}]>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHIPPINGCOUNTRYVAT" }]
+                </dt>
+                <dd>
+                    [{ oxmultilang ident="SHOP_CONFIG_SHIPPINGCOUNTRYVAT" }]
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+
          </div>
     </div>
 
@@ -521,7 +534,7 @@ function _groupExp(el) {
 
             <dl>
                 <dt>
-                    <textarea class="txtfield" name=confaarrs[aZoomImageSizes] [{ $readonly}]>[{$confaarrs.aZoomImageSizes}]</textarea>
+                    <input type=text class="txt" name=confstrs[sZoomImageSize] value="[{$confstrs.sZoomImageSize}]" [{ $readonly}]>
                     [{ oxinputhelp ident="HELP_SHOP_CONFIG_ZOOMIMAGESIZE" }]
                 </dt>
                 <dd>
@@ -549,6 +562,52 @@ function _groupExp(el) {
             <a href="#" onclick="_groupExp(this);return false;" class="rc"><b>[{ oxmultilang ident="SHOP_OPTIONS_GROUP_SHOP_FRONTEND" }]</b></a>
             <dl>
                 <dt>
+                </dt>
+                <dd>
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_SELECTSHOPCOMPONENTS" }][{ oxmultilang ident="SHOP_CONFIG_SELECTSHOPCOMPONENTS" }]
+                    <div style="margin-left:10px;">
+                        <input type=hidden name=confbools[bl_showVouchers] value=false>
+                        <input type=checkbox name=confbools[bl_showVouchers] value=true  [{if ($confbools.bl_showVouchers)}]checked[{/if}] [{ $readonly }]>
+                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWVOUCHERS" }]
+                        [{ oxmultilang ident="SHOP_CONFIG_SHOWVOUCHERS" }]
+                        <br>
+
+                        <input type=hidden name=confbools[bl_showOpenId] value=false>
+                        <input type=checkbox name=confbools[bl_showOpenId] value=true  [{if ($confbools.bl_showOpenId)}]checked[{/if}] [{ $readonly }]>
+                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWOPENID" }]
+                        [{ oxmultilang ident="SHOP_CONFIG_SHOWOPENID" }]
+                        <br>
+
+                        <input type=hidden name=confbools[bl_showGiftWrapping] value=false>
+                        <input type=checkbox name=confbools[bl_showGiftWrapping] value=true  [{if ($confbools.bl_showGiftWrapping)}]checked[{/if}] [{ $readonly }]>
+                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWGIFTWRAPPING" }]
+                        [{ oxmultilang ident="SHOP_CONFIG_SHOWGIFTWRAPPING" }]
+                        <br>
+
+                        <input type=hidden name=confbools[bl_showListmania] value=false>
+                        <input type=checkbox name=confbools[bl_showListmania] value=true  [{if ($confbools.bl_showListmania)}]checked[{/if}] [{ $readonly }]>
+                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWLISTMANIA" }]
+                        [{ oxmultilang ident="SHOP_CONFIG_SHOWLISTMANIA" }]
+                        <br>
+
+                        <input type=hidden name=confbools[bl_showWishlist] value=false>
+                        <input type=checkbox name=confbools[bl_showWishlist] value=true  [{if ($confbools.bl_showWishlist)}]checked[{/if}] [{ $readonly }]>
+                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWWISHLIST" }]
+                        [{ oxmultilang ident="SHOP_CONFIG_SHOWWISHLIST" }]
+                        <br>
+
+                        <input type=hidden name=confbools[bl_showCompareList] value=false>
+                        <input type=checkbox name=confbools[bl_showCompareList] value=true  [{if ($confbools.bl_showCompareList)}]checked[{/if}] [{ $readonly }]>
+                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_SHOWCOMPARELIST" }]
+                        [{ oxmultilang ident="SHOP_CONFIG_SHOWCOMPARELIST" }]
+                    </div>
+                </dd>
+                <div class="spacer"></div>
+            </dl>
+
+
+            <dl>
+                <dt>
                     <input type=hidden name=confbools[blTopNaviLayout] value=false>
                     <input type=checkbox name=confbools[blTopNaviLayout] value=true  [{if ($confbools.blTopNaviLayout)}]checked[{/if}] [{ $readonly}]>
                     [{ oxinputhelp ident="HELP_SHOP_CONFIG_TOPNAVILAYOUT" }]
@@ -561,7 +620,7 @@ function _groupExp(el) {
 
             <dl>
                 <dt>
-                    <input type="button" value="[{if isset($defcat) && isset($defcat->oxcategories__oxtitle)}][{$defcat->oxcategories__oxtitle->value}][{else}]---[{/if}]" onclick="JavaScript:showDialog('?cl=shop_config&aoc=1&oxid=[{$oxid|escape:'url'}]');">
+                    <input type="button" value="[{if isset($defcat) && isset($defcat->oxcategories__oxtitle)}][{$defcat->oxcategories__oxtitle->value}][{else}]---[{/if}]" onclick="JavaScript:showDialog('&cl=shop_config&aoc=1&oxid=[{$oxid|escape:'url'}]');">
                     [{ oxinputhelp ident="HELP_SHOP_CONFIG_TOPNAVICATCOUNT" }]
                 </dt>
                 <dd>
@@ -673,7 +732,7 @@ function _groupExp(el) {
                 </dd>
                 <div class="spacer"></div>
             </dl>
-            
+
             <dl>
                 <dt>
                     <input type=hidden name="confbools[blCheckForUpdates]" value="false">
@@ -772,30 +831,51 @@ function _groupExp(el) {
 
             <dl>
                 <dt>
-                    <input type=hidden name=confarrs[aRssSelected] value=''>
-                    <select class="select" multiple name=confarrs[aRssSelected][] [{ $readonly}]>
-                      [{if $confarrs.aRssSelected|is_array}]
-                        <option value="oxrss_topshop"[{if in_array('oxrss_topshop', $confarrs.aRssSelected)}] selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_RSSTOPSHOP" }]</option>
-                        <option value="oxrss_bargain"[{if in_array('oxrss_bargain', $confarrs.aRssSelected)}] selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_RSSBARGAIN" }]</option>
-                        <option value="oxrss_newest"[{if in_array('oxrss_newest', $confarrs.aRssSelected)}] selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_RSSNEWEST" }]</option>
-                        <option value="oxrss_categories"[{if in_array('oxrss_categories', $confarrs.aRssSelected)}] selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_RSSCATEGORIES" }]</option>
-                        <option value="oxrss_search"[{if in_array('oxrss_search', $confarrs.aRssSelected)}] selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_RSSSEARCH" }]</option>
-                        <option value="oxrss_recommlists"[{if in_array('oxrss_recommlists', $confarrs.aRssSelected)}] selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_RSSARTRECOMMLISTS" }]</option>
-                        <option value="oxrss_recommlistarts"[{if in_array('oxrss_recommlistarts', $confarrs.aRssSelected)}] selected[{/if}]>[{ oxmultilang ident="SHOP_CONFIG_RSSRECOMMLISTARTS" }]</option>
-                      [{else}]
-                        <option value="oxrss_topshop">[{ oxmultilang ident="SHOP_CONFIG_RSSTOPSHOP" }]</option>
-                        <option value="oxrss_bargain">[{ oxmultilang ident="SHOP_CONFIG_RSSBARGAIN" }]</option>
-                        <option value="oxrss_newest">[{ oxmultilang ident="SHOP_CONFIG_RSSNEWEST" }]</option>
-                        <option value="oxrss_categories">[{ oxmultilang ident="SHOP_CONFIG_RSSCATEGORIES" }]</option>
-                        <option value="oxrss_search">[{ oxmultilang ident="SHOP_CONFIG_RSSSEARCH" }]</option>
-                        <option value="oxrss_recommlists">[{ oxmultilang ident="SHOP_CONFIG_RSSARTRECOMMLISTS" }]</option>
-                        <option value="oxrss_recommlistarts">[{ oxmultilang ident="SHOP_CONFIG_RSSRECOMMLISTARTS" }]</option>
-                      [{/if}]
-                    </select>
-                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_RSSSELECTED" }]
                 </dt>
                 <dd>
-                    [{ oxmultilang ident="SHOP_CONFIG_RSSSELECTED" }]
+                    [{ oxinputhelp ident="HELP_SHOP_CONFIG_RSSSELECTED" }][{ oxmultilang ident="SHOP_CONFIG_RSSSELECTED" }]
+                    <div style="margin-left:10px;">
+                        <input type=hidden name=confbools[bl_rssTopShop] value=false>
+                        <input type=checkbox name=confbools[bl_rssTopShop] value=true  [{if ($confbools.bl_rssTopShop)}]checked[{/if}] [{ $readonly }]>
+                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_RSSTOPSHOP" }]
+                        [{ oxmultilang ident="SHOP_CONFIG_RSSTOPSHOP" }]
+                        <br />
+
+                        <input type=hidden name=confbools[bl_rssBargain] value=false>
+                        <input type=checkbox name=confbools[bl_rssBargain] value=true  [{if ($confbools.bl_rssBargain)}]checked[{/if}] [{ $readonly }]>
+                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_RSSBARGAIN" }]
+                        [{ oxmultilang ident="SHOP_CONFIG_RSSBARGAIN" }]
+                        <br />
+
+                        <input type=hidden name=confbools[bl_rssNewest] value=false>
+                        <input type=checkbox name=confbools[bl_rssNewest] value=true  [{if ($confbools.bl_rssNewest)}]checked[{/if}] [{ $readonly }]>
+                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_RSSNEWEST" }]
+                        [{ oxmultilang ident="SHOP_CONFIG_RSSNEWEST" }]
+                        <br />
+
+                        <input type=hidden name=confbools[bl_rssCategories] value=false>
+                        <input type=checkbox name=confbools[bl_rssCategories] value=true  [{if ($confbools.bl_rssCategories)}]checked[{/if}] [{ $readonly }]>
+                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_RSSCATEGORIES" }]
+                        [{ oxmultilang ident="SHOP_CONFIG_RSSCATEGORIES" }]
+                        <br />
+
+                        <input type=hidden name=confbools[bl_rssSearch] value=false>
+                        <input type=checkbox name=confbools[bl_rssSearch] value=true  [{if ($confbools.bl_rssSearch)}]checked[{/if}] [{ $readonly }]>
+                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_RSSSEARCH" }]
+                        [{ oxmultilang ident="SHOP_CONFIG_RSSSEARCH" }]
+                        <br />
+
+                        <input type=hidden name=confbools[bl_rssRecommLists] value=false>
+                        <input type=checkbox name=confbools[bl_rssRecommLists] value=true  [{if ($confbools.bl_rssRecommLists)}]checked[{/if}] [{ $readonly }]>
+                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_RSSARTRECOMMLISTS" }]
+                        [{ oxmultilang ident="SHOP_CONFIG_RSSARTRECOMMLISTS" }]
+                        <br />
+
+                        <input type=hidden name=confbools[bl_rssRecommListArts] value=false>
+                        <input type=checkbox name=confbools[bl_rssRecommListArts] value=true  [{if ($confbools.bl_rssRecommListArts)}]checked[{/if}] [{ $readonly }]>
+                        [{ oxinputhelp ident="HELP_SHOP_CONFIG_RSSRECOMMLISTARTS" }]
+                        [{ oxmultilang ident="SHOP_CONFIG_RSSRECOMMLISTARTS" }]
+                    </div>
                 </dd>
                 <div class="spacer"></div>
             </dl>

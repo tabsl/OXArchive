@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package inc
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: deliveryset_users.inc.php 22508 2009-09-22 09:57:39Z vilma $
+ * @version   SVN: $Id: deliveryset_users.inc.php 25640 2010-02-05 06:42:24Z alfonsas $
  */
 
 $aColumns = array( 'container1' => array(    // field , table,  visible, multilanguage, ident

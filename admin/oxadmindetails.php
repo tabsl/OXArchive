@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxadmindetails.php 20074 2009-06-22 13:40:26Z sarunas $
+ * @version   SVN: $Id: oxadmindetails.php 26679 2010-03-19 14:40:47Z rimvydas.paskevicius $
  */
 
 /**
@@ -91,7 +91,7 @@ class oxAdminDetails extends oxAdminView
             $this->_oEditor = false;
 
             if ( $sEditorFile && file_exists( $sEditorFile ) ) {
-                include_once ($sEditorFile);
+                include_once $sEditorFile;
 
                 // create a new instance of the wysiwygPro class:
                 $this->_oEditor = new wysiwygPro();
@@ -139,14 +139,15 @@ class oxAdminDetails extends oxAdminView
 
                 // parse for styles and add them
                 $this->setAdminMode( false );
-                $sCSSPath = $myConfig->getResourcePath("styles/{$sStylesheet}", false );
-                $sCSSUrl  = $myConfig->getResourceUrl("styles/{$sStylesheet}", false );
+                if ( $myConfig->getConfigParam( "blFormerTplSupport" ) ) {
+                    $sCSSPath = $myConfig->getResourcePath("styles/{$sStylesheet}", false );
+                    $sCSSUrl  = $myConfig->getResourceUrl("styles/{$sStylesheet}", false );
+                } else {
+                    $sCSSPath = $myConfig->getResourcePath("{$sStylesheet}", false );
+                    $sCSSUrl  = $myConfig->getResourceUrl("{$sStylesheet}", false );
+                }
 
                 $aCSSPaths = array();
-
-                // #1157C - in wysiwigpro editor font problem
-                $aCSSPaths[] = $myConfig->getResourcePath("oxid.css", false );
-
                 $this->setAdminMode( true );
 
                 if (is_file($sCSSPath)) {
@@ -233,10 +234,10 @@ class oxAdminDetails extends oxAdminView
     /**
      * Returns textarea filled with text to edit
      *
-     * @param int    $iWidth      editor width
-     * @param int    $iHeight     editor height
-     * @param object $oObject     object passed to editor
-     * @param string $sField      object field which content is passed to editor
+     * @param int    $iWidth  editor width
+     * @param int    $iHeight editor height
+     * @param object $oObject object passed to editor
+     * @param string $sField  object field which content is passed to editor
      *
      * @return string
      */
@@ -353,7 +354,8 @@ class oxAdminDetails extends oxAdminView
                     break;
                 }
             }
-        } else { // no category selected - opening first available
+        } else {
+            // no category selected - opening first available
             $oCatTree->rewind();
             if ( $oCat = $oCatTree->current() ) {
                 $oCat->selected = 1;

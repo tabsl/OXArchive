@@ -75,9 +75,9 @@ function loadEditFrame(sUrl)
 </html>
 
 <frameset rows="54,*" border="0">
-    <frame src="[{$shop->selflink}]?cl=navigation&item=header.tpl" name="header" id="header" frameborder="0" scrolling="No" noresize marginwidth="0" marginheight="0">
+    <frame src="[{$shop->selflink}]&cl=navigation&item=header.tpl" name="header" id="header" frameborder="0" scrolling="No" noresize marginwidth="0" marginheight="0">
     <frameset  cols="200,*" border="0">
-        <frame src="[{$shop->selflink}]?cl=navigation" name="navigation" id="navigation" frameborder="0" scrolling="Auto" noresize marginwidth="0" marginheight="0">
-        <frame src="[{$shop->selflink}]?cl=navigation&item=home.tpl" name="basefrm" id="basefrm" frameborder="0" scrolling="Auto" noresize marginwidth="0" marginheight="0">
+        <frame src="[{$shop->selflink}]&cl=navigation" name="navigation" id="navigation" frameborder="0" scrolling="Auto" noresize marginwidth="0" marginheight="0">
+        <frame src="[{$shop->selflink}]&cl=navigation&item=home.tpl" name="basefrm" id="basefrm" frameborder="0" scrolling="Auto" noresize marginwidth="0" marginheight="0">
     </frameset>
 </frameset>

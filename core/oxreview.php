@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxreview.php 22600 2009-09-24 08:24:15Z alfonsas $
+ * @version   SVN: $Id: oxreview.php 25467 2010-02-01 14:14:26Z alfonsas $
  */
 
 /**
@@ -120,7 +120,7 @@ class oxReview extends oxBase
 
         $sObjectIdWhere = '';
         if ( is_array( $aIds ) && count( $aIds ) ) {
-            $sObjectIdWhere = "oxreviews.oxobjectid in ( ".implode(", ",oxDb::getInstance()->quoteArray( $aIds ))." )";
+            $sObjectIdWhere = "oxreviews.oxobjectid in ( ".implode(", ", oxDb::getInstance()->quoteArray( $aIds ))." )";
         } elseif ( is_string( $aIds ) && $aIds ) {
             $sObjectIdWhere = "oxreviews.oxobjectid = ".$oDb->quote( $aIds );
         } else {

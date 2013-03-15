@@ -1,4 +1,4 @@
-<div [{if $test_Cntr}]id="test_cntr_[{$test_Cntr}]_[{$product->oxarticles__oxartnum->value}]"[{/if}] class="product [{if $head}] head[{/if}] [{$size|default:''}] [{$class|default:''}]">
+<div [{if $test_Cntr}]id="test_cntr_[{$test_Cntr}]_[{$product->oxarticles__oxartnum->value}]"[{/if}] class="product hproduct[{if $head}] head[{/if}] [{$size|default:''}] [{$class|default:''}]">
     [{if $showMainLink}]
         [{assign var='_productLink' value=$product->getMainLink()}]
     [{else}]
@@ -14,14 +14,18 @@
         </strong>
     [{/if}]
 
-    <a id="test_pic_[{$testid}]" href="[{ $_productLink }]" class="picture"[{if $oView->noIndex() }] rel="nofollow"[{/if}]>
-      <img src="[{if $size=='big'}][{$product->getPictureUrl(1) }][{elseif $size=='thinest'}][{$product->getIconUrl() }][{else}][{ $product->getThumbnailUrl() }][{/if}]" alt="[{ $product->oxarticles__oxtitle->value|strip_tags }] [{ $product->oxarticles__oxvarselect->value|default:'' }]">
+    <a id="test_pic_[{$testid}]" href="[{ $_productLink }]" class="picture url" rel="product[{if $oView->noIndex() }] nofollow[{/if}]">
+      <img class="photo" src="[{if $size=='big'}][{$product->getPictureUrl(1) }][{elseif $size=='thinest'}][{$product->getIconUrl() }][{else}][{ $product->getThumbnailUrl() }][{/if}]" alt="[{ $product->oxarticles__oxtitle->value|strip_tags }] [{ $product->oxarticles__oxvarselect->value|default:'' }]">
     </a>
 
     <strong class="h3">
-        <a id="test_title_[{$testid}]" href="[{ $_productLink }]"[{if $oView->noIndex() }] rel="nofollow"[{/if}]>[{$product->oxarticles__oxtitle->value}] [{$product->oxarticles__oxvarselect->value}]</a>
+        <a id="test_title_[{$testid}]" class="fn" href="[{ $_productLink }]" rel="product[{if $oView->noIndex() }] nofollow[{/if}]">[{$product->oxarticles__oxtitle->value}] [{$product->oxarticles__oxvarselect->value}]</a>
         <br>
-        <tt id="test_no_[{$testid}]">[{ oxmultilang ident="INC_PRODUCTITEM_ARTNOMBER2" }] [{ $product->oxarticles__oxartnum->value }]</tt>
+        <tt class="identifier" id="test_no_[{$testid}]">
+            <span class="type" title="sku">[{ oxmultilang ident="INC_PRODUCTITEM_ARTNOMBER2" }]</span>
+            <span class="value">[{ $product->oxarticles__oxartnum->value }]</span>
+        </tt>
+
         [{if $size=='thin' || $size=='thinest'}]
         <span class="flag [{if $product->getStockStatus() == -1}]red[{elseif $product->getStockStatus() == 1}]orange[{elseif $product->getStockStatus() == 0}]green[{/if}]">&nbsp;</span>
         [{/if}]
@@ -32,13 +36,13 @@
     [{/if}]
     [{oxhasrights ident="SHOWSHORTDESCRIPTION"}]
       [{if $size=='big' || $size=='thin'}]
-        <div id="test_shortDesc_[{$testid}]" class="desc">[{ $product->oxarticles__oxshortdesc->value }]</div>
+        <div id="test_shortDesc_[{$testid}]" class="desc description">[{ $product->oxarticles__oxshortdesc->value }]</div>
       [{/if}]
     [{/oxhasrights}]
 
     <div [{if $test_Cntr}]id="test_cntr_[{$test_Cntr}]"[{/if}] class="actions">
         <a id="test_details_[{$testid}]" href="[{ $_productLink }]"[{if $oView->noIndex() }] rel="nofollow"[{/if}]>[{ oxmultilang ident="INC_PRODUCTITEM_MOREINFO2" }]</a>
-        [{if $isfiltering }]
+        [{if $isfiltering && $oViewConf->getShowCompareList()}]
             [{oxid_include_dynamic file="dyn/compare_links.tpl" testid="_`$testid`" type="compare" aid=$product->oxarticles__oxid->value anid=$altproduct in_list=$product->blIsOnComparisonList page=$pageNavigation->actPage-1 text_to_id="INC_PRODUCTITEM_COMPARE2" text_from_id="INC_PRODUCTITEM_REMOVEFROMCOMPARELIST2"}]
         [{/if}]
     </div>
@@ -47,14 +51,14 @@
 
     [{capture name=product_price}]
     [{oxhasrights ident="SHOWARTICLEPRICE"}]
-        <div id="test_price_[{$testid}]" class="price">
+        <div id="test_price_[{$testid}]" class="cost">
             [{if $product->getFTPrice() && $size=='big' }]
                 <b class="old">[{ oxmultilang ident="DETAILS_REDUCEDFROM" }] <del>[{ $product->getFTPrice()}] [{ $currency->sign}]</del></b>
                 <span class="desc">[{ oxmultilang ident="DETAILS_REDUCEDTEXT" }]</span><br>
                 <sub class="only">[{ oxmultilang ident="DETAILS_NOWONLY" }]</sub>
             [{/if}]
             [{if $product->getFPrice()}]
-              <big>[{ $product->getFPrice() }] [{ $currency->sign}]</big><sup class="dinfo"><a href="#delivery_link" rel="nofollow">*</a></sup>
+              <big class="price">[{ $product->getFPrice() }] [{ $currency->sign}]</big><sup class="dinfo"><a href="#delivery_link" rel="nofollow">*</a></sup>
             [{else}]
               <big>&nbsp;</big>
             [{/if}]

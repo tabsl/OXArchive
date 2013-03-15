@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: wrapping_main.php 17191 2009-03-13 12:21:00Z arvydas $
+ * @version   SVN: $Id: wrapping_main.php 26218 2010-03-03 07:55:32Z arvydas $
  */
 
 /**
@@ -90,15 +90,15 @@ class Wrapping_Main extends oxAdminDetails
     {
         $myConfig  = $this->getConfig();
 
-        $soxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
+        $soxId   = oxConfig::getParameter( "oxid");
+        $aParams = oxConfig::getParameter( "editval");
+
         // checkbox handling
         if ( !isset( $aParams['oxwrapping__oxactive']))
             $aParams['oxwrapping__oxactive'] = 0;
 
             // shopid
-            $sShopID = oxSession::getVar( "actshop");
-            $aParams['oxwrapping__oxshopid'] = $sShopID;
+            $aParams['oxwrapping__oxshopid'] = oxSession::getVar( "actshop" );
 
         $oWrapping = oxNew( "oxwrapping" );
 
@@ -130,15 +130,16 @@ class Wrapping_Main extends oxAdminDetails
      */
     public function saveinnlang()
     {
-        $soxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
+        $soxId   = oxConfig::getParameter( "oxid");
+        $aParams = oxConfig::getParameter( "editval");
+
         // checkbox handling
         if ( !isset( $aParams['oxwrapping__oxactive']))
             $aParams['oxwrapping__oxactive'] = 0;
 
             // shopid
-            $sShopID = oxSession::getVar( "actshop");
-            $aParams['oxwrapping__oxshopid'] = $sShopID;
+            $aParams['oxwrapping__oxshopid'] = oxSession::getVar( "actshop" );
+
         $oWrapping = oxNew( "oxwrapping" );
         if ( $soxId != "-1")
             $oWrapping->load( $soxId);

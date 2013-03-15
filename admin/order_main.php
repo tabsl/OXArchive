@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: order_main.php 20675 2009-07-08 13:44:08Z arvydas $
+ * @version   SVN: $Id: order_main.php 26510 2010-03-15 10:01:56Z arvydas $
  */
 
 /**
@@ -60,7 +60,7 @@ class Order_Main extends oxAdminDetails
             // paid ?
             if ( $oOrder->oxorder__oxpaid->value != "0000-00-00 00:00:00") {
                 $oOrder->blIsPaid = true;
-                $oOrder->oxorder__oxpaid->setValue( oxUtilsDate::getInstance()->formatDBDate( $oOrder->oxorder__oxpaid->value ) );
+                $oOrder->oxorder__oxpaid = new oxField( oxUtilsDate::getInstance()->formatDBDate( $oOrder->oxorder__oxpaid->value ) );
             }
 
             $this->_aViewData["edit"] =  $oOrder;
@@ -95,12 +95,11 @@ class Order_Main extends oxAdminDetails
     public function save()
     {
 
-        $soxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
-        $aDynvalues = oxConfig::getParameter( "dynvalue");
+        $soxId      = oxConfig::getParameter( "oxid" );
+        $aParams    = oxConfig::getParameter( "editval" );
 
             // shopid
-            $sShopID = oxSession::getVar( "actshop");
+            $sShopID = oxSession::getVar( "actshop" );
             $aParams['oxorder__oxshopid'] = $sShopID;
 
         $oOrder = oxNew( "oxorder" );
@@ -112,7 +111,8 @@ class Order_Main extends oxAdminDetails
 
         $oOrder->assign( $aParams);
 
-        if ( isset( $aDynvalues)) {
+        $aDynvalues = oxConfig::getParameter( "dynvalue" );
+        if ( isset( $aDynvalues ) ) {
             // #411 Dodger
             $oPayment = oxNew( "oxuserpayment" );
             $oPayment->load( $oOrder->oxorder__oxpaymentid->value);
@@ -129,8 +129,9 @@ class Order_Main extends oxAdminDetails
         $oOrder->recalculateOrder();
 
         // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oOrder->oxorder__oxid->value);
+        if ( $soxId == "-1" ) {
+            oxSession::setVar( "saved_oxid", $oOrder->oxorder__oxid->value );
+        }
 
         // reloading upper frame
         $this->_aViewData["updatelist"] = "1";
@@ -143,32 +144,30 @@ class Order_Main extends oxAdminDetails
      */
     public function sendorder()
     {
-        $soxId  = oxConfig::getParameter( "oxid");
+        $soxId  = oxConfig::getParameter( "oxid" );
         $oOrder = oxNew( "oxorder" );
-        $oOrder->load( $soxId);
+        if ( $oOrder->load( $soxId ) ) {
 
-        // #632A
-        $timeout = oxUtilsDate::getInstance()->getTime(); //time();
-        $now = date("Y-m-d H:i:s", $timeout);
-        $oOrder->oxorder__oxsenddate->setValue($now);
-        $oOrder->save();
+            // #632A
+            $oOrder->oxorder__oxsenddate->setValue( date( "Y-m-d H:i:s", oxUtilsDate::getInstance()->getTime() ) );
+            $oOrder->save();
 
-        // #1071C
-        $oOrderArticles = $oOrder->getOrderArticles();
-        foreach ( $oOrderArticles as $oxid=>$oArticle) {
-            // remove canceled articles from list
-            if ( $oArticle->oxorderarticles__oxstorno->value == 1 )
-                $oOrderArticles->offsetUnset($oxid);
+            // #1071C
+            $oOrderArticles = $oOrder->getOrderArticles();
+            foreach ( $oOrderArticles as $sOxId => $oArticle ) {
+                // remove canceled articles from list
+                if ( $oArticle->oxorderarticles__oxstorno->value == 1 ) {
+                    $oOrderArticles->offsetUnset( $sOxId );
+                }
+            }
+
+            if ( oxConfig::getParameter( "sendmail" ) ) {
+                // send eMail
+                $oEmail = oxNew( "oxemail" );
+                $oEmail->sendSendedNowMail( $oOrder );
+            }
+
         }
-
-        $blMail  = oxConfig::getParameter( "sendmail");
-        if ( isset( $blMail) && $blMail) {
-            // send eMail
-
-            $oxEMail = oxNew( "oxemail" );
-            $oxEMail->SendSendedNowMail( $oOrder );
-        }
-
     }
 
     /**
@@ -178,13 +177,13 @@ class Order_Main extends oxAdminDetails
      */
     public function resetorder()
     {
-        $soxId  = oxConfig::getParameter( "oxid");
         $oOrder = oxNew( "oxorder" );
-        $oOrder->load( $soxId);
+        if ( $oOrder->load( oxConfig::getParameter( "oxid") ) ) {
 
-        $oOrder->oxorder__oxsenddate->setValue("0000-00-00 00:00:00");
-        $oOrder->save();
+            $oOrder->oxorder__oxsenddate->setValue("0000-00-00 00:00:00");
+            $oOrder->save();
 
+        }
     }
 
     /**
@@ -199,6 +198,8 @@ class Order_Main extends oxAdminDetails
         if ( ( $sDelSetId = oxConfig::getParameter( "setDelSet" ) ) &&
              $oOrder->load( oxConfig::getParameter( "oxid" ) ) ) {
             $oOrder->oxorder__oxpaymenttype->setValue( "oxempty" );
+            // keeps old discount
+            $oOrder->reloadDiscount( false );
             $oOrder->setDelivery( $sDelSetId );
             $oOrder->recalculateOrder();
         }
@@ -216,6 +217,8 @@ class Order_Main extends oxAdminDetails
         if ( ( $sPayId = oxConfig::getParameter( "setPayment") ) &&
              $oOrder->load( oxConfig::getParameter( "oxid" ) ) ) {
             $oOrder->oxorder__oxpaymenttype->setValue( $sPayId );
+            // keeps old discount
+            $oOrder->reloadDiscount( false );
             $oOrder->recalculateOrder();
         }
     }

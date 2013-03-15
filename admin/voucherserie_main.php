@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: voucherserie_main.php 23307 2009-10-16 10:33:03Z vilma $
+ * @version   SVN: $Id: voucherserie_main.php 26641 2010-03-18 09:10:17Z arvydas $
  */
 
 /**
@@ -74,21 +74,19 @@ class VoucherSerie_Main extends oxAdminDetails
     {
 
         // Parameter Processing
-
         $soxId          = oxConfig::getParameter("oxid");
         $aSerieParams   = oxConfig::getParameter("editval");
-        $dVoucherAmount = oxConfig::getParameter("voucherAmount");
-        if (!is_numeric($dVoucherAmount) || $dVoucherAmount < 0)
-            $dVoucherAmount = 0;
+        $dVoucherAmount = abs( (int) oxConfig::getParameter( "voucherAmount" ) );
 
         // Voucher Serie Processing
 
         $oVoucherSerie = oxNew( "oxvoucherserie" );
         // if serie already exist use it
-        if ($soxId != "-1")
-            $oVoucherSerie->load($soxId);
-        else
+        if ( $soxId != "-1" ) {
+            $oVoucherSerie->load( $soxId );
+        } else {
             $aSerieParams["oxvoucherseries__oxid"] = null;
+        }
 
 
         // select random nr if chosen
@@ -161,12 +159,12 @@ class VoucherSerie_Main extends oxAdminDetails
         }
         $this->_aViewData["exportCompleted"] = true;
 
-        header("Pragma: public");
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-        header("Expires: 0");
-        header("Content-Disposition: attachment; filename=vouchers.csv");
-        header("Content-Type: application/csv");
-        echo($sLine);
-        exit();
+        $oUtils = oxUtils::getInstance();
+        $oUtils->setHeader( "Pragma: public" );
+        $oUtils->setHeader( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+        $oUtils->setHeader( "Expires: 0" );
+        $oUtils->setHeader( "Content-Disposition: attachment; filename=vouchers.csv");
+        $oUtils->setHeader( "Content-Type: application/csv" );
+        $oUtils->showMessageAndExit( $sLine );
     }
 }

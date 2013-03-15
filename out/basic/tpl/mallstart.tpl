@@ -26,8 +26,11 @@
       [{ include file="inc/admin_banner.tpl" }]
     [{/if}]
 
-    <div class="welcomebox"
-        [{ oxcontent ident="oxstartwelcome" }]
+    <div class="welcomebox">
+
+      [{oxifcontent ident="oxstartwelcome" object="oCont"}]
+        [{$oCont->oxcontents__oxcontent->value}]
+      [{/oxifcontent}]
 
         <div class="shopselectbox">
             [{ oxmultilang ident="MALLCATITEM_PLEASECHOOSE" }]<br>

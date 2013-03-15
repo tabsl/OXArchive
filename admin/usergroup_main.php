@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: usergroup_main.php 17191 2009-03-13 12:21:00Z arvydas $
+ * @version   SVN: $Id: usergroup_main.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -80,19 +80,23 @@ class UserGroup_Main extends oxAdminDetails
         $soxId      = oxConfig::getParameter( "oxid");
         $aParams    = oxConfig::getParameter( "editval");
         // checkbox handling
-        if ( !isset( $aParams['oxgroups__oxactive']))
+        if ( !isset( $aParams['oxgroups__oxactive'] ) ) {
             $aParams['oxgroups__oxactive'] = 0;
+        }
 
         $oGroup = oxNew( "oxgroups" );
-        if ( $soxId != "-1")
-            $oGroup->load( $soxId);
-        else
+        if ( $soxId != "-1") {
+            $oGroup->load( $soxId );
+        } else {
             $aParams['oxgroups__oxid'] = null;
-        //$aParams = $oGroup->ConvertNameArray2Idx( $aParams);
+        }
+
         $oGroup->assign( $aParams);
         $oGroup->save();
+
         // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oGroup->oxgroups__oxid->value);
+        if ( $soxId == "-1" ) {
+            oxSession::setVar( "saved_oxid", $oGroup->oxgroups__oxid->value );
+        }
     }
 }

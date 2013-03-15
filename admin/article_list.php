@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: article_list.php 17958 2009-04-07 14:29:36Z rimvydas.paskevicius $
+ * @version   SVN: $Id: article_list.php 26619 2010-03-17 13:44:29Z arvydas $
  */
 
 /**
@@ -60,75 +60,123 @@ class Article_List extends oxAdminList
         }
 
         $oArticle = null;
-        foreach ( $this->_oList as $key => $oArticle ) {
-            $sFieldName = "oxarticles__".strtolower( $sPwrSearchFld );
+        $oList = $this->getItemList();
+        if ( $oList) {
+            foreach ( $oList as $key => $oArticle ) {
+                $sFieldName = "oxarticles__".strtolower( $sPwrSearchFld );
 
-            // formatting view
-            if ( !$myConfig->getConfigParam( 'blSkipFormatConversion' ) ) {
-                if ( $oArticle->$sFieldName->fldtype == "datetime")
-                    oxDb::getInstance()->convertDBDateTime( $oArticle->$sFieldName );
-                elseif ( $oArticle->$sFieldName->fldtype == "timestamp")
-                    oxDb::getInstance()->convertDBTimestamp( $oArticle->$sFieldName );
-                elseif ( $oArticle->$sFieldName->fldtype == "date")
-                    oxDb::getInstance()->convertDBDate( $oArticle->$sFieldName );
+                // formatting view
+                if ( !$myConfig->getConfigParam( 'blSkipFormatConversion' ) ) {
+                    if ( $oArticle->$sFieldName->fldtype == "datetime" )
+                        oxDb::getInstance()->convertDBDateTime( $oArticle->$sFieldName );
+                    elseif ( $oArticle->$sFieldName->fldtype == "timestamp" )
+                        oxDb::getInstance()->convertDBTimestamp( $oArticle->$sFieldName );
+                    elseif ( $oArticle->$sFieldName->fldtype == "date" )
+                        oxDb::getInstance()->convertDBDate( $oArticle->$sFieldName );
+                }
+
+                $oArticle->pwrsearchval = $oArticle->$sFieldName->value;
+                $oList[$key] = $oArticle;
             }
-
-            $oArticle->pwrsearchval = $oArticle->$sFieldName->value;
-            $this->_oList[$key] = $oArticle;
         }
-
 
         parent::render();
 
         // load fields
-        if ( !$oArticle ) {
-            $oArticle = $this->_oList->getBaseObject();
+        if ( !$oArticle && $oList ) {
+            $oArticle = $oList->getBaseObject();
         }
-        $this->_aViewData["pwrsearchfields"] = $oArticle->getSearchableFields();
+        $this->_aViewData["pwrsearchfields"] = $oArticle ? $oArticle->getSearchableFields() : null;
         $this->_aViewData["pwrsearchfld"]    = strtoupper( $sPwrSearchFld );
 
-        $aWhere = array();
         if ( isset( $this->_aViewData["where"] ) ) {
-            $aWhere = &$this->_aViewData["where"];
             $sFieldName = "oxarticles__".strtoupper( $sPwrSearchFld );
-            if ( isset( $aWhere->$sFieldName ) )
-                $this->_aViewData["pwrsearchinput"] = $aWhere->$sFieldName;
+            if ( isset( $this->_aViewData["where"]->$sFieldName ) ) {
+                $this->_aViewData["pwrsearchinput"] = $this->_aViewData["where"]->$sFieldName;
+            }
+        }
+
+        $sType  = '';
+        $sValue = '';
+
+        $sArtCat= oxConfig::getParameter( "art_category" );
+        if ( $sArtCat && strstr( $sArtCat, "@@" ) !== false ) {
+            list( $sType, $sValue ) = explode( "@@", $sArtCat );
         }
 
         // parent categorie tree
         $oCatTree = oxNew( "oxCategoryList");
         $oCatTree->buildList( $myConfig->getConfigParam( 'bl_perfLoadCatTree' ) );
-
-        if ( ( $sChosenCat= oxConfig::getParameter( "art_category") ) ) {
+        if ( $sType === 'cat' ) {
             foreach ($oCatTree as $oCategory ) {
-                if ( $oCategory->oxcategories__oxid->value == $sChosenCat ) {
+                if ( $oCategory->oxcategories__oxid->value == $sValue ) {
                     $oCategory->selected = 1;
                     break;
                 }
             }
         }
-
         $this->_aViewData["cattree"] = $oCatTree;
+
+       // manufacturer list
+        $oMnfTree = oxNew( "oxManufacturerList");
+        $oMnfTree->loadManufacturerList();
+        if ( $sType === 'mnf' ) {
+            foreach ($oMnfTree as $oManufacturer ) {
+                if ( $oManufacturer->oxmanufacturers__oxid->value == $sValue ) {
+                    $oManufacturer->selected = 1;
+                    break;
+                }
+            }
+        }
+        $this->_aViewData["mnftree"] = $oMnfTree;
+
+        // vendor list
+        $oVndTree = oxNew( "oxVendorList");
+        $oVndTree->loadVendorList();
+        if ( $sType === 'vnd' ) {
+            foreach ($oVndTree as $oVendor ) {
+                if ( $oVendor->oxvendor__oxid->value == $sValue ) {
+                    $oVendor->selected = 1;
+                    break;
+                }
+            }
+        }
+        $this->_aViewData["vndtree"] = $oVndTree;
+
         return "article_list.tpl";
     }
 
     /**
      * Sets articles sorting by category.
      *
-     * @param string $sSQL sql string
+     * @param string $sSql sql string
      *
      * @return string
      */
     protected function _changeselect( $sSql )
     {
-        // add category
-        if ( ( $sChosenCat = oxConfig::getParameter( "art_category" ) ) ) {
-            $sTable   = getViewName( "oxarticles" );
-            $sO2CView = getViewName( "oxobject2category" );
-            $sInsert  = "from $sTable left join $sO2CView on $sTable.oxid = $sO2CView.oxobjectid where $sO2CView.oxcatnid = '$sChosenCat' and ";
-            $sSql = preg_replace( "/from\s+$sTable\s+where/i", $sInsert, $sSql);
+        $sArtCat= oxConfig::getParameter("art_category");
+        if ( $sArtCat && strstr($sArtCat, "@@") !== false ) {
+            list($sType, $sValue) = explode("@@", $sArtCat);
         }
 
+        $sTable   = getViewName( "oxarticles" );
+        switch ($sType) {
+            // add category
+            case 'cat':
+                $sO2CView = getViewName( "oxobject2category" );
+                $sInsert  = "from $sTable left join $sO2CView on $sTable.oxid = $sO2CView.oxobjectid where $sO2CView.oxcatnid = ".oxDb::getDb()->quote($sValue)." and ";
+                $sSql = preg_replace( "/from\s+$sTable\s+where/i", $sInsert, $sSql);
+                break;
+            // add category
+            case 'mnf':
+                $sSql.= " and $sTable.oxmanufacturerid = ".oxDb::getDb()->quote($sValue);
+                break;
+            // add vendor
+            case 'vnd':
+                $sSql.= " and $sTable.oxvendorid = ".oxDb::getDb()->quote($sValue);
+                break;
+        }
         return $sSql;
     }
 
@@ -140,10 +188,7 @@ class Article_List extends oxAdminList
     public function buildWhere()
     {
         // we override this to select only parent articles
-        $this->_aWhere = parent::buildWhere();
-        if ( !is_array( $this->_aWhere ) ) {
-            $this->_aWhere = array();
-        }
+        $this->_aWhere = ( array ) parent::buildWhere();
 
         // adding folder check
         $sFolder = oxConfig::getParameter( 'folder' );
@@ -166,7 +211,7 @@ class Article_List extends oxAdminList
     protected function _prepareWhereQuery( $aWhere, $sQ )
     {
         $sQ = parent::_prepareWhereQuery( $aWhere, $sQ );
-        //searching for empty oxfolder fields
+
         return $sQ . " and ".getViewName( 'oxarticles' ).".oxparentid = '' ";
     }
 

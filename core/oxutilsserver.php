@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxutilsserver.php 22348 2009-09-16 09:08:30Z sarunas $
+ * @version   SVN: $Id: oxutilsserver.php 25467 2010-02-01 14:14:26Z alfonsas $
  */
 
 /**
@@ -50,14 +50,13 @@ class oxUtilsServer extends oxSuperCfg
     {
         // disable caching for test modules
         if ( defined( 'OXID_PHP_UNIT' ) ) {
-            static $inst = array();
-            self::$_instance = $inst[oxClassCacheKey()];
+            self::$_instance = modInstances::getMod( __CLASS__ );
         }
 
         if ( !self::$_instance instanceof oxUtilsServer ) {
             self::$_instance = oxNew( 'oxUtilsServer');
             if ( defined( 'OXID_PHP_UNIT' ) ) {
-                $inst[oxClassCacheKey()] = self::$_instance;
+                modInstances::addMod( __CLASS__, self::$_instance);
             }
         }
         return self::$_instance;
@@ -253,5 +252,22 @@ class oxUtilsServer extends oxSuperCfg
         }
 
         return $this->_aUserCookie[$sShopId] = $this->getOxCookie( 'oxid_'.$sShopId );
+    }
+
+    /**
+     * Checks if current client ip is in trusted IPs list.
+     * IP list is defined in config file as "aTrustedIPs" parameter
+     *
+     * @return bool
+     */
+    public function isTrustedClientIp()
+    {
+        $blTrusted = false;
+        $aTrustedIPs = ( array ) $this->getConfig()->getConfigParam( "aTrustedIPs" );
+        if ( count( $aTrustedIPs ) ) {
+            $blTrusted = in_array( $this->getRemoteAddress(), $aTrustedIPs );
+        }
+
+        return $blTrusted;
     }
 }

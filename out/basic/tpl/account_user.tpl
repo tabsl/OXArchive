@@ -85,13 +85,24 @@
           <tr>
             <td><label>[{ oxmultilang ident="ACCOUNT_USER_COUNTRY" }]</label></td>
             <td>
-              <select name="invadr[oxuser__oxcountryid]">
+              <select id="inv_country_select" name="invadr[oxuser__oxcountryid]">
                 <option value="">-</option>
                 [{foreach from=$oView->getCountryList() item=country key=country_id }]
                   <option value="[{ $country->oxcountry__oxid->value }]"  [{if $oxcmp_user->oxuser__oxcountryid->value == $country->oxcountry__oxid->value }]selected[{/if }]>[{ $country->oxcountry__oxtitle->value }]</option>
                 [{/foreach }]
               </select>
               [{if $oView->isFieldRequired(oxuser__oxcountryid) }]<span class="req">*</span>[{/if }]
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              [{include file="inc/state_selector.snippet.tpl"
+                        countrySelectId="inv_country_select"
+                        stateSelectName="invadr[oxuser__oxstateid]"
+                        selectedStateIdPrim=$invadr.oxuser__oxstateid
+                        selectedStateId=$oxcmp_user->oxuser__oxstateid->value
+                     }]
             </td>
           </tr>
           <tr>
@@ -125,7 +136,7 @@
           [{if $oViewConf->showBirthdayFields() }]
           <tr>
             <td><label>[{ oxmultilang ident="ACCOUNT_USER_BIRTHDATE" }]</label></td>
-            <td valign="top">
+            <td valign="top" nowrap>
               <input type="text" size="3" maxlength="2" name="invadr[oxuser__oxbirthdate][day]" value="[{if isset( $invadr.oxuser__oxbirthdate.day ) }][{$invadr.oxuser__oxbirthdate.day }][{elseif $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00"}][{$oxcmp_user->oxuser__oxbirthdate->value|regex_replace:"/^([0-9]{4})[-]([0-9]{1,2})[-]/":"" }][{/if}]">&nbsp;&nbsp;
               <input type="text" size="3" maxlength="2" name="invadr[oxuser__oxbirthdate][month]" value="[{if isset( $invadr.oxuser__oxbirthdate.month ) }][{$invadr.oxuser__oxbirthdate.month }][{elseif $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00" }][{$oxcmp_user->oxuser__oxbirthdate->value|regex_replace:"/^([0-9]{4})[-]/":""|regex_replace:"/[-]([0-9]{1,2})$/":"" }][{/if}]">&nbsp;&nbsp;
                  <input type="text" size="8" maxlength="4" name="invadr[oxuser__oxbirthdate][year]" value="[{if isset( $invadr.oxuser__oxbirthdate.year ) }][{$invadr.oxuser__oxbirthdate.year }][{elseif $oxcmp_user->oxuser__oxbirthdate->value && $oxcmp_user->oxuser__oxbirthdate->value != "0000-00-00" }][{$oxcmp_user->oxuser__oxbirthdate->value|regex_replace:"/[-]([0-9]{1,2})[-]([0-9]{1,2})$/":"" }][{/if}]">
@@ -219,13 +230,24 @@
           <tr>
             <td><label>[{ oxmultilang ident="ACCOUNT_USER_COUNTRY2" }]</label></td>
             <td>
-              <select name="deladr[oxaddress__oxcountryid]">
+              <select id="del_country_select" name="deladr[oxaddress__oxcountryid]">
                 <option value="">-</option>
                 [{foreach from=$oView->getCountryList() item=country key=country_id }]
                   <option value="[{ $country->oxcountry__oxid->value }]" [{if isset( $deladr.oxaddress__oxcountryid ) && $deladr.oxaddress__oxcountryid == $country->oxcountry__oxid->value }]selected[{elseif $delivadr->oxaddress__oxcountry->value == $country->oxcountry__oxtitle->value or $delivadr->oxaddress__oxcountry->value == $country->oxcountry__oxid->value or $delivadr->oxaddress__oxcountryid->value == $country->oxcountry__oxid->value }]selected[{/if }]>[{ $country->oxcountry__oxtitle->value }]</option>
                 [{/foreach }]
               </select>
               [{if $oView->isFieldRequired(oxaddress__oxcountryid) }]<span class="req">*</span>[{/if }]
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              [{include file="inc/state_selector.snippet.tpl"
+                        countrySelectId="del_country_select"
+                        stateSelectName="deladr[oxaddress__oxstateid]"
+                        selectedStateIdPrim=$deladr.oxaddress__oxstateid
+                        selectedStateId=$delivadr->oxaddress__oxstateid->value
+                     }]
             </td>
           </tr>
           <tr>

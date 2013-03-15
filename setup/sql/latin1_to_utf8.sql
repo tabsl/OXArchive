@@ -36,6 +36,9 @@ ALTER TABLE `oxshops` MODIFY `OXDEFCURRENCY` varchar(32) NOT NULL default '';
 ALTER TABLE `oxuser` MODIFY `OXUPDATEKEY` varchar( 32 ) NOT NULL default '';
 
 ALTER TABLE `oxactions` MODIFY `OXTITLE` varchar(128) NOT NULL default '';
+ALTER TABLE `oxactions` MODIFY `OXTITLE_1` varchar(128) NOT NULL default '';
+ALTER TABLE `oxactions` MODIFY `OXTITLE_2` varchar(128) NOT NULL default '';
+ALTER TABLE `oxactions` MODIFY `OXTITLE_3` varchar(128) NOT NULL default '';
 
 ALTER TABLE `oxnewssubscribed` MODIFY `OXSAL` varchar(64) NOT NULL default '';
 

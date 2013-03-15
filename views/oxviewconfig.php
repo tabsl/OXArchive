@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxviewconfig.php 21697 2009-08-19 13:09:31Z vilma $
+ * @version   SVN: $Id: oxviewconfig.php 26319 2010-03-05 09:58:47Z sarunas $
  */
 
 /**
@@ -59,17 +59,19 @@ class oxViewConfig extends oxSuperCfg
     {
         if ( ( $sValue = $this->getViewConfigParam( 'homeLink' ) ) === null ) {
             $myConfig = $this->getConfig();
-            $myUtils = oxUtils::getInstance();
+            $myUtils  = oxUtils::getInstance();
+            $oLang    = oxLang::getInstance();
 
             $sValue = null;
 
 
-            if ( $myUtils->seoIsActive() && !$sValue && $iLang = oxLang::getInstance()->getBaseLanguage() ) {
+            $iLang = $oLang->getBaseLanguage();
+            if ( $myUtils->seoIsActive() && !$sValue && $iLang ) {
                 $sValue = oxSeoEncoder::getInstance()->getStaticUrl( $this->getSelfLink() . 'cl=start', $iLang );
             }
 
             if ( !$sValue ) {
-                $sValue = $this->getSession()->processUrl( $this->getBaseDir() );
+                $sValue = preg_replace('#index.php\??$#', '', $this->getSelfLink());
             }
 
             $this->setViewConfigParam( 'homeLink', $sValue );
@@ -85,7 +87,7 @@ class oxViewConfig extends oxSuperCfg
     public function getActTplName()
     {
         $sTplName = oxConfig::getParameter( 'tpl' );
-        // #M1176: Logout from CMS page 
+        // #M1176: Logout from CMS page
         if ( !$sTplName ) {
             $sTplName = $this->getViewConfigParam('tpl');
         }
@@ -103,8 +105,7 @@ class oxViewConfig extends oxSuperCfg
         $sCatnid  = $this->getActCatId();
         $sTplName = $this->getActTplName();
 
-        $sLink = $this->getConfig()->getShopHomeURL()."cl={$sClass}&amp;".( $sCatnid ? "cnid={$sCatnid}" : '' )."&amp;fnc=logout".( $sTplName ? "&amp;tpl=".basename( $sTplName ) : '' )."&amp;redirect=1";
-        return $this->getSession()->processUrl( $sLink );
+        return $this->getConfig()->getShopHomeURL()."cl={$sClass}&amp;".( $sCatnid ? "cnid={$sCatnid}" : '' )."&amp;fnc=logout".( $sTplName ? "&amp;tpl=".basename( $sTplName ) : '' )."&amp;redirect=1";
     }
 
     /**
@@ -116,8 +117,7 @@ class oxViewConfig extends oxSuperCfg
     {
         $sTplName = $this->getActTplName();
         $sClass   = $this->getActiveClassName();
-        $sLink = $this->getConfig()->getShopCurrentURL()."cl=help&amp;page={$sClass}".( $sTplName ? "&amp;tpl={$sTplName}" : '' );
-        return $this->getSession()->processUrl( $sLink );
+        return $this->getConfig()->getShopCurrentURL()."cl=help&amp;page={$sClass}".( $sTplName ? "&amp;tpl={$sTplName}" : '' );
     }
 
     /**
@@ -283,6 +283,13 @@ class oxViewConfig extends oxSuperCfg
     {
         if ( ( $sValue = $this->getViewConfigParam( 'hiddensid' ) ) === null ) {
             $sValue = $this->getSession()->hiddenSid();
+
+            // appending language info to form
+            if ( ( $sLang = oxLang::getInstance()->getFormLang() ) ) {
+                $sValue .= "\n{$sLang}";
+            }
+
+
             $this->setViewConfigParam( 'hiddensid', $sValue );
         }
         return $sValue;
@@ -664,6 +671,66 @@ class oxViewConfig extends oxSuperCfg
     public function getNrOfCatArticles()
     {
         return $this->getConfig()->getConfigParam( 'aNrofCatArticles' );
+    }
+
+    /**
+     * Returns config param "bl_showWishlist" value
+     *
+     * @return bool
+     */
+    public function getShowWishlist()
+    {
+        return $this->getConfig()->getConfigParam( 'bl_showWishlist' );
+    }
+
+    /**
+     * Returns config param "bl_showCompareList" value
+     *
+     * @return bool
+     */
+    public function getShowCompareList()
+    {
+        return $this->getConfig()->getConfigParam( 'bl_showCompareList' );
+    }
+
+    /**
+     * Returns config param "bl_showListmania" value
+     *
+     * @return bool
+     */
+    public function getShowListmania()
+    {
+        return $this->getConfig()->getConfigParam( 'bl_showListmania' );
+    }
+
+    /**
+     * Returns config param "bl_showOpenId" value
+     *
+     * @return bool
+     */
+    public function getShowOpenIdLogin()
+    {
+        return $this->getConfig()->getConfigParam( 'bl_showOpenId' );
+    }
+
+    /**
+     * Returns config param "bl_showVouchers" value
+     *
+     * @return bool
+     */
+    public function getShowVouchers()
+    {
+        return $this->getConfig()->getConfigParam( 'bl_showVouchers' );
+    }
+
+    /**
+     * Returns config param "bl_showGiftWrapping" value
+     *
+     * @return bool
+     */
+    public function getShowGiftWrapping()
+    {
+        return $this->getConfig()->getConfigParam( 'bl_showGiftWrapping' );
     }
 
     /**

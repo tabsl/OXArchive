@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxadminview.php 23224 2009-10-13 14:24:30Z arvydas $
+ * @version   SVN: $Id: oxadminview.php 26740 2010-03-22 16:12:41Z tomas $
  */
 
 /**
@@ -188,18 +188,19 @@ class oxAdminView extends oxView
         // override cause of admin dir
         $sURL = $myConfig->getConfigParam( 'sShopURL' ). $myConfig->getConfigParam( 'sAdminDir' );
 
-        if ($myConfig->getConfigParam('sAdminSSLURL'))
+        if ($myConfig->getConfigParam('sAdminSSLURL')) {
             $sURL = $myConfig->getConfigParam('sAdminSSLURL');
+        }
 
         $oViewConf = $this->getViewConfig();
-        $oViewConf->setViewConfigParam( 'selflink', $sURL.'/index.php' );
+        $oViewConf->setViewConfigParam( 'selflink', $mySession->url($sURL.'/index.php') );
         $oViewConf->setViewConfigParam( 'ajaxlink', str_replace( '&amp;', '&', $mySession->url( $sURL.'/oxajax.php' ) ) );
         $oViewConf->setViewConfigParam( 'sServiceUrl', $this->getServiceUrl() );
         $oViewConf->setViewConfigParam( 'blLoadDynContents', $myConfig->getConfigParam( 'blLoadDynContents' ) );
         $oViewConf->setViewConfigParam( 'sShopCountry', $myConfig->getConfigParam( 'sShopCountry' ) );
 
         if ( $sURL = $myConfig->getConfigParam( 'sAdminSSLURL') ) {
-            $oViewConf->setViewConfigParam( 'selflink', $sURL.'/index.php' );
+            $oViewConf->setViewConfigParam( 'selflink', $mySession->url($sURL.'/index.php') );
             $oViewConf->setViewConfigParam( 'ajaxlink', str_replace( '&amp;', '&', $mySession->url( $sURL.'/oxajax.php' ) ) );
         }
 
@@ -313,16 +314,16 @@ class oxAdminView extends oxView
         $myUtilsServer = oxUtilsServer::getInstance();
 
         // store navigation history
-        $aHistory = explode('|',$myUtilsServer->getOxCookie('oxidadminhistory'));
-        if(!is_array($aHistory)) {
+        $aHistory = explode('|', $myUtilsServer->getOxCookie('oxidadminhistory'));
+        if (!is_array($aHistory)) {
             $aHistory = array();
         }
 
-        if(!in_array($sNode,$aHistory)) {
+        if (!in_array($sNode, $aHistory)) {
             $aHistory[] = $sNode;
         }
 
-        $myUtilsServer->setOxCookie('oxidadminhistory',implode('|',$aHistory));
+        $myUtilsServer->setOxCookie('oxidadminhistory', implode('|', $aHistory));
     }
 
     /**
@@ -376,7 +377,8 @@ class oxAdminView extends oxView
     /**
      * Returns maximum allowed size of upload file and formatted size equivalent
      *
-     * @param int $iMaxFileSize recommended maximum size of file (normalu value is taken from php ini, otherwise sets 2MB)
+     * @param int  $iMaxFileSize recommended maximum size of file (normalu value is taken from php ini, otherwise sets 2MB)
+     * @param bool $blFormatted  Return formated
      *
      * @return array
      */
@@ -422,7 +424,7 @@ class oxAdminView extends oxView
     /**
      * Reset output cache
      *
-     * @param  $blForceResete if true, forces reset
+     * @param bool $blForceResete if true, forces reset
      *
      * @return null
      */
@@ -440,8 +442,8 @@ class oxAdminView extends oxView
      * Resets counters values from cache. Resets price category articles, category articles,
      * vendor articles, manufacturer articles count.
      *
-     * @param $sCounterType counter type
-     * @param $sValue       reset value
+     * @param string $sCounterType counter type
+     * @param string $sValue       reset value
      *
      * @return null
      */
@@ -487,6 +489,8 @@ class oxAdminView extends oxView
     /**
      * Get english country name by country iso alpha 2 code
      *
+     * @param string $sCountryCode Country code
+     *
      * @return boolean
      */
     protected function _getCountryByCode( $sCountryCode )
@@ -496,8 +500,14 @@ class oxAdminView extends oxView
         //default country
         $sCountry = 'international';
 
+        $aLandIds = oxLang::getInstance()->getLanguageIds();
+
+        $iEnglishId = array_search("en", $aLandIds);
+
+        $sEnTag = oxLang::getInstance()->getLanguageTag($iEnglishId);
+
         if ( !empty($sCountryCode) ) {
-            $sQ = "select oxtitle_1 from oxcountry where oxisoalpha2 = " . oxDb::getDb()->quote( $sCountryCode );
+            $sQ = "select oxtitle$sEnTag from oxcountry where oxisoalpha2 = " . oxDb::getDb()->quote( $sCountryCode );
             $sCountry = oxDb::getDb()->getOne( $sQ );
         }
 
@@ -511,7 +521,7 @@ class oxAdminView extends oxView
      */
     protected function _authorize()
     {
-        return ( bool ) ( count( oxUtilsServer::getInstance()->getOxCookie() ) && oxUtils::getInstance()->checkAccessRights() );
+        return ( bool ) ( $this->getSession()->checkSessionChallenge() && count( oxUtilsServer::getInstance()->getOxCookie() ) && oxUtils::getInstance()->checkAccessRights() );
     }
 
     /**
@@ -523,7 +533,6 @@ class oxAdminView extends oxView
     {
         if ( self::$_oNaviTree == null ) {
             self::$_oNaviTree = oxNew( 'oxnavigationtree' );
-            self::$_oNaviTree->init();
         }
         return self::$_oNaviTree;
     }
@@ -546,14 +555,15 @@ class oxAdminView extends oxView
      */
     public function chshp()
     {
-        $sActShop = oxConfig::getParameter( 'actshop' );
-        $this->getConfig()->setShopId( $sActShop );
-        oxSession::setVar( "shp", $sActShop);
+        $sActShop = oxConfig::getParameter( 'shp' );
+        oxSession::setVar( "shp", $sActShop );
         oxSession::setVar( 'currentadminshop', $sActShop );
     }
 
     /**
      * Marks seo entires as expired, cleans up tag clouds cache
+     *
+     * @param string $sShopId Shop id
      *
      * @return null
      */
@@ -565,6 +575,23 @@ class oxAdminView extends oxView
         // resetting tag cache
         $oTagCloud = oxNew('oxtagcloud');
         $oTagCloud->resetTagCache();
+    }
+
+    /**
+     * Marks article seo url as expired
+     *
+     * @param array $aArtIds article id's
+     *
+     * @return null
+     */
+    public function resetArtSeoUrl( $aArtIds )
+    {
+        if ( !is_array($aArtIds) ) {
+            $aArtIds = array($aArtIds);
+        }
+        foreach ( $aArtIds as $sArtId ) {
+           oxSeoEncoder::getInstance()->markAsExpired( $sArtId );
+        }
     }
 
     /**

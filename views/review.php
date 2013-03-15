@@ -15,18 +15,18 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: review.php 23584 2009-10-26 10:01:11Z arvydas $
+ * @version   SVN: $Id: review.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
  * Review of chosen article.
  * Collects article review data, saves new review to DB.
  */
-class Review extends oxUBase
+class Review extends Details
 {
     /**
      * Review user id
@@ -114,20 +114,27 @@ class Review extends oxUBase
     protected $_iViewIndexState = VIEW_INDEXSTATE_NOINDEXNOFOLLOW;
 
     /**
+     * Returns prefix ID used by template engine.
+     *
+     * @return  string  $this->_sViewID view id
+     */
+    public function getViewId()
+    {
+        return oxUBase::getViewId();
+    }
+
+    /**
      * Executes parent::init(), Loads user chosen product object (with all data).
      *
      * @return null
      */
     public function init()
     {
-        $myConfig = $this->getConfig();
-
-        parent::init();
-
-        $this->_oActiveRecommList = $this->getActiveRecommList();
-        if ( oxConfig::getParameter( 'recommid' ) && !$this->_oActiveRecommList ) {
-            oxUtils::getInstance()->redirect( $myConfig->getShopHomeURL() );
+        if ( oxConfig::getParameter( 'recommid' ) && !$this->getActiveRecommList() ) {
+            oxUtils::getInstance()->redirect( $this->getConfig()->getShopHomeURL() );
         }
+
+        oxUBase::init();
     }
 
     /**
@@ -144,9 +151,9 @@ class Review extends oxUBase
      */
     public function render()
     {
-        parent::render();
+        oxUBase::render();
 
-        if ( !$this->_checkDirectReview($this->getReviewUserId()) ) {
+        if ( !$this->_checkDirectReview( $this->getReviewUserId() ) ) {
             return $this->_sThisTemplate = $this->_sThisLoginTemplate;
         }
 
@@ -162,11 +169,10 @@ class Review extends oxUBase
         $this->_aViewData['similarrecommlist'] = $this->getRecommList();
 
 
-        $this->_aViewData['actvrecommlist'] = $this->getActiveRecommList();
-        $this->_aViewData['itemList']       = $this->getActiveRecommItems();
+        $this->_aViewData['actvrecommlist'] = $oActiveRecommList = $this->getActiveRecommList();
+        $this->_aViewData['itemList']       = $oList = $this->getActiveRecommItems();
 
-        if ( $oActiveRecommList = $this->getActiveRecommList() ) {
-            $oList = $this->getActiveRecommItems();
+        if ( $oActiveRecommList ) {
             if ( $oList && $oList->count()) {
                 $this->_iAllArtCnt = $oActiveRecommList->getArtCount();
             }
@@ -194,52 +200,46 @@ class Review extends oxUBase
     public function saveReview()
     {
         $sReviewUserId = $this->getReviewUserId();
+        if ( $sReviewUserId && $this->canAcceptFormData() && $this->_checkDirectReview( $sReviewUserId ) ) {
 
-        if ( !$this->_checkDirectReview($sReviewUserId) ) {
-            return;
-        }
+            if ( ( $oActObject = $this->_getActiveObject() ) && ( $sType = $this->_getActiveType() ) ) {
 
-        $sReviewText = trim( ( string ) oxConfig::getParameter( 'rvw_txt' ) );
-        $dRating     = ( oxConfig::getParameter( 'rating' ) ) ? oxConfig::getParameter( 'rating' ) : oxConfig::getParameter( 'artrating' );
-
-        if ($dRating < 0 || $dRating > 5) {
-            $dRating = null;
-        }
-        // #1590M
-        /*if ( !$sReviewText ) {
-            $this->_aViewData['success'] = true;
-            return;
-        }*/
-
-        $sType     = $this->_getActiveType();
-        $sObjectId = $this->_getActiveObject()->getId();
-        if ($sType && $sObjectId) {
-            //save rating
-            if ( $dRating ) {
-                $oRating = oxNew( 'oxrating' );
-                $oRating->oxratings__oxuserid   = new oxField($sReviewUserId);
-                $oRating->oxratings__oxtype     = new oxField($sType, oxField::T_RAW);
-                $oRating->oxratings__oxobjectid = new oxField($sObjectId);
-                $oRating->oxratings__oxrating   = new oxField($dRating);
-                $oRating->save();
-                if ( $oProduct = $this->getProduct() ) {
-                    $oProduct->addToRatingAverage( $dRating);
-                } elseif ($this->_oActiveRecommList) {
-                    $this->_oActiveRecommList->addToRatingAverage( $dRating);
+                if ( ( $dRating = oxConfig::getParameter( 'rating' ) ) === null ) {
+                    $dRating = oxConfig::getParameter( 'artrating' );
                 }
-                $this->_blReviewSendStatus = true;
-            }
 
-            if ( $sReviewText ) {
-                $oReview = oxNew( 'oxreview' );
-                $oReview->oxreviews__oxuserid   = new oxField($sReviewUserId);
-                $oReview->oxreviews__oxtype     = new oxField($sType, oxField::T_RAW);
-                $oReview->oxreviews__oxobjectid = new oxField($sObjectId);
-                $oReview->oxreviews__oxtext     = new oxField($sReviewText);
-                $oReview->oxreviews__oxlang     = new oxField(oxLang::getInstance()->getBaseLanguage());
-                $oReview->oxreviews__oxrating   = new oxField(( $dRating) ? $dRating : null);
-                $oReview->save();
-                $this->_blReviewSendStatus = true;
+                if ( $dRating !== null ) {
+                    $dRating = (int) $dRating;
+                }
+
+                //save rating
+                if ( $dRating !== null && $dRating >= 0 && $dRating <= 5 ) {
+                    $oRating = oxNew( 'oxrating' );
+                    if ( $oRating->allowRating( $sReviewUserId, $sType, $oActObject->getId() ) ) {
+                        $oRating->oxratings__oxuserid   = new oxField( $sReviewUserId );
+                        $oRating->oxratings__oxtype     = new oxField( $sType );
+                        $oRating->oxratings__oxobjectid = new oxField( $oActObject->getId() );
+                        $oRating->oxratings__oxrating   = new oxField( $dRating );
+                        $oRating->save();
+
+                        $oActObject->addToRatingAverage( $dRating);
+
+                        $this->_blReviewSendStatus = true;
+                    }
+                }
+
+                if ( ( $sReviewText = trim( ( string ) oxConfig::getParameter( 'rvw_txt', true ) ) ) ) {
+                    $oReview = oxNew( 'oxreview' );
+                    $oReview->oxreviews__oxobjectid = new oxField( $oActObject->getId() );
+                    $oReview->oxreviews__oxtype     = new oxField( $sType );
+                    $oReview->oxreviews__oxtext     = new oxField( $sReviewText, oxField::T_RAW );
+                    $oReview->oxreviews__oxlang     = new oxField( oxLang::getInstance()->getBaseLanguage() );
+                    $oReview->oxreviews__oxuserid   = new oxField( $sReviewUserId );
+                    $oReview->oxreviews__oxrating   = new oxField( ( $dRating !== null ) ? $dRating : null );
+                    $oReview->save();
+
+                    $this->_blReviewSendStatus = true;
+                }
             }
         }
     }
@@ -254,8 +254,7 @@ class Review extends oxUBase
     protected function _checkDirectReview( $sReviewUserId )
     {
         $oUser = $this->getUser();
-        $blAllow = false;
-        if ($oUser && ($sReviewUserId == $oUser->getId())) {
+        if ( $oUser && ( $sReviewUserId == $oUser->getId() ) ) {
             $blAllow = true;
         } else {
             $blAllow = $this->_allowDirectReview( $sReviewUserId );
@@ -274,11 +273,7 @@ class Review extends oxUBase
     protected function _allowDirectReview( $sUserId )
     {
         $oUser = oxNew( 'oxuser' );
-        if ( !$oUser->exists( $sUserId ) ) {
-            return false;
-        }
-
-        return true;
+        return $oUser->exists( $sUserId );
     }
 
     /**
@@ -296,33 +291,12 @@ class Review extends oxUBase
             $sReviewUser = ( !$sReviewUser ) ? oxConfig::getParameter( 'reviewuserid' ) : $sReviewUser;
             if ( $sReviewUser ) {
                 $oUser = oxNew( 'oxuser' );
-                $sReviewUserId = $oUser->getReviewUserId( $sReviewUser );
+                $this->_sReviewUserId = $oUser->getReviewUserId( $sReviewUser );
+            } elseif ( ( $oUser = $this->getUser() ) ) {
+                $this->_sReviewUserId = $oUser->getId();
             }
-
-            $oUser = $this->getUser();
-            if (!$sReviewUserId && $oUser) {
-                $sReviewUserId = $oUser->getId();
-            }
-            $this->_sReviewUserId = $sReviewUserId;
         }
         return $this->_sReviewUserId;
-    }
-
-    /**
-     * Template variable getter. Returns search product
-     *
-     * @return object
-     */
-    public function getProduct()
-    {
-        if ( $this->_oProduct === null ) {
-            $this->_oProduct = false;
-
-            if ( $sAnid = oxConfig::getParameter( 'anid' ) ) {
-                $this->_oProduct = oxNewArticle( $sAnid );
-            }
-        }
-        return $this->_oProduct;
     }
 
     /**
@@ -335,10 +309,10 @@ class Review extends oxUBase
         if ( $this->_oActObject === null ) {
             $this->_oActObject = false;
 
-            if ( $oProduct = $this->getProduct() ) {
+            if ( ( $oProduct = $this->getProduct() ) ) {
                 $this->_oActObject = $oProduct;
-            } elseif ( $this->_oActiveRecommList ) {
-                $this->_oActObject = $this->_oActiveRecommList;
+            } elseif ( ( $oRecommList = $this->getActiveRecommList() ) ) {
+                $this->_oActObject = $oRecommList;
             }
         }
         return $this->_oActObject;
@@ -351,9 +325,10 @@ class Review extends oxUBase
      */
     protected function _getActiveType()
     {
+        $sType = null;
         if ( $this->getProduct() ) {
             $sType = 'oxarticle';
-        } elseif ($this->_oActiveRecommList) {
+        } elseif ( $this->getActiveRecommList() ) {
             $sType = 'oxrecommlist';
         }
         return $sType;
@@ -362,10 +337,14 @@ class Review extends oxUBase
     /**
      * Template variable getter. Returns active recommlist
      *
-     * @return object
+     * @return oxRecommList
      */
     public function getActiveRecommList()
     {
+        if (!$this->getViewConfig()->getShowListmania()) {
+            return false;
+        }
+
         if ( $this->_oActiveRecommList === null ) {
             $this->_oActiveRecommList = false;
 
@@ -388,11 +367,10 @@ class Review extends oxUBase
     {
         if ( $this->_blRate === null ) {
             $this->_blRate = false;
-            $sType     = $this->_getActiveType();
-            $sObjectId = $this->_getActiveObject()->getId();
-            $oRating = oxNew( 'oxrating' );
-            $this->_blRate = $oRating->allowRating( $this->getReviewUserId(), $sType, $sObjectId);
-
+            if ( ( $oActObject = $this->_getActiveObject() ) ) {
+                $oRating = oxNew( 'oxrating' );
+                $this->_blRate = $oRating->allowRating( $this->getReviewUserId(), $this->_getActiveType(), $oActObject->getId() );
+            }
         }
         return $this->_blRate;
     }
@@ -411,38 +389,6 @@ class Review extends oxUBase
             }
         }
         return $this->_aReviews;
-    }
-
-    /**
-     * Template variable getter. Returns crosssellings
-     *
-     * @return object
-     */
-    public function getCrossSelling()
-    {
-        if ( $this->_oCrossSelling === null ) {
-            $this->_oCrossSelling = false;
-            if ( $oProduct = $this->getProduct() ) {
-                $this->_oCrossSelling = $oProduct->getCrossSelling();
-            }
-        }
-        return $this->_oCrossSelling;
-    }
-
-    /**
-     * Template variable getter. Returns similar products
-     *
-     * @return object
-     */
-    public function getSimilarProducts()
-    {
-        if ( $this->_oSimilarProducts === null ) {
-            $this->_oSimilarProducts = false;
-            if ( $oProduct = $this->getProduct() ) {
-                $this->_oSimilarProducts = $oProduct->getSimilarProducts();
-            }
-        }
-        return $this->_oSimilarProducts;
     }
 
     /**
@@ -512,7 +458,7 @@ class Review extends oxUBase
     {
         if ( $this->_oPageNavigation === null ) {
             $this->_oPageNavigation = false;
-            if ( $this->_oActiveRecommList ) {
+            if ( $this->getActiveRecommList() ) {
                 $this->_oPageNavigation = $this->generatePageNavigation();
             }
         }
@@ -526,7 +472,7 @@ class Review extends oxUBase
      */
     public function getAdditionalParams()
     {
-        $sAddParams = parent::getAdditionalParams();
+        $sAddParams = oxUBase::getAdditionalParams();
         if ( $oActRecommList = $this->getActiveRecommList() ) {
             $sAddParams .= '&amp;recommid='.$oActRecommList->getId();
         }
@@ -542,14 +488,17 @@ class Review extends oxUBase
     {
         $sParams = parent::getDynUrlParams();
 
-        if ( $sVal = oxConfig::getParameter( 'cnid' ) ) {
-            $sParams .= "&amp;cnid={$sVal}";
+        if ( $sCnId = oxConfig::getParameter( 'cnid' ) ) {
+            $sParams .= "&amp;cnid={$sCnId}";
         }
-        if ( $sVal= oxConfig::getParameter( 'anid' ) ) {
-            $sParams .= "&amp;anid={$sVal}";
+        if ( $sAnId = oxConfig::getParameter( 'anid' ) ) {
+            $sParams .= "&amp;anid={$sAnId}";
         }
-        if ( $sVal= oxConfig::getParameter( 'listtype' ) ) {
-            $sParams .= "&amp;listtype={$sVal}";
+        if ( $sListType = oxConfig::getParameter( 'listtype' ) ) {
+            $sParams .= "&amp;listtype={$sListType}";
+        }
+        if ( $sRecommId = oxConfig::getParameter( 'recommid' ) ) {
+            $sParams .= "&amp;recommid={$sRecommId}";
         }
 
         return $sParams;

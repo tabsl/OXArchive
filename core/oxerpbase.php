@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxerpbase.php 18054 2009-04-09 16:47:26Z arvydas $
+ * @version   SVN: $Id: oxerpbase.php 25471 2010-02-01 14:35:11Z alfonsas $
  */
 
 require_once 'oxerpcompatability.php';
@@ -30,7 +30,7 @@ require_once 'oxerpcompatability.php';
  * @package core
  * @author Lars Jankowfsky
  * @copyright Copyright (c) 2006
- * @version $Id: oxerpbase.php 18054 2009-04-09 16:47:26Z arvydas $
+ * @version $Id: oxerpbase.php 25471 2010-02-01 14:35:11Z alfonsas $
  * @access public
  **/
 abstract class oxERPBase
@@ -331,7 +331,7 @@ abstract class oxERPBase
             throw new Exception( "Type $sType not supported in ERP interface!");
         }
 
-        require_once $sFullPath;
+        include_once $sFullPath;
         return oxNew ($sClassName);
     }
 
@@ -688,20 +688,18 @@ abstract class oxERPBase
 
 // the following statements and class is just for pretending some error messages in oxconfig
 if ( !class_exists( 'FakeView' ) ) {
+/**
+ * Fake view object to manipulate with view on some special cases
+ */
+class FakeView
+{
     /**
-     * Fake view object to manipulate with view on some special cases
+     * Original oxview addGlobalParams wrapper
+     *
+     * @return null
      */
-    class FakeView
+    public function addGlobalParams()
     {
-        /**
-         * Original oxview addGlobalParams wrapper
-         *
-         * @return null
-         */
-        public function addGlobalParams()
-        {
-        }
     }
 }
-
-
+}

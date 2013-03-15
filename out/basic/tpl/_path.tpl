@@ -8,9 +8,9 @@
 [{/foreach}]
 
 [{if $is_start}]
-    [{assign var="oCont" value=$oView->getContentByIdent("oxdeliveryinfo") }]
-    [{assign var="_path_space" value=" " }]
-    [{ $_path_space }]
-    <a rel="nofollow" class="dinfo" href="[{ $oCont->getLink() }]">[{ oxmultilang ident="INC_HEADER_INCLTAXPLUSSHIPPING" }]</a>
+    [{assign var="_path_space" value=" " }][{ $_path_space }]
+    [{oxifcontent ident="oxdeliveryinfo" object="oCont"}]
+        <a rel="nofollow" class="dinfo" href="[{ $oCont->getLink() }]">[{ oxmultilang ident="INC_HEADER_INCLTAXPLUSSHIPPING" }]</a>
+    [{/oxifcontent}]
 [{/if}]
 [{/strip}]

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: pricealarm_send.php 22485 2009-09-22 06:59:12Z arvydas $
+ * @version   SVN: $Id: pricealarm_send.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -61,7 +61,7 @@ class PriceAlarm_Send extends oxAdminList
                 $rs = $oDB->Execute( $sSelect);
             }
 
-            $iAllCnt_counting=0;
+            $iAllCntTmp=0;
 
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
@@ -69,7 +69,7 @@ class PriceAlarm_Send extends oxAdminList
                     $oArticle->load($rs->fields['oxid']);
                     if ($oArticle->getPrice()->getBruttoPrice() <= $rs->fields['oxprice']) {
                         $this->sendeMail( $rs->fields['oxemail'], $rs->fields['oxartid'], $rs->fields['oxid'], $rs->fields['oxprice']);
-                        $iAllCnt_counting++;
+                        $iAllCntTmp++;
                     }
                     $rs->moveNext();
                 }
@@ -77,7 +77,7 @@ class PriceAlarm_Send extends oxAdminList
             if ( !isset( $iStart)) {
                 // first call
                 $iStart     = 0;
-                $iAllCnt    = $iAllCnt_counting;
+                $iAllCnt    = $iAllCntTmp;
             }
 
 
@@ -101,6 +101,8 @@ class PriceAlarm_Send extends oxAdminList
      * Overrides parent method to pass referred id
      *
      * @param string $sId class name
+     *
+     * @return null
      */
     protected function _setupNavigation( $sId )
     {
@@ -117,20 +119,19 @@ class PriceAlarm_Send extends oxAdminList
      *
      * @return null
      */
-    public function sendeMail( $sEMail, $sProductID, $sPricealarmID, $sBidPrice)
+    public function sendeMail( $sEMail, $sProductID, $sPricealarmID, $sBidPrice )
     {
         $myConfig = $this->getConfig();
-        $oPricealarm = oxNew( "oxpricealarm" );
-        $oPricealarm->load( $sPricealarmID);
+        $oAlarm = oxNew( "oxpricealarm" );
+        $oAlarm->load( $sPricealarmID );
 
         // Send Email
         $oShop = oxNew( "oxshop" );
-        //$oShop->load( $myConfig->getShopId());
-        $oShop->load( $oPricealarm->oxpricealarm__oxshopid->value);
+        $oShop->load( $oAlarm->oxpricealarm__oxshopid->value);
         $oShop = $this->addGlobalParams( $oShop);
 
         $oArticle = oxNew( "oxarticle" );
-        $oArticle->load( $sProductID);
+        $oArticle->load( $sProductID );
 
         if ( $oArticle->oxarticles__oxparentid->value && !$oArticle->oxarticles__oxtitle->value) {
             $oParent = oxNew( "oxarticle" );
@@ -140,12 +141,7 @@ class PriceAlarm_Send extends oxAdminList
 
         $oDefCurr = $myConfig->getActShopCurrencyObject();
 
-        $oAlarm = oxNew( "oxpricealarm" );
-        $oAlarm->load( $sPricealarmID);
-
-        $oThisCurr = $myConfig->getCurrencyObject( $oAlarm->oxpricealarm__oxcurrency->value);
-
-        if ( !$oThisCurr ) {
+        if ( ! ( $oThisCurr = $myConfig->getCurrencyObject( $oAlarm->oxpricealarm__oxcurrency->value ) ) ) {
             $oThisCurr = $oDefCurr;
             $oAlarm->oxpricealarm__oxcurrency->setValue($oDefCurr->name);
         }
@@ -168,28 +164,24 @@ class PriceAlarm_Send extends oxAdminList
         $smarty = oxUtilsView::getInstance()->getSmarty();
         $smarty->assign( "shop", $oShop );
         $smarty->assign( "product", $oArticle );
-        $smarty->assign( "bidprice", $oLang->formatCurrency($sBidPrice, $oThisCurr) );
+        $smarty->assign( "bidprice", $oLang->formatCurrency( $sBidPrice, $oThisCurr ) );
         $smarty->assign( "currency", $oThisCurr );
-        $smarty->assign( "shopImageDir", $myConfig->getImageUrl( false , false ) );
+        $smarty->assign( "shopImageDir", $myConfig->getImageUrl( false, false ) );
 
-        $iLang = $oAlarm->oxpricealarm__oxlang->value;
+        $iLang = (int) $oAlarm->oxpricealarm__oxlang->value;
 
-        if (!$iLang) {
-            $iLang = 0;
-        }
-
-        $old_iLang = $oLang->getTplLanguage();
+        $iOldLangId = $oLang->getTplLanguage();
         $oLang->setTplLanguage( $iLang );
 
-        $oxEMail->Body      = $smarty->fetch( "email_pricealarm_customer.tpl");
-        $oxEMail->Subject   = $oShop->oxshops__oxname->getRawValue();
-        $oxEMail->AddAddress( $sEMail, $sEMail );
-        $oxEMail->AddReplyTo( $oShop->oxshops__oxorderemail->value, $oShop->oxshops__oxname->getRawValue());
+        $oxEMail->setBody( $smarty->fetch( "email_pricealarm_customer.tpl" ) );
+        $oxEMail->setSubject( $oShop->oxshops__oxname->getRawValue() );
+        $oxEMail->addAddress( $sEMail, $sEMail );
+        $oxEMail->addReplyTo( $oShop->oxshops__oxorderemail->value, $oShop->oxshops__oxname->getRawValue());
         $blSuccess = $oxEMail->send();
 
-        $oLang->setTplLanguage( $old_iLang );
+        $oLang->setTplLanguage( $iOldLangId );
 
-        if ( $blSuccess) {
+        if ( $blSuccess ) {
             $oAlarm->oxpricealarm__oxsended->setValue( date( "Y-m-d H:i:s" ) );
             $oAlarm->save();
         }

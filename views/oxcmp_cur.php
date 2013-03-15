@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxcmp_cur.php 22820 2009-09-30 12:44:55Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxcmp_cur.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
@@ -156,7 +156,7 @@ class oxcmp_cur extends oxView
 
         reset( $this->aCurrencies );
         while ( list( , $oItem ) = each( $this->aCurrencies ) ) {
-            $oItem->link = "{$sURL}&amp;cur={$oItem->id}";
+            $oItem->link = oxUtilsUrl::getInstance()->processUrl("{$sURL}&amp;cur={$oItem->id}");
         }
 
         parent::init();
@@ -174,9 +174,10 @@ class oxcmp_cur extends oxView
     public function render()
     {
         parent::render();
-        $this->_oParent->setActCurrency( $this->_oActCur );
+        $oParentView = $this->getParent();
+        $oParentView->setActCurrency( $this->_oActCur );
         // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-        $this->_oParent->addTplParam( 'currency', $this->_oParent->getActCurrency() );
+        $oParentView->addTplParam( 'currency', $oParentView->getActCurrency() );
         return $this->aCurrencies;
     }
 }

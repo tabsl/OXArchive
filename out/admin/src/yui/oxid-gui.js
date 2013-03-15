@@ -11,13 +11,17 @@ var $  = YAHOO.util.Dom.get,
 if(YAHOO.widget.Dialog && YAHOO.widget.ColorPicker){
 (function () {
 
-    YAHOO.oxid.gui = function( elBox, elTabs, elPicker, elTree, elPreview, selfUrl, srcUrl)
+    YAHOO.oxid.gui = function( elBox, elTabs, elPicker, elTree, elPreview, selfUrl, srcUrl, addData)
     {
         var me     = this;
         var slf    = selfUrl;
 
         var css    = 'cl=gui&fnc=previewCss';
         var sav    = 'cl=gui&fnc=save';
+        if (addData) {
+            css += '&'+addData;
+            sav += '&'+addData;
+        }
 
         var assets = srcUrl + 'yui/build/colorpicker/assets/';
 

@@ -72,7 +72,7 @@
             var aSelRows = YAHOO.oxid.container2.getSelectedRows();
 
             if ( aSelRows.length ) {
-                sOxid = YAHOO.oxid.container2.getRecord(aSelRows[0])._oData._6;
+                sOxid = YAHOO.oxid.container2.getRecord(aSelRows[0])._oData._7;
                 YAHOO.oxid.container2.modRequest = function( sRequest ) { return sRequest+'&fnc=setSorting&sortoxid='+sOxid+'&direction=up'; }
                 YAHOO.oxid.container2.getDataSource().flushCache();
                 YAHOO.oxid.container2.getPage( 0 );
@@ -83,7 +83,7 @@
         {
             var aSelRows = YAHOO.oxid.container2.getSelectedRows();
             if ( aSelRows.length ) {
-                sOxid = YAHOO.oxid.container2.getRecord(aSelRows[0])._oData._6;
+                sOxid = YAHOO.oxid.container2.getRecord(aSelRows[0])._oData._7;
                 YAHOO.oxid.container2.modRequest = function( sRequest ) { return sRequest+'&fnc=setSorting&sortoxid='+sOxid+'&direction=down'; }
                 YAHOO.oxid.container2.getDataSource().flushCache();
                 YAHOO.oxid.container2.getPage( 0 );

@@ -22,6 +22,8 @@
           <input type="hidden" name="cl" value="suggest">
           <input type="hidden" name="anid" value="[{ $product->oxarticles__oxnid->value }]">
           <input type="hidden" name="CustomError" value='suggest'>
+          [{assign var="oCaptcha" value=$oView->getCaptcha() }]
+          <input type="hidden" name="c_mach" value="[{$oCaptcha->getHash()}]"/>
           <table>
             <tr>
               <td><b>[{ oxmultilang ident="SUGGEST_CARDTO" }]</b></td>
@@ -59,6 +61,18 @@
               <td valign="top">[{ oxmultilang ident="SUGGEST_YOURMESSAGE" }]</td>
               <td>
                 <textarea cols="70" rows="8" name="editval[send_message]" >[{if $editval->send_message}][{$editval->send_message}][{else}][{ oxmultilang ident="SUGGEST_MESSAGE1" }] [{ $oxcmp_shop->oxshops__oxname->value }] [{ oxmultilang ident="SUGGEST_MESSAGE2" }][{/if}]</textarea>
+              </td>
+            </tr>
+            <tr>
+              <td><label>[{ oxmultilang ident="SUGGEST_VERIFICATIONCODE" }]</label></td>
+              <td>
+               [{assign var="oCaptcha" value=$oView->getCaptcha() }]
+               [{if $oCaptcha->isImageVisible()}]
+                 <div class="left"><img src="[{$oCaptcha->getImageUrl()}]" alt=""></div>
+               [{else}]
+                 <div id="test_verificationCode" class="verification_code">[{$oCaptcha->getText()}]</div>
+               [{/if}]
+               &nbsp;<input type="text" name="c_mac" value=""/>&nbsp;<span class="note">*</span>
               </td>
             </tr>
             <tr>

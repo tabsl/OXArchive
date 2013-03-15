@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxcmp_categories.php 23385 2009-10-20 13:01:01Z sarunas $
+ * @version   SVN: $Id: oxcmp_categories.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
@@ -60,45 +60,7 @@ class oxcmp_categories extends oxView
             return;
         }
 
-        $sActProduct = oxConfig::getParameter( 'anid' );
-        if ( ! ( $sActCont = oxConfig::getParameter( 'oxcid' ) ) ) {
-            $sActCont = oxConfig::getParameter( 'tpl' );
-        }
-        $sActManufacturer = oxConfig::getParameter( 'mnid' );
-        $sActCat = $sActManufacturer ? null : oxConfig::getParameter( 'cnid' );
-        $sActTag = oxConfig::getParameter( 'searchtag' );
-
-        $blArtLoaded = false;
-        if ( $sActProduct ) {
-            // some views has specific product getters..
-            $oProduct = $this->_oParent->getViewProduct();
-            $blArtLoaded = $oProduct ? true : false;
-            if ( !$blArtLoaded ) {
-                $oProduct = oxNew( 'oxarticle' );
-                //$oProduct->setSkipAbPrice( true );
-                if ( $oProduct->load( $sActProduct ) ) {
-
-                    // storing for reuse
-                    $this->_oParent->setViewProduct( $oProduct );
-                    $blArtLoaded = true;
-                }
-            }
-        }
-
-        // loaded article - then checking additional parameters
-        if ( $blArtLoaded ) {
-            $sActCat = $this->_addAdditionalParams( $oProduct, $sActCat, $sActManufacturer, $sActCont, $sActTag );
-        }
-
-        // Checking for the default category
-        if ( $sActCat === null && !$blArtLoaded && !$sActCont && !$sActManufacturer && !$sActTag ) {
-            // set remote cat
-            $sActCat = $myConfig->getActiveShop()->oxshops__oxdefcat->value;
-            if ( $sActCat == 'oxrootid' ) {
-                // means none selected
-                $sActCat= null;
-            }
-        }
+        $sActCat = $this->_getActCat();
 
         if ( $myConfig->getConfigParam( 'bl_perfLoadVendorTree' ) ) {
             // building vendor tree
@@ -107,6 +69,7 @@ class oxcmp_categories extends oxView
 
         if ( $myConfig->getConfigParam( 'bl_perfLoadManufacturerTree' ) ) {
             // building Manufacturer tree
+            $sActManufacturer = oxConfig::getParameter( 'mnid' );
             $this->_loadManufacturerTree( $sActManufacturer );
         }
 
@@ -116,9 +79,71 @@ class oxcmp_categories extends oxView
             $this->_loadCategoryTree( $sActCat );
 
             if ( $myConfig->getConfigParam( 'blTopNaviLayout' ) ) {
+                if ( ! ( $sActCont = oxConfig::getParameter( 'oxcid' ) ) ) {
+                    $sActCont = oxConfig::getParameter( 'tpl' );
+                }
                 $this->_oMoreCat = $this->_getMoreCategory( $sActCat, $sActCont );
             }
         }
+    }
+
+    /**
+     * get active article
+     *
+     * @return oxarticle
+     */
+    public function getProduct()
+    {
+        if ( ( $sActProduct = oxConfig::getParameter( 'anid' ) ) ) {
+            $oParentView = $this->getParent();
+            if ( ( $oProduct = $oParentView->getViewProduct() ) ) {
+                return $oProduct;
+            } else {
+                $oProduct = oxNew( 'oxarticle' );
+                if ( $oProduct->load( $sActProduct ) ) {
+                    // storing for reuse
+                    $oParentView->setViewProduct( $oProduct );
+                    return $oProduct;
+                }
+            }
+        }
+    }
+
+    /**
+     * get active category id
+     *
+     * @return string
+     */
+    protected function _getActCat()
+    {
+        if ( ! ( $sActCont = oxConfig::getParameter( 'oxcid' ) ) ) {
+            $sActCont = oxConfig::getParameter( 'tpl' );
+        }
+        $sActManufacturer = oxConfig::getParameter( 'mnid' );
+        $sActTag = oxConfig::getParameter( 'searchtag' );
+        $sActCat = $sActManufacturer ? null : oxConfig::getParameter( 'cnid' );
+
+        // loaded article - then checking additional parameters
+        $oProduct = $this->getProduct();
+        if ( $oProduct ) {
+            $myConfig = $this->getConfig();
+
+            $sActManufacturer = $myConfig->getConfigParam( 'bl_perfLoadManufacturerTree' ) ? $sActManufacturer : null;
+            $sActVendor = ( $myConfig->getConfigParam( 'bl_perfLoadVendorTree' ) && preg_match( '/^v_.?/i', $sActCat ) ) ? $sActCat : null;
+
+            $sActCat = $this->_addAdditionalParams( $oProduct, $sActCat, $sActManufacturer, $sActCont, $sActTag, $sActVendor );
+        }
+
+        // Checking for the default category
+        if ( $sActCat === null && !$oProduct && !$sActCont && !$sActManufacturer && !$sActTag ) {
+            // set remote cat
+            $sActCat = $this->getConfig()->getActiveShop()->oxshops__oxdefcat->value;
+            if ( $sActCat == 'oxrootid' ) {
+                // means none selected
+                $sActCat= null;
+            }
+        }
+        return $sActCat;
     }
 
     /**
@@ -135,11 +160,13 @@ class oxcmp_categories extends oxView
             $oCategoryTree = oxNew( 'oxcategorylist' );
             $oCategoryTree->buildTree( $sActCat, $myConfig->getConfigParam( 'blLoadFullTree' ), $myConfig->getConfigParam( 'bl_perfLoadTreeForSearch' ), $myConfig->getConfigParam( 'blTopNaviLayout' ) );
 
+            $oParentView = $this->getParent();
+
             // setting active category tree
-            $this->_oParent->setCategoryTree( $oCategoryTree );
+            $oParentView->setCategoryTree( $oCategoryTree );
 
             // setting active category
-            $this->_oParent->setActCategory( $oCategoryTree->getClickCat() );
+            $oParentView->setActCategory( $oCategoryTree->getClickCat() );
         }
     }
 
@@ -157,12 +184,14 @@ class oxcmp_categories extends oxView
             $oVendorTree = oxNew( 'oxvendorlist' );
             $oVendorTree->buildVendorTree( 'vendorlist', $sActVendor, $myConfig->getShopHomeURL() );
 
+            $oParentView = $this->getParent();
+
             // setting active vendor list
-            $this->_oParent->setVendorTree( $oVendorTree );
+            $oParentView->setVendorTree( $oVendorTree );
 
             // setting active vendor
             if ( ( $oVendor = $oVendorTree->getClickVendor() ) ) {
-                $this->_oParent->setActVendor( $oVendor );
+                $oParentView->setActVendor( $oVendor );
             }
         }
     }
@@ -181,12 +210,14 @@ class oxcmp_categories extends oxView
             $oManufacturerTree = oxNew( 'oxmanufacturerlist' );
             $oManufacturerTree->buildManufacturerTree( 'manufacturerlist', $sActManufacturer, $myConfig->getShopHomeURL() );
 
+            $oParentView = $this->getParent();
+
             // setting active Manufacturer list
-            $this->_oParent->setManufacturerTree( $oManufacturerTree );
+            $oParentView->setManufacturerTree( $oManufacturerTree );
 
             // setting active Manufacturer
             if ( ( $oManufacturer = $oManufacturerTree->getClickManufacturer() ) ) {
-                $this->_oParent->setActManufacturer( $oManufacturer );
+                $oParentView->setActManufacturer( $oManufacturer );
             }
         }
     }
@@ -203,46 +234,47 @@ class oxcmp_categories extends oxView
 
         // Performance
         $myConfig = $this->getConfig();
+        $oParentView = $this->getParent();
 
         if ( $myConfig->getConfigParam( 'bl_perfLoadVendorTree' ) &&
-             ( $oVendorTree = $this->_oParent->getVendorTree() )) {
-            $this->_oParent->setVendorlist( $oVendorTree );
-            $this->_oParent->setRootVendor( $oVendorTree->getRootCat() );
+             ( $oVendorTree = $oParentView->getVendorTree() )) {
+            $oParentView->setVendorlist( $oVendorTree );
+            $oParentView->setRootVendor( $oVendorTree->getRootCat() );
 
             // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-            $this->_oParent->addTplParam( 'rootvendor', $this->_oParent->getRootVendor() );
-            $this->_oParent->addTplParam( 'aVendorlist', $this->_oParent->getVendorlist() );
-            $this->_oParent->addTplParam( 'sVendorID', $this->_oParent->getVendorId() );
+            $oParentView->addTplParam( 'rootvendor', $oParentView->getRootVendor() );
+            $oParentView->addTplParam( 'aVendorlist', $oParentView->getVendorlist() );
+            $oParentView->addTplParam( 'sVendorID', $oParentView->getVendorId() );
         }
 
         if ( $myConfig->getConfigParam( 'bl_perfLoadManufacturerTree' ) &&
-             ( $oManufacturerTree = $this->_oParent->getManufacturerTree() ) ) {
-            $this->_oParent->setManufacturerlist( $oManufacturerTree );
-            $this->_oParent->setRootManufacturer( $oManufacturerTree->getRootCat() );
+             ( $oManufacturerTree = $oParentView->getManufacturerTree() ) ) {
+            $oParentView->setManufacturerlist( $oManufacturerTree );
+            $oParentView->setRootManufacturer( $oManufacturerTree->getRootCat() );
 
             // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-            $this->_oParent->addTplParam( 'rootmanufacturer', $this->_oParent->getRootManufacturer() );
-            $this->_oParent->addTplParam( 'aManufacturerlist', $this->_oParent->getManufacturerlist() );
-            $this->_oParent->addTplParam( 'sManufacturerID', $this->_oParent->getManufacturerId() );
+            $oParentView->addTplParam( 'rootmanufacturer', $oParentView->getRootManufacturer() );
+            $oParentView->addTplParam( 'aManufacturerlist', $oParentView->getManufacturerlist() );
+            $oParentView->addTplParam( 'sManufacturerID', $oParentView->getManufacturerId() );
         }
 
         if ( $myConfig->getConfigParam( 'bl_perfLoadCatTree' ) &&
-             ( $oCategoryTree = $this->_oParent->getCategoryTree() ) ) {
+             ( $oCategoryTree = $oParentView->getCategoryTree() ) ) {
 
             // we loaded full category tree ?
             if ( $myConfig->getConfigParam( 'bl_perfLoadTreeForSearch' ) ) {
-                $this->_oParent->setSearchCatTree( $oCategoryTree );
+                $oParentView->setSearchCatTree( $oCategoryTree );
                 // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-                $this->_oParent->addTplParam( 'aSearchCatTree', $this->_oParent->getSearchCatTree() );
+                $oParentView->addTplParam( 'aSearchCatTree', $oParentView->getSearchCatTree() );
             }
 
             // new navigation ?
             if ( $myConfig->getConfigParam( 'blTopNaviLayout' ) ) {
-                $this->_oParent->setCatMore( $this->_oMoreCat );
+                $oParentView->setCatMore( $this->_oMoreCat );
                 // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-                $this->_oParent->addTplParam( 'navcategorytree', $oCategoryTree );
-                $this->_oParent->addTplParam( 'navcategorycount', $oCategoryTree->count() );
-                $this->_oParent->addTplParam( 'navcatmore', $this->_oParent->getCatMore() );
+                $oParentView->addTplParam( 'navcategorytree', $oCategoryTree );
+                $oParentView->addTplParam( 'navcategorycount', $oCategoryTree->count() );
+                $oParentView->addTplParam( 'navcatmore', $oParentView->getCatMore() );
             }
 
             return $oCategoryTree;
@@ -260,13 +292,13 @@ class oxcmp_categories extends oxView
     protected function _getMoreCategory( $sActCat, $sActCont )
     {
         $myConfig = $this->getConfig();
-        $iTopCount = $myConfig->getConfigParam( 'iTopNaviCatCount' );
         $blExpanded = false;
 
         if ( $sActCat == 'oxmore' ) {
             $blExpanded = true;
         } else {
-            $oCategoryTree = $this->_oParent->getCategoryTree();
+            $iTopCount = $myConfig->getConfigParam( 'iTopNaviCatCount' );
+            $oCategoryTree = $this->getParent()->getCategoryTree();
             if ( $oCategoryTree ) {
                 $iCnt = 0;
                 foreach ( $oCategoryTree as $oCat ) {
@@ -274,7 +306,7 @@ class oxcmp_categories extends oxView
 
                     if ( ( $aContent = $oCat->getContentCats() ) ) {
                         foreach ( $aContent as $oContent ) {
-                            if ( $sActCont == $oContent->getId() && $iCnt > $iTopCount ) {
+                            if ( $sActCont == $oContent->getId() && ($iCnt > $iTopCount )) {
                                 $blExpanded = true;
                                 break 2;
                             }
@@ -282,7 +314,7 @@ class oxcmp_categories extends oxView
                         }
                     }
 
-                    if ( $oCat->getExpanded() && $iCnt > $iTopCount ) {
+                    if ( $oCat->getExpanded() && ($iCnt > $iTopCount )) {
                         $blExpanded = true;
                         break;
                     }
@@ -304,10 +336,11 @@ class oxcmp_categories extends oxView
      * @param string    $sActManufacturer active manufacturer id
      * @param string    $sActCont         active template
      * @param string    $sActTag          active tag
+     * @param string    $sActVendor       active vendor
      *
      * @return string $sActCat
      */
-    protected function _addAdditionalParams( $oProduct, $sActCat, $sActManufacturer, $sActCont, $sActTag )
+    protected function _addAdditionalParams( $oProduct, $sActCat, $sActManufacturer, $sActCont, $sActTag, $sActVendor )
     {
         $sSearchPar = oxConfig::getParameter( 'searchparam' );
         $sSearchCat = oxConfig::getParameter( 'searchcnid' );
@@ -316,87 +349,61 @@ class oxcmp_categories extends oxView
         $sListType  = oxConfig::getParameter( 'listtype' );
 
         // search ?
-        if ( !$sListType ) {
+        if ( ( !$sListType || $sListType == 'search' ) && ( $sSearchPar || $sSearchCat || $sSearchVnd || $sSearchMan ) ) {
+            // setting list type directly
+            $sListType = 'search';
+        } else {
 
-            if ( ( !$sListType || $sListType == 'search' ) && ( $sSearchPar || $sSearchCat || $sSearchVnd ) ) {
+            // such Manufacturer is available ?
+            if ( $sActManufacturer && ( $sActManufacturer == $oProduct->getManufacturerId() ) ) {
                 // setting list type directly
-                $sListType = 'search';
-            } else {
-
-                // manufacturer ?
-                $blManufacturer = false;
-                if ( $this->getConfig()->getConfigParam( 'bl_perfLoadManufacturerTree' ) && $sActManufacturer ) {
-                    // such Manufacturer is available ?
-                    if ( $sActManufacturer == $oProduct->getManufacturerId() ) {
-                        $blManufacturer = true;
-                        // setting list type directly
-                        $sListType = 'manufacturer';
-                    }
-                }
-
-                // vendor ?
-                $blVendor = false;
-                if ( !$blManufacturer && $sActCat && $this->getConfig()->getConfigParam( 'bl_perfLoadVendorTree' ) && preg_match( '/^v_.?/i', $sActCat ) ) {
-                    // such vendor is available ?
-                    if ( substr( $sActCat, 2 ) == $oProduct->getVendorId() ) {
-                        $blVendor = true;
-                        // setting list type directly
-                        $sListType = 'vendor';
-                    }
-                }
-
+                $sListType = 'manufacturer';
+                $sActCat   = $sActManufacturer;
+            } elseif ( $sActVendor && ( substr( $sActVendor, 2 ) == $oProduct->getVendorId() ) ) {
+                // such vendor is available ?
+                $sListType = 'vendor';
+                $sActCat   = $sActVendor;
+            } elseif ( $sActTag ) {
                 // tag ?
-                $blTags = false;
-                if ( !$blVendor && !$blManufacturer && $sActTag ) {
-                    $blTags = true;
-                    // setting list type..
-                    $sListType = 'tag';
-                }
-
+                $sListType = 'tag';
+            } elseif ( $sActCat && $oProduct->isAssignedToCategory( $sActCat ) ) {
                 // category ?
-                if ( $sActCat && !$blVendor && !$blManufacturer && !$blTags ) {
-                    if ( !$oProduct->isAssignedToCategory( $sActCat ) ) {
-                        // article is assigned to any category ?
-                        // #1306: selecting active categories will not be checked if parent categories are active
-                        $aArticleCats = $oProduct->getCategoryIds(true);
-                        if ( is_array( $aArticleCats ) && count( $aArticleCats ) ) {
-                            $sActCat = reset( $aArticleCats );
-                            // setting list type directly
-                            $sListType = null;
-                        } elseif ( ( $sActCat = $oProduct->getManufacturerId() ) ) {
-                            // not assigned to any category ? maybe it is assigned to Manufacturer ?
-                            // setting list type directly
-                            $sListType = 'manufacturer';
-                        } elseif ( ( $sActCat = $oProduct->getVendorId() ) ) {
-                            // not assigned to any category ? maybe it is assigned to vendor ?
-                            // setting list type directly
-                            $sListType = 'vendor';
-                        } else {
-                            $sActCat = null;
-                        }
-                    }
-                } elseif ( !$sActCat && !$sActCont && !$sActManufacturer && !$blTags ) {
-                    $aArticleCats = $oProduct->getCategoryIds(true);
-                    if ( is_array( $aArticleCats ) && count( $aArticleCats ) ) {
-                        $sActCat = reset( $aArticleCats );
-                        // setting list type directly
-                        $sListType  = null;
-                    } elseif ( ( $sActCat = $oProduct->getManufacturerId() ) ) {
-                        // not assigned to any category ? maybe it is assigned to Manufacturer ?
-                        // setting list type directly
-                        $sListType = 'manufacturer';
-                    } elseif ( ( $sActCat = $oProduct->getVendorId() ) ) {
-                        // not assigned to any category ? maybe it is assigned to vendor ?
-                        // setting list type directly
-                        $sListType = 'vendor';
-                    }
-                }
+            } else {
+                list( $sListType, $sActCat ) = $this->_getDefaultParams( $oProduct );
             }
         }
+
+        $oParentView = $this->getParent();
         //set list type and category id
-        $this->_oParent->setListType( $sListType );
-        $this->_oParent->setCategoryId( $sActCat );
+        $oParentView->setListType( $sListType );
+        $oParentView->setCategoryId( $sActCat );
 
         return $sActCat;
+    }
+
+    /**
+     * Returns array containing default list type and category (or manufacturer ir vendor) id
+     *
+     * @param oxarticle $oProduct current product object
+     *
+     * @return array
+     */
+    protected function _getDefaultParams( $oProduct )
+    {
+        $sListType = null;
+        $aArticleCats = $oProduct->getCategoryIds( true );
+        if ( is_array( $aArticleCats ) && count( $aArticleCats ) ) {
+            $sActCat = reset( $aArticleCats );
+        } elseif ( ( $sActCat = $oProduct->getManufacturerId() ) ) {
+            // not assigned to any category ? maybe it is assigned to Manufacturer ?
+            $sListType = 'manufacturer';
+        } elseif ( ( $sActCat = $oProduct->getVendorId() ) ) {
+            // not assigned to any category ? maybe it is assigned to vendor ?
+            $sListType = 'vendor';
+        } else {
+            $sActCat = null;
+        }
+
+        return array( $sListType, $sActCat );
     }
 }

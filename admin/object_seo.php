@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: object_seo.php 22897 2009-10-02 11:24:07Z arvydas $
+ * @version   SVN: $Id: object_seo.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -98,14 +98,14 @@ class Object_Seo extends oxAdminDetails
      */
     protected function _getSeoUrl( $oObject )
     {
-        $iShopId  = $this->getConfig()->getShopId();
-        return oxDb::getDb()->getOne( $this->_getSeoUrlQuery( $oObject, $iShopId ) );
+        return oxDb::getDb()->getOne( $this->_getSeoUrlQuery( $oObject, $this->getConfig()->getShopId() ) );
     }
 
     /**
      * Returns query for selecting seo url
      *
      * @param object $oObject object to build query
+     * @param int    $iShopId shop id
      *
      * @return string
      */
@@ -116,15 +116,20 @@ class Object_Seo extends oxAdminDetails
 
     /**
      * Returns seo object
+     *
+     * @param string $sOxid object id
+     *
      * @return mixed
      */
     protected function _getObject( $sOxid )
     {
-        if ( $this->_oObject === null ) {
+        if ( $this->_oObject === null && ( $sType = $this->_getType() ) ) {
+            $this->_oObject = false;
+
             // load object
-            $this->_oObject = oxNew( $this->_getType() );
-            if ( !$this->_oObject->loadInLang( $this->_iEditLang, $sOxid ) ) {
-                $this->_oObject = false;
+            $oObject = oxNew( $sType );
+            if ( $oObject->loadInLang( $this->_iEditLang, $sOxid ) ) {
+                $this->_oObject = $oObject;
             }
         }
         return $this->_oObject;
@@ -132,17 +137,23 @@ class Object_Seo extends oxAdminDetails
 
     /**
      * Returns url type
+     *
      * @return string
      */
-    protected function _getType() {}
+    protected function _getType()
+    {
+    }
 
     /**
      * Returns objects std url
+     *
+     * @param string $sOxid object id
+     *
      * @return string
      */
     protected function _getStdUrl( $sOxid )
     {
-        return $this->_getObject( $sOxid )->getStdLink();
+        return $this->_getObject( $sOxid )->getBaseStdLink( $this->_iEditLang, true, false );
     }
 
     /**
@@ -153,7 +164,7 @@ class Object_Seo extends oxAdminDetails
     public function save()
     {
         // saving/updating seo params
-        if ( ( $sOxid = $this->getSeoEntryId() ) ) {
+        if ( ( $sOxid = $this->_getSeoEntryId() ) ) {
             $aSeoData = oxConfig::getParameter( 'aSeoData' );
             $iShopId  = $this->getConfig()->getShopId();
 
@@ -165,10 +176,10 @@ class Object_Seo extends oxAdminDetails
             $oEncoder = oxSeoEncoder::getInstance();
 
             // marking self and page links as expired
-            $oEncoder->markAsExpired( $sOxid, $this->getconfig()->getShopId(), 1, $this->getEditLang() );
+            $oEncoder->markAsExpired( $sOxid, $iShopId, 1, $this->getEditLang() );
 
             // saving
-            $oEncoder->addSeoEntry( $sOxid, $iShopId, $this->getEditLang(), $this->_getStdUrl( oxConfig::getParameter( 'oxid' ) ),
+            $oEncoder->addSeoEntry( $sOxid, $iShopId, $this->getEditLang(), $this->_getStdUrl( $sOxid ),
                                     $aSeoData['oxseourl'], $this->_getSeoEntryType(), $aSeoData['oxfixed'],
                                     trim( $aSeoData['oxkeywords'] ), trim( $aSeoData['oxdescription'] ), $this->processParam( $aSeoData['oxparams'] ), true );
         }
@@ -187,9 +198,21 @@ class Object_Seo extends oxAdminDetails
     /**
      * Returns seo entry ident
      *
+     * @deprecated should be used object_seo::_getSeoEntryId()
+     *
      * @return string
      */
     protected function getSeoEntryId()
+    {
+        return $this->_getSeoEntryId();
+    }
+
+    /**
+     * Returns seo entry ident
+     *
+     * @return string
+     */
+    protected function _getSeoEntryId()
     {
         return oxConfig::getParameter( 'oxid' );
     }

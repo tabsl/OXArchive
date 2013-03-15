@@ -24,11 +24,11 @@
 <tr>
     <!-- Anfang rechte Seite -->
     <td valign="top" class="edittext" align="left" width="50%">
-        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('?cl=deliveryset_users&aoc=1&oxid=[{ $oxid }]');">
+        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('&cl=deliveryset_users&aoc=1&oxid=[{ $oxid }]');">
     </td>
     <!-- Anfang rechte Seite -->
     <td valign="top" class="edittext" align="left">
-        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNUSERS" }]" class="edittext" onclick="JavaScript:showDialog('?cl=deliveryset_users&aoc=2&oxid=[{ $oxid }]');">
+        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNUSERS" }]" class="edittext" onclick="JavaScript:showDialog('&cl=deliveryset_users&aoc=2&oxid=[{ $oxid }]');">
     </td>
     <!-- Ende rechte Seite -->
   </tr>

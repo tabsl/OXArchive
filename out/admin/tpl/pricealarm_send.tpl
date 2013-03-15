@@ -1,7 +1,7 @@
 [{include file="headitem.tpl" box="list"
     title="PRICEALARM_SEND_TITLE"|oxmultilangassign box="list"
     meta_refresh_sec="2"
-    meta_refresh_url="`$shop->selflink`?cl=pricealarm_send&iStart=`$iStart`&iAllCnt=`$iAllCnt`"
+    meta_refresh_url="`$shop->selflink`&cl=pricealarm_send&iStart=`$iStart`&iAllCnt=`$iAllCnt`"
 }]
 
 <script type="text/javascript">

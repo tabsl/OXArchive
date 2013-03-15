@@ -33,20 +33,24 @@
                 <dt><a id="test_link_account_noticelist" class="[{if $active_link == 5}]active[{/if}]" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_noticelist" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_MYNOTICELIST" }]</a></dt>
                 <dd id="test_link_account_noticelistDesc">[{ oxmultilang ident="INC_ACCOUNT_HEADER_PRODUCT3" }] [{ if $oxcmp_user }][{ $oxcmp_user->getNoticeListArtCnt() }][{else}]0[{/if}]</dd>
             </dl>
-            <dl>
-                <dt><a id="test_link_account_wishlist" class="[{if $active_link == 6}]active[{/if}]" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_wishlist" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_MYWISHLIST" }]</a></dt>
-                <dd id="test_link_account_wishlistDesc">[{ oxmultilang ident="INC_ACCOUNT_HEADER_PRODUCT3" }] [{ if $oxcmp_user }][{ $oxcmp_user->getWishListArtCnt() }][{else}]0[{/if}]</dd>
-            </dl>
-            [{if $isfiltering }]
-            <dl>
-                <dt><a id="test_link_account_comparelist" class="[{if $active_link == 7}]active[{/if}]" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=compare" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_MYPRODUCTCOMPARISON" }]</a></dt>
-                <dd id="test_link_account_comparelistDesc">[{ oxmultilang ident="INC_ACCOUNT_HEADER_PRODUCT3" }] [{ if $oView->getCompareItemsCnt() }][{ $oView->getCompareItemsCnt() }][{else}]0[{/if}]</dd>
-            </dl>
+            [{if $oViewConf->getShowWishlist()}]
+                <dl>
+                    <dt><a id="test_link_account_wishlist" class="[{if $active_link == 6}]active[{/if}]" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_wishlist" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_MYWISHLIST" }]</a></dt>
+                    <dd id="test_link_account_wishlistDesc">[{ oxmultilang ident="INC_ACCOUNT_HEADER_PRODUCT3" }] [{ if $oxcmp_user }][{ $oxcmp_user->getWishListArtCnt() }][{else}]0[{/if}]</dd>
+                </dl>
             [{/if}]
-            <dl>
-                <dt><a id="test_link_account_recommlist" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_recommlist" }]" class="[{if $active_link == 8}]active[{/if}]">[{ oxmultilang ident="INC_ACCOUNT_HEADER_MYRECOMMLIST" }]</a></dt>
-                <dd id="test_link_account_recommlistDesc">[{ oxmultilang ident="INC_ACCOUNT_HEADER_LISTS" }] [{ if $oxcmp_user->getRecommListsCount() }][{ $oxcmp_user->getRecommListsCount() }][{else}]0[{/if}]</dd>
-            </dl>
+            [{if $isfiltering && $oViewConf->getShowCompareList()}]
+                <dl>
+                    <dt><a id="test_link_account_comparelist" class="[{if $active_link == 7}]active[{/if}]" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=compare" }]" rel="nofollow">[{ oxmultilang ident="INC_ACCOUNT_HEADER_MYPRODUCTCOMPARISON" }]</a></dt>
+                    <dd id="test_link_account_comparelistDesc">[{ oxmultilang ident="INC_ACCOUNT_HEADER_PRODUCT3" }] [{ if $oView->getCompareItemsCnt() }][{ $oView->getCompareItemsCnt() }][{else}]0[{/if}]</dd>
+                </dl>
+            [{/if}]
+            [{if $oViewConf->getShowListmania()}]
+                <dl>
+                    <dt><a id="test_link_account_recommlist" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account_recommlist" }]" class="[{if $active_link == 8}]active[{/if}]">[{ oxmultilang ident="INC_ACCOUNT_HEADER_MYRECOMMLIST" }]</a></dt>
+                    <dd id="test_link_account_recommlistDesc">[{ oxmultilang ident="INC_ACCOUNT_HEADER_LISTS" }] [{ if $oxcmp_user->getRecommListsCount() }][{ $oxcmp_user->getRecommListsCount() }][{else}]0[{/if}]</dd>
+                </dl>
+            [{/if}]
             <dl class="lastInCol">
                 <dt><a id="test_link_account_logout" href="[{ $oViewConf->getLogoutLink() }]" class="[{if $active_link == 9}]active[{/if}]">[{ oxmultilang ident="INC_ACCOUNT_HEADER_LOGOUT" }]</a></dt>
                 <dd id="test_link_account_logoutDesc">[{ oxmultilang ident="INC_ACCOUNT_HEADER_LOGOUTFROMSHOP" }]&nbsp;</dd>

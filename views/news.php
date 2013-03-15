@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: news.php 17016 2009-03-04 13:05:30Z vilma $
+ * @version   SVN: $Id: news.php 26736 2010-03-22 13:40:09Z sarunas $
  */
 
 /**
@@ -64,9 +64,6 @@ class News extends oxUBase
      */
     public function render()
     {
-
-        $myConfig = $this->getConfig();
-
         parent::render();
 
         $this->_aViewData['news'] = $this->getNews();

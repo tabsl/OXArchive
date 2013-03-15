@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxexceptionhandler.php 23366 2009-10-20 08:53:58Z arvydas $
+ * @version   SVN: $Id: oxexceptionhandler.php 26572 2010-03-16 13:10:50Z tomas $
  */
 
 /**
@@ -119,12 +119,12 @@ class oxExceptionHandler
         // exception occured in function processing
         $oEx->setNotCaught();
         // general log entry for all exceptions here
-        $oEx->debugOut($this->_iDebug);
+        $oEx->debugOut();
 
         if ( defined( 'OXID_PHP_UNIT' ) ) {
             return $oEx->getString();
         } elseif ( 0 != $this->_iDebug ) {
-            exit( $oEx->getString() );
+            oxUtils::getInstance()->showMessageAndExit( $oEx->getString() );
         }
 
         //simple safe redirect in productive mode
@@ -150,7 +150,7 @@ class oxExceptionHandler
             if ( defined( 'OXID_PHP_UNIT' ) ) {
                 return;
             } elseif ( 0 != $this->_iDebug ) {
-                exit( $sOut );
+                oxUtils::getInstance()->showMessageAndExit( $sLogMsg );
             }
         }
 

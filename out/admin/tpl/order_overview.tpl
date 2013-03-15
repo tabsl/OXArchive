@@ -22,9 +22,9 @@
             <br>
             [{ if $edit->oxorder__oxbillcompany->value }][{ oxmultilang ident="GENERAL_COMPANY" }] [{$edit->oxorder__oxbillcompany->value }]<br>[{/if}]
             [{ if $edit->oxorder__oxbilladdinfo->value }][{$edit->oxorder__oxbilladdinfo->value }]<br>[{/if}]
-            [{assign var=_sal value=$edit->oxorder__oxbillsal->value}]
-            [{oxmultilang ident="GENERAL_SALUTATION_$_sal" noerror="yes" alternative=$_sal }] [{$edit->oxorder__oxbillfname->value }] [{$edit->oxorder__oxbilllname->value }]<br>
+            [{$edit->oxorder__oxbillsal->value|oxmultilangsal}] [{$edit->oxorder__oxbillfname->value }] [{$edit->oxorder__oxbilllname->value }]<br>
             [{$edit->oxorder__oxbillstreet->value }] [{$edit->oxorder__oxbillstreetnr->value }]<br>
+            [{$edit->oxorder__oxbillstateid->value}]
             [{$edit->oxorder__oxbillzip->value }] [{$edit->oxorder__oxbillcity->value }]<br>
             [{$edit->oxorder__oxbillcountry->value }]<br>
             [{if $edit->oxorder__oxbillcompany->value && $edit->oxorder__oxbillustid->value }]
@@ -42,8 +42,9 @@
                 <br>
                 [{ if $edit->oxorder__oxdelcompany->value }]Firma [{$edit->oxorder__oxdelcompany->value }]<br>[{/if}]
                 [{ if $edit->oxorder__oxdeladdinfo->value }][{$edit->oxorder__oxdeladdinfo->value }]<br>[{/if}]
-                [{$edit->oxorder__oxdelsal->value }] [{$edit->oxorder__oxdelfname->value }] [{$edit->oxorder__oxdellname->value }]<br>
+                [{$edit->oxorder__oxdelsal->value|oxmultilangsal }] [{$edit->oxorder__oxdelfname->value }] [{$edit->oxorder__oxdellname->value }]<br>
                 [{$edit->oxorder__oxdelstreet->value }] [{$edit->oxorder__oxdelstreetnr->value }]<br>
+                [{$edit->oxorder__oxdelstateid->value }]
                 [{$edit->oxorder__oxdelzip->value }] [{$edit->oxorder__oxdelcity->value }]<br>
                 [{$edit->oxorder__oxdelcountry->value }]<br>
                 <br>
@@ -78,15 +79,27 @@
             <b>[{ oxmultilang ident="GENERAL_ATALL" }]: </b><br><br>
             <table border="0" cellspacing="0" cellpadding="0" id="order.info">
             <tr>
-            <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_INETTO" }]</td>
-            <td class="edittext" align="right"><b>[{ $edit->ftotalnetsum }]</b></td>
-            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
-            </tr>
-            <tr>
             <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_IBRUTTO" }]</td>
             <td class="edittext" align="right"><b>[{ $edit->ftotalbrutsum }]</b></td>
             <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
             </tr>
+            <tr>
+            <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_DISCOUNT" }]&nbsp;&nbsp;</td>
+            <td class="edittext" align="right"><b>- [{ $edit->fdiscount }]</b></td>
+            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
+            </tr>
+            <tr>
+            <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_INETTO" }]</td>
+            <td class="edittext" align="right"><b>[{ $edit->ftotalnetsum }]</b></td>
+            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
+            </tr>
+            [{foreach key=iVat from=$aProductVats item=dVatPrice}]
+            <tr>
+            <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_IVAT" }] ([{ $iVat }]%)</td>
+            <td class="edittext" align="right"><b>[{ $dVatPrice }]</b></td>
+            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
+            </tr>
+            [{/foreach}]
             [{if $edit->totalvouchers}]
             <tr>
             <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_VOUCHERS" }]</td>
@@ -102,11 +115,6 @@
             <tr>
             <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_PAYCOST" }]&nbsp;&nbsp;</td>
             <td class="edittext" align="right"><b>[{ $edit->fpaycost }]</b></td>
-            <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
-            </tr>
-            <tr>
-            <td class="edittext" height="15">[{ oxmultilang ident="GENERAL_DISCOUNT" }]&nbsp;&nbsp;</td>
-            <td class="edittext" align="right"><b>- [{ $edit->fdiscount }]</b></td>
             <td class="edittext">&nbsp;<b>[{if $edit->oxorder__oxcurrency->value}] [{$edit->oxorder__oxcurrency->value}] [{else}] [{ $currency->name}] [{/if}]</b></td>
             </tr>
             [{if $edit->oxorder__oxwrapcost->value }]

@@ -15,20 +15,24 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package smartyPlugins
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   smarty_plugins
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: modifier.oxmultilangassign.php 17246 2009-03-16 15:18:58Z arvydas $
+ * @version   SVN: $Id: modifier.oxmultilangassign.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
-/*
-* Smarty function
-* -------------------------------------------------------------
-* Purpose: Output multilang string for admin
-* add [{ oxmultilang ident="..." }] where you want to display content
-* -------------------------------------------------------------
-*/
+/**
+ * Smarty function
+ * -------------------------------------------------------------
+ * Purpose: Modifies provided language constant with it's translation
+ * usage: [{ $val|oxmultilangassign}]
+ * -------------------------------------------------------------
+ *
+ * @param string $sIdent language constant ident
+ *
+ * @return string
+ */
 function smarty_modifier_oxmultilangassign( $sIdent )
 {
     if ( !isset( $sIdent ) ) {

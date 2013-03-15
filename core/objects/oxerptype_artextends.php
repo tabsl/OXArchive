@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxerptype_artextends.php 23188 2009-10-13 06:59:38Z sarunas $
+ * @version   SVN: $Id: oxerptype_artextends.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 require_once 'oxerptype.php';

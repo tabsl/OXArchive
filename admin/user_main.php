@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: user_main.php 20428 2009-06-23 14:46:14Z vilma $
+ * @version   SVN: $Id: user_main.php 26086 2010-02-26 08:47:42Z arvydas $
  */
 
 /**
@@ -59,17 +59,18 @@ class User_Main extends oxAdminDetails
         // User rights
         $aUserRights = array();
         $oLang = oxLang::getInstance();
+        $iTplLang = $oLang->getTplLanguage();
 
         $iPos = count( $aUserRights );
         $aUserRights[$iPos] = new OxstdClass();
-        $aUserRights[$iPos]->name = $oLang->translateString( "user", $oLang->getTplLanguage() );
+        $aUserRights[$iPos]->name = $oLang->translateString( "user", $iTplLang );
         $aUserRights[$iPos]->id   = "user";
 
         if ( $blisMallAdmin ) {
             $iPos = count( $aUserRights );
             $aUserRights[$iPos] = new OxstdClass();
             $aUserRights[$iPos]->id   = "malladmin";
-            $aUserRights[$iPos]->name = $oLang->translateString( "Admin", $oLang->getTplLanguage() );
+            $aUserRights[$iPos]->name = $oLang->translateString( "Admin", $iTplLang );
         }
 
 
@@ -104,7 +105,7 @@ class User_Main extends oxAdminDetails
 
         // passing country list
         $oCountryList = oxNew( "oxCountryList" );
-        $oCountryList->loadActiveCountries( $oLang->getTplLanguage() );
+        $oCountryList->loadActiveCountries( $iTplLang );
 
         $this->_aViewData["countrylist"] = $oCountryList;
 
@@ -136,60 +137,53 @@ class User_Main extends oxAdminDetails
      */
     public function save()
     {
-        $myConfig = $this->getConfig();
-
-
-        $soxId      = oxConfig::getParameter( "oxid");
-        $aParams    = oxConfig::getParameter( "editval");
 
         //allow admin information edit only for MALL admins
-        if (!$this->_allowAdminEdit($soxId))
-            return;
+        $soxId = oxConfig::getParameter( "oxid" );
+        if ( $this->_allowAdminEdit( $soxId ) ) {
 
-        // checkbox handling
-        if ( !isset( $aParams['oxuser__oxactive']))
-            $aParams['oxuser__oxactive'] = 0;
+            $aParams = oxConfig::getParameter( "editval");
 
-        $oUser = oxNew( "oxuser" );
-        if ( $soxId != "-1")
-            $oUser->load( $soxId);
-        else
-            $aParams['oxuser__oxid'] = null;
+            // checkbox handling
+            if ( !isset( $aParams['oxuser__oxactive'] ) ) {
+                $aParams['oxuser__oxactive'] = 0;
+            }
 
-        //setting new password
-        if ( ( $sNewPass = oxConfig::getParameter( "newPassword" ) ) ) {
-            $oUser->setPassword( $sNewPass );
-        }
+            $oUser = oxNew( "oxuser" );
+            if ( $soxId != "-1" ) {
+                $oUser->load( $soxId );
+            } else {
+                $aParams['oxuser__oxid'] = null;
+            }
 
-        //FS#2167 V checks for already used email
-        if ( $oUser->checkIfEmailExists($aParams['oxuser__oxusername'])) {
-            $this->_sSaveError = 'EXCEPTION_USER_USEREXISTS';
-            return;
-        }
+            //setting new password
+            if ( ( $sNewPass = oxConfig::getParameter( "newPassword" ) ) ) {
+                $oUser->setPassword( $sNewPass );
+            }
 
-        //#1006T
-        //special treatment for newsletter fields
-        /* $aParams["oxuser__oxdboptin"] = $oUser->oxuser__oxdboptin->value;
-        $aParams["oxuser__oxemailfailed"] = $oUser->oxuser__oxemailfailed->value;*/
+            //FS#2167 V checks for already used email
+            if ( $oUser->checkIfEmailExists( $aParams['oxuser__oxusername'] ) ) {
+                $this->_sSaveError = 'EXCEPTION_USER_USEREXISTS';
+                return;
+            }
 
-        //$aParams = $oUser->ConvertNameArray2Idx( $aParams);
-        $oUser->assign( $aParams);
-
-        $sRights = $oUser->oxuser__oxrights->value;
+            $oUser->assign( $aParams );
 
 
-        // A. changing field type to save birth date correctly
-        $oUser->oxuser__oxbirthdate->fldtype = 'char';
+            // A. changing field type to save birth date correctly
+            $oUser->oxuser__oxbirthdate->fldtype = 'char';
 
-        try {
-            $oUser->save();
-            $this->_aViewData["updatelist"] = "1";
+            try {
+                $oUser->save();
+                $this->_aViewData["updatelist"] = "1";
 
-            // set oxid if inserted
-            if ( $soxId == "-1")
-                oxSession::setVar( "saved_oxid", $oUser->oxuser__oxid->value);
-        } catch (Exception $e) {
-            $this->_sSaveError = $e->getMessage();
+                // set oxid if inserted
+                if ( $soxId == "-1" ) {
+                    oxSession::setVar( "saved_oxid", $oUser->getId() );
+                }
+            } catch ( Exception $oExcp ) {
+                $this->_sSaveError = $oExcp->getMessage();
+            }
         }
     }
 }

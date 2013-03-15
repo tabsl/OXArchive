@@ -15,18 +15,18 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxactions.php 22507 2009-09-22 09:33:55Z sarunas $
+ * @version   SVN: $Id: oxactions.php 25467 2010-02-01 14:14:26Z alfonsas $
  */
 
 /**
  * Article actions manager. Collects and keeps actions of chosen article.
  * @package core
  */
-class oxActions extends oxBase
+class oxActions extends oxI18n
 {
     /**
      * Current class name

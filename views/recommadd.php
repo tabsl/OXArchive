@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: recommadd.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: recommadd.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -44,14 +44,13 @@ class RecommAdd extends Details
     protected $_aUserRecommList = null;
 
     /**
-     * Renders the view
+     * Executes oxUBase::init()
      *
-     * @return unknown
+     * @return null
      */
-    public function render()
+    public function init()
     {
-        parent::render();
-        return $this->_sThisTemplate;
+        oxUBase::init();
     }
 
     /**

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxshop.php 22590 2009-09-24 06:24:00Z alfonsas $
+ * @version   SVN: $Id: oxshop.php 25467 2010-02-01 14:14:26Z alfonsas $
  */
 
 /**
@@ -58,6 +58,18 @@ class oxShop extends oxI18n
     {
         parent::__construct();
         $this->init( 'oxshops' );
+    }
+
+    /**
+     * Sets multi shop tables
+     *
+     * @param string $aMultiShopTables multi shop tables
+     *
+     * @return null
+     */
+    public function setMultiShopTables( $aMultiShopTables )
+    {
+        $this->_aMultiShopTables = $aMultiShopTables;
     }
 
 }

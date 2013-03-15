@@ -15,9 +15,9 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package main
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   main
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
  */
 
@@ -113,3 +113,6 @@
 
     // Deactivate Static URL's for these Robots
     $this->aRobotsExcept = array();
+
+    // IP addresses for which session/cookie id match and user agent change checks are off
+    $this->aTrustedIPs = array();

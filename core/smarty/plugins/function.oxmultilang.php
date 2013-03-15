@@ -15,22 +15,29 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package smartyPlugins
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   smarty_plugins
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: function.oxmultilang.php 23513 2009-10-22 17:43:28Z tomas $
+ * @version   SVN: $Id: function.oxmultilang.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
-/*
-* Smarty function
-* -------------------------------------------------------------
-* Purpose: Output multilang string
-* add [{ oxmultilang ident="..." }] where you want to display content
-* -------------------------------------------------------------
+/**
+ * Smarty function
+ * -------------------------------------------------------------
+ * Purpose: Output multilang string
+ * add [{ oxmultilang ident="..." }] where you want to display content
+ * -------------------------------------------------------------
+ *
+ * @param array  $params  params
+ * @param Smarty &$smarty clever simulation of a method
+ *
+ * @return string
 */
 function smarty_function_oxmultilang( $params, &$smarty )
 {
+
+    startProfile("smarty_function_oxmultilang");
     $sIdent  = isset( $params['ident'] ) ? $params['ident'] : 'IDENT MISSING';
     $iLang   = null;
     $blAdmin = isAdmin();
@@ -49,13 +56,16 @@ function smarty_function_oxmultilang( $params, &$smarty )
         // is thrown in debug mode and has to be caught here, as smarty hangs otherwise!
     }
 
-    if ( $blAdmin && $sTranslation == $sIdent && !isset( $params['noerror'] ) ) {
+    if ($blAdmin && $sTranslation == $sIdent && (!isset( $params['noerror']) || !$params['noerror']) ) {
         $sTranslation = '<b>ERROR : Translation for '.$sIdent.' not found!</b>';
     }
 
-    if ( $blAdmin && $sTranslation == $sIdent && isset( $params['alternative'] ) ) {
+    if ( $sTranslation == $sIdent && isset( $params['alternative'] ) ) {
         $sTranslation = $params['alternative'];
     }
+
+
+    stopProfile("smarty_function_oxmultilang");
 
     return $sTranslation;
 }

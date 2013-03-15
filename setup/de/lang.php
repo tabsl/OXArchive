@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package setup
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   setup
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: lang.php 23462 2009-10-21 15:15:23Z vilma $
+ * @version   SVN: $Id: lang.php 26930 2010-03-29 13:30:53Z alfonsas $
  */
 
 $aLang = array(
@@ -33,7 +33,7 @@ $aLang = array(
 'TAB_1_TITLE'                                     => "Willkommen",
 'TAB_2_TITLE'                                     => "Lizenzbedingungen",
 'TAB_3_TITLE'                                     => "Datenbank",
-'TAB_4_TITLE'                                     => "Verzeichnisse",
+'TAB_4_TITLE'                                     => "Verzeichnisse & Login",
 'TAB_5_TITLE'                                     => "Lizenz",
 'TAB_6_TITLE'                                     => "Fertigstellen",
 
@@ -41,19 +41,17 @@ $aLang = array(
 'TAB_1_DESC'                                      => "Herzlich willkommen<br>zur Installation von OXID eShop",
 'TAB_2_DESC'                                      => "Best&auml;tigen Sie die Lizenzbedingungen",
 'TAB_3_DESC'                                      => "Verbindung testen,<br>Tabellen anlegen",
-'TAB_4_DESC'                                      => "Einrichten Ihres Shops,<br>Schreiben der Konfigurationsdatei",
+'TAB_4_DESC'                                      => "Verzeichnisse einrichten und Admin-Zugangsdaten wählen",
 'TAB_5_DESC'                                      => "Lizenzschl&uuml;ssel eintragen",
 'TAB_6_DESC'                                      => "Installation erfolgreich",
 
 'HERE'                                            => "hier",
 
 'ERROR_NOT_AVAILABLE'                             => "FEHLER: %s nicht vorhanden!",
-'ERROR_CHMOD'                                     => "FEHLER: Kann %s nicht auf chmod(0755) setzen!",
 'ERROR_NOT_WRITABLE'                              => "FEHLER: %s nicht beschreibbar!",
 'ERROR_DB_CONNECT'                                => "FEHLER: Keine Datenbank Verbindung m&ouml;glich!",
 'ERROR_OPENING_SQL_FILE'                          => "FEHLER: Kann SQL Datei %s nicht &ouml;ffnen!",
 'ERROR_FILL_ALL_FIELDS'                           => "FEHLER: Bitte alle notwendigen Felder ausf&uuml;llen!",
-'ERROR_COULD_NOT_CONNECT_TO_DB'                   => "FEHLER: Keine Datenbank Verbindung m&ouml;glich!",
 'ERROR_COULD_NOT_CREATE_DB'                       => "FEHLER: Datenbank %s nicht vorhanden und kann auch nicht erstellt werden!",
 'ERROR_DB_ALREADY_EXISTS'                         => "FEHLER: Es scheint als ob in der Datenbank %s bereits eine OXID Datenbank vorhanden ist. Bitte l&ouml;schen Sie diese!",
 'ERROR_BAD_SQL'                                   => "FEHLER: (Tabellen)Probleme mit folgenden SQL Befehlen: ",
@@ -61,12 +59,20 @@ $aLang = array(
 'ERROR_CONFIG_FILE_IS_NOT_WRITABLE'               => "FEHLER: %s/config.inc.php"." nicht beschreibbar!",
 'ERROR_BAD_SERIAL_NUMBER'                         => "FEHLER: Falsche Serienummer!",
 'ERROR_COULD_NOT_OPEN_CONFIG_FILE'                => "Konnte config.inc.php nicht &ouml;ffnen. Bitte in unserer FAQ oder im Forum nachlesen oder den OXID Support kontaktieren.",
+'ERROR_COULD_NOT_FIND_FILE'                       => "Setup konnte die Datei \"%s\" nicht finden!",
+'ERROR_COULD_NOT_READ_FILE'                       => "Setup konnte die Datei \"%s\" nicht öffnen!",
+'ERROR_COULD_NOT_WRITE_TO_FILE'                   => "Setup konnte nicht in die Datei \"%s\" schreiben!",
+'ERROR_PASSWORD_TOO_SHORT'                        => "Passwort zu kurz",
+'ERROR_PASSWORDS_DO_NOT_MATCH'                    => "Passwörter stimmen nicht überein",
+'ERROR_USER_NAME_DOES_NOT_MATCH_PATTERN'          => "Bitte geben Sie eine gültige E-Mail-Adresse ein!",
+'ERROR_MYSQL_VERSION_DOES_NOT_FIT_REQUIREMENTS'   => "Die MySQL Version erfüllt nicht die Systemvoraussetzungen",
 
 'MOD_PHP_EXTENNSIONS'                             => 'PHP Erweiterungen',
 'MOD_PHP_CONFIG'                                  => 'PHP Konfiguration',
 'MOD_SERVER_CONFIG'                               => 'Server-Konfiguration',
 
 'MOD_MOD_REWRITE'                                 => 'Apache mod_rewrite Modul',
+'MOD_SERVER_PERMISSIONS'                          => 'Dateizugriffsrechte',
 'MOD_ALLOW_URL_FOPEN'                             => 'allow_url_fopen oder fsockopen auf Port 80',
 'MOD_PHP4_COMPAT'                                 => 'Zend Kompatibilit&auml;tsmodus muss ausgeschaltet sein',
 'MOD_PHP_VERSION'                                  => 'PHP mindestens Version 5.2.0',
@@ -81,12 +87,15 @@ $aLang = array(
 'MOD_GD_INFO'                                     => 'GDlib v2 [v1] incl. JPEG Unterst&uuml;tzung',
 'MOD_INI_SET'                                     => 'ini_set erlaubt',
 'MOD_REGISTER_GLOBALS'                            => 'register_globals muss ausgeschaltet sein',
-'MOD_ZEND_OPTIMIZER'                              => 'Zend Optimizer installiert',
+'MOD_ZEND_OPTIMIZER'                              => 'Zend Optimizer oder Zend Guard Loader installiert',
 'MOD_ZEND_PLATFORM_OR_SERVER'                     => 'Zend Platform oder Zend Server installiert',
 'MOD_MB_STRING'                                   => 'mbstring',
+'MOD_CURL'                                        => 'cURL',
 'MOD_UNICODE_SUPPORT'                             => 'UTF-8 Unterstützung',
 
 'STEP_0_ERROR_TEXT'                               => 'Ihr System erf&uuml;llt nicht alle n&ouml;tigen Systemvoraussetzungen',
+'STEP_0_ERROR_TEXT'                               => 'Your system does not fit system requirements',
+'STEP_0_ERROR_URL'                                  => "http://www.oxid-esales.com/de/produkte/community-edition/systemvoraussetzungen",
 'STEP_0_TEXT'                                     => '<ul class="req">'.
                                                      '<li class="pass"> - Die Voraussetzung ist erf&uuml;llt.</li>'.
                                                      '<li class="pmin"> - Die Voraussetzung ist nicht oder nur teilweise erf&uuml;llt. Der OXID eShop funktioniert trotzdem und kann installiert werden.</li>'.
@@ -144,7 +153,10 @@ $aLang = array(
 'STEP_4_SHOP_URL'                                 => "Shop URL",
 'STEP_4_SHOP_DIR'                                 => "Verzeichnis auf dem Server zum Shop",
 'STEP_4_SHOP_TMP_DIR'                             => "Verzeichnis auf dem Server zum TMP Verzeichnis",
-'STEP_4_DELETE_SETUP_DIR'                         => "Den Setup Ordner automatisch entfernen",
+'STEP_4_ADMIN_LOGIN_NAME'                         => "Administrator E-Mail (wird als Benutzername verwendet)",
+'STEP_4_ADMIN_PASS'                               => "Administrator Passwort",
+'STEP_4_ADMIN_PASS_CONFIRM'                       => "Administrator Passwort bestätigen",
+'STEP_4_ADMIN_PASS_MINCHARS'                      => "frei wählbar, mindestens 6 Zeichen",
 
 'STEP_4_1_TITLE'                                  => "Verzeichnisse - in Arbeit...",
 'STEP_4_1_DATA_WAS_WRITTEN'                       => "Kontrolle und Schreiben der Dateien erfolgreich!<br>Bitte warten...",
@@ -166,7 +178,6 @@ $aLang = array(
 'STEP_6_LINK_TO_SHOP_ADMIN_AREA'                  => "Zugang zu Ihrer Shop Administration",
 'STEP_6_TO_SHOP'                                  => "Zum Shop",
 'STEP_6_TO_SHOP_ADMIN'                            => "Zur Shop Administration",
-'STEP_6_ADDITIONAL_LOGIN_INFO'                    => 'Nutzen Sie "admin" als Benutzer und Passwort',
 
 'ATTENTION'                                       => "Bitte beachten Sie",
 'SETUP_DIR_DELETE_NOTICE'                         => "WICHTIG: Bitte l&ouml;schen Sie Ihr Setup Verzeichnis falls dieses nicht bereits automatisch entfernt wurde!",
@@ -178,7 +189,7 @@ $aLang = array(
 'USE_DYNAMIC_PAGES'                               => "Um Ihren Gesch&auml;ftserfolg zu vergr&ouml;&szlig;ern, laden Sie weitere Informationen vom OXID Server nach. <br>Mehr Informationen in unserern ",
 'PRIVACY_POLICY'                                  => "Datenschutzerl&auml;uterungen",
 
-'LOAD_DYN_CONTENT_NOTICE'                         => "<p>Falls die Option &quot;Weitere Informationen&quot; nachladen eingeschaltet ist, sehen Sie ein zus&auml;tzliches Men&uuml; im Admin Bereich Ihres OXID eShops.</p><p>Mittels dieses Men&uuml;s erhalten Sie weitere Informationen &uuml;ber E-Commerce Services wie z.B. Google Produktsuche oder econda.</p> <p>Sie k&ouml;nnen diese Einstellung im Admin Bereich jederzeit wieder &auml;ndern.</p>",
+'LOAD_DYN_CONTENT_NOTICE'                         => "<p>Falls die Option &quot;Weitere Informationen&quot; nachladen eingeschaltet ist, sehen Sie ein zus&auml;tzliches Men&uuml; im Admin Bereich Ihres OXID eShops.</p><p>Mittels dieses Men&uuml;s erhalten Sie weitere Informationen &uuml;ber eCommerce Services wie z.B. Google Produktsuche oder econda.</p> <p>Sie k&ouml;nnen diese Einstellung im Admin Bereich jederzeit wieder &auml;ndern.</p>",
 'ERROR_SETUP_CANCELLED'                           => "Das Setup wurde abgebrochen, weil Sie die Lizenzvereinbarungen nicht akzeptiert haben.",
 'BUTTON_START_INSTALL'                            => "Setup erneut starten",
 

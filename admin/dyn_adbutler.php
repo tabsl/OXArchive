@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: dyn_adbutler.php 21190 2009-07-29 15:14:45Z vilma $
+ * @version   SVN: $Id: dyn_adbutler.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -58,7 +58,7 @@ class dyn_adbutler extends dyn_interface
 
         $oShop = oxNew( "oxshop" );
         $oShop->load( $soxId);
-        
+
         $aParams['oxshops__oxadbutlerid'] = $this->_checkId($aParams['oxshops__oxadbutlerid']);
 
         //$aParams = $oShop->ConvertNameArray2Idx( $aParams);
@@ -78,7 +78,7 @@ class dyn_adbutler extends dyn_interface
     {
         $iIdLen = strlen( $sProgrammId );
         if ( $iIdLen < 9 ) {
-        	$sProgrammId = str_repeat( "0", 9-$iIdLen ) . $sProgrammId;
+            $sProgrammId = str_repeat( "0", 9-$iIdLen ) . $sProgrammId;
         }
         return $sProgrammId;
     }

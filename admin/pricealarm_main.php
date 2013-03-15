@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: pricealarm_main.php 19841 2009-06-15 08:00:07Z rimvydas.paskevicius $
+ * @version   SVN: $Id: pricealarm_main.php 26912 2010-03-26 17:37:36Z arvydas $
  */
 
 /**
@@ -38,22 +38,24 @@ class PriceAlarm_Main extends oxAdminDetails
      * @return string
      */
     public function render()
-    {   $myConfig = $this->getConfig();
+    {
+        $myConfig = $this->getConfig();
 
             // #1140 R - price must be checked from the object.
             $sql = "select oxarticles.oxid, oxpricealarm.oxprice from oxpricealarm, oxarticles where oxarticles.oxid = oxpricealarm.oxartid and oxpricealarm.oxsended = '000-00-00 00:00:00'";
             $rs = oxDb::getDb()->Execute( $sql);
-            $iAllCnt_counting = 0;
+            $iAllCnt = 0;
+
             if ($rs != false && $rs->recordCount() > 0) {
                 while (!$rs->EOF) {
                     $oArticle = oxNew("oxarticle" );
                     $oArticle->load($rs->fields[0]);
                     if ($oArticle->getPrice()->getBruttoPrice() <= $rs->fields[1])
-                        $iAllCnt_counting++;
+                        $iAllCnt++;
                     $rs->moveNext();
                 }
             }
-            $this->_aViewData['iAllCnt'] = $iAllCnt_counting;
+            $this->_aViewData['iAllCnt'] = $iAllCnt;
 
         $soxId = oxConfig::getParameter( "oxid");
         // check if we right now saved a new entry
@@ -86,16 +88,16 @@ class PriceAlarm_Main extends oxAdminDetails
 
             if ( !$oThisCurr ) {
                 $oThisCurr = $oDefCurr;
-                $oPricealarm->oxpricealarm__oxcurrency->setValue($oDefCurr->name);
+                $oPricealarm->oxpricealarm__oxcurrency = new oxField( $oDefCurr->name );
             }
 
             // #889C - Netto prices in Admin
             // (we have to call $oArticle->getPrice() to get price with VAT)
             $oLang = oxLang::getInstance();
-            $oArticle->oxarticles__oxprice->setValue($oArticle->getPrice()->getBruttoPrice() * $oThisCurr->rate);
+            $oArticle->oxarticles__oxprice = new oxField($oArticle->getPrice()->getBruttoPrice() * $oThisCurr->rate);
             $oArticle->fprice = $oLang->formatCurrency( $oArticle->oxarticles__oxprice->value, $oThisCurr);
 
-            $oPricealarm->oxpricealarm__oxprice->setValue( $oLang->formatCurrency( $oPricealarm->oxpricealarm__oxprice->value, $oThisCurr));
+            $oPricealarm->oxpricealarm__oxprice = new oxField( $oLang->formatCurrency( $oPricealarm->oxpricealarm__oxprice->value, $oThisCurr));
 
             $oPricealarm->oArticle = $oArticle;
             $oCur = $myConfig->getCurrencyObject( $oPricealarm->oxpricealarm__oxcurrency->value);
@@ -107,21 +109,20 @@ class PriceAlarm_Main extends oxAdminDetails
                 $oUser->load($oPricealarm->oxpricealarm__oxuserid->value);
                 $oPricealarm->oUser = $oUser;
             }
+
             //
             $oShop = oxNew( "oxshop" );
             $oShop->load( $myConfig->getShopId());
-            $oShop = $this->addGlobalParams( $oShop);
+            $oShop = $this->addGlobalParams( $oShop );
 
             $smarty = oxUtilsView::getInstance()->getSmarty();
             $smarty->assign( "shop", $oShop );
             $smarty->assign( "product", $oArticle );
             $smarty->assign( "bidprice", $oPricealarm->oxpricealarm__oxprice->value);
-            $smarty->assign( "shopImageDir", $myConfig->getImageUrl( false , false ) );
+            $smarty->assign( "shopImageDir", $myConfig->getImageUrl( false, false ) );
             $smarty->assign( "currency", $oCur );
 
-            $iLang = $oPricealarm->oxpricealarm__oxlang->value;
-
-            if (!$iLang) {
+            if ( !( $iLang = $oPricealarm->oxpricealarm__oxlang->value ) ) {
                 $iLang = 0;
             }
 
@@ -133,17 +134,15 @@ class PriceAlarm_Main extends oxAdminDetails
             if ( isset( $aParams['oxpricealarm__oxlongdesc'] ) && $aParams['oxpricealarm__oxlongdesc'] ) {
                 $oLetter->oxpricealarm__oxlongdesc = new oxField( stripslashes( $aParams['oxpricealarm__oxlongdesc'] ), oxField::T_RAW );
             } else {
-                $old_iLang = $oLang->getTplLanguage();
+                $iOldLang = $oLang->getTplLanguage();
                 $oLang->setTplLanguage( $iLang );
-                $smarty->fetch( "email_pricealarm_customer.tpl");
-
-                $oLetter->oxpricealarm__oxlongdesc = new oxField( $smarty->fetch( "email_pricealarm_customer.tpl"), oxField::T_RAW );
-                $oLang->setTplLanguage( $old_iLang );
+                $oLetter->oxpricealarm__oxlongdesc = new oxField( $smarty->fetch( "email_pricealarm_customer.tpl" ), oxField::T_RAW );
+                $oLang->setTplLanguage( $iOldLang );
             }
 
             $this->_aViewData["editor"]  = $this->_generateTextEditor( "100%", 300, $oLetter, "oxpricealarm__oxlongdesc", "details.tpl.css");
-            $this->_aViewData["edit"] =  $oPricealarm;
-            $this->_aViewData["oxid"] = $soxId;
+            $this->_aViewData["edit"]    = $oPricealarm;
+            $this->_aViewData["oxid"]    = $soxId;
             $this->_aViewData["actshop"] = $oShop->getShopId();
         }
 
@@ -159,42 +158,45 @@ class PriceAlarm_Main extends oxAdminDetails
      */
     public function send()
     {
+        $blError = true;
+
         // error
-        if ( !oxConfig::getParameter( "oxid")) {
-            $this->_aViewData["mail_err"] = 1;
-            return;
+        if ( oxConfig::getParameter( "oxid" ) ) {
+            $oPricealarm = oxNew( "oxpricealarm" );
+            $oPricealarm->load( oxConfig::getParameter( "oxid"));
+
+            // Send Email
+            $oShop = oxNew( "oxshop" );
+            $oShop->load( $oPricealarm->oxpricealarm__oxshopid->value );
+
+            $oArticle = oxNew( "oxarticle" );
+            $oArticle->load( $oPricealarm->oxpricealarm__oxartid->value);
+
+            //arranging user email
+            $oEmail = oxNew( "oxemail" );
+            $oEmail->setFrom( $oShop->oxshops__oxorderemail->value, $oShop->oxshops__oxname->getRawValue() );
+            $oEmail->setSmtp( $oShop );
+
+            $aParams = oxConfig::getParameter( "editval" );
+            $sContent = isset( $aParams['oxpricealarm__oxlongdesc'] ) ? stripslashes( $aParams['oxpricealarm__oxlongdesc'] ) : '';
+            if ( $sContent ) {
+                $sContent = oxUtilsView::getInstance()->parseThroughSmarty( $sContent, $oPricealarm->getId() );
+            }
+
+            $oEmail->setBody( $sContent );
+            $oEmail->setSubject( $oShop->oxshops__oxname->getRawValue() );
+            $oEmail->setRecipient( $oPricealarm->oxpricealarm__oxemail->value, $oPricealarm->oxpricealarm__oxemail->value );
+            $oEmail->setReplyTo( $oShop->oxshops__oxorderemail->value, $oShop->oxshops__oxname->getRawValue() );
+
+            // setting result message
+            if ( $oEmail->send() ) {
+                $oPricealarm->oxpricealarm__oxsended->setValue( date( "Y-m-d H:i:s" ) );
+                $oPricealarm->save();
+                $blError = false;
+            }
         }
 
-        $oPricealarm = oxNew( "oxpricealarm" );
-        $oPricealarm->load( oxConfig::getParameter( "oxid"));
-
-        // Send Email
-        $oShop = oxNew( "oxshop" );
-        $oShop->load( $oPricealarm->oxpricealarm__oxshopid->value );
-
-        $oArticle = oxNew( "oxarticle" );
-        $oArticle->load( $oPricealarm->oxpricealarm__oxartid->value);
-
-        //arranging user email
-        $oEmail = oxNew( "oxemail" );
-        $oEmail->setFrom( $oShop->oxshops__oxorderemail->value, $oShop->oxshops__oxname->getRawValue() );
-        $oEmail->setSmtp( $oShop );
-
-        $aParams = oxConfig::getParameter( "editval" );
-        $sContent = isset( $aParams['oxpricealarm__oxlongdesc'] ) ? stripslashes( $aParams['oxpricealarm__oxlongdesc'] ) : '';
-        if ( $sContent ) {
-            $sContent = oxUtilsView::getInstance()->parseThroughSmarty( $sContent, $oPricealarm->getId() );
-        }
-
-        $oEmail->setBody( $sContent );
-        $oEmail->setSubject( $oShop->oxshops__oxname->getRawValue() );
-        $oEmail->setRecipient( $oPricealarm->oxpricealarm__oxemail->value, $oPricealarm->oxpricealarm__oxemail->value );
-        $oEmail->setReplyTo( $oShop->oxshops__oxorderemail->value, $oShop->oxshops__oxname->getRawValue() );
-
-        // setting result message
-        if ( $oEmail->send() ) {
-            $oPricealarm->oxpricealarm__oxsended->setValue( date( "Y-m-d H:i:s" ) );
-            $oPricealarm->save();
+        if ( !$blError ) {
             $this->_aViewData["mail_succ"] = 1;
         } else {
             $this->_aViewData["mail_err"] = 1;

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: deliveryset_users.php 16302 2009-02-05 10:18:49Z rimvydas.paskevicius $
+ * @version   SVN: $Id: deliveryset_users.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -62,11 +62,6 @@ class DeliverySet_Users extends oxAdminDetails
             $aNewList[$val->oxgroups__oxid->value]->oxgroups__oxtitle = new oxField($val->oxgroups__oxtitle->value);
         }
 
-        /*while (list($key, $val) = each($oGroups)) {
-            if ( $val->oxgroups__oxid->value == $oDelivery->oxdelivery__oxusergroupid->value)
-                $val->selected = 1;
-            $aNewList[] = $val;
-        }*/
         $oGroups = $aNewList;
 
         if ( isset($soxId) && $soxId != "-") {
@@ -88,7 +83,7 @@ class DeliverySet_Users extends oxAdminDetails
             $this->_aViewData['oxajax'] = $aColumns;
 
             return "popups/deliveryset_groups.tpl";
-        } elseif ( $iAoc == 2 ){
+        } elseif ( $iAoc == 2 ) {
 
             include_once 'inc/deliveryset_users.inc.php';
             $this->_aViewData['oxajax'] = $aColumns;

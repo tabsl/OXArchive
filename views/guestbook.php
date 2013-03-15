@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: guestbook.php 23188 2009-10-13 06:59:38Z sarunas $
+ * @version   SVN: $Id: guestbook.php 26730 2010-03-22 11:58:18Z arvydas $
  */
 
 /**
@@ -120,9 +120,6 @@ class GuestBook extends oxUBase
             //no valid login
             return $this->_sThisLoginTemplate;
         }
-
-        $myConfig = $this->getConfig();
-
 
         // flood protection
         $this->_aViewData['hideentries'] = $this->floodProtection();

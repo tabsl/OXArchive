@@ -35,6 +35,7 @@ function editThis( sID )
 
 
 <form name="transfer" id="transfer" action="[{ $shop->selflink }]" method="post">
+    [{ $shop->hiddensid }]
     <input type="hidden" name="oxid" value="[{ $oxid }]">
     <input type="hidden" name="cl" value="article_stock">
     <input type="hidden" name="editlanguage" value="[{ $editlanguage }]">
@@ -44,6 +45,7 @@ function editThis( sID )
 
         <table cellspacing="0" cellpadding="0" border="0" style="width:100%;">
         <form name="myedit" id="myedit" action="[{ $shop->selflink }]" method="post">
+        [{ $shop->hiddensid }]
         <input type="hidden" name="cl" value="article_stock">
         <input type="hidden" name="fnc" value="">
         <input type="hidden" name="oxid" value="[{ $oxid }]">
@@ -177,7 +179,7 @@ function editThis( sID )
                   [{/if}]
                 </td>
                 <td class=listitem[{$oddclass}]>
-                  <a href="[{ $shop->selflink }]?cl=article_stock&priceid=[{$amountprice->oxprice2article__oxid->value}]&fnc=deleteprice&oxid=[{$oxid}]" onClick='return confirm("Wollen Sie diesen Eintrag wirklich l�schen ?")' class="delete"></a>
+                  <a href="[{ $shop->selflink }]&cl=article_stock&priceid=[{$amountprice->oxprice2article__oxid->value}]&fnc=deleteprice&oxid=[{$oxid}]" onClick='return confirm("Wollen Sie diesen Eintrag wirklich l�schen ?")' class="delete"></a>
                 </td>
               </tr>
             [{/foreach}]

@@ -15,21 +15,26 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package smartyPlugins
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   smarty_plugins
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: function.oxgetseourl.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * @version   SVN: $Id: function.oxgetseourl.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
  */
 
-/*
-* Smarty function
-* ----------------------------------------------------------------------
-* Purpose: outputs HTML and JavaScript selectboxes for MD variant management
-* call example:
-* [{oxvariantselect value=$product->getMdVariants() separator=" " artid=$product->getId()}]
-* ----------------------------------------------------------------------
-*/
+/**
+ * Smarty function
+ * ----------------------------------------------------------------------
+ * Purpose: outputs HTML and JavaScript selectboxes for MD variant management
+ * call example:
+ * [{oxvariantselect value=$product->getMdVariants() separator=" " artid=$product->getId()}]
+ * ----------------------------------------------------------------------
+ *
+ * @param array  $params  params
+ * @param Smarty &$smarty clever simulation of a method
+ *
+ * @return string
+ */
 function smarty_function_oxvariantselect( $params, &$smarty )
 {
     $sOutput = '';
@@ -59,13 +64,13 @@ function smarty_function_oxvariantselect( $params, &$smarty )
 /**
  * Recursiovely adds selection box of for subvariants
  *
- * @param array[string]OxMdVariant $oMdVariants   Variant list
- * @param int                      $iLevel        Depth level
- * @param array[int][int]string    $aSelectBoxes  Cummulative array of select boxes
- * @param array[string]string      $aRealVariants Cummulative array or real variants
- * @param string                   $sSeparator    Separator placed between select boxes
- * @param string                   $sCallMethod   Method to be called to display the variant
- * @param string                   $sArtId        Default selected article Id
+ * @param array[string]OxMdVariant $oMdVariants    Variant list
+ * @param int                      $iLevel         Depth level
+ * @param array[int][int]string    &$aSelectBoxes  Cummulative array of select boxes
+ * @param array[string]string      &$aRealVariants Cummulative array or real variants
+ * @param string                   $sSeparator     Separator placed between select boxes
+ * @param string                   $sCallMethod    Method to be called to display the variant
+ * @param string                   $sArtId         Default selected article Id
  *
  * @return string
  */
@@ -76,7 +81,7 @@ function oxvariantselect_addSubvariants($oMdVariants, $iLevel, &$aSelectBoxes, &
     if (count($oMdVariants)) {
         $blVisible = false;
         $sSelectedVariant = null;
-        foreach($oMdVariants as $sKey => $oVariant) {
+        foreach ($oMdVariants as $sKey => $oVariant) {
             $sSelectBoxName = "mdvariantselect_".$oVariant->getParentId();
             $aSelectBoxes[$iLevel][] = $sSelectBoxName;
             $aOptions[$oVariant->getId()] = $oVariant->getName();
@@ -94,8 +99,8 @@ function oxvariantselect_addSubvariants($oMdVariants, $iLevel, &$aSelectBoxes, &
         $sRes .= $sSeparator;
 
         //add select boxes recursively
-        foreach($oMdVariants as $oVariant) {
-            $sRes .= oxvariantselect_addSubvariants($oVariant->getMdSubvariants(), $iLevel+1, $aSelectBoxes,  $aRealVariants, $sSeparator, $sCallMethod, $sArtId);
+        foreach ($oMdVariants as $oVariant) {
+            $sRes .= oxvariantselect_addSubvariants($oVariant->getMdSubvariants(), $iLevel+1, $aSelectBoxes, $aRealVariants, $sSeparator, $sCallMethod, $sArtId);
 
             //no more subvariants? Mseans we are the last level select box, good enought to register a real variant now
             if (!count($oVariant->getMdSubvariants())) {

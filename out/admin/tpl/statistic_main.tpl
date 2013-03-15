@@ -53,7 +53,7 @@
     </td>
     <td valign="top" class="edittext">
         [{ if $oxid && $oxid != '-1' }]
-        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="STASTISTIC_MAIN_ASSIGNREPORT" }]" class="edittext" onclick="JavaScript:showDialog('?cl=statistic_main&aoc=1&oxid=[{ $oxid }]');">
+        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="STASTISTIC_MAIN_ASSIGNREPORT" }]" class="edittext" onclick="JavaScript:showDialog('&cl=statistic_main&aoc=1&oxid=[{ $oxid }]');">
         [{/if}]
     </td>
 

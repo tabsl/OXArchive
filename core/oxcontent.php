@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxcontent.php 23323 2009-10-16 14:59:42Z sarunas $
+ * @version   SVN: $Id: oxcontent.php 26406 2010-03-09 11:27:24Z alfonsas $
  */
 
 /**
@@ -53,11 +53,18 @@ class oxContent extends oxI18n implements oxIUrl
     protected $_aSkipSaveFields = array( 'oxtimestamp' );
 
     /**
-     * noparamlink link to this content
+     * Seo article urls for languages
+     *
+     * @var array
+     */
+    protected $_aSeoUrls = array();
+
+    /**
+     * Content parent category id
      *
      * @var string
      */
-    protected $_sNoparamlink = null;
+    protected $_sParentCatId = null;
 
     /**
      * expanded state of a content category
@@ -125,8 +132,7 @@ class oxContent extends oxI18n implements oxIUrl
                                                     'oxcontents.'.$this->getSqlFieldName( 'oxactive' ) => '1',
                                                     'oxcontents.oxshopid' => $this->getConfig()->getShopId() ) );
 
-        $sRes = $this->assignRecord( $sSelect );
-        return $sRes;
+        return $this->assignRecord( $sSelect );
     }
 
     /**
@@ -146,36 +152,82 @@ class oxContent extends oxI18n implements oxIUrl
     }
 
     /**
-     * getLink returns link for this content in the frontend
+     * Returns raw content seo url
      *
-     * @param integer $iLang language
+     * @param int $iLang language id
      *
-     * @access public
      * @return string
      */
-    public function getLink($iLang = null)
+    public function getBaseSeoLink( $iLang )
     {
-        if (isset($iLang)) {
-            $iLang = (int) $iLang;
-            if ($iLang == (int) $this->getLanguage()) {
-                $iLang = null;
-            }
-        }
-        if ( $this->_sNoparamlink === null || isset($iLang) ) {
-            if ( oxUtils::getInstance()->seoIsActive() ) {
-                $sNoparamlink = oxSeoEncoderContent::getInstance()->getContentUrl( $this, $iLang );
-            } else {
-                $sNoparamlink = $this->getStdLink($iLang);
-            }
+        return oxSeoEncoderContent::getInstance()->getContentUrl( $this, $iLang );
+    }
 
-            if (isset($iLang)) {
-                return $sNoparamlink;
-            } else {
-                $this->_sNoparamlink = $sNoparamlink;
-            }
+    /**
+     * getLink returns link for this content in the frontend
+     *
+     * @param int $iLang language id [optional]
+     *
+     * @return string
+     */
+    public function getLink( $iLang = null )
+    {
+        if ( !oxUtils::getInstance()->seoIsActive() ) {
+            return $this->getStdLink( $iLang );
         }
 
-        return $this->_sNoparamlink;
+        if ( $iLang === null ) {
+            $iLang = $this->getLanguage();
+        }
+
+        if ( !isset( $this->_aSeoUrls[$iLang] ) ) {
+            $this->_aSeoUrls[$iLang] = $this->getBaseSeoLink( $iLang );
+        }
+
+        return $this->_aSeoUrls[$iLang];
+    }
+
+    /**
+     * Returns base dynamic url: shopurl/index.php?cl=details
+     *
+     * @param int  $iLang   language id
+     * @param bool $blAddId add current object id to url or not
+     * @param bool $blFull  return full including domain name [optional]
+     *
+     * @return string
+     */
+    public function getBaseStdLink( $iLang, $blAddId = true, $blFull = true )
+    {
+        $sUrl = '';
+        if ( $blFull ) {
+            //always returns shop url, not admin
+            $sUrl = $this->getConfig()->getShopUrl( $iLang, false );
+        }
+
+        $sUrl .= "index.php?cl=content";
+        if ( $blAddId ) {
+            $sUrl .= "&amp;oxcid=".$this->getId();
+            // adding parent category if if available
+            if ( $this->_sParentCatId !== false &&
+                 $this->oxcontents__oxcatid->value && $this->oxcontents__oxcatid->value != 'oxrootid' ) {
+
+                if ( $this->_sParentCatId === null ) {
+                    $this->_sParentCatId = false;
+                    $oDb = oxDb::getDb();
+                    $sParentId = $oDb->getOne( "select oxparentid from oxcategories where oxid = ".$oDb->quote( $this->oxcontents__oxcatid->value ) );
+                    if ( $sParentId && 'oxrootid' != $sParentId ) {
+                        $this->_sParentCatId = $sParentId;
+                    }
+                }
+
+                if ( $this->_sParentCatId ) {
+                    $sUrl .= "&amp;cnid=".$this->_sParentCatId;
+                }
+            }
+        }
+
+        //always returns shop url, not admin
+        return $sUrl;
     }
 
     /**
@@ -188,22 +240,11 @@ class oxContent extends oxI18n implements oxIUrl
      */
     public function getStdLink( $iLang = null, $aParams = array() )
     {
-        $sAdd = '';
+        if ( $iLang === null ) {
+            $iLang = $this->getLanguage();
+        }
 
-        if (isset($iLang) && !oxUtils::getInstance()->seoIsActive()) {
-            $iLang = (int) $iLang;
-            if ($iLang != (int) $this->getLanguage()) {
-                $sAdd .= "&amp;lang={$iLang}";
-            }
-        }
-        if ($this->oxcontents__oxcatid->value && $this->oxcontents__oxcatid->value != 'oxrootid') {
-            $oDb = oxDb::getDb();
-            $sParentId = $oDb->getOne("select oxparentid from oxcategories where oxid = ".$oDb->quote($this->oxcontents__oxcatid->value));
-            if ($sParentId && 'oxrootid' != $sParentId) {
-                $sAdd .= "&amp;cnid=$sParentId";
-            }
-        }
-        return $this->getConfig()->getShopHomeURL() . "cl=content&amp;oxcid=" . $this->getId() . $sAdd;
+        return oxUtilsUrl::getInstance()->processStdUrl( $this->getBaseStdLink( $iLang ), $aParams, $iLang, $iLang != $this->getLanguage() );
     }
 
     /**

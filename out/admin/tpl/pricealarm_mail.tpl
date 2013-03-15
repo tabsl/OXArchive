@@ -18,7 +18,7 @@
 [{ oxmultilang ident="PRICEALARM_MAIL_OPENEMAILS1" }] [{ $iAllCnt }] [{ oxmultilang ident="PRICEALARM_MAIL_OPENEMAILS2" }]
 <br><br>
 [{ if $iAllCnt && !$readonly }]
-[{ oxmultilang ident="PRICEALARM_MAIL_SENDPRICEALARMEMAIL1" }] <a href="[{$shop->selflink}]?cl=pricealarm_send" class="edittext" target="list" [{if $readonly }]onclick="JavaScript:return false;"[{/if}]><b>[{ oxmultilang ident="PRICEALARM_MAIL_SENDPRICEALARMEMAIL2" }]</b></a>
+[{ oxmultilang ident="PRICEALARM_MAIL_SENDPRICEALARMEMAIL1" }] <a href="[{$shop->selflink}]&cl=pricealarm_send" class="edittext" target="list" [{if $readonly }]onclick="JavaScript:return false;"[{/if}]><b>[{ oxmultilang ident="PRICEALARM_MAIL_SENDPRICEALARMEMAIL2" }]</b></a>
 [{ /if }]
 
 [{include file="bottomnaviitem.tpl" }]

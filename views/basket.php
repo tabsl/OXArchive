@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: basket.php 22072 2009-09-02 10:19:07Z arvydas $
+ * @version   SVN: $Id: basket.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
@@ -177,6 +177,10 @@ class Basket extends oxUBase
      */
     public function getSimilarRecommLists()
     {
+        if (!$this->getViewConfig()->getShowListmania()) {
+            return false;
+        }
+
         if ( $this->_oRecommList === null) {
             $this->_oRecommList = false;
 
@@ -205,6 +209,10 @@ class Basket extends oxUBase
      */
     public function addVoucher()
     {
+        if (!$this->getViewConfig()->getShowVouchers()) {
+            return;
+        }
+
         $oBasket = $this->getSession()->getBasket();
         $oBasket->addVoucher( oxConfig::getParameter( 'voucherNr' ) );
     }
@@ -216,6 +224,10 @@ class Basket extends oxUBase
      */
     public function removeVoucher()
     {
+        if (!$this->getViewConfig()->getShowVouchers()) {
+            return;
+        }
+
         $oBasket = $this->getSession()->getBasket();
         $oBasket->removeVoucher( oxConfig::getParameter( 'voucherId' ) );
     }

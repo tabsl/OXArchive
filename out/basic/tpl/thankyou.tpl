@@ -51,11 +51,12 @@
                   <div>
                       <input type="hidden" name="_charset_">
                       <input name="shop_id" type=hidden value="[{$oView->getTrustedShopId()}]">
-                      <input name="title" type=hidden value="[{ $order->oxorder__oxbillsal->value }]">
+                      <input name="title" type=hidden value="[{ $order->oxorder__oxbillsal->value|oxmultilangsal }]">
                       <input name="email" type="hidden" value="[{ $oxcmp_user->oxuser__oxusername->value }]">
                       <input name="first_name" type=hidden value="[{ $order->oxorder__oxbillfname->value }]">
                       <input name="last_name" type=hidden value="[{ $order->oxorder__oxbilllname->value }]">
                       <input name="street" type=hidden value="[{ $order->oxorder__oxbillstreet->value }]">
+                      <input name="state" type=hidden value="[{ $order->oxorder__oxbillstateid->value }]">
                       <input name="zip" type=hidden value="[{ $order->oxorder__oxbillzip->value }]">
                       <input name="city" type=hidden value="[{ $order->oxorder__oxillcity->value }]">
                       <input name="country" type=hidden value="[{ $oView->getCountryISO3() }]">
@@ -80,7 +81,7 @@
           <!--Adbutler-->
           [{assign var="discountnetprice" value=$basket->getDiscountedNettoPrice()}]
           [{assign var="currencycovindex" value=$oView->getCurrencyCovIndex()}]
-          <img src="https://www1.belboon.de/adtracking/sale/[{$oxcmp_shop->oxshops__oxadbutlerid->value }].gif/oc=[{$order->oxorder__oxordernr->value }]&sale=[{ $discountnetprice * $currencycovindex|string_format:"%.2f"}]" WIDTH="1" HEIGHT="1">
+          <img src="https://www1.belboon.de/adtracking/sale/[{$oxcmp_shop->oxshops__oxadbutlerid->value }].gif/oc=[{$order->oxorder__oxordernr->value }]&sale=[{ $discountnetprice * $currencycovindex|string_format:"%.2f"}]&belboon=[{$belboon}]" WIDTH="1" HEIGHT="1">
           <object class="flash" type="application/x-shockwave-flash" data="http://www1.belboon.de/tracking/flash.swf" width="1" height="1" >
             <param name="flashvars" value="pgmid=[{$oxcmp_shop->oxshops__oxadbutlerid->value }]&etype=sale&tparam=sale&evalue=[{ $discountnetprice * $currencycovindex|string_format:"%.2f"}]&oc=[{$order->oxorder__oxordernr->value }]">
             <param name="movie" value="http://www1.belboon.de/tracking/flash.swf" />

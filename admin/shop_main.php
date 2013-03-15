@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: shop_main.php 22589 2009-09-24 04:48:28Z alfonsas $
+ * @version   SVN: $Id: shop_main.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 
@@ -153,16 +153,14 @@ class Shop_Main extends oxAdminDetails
     protected function _getShopIds()
     {
         //loading shop ids
-        $sQ = "select oxid, oxname from oxshops";
         $aShopIds = array();
-        $rs = oxDb::getDb()->execute($sQ);
-        if ($rs != false && $rs->recordCount() > 0) {
-            while (!$rs->EOF) {
-                $oShop = new stdClass();
-                $oShop->oxid = $rs->fields[0];
-                $oShop->oxname = $rs->fields[1];
-                $aShopIds[$rs->fields[0]] = $oShop;
-                $rs->moveNext();
+        $sRs = oxDb::getDb()->execute( "select oxid, oxname from oxshops" );
+        if ($sRs != false && $sRs->recordCount() > 0) {
+            while ( !$sRs->EOF ) {
+                $aShopIds[$sRs->fields[0]] = new oxStdClass();
+                $aShopIds[$sRs->fields[0]]->oxid   = $sRs->fields[0];
+                $aShopIds[$sRs->fields[0]]->oxname = $sRs->fields[1];
+                $sRs->moveNext();
             }
         }
 

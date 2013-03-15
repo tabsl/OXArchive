@@ -1,4 +1,21 @@
 var oxid = {
+
+    /* Show DIV */
+    showDiv: function (divID) {
+        var e = document.getElementById(divID);
+        if (!e) return false;
+        e.style.visibility = "visible";
+        e.style.display = "block";
+    },
+
+    /* Hide the DIV */
+    hideDiv: function (divID) {
+        var e = document.getElementById(divID);
+        if (!e) return false;
+        e.style.visibility ="hidden";
+        e.style.display ="none";
+    },
+
     // Generall navigation with timeout
     nav: {
 
@@ -481,6 +498,61 @@ var oxid = {
             var selectedId = oxid.mdVariants.getSelectedMdRealVariant();
             if (selectedId && document.getElementById('mdvariant_' + selectedId)) {
                 document.getElementById('md_variant_box').innerHTML = document.getElementById('mdvariant_' + selectedId).innerHTML;
+            }
+
+        }
+    },
+
+    stateSelector: {
+
+        fillStates: function  (countrySelectId, stateSelectId, divId, allStates, allStateIds, allCountryIds, statePromptString, selectedStateId) {
+
+            var states = allStates[allCountryIds[document.getElementById(countrySelectId).options[document.getElementById(countrySelectId).selectedIndex].value]];
+            var ids  = allStateIds[allCountryIds[document.getElementById(countrySelectId).options[document.getElementById(countrySelectId).selectedIndex].value]];
+
+            var stateSelectObject = document.getElementById(stateSelectId);
+
+            if(stateSelectObject == null) {
+                return;
+            }
+
+            //add event handler to country select (this is important for the first time)
+            document.getElementById(countrySelectId).onchange = function() {
+                oxid.stateSelector.fillStates(countrySelectId, stateSelectId, divId, allStates, allStateIds, allCountryIds, statePromptString, selectedStateId);
+            }
+
+            //remove all nodes
+            if ( stateSelectObject.hasChildNodes() ) {
+                while ( stateSelectObject.childNodes.length >= 1 ) {
+                    stateSelectObject.removeChild( stateSelectObject.firstChild );
+                }
+            }
+
+            //create blank prompt option
+            var option = document.createElement('option');
+                option.appendChild(document.createTextNode(statePromptString));
+                option.setAttribute('value', '');
+                stateSelectObject.appendChild(option);
+
+            //fill options with states
+            if (states != null) {
+             var cCount = 0;
+             for(var x = 0; x < states.length; x++) {
+                cCount++;
+                var option = document.createElement('option');
+                option.appendChild(document.createTextNode(states[x]));
+                option.setAttribute('value', ids[x]);
+                stateSelectObject.appendChild(option);
+                if (selectedStateId == ids[x]) {
+                  stateSelectObject.selectedIndex = x+1;
+                }
+             }
+            }
+
+            if (states != null && states.length > 0) {
+              oxid.showDiv(divId);
+            } else {
+              oxid.hideDiv(divId);
             }
 
         }

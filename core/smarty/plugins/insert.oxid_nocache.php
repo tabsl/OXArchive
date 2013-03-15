@@ -15,22 +15,27 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package smartyPlugins
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   smarty_plugins
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: insert.oxid_nocache.php 16303 2009-02-05 10:23:41Z rimvydas.paskevicius $
+ * @version   SVN: $Id: insert.oxid_nocache.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
-/*
-* Smarty plugin
-* -------------------------------------------------------------
-* File: insert.oxid_nocache.php
-* Type: string, html
-* Name: oxid_nocache
-* Purpose: Inserts Items not cached
-* -------------------------------------------------------------
-*/
+/**
+ * Smarty plugin
+ * -------------------------------------------------------------
+ * File: insert.oxid_nocache.php
+ * Type: string, html
+ * Name: oxid_nocache
+ * Purpose: Inserts Items not cached
+ * -------------------------------------------------------------
+ *
+ * @param array  $params  params
+ * @param Smarty &$smarty clever simulation of a method
+ *
+ * @return string
+ */
 function smarty_insert_oxid_nocache($params, &$smarty)
 {   $myConfig = oxConfig::getInstance();
 
@@ -42,7 +47,7 @@ function smarty_insert_oxid_nocache($params, &$smarty)
     // #1184M - specialchar search
     $sSearchParamForHTML = oxConfig::getParameter("searchparam");
     $sSearchParamForLink = rawurlencode( oxConfig::getParameter( "searchparam", true ) );
-    if( $sSearchParamForHTML ) {
+    if ( $sSearchParamForHTML ) {
         $smarty->assign_by_ref( "searchparamforhtml", $sSearchParamForHTML );
         $smarty->assign_by_ref( "searchparam", $sSearchParamForLink );
     }
@@ -51,8 +56,8 @@ function smarty_insert_oxid_nocache($params, &$smarty)
     if( $sSearchCat )
         $smarty->assign_by_ref( "searchcnid", rawurldecode( $sSearchCat ) );
 
-    foreach (array_keys( $params) as $key)
-    {   $viewData = & $params[$key];
+    foreach (array_keys( $params) as $key) {
+        $viewData = & $params[$key];
         $smarty->assign_by_ref($key, $viewData);
     }
 

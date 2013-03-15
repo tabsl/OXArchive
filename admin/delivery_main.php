@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: delivery_main.php 22483 2009-09-22 06:55:52Z arvydas $
+ * @version   SVN: $Id: delivery_main.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -138,12 +138,15 @@ class Delivery_Main extends oxAdminDetails
             // shopid
             $sShopID = oxSession::getVar( "actshop");
             $aParams['oxdelivery__oxshopid'] = $sShopID;
-        $oAttr = oxNew( "oxdelivery" );
 
-        if ( $soxId != "-1")
-            $oAttr->loadInLang( $this->_iEditLang, $soxId );
-        else
+        $oDelivery = oxNew( "oxdelivery" );
+
+        if ( $soxId != "-1") {
+            $oDelivery->loadInLang( $this->_iEditLang, $soxId );
+        } else {
             $aParams['oxdelivery__oxid'] = null;
+        }
+
         // checkbox handling
         if ( !isset( $aParams['oxdelivery__oxactive']))
             $aParams['oxdelivery__oxactive'] = 0;
@@ -155,17 +158,17 @@ class Delivery_Main extends oxAdminDetails
             $aParams['oxdelivery__oxsort'] = 9999;
 
 
-        //$aParams = $oAttr->ConvertNameArray2Idx( $aParams);
-        $oAttr->setLanguage(0);
-        $oAttr->assign( $aParams);
-        $oAttr->setLanguage($this->_iEditLang);
-        $oAttr = oxUtilsFile::getInstance()->processFiles( $oAttr );
-        $oAttr->save();
+        $oDelivery->setLanguage(0);
+        $oDelivery->assign( $aParams );
+        $oDelivery->setLanguage($this->_iEditLang);
+        $oDelivery = oxUtilsFile::getInstance()->processFiles( $oDelivery );
+        $oDelivery->save();
         $this->_aViewData["updatelist"] = "1";
 
         // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oAttr->oxdelivery__oxid->value);
+        if ( $soxId == "-1") {
+            oxSession::setVar( "saved_oxid", $oDelivery->oxdelivery__oxid->value);
+        }
     }
 
     /**
@@ -181,75 +184,34 @@ class Delivery_Main extends oxAdminDetails
             // shopid
             $sShopID = oxSession::getVar( "actshop");
             $aParams['oxdelivery__oxshopid'] = $sShopID;
-        $oAttr = oxNew( "oxdelivery" );
 
-        if ( $soxId != "-1")
-            $oAttr->loadInLang( $this->_iEditLang, $soxId );
-        else
+        $oDelivery = oxNew( "oxdelivery" );
+
+        if ( $soxId != "-1") {
+            $oDelivery->loadInLang( $this->_iEditLang, $soxId );
+        } else {
             $aParams['oxdelivery__oxid'] = null;
+        }
+
         // checkbox handling
-        if ( !isset( $aParams['oxdelivery__oxactive']))
+        if ( !isset( $aParams['oxdelivery__oxactive'])) {
             $aParams['oxdelivery__oxactive'] = 0;
-        if ( !isset( $aParams['oxdelivery__oxfixed']))
+        }
+        if ( !isset( $aParams['oxdelivery__oxfixed'])) {
             $aParams['oxdelivery__oxfixed'] = 0;
+        }
 
 
-        //$aParams = $oAttr->ConvertNameArray2Idx( $aParams);
-        $oAttr->setLanguage(0);
-        $oAttr->assign( $aParams);
-        $oAttr->setLanguage($this->_iEditLang);
-        $oAttr = oxUtilsFile::getInstance()->processFiles( $oAttr );
-        $oAttr->save();
+        $oDelivery->setLanguage(0);
+        $oDelivery->assign( $aParams);
+        $oDelivery->setLanguage($this->_iEditLang);
+        $oDelivery = oxUtilsFile::getInstance()->processFiles( $oDelivery );
+        $oDelivery->save();
         $this->_aViewData["updatelist"] = "1";
 
         // set oxid if inserted
-        if ( $soxId == "-1")
-            oxSession::setVar( "saved_oxid", $oAttr->oxdelivery__oxid->value);
-    }
-
-    /**
-     * Adds this delivery cost to these sets
-     *
-     * @return null
-     */
-    public function addtoset()
-    {
-        $soxId = oxConfig::getParameter( "oxid");
-        $aChosenSets = oxConfig::getParameter( "allsets");
-
-
-        if ( isset( $soxId) && $soxId != "-1" && isset( $aChosenSets) && $aChosenSets) {
-            $oDb = oxDb::getDb();
-            foreach ( $aChosenSets as $sChosenSet) {
-                // check if we have this entry already in
-                $sID = $oDb->GetOne("select oxid from oxdel2delset where oxdelid = ".$oDb->quote( $soxId ) ." and oxdelsetid = ".$oDb->quote( $sChosenSet ) );
-                if ( !isset( $sID) || !$sID) {
-                        $oDel2delset = oxNew( 'oxbase' );
-                        $oDel2delset->init( 'oxdel2delset' );
-                        $oDel2delset->oxdel2delset__oxdelid    = new oxField($soxId);
-                        $oDel2delset->oxdel2delset__oxdelsetid = new oxField($sChosenSet);
-                        $oDel2delset->save();
-                }
-            }
-        }
-    }
-
-    /**
-     * Remove this delivery cost from these sets
-     *
-     * @return null
-     */
-    public function removefromset()
-    {
-        $soxId = oxConfig::getParameter( "oxid" );
-        $aChosenSets = oxConfig::getParameter( "allasssets" );
-
-
-        if ( isset( $soxId) && $soxId != "-1" && isset( $aChosenSets) && $aChosenSets) {
-            $oDb = oxDb::getDb();
-            foreach ( $aChosenSets as $sChosenSet) {
-                $oDb->Execute( "delete from oxdel2delset where oxdelid = ".$oDb->quote( $soxId ) ." and oxdelsetid = ".$oDb->quote( $sChosenSet ) );
-            }
+        if ( $soxId == "-1") {
+            oxSession::setVar( "saved_oxid", $oDelivery->oxdelivery__oxid->value);
         }
     }
 }

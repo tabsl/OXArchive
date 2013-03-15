@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: recommlist.php 23400 2009-10-20 14:38:13Z arvydas $
+ * @version   SVN: $Id: recommlist.php 26303 2010-03-04 16:11:37Z sarunas $
  */
 
 /**
@@ -27,7 +27,7 @@
  * Collects some article base information, sets default recomendation text,
  * sends suggestion mail to user.
  */
-class RecommList extends oxUBase
+class RecommList extends aList
 {
     /**
      * List type
@@ -42,24 +42,6 @@ class RecommList extends oxUBase
     protected $_sThisTemplate = 'recommlist.tpl';
 
     /**
-     * Active recommendation's list id
-     * @var string
-     */
-    protected $_sRecommId = null;
-
-    /**
-     * Active recommendation's list
-     * @var object
-     */
-    protected $_oActiveRecommList = null;
-
-    /**
-     * Active recommlist's items
-     * @var object
-     */
-    protected $_oActiveRecommItems = null;
-
-    /**
      * Other recommendations list
      * @var oxrecommlist
      */
@@ -70,12 +52,6 @@ class RecommList extends oxUBase
      * @var array
      */
     protected $_aReviews = null;
-
-    /**
-     * Is review active
-     * @var bool
-     */
-    protected $_blReviewActive = null;
 
     /**
      * Can user rate
@@ -127,12 +103,12 @@ class RecommList extends oxUBase
      */
     public function render()
     {
-        parent::render();
+        oxUBase::render();
         $myConfig = $this->getConfig();
 
         $this->_iAllArtCnt = 0;
         $this->_aViewData['actvrecommlist'] = $this->getActiveRecommList();
-        $this->_aViewData['itemList'] = $this->getActiveRecommItems();
+        $this->_aViewData['itemList'] = $this->getArticleList();
 
         // loading other recommlists
         $this->_aViewData['similarrecommlist'] = $this->getSimilarRecommLists();
@@ -145,26 +121,24 @@ class RecommList extends oxUBase
 
         // list of found oxrecommlists
         $this->_aViewData['recommlists'] = $this->getRecommLists();
-        if ( $sOxid = $this->getRecommId()) {
-            $oActiveRecommList = $this->getActiveRecommList();
-            $oList = $this->getActiveRecommItems();
-            if ( $oList && $oList->count()) {
-                    $this->_iAllArtCnt = $oActiveRecommList->getArtCount();
+        if ( $oActiveRecommList = $this->getActiveRecommList() ) {
+            if ( ( $oList = $this->getArticleList() ) && $oList->count()) {
+                $this->_iAllArtCnt = $oActiveRecommList->getArtCount();
             }
 
-            if (in_array('oxrss_recommlistarts', $myConfig->getConfigParam( 'aRssSelected' ))) {
+            if ( $myConfig->getConfigParam( 'bl_rssRecommListArts' ) ) {
                 $oRss = oxNew('oxrssfeed');
                 $this->addRssFeed($oRss->getRecommListArticlesTitle($oActiveRecommList), $oRss->getRecommListArticlesUrl($this->_oActiveRecommList), 'recommlistarts');
             }
 
         } else {
-            if ( ($oList = $this->getRecommLists()) && $oList->count() ) {
+            if ( ( $oList = $this->getRecommLists() ) && $oList->count() ) {
                 $oRecommList = oxNew( 'oxrecommlist' );
                 $this->_iAllArtCnt = $oRecommList->getSearchRecommListCount( $this->getRecommSearch() );
             }
         }
 
-        if ( !$oList = $this->getActiveRecommItems() ) {
+        if ( !( $oList = $this->getArticleList() ) ) {
             $oList = $this->getRecommLists();
         }
 
@@ -188,22 +162,17 @@ class RecommList extends oxUBase
     }
 
     /**
-     * Iterates through list articles and performs list view specific tasks
+     * Returns product link type (OXARTICLE_LINKTYPE_RECOMM)
      *
-     * @return null
+     * @return int
      */
-    protected function _processListArticles()
+    protected function _getProductLinkType()
     {
-        $sAddParams = $this->getAddUrlParams();
-        if ( $sAddParams && $this->_oActiveRecommItems ) {
-            foreach ( $this->_oActiveRecommItems as $oArticle ) {
-                $oArticle->appendLink( $sAddParams );
-            }
-        }
+        return OXARTICLE_LINKTYPE_RECOMM;
     }
 
     /**
-     * Returns additional URL paramerets which must be added to list products urls
+     * Returns additional URL parameters which must be added to list products dynamic urls
      *
      * @return string
      */
@@ -212,14 +181,24 @@ class RecommList extends oxUBase
         $sAddParams  = parent::getAddUrlParams();
         $sAddParams .= ($sAddParams?'&amp;':'') . "listtype={$this->_sListType}";
 
-        if ( $sParam = rawurlencode( oxConfig::getParameter( 'searchrecomm', true ) ) ) {
-            $sAddParams .= "&amp;searchrecomm={$sParam}";
+        if ( $oRecommList = $this->getActiveRecommList() ) {
+            $sAddParams .= "&amp;recommid=".$oRecommList->getId();
         }
 
-        if ( $oRecommList = $this->getActRecommList() ) {
-            $sAddParams .= '&amp;recommid='.$oRecommList->getId();
-        }
+        return $sAddParams;
+    }
 
+    /**
+     * Returns additional URL parameters which must be added to list products seo urls
+     *
+     * @return string
+     */
+    public function getAddSeoUrlParams()
+    {
+        $sAddParams = parent::getAddSeoUrlParams();
+        if ( $sParam = oxConfig::getParameter( "searchrecomm", true ) ) {
+            $sAddParams .= "&amp;searchrecomm=" . rawurlencode( $sParam );
+        }
         return $sAddParams;
     }
 
@@ -230,45 +209,37 @@ class RecommList extends oxUBase
      */
     public function saveReview()
     {
-        $sReviewText = trim( ( string ) oxConfig::getParameter( 'rvw_txt', true ) );
-        $dRating     = oxConfig::getParameter( 'recommlistrating' );
-        if ( $dRating < 0 || $dRating > 5 ) {
-            $dRating = null;
-        }
+        if ( $this->canAcceptFormData() &&
+             ( $oRecommList = $this->getActiveRecommList() ) && ( $oUser = $this->getUser() ) ) {
 
-        $sRLId  = oxConfig::getParameter( 'recommid' );
-        $sUserId = oxSession::getVar( 'usr' );
-
-        $oRecommList = oxNew('oxrecommlist');
-        if (!$oRecommList->load($sRLId)) {
-            return;
-        }
-
-        //save rating
-        if ( $dRating && $sUserId ) {
-            $oRating = oxNew( 'oxrating' );
-            $blRate = $oRating->allowRating( $sUserId, 'oxrecommlist', $oRecommList->getId());
-            if ( $blRate) {
-                $oRating->oxratings__oxuserid   = new oxField($sUserId);
-                $oRating->oxratings__oxtype     = new oxField('oxrecommlist', oxField::T_RAW);
-                $oRating->oxratings__oxobjectid = new oxField($sRLId);
-                $oRating->oxratings__oxrating   = new oxField($dRating);
-                $oRating->save();
-                $oRecommList->addToRatingAverage( $dRating);
-            } else {
-                $dRating = null;
+            //save rating
+            $dRating = oxConfig::getParameter( 'recommlistrating' );
+            if ( $dRating !== null ) {
+                $dRating = (int) $dRating;
             }
-        }
 
-        if ( $sReviewText && $sUserId ) {
-            $oReview = oxNew( 'oxreview' );
-            $oReview->oxreviews__oxobjectid = new oxField($sRLId);
-            $oReview->oxreviews__oxtype     = new oxField('oxrecommlist', oxField::T_RAW);
-            $oReview->oxreviews__oxtext     = new oxField($sReviewText, oxField::T_RAW);
-            $oReview->oxreviews__oxlang     = new oxField(oxLang::getInstance()->getBaseLanguage());
-            $oReview->oxreviews__oxuserid   = new oxField($sUserId);
-            $oReview->oxreviews__oxrating   = new oxField(( $dRating) ? $dRating : null);
-            $oReview->save();
+            if ( $dRating !== null && $dRating >= 0 && $dRating <= 5 ) {
+                $oRating = oxNew( 'oxrating' );
+                if ( $oRating->allowRating( $oUser->getId(), 'oxrecommlist', $oRecommList->getId() ) ) {
+                    $oRating->oxratings__oxuserid   = new oxField( $oUser->getId() );
+                    $oRating->oxratings__oxtype     = new oxField( 'oxrecommlist' );
+                    $oRating->oxratings__oxobjectid = new oxField( $oRecommList->getId() );
+                    $oRating->oxratings__oxrating   = new oxField( $dRating );
+                    $oRating->save();
+                    $oRecommList->addToRatingAverage( $dRating );
+                }
+            }
+
+            if ( ( $sReviewText = trim( ( string ) oxConfig::getParameter( 'rvw_txt', true ) ) ) ) {
+                $oReview = oxNew( 'oxreview' );
+                $oReview->oxreviews__oxobjectid = new oxField( $oRecommList->getId() );
+                $oReview->oxreviews__oxtype     = new oxField( 'oxrecommlist' );
+                $oReview->oxreviews__oxtext     = new oxField( $sReviewText, oxField::T_RAW );
+                $oReview->oxreviews__oxlang     = new oxField( oxLang::getInstance()->getBaseLanguage() );
+                $oReview->oxreviews__oxuserid   = new oxField( $oUser->getId() );
+                $oReview->oxreviews__oxrating   = new oxField( ( $dRating !== null ) ? $dRating : null );
+                $oReview->save();
+            }
         }
     }
 
@@ -292,38 +263,33 @@ class RecommList extends oxUBase
      */
     public function getNavigationParams()
     {
-        $aParams = parent::getNavigationParams();
+        $aParams = oxUBase::getNavigationParams();
         $aParams['recommid'] = oxConfig::getParameter( 'recommid' );
 
         return $aParams;
     }
 
     /**
-     * Template variable getter. Returns active recommlists
-     *
-     * @return object
-     */
-    public function getActiveRecommList()
-    {
-        if ( $this->_oActiveRecommList === null ) {
-            $this->_oActiveRecommList = false;
-            if ( $sOxid = $this->getRecommId()) {
-                $this->_oActiveRecommList = oxNew( 'oxrecommlist' );
-                $this->_oActiveRecommList->load( $sOxid);
-            }
-        }
-        return $this->_oActiveRecommList;
-    }
-
-    /**
      * Template variable getter. Returns active recommlist's items
+     *
+     * @deprecated use recommlist::getArticleList() instead
      *
      * @return object
      */
     public function getActiveRecommItems()
     {
-        if ( $this->_oActiveRecommItems === null ) {
-            $this->_oActiveRecommItems = false;
+        return $this->getArticleList();
+    }
+
+    /**
+     * Template variable getter. Returns category's article list
+     *
+     * @return array
+     */
+    public function getArticleList()
+    {
+        if ( $this->_aArticleList === null ) {
+            $this->_aArticleList = false;
             if ( $oActiveRecommList = $this->getActiveRecommList()) {
                 // sets active page
                 $iActPage = (int) oxConfig::getParameter( 'pgNr' );
@@ -333,17 +299,16 @@ class RecommList extends oxUBase
                 $iNrofCatArticles = $this->getConfig()->getConfigParam( 'iNrofCatArticles' );
                 $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 10;
 
-                $oList = $oActiveRecommList->getArticles($iNrofCatArticles * $iActPage, $iNrofCatArticles);
+                $this->_aArticleList = $oActiveRecommList->getArticles($iNrofCatArticles * $iActPage, $iNrofCatArticles);
 
-                if ( $oList && $oList->count() ) {
-                    foreach ( $oList as $oItem) {
+                if ( $this->_aArticleList && $this->_aArticleList->count() ) {
+                    foreach ( $this->_aArticleList as $oItem ) {
                         $oItem->text = $oActiveRecommList->getArtDescription( $oItem->getId() );
                     }
-                    $this->_oActiveRecommItems = $oList;
                 }
             }
         }
-        return $this->_oActiveRecommItems;
+        return $this->_aArticleList;
     }
 
     /**
@@ -355,13 +320,11 @@ class RecommList extends oxUBase
     {
         if ( $this->_oOtherRecommList === null ) {
             $this->_oOtherRecommList = false;
-            if ( $oActiveRecommList = $this->getActiveRecommList() ) {
-                if ( $oList = $this->getActiveRecommItems() ) {
-                    $oRecommLists  = $oActiveRecommList->getRecommListsByIds( $oList->arrayKeys());
-                    //do not show the same list
-                    unset($oRecommLists[$this->getRecommId()]);
-                    $this->_oOtherRecommList = $oRecommLists;
-                }
+            if ( ( $oActiveRecommList = $this->getActiveRecommList() ) && ( $oList = $this->getArticleList() ) ) {
+                $oRecommLists = $oActiveRecommList->getRecommListsByIds( $oList->arrayKeys());
+                //do not show the same list
+                unset( $oRecommLists[$oActiveRecommList->getId()] );
+                $this->_oOtherRecommList = $oRecommLists;
             }
         }
         return $this->_oOtherRecommList;
@@ -370,17 +333,13 @@ class RecommList extends oxUBase
     /**
      * Template variable getter. Returns recommlist id
      *
+     * @deprecated use oxUBase::getActiveRecommList()->getId()
+     *
      * @return string
      */
     public function getRecommId()
     {
-        if ( $this->_sRecommId === null ) {
-            $this->_sRecommId = false;
-            if ( $sOxid = oxConfig::getParameter( 'recommid' )) {
-                $this->_sRecommId = $sOxid;
-            }
-        }
-        return $this->_sRecommId;
+        return oxConfig::getParameter( 'recommid' );
     }
 
     /**
@@ -392,10 +351,8 @@ class RecommList extends oxUBase
     {
         if ( $this->_aReviews === null ) {
             $this->_aReviews = false;
-            if ( $this->isReviewActive() ) {
-                if ( $oActiveRecommList = $this->getActiveRecommList() ) {
-                    $this->_aReviews = $oActiveRecommList->getReviews();
-                }
+            if ( $this->isReviewActive() && ( $oActiveRecommList = $this->getActiveRecommList() ) ) {
+                $this->_aReviews = $oActiveRecommList->getReviews();
             }
         }
         return $this->_aReviews;
@@ -408,14 +365,7 @@ class RecommList extends oxUBase
      */
     public function isReviewActive()
     {
-        $myConfig  = $this->getConfig();
-        if ( $this->_blReviewActive === null ) {
-            $this->_blReviewActive = false;
-            if ( $myConfig->getConfigParam( 'bl_perfLoadReviews' ) ) {
-                $this->_blReviewActive = true;
-            }
-        }
-        return $this->_blReviewActive;
+        return $this->getConfig()->getConfigParam( 'bl_perfLoadReviews' );
     }
 
     /**
@@ -427,11 +377,9 @@ class RecommList extends oxUBase
     {
         if ( $this->_blRate === null ) {
             $this->_blRate = false;
-            if ( $this->isReviewActive() ) {
-                if ( $oActiveRecommList = $this->getActiveRecommList() ) {
-                    $oRating = oxNew( 'oxrating' );
-                    $this->_blRate = $oRating->allowRating( oxSession::getVar( 'usr' ), 'oxrecommlist', $oActiveRecommList->getId());
-                }
+            if ( $this->isReviewActive() && ( $oActiveRecommList = $this->getActiveRecommList() ) ) {
+                $oRating = oxNew( 'oxrating' );
+                $this->_blRate = $oRating->allowRating( oxSession::getVar( 'usr' ), 'oxrecommlist', $oActiveRecommList->getId());
             }
         }
         return $this->_blRate;
@@ -445,14 +393,12 @@ class RecommList extends oxUBase
     public function getRatingValue()
     {
         if ( $this->_dRatingValue === null ) {
-            $this->_dRatingValue = false;
-            if ( $this->isReviewActive() ) {
-                if ( $oActiveRecommList = $this->getActiveRecommList() ) {
-                    $this->_dRatingValue = round( $oActiveRecommList->oxrecommlists__oxrating->value, 1);
-                }
+            $this->_dRatingValue = (double)0;
+            if ( $this->isReviewActive() && ( $oActiveRecommList = $this->getActiveRecommList() ) ) {
+                $this->_dRatingValue = round( $oActiveRecommList->oxrecommlists__oxrating->value, 1);
             }
         }
-        return $this->_dRatingValue;
+        return (double) $this->_dRatingValue;
     }
 
     /**
@@ -464,10 +410,8 @@ class RecommList extends oxUBase
     {
         if ( $this->_iRatingCnt === null ) {
             $this->_iRatingCnt = false;
-            if ( $this->isReviewActive() ) {
-                if ( $oActiveRecommList = $this->getActiveRecommList() ) {
-                    $this->_iRatingCnt = $oActiveRecommList->oxrecommlists__oxratingcnt->value;
-                }
+            if ( $this->isReviewActive() && ( $oActiveRecommList = $this->getActiveRecommList() ) ) {
+                $this->_iRatingCnt = $oActiveRecommList->oxrecommlists__oxratingcnt->value;
             }
         }
         return $this->_iRatingCnt;
@@ -482,11 +426,10 @@ class RecommList extends oxUBase
     {
         if ( $this->_oSearchRecommLists === null ) {
             $this->_oSearchRecommLists = array();
-            if ( !$this->getRecommId()) {
-                $sSearch = $this->getRecommSearch();
+            if ( !$this->getActiveRecommList() ) {
                 // list of found oxrecommlists
                 $oRecommList = oxNew( 'oxrecommlist' );
-                $oList = $oRecommList->getSearchRecommLists( $sSearch );
+                $oList = $oRecommList->getSearchRecommLists( $this->getRecommSearch() );
                 if ( $oList && $oList->count() ) {
                     $this->_oSearchRecommLists = $oList;
                 }
@@ -568,6 +511,10 @@ class RecommList extends oxUBase
      */
     public function getSearchForHtml()
     {
+        // #M1450 if active recommlist is loaded return it's title
+        if ( $oActiveRecommList = $this->getActiveRecommList()) {
+            return $oActiveRecommList->oxrecommlists__oxtitle->value;
+        }
         return oxConfig::getParameter( 'searchrecomm' );
     }
 
@@ -582,17 +529,40 @@ class RecommList extends oxUBase
     }
 
     /**
-     * Template variable getter. Returns page navigation
+     * Generates Url for page navigation
      *
-     * @return object
+     * @return string
      */
-    public function getPageNavigation()
+    public function generatePageNavigationUrl()
     {
-        if ( $this->_oPageNavigation === null ) {
-            $this->_oPageNavigation = false;
-            $this->_oPageNavigation = $this->generatePageNavigation();
+        if ( ( oxUtils::getInstance()->seoIsActive() && ( $oRecomm = $this->getActiveRecommList() ) ) ) {
+            $sUrl = $oRecomm->getLink();
+        } else {
+            $sUrl = oxUBase::generatePageNavigationUrl();
         }
-        return $this->_oPageNavigation;
+        return $sUrl;
+    }
+
+    /**
+     * Adds page number parameter to current Url and returns formatted url
+     *
+     * @param string $sUrl  url to append page numbers
+     * @param int    $iPage current page number
+     * @param int    $iLang requested language
+     *
+     * @return string
+     */
+    protected function _addPageNrParam( $sUrl, $iPage, $iLang = null)
+    {
+        if ( oxUtils::getInstance()->seoIsActive() && ( $oRecomm = $this->getActiveRecommList() ) ) {
+            if ( $iPage ) {
+                // only if page number > 0
+                $sUrl = oxSeoEncoderRecomm::getInstance()->getRecommPageUrl( $oRecomm, $iPage, $iLang, true );
+            }
+        } else {
+            $sUrl = oxUBase::_addPageNrParam( $sUrl, $iPage, $iLang );
+        }
+        return $sUrl;
     }
 
     /**
@@ -602,10 +572,10 @@ class RecommList extends oxUBase
      */
     public function getAdditionalParams()
     {
-        $sAddParams = parent::getAdditionalParams();
+        $sAddParams = oxUBase::getAdditionalParams();
 
-        if ( $sOxid = $this->getRecommId() ) {
-            $sAddParams .= "&amp;recommid={$sOxid}";
+        if ( $oRecomm = $this->getActiveRecommList() ) {
+            $sAddParams .= "&amp;recommid=".$oRecomm->getId();
         }
 
         if ( $sSearch = $this->getRecommSearch() ) {
@@ -624,16 +594,14 @@ class RecommList extends oxUBase
      */
     public function getLink( $iLang = null )
     {
-        $sLink = parent::getLink( $iLang );
-
-        if ( oxUtils::getInstance()->seoIsActive() ) {
-            if ( $sRecommId = $this->getRecommId() ) {
-                $sLink .= ( ( strpos( $sLink, '?' ) === false ) ? '?' : '&amp;' ) . "recommid={$sRecommId}";
-            }
-
-            if ( $sSearch = $this->getSearchForHtml() ) {
-                $sLink .= ( ( strpos( $sLink, '?' ) === false ) ? '?' : '&amp;' ) . "searchrecomm={$sSearch}";
-            }
+        if ( $oRecomm = $this->getActiveRecommList() ) {
+            $sLink = $oRecomm->getLink( $iLang );
+        } else {
+            $sLink = oxUBase::getLink( $iLang );
+        }
+        $sSearch = oxConfig::getParameter( 'searchrecomm' );
+        if ( $sSearch ) {
+            $sLink .= ( ( strpos( $sLink, '?' ) === false ) ? '?' : '&amp;' ) . "searchrecomm={$sSearch}";
         }
 
         return $sLink;

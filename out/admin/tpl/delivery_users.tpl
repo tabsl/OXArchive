@@ -27,13 +27,13 @@
     <!-- Anfang rechte Seite -->
     <td valign="top" class="edittext" align="left" width="50%">
     [{ if $oxid != "-1"}]
-        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('?cl=delivery_users&aoc=2&oxid=[{ $oxid }]');">
+        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('&cl=delivery_users&aoc=2&oxid=[{ $oxid }]');">
     [{ /if}]
     </td>
     <!-- Anfang rechte Seite -->
     <td valign="top" class="edittext" align="left">
     [{ if $oxid != "-1"}]
-        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNUSERS" }]" class="edittext" onclick="JavaScript:showDialog('?cl=delivery_users&aoc=1&oxid=[{ $oxid }]');">
+        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNUSERS" }]" class="edittext" onclick="JavaScript:showDialog('&cl=delivery_users&aoc=1&oxid=[{ $oxid }]');">
     [{ /if}]
     </td>
     <!-- Ende rechte Seite -->

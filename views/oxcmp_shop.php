@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxcmp_shop.php 16306 2009-02-05 10:28:05Z rimvydas.paskevicius $
+ * @version   SVN: $Id: oxcmp_shop.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 /**
@@ -47,9 +47,10 @@ class oxcmp_shop extends oxView
         $myConfig = $this->getConfig();
             $sShopLogo = $myConfig->getConfigParam( 'sShopLogo' );
             if ( $sShopLogo && file_exists( $myConfig->getAbsImageDir().'/'.$sShopLogo ) ) {
-                $this->_oParent->setShopLogo($sShopLogo);
+                $oParentView = $this->getParent();
+                $oParentView->setShopLogo( $sShopLogo );
                 // Passing to view. Left for compatibility reasons for a while. Will be removed in future
-                $this->_oParent->addTplParam( 'shoplogo', $this->_oParent->getShopLogo() );
+                $oParentView->addTplParam( 'shoplogo', $oParentView->getShopLogo() );
             }
 
         // is shop active?

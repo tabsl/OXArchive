@@ -10,10 +10,10 @@
 
     <ul>
       <li class="act">
-          <a href="[{$shop->selflink}]?cl=navigation&amp;item=home.tpl" target="basefrm" class="rc"><b>[{ oxmultilang ident="NAVIGATION_HOME" }]</b></a>
+          <a href="[{$shop->selflink}]&cl=navigation&amp;item=home.tpl" target="basefrm" class="rc"><b>[{ oxmultilang ident="NAVIGATION_HOME" }]</b></a>
       </li>
       <li class="sep">
-          <a href="[{$shop->selflink}]?cl=navigation&amp;fnc=logout" target="_parent" class="rc"><b>[{ oxmultilang ident="NAVIGATION_LOGOUT" }]</b></a>
+          <a href="[{$shop->selflink}]&cl=navigation&amp;fnc=logout" target="_parent" class="rc"><b>[{ oxmultilang ident="NAVIGATION_LOGOUT" }]</b></a>
       </li>
     </ul>
 

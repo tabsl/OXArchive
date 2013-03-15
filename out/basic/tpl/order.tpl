@@ -41,10 +41,12 @@
                       <tr>
                         <td><input id="test_OrderConfirmAGBTop" type="checkbox" class="chk" name="ord_agb" value="1"></td>
                         <td>
-                            [{assign var="oCont" value=$oView->getContentByIdent("oxagb") }]
-                            [{ oxmultilang ident="ORDER_IAGREETOTERMS1" }] <a id="test_OrderOpenAGBTop" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'agb_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ oxmultilang ident="ORDER_IAGREETOTERMS2" }]</a> [{ oxmultilang ident="ORDER_IAGREETOTERMS3" }],&nbsp;
-                            [{assign var="oCont" value=$oView->getContentByIdent("oxrightofwithdrawal") }]
-                            [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL1" }] <a id="test_OrderOpenWithdrawalTop" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'rightofwithdrawal_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ $oCont->oxcontents__oxtitle->value }]</a> [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL3" }]
+                            [{oxifcontent ident="oxagb" object="oCont"}]
+                                [{oxmultilang ident="ORDER_IAGREETOTERMS1" }] <a id="test_OrderOpenAGBTop" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'agb_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ oxmultilang ident="ORDER_IAGREETOTERMS2" }]</a> [{ oxmultilang ident="ORDER_IAGREETOTERMS3" }],&nbsp;
+                            [{/oxifcontent}]
+                            [{oxifcontent ident="oxrightofwithdrawal" object="oCont"}]
+                                [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL1" }] <a id="test_OrderOpenWithdrawalTop" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'rightofwithdrawal_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ $oCont->oxcontents__oxtitle->value }]</a> [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL3" }]
+                            [{/oxifcontent}]
                         </td>
                       </tr>
                     </table>
@@ -186,6 +188,7 @@
       [{/foreach}]
 
 
+      [{ if $oViewConf->getShowGiftWrapping() }]
       [{assign var="oCard" value=$oxcmp_basket->getCard() }]
       [{ if $oCard }]
         <tr class="sumrow">
@@ -214,6 +217,7 @@
           <td colspan="7" class="line"></td>
           <td></td>
         </tr>
+      [{/if}]
       [{/if}]
 
       [{if !$oxcmp_basket->getDiscounts() }]
@@ -276,7 +280,7 @@
         [{/foreach}]
       [{/if}]
 
-      [{if $oxcmp_basket->getVoucherDiscValue() }]
+      [{if $oViewConf->getShowVouchers() && $oxcmp_basket->getVoucherDiscValue() }]
         <tr class="bsk_sep">
           <td class="brd"></td>
           <td colspan="7" class="line"></td>
@@ -331,7 +335,7 @@
           </tr>
         [{/if}]
       [{/if}]
-      [{ if $oxcmp_basket->getWrappCostNet() }]
+      [{if $oViewConf->getShowGiftWrapping() && $oxcmp_basket->getWrappCostNet() }]
           <tr class="sumrow">
             <td class="brd"></td>
             <td colspan="6" class="sumdesc">[{if $oxcmp_basket->getWrappCostVat() }][{ oxmultilang ident="ORDER_WRAPPINGNET" }][{else}][{ oxmultilang ident="ORDER_WRAPPINGGROSS1" }][{/if}]</td>
@@ -379,7 +383,7 @@
     </table>
 
 
-    [{ if $oxcmp_basket->getVouchers()}]
+    [{ if $oViewConf->getShowVouchers() && $oxcmp_basket->getVouchers()}]
       <strong class="boxhead">[{ oxmultilang ident="ORDER_USEDCOUPONS" }]</strong>
       <div class="box info">
        [{foreach from=$Errors.basket item=oEr key=key }]
@@ -413,10 +417,10 @@
             [{ oxmultilang ident="ORDER_EMAIL" }]&nbsp;[{ $oxcmp_user->oxuser__oxusername->value }]<br>
             [{ $oxcmp_user->oxuser__oxcompany->value }]&nbsp;<br>
 
-            [{assign var=_sal value=$oxcmp_user->oxuser__oxsal->value}]
-            [{oxmultilang ident="SALUTATION_$_sal" noerror="yes" alternative=$_sal }]&nbsp;[{ $oxcmp_user->oxuser__oxfname->value }]&nbsp;[{ $oxcmp_user->oxuser__oxlname->value }]<br>
+            [{ $oxcmp_user->oxuser__oxsal->value|oxmultilangsal}]&nbsp;[{ $oxcmp_user->oxuser__oxfname->value }]&nbsp;[{ $oxcmp_user->oxuser__oxlname->value }]<br>
             [{ $oxcmp_user->oxuser__oxaddinfo->value }]<br>
             [{ $oxcmp_user->oxuser__oxstreet->value }]&nbsp;[{ $oxcmp_user->oxuser__oxstreetnr->value }]<br>
+            [{ $oxcmp_user->getState() }]
             [{ $oxcmp_user->oxuser__oxzip->value }]&nbsp;[{ $oxcmp_user->oxuser__oxcity->value }]<br>
             [{ $oxcmp_user->oxuser__oxcountry->value }]<br><br>
             [{ oxmultilang ident="ORDER_PHONE" }] [{ $oxcmp_user->oxuser__oxfon->value }]&nbsp;<br>
@@ -439,10 +443,10 @@
             [{if $oDelAdress }]
               <br>
               [{ $oDelAdress->oxaddress__oxcompany->value }]&nbsp;<br>
-              [{assign var=_sal value=$oDelAdress->oxaddress__oxsal->value}]
-              [{oxmultilang ident="SALUTATION_$_sal" noerror="yes" alternative=$_sal }]&nbsp;[{ $oDelAdress->oxaddress__oxfname->value }]&nbsp;[{ $oDelAdress->oxaddress__oxlname->value }]<br>
+              [{ $oDelAdress->oxaddress__oxsal->value|oxmultilangsal}]&nbsp;[{ $oDelAdress->oxaddress__oxfname->value }]&nbsp;[{ $oDelAdress->oxaddress__oxlname->value }]<br>
               [{ $oDelAdress->oxaddress__oxaddinfo->value }]<br>
               [{ $oDelAdress->oxaddress__oxstreet->value }]&nbsp;[{ $oDelAdress->oxaddress__oxstreetnr->value }]<br>
+              [{ $oDelAdress->getState() }]
               [{ $oDelAdress->oxaddress__oxzip->value }]&nbsp;[{ $oDelAdress->oxaddress__oxcity->value }]<br>
               [{ $oDelAdress->oxaddress__oxcountry->value }]<br><br>
               [{ oxmultilang ident="ORDER_PHONE2" }] [{ $oDelAdress->oxaddress__oxfon->value }]&nbsp;<br>
@@ -504,10 +508,11 @@
           <br /><br />
         </p>
 
+        [{oxifcontent ident="oxrightofwithdrawal" object="oCont"}]
         <p>
-          [{assign var="oCont" value=$oView->getContentByIdent("oxrightofwithdrawal") }]
           [{ oxmultilang ident="ORDER_RIGHTOFWITHDRAWAL_MOREINFO1" }] <a id="test_OpenWithdrawal" rel="nofollow" href="[{ $oCont->getLink() }]" class="fontunderline">[{ $oCont->oxcontents__oxtitle->value }]</a>.
         </p>
+        [{/oxifcontent}]
 
     </div>
 
@@ -537,10 +542,12 @@
                           <tr>
                             <td><input id="test_OrderConfirmAGBBottom" type="checkbox" class="chk" name="ord_agb" value="1"></td>
                             <td>
-                                [{assign var="oCont" value=$oView->getContentByIdent("oxagb") }]
-                                [{ oxmultilang ident="ORDER_IAGREETOTERMS1" }] <a id="test_OrderOpenAGBBottom" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'agb_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;" class="fontunderline">[{ oxmultilang ident="ORDER_IAGREETOTERMS2" }]</a> [{ oxmultilang ident="ORDER_IAGREETOTERMS3" }],&nbsp;
-                                [{assign var="oCont" value=$oView->getContentByIdent("oxrightofwithdrawal") }]
-                                [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL1" }] <a id="test_OrderOpenWithdrawalBottom" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'rightofwithdrawal_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ $oCont->oxcontents__oxtitle->value }]</a> [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL3" }]
+                                [{oxifcontent ident="oxagb" object="oCont"}]
+                                  [{oxmultilang ident="ORDER_IAGREETOTERMS1" }] <a id="test_OrderOpenAGBBottom" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'agb_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;" class="fontunderline">[{ oxmultilang ident="ORDER_IAGREETOTERMS2" }]</a> [{ oxmultilang ident="ORDER_IAGREETOTERMS3" }],&nbsp;
+                                [{/oxifcontent}]
+                                [{oxifcontent ident="oxrightofwithdrawal" object="oCont"}]
+                                  [{oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL1" }] <a id="test_OrderOpenWithdrawalBottom" rel="nofollow" href="[{ $oCont->getLink() }]" onclick="window.open('[{ $oCont->getLink()|oxaddparams:"plain=1"}]', 'rightofwithdrawal_popup', 'resizable=yes,status=no,scrollbars=yes,menubar=no,width=620,height=400');return false;">[{ $oCont->oxcontents__oxtitle->value }]</a> [{ oxmultilang ident="ORDER_IAGREETORIGHTOFWITHDRAWAL3" }]
+                                [{/oxifcontent}]
                             </td>
                           </tr>
                         </table>

@@ -18,6 +18,7 @@
     <script type="text/javascript" src="[{$shop->basetpldir}]yui/build/json/json-min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="[{$shop->basetpldir}]aoc.css">
+    <!--[if IE 8]><link rel="stylesheet" type="text/css" href="[{$shop->basetpldir}]aoc_ie8.css"><![endif]-->
     <script type="text/javascript" src="[{ $shop->basetpldir }]yui/oxid-aoc.js"></script>
 
     [{if $readonly}]

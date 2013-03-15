@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxutils.php 23456 2009-10-21 14:49:35Z sarunas $
+ * @version   SVN: $Id: oxutils.php 26909 2010-03-26 17:27:59Z tomas $
  */
 
 /**
@@ -79,18 +79,15 @@ class oxUtils extends oxSuperCfg
     {
         // disable caching for test modules
         if ( defined( 'OXID_PHP_UNIT' ) ) {
-            static $inst = array();
-            self::$_instance = $inst[oxClassCacheKey()];
-
+            self::$_instance = modInstances::getMod( __CLASS__ );
         }
 
         if ( !(self::$_instance instanceof oxUtils) ) {
 
-
             self::$_instance = oxNew( 'oxUtils' );
 
             if ( defined( 'OXID_PHP_UNIT' ) ) {
-                $inst[oxClassCacheKey()] = self::$_instance;
+                modInstances::addMod( __CLASS__, self::$_instance);
             }
         }
         return self::$_instance;
@@ -228,10 +225,10 @@ class oxUtils extends oxSuperCfg
     /**
      * Returns formatted currency string, according to formatting standards.
      *
-     * @deprecated use oxLang::formatCurrency
-     *
      * @param double $dValue  Plain price
      * @param object $oActCur Object of active currency
+     *
+     * @deprecated use oxLang::formatCurrency
      *
      * @return string
      */
@@ -354,7 +351,8 @@ class oxUtils extends oxSuperCfg
         // improved #533
         // checking for available profiles list
         $aInterfaceProfiles = $aInterfaceProfiles;
-        if ( is_array( $aInterfaceProfiles ) ) {   //checking for previous profiles
+        if ( is_array( $aInterfaceProfiles ) ) {
+            //checking for previous profiles
             $sPrevProfile = oxUtilsServer::getInstance()->getOxCookie('oxidadminprofile');
             if (isset($sPrevProfile)) {
                 $aPrevProfile = @explode("@", trim($sPrevProfile));
@@ -476,13 +474,13 @@ class oxUtils extends oxSuperCfg
      * All file caches are supposed to be written once by commitFileCache() method.
      *
      * @param string $sKey      Cache key
-     * @param mixed  $,Contents Contents to cache
+     * @param mixed  $mContents Contents to cache
      *
      * @return bool
      */
     public function toFileCache($sKey, $mContents)
     {
-        $sFilePath = $this->_getCacheFilePath( $sKey );
+        $sFilePath = $this->getCacheFilePath( $sKey );
         $iCurTime = oxUtilsDate::getInstance()->getTime();
 
         //T2009-05-26
@@ -511,6 +509,67 @@ class oxUtils extends oxSuperCfg
     }
 
     /**
+     * Generates php file, which could later be loaded as include instead of paresed data.
+     * Currenntly this method supports simple arrays only.
+     *
+     * @param string $sKey      Cache key
+     * @param mixed  $mContents Cache contents. At this moment only simple array type is supported.
+     *
+     * @return null;
+     */
+    public function toPhpFileCache($sKey, $mContents)
+    {
+        $sFilePath = $this->getCacheFilePath( $sKey, false, 'php' );
+        $sDate = date("Y-m-d H:i:s");
+        $sVarName = '$_aCacheContents';
+
+        //only simple arrays are supported
+        if (!is_array($mContents))
+            return;
+
+        $sContents = "<?php ?>";
+        if (is_array($mContents)) {
+            $sContents  = "<?php\n//automatically generated file\n//$sDate\n\n$sVarName = array (\n";
+            foreach ($mContents as $sKey => $mVal) {
+                if (!is_numeric($mVal)) {
+                    $mVal = "'$mVal'";
+                }
+                if (!is_numeric($sKey)) {
+                    $sKey = "'$sKey'";
+                }
+                $sContents .= "  $sKey => $mVal,\n";
+            }
+            $sContents .= ");\n?>";
+        }
+
+        $hFile = fopen( $sFilePath, "w");
+        if ( $hFile) {
+            fwrite( $hFile, $sContents);
+            fclose( $hFile);
+        }
+
+    }
+
+    /**
+     * Includes cached php file and loads stored contents.
+     *
+     * @param string $sKey Cache key.
+     *
+     * @return null;
+     */
+    public function fromPhpFileCache($sKey)
+    {
+        $sFilePath = $this->getCacheFilePath( $sKey, false, 'php' );
+
+        if (file_exists($sFilePath)) {
+            include $sFilePath;
+            return $_aCacheContents;
+        }
+
+        return null;
+    }
+
+    /**
      * Fetches contents from file cache.
      *
      * @param string $sKey Cache key
@@ -519,23 +578,21 @@ class oxUtils extends oxSuperCfg
      */
     public function fromFileCache( $sKey )
     {
-        if (isset($this->_aFileCacheContents[$sKey]))
-            return $this->_aFileCacheContents[$sKey];
+        if ( !isset( $this->_aFileCacheContents[$sKey] ) ) {
+            $sRes = null;
 
-        $sRes = null;
-        // read the file
-        $sFilePath = $this->_getCacheFilePath( $sKey );
-        if (!file_exists( $sFilePath))
-            return null;
-        if ( file_exists( $sFilePath) && is_readable($sFilePath)) {
-            // read it
-            $sRes = file_get_contents( $sFilePath);
-            if (!$sRes)
-                return null;
+            // read the file
+            $sFilePath = $this->getCacheFilePath( $sKey );
+            if ( file_exists( $sFilePath ) && is_readable( $sFilePath ) ) {
+                // read it
+                $sRes = file_get_contents( $sFilePath );
+                $sRes = $sRes ? unserialize( $sRes ) : null;
+            }
+
+            $this->_aFileCacheContents[$sKey] = $sRes;
         }
-        $sRes = unserialize($sRes);
 
-        return $sRes;
+        return $this->_aFileCacheContents[$sKey];
     }
 
     /**
@@ -545,9 +602,9 @@ class oxUtils extends oxSuperCfg
      */
     public function commitFileCache()
     {
-        foreach($this->_aFileCacheContents as $sKey => $mContents) {
+        foreach ($this->_aFileCacheContents as $sKey => $mContents) {
             $mContents = serialize($mContents);
-            $sFilePath = $this->_getCacheFilePath( $sKey );
+            $sFilePath = $this->getCacheFilePath( $sKey );
             //if ( is_writable($sFilePath))
             // dodger: somehow is_writeable() always says no on windows machines
             $hFile = fopen( $sFilePath, "w");
@@ -571,7 +628,7 @@ class oxUtils extends oxSuperCfg
      */
     public function oxResetFileCache()
     {
-        $aPathes = glob( $this->_getCacheFilePath( null, true ) . '*' );
+        $aPathes = glob( $this->getCacheFilePath( null, true ) . '*' );
         if ( is_array( $aPathes ) ) {
             // delete all the files, except cached tables fieldnames
             $aPathes = preg_grep( $this->_sPermanentCachePattern, $aPathes, PREG_GREP_INVERT );
@@ -632,9 +689,8 @@ class oxUtils extends oxSuperCfg
         }
         if ( $blSuccess || file_exists( $sLocal ) ) {
             return $sLocal;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -678,9 +734,11 @@ class oxUtils extends oxSuperCfg
                         oxSession::setVar( "actshop", $myConfig->getBaseShopId());
                     }
                     $blIsAuth = true;
-                } else {   // Shopadmin... check if this shop is valid and exists
+                } else {
+                    // Shopadmin... check if this shop is valid and exists
                     $sShopID = $oDb->getOne("select oxid from oxshops where oxid = " . $oDb->quote( $sRights ) );
-                    if ( isset( $sShopID) && $sShopID) {   // success, this shop exists
+                    if ( isset( $sShopID) && $sShopID) {
+                        // success, this shop exists
 
                         oxSession::setVar( "actshop", $sRights);
                         oxSession::setVar( "currentadminshop", $sRights);
@@ -833,6 +891,7 @@ class oxUtils extends oxSuperCfg
      *
      * @param string $sUrl               URL to be redirected
      * @param bool   $blAddRedirectParam add "redirect" param
+     * @param int    $iHeaderCode        header code, default 301
      *
      * @return null or exit
      */
@@ -886,12 +945,13 @@ class oxUtils extends oxSuperCfg
     public function showMessageAndExit( $sMsg )
     {
         $this->getSession()->freeze();
+        $this->commitFileCache();
 
         if ( defined( 'OXID_PHP_UNIT' ) ) {
             return;
         }
 
-        die( $sMsg );
+        exit( $sMsg );
     }
 
     /**
@@ -1076,42 +1136,17 @@ class oxUtils extends oxSuperCfg
      *
      * @param string $sUrl given url
      *
-     * @access public
+     * @deprecated use oxUtilsUrl::prepareUrlForNoSession()
+     *
      * @return string
      */
-    public function prepareUrlForNoSession($sUrl)
+    public function prepareUrlForNoSession( $sUrl )
     {
         if ( $this->seoIsActive() ) {
             return $sUrl;
         }
 
-        $sUrl = preg_replace('/(force_)?sid=[a-z0-9\._]*&?(amp;)?/i', '', $sUrl);
-
-        $oStr = getStr();
-        if ($qpos = $oStr->strpos($sUrl, '?')) {
-            if ($qpos == $oStr->strlen($sUrl)-1) {
-                $sSep = '';
-            } else {
-                $sSep = '&amp;';
-            }
-        } else {
-            $sSep = '?';
-        }
-
-        if (!preg_match('/[&?](amp;)?lang=[0-9]+/i', $sUrl)) {
-            $sUrl .= "{$sSep}lang=".oxLang::getInstance()->getBaseLanguage();
-            $sSep = '&amp;';
-        }
-
-        if (!preg_match('/[&?](amp;)?cur=[0-9]+/i', $sUrl)) {
-            $iCur = (int) oxConfig::getParameter('currency');
-            if ($iCur) {
-                $sUrl .= "{$sSep}cur=".$iCur;
-                $sSep = '&amp;';
-            }
-        }
-
-        return $sUrl;
+        return oxUtilsUrl::getInstance()->prepareUrlForNoSession( $sUrl );
     }
 
     /**
@@ -1120,9 +1155,25 @@ class oxUtils extends oxSuperCfg
      * @param string $sCacheName cache file name
      * @param bool   $blPathOnly if TRUE, name parameter will be ignored and only cache folder will be returned (default FALSE)
      *
+     * @deprecated use oxUtils::getCacheFilePath()
+     *
      * @return string
      */
     protected function _getCacheFilePath( $sCacheName, $blPathOnly = false )
+    {
+        return $this->getCacheFilePath( $sCacheName, $blPathOnly );
+    }
+
+    /**
+     * Returns full path (including file name) to cache file
+     *
+     * @param string $sCacheName cache file name
+     * @param bool   $blPathOnly if TRUE, name parameter will be ignored and only cache folder will be returned (default FALSE)
+     * @param string $sExtension cache file extension
+     *
+     * @return string
+     */
+    public function getCacheFilePath( $sCacheName, $blPathOnly = false, $sExtension = 'txt' )
     {
         $sVersionPrefix = "";
 
@@ -1130,7 +1181,7 @@ class oxUtils extends oxSuperCfg
             $sVersionPrefix = 'pe';
 
         $sPath = realpath($this->getConfig()->getConfigParam( 'sCompileDir' ));
-        return $blPathOnly ? "{$sPath}/" : "{$sPath}/ox{$sVersionPrefix}c_{$sCacheName}.txt";
+        return $blPathOnly ? "{$sPath}/" : "{$sPath}/ox{$sVersionPrefix}c_{$sCacheName}." . $sExtension;
     }
 
     /**
@@ -1143,7 +1194,7 @@ class oxUtils extends oxSuperCfg
     public function getLangCache( $sCacheName )
     {
         $aLangCache = null;
-        $sFilePath = $this->_getCacheFilePath( $sCacheName );
+        $sFilePath = $this->getCacheFilePath( $sCacheName );
         if ( file_exists( $sFilePath ) && is_readable( $sFilePath ) ) {
             include $sFilePath;
         }
@@ -1161,7 +1212,7 @@ class oxUtils extends oxSuperCfg
     public function setLangCache( $sCacheName, $aLangCache )
     {
         $sCache = "<?php\n\$aLangCache = ".var_export( $aLangCache, true ).";";
-        $blRes = file_put_contents($this->_getCacheFilePath($sCacheName), $sCache);
+        $blRes = file_put_contents($this->getCacheFilePath($sCacheName), $sCache);
         return $blRes;
     }
 
@@ -1200,5 +1251,29 @@ class oxUtils extends oxSuperCfg
         }
 
         return $blOk;
+    }
+
+    /**
+     * handler for 404 (page not found) error
+     *
+     * @param string $sUrl url wich was given, can be not specified in some cases
+     *
+     * @return void
+     */
+    public function handlePageNotFoundError($sUrl = '')
+    {
+        $this->setHeader("HTTP/1.0 404 Not Found");
+        $sReturn = "Page not found.";
+        try {
+            $oView = oxNew('oxubase');
+            $oView->init();
+            $oView->render();
+            $oView->addTplParam('sUrl', $sUrl);
+            if ($sRet = oxUtilsView::getInstance()->getTemplateOutput('err_404.tpl', $oView)) {
+                $sReturn = $sRet;
+            }
+        } catch (Exception $e) {
+        }
+        $this->showMessageAndExit( $sReturn );
     }
 }

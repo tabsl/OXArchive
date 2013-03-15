@@ -15,15 +15,15 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxmdvariant.php 20503 2009-10-15 14:54:11Z tomas $
+ * @version   SVN: $Id: oxmdvariant.php 20503 2009-10-15 14:54:11Z tomas $
  */
 
 /**
- * Defines an element of multidimensional variant name tree structure. Contains article id, variant name, URL, price, price text, and a subset of MD variants.
+ * Defines an element of multidimentional variant name tree structure. Contains article id, variant name, URL, price, price text, and a subset of MD variants.
  *
  * @package core
  */
@@ -130,33 +130,6 @@ class oxMdVariant extends oxSuperCfg
     }
 
     /**
-     * Inits MD variant by name. In case $aNames parameter has more than one element addNames recursively adds names for subvariants.
-     *
-     * @param array[int] $aNames Expected array of $sKey=>$sName pairs.
-     * @param double     $dPrice Price as double
-     * @param string     $sUrl   Article URL
-     *
-     * @return null
-     */
-    public function addNames($sArtId, $aNames, $dPrice, $sUrl)
-    {
-        $iCount = count($aNames);
-        $sName = array_shift($aNames);
-
-        if ($iCount) {
-            //get required subvariant
-            $oVariant = $this->_getMdSubvariantByName($sName);
-            //add remaining names
-            $oVariant->addNames($sArtId, $aNames, $dPrice, $sUrl);
-        } else {
-            //means we have the deepest element and assign other attributes
-            $this->_sArticleId = $sArtId;
-            $this->_dPrice = $dPrice;
-            $this->_sUrl = $sUrl;
-        }
-    }
-
-    /**
      * Sets MD subvariants
      *
      * @param array[string]OxMdVariant $aSubvariants Subvariants
@@ -169,39 +142,51 @@ class oxMdVariant extends oxSuperCfg
     }
 
     /**
-     * Returns corresponding article id or recusively first variant id from subvariant set
+     * Returns full array of subvariants
      *
-     * @return string
+     * @return array[string]OxMdSubvariants
      */
-    public function getArticleId()
+    public function getMdSubvariants()
     {
-        $oFirstSubvariant = $this->getFirstMdSubvariant();
-
-        if ($oFirstSubvariant)
-            return $oFirstSubvariant->getArticleId();
-
-        return $this->_sArticleId;
+        return $this->_aSubvariants;
     }
 
     /**
-     * Checks whether $sArtId is one of subtree article ids.
+     * Returns first MD subvariant from subvariant set or null in case variant has no subvariants.
      *
-     * @param string $sArtId Article ID
-     *
-     * @return bool
+     * @return OxMdVariant
      */
-    public function hasArticleId($sArtId)
+    public function getFirstMdSubvariant()
     {
-        if ($this->getArticleId() == $sArtId)
-            return true;
+        $aMdSubvariants = $this->getMdSubvariants();
+        if (count($aMdSubvariants))
+            return reset($aMdSubvariants);
 
+        return null;
+    }
+
+    /**
+     * Checks for existing MD subvariant by name. Returns existing one or in case $sName has not been found creates an empty OxMdVariant instance.
+     *
+     * @param string $sName Subvariant name
+     *
+     * @return OxMdVariant
+     */
+    public function getMdSubvariantByName($sName)
+    {
         $aSubvariants = $this->getMdSubvariants();
-        foreach ($aSubvariants as $oSubvariant) {
-            if ($oSubvariant->hasArticleId($sArtId))
-                return true;
+        foreach ($aSubvariants as $oMdSubvariant) {
+            if (strcasecmp($oMdSubvariant->getName(), $sName) == 0)
+                return $oMdSubvariant;
         }
 
-        return false;
+        $oNewSubvariant = oxNew("oxMdVariant");
+        $oNewSubvariant->setName($sName);
+        $oNewSubvariant->setId(md5($sName.$this->getId()));
+        $oNewSubvariant->setParentId($this->getId());
+        $this->_addMdSubvariant($oNewSubvariant);
+
+        return $oNewSubvariant;
     }
 
     /**
@@ -222,6 +207,8 @@ class oxMdVariant extends oxSuperCfg
      * Name setter
      *
      * @param string $sName New name
+     *
+     * @return null;
      */
     public function setName($sName)
     {
@@ -236,16 +223,6 @@ class oxMdVariant extends oxSuperCfg
     public function getName()
     {
         return $this->_sName;
-    }
-
-    /**
-     * Returns corresponding article Url
-     *
-     * @return string
-     */
-    public function getUrl()
-    {
-        return $this->_sUrl;
     }
 
     /**
@@ -314,7 +291,7 @@ class oxMdVariant extends oxSuperCfg
 
         $sFromPrefix = '';
 
-        if (!$this->isFixedPrice()) {
+        if (!$this->_isFixedPrice()) {
             $sFromPrefix = oxLang::getInstance()->translateString('priceFrom') . ' ';
         }
 
@@ -327,57 +304,72 @@ class oxMdVariant extends oxSuperCfg
     }
 
     /**
-     * Returns first MD subvariant from subvariant set or null in case variant has no subvariants.
+     * Inits MD variant by name. In case $aNames parameter has more than one element addNames recursively adds names for subvariants.
      *
-     * @return OxMdVariant
+     * @param string     $sArtId Article ID
+     * @param array[int] $aNames Expected array of $sKey=>$sName pairs.
+     * @param double     $dPrice Price as double
+     * @param string     $sUrl   Article URL
+     *
+     * @return null
      */
-    public function getFirstMdSubvariant()
+    public function addNames($sArtId, $aNames, $dPrice, $sUrl)
     {
-        $aMdSubvariants = $this->getMdSubvariants();
-        if (count($aMdSubvariants))
-            return reset($aMdSubvariants);
+        $iCount = count($aNames);
+        $sName = array_shift($aNames);
 
-        return null;
+        if ($iCount) {
+            //get required subvariant
+            $oVariant = $this->getMdSubvariantByName($sName);
+            //add remaining names
+            $oVariant->addNames($sArtId, $aNames, $dPrice, $sUrl);
+        } else {
+            //means we have the deepest element and assign other attributes
+            $this->_sArticleId = $sArtId;
+            $this->_dPrice = $dPrice;
+            $this->_sUrl = $sUrl;
+        }
     }
 
     /**
-     * Returns full array of subvariants
+     * Returns corresponding article id or recusively first variant id from subvariant set
      *
-     * @return array[string]OxMdSubvariants
+     * @return string
      */
-    public function getMdSubvariants()
+    public function getArticleId()
     {
-        return $this->_aSubvariants;
+        $oFirstSubvariant = $this->getFirstMdSubvariant();
+
+        if ($oFirstSubvariant)
+            return $oFirstSubvariant->getArticleId();
+
+        return $this->_sArticleId;
     }
 
     /**
-     * Checks for existing MD subvariant by name. Returns existing one or in case $sName has not been found creates an empty OxMdVariant instance.
+     * Checks whether $sArtId is one of subtree article ids.
      *
-     * @param string $sName Subvariant name
+     * @param string $sArtId Article ID
      *
-     * @return OxMdVariant
+     * @return bool
      */
-    protected function _getMdSubvariantByName($sName)
+    public function hasArticleId($sArtId)
     {
+        if ($this->getArticleId() == $sArtId)
+            return true;
+
         $aSubvariants = $this->getMdSubvariants();
-        foreach ($aSubvariants as $oMdSubvariant) {
-            if (strcasecmp($oMdSubvariant->getName(), $sName) == 0)
-                return $oMdSubvariant;
+        foreach ($aSubvariants as $oSubvariant) {
+            if ($oSubvariant->hasArticleId($sArtId))
+                return true;
         }
 
-        $oNewSubvariant = oxNew("oxMdVariant");
-        $oNewSubvariant->setName($sName);
-        $oNewSubvariant->setId(md5($sName.$this->getId()));
-        $oNewSubvariant->setParentId($this->getId());
-        $this->_addMdSubvariant($oNewSubvariant);
-
-        return $oNewSubvariant;
+        return false;
     }
 
     /**
      * Adds one subvariant to subvariant set
      *
-     * @param string      $sKey        Article id
      * @param OxMdVariant $oSubvariant Subvariant
      *
      * @return null
@@ -388,11 +380,11 @@ class oxMdVariant extends oxSuperCfg
     }
 
     /**
-     * Checks if vairant price is fixed or not ("from" price)
+     * Checks if variant price is fixed or not ("from" price)
      *
      * @return bool
      */
-    protected function isFixedPrice()
+    protected function _isFixedPrice()
     {
         $dPrice = $this->getDPrice();
         $aVariants = $this->getMdSubvariants();
@@ -404,7 +396,7 @@ class oxMdVariant extends oxSuperCfg
             if (!is_null($dVariantPrice) && $dVariantPrice != $dPrice) {
                 return false;
             }
-            if (!$oVariant->isFixedPrice()) {
+            if (!$oVariant->_isFixedPrice()) {
                 return false;
             }
         }

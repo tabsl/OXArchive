@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: genexport_do.php 22356 2009-09-16 13:54:18Z vilma $
+ * @version   SVN: $Id: genexport_do.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -28,8 +28,25 @@
  */
 class GenExport_Do extends DynExportBase
 {
+    /**
+     * Export class name
+     *
+     * @var string
+     */
     public $sClass_do       = "genExport_do";
+
+    /**
+     * Export ui class name
+     *
+     * @var string
+     */
     public $sClass_main     = "genExport_main";
+
+    /**
+     * Export file name
+     *
+     * @var string
+     */
     public $sExportFileName = "genexport";
 
     /**
@@ -47,15 +64,16 @@ class GenExport_Do extends DynExportBase
      */
     public function nextTick( $iCnt )
     {
-        $myConfig = oxConfig::getInstance();
         $iExportedItems = $iCnt;
+        $blContinue = false;
         if ( $oArticle = $this->getOneArticle( $iCnt, $blContinue ) ) {
-            $smarty = oxUtilsView::getInstance()->getSmarty();
-            $smarty->assign_by_ref( "linenr", $iCnt );
-            $smarty->assign_by_ref( "article", $oArticle );
-            $smarty->assign( "spr", $myConfig->getConfigParam( 'sCSVSign' ) );
-            $smarty->assign( "encl", $myConfig->getConfigParam( 'sGiCsvFieldEncloser' ) );
-            $this->write( $smarty->fetch( "genexport.tpl", $this->getViewID() ) );
+            $myConfig = oxConfig::getInstance();
+            $oSmarty = oxUtilsView::getInstance()->getSmarty();
+            $oSmarty->assign_by_ref( "linenr", $iCnt );
+            $oSmarty->assign_by_ref( "article", $oArticle );
+            $oSmarty->assign( "spr", $myConfig->getConfigParam( 'sCSVSign' ) );
+            $oSmarty->assign( "encl", $myConfig->getConfigParam( 'sGiCsvFieldEncloser' ) );
+            $this->write( $oSmarty->fetch( "genexport.tpl", $this->getViewId() ) );
             return ++$iExportedItems;
         }
 
@@ -71,10 +89,10 @@ class GenExport_Do extends DynExportBase
      */
     public function write( $sLine )
     {
-        $sLine = $this->removeSID( $sLine);
+        $sLine = $this->removeSID( $sLine );
 
-        $sLine = str_replace( array("\r\n","\n"), "", $sLine);
-        $sLine = str_replace( "<br>", "\n", $sLine);
+        $sLine = str_replace( array("\r\n","\n"), "", $sLine );
+        $sLine = str_replace( "<br>", "\n", $sLine );
 
         fwrite( $this->fpFile, $sLine."\r\n");
     }

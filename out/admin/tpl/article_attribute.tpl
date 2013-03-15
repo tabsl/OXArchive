@@ -43,12 +43,12 @@ function editThis( sID )
         [{/if}]
 
           [{oxhasrights object=$edit readonly=$readonly }]
-          <input type="button" value="[{ oxmultilang ident="ARTICLE_ATTRIBUTE_ASSIGNATTRIBUTE" }]" class="edittext" onclick="JavaScript:showDialog('?cl=article_attribute&aoc=1&oxid=[{ $oxid }]');">
+          <input type="button" value="[{ oxmultilang ident="ARTICLE_ATTRIBUTE_ASSIGNATTRIBUTE" }]" class="edittext" onclick="JavaScript:showDialog('&cl=article_attribute&aoc=1&oxid=[{ $oxid }]');">
           [{/oxhasrights}]
 
           [{ if !$edit->blForeignArticle }]
           <br><br>
-          <a class="edittext" href="[{ $shop->selflink }]?cl=attribute" target="_new"><b>[{ oxmultilang ident="ARTICLE_ATTRIBUTE_OPENINNEWWINDOW" }]</b></a>
+          <a class="edittext" href="[{ $shop->selflink }]&cl=attribute" target="_new"><b>[{ oxmultilang ident="ARTICLE_ATTRIBUTE_OPENINNEWWINDOW" }]</b></a>
           [{/if}]
 
       </td>
@@ -56,7 +56,7 @@ function editThis( sID )
       <!-- Anfang rechte Seite -->
       <td valign="top" class="edittext" align="left" width="50%">
         [{oxhasrights object=$edit readonly=$readonly }]
-          <input type="button" value="[{ oxmultilang ident="ARTICLE_ATTRIBUTE_ASSIGNSELECTLIST" }]" class="edittext" onclick="JavaScript:showDialog('?cl=article_attribute&aoc=2&oxid=[{ $oxid }]');">
+          <input type="button" value="[{ oxmultilang ident="ARTICLE_ATTRIBUTE_ASSIGNSELECTLIST" }]" class="edittext" onclick="JavaScript:showDialog('&cl=article_attribute&aoc=2&oxid=[{ $oxid }]');">
         [{/oxhasrights}]
       </td>
       <!-- Ende rechte Seite -->

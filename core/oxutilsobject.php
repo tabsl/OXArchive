@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxutilsobject.php 17248 2009-03-16 15:22:07Z arvydas $
+ * @version   SVN: $Id: oxutilsobject.php 25471 2010-02-01 14:35:11Z alfonsas $
  */
 
 /**
@@ -64,8 +64,7 @@ class oxUtilsObject extends oxSuperCfg
     {
         // disable caching for test modules
         if ( defined( 'OXID_PHP_UNIT' ) ) {
-            static $inst = array();
-            self::$_instance = $inst[oxClassCacheKey()];
+            self::$_instance = modInstances::getMod( __CLASS__ );
         }
 
         if ( !self::$_instance instanceof oxUtilsObject ) {
@@ -75,7 +74,7 @@ class oxUtilsObject extends oxSuperCfg
             self::$_instance = $oUtilsObject->oxNew( 'oxUtilsObject' );
 
             if ( defined( 'OXID_PHP_UNIT' ) ) {
-                $inst[oxClassCacheKey()] = self::$_instance;
+                modInstances::addMod( __CLASS__, self::$_instance);
             }
         }
         return self::$_instance;
@@ -290,8 +289,9 @@ class oxUtilsObject extends oxSuperCfg
 
             //including original file
             if ( file_exists( $sParentPath ) ) {
-                require_once $sParentPath;
-            } elseif ( !class_exists( $sModuleClass ) ) { //to avoid problems with unitest and only throw a exception if class does not exists MAFI
+                include_once $sParentPath;
+            } elseif ( !class_exists( $sModuleClass ) ) {
+                //to avoid problems with unitest and only throw a exception if class does not exists MAFI
                 $oEx = new oxSystemComponentException();
                 $oEx->setMessage('EXCEPTION_SYSTEMCOMPONENT_CLASSNOTFOUND');
                 $oEx->setComponent($sModule);

@@ -18,7 +18,7 @@
 <table cellspacing="0" cellpadding="0" border="0" height="100%" width="100%">
 <tr>
     <td valign="top" class="edittext">
-        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('?cl=newsletter_selection&aoc=1&oxid=[{ $oxid }]');">
+        <input [{ $readonly }] type="button" value="[{ oxmultilang ident="GENERAL_ASSIGNGROUPS" }]" class="edittext" onclick="JavaScript:showDialog('&cl=newsletter_selection&aoc=1&oxid=[{ $oxid }]');">
     </td>
 
     <!-- Anfang rechte Seite -->
@@ -28,7 +28,7 @@
     <br>
     <br>
     <div id="_newsletterbtn"[{ if !$user }]style="display:none"[{ /if }]>
-    <a href="[{$shop->selflink}]?cl=newsletter_send&user=[{$user}]&id=[{ $oxid }]&iStart=0" class="edittext" target="list" [{if $readonly }]onclick="JavaScript:return false;"[{/if}]><b>[{ oxmultilang ident="NEWSLETTER_SELECTION_SENDNEWS" }]</b></a>
+    <a href="[{$shop->selflink}]&cl=newsletter_send&user=[{$user}]&id=[{ $oxid }]&iStart=0" class="edittext" target="list" [{if $readonly }]onclick="JavaScript:return false;"[{/if}]><b>[{ oxmultilang ident="NEWSLETTER_SELECTION_SENDNEWS" }]</b></a>
     </div>
     </td>
     </tr>

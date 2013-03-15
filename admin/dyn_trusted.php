@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: dyn_trusted.php 22945 2009-10-05 15:40:36Z alfonsas $
+ * @version   SVN: $Id: dyn_trusted.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 
@@ -59,33 +59,37 @@ class dyn_trusted extends Shop_Config
      */
     public function save()
     {
-        $myConfig = $this->getConfig();
-        $aConfStrs  = oxConfig::getParameter( "aShopID_TrustedShops");
+        $aConfStrs = oxConfig::getParameter( "aShopID_TrustedShops" );
         $blSave = true;
         $blNotEmpty = false;
-        foreach ( $aConfStrs as $sConfStrs) {
+        foreach ( $aConfStrs as $sConfStrs ) {
             if ( $sConfStrs ) {
                 $blNotEmpty = true;
                 if ( strlen( $sConfStrs ) != 33 || substr( $sConfStrs, 0, 1 ) != 'X' ) {
-                    $this->_aViewData["errorsaving"] = 1;
                     $blSave = false;
-                    $this->_aViewData["aShopID_TrustedShops"] = null;
                 }
             }
         }
-        if ( $blNotEmpty && ( count( array_unique( $aConfStrs ) ) < count( $aConfStrs ) ) ) {
-            $this->_aViewData["errorsaving"] = 1;
+
+        $aTSIds = array_filter( $aConfStrs );
+        if ( $blNotEmpty && ( count( array_unique( $aTSIds ) ) < count( $aTSIds ) ) ) {
             $blSave = false;
-            $this->_aViewData["aShopID_TrustedShops"] = null;
         }
 
         if ( $blSave ) {
+            $myConfig = $this->getConfig();
             $myConfig->saveShopConfVar( "aarr", 'iShopID_TrustedShops', $aConfStrs, $myConfig->getShopId() );
+        } else {
+            // displaying error..
+            $this->_aViewData["errorsaving"] = 1;
+            $this->_aViewData["aShopID_TrustedShops"] = null;
         }
     }
 
     /**
+     * Returns view id ('dyn_interface')
      *
+     * @return string
      */
     public function getViewId()
     {

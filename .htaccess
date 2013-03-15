@@ -2,8 +2,11 @@
 
 Options +FollowSymLinks
 RewriteEngine On
-RewriteCond %{REQUEST_URI} !(\/core\/|\/export\/|\/modules\/|\/out\/|\/setup\/|\/tmp\/|\/views\/)
-RewriteRule admin/test\.php$ admin/test.php?mod_rewrite=1
+RewriteBase /
+
+RewriteCond %{REQUEST_URI} oxseo\.php$
+RewriteCond %{QUERY_STRING} mod_rewrite_module_is=off
+RewriteRule oxseo\.php$ oxseo.php?mod_rewrite_module_is=on [L]
 
 RewriteCond %{REQUEST_URI} !(\/admin\/|\/core\/|\/export\/|\/modules\/|\/out\/|\/setup\/|\/tmp\/|\/views\/)
 RewriteCond %{REQUEST_FILENAME} !-f

@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: shop_system.php 22488 2009-09-22 07:04:25Z arvydas $
+ * @version   SVN: $Id: shop_system.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
 /**
@@ -56,7 +56,7 @@ class Shop_System extends Shop_Config
         $sLangAbbr = $aLanguages[$iLang]->abbr;
 
         // loading shop location countries list (defines in which country shop exists)
-        require "shop_countries.php";
+        include "shop_countries.php";
 
         $soxId = oxConfig::getParameter( "oxid");
         if ( !$soxId)

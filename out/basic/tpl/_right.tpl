@@ -10,7 +10,7 @@
         [{oxid_include_dynamic file="dyn/cmp_login_links.tpl" type="login_links"}]
     </div>
 
-    [{if !$oxcmp_user->oxuser__oxpassword->value}]
+    [{if !$oxcmp_user->oxuser__oxpassword->value && $oViewConf->getShowOpenIdLogin() }]
         <strong class="h2"><a id="test_RightSideOpenIdHeader" rel="nofollow" href="[{ oxgetseourl ident=$oViewConf->getSelfLink()|cat:"cl=account"}]">[{ oxmultilang ident="INC_RIGHTITEM_OPENID" }]</a></strong>
         <div class="box">
             [{oxid_include_dynamic file="dyn/cmp_openidlogin_right.tpl" type="login" pgnr=$pageNavigation->actPage tpl=$tpl additional_form_parameters="`$AdditionalFormParameters`"|cat:$oViewConf->getNavFormParams() }]
@@ -50,43 +50,45 @@
     </div>
 [{ /if }]
 
-[{ if $oView->getSimilarRecommLists() }]
-    <strong class="h2" id="test_RightSideRecommlistHeader">
-        [{ oxmultilang ident="INC_RIGHTITEM_RECOMMLIST" }]
-        [{if $rsslinks.recommlists}]
-            <a class="rss" id="rss.recommlists" href="[{$rsslinks.recommlists.link}]" title="[{$rsslinks.recommlists.title}]"></a>
-            [{oxscript add="oxid.blank('rss.recommlists');"}]
-        [{/if}]
-    </strong>
-    <div class="box">
-        <div>[{include file="inc/right_recommlist.tpl" list=$oView->getSimilarRecommLists()}]</div>
-        <br>
-        <span class="def_color_1">[{ oxmultilang ident="INC_RIGHTITEM_SEARCHFORLISTS" }]</span>
-        <form name="basket" action="[{ $oViewConf->getSelfActionLink() }]" method="post" class="recommlistsearch">
-          <div>
-              [{ $oViewConf->getHiddenSid() }]
-              <input type="hidden" name="cl" value="recommlist">
-              <input type="text" name="searchrecomm" id="searchrecomm" value="[{$oView->getRecommSearch()}]" class="search_input">
-              <span class="btn"><input id="test_searchRecommlist" type="submit" value="GO!" class="btn"></span>
-          </div>
-        </form>
-    </div>
-[{ /if }]
+[{if $oViewConf->getShowListmania()}]
+    [{ if $oView->getSimilarRecommLists() }]
+        <strong class="h2" id="test_RightSideRecommlistHeader">
+            [{ oxmultilang ident="INC_RIGHTITEM_RECOMMLIST" }]
+            [{if $rsslinks.recommlists}]
+                <a class="rss" id="rss.recommlists" href="[{$rsslinks.recommlists.link}]" title="[{$rsslinks.recommlists.title}]"></a>
+                [{oxscript add="oxid.blank('rss.recommlists');"}]
+            [{/if}]
+        </strong>
+        <div class="box">
+            <div>[{include file="inc/right_recommlist.tpl" list=$oView->getSimilarRecommLists()}]</div>
+            <br>
+            <span class="def_color_1">[{ oxmultilang ident="INC_RIGHTITEM_SEARCHFORLISTS" }]</span>
+            <form name="basket" action="[{ $oViewConf->getSelfActionLink() }]" method="post" class="recommlistsearch">
+              <div>
+                  [{ $oViewConf->getHiddenSid() }]
+                  <input type="hidden" name="cl" value="recommlist">
+                  <input type="text" name="searchrecomm" id="searchrecomm" value="[{$oView->getRecommSearch()}]" class="search_input">
+                  <span class="btn"><input id="test_searchRecommlist" type="submit" value="GO!" class="btn"></span>
+              </div>
+            </form>
+        </div>
+    [{ /if }]
 
-[{ if !$oView->getSimilarRecommLists() && $oView->getRecommSearch() }]
-    <strong class="h2" id="test_RightSideRecommlistHeader">[{ oxmultilang ident="INC_RIGHTITEM_RECOMMLIST" }]</strong>
-    <div class="box">
-        <span class="def_color_1">[{ oxmultilang ident="INC_RIGHTITEM_SEARCHFORLISTS" }]</span>
-        <form name="basket" action="[{ $oViewConf->getSelfActionLink() }]" method="post" class="recommlistsearch">
-          <div>
-              [{ $oViewConf->getHiddenSid() }]
-              <input type="hidden" name="cl" value="recommlist">
-              <input type="text" name="searchrecomm" value="[{$oView->getRecommSearch()}]" class="search_input">
-              <span class="btn"><input id="test_searchRecommlist" type="submit" value="GO!" class="btn"></span>
-          </div>
-        </form>
-    </div>
-[{ /if }]
+    [{ if !$oView->getSimilarRecommLists() && $oView->getRecommSearch() }]
+        <strong class="h2" id="test_RightSideRecommlistHeader">[{ oxmultilang ident="INC_RIGHTITEM_RECOMMLIST" }]</strong>
+        <div class="box">
+            <span class="def_color_1">[{ oxmultilang ident="INC_RIGHTITEM_SEARCHFORLISTS" }]</span>
+            <form name="basket" action="[{ $oViewConf->getSelfActionLink() }]" method="post" class="recommlistsearch">
+              <div>
+                  [{ $oViewConf->getHiddenSid() }]
+                  <input type="hidden" name="cl" value="recommlist">
+                  <input type="text" name="searchrecomm" value="[{$oView->getRecommSearch()}]" class="search_input">
+                  <span class="btn"><input id="test_searchRecommlist" type="submit" value="GO!" class="btn"></span>
+              </div>
+            </form>
+        </div>
+    [{ /if }]
+[{/if}]
 
 [{ if $oView->getAccessoires() }]
     <strong class="h2" id="test_RightSideAccessoiresHeader">[{ oxmultilang ident="INC_RIGHTITEM_ACCESSORIES" }]</strong>

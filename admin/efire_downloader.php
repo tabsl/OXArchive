@@ -15,14 +15,14 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package admin
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   admin
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: efire_downloader.php 23173 2009-10-12 13:29:45Z sarunas $
+ * @version   SVN: $Id: efire_downloader.php 25466 2010-02-01 14:12:07Z alfonsas $
  */
 
-class EFire_Downloader extends oxAdminView
+class EFire_Downloader extends Efire
 {
     /**
      * Template name
@@ -31,6 +31,11 @@ class EFire_Downloader extends oxAdminView
      */
     protected $_sThisTemplate = "efire_downloader.tpl";
 
+    /**
+     * Sets efire parameters to view, returns name of template to render
+     *
+     * @return string
+     */
     public function render()
     {
         $oStr = getStr();
@@ -71,17 +76,15 @@ class EFire_Downloader extends oxAdminView
         $sEtUsername = $this->getConfig()->getParameter("etUsername");
         $sEtPassword = $this->getConfig()->getParameter("etPassword");
 
-        $oConnector = oxNew("oxefidownloader");
-
         $sShopVersion = $this->getConfig()->getEdition() . " " . $this->getConfig()->getVersion();
-
         $blSaveCredentials = $this->getConfig()->getParameter('blSaveCredentials');
 
         try {
-            $oConnector->downloadConnector($sEtUsername, $sEtPassword, $sShopVersion, $blSaveCredentials);
-            $this->_aViewData['message'] = oxLang::getInstance()->translateString('EFIRE_DOWNLOADER_SUCCESS');
-        } catch (Exception $e) {
-            oxUtilsView::getInstance()->addErrorToDisplay(sprintf(oxLang::getInstance()->translateString('EFIRE_DOWNLOADER_ERROR'), $e->getMessage()));
+            $oConnector = oxNew("oxefidownloader");
+            $oConnector->downloadConnector( $sEtUsername, $sEtPassword, $sShopVersion, $blSaveCredentials );
+            $this->_aViewData['message'] = oxLang::getInstance()->translateString('EFIRE_DOWNLOADER_SUCCESS' );
+        } catch ( Exception $e ) {
+            oxUtilsView::getInstance()->addErrorToDisplay( sprintf( oxLang::getInstance()->translateString('EFIRE_DOWNLOADER_ERROR' ), $e->getMessage() ) );
         }
     }
 }

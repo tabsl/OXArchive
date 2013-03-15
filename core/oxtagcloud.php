@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxtagcloud.php 22590 2009-09-24 06:24:00Z alfonsas $
+ * @version   SVN: $Id: oxtagcloud.php 26071 2010-02-25 15:12:55Z sarunas $
  */
 
 if (!defined('OXTAGCLOUD_MINFONT')) {
@@ -39,11 +39,237 @@ if (!defined('OXTAGCLOUD_MINFONT')) {
 class oxTagCloud extends oxSuperCfg
 {
     /**
-     * Cache key
+     * Cloud cache key
      *
-     * @var unknown_type
+     * @var string
      */
     protected $_sCacheKey = "tagcloud_";
+
+    /**
+     * Extended mode
+     *
+     * @var bool
+     */
+    protected $_blExtended = false;
+
+    /**
+     * Product id
+     *
+     * @var string
+     */
+    protected $_sProductId = null;
+
+    /**
+     * Language id
+     *
+     * @var int
+     */
+    protected $_iLangId = null;
+
+    /**
+     * Max hit
+     *
+     * @var int
+     */
+    protected $_iMaxHit = null;
+
+    /**
+     * Cloud array
+     *
+     * @var array
+     */
+    protected $_aCloudArray = null;
+
+    /**
+     * Tag separator.
+     * Separator as space is deprecated. The default value is  ','
+     *
+     * @var string
+     */
+    protected $_sSeparator = ' ';
+
+    /**
+     * Object constructor. Initializes separator.
+     *
+     */
+    public function __construct()
+    {
+        $sSeparator = $this->getConfig()->getConfigParam("sTagSeparator");
+        if ($sSeparator)
+            $this->_sSeparator = $sSeparator;
+    }
+
+    /**
+     * Tag cloud product id setter
+     *
+     * @param string $sProductId product id
+     *
+     * @return null
+     */
+    public function setProductId( $sProductId )
+    {
+        $this->_sProductId = $sProductId;
+    }
+
+    /**
+     * Tag cloud language id setter
+     *
+     * @param int $iLangId language id
+     *
+     * @return null
+     */
+    public function setLanguageId( $iLangId )
+    {
+        $this->_iLangId = $iLangId;
+    }
+
+    /**
+     * Tag cloud mode setter (extended or not)
+     *
+     * @param bool $blExtended if true - extended cloud array will be returned
+     *
+     * @return null
+     */
+    public function setExtendedMode( $blExtended )
+    {
+        $this->_blExtended = $blExtended;
+    }
+
+    /**
+     * Returns current tag cloud language id
+     *
+     * @return int
+     */
+    public function getLanguageId()
+    {
+        if ( $this->_iLangId === null ) {
+            $this->_iLangId = oxLang::getInstance()->getBaseLanguage();
+        }
+        return $this->_iLangId;
+    }
+
+    /**
+     * Returns current tag cloud product id (if available)
+     *
+     * @return string
+     */
+    public function getProductId()
+    {
+        return $this->_sProductId;
+    }
+
+    /**
+     * Extended mode getter
+     *
+     * @return bool
+     */
+    public function isExtended()
+    {
+        return $this->_blExtended;
+    }
+
+    /**
+     * Returns extended tag cloud array
+     *
+     * @param string $sProductId product id [optional]
+     * @param bool   $blExtended extended clour array mode [optional]
+     * @param int    $iLang      language id [optional]
+     *
+     * @return array
+     */
+    public function getCloudArray( $sProductId = null, $blExtended = null, $iLang = null )
+    {
+        // collecting cloud info
+        $iLang      = ( $iLang === null ) ? (int) $this->getLanguageId() : $iLang;
+        $blExtended = ( $blExtended === null ) ? $this->isExtended() : $blExtended;
+        $sProductId = ( $sProductId === null ) ? (string) $this->getProductId() : $sProductId;
+
+        // checking if current data is allready loaded
+        $sCacheIdent = $this->_getCacheKey( $blExtended, $iLang )."_".$sProductId;
+        if ( !isset( $this->_aCloudArray[$sCacheIdent] ) ) {
+
+            $myUtils = oxUtils::getInstance();
+
+            // checking cache
+            $aCloudArray = ( !$sProductId ) ? $myUtils->fromFileCache( $sCacheIdent ) : null;
+
+            // loading cloud info
+            if ( $aCloudArray === null ) {
+                $aCloudArray = $this->getTags( $sProductId, $blExtended, $iLang );
+            }
+
+            // updating cache
+            if ( !$sProductId ) {
+                $myUtils->toFileCache( $sCacheIdent, $aCloudArray );
+            }
+
+            $this->_aCloudArray[$sCacheIdent] = $aCloudArray;
+        }
+        return $this->_aCloudArray[$sCacheIdent];
+    }
+
+    /**
+     * Returns tag url (seo or dynamic depends on shop mode)
+     *
+     * @param string $sTag tag title
+     *
+     * @return string
+     */
+    public function getTagLink( $sTag )
+    {
+        $oSeoEncoderTag = oxSeoEncoderTag::getInstance();
+        $iLang = $this->getLanguageId();
+
+        if ( oxUtils::getInstance()->seoIsActive() ) {
+            $sUrl = $oSeoEncoderTag->getTagUrl( $sTag, $iLang );
+        } else {
+            $sUrl = $this->getConfig()->getShopUrl() . $oSeoEncoderTag->getStdTagUri( $sTag ) . "&amp;lang=" . $iLang;
+        }
+
+        return $sUrl;
+    }
+
+    /**
+     * Returns html safe tag title
+     *
+     * @param string $sTag tag title
+     *
+     * @return string
+     */
+    public function getTagTitle( $sTag )
+    {
+        return getStr()->htmlentities( $sTag );
+    }
+
+    /**
+     * Returns max hit
+     *
+     * @return int
+     */
+    protected function _getMaxHit()
+    {
+        if ( $this->_iMaxHit === null ) {
+            $this->_iMaxHit = max( $this->getCloudArray() );
+        }
+        return $this->_iMaxHit;
+    }
+
+    /**
+     * Returns tag size
+     *
+     * @param string $sTag tag title
+     *
+     * @return int
+     */
+    public function getTagSize( $sTag )
+    {
+        $aCloudArray = $this->getCloudArray();
+        $iCurrSize = $this->_getFontSize( $aCloudArray[ $sTag ], $this->_getMaxHit() );
+
+        // calculating min size
+        return floor( $iCurrSize / OXTAGCLOUD_MINFONT ) * OXTAGCLOUD_MINFONT;
+    }
+
 
     /**
      * Returns tag array
@@ -54,7 +280,7 @@ class oxTagCloud extends oxSuperCfg
      *
      * @return array
      */
-    public function getTags($sArtId = null, $blExtended = false, $iLang = null )
+    public function getTags( $sArtId = null, $blExtended = false, $iLang = null )
     {
         $oDb = oxDb::getDb(true);
         if ($blExtended) {
@@ -78,7 +304,7 @@ class oxTagCloud extends oxSuperCfg
         $aTags = array();
         while ( $rs && $rs->recordCount() && !$rs->EOF ) {
             $sTags = $this->trimTags( $rs->fields['oxtags'] );
-            $aArticleTags = explode( ' ', $sTags );
+            $aArticleTags = explode( $this->_sSeparator, $sTags );
             foreach ( $aArticleTags as $sTag ) {
                 if ( trim( $sTag ) ) {
                     ++$aTags[$sTag];
@@ -89,8 +315,8 @@ class oxTagCloud extends oxSuperCfg
 
         //taking only top tags
         if ( $iAmount ) {
-            arsort($aTags);
-            $aTags = array_slice($aTags, 0, $iAmount, true );
+            arsort( $aTags );
+            $aTags = array_slice( $aTags, 0, $iAmount, true );
         }
 
         $aTags = $this->_sortTags( $aTags );
@@ -142,6 +368,8 @@ class oxTagCloud extends oxSuperCfg
      * @param string $sArtId     article id
      * @param bool   $blExtended if can extend tags
      * @param int    $iLang      preferred language [optional]
+     *
+     * @deprecated should ne used oxTagCloud::getCloudArray()
      *
      * @return string
      */
@@ -202,7 +430,7 @@ class oxTagCloud extends oxSuperCfg
      *
      * @return int
      */
-    protected function _getFontSize($iHit, $iMaxHit)
+    protected function _getFontSize( $iHit, $iMaxHit )
     {
         //handling special case
         if ($iMaxHit <= OXTAGCLOUD_MINOCCURENCETOSHOW || !$iMaxHit) {
@@ -232,24 +460,25 @@ class oxTagCloud extends oxSuperCfg
      */
     public function prepareTags( $sTags )
     {
-        $aTags = explode( ' ', $sTags );
+        $aTags = explode( $this->_sSeparator, $sTags );
         $sRes = '';
         $oStr = getStr();
         foreach ( $aTags as $sTag ) {
+            $sTag = trim($sTag);
             if ( ( $iLen = $oStr->strlen( $sTag ) ) ) {
                 if ( $iLen < OXTAGCLOUD_MINTAGLENGTH ) {
                     $sTag .= str_repeat( '_', OXTAGCLOUD_MINTAGLENGTH - $iLen );
                 }
 
-                $sRes .= $oStr->strtolower( $sTag ) . " ";
+                $sRes .= trim($oStr->strtolower( $sTag )) . $this->_sSeparator;
             }
         }
 
-        return trim( $sRes );
+        return trim( $sRes, $this->_sSeparator);
     }
 
     /**
-     * Trims underscores from tags.
+     * Trims underscores and spaces from tags.
      *
      * @param string $sTags given tag
      *
@@ -257,16 +486,17 @@ class oxTagCloud extends oxSuperCfg
      */
     public function trimTags($sTags)
     {
-        $aTags = explode(' ', $sTags);
+        $aTags = explode($this->_sSeparator, $sTags);
         $sRes = '';
         $oStr = getStr();
         foreach ( $aTags as $sTag ) {
+            $sTag = trim($sTag);
             if ( $oStr->strlen( $sTag ) ) {
-                $sRes .= rtrim( $sTag, '_' ) . " ";
+                $sRes .= rtrim( trim($sTag), '_' ) . $this->_sSeparator;
             }
         }
 
-        return trim( $sRes );
+        return trim($sRes, $this->_sSeparator);
     }
 
     /**

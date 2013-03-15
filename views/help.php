@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package views
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   views
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: help.php 17315 2009-03-17 16:18:58Z arvydas $
+ * @version   SVN: $Id: help.php 26734 2010-03-22 13:08:22Z arvydas $
  */
 
 /**
@@ -41,6 +41,12 @@ class Help extends oxUBase
      * @var string
      */
     protected $_sHelpText = null;
+
+    /**
+     * Defautl help page name
+     * @var string
+     */
+    protected $_sDefaultPage = 'default';
 
     /**
      * Current view search engine indexing state
@@ -68,6 +74,35 @@ class Help extends oxUBase
     }
 
     /**
+     * Reads and returns help file contents
+     *
+     * @param string $sHelpPage help page name
+     * @param string $sLang     help language
+     *
+     * @return string | false
+     */
+    protected function _getHelpPageContents( $sHelpPage, $sLang )
+    {
+        if ( $sHelpPage ) {
+            $aHelpPages[] = basename( $sHelpPage );
+        }
+        $aHelpPages[] = $this->_sDefaultPage;
+
+        $sContents = false;
+        $sPath = getShopBasePath()."help/{$sLang}/";
+
+        foreach ( $aHelpPages as $sPage ) {
+            $sHelpPath = $sPath . $sPage . ".inc.tpl";
+            if ( is_readable( $sHelpPath ) ) {
+                $sContents = file_get_contents( $sHelpPath );
+                break;
+            }
+        }
+
+        return $sContents;
+    }
+
+    /**
      * Template variable getter. Returns help text
      *
      * @return string
@@ -75,27 +110,9 @@ class Help extends oxUBase
     public function getHelpText()
     {
         if ( $this->_sHelpText === null ) {
-            $this->_sHelpText = false;
-            $sLang = oxLang::getInstance()->getTplLanguage();
-            $sTpl  = basename( oxConfig::getParameter( 'tpl' ) );
-            $sHelpPage = $sTpl?$sTpl:oxConfig::getParameter( 'page' );
-
-            $sHelpText = null;
-            $sHelpPath = getShopBasePath()."help/{$sLang}/{$sHelpPage}.inc.tpl";
-            if ( $sHelpPage && is_readable( $sHelpPath ) ) {
-                $sHelpText = file_get_contents( $sHelpPath );
-            }
-
-            if ( !$sHelpText ) {
-                $sHelpPath = getShopBasePath()."help/{$sLang}/default.inc.tpl";
-                if ( is_readable( $sHelpPath ) ) {
-                    $sHelpText = file_get_contents( $sHelpPath );
-                }
-            }
-
-            if ( $sHelpText ) {
-                $this->_sHelpText = $sHelpText;
-            }
+            $sHelpPage = oxConfig::getParameter( 'tpl' );
+            $sHelpPage = $sHelpPage ? $sHelpPage : oxConfig::getParameter( 'page' );
+            $this->_sHelpText = $this->_getHelpPageContents( $sHelpPage, oxLang::getInstance()->getBaseLanguage() );
         }
         return $this->_sHelpText;
     }

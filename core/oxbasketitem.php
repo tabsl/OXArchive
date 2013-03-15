@@ -15,11 +15,11 @@
  *    You should have received a copy of the GNU General Public License
  *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link http://www.oxid-esales.com
- * @package core
- * @copyright (C) OXID eSales AG 2003-2009
+ * @link      http://www.oxid-esales.com
+ * @package   core
+ * @copyright (C) OXID eSales AG 2003-2010
  * @version OXID eShop CE
- * $Id: oxbasketitem.php 22336 2009-09-15 15:44:43Z vilma $
+ * @version   SVN: $Id: oxbasketitem.php 26770 2010-03-23 14:33:36Z sarunas $
  */
 
 /**
@@ -284,12 +284,13 @@ class oxBasketItem extends oxSuperCfg
      *
      * @param double $dAmount    amount
      * @param bool   $blOverride overide current amoutn or not
+     * @param string $sItemKey   item key
      *
      * @throws oxOutOfStockException, oxArticleInputException
      *
      * @return null
      */
-    public function setAmount( $dAmount, $blOverride = true )
+    public function setAmount( $dAmount, $blOverride = true, $sItemKey = null )
     {
         //validating amount
         $oValidator = oxNew( 'oxinputvalidator' );
@@ -317,7 +318,8 @@ class oxBasketItem extends oxSuperCfg
 
         // checking for stock
         if ( $this->getStockCheckStatus() == true ) {
-            $iOnStock = $oArticle->checkForStock( $this->_dAmount );
+            $dArtStockAmount = $this->getSession()->getBasket()->getArtStockInBasket( $oArticle->getId(), $sItemKey );
+            $iOnStock = $oArticle->checkForStock( $this->_dAmount, $dArtStockAmount );
             if ( $iOnStock !== true ) {
                 if ( $iOnStock === false ) {
                     // no stock !
@@ -356,6 +358,7 @@ class oxBasketItem extends oxSuperCfg
         $this->_oPrice->setBruttoPriceMode();
         $this->_oPrice->setVat( $oPrice->getVAT() );
         $this->_oPrice->addPrice( $oPrice );
+        $this->_oPrice->multiply( $this->getAmount() );
 
         $this->_oUnitPrice = oxNew( 'oxprice' );
         $this->_oUnitPrice->setBruttoPriceMode();
@@ -378,6 +381,18 @@ class oxBasketItem extends oxSuperCfg
         } else {
             return $this->_sDimageDirNoSsl;
         }
+    }
+
+    /**
+     * Returns article icon picture url
+     *
+     * @return string
+     */
+    public function getIconUrl()
+    {
+        $sIconUrl = $this->getImageUrl() . $this->getIcon();
+
+        return $sIconUrl;
     }
 
     /**
@@ -490,7 +505,7 @@ class oxBasketItem extends oxSuperCfg
     }
 
     /**
-     * returns the price.
+     * returns the total weight.
      *
      * @return double
      */
@@ -630,24 +645,23 @@ class oxBasketItem extends oxSuperCfg
      */
     protected function _setDeprecatedValues()
     {
+        $oUnitPrice = $this->getUnitPrice();
         $oPrice = $this->getPrice();
 
         // product VAT percent
         $this->vatPercent = $this->getVatPercent();
 
         // VAT value
-        $this->dvat = $oPrice->getVATValue();
+        $this->dvat = $oUnitPrice->getVATValue();
 
         // unit non formatted price
-        $this->dprice = $oPrice->getBruttoPrice();
+        $this->dprice = $oUnitPrice->getBruttoPrice();
 
         // formatted unit price
         $this->fprice = $this->getFUnitPrice();
 
         // non formatted unit NETTO price
-        $this->dnetprice = $oPrice->getNettoPrice();
-
-        $this->_oPrice->multiply( $this->getAmount() );
+        $this->dnetprice = $oUnitPrice->getNettoPrice();
 
         // non formatted total NETTO price
         $this->dtotalnetprice = $oPrice->getNettoPrice();
